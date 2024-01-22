@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+bin/SysYc test/test/example/example4.sy -S -o test/cgen_test_output/example4.out.S

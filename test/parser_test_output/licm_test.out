@@ -1,0 +1,75 @@
+Program
+  VarDecls   Type:int
+    VarDef   name:A   scope:0
+      Dimensions:
+        Intconst   val:30   type:int
+        Intconst   val:30   type:int
+      init:
+        VarInitVal
+  FuncDef   name:main   return_type:int
+    Block   Size:5
+      VarDecls   Type:int
+        VarDef   name:a   scope:1
+          init:
+            VarInitVal_exp
+              FuncCall   name:getint   type:int
+                Empty params
+      VarDecls   Type:int
+        VarDef   name:b   scope:1
+          init:
+            VarInitVal_exp
+              FuncCall   name:getint   type:int
+                Empty params
+      VarDecls   Type:int
+        VarDef   name:i   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:0   type:int
+      WhileStmt:
+      Cond   type:bool
+        RelExp_lt: (<)   type:bool
+          Lval   type:int   name:i   scope:1
+          Intconst   val:30   type:int
+      Body:
+        BlockStmt:
+          Block   Size:3
+            VarDecls   Type:int
+              VarDef   name:j   scope:2
+                init:
+                  VarInitVal_exp
+                    Intconst   val:0   type:int
+            WhileStmt:
+            Cond   type:bool
+              RelExp_lt: (<)   type:bool
+                Lval   type:int   name:j   scope:2
+                Intconst   val:30   type:int
+            Body:
+              BlockStmt:
+                Block   Size:2
+                  AssignStmt:
+                    Lval   type:int   name:A   scope:0
+                      dims:
+                        Lval   type:int   name:i   scope:1
+                        Lval   type:int   name:j   scope:2
+                    AddExp_plus: (+)   type:int
+                      Lval   type:int   name:A   scope:0
+                        dims:
+                          Lval   type:int   name:i   scope:1
+                          Lval   type:int   name:j   scope:2
+                      MulExp_mul: (*)   type:int
+                        MulExp_mul: (*)   type:int
+                          Lval   type:int   name:a   scope:1
+                          Lval   type:int   name:b   scope:1
+                        Lval   type:int   name:b   scope:1
+                  AssignStmt:
+                    Lval   type:int   name:j   scope:2
+                    AddExp_plus: (+)   type:int
+                      Lval   type:int   name:j   scope:2
+                      Intconst   val:1   type:int
+            AssignStmt:
+              Lval   type:int   name:i   scope:1
+              AddExp_plus: (+)   type:int
+                Lval   type:int   name:i   scope:1
+                Intconst   val:1   type:int
+      ReturnStmt:
+        Intconst   val:0   type:int

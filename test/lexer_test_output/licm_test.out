@@ -1,0 +1,96 @@
+Token           Lexeme               Property                        Line           Column         
+INT             int                                                   1              0              
+IDENT           A                    A                                1              4              
+LSQUARE         [                                                     1              5              
+INT_CONST       30                   30                               1              6              
+RSQUARE         ]                                                     1              8              
+LSQUARE         [                                                     1              9              
+INT_CONST       30                   30                               1              10             
+RSQUARE         ]                                                     1              12             
+ASSIGN          =                                                     1              13             
+LBRACE          {                                                     1              14             
+RBRACE          }                                                     1              15             
+SEMICOLON       ;                                                     1              16             
+INT             int                                                   2              0              
+IDENT           main                 main                             2              4              
+LPAREN          (                                                     2              8              
+RPAREN          )                                                     2              9              
+LBRACE          {                                                     3              0              
+INT             int                                                   4              4              
+IDENT           a                    a                                4              8              
+ASSIGN          =                                                     4              10             
+IDENT           getint               getint                           4              12             
+LPAREN          (                                                     4              18             
+RPAREN          )                                                     4              19             
+SEMICOLON       ;                                                     4              20             
+INT             int                                                   5              4              
+IDENT           b                    b                                5              8              
+ASSIGN          =                                                     5              10             
+IDENT           getint               getint                           5              12             
+LPAREN          (                                                     5              18             
+RPAREN          )                                                     5              19             
+SEMICOLON       ;                                                     5              20             
+INT             int                                                   6              4              
+IDENT           i                    i                                6              8              
+ASSIGN          =                                                     6              10             
+INT_CONST       0                    0                                6              12             
+SEMICOLON       ;                                                     6              13             
+WHILE           while                                                 7              4              
+LPAREN          (                                                     7              9              
+IDENT           i                    i                                7              10             
+GREATER         <                                                     7              12             
+INT_CONST       30                   30                               7              14             
+RPAREN          )                                                     7              16             
+LBRACE          {                                                     7              17             
+INT             int                                                   8              8              
+IDENT           j                    j                                8              12             
+ASSIGN          =                                                     8              14             
+INT_CONST       0                    0                                8              16             
+SEMICOLON       ;                                                     8              17             
+WHILE           while                                                 9              8              
+LPAREN          (                                                     9              13             
+IDENT           j                    j                                9              14             
+GREATER         <                                                     9              16             
+INT_CONST       30                   30                               9              18             
+RPAREN          )                                                     9              20             
+LBRACE          {                                                     9              21             
+IDENT           A                    A                                10             12             
+LSQUARE         [                                                     10             13             
+IDENT           i                    i                                10             14             
+RSQUARE         ]                                                     10             15             
+LSQUARE         [                                                     10             16             
+IDENT           j                    j                                10             17             
+RSQUARE         ]                                                     10             18             
+ASSIGN          =                                                     10             20             
+IDENT           A                    A                                10             22             
+LSQUARE         [                                                     10             23             
+IDENT           i                    i                                10             24             
+RSQUARE         ]                                                     10             25             
+LSQUARE         [                                                     10             26             
+IDENT           j                    j                                10             27             
+RSQUARE         ]                                                     10             28             
+ADD             +                                                     10             30             
+IDENT           a                    a                                10             32             
+MUL             *                                                     10             33             
+IDENT           b                    b                                10             34             
+MUL             *                                                     10             35             
+IDENT           b                    b                                10             36             
+SEMICOLON       ;                                                     10             37             
+IDENT           j                    j                                11             12             
+ASSIGN          =                                                     11             14             
+IDENT           j                    j                                11             16             
+ADD             +                                                     11             18             
+INT_CONST       1                    1                                11             20             
+SEMICOLON       ;                                                     11             21             
+RBRACE          }                                                     12             8              
+IDENT           i                    i                                13             8              
+ASSIGN          =                                                     13             10             
+IDENT           i                    i                                13             12             
+ADD             +                                                     13             14             
+INT_CONST       1                    1                                13             16             
+SEMICOLON       ;                                                     13             17             
+RBRACE          }                                                     14             4              
+RETURN          return                                                15             4              
+INT_CONST       0                    0                                15             11             
+SEMICOLON       ;                                                     15             12             
+RBRACE          }                                                     16             0              

@@ -1,0 +1,5 @@
+int main(){
+    int a = getint();
+    int b = getint();
+    return a%998244353 + b%32;
+}

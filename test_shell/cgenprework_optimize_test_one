@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+bin/SysYc test/test/example/median.sy -cgenpre -o test/cgenpre_test_output/median.out.ll -O1

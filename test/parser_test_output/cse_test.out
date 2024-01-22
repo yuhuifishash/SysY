@@ -1,0 +1,42 @@
+Program
+  VarDecls   Type:int
+    VarDef   name:d   scope:0
+      init:
+        VarInitVal_exp
+          Intconst   val:5   type:int
+  VarDecls   Type:int
+    VarDef   name:A   scope:0
+      Dimensions:
+        Intconst   val:100   type:int
+        Intconst   val:100   type:int
+      init:
+        VarInitVal
+  FuncDef   name:main   return_type:int
+    Block   Size:3
+      VarDecls   Type:int
+        VarDef   name:i   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:2   type:int
+        VarDef   name:j   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:3   type:int
+      AssignStmt:
+        Lval   type:int   name:A   scope:0
+          dims:
+            Lval   type:int   name:i   scope:1
+            Lval   type:int   name:j   scope:1
+        AddExp_sub: (-)   type:int
+          AddExp_plus: (+)   type:int
+            Lval   type:int   name:A   scope:0
+              dims:
+                Lval   type:int   name:i   scope:1
+                Lval   type:int   name:j   scope:1
+            Lval   type:int   name:A   scope:0
+              dims:
+                Lval   type:int   name:i   scope:1
+                Lval   type:int   name:j   scope:1
+          Intconst   val:2   type:int
+      ReturnStmt:
+        Intconst   val:0   type:int

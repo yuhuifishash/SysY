@@ -1,0 +1,15 @@
+int main()
+{
+  int a = 5;
+  int b = 7;
+  int c = a + b;
+  int e = 23;
+  if(c){
+    e = 389;
+  }
+  if(!c){
+    e = 3 + 5;
+  }
+  int f = 3*e;
+  return f;
+}

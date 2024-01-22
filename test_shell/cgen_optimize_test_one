@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+bin/SysYc test/test/example/median.sy -S -o test/cgen_optimize_test_output/median.out.S -O1

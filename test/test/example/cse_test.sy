@@ -1,0 +1,8 @@
+int d = 5;
+int A[100][100] = {};
+int main()
+{
+  int i = 2,j = 3;
+  A[i][j] = A[i][j] + A[i][j] - 2;
+  return 0;
+}

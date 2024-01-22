@@ -1,0 +1,62 @@
+Token           Lexeme               Property                        Line           Column         
+INT             int                                                   1              0              
+IDENT           main                 main                             1              4              
+LPAREN          (                                                     1              8              
+RPAREN          )                                                     1              9              
+LBRACE          {                                                     2              0              
+INT             int                                                   3              2              
+IDENT           a                    a                                3              6              
+ASSIGN          =                                                     3              8              
+INT_CONST       5                    5                                3              10             
+SEMICOLON       ;                                                     3              11             
+INT             int                                                   4              2              
+IDENT           b                    b                                4              6              
+ASSIGN          =                                                     4              8              
+INT_CONST       7                    7                                4              10             
+SEMICOLON       ;                                                     4              11             
+INT             int                                                   5              2              
+IDENT           c                    c                                5              6              
+ASSIGN          =                                                     5              8              
+IDENT           a                    a                                5              10             
+ADD             +                                                     5              12             
+IDENT           b                    b                                5              14             
+SEMICOLON       ;                                                     5              15             
+INT             int                                                   6              2              
+IDENT           e                    e                                6              6              
+ASSIGN          =                                                     6              8              
+INT_CONST       23                   23                               6              10             
+SEMICOLON       ;                                                     6              12             
+IF              if                                                    7              2              
+LPAREN          (                                                     7              4              
+IDENT           c                    c                                7              5              
+RPAREN          )                                                     7              6              
+LBRACE          {                                                     7              7              
+IDENT           e                    e                                8              4              
+ASSIGN          =                                                     8              6              
+INT_CONST       389                  389                              8              8              
+SEMICOLON       ;                                                     8              11             
+RBRACE          }                                                     9              2              
+IF              if                                                    10             2              
+LPAREN          (                                                     10             4              
+NOT             !                                                     10             5              
+IDENT           c                    c                                10             6              
+RPAREN          )                                                     10             7              
+LBRACE          {                                                     10             8              
+IDENT           e                    e                                11             4              
+ASSIGN          =                                                     11             6              
+INT_CONST       3                    3                                11             8              
+ADD             +                                                     11             10             
+INT_CONST       5                    5                                11             12             
+SEMICOLON       ;                                                     11             13             
+RBRACE          }                                                     12             2              
+INT             int                                                   13             2              
+IDENT           f                    f                                13             6              
+ASSIGN          =                                                     13             8              
+INT_CONST       3                    3                                13             10             
+MUL             *                                                     13             11             
+IDENT           e                    e                                13             12             
+SEMICOLON       ;                                                     13             13             
+RETURN          return                                                14             2              
+IDENT           f                    f                                14             9              
+SEMICOLON       ;                                                     14             10             
+RBRACE          }                                                     15             0              

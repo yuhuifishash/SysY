@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+bin/SysYc test/test/example/median.sy -llvm -o test/IR_optimize_test_output/median.out.ll -O1
+

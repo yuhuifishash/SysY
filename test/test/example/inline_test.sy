@@ -1,0 +1,15 @@
+int d = 0;
+int f()
+{
+    if(d){
+        return 3;
+    }
+    else{
+        return 15;
+    }
+}
+
+int main()
+{
+    return f();
+}

@@ -1,0 +1,55 @@
+Program
+  FuncDef   name:main   return_type:int
+    Block   Size:8
+      VarDecls   Type:int
+        VarDef   name:a   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:5   type:int
+      VarDecls   Type:int
+        VarDef   name:b   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:7   type:int
+      VarDecls   Type:int
+        VarDef   name:c   scope:1
+          init:
+            VarInitVal_exp
+              AddExp_plus: (+)   type:int
+                Lval   type:int   name:a   scope:1
+                Lval   type:int   name:b   scope:1
+      VarDecls   Type:int
+        VarDef   name:e   scope:1
+          init:
+            VarInitVal_exp
+              Intconst   val:23   type:int
+      IfStmt:
+      Cond   type:bool
+        Lval   type:int   name:c   scope:1
+      if_stmt:
+        BlockStmt:
+          Block   Size:1
+            AssignStmt:
+              Lval   type:int   name:e   scope:1
+              Intconst   val:389   type:int
+      IfStmt:
+      Cond   type:bool
+        UnaryExp_not:(!)   type:bool
+          Lval   type:int   name:c   scope:1
+      if_stmt:
+        BlockStmt:
+          Block   Size:1
+            AssignStmt:
+              Lval   type:int   name:e   scope:1
+              AddExp_plus: (+)   type:int
+                Intconst   val:3   type:int
+                Intconst   val:5   type:int
+      VarDecls   Type:int
+        VarDef   name:f   scope:1
+          init:
+            VarInitVal_exp
+              MulExp_mul: (*)   type:int
+                Intconst   val:3   type:int
+                Lval   type:int   name:e   scope:1
+      ReturnStmt:
+        Lval   type:int   name:f   scope:1
