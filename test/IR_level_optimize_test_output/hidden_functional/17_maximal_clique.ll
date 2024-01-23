@@ -98,7 +98,7 @@ L5:
     %r29 = icmp slt i32 0,%r28
     br i1 %r29, label %L11, label %L9
 L7:
-    %r66 = phi i32 [0,%L11],[%r54,%L8]
+    %r66 = phi i32 [%r54,%L8],[0,%L11]
     %r70 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r66
     %r35 = getelementptr i32, ptr %r70, i32 0
     %r36 = load i32, ptr %r35

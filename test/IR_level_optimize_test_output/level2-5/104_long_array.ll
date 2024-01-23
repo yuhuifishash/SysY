@@ -21,9 +21,9 @@ L0:
     %r2 = alloca [10000 x i32]
     br label %L1
 L1:
-    br label %L38
+    br label %L39
 L3:
-    %r227 = phi i32 [%r21,%L4],[0,%L38]
+    %r227 = phi i32 [%r21,%L4],[0,%L39]
     %r14 = mul i32 %r227,%r227
     %r16 = srem i32 %r14,10
     %r18 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r227
@@ -34,9 +34,9 @@ L4:
     %r24 = icmp slt i32 %r21,10000
     br i1 %r24, label %L3, label %L5
 L5:
-    br label %L39
+    br label %L40
 L7:
-    %r229 = phi i32 [%r46,%L8],[0,%L39]
+    %r229 = phi i32 [0,%L40],[%r46,%L8]
     %r34 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r229
     %r35 = load i32, ptr %r34
     %r39 = mul i32 %r35,%r35
@@ -49,9 +49,9 @@ L8:
     %r49 = icmp slt i32 %r46,10000
     br i1 %r49, label %L7, label %L9
 L9:
-    br label %L40
+    br label %L41
 L11:
-    %r231 = phi i32 [0,%L40],[%r75,%L12]
+    %r231 = phi i32 [%r75,%L12],[0,%L41]
     %r59 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r231
     %r60 = load i32, ptr %r59
     %r64 = mul i32 %r60,%r60
@@ -67,10 +67,10 @@ L12:
     %r78 = icmp slt i32 %r75,10000
     br i1 %r78, label %L11, label %L13
 L13:
-    br label %L41
+    br label %L42
 L15:
-    %r233 = phi i32 [%r196,%L16],[0,%L41]
-    %r218 = phi i32 [0,%L41],[%r217,%L16]
+    %r233 = phi i32 [%r196,%L16],[0,%L42]
+    %r218 = phi i32 [%r217,%L16],[0,%L42]
     %r91 = icmp slt i32 %r233,10
     br i1 %r91, label %L18, label %L19
 L16:
@@ -93,7 +93,7 @@ L20:
     %r196 = add i32 %r233,1
     br label %L16
 L21:
-    br label %L42
+    br label %L43
 L22:
     %r136 = icmp slt i32 %r233,30
     br i1 %r136, label %L28, label %L29
@@ -101,8 +101,8 @@ L23:
     %r222 = phi i32 [%r124,%L27],[%r223,%L30]
     br label %L20
 L25:
-    %r220 = phi i32 [%r124,%L26],[%r218,%L42]
-    %r215 = phi i32 [%r127,%L26],[5000,%L42]
+    %r220 = phi i32 [%r124,%L26],[%r218,%L43]
+    %r215 = phi i32 [%r127,%L26],[5000,%L43]
     %r119 = load i32, ptr %r118
     %r120 = add i32 %r220,%r119
     %r122 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r215
@@ -117,7 +117,7 @@ L27:
     call void @putint(i32 %r124)
     br label %L23
 L28:
-    br label %L43
+    br label %L38
 L29:
     %r187 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r233
     %r188 = load i32, ptr %r187
@@ -129,8 +129,8 @@ L30:
     %r223 = phi i32 [%r193,%L29],[%r224,%L34]
     br label %L23
 L32:
-    %r225 = phi i32 [%r224,%L33],[%r218,%L43]
-    %r209 = phi i32 [%r208,%L33],[5000,%L43]
+    %r225 = phi i32 [%r218,%L38],[%r224,%L33]
+    %r209 = phi i32 [%r208,%L33],[5000,%L38]
     %r150 = icmp sgt i32 %r209,2233
     br i1 %r150, label %L35, label %L36
 L33:
@@ -163,18 +163,18 @@ L37:
     %r208 = phi i32 [%r164,%L35],[%r178,%L36]
     br label %L33
 L38:
-    br label %L3
+    br label %L32
 L39:
-    br label %L7
+    br label %L3
 L40:
-    br label %L11
+    br label %L7
 L41:
-    br label %L15
+    br label %L11
 L42:
+    br label %L15
+L43:
     %r118 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r233
     br label %L25
-L43:
-    br label %L32
 }
 define i32 @main()
 {

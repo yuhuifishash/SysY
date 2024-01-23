@@ -34,7 +34,7 @@ L5:
     %r30 = icmp slt i32 1,%r1
     br i1 %r30, label %L14, label %L9
 L7:
-    %r65 = phi i32 [%r21,%L14],[%r43,%L8]
+    %r65 = phi i32 [%r43,%L8],[%r21,%L14]
     %r62 = phi i32 [%r61,%L8],[%r21,%L14]
     %r59 = phi i32 [%r52,%L8],[1,%L14]
     %r35 = icmp slt i32 %r65,0

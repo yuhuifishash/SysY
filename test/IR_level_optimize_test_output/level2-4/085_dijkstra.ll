@@ -153,7 +153,7 @@ L1:
     %r7 = icmp sle i32 1,%r6
     br i1 %r7, label %L21, label %L5
 L3:
-    %r92 = phi i32 [%r40,%L4],[1,%L21]
+    %r92 = phi i32 [1,%L21],[%r40,%L4]
     %r14 = icmp sle i32 1,%r13
     br i1 %r14, label %L22, label %L9
 L4:
@@ -164,7 +164,7 @@ L5:
     %r49 = icmp sle i32 1,%r48
     br i1 %r49, label %L23, label %L16
 L7:
-    %r90 = phi i32 [%r32,%L8],[1,%L22]
+    %r90 = phi i32 [1,%L22],[%r32,%L8]
     %r19 = icmp eq i32 %r92,%r90
     br i1 %r19, label %L10, label %L11
 L8:
@@ -185,7 +185,7 @@ L12:
     %r32 = add i32 %r90,1
     br label %L8
 L14:
-    %r94 = phi i32 [1,%L23],[%r62,%L15]
+    %r94 = phi i32 [%r62,%L15],[1,%L23]
     %r53 = call i32 @getint()
     %r55 = call i32 @getint()
     %r56 = call i32 @getint()
@@ -203,7 +203,7 @@ L16:
     %r71 = icmp sle i32 1,%r70
     br i1 %r71, label %L24, label %L20
 L18:
-    %r96 = phi i32 [%r80,%L19],[1,%L24]
+    %r96 = phi i32 [1,%L24],[%r80,%L19]
     %r75 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r96
     %r76 = load i32, ptr %r75
     call void @putint(i32 %r76)

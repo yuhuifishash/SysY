@@ -19,7 +19,7 @@ L0:
 L1:
     br label %L12
 L3:
-    %r39 = phi i32 [%r28,%L4],[0,%L12]
+    %r39 = phi i32 [0,%L12],[%r28,%L4]
     %r13 = icmp eq i32 %r39,5
     br i1 %r13, label %L6, label %L7
 L4:

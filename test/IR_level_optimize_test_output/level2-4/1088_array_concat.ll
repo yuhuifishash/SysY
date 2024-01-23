@@ -65,7 +65,7 @@ L0:
 L1:
     br label %L10
 L3:
-    %r71 = phi i32 [0,%L10],[%r37,%L4]
+    %r71 = phi i32 [%r37,%L4],[0,%L10]
     %r19 = getelementptr [3 x i32], ptr %r0, i32 0, i32 %r71
     store i32 %r71, ptr %r19
     %r22 = getelementptr [3 x i32], ptr %r1, i32 0, i32 %r71

@@ -61,7 +61,7 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-24]
 	ldr r10,[fp,#-32]
 	cmp r9,r10
-	blt .merge_sortL28
+	blt .merge_sortL27
 .merge_sortL37:
 	ldr r9,[fp,#-16]
 	mov r10,r9
@@ -70,17 +70,17 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-20]
 	ldr r10,[fp,#-36]
 	cmp r9,r10
-	blt .merge_sortL29
+	blt .merge_sortL28
 .merge_sortL22:
 	ldr r9,[fp,#-28]
 	ldr r10,[fp,#-36]
 	cmp r9,r10
-	blt .merge_sortL30
+	blt .merge_sortL29
 .merge_sortL26:
 	add sp,sp,#36
 	pop {r4,r5,r6,r7,r8,r9,r10}
 	pop {fp,pc}
-.merge_sortL30:
+.merge_sortL29:
 	ldr r9,[fp,#-28]
 	mov r3,r9
 .merge_sortL24:
@@ -101,7 +101,7 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 .merge_sortL40:
 	mov r3,r7
 	bl .merge_sortL24
-.merge_sortL29:
+.merge_sortL28:
 	ldr r9,[fp,#-12]
 	mov r7,r9
 	ldr r9,[fp,#-20]
@@ -126,7 +126,7 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 	mov r7,r4
 	mov r6,r5
 	bl .merge_sortL20
-.merge_sortL28:
+.merge_sortL27:
 	ldr r9,[fp,#-16]
 	mov r7,r9
 	ldr r9,[fp,#-24]
@@ -159,7 +159,7 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-32]
 	ldr r10,[fp,#-36]
 	cmp r9,r10
-	blt .merge_sortL27
+	blt .merge_sortL30
 .merge_sortL34:
 	ldr r9,[fp,#-28]
 	mov r10,r9
@@ -171,7 +171,7 @@ merge_sort:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-24]
 	bl .merge_sortL7
-.merge_sortL27:
+.merge_sortL30:
 	ldr r9,[fp,#-28]
 	mov r7,r9
 	ldr r9,[fp,#-32]

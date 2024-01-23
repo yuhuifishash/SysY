@@ -24,12 +24,12 @@ L2:
     %r19 = getelementptr i32, ptr %r0, i32 %r1
     %r20 = load i32, ptr %r19
     %r23 = icmp slt i32 %r1,%r2
-    br i1 %r23, label %L29, label %L7
+    br i1 %r23, label %L28, label %L7
 L3:
     ret i32 0
 L5:
-    %r156 = phi i32 [%r159,%L6],[%r1,%L29]
-    %r151 = phi i32 [%r153,%L6],[%r2,%L29]
+    %r156 = phi i32 [%r159,%L6],[%r1,%L28]
+    %r151 = phi i32 [%r153,%L6],[%r2,%L28]
     %r28 = icmp slt i32 %r156,%r151
     br i1 %r28, label %L12, label %L11
 L6:
@@ -46,7 +46,7 @@ L7:
     %r145 = call i32 @QuickSort(ptr %r135,i32 %r141,i32 %r2)
     br label %L3
 L9:
-    %r149 = phi i32 [%r45,%L14],[%r151,%L30]
+    %r149 = phi i32 [%r45,%L14],[%r151,%L29]
     %r45 = sub i32 %r149,1
     br label %L10
 L10:
@@ -61,7 +61,7 @@ L12:
     %r33 = load i32, ptr %r32
     %r36 = sub i32 %r20,1
     %r37 = icmp sgt i32 %r33,%r36
-    br i1 %r37, label %L30, label %L11
+    br i1 %r37, label %L29, label %L11
 L14:
     %r52 = getelementptr i32, ptr %r0, i32 %r45
     %r53 = load i32, ptr %r52
@@ -80,7 +80,7 @@ L17:
     %r78 = icmp slt i32 %r155,%r150
     br i1 %r78, label %L22, label %L21
 L19:
-    %r158 = phi i32 [%r93,%L24],[%r155,%L28]
+    %r158 = phi i32 [%r93,%L24],[%r155,%L30]
     %r93 = add i32 %r158,1
     br label %L20
 L20:
@@ -94,7 +94,7 @@ L22:
     %r82 = getelementptr i32, ptr %r0, i32 %r155
     %r83 = load i32, ptr %r82
     %r85 = icmp slt i32 %r83,%r20
-    br i1 %r85, label %L28, label %L21
+    br i1 %r85, label %L30, label %L21
 L24:
     %r100 = getelementptr i32, ptr %r0, i32 %r93
     %r101 = load i32, ptr %r100
@@ -111,11 +111,11 @@ L27:
     %r153 = phi i32 [%r150,%L21],[%r121,%L26]
     br label %L6
 L28:
-    br label %L19
-L29:
     br label %L5
-L30:
+L29:
     br label %L9
+L30:
+    br label %L19
 }
 define i32 @insertsort(ptr %r0)
 {
@@ -180,20 +180,20 @@ L1:
     %r7 = load i32, ptr @n
     %r9 = sub i32 %r7,1
     %r10 = icmp slt i32 0,%r9
-    br i1 %r10, label %L13, label %L5
+    br i1 %r10, label %L12, label %L5
 L3:
-    %r78 = phi i32 [%r65,%L4],[0,%L13]
+    %r78 = phi i32 [0,%L12],[%r65,%L4]
     %r17 = sub i32 %r15,%r78
     %r19 = sub i32 %r17,1
     %r20 = icmp slt i32 0,%r19
-    br i1 %r20, label %L12, label %L9
+    br i1 %r20, label %L13, label %L9
 L4:
     %r70 = icmp slt i32 %r65,%r69
     br i1 %r70, label %L3, label %L5
 L5:
     ret i32 0
 L7:
-    %r76 = phi i32 [%r53,%L8],[0,%L12]
+    %r76 = phi i32 [0,%L13],[%r53,%L8]
     %r24 = getelementptr i32, ptr %r0, i32 %r76
     %r25 = load i32, ptr %r24
     %r28 = add i32 %r76,1
@@ -220,14 +220,14 @@ L11:
     %r53 = add i32 %r76,1
     br label %L8
 L12:
+    %r15 = load i32, ptr @n
+    %r69 = sub i32 %r15,1
+    br label %L3
+L13:
     %r55 = load i32, ptr @n
     %r57 = sub i32 %r55,%r78
     %r59 = sub i32 %r57,1
     br label %L7
-L13:
-    %r15 = load i32, ptr @n
-    %r69 = sub i32 %r15,1
-    br label %L3
 }
 define i32 @getMid(ptr %r0)
 {
@@ -262,9 +262,9 @@ L0:
     %r1 = alloca [1000 x i32]
     br label %L1
 L1:
-    br label %L13
+    br label %L12
 L3:
-    %r72 = phi i32 [%r15,%L4],[0,%L13]
+    %r72 = phi i32 [0,%L12],[%r15,%L4]
     %r12 = getelementptr [1000 x i32], ptr %r1, i32 0, i32 %r72
     store i32 0, ptr %r12
     %r15 = add i32 %r72,1
@@ -275,11 +275,11 @@ L4:
 L5:
     %r28 = load i32, ptr @n
     %r29 = icmp slt i32 0,%r28
-    br i1 %r29, label %L12, label %L9
+    br i1 %r29, label %L13, label %L9
 L7:
-    %r74 = phi i32 [%r57,%L8],[0,%L12]
-    %r70 = phi i32 [%r69,%L8],[0,%L12]
-    %r67 = phi i32 [%r66,%L8],[0,%L12]
+    %r74 = phi i32 [0,%L13],[%r57,%L8]
+    %r70 = phi i32 [0,%L13],[%r69,%L8]
+    %r67 = phi i32 [%r66,%L8],[0,%L13]
     %r35 = getelementptr i32, ptr %r0, i32 %r74
     %r36 = load i32, ptr %r35
     %r38 = getelementptr [1000 x i32], ptr %r1, i32 0, i32 %r36
@@ -305,10 +305,10 @@ L11:
     %r57 = add i32 %r74,1
     br label %L8
 L12:
+    br label %L3
+L13:
     %r59 = load i32, ptr @n
     br label %L7
-L13:
-    br label %L3
 }
 define i32 @arrCopy(ptr %r0,ptr %r1)
 {
@@ -319,7 +319,7 @@ L1:
     %r7 = icmp slt i32 0,%r6
     br i1 %r7, label %L6, label %L5
 L3:
-    %r24 = phi i32 [%r17,%L4],[0,%L6]
+    %r24 = phi i32 [0,%L6],[%r17,%L4]
     %r11 = getelementptr i32, ptr %r0, i32 %r24
     %r12 = load i32, ptr %r11
     %r14 = getelementptr i32, ptr %r1, i32 %r24
@@ -353,8 +353,8 @@ L1:
     %r11 = icmp slt i32 0,%r10
     br i1 %r11, label %L9, label %L5
 L3:
-    %r46 = phi i32 [%r48,%L4],[0,%L9]
-    %r44 = phi i32 [%r37,%L4],[0,%L9]
+    %r46 = phi i32 [0,%L9],[%r48,%L4]
+    %r44 = phi i32 [0,%L9],[%r37,%L4]
     %r16 = getelementptr i32, ptr %r0, i32 %r44
     %r17 = load i32, ptr %r16
     %r18 = add i32 %r46,%r17
@@ -392,7 +392,7 @@ L1:
     %r13 = icmp slt i32 0,%r12
     br i1 %r13, label %L16, label %L5
 L3:
-    %r105 = phi i32 [%r104,%L4],[0,%L16]
+    %r105 = phi i32 [0,%L16],[%r104,%L4]
     %r100 = phi i32 [%r68,%L4],[0,%L16]
     %r98 = phi i32 [%r97,%L4],[0,%L16]
     %r20 = icmp slt i32 %r100,%r19
@@ -541,7 +541,7 @@ L1:
     %r103 = call i32 @arrCopy(ptr %r101,ptr %r102)
     br label %L30
 L3:
-    %r273 = phi i32 [%r120,%L4],[0,%L37]
+    %r273 = phi i32 [%r120,%L4],[0,%L34]
     %r115 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r273
     %r116 = load i32, ptr %r115
     call void @putint(i32 %r116)
@@ -553,9 +553,9 @@ L4:
 L5:
     %r126 = getelementptr i32, ptr %r2, i32 0
     %r127 = call i32 @bubblesort(ptr %r126)
-    br label %L38
+    br label %L35
 L7:
-    %r275 = phi i32 [%r140,%L8],[0,%L38]
+    %r275 = phi i32 [0,%L35],[%r140,%L8]
     %r135 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r275
     %r136 = load i32, ptr %r135
     call void @putint(i32 %r136)
@@ -573,9 +573,9 @@ L9:
     %r152 = getelementptr i32, ptr %r1, i32 0
     %r154 = call i32 @arrCopy(ptr %r152,ptr %r146)
     %r156 = call i32 @bubblesort(ptr %r146)
-    br label %L39
+    br label %L36
 L11:
-    %r277 = phi i32 [%r169,%L12],[0,%L39]
+    %r277 = phi i32 [%r169,%L12],[0,%L36]
     %r164 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r277
     %r165 = load i32, ptr %r164
     call void @putint(i32 %r165)
@@ -589,9 +589,9 @@ L13:
     %r176 = getelementptr i32, ptr %r2, i32 0
     %r177 = call i32 @arrCopy(ptr %r175,ptr %r176)
     %r179 = call i32 @insertsort(ptr %r176)
-    br label %L34
+    br label %L37
 L15:
-    %r279 = phi i32 [%r192,%L16],[0,%L34]
+    %r279 = phi i32 [%r192,%L16],[0,%L37]
     %r187 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r279
     %r188 = load i32, ptr %r187
     call void @putint(i32 %r188)
@@ -605,9 +605,9 @@ L17:
     %r199 = getelementptr i32, ptr %r2, i32 0
     %r200 = call i32 @arrCopy(ptr %r198,ptr %r199)
     %r206 = call i32 @QuickSort(ptr %r199,i32 0,i32 31)
-    br label %L35
+    br label %L38
 L19:
-    %r281 = phi i32 [%r218,%L20],[0,%L35]
+    %r281 = phi i32 [%r218,%L20],[0,%L38]
     %r213 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r281
     %r214 = load i32, ptr %r213
     call void @putint(i32 %r214)
@@ -621,9 +621,9 @@ L21:
     %r225 = getelementptr i32, ptr %r2, i32 0
     %r226 = call i32 @arrCopy(ptr %r224,ptr %r225)
     %r229 = call i32 @calSum(ptr %r225,i32 4)
-    br label %L36
+    br label %L39
 L23:
-    %r283 = phi i32 [%r242,%L24],[0,%L36]
+    %r283 = phi i32 [%r242,%L24],[0,%L39]
     %r237 = getelementptr [32 x i32], ptr %r2, i32 0, i32 %r283
     %r238 = load i32, ptr %r237
     call void @putint(i32 %r238)
@@ -653,23 +653,23 @@ L29:
 L30:
     br label %L32
 L31:
-    br label %L37
+    br label %L34
 L32:
     br label %L33
 L33:
     br label %L31
 L34:
-    br label %L15
-L35:
-    br label %L19
-L36:
-    br label %L23
-L37:
     br label %L3
-L38:
+L35:
     br label %L7
-L39:
+L36:
     br label %L11
+L37:
+    br label %L15
+L38:
+    br label %L19
+L39:
+    br label %L23
 L40:
     br label %L27
 }

@@ -384,7 +384,7 @@ L1:
     %r9 = icmp slt i32 0,%r8
     br i1 %r9, label %L12, label %L5
 L3:
-    %r64 = phi i32 [0,%L12],[%r52,%L4]
+    %r64 = phi i32 [%r52,%L4],[0,%L12]
     %r15 = add i32 %r64,1
     %r18 = icmp slt i32 %r15,%r1
     br i1 %r18, label %L13, label %L9

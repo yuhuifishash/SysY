@@ -199,7 +199,7 @@ L12:
     br i1 %r42, label %L10, label %L11
 L15:
     %r108 = phi i32 [%r94,%L16],[1,%L149]
-    %r106 = phi i32 [%r97,%L16],[0,%L149]
+    %r106 = phi i32 [0,%L149],[%r97,%L16]
     %r65 = call float @getfloat()
     %r69 = fmul float %r67,%r65
     %r71 = fmul float %r69,%r65

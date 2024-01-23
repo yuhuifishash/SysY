@@ -101,7 +101,7 @@ L1:
     %r38 = icmp slt i32 %r35,%r37
     br i1 %r38, label %L6, label %L5
 L3:
-    %r58 = phi i32 [%r35,%L6],[%r51,%L4]
+    %r58 = phi i32 [%r51,%L4],[%r35,%L6]
     %r44 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r58
     %r45 = load i32, ptr %r44
     call void @putint(i32 %r45)

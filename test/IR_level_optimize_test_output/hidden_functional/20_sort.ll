@@ -94,7 +94,7 @@ L1:
     %r7 = icmp slt i32 0,%r6
     br i1 %r7, label %L12, label %L5
 L3:
-    %r59 = phi i32 [%r49,%L4],[0,%L12]
+    %r59 = phi i32 [0,%L12],[%r49,%L4]
     %r12 = add i32 %r59,1
     %r15 = icmp slt i32 %r12,%r14
     br i1 %r15, label %L13, label %L9
@@ -104,7 +104,7 @@ L4:
 L5:
     ret void
 L7:
-    %r57 = phi i32 [%r41,%L8],[%r12,%L13]
+    %r57 = phi i32 [%r12,%L13],[%r41,%L8]
     %r20 = load i32, ptr %r19
     %r22 = getelementptr i32, ptr %r0, i32 %r57
     %r23 = load i32, ptr %r22
@@ -159,7 +159,7 @@ L4:
     %r37 = icmp slt i32 %r34,%r36
     br i1 %r37, label %L3, label %L5
 L5:
-    %r83 = phi i32 [-100,%L1],[%r81,%L4]
+    %r83 = phi i32 [%r81,%L4],[-100,%L1]
     %r45 = icmp sle i32 0,%r83
     br i1 %r45, label %L17, label %L11
 L6:
@@ -167,7 +167,7 @@ L6:
     %r31 = load i32, ptr %r30
     br label %L7
 L7:
-    %r81 = phi i32 [%r82,%L3],[%r31,%L6]
+    %r81 = phi i32 [%r31,%L6],[%r82,%L3]
     %r34 = add i32 %r84,1
     br label %L4
 L9:

@@ -154,7 +154,7 @@ main:@r4 r5 r6 r7 r8
 	sub sp,sp,#8
 .mainL0:
 .mainL1:
-.mainL10:
+.mainL11:
 	mov r8,#1
 .mainL3:
 	@%r12 = call i32 @getint()
@@ -163,7 +163,7 @@ main:@r4 r5 r6 r7 r8
 	mov r7,r0
 	add sp,sp,#4 @stack align 8bytes
 	cmp r7,#0
-	bne .mainL11
+	bne .mainL10
 .mainL9:
 	add r6,r8,#1
 .mainL4:
@@ -182,7 +182,7 @@ main:@r4 r5 r6 r7 r8
 .mainL12:
 	mov r8,r6
 	bl .mainL3
-.mainL11:
+.mainL10:
 	mov r6,#10
 	mul r6,r8,r6
 	mov r5,r6

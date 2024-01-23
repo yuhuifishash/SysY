@@ -283,7 +283,7 @@ L88:
     %r165 = icmp ne i32 %r164,0
     br i1 %r165, label %L50, label %L86
 L91:
-    %r520 = phi i32 [%r320,%L96],[1,%L292]
+    %r520 = phi i32 [1,%L292],[%r320,%L96]
     %r320 = add i32 %r520,1
     br label %L92
 L92:

@@ -31,7 +31,7 @@ L3:
     %r45 = load i32, ptr @k
     ret i32 %r45
 L5:
-    %r47 = phi i32 [112,%L10],[%r49,%L6]
+    %r47 = phi i32 [%r49,%L6],[112,%L10]
     %r18 = sub i32 %r47,88
     %r21 = icmp slt i32 %r18,1000
     br i1 %r21, label %L8, label %L9

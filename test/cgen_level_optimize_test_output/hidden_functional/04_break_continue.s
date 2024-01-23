@@ -11,13 +11,13 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	sub sp,sp,#40
 .mainL0:
 .mainL1:
-.mainL50:
+.mainL47:
 	mov r9,#0
 	str r9,[fp,#-12]
 	mov r9,#0
 	str r9,[fp,#-16]
 .mainL3:
-.mainL51:
+.mainL48:
 	mov r9,#0
 	str r9,[fp,#-20]
 	ldr r9,[fp,#-16]
@@ -31,7 +31,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-32]
 .mainL11:
-.mainL48:
+.mainL50:
 	mov r2,#0
 	ldr r9,[fp,#-32]
 	mov r10,r9
@@ -41,7 +41,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	cmp r0,#3
 	bge .mainL18
 .mainL19:
-.mainL47:
+.mainL51:
 	mov r8,#0
 .mainL31:
 	add r0,r8,#1

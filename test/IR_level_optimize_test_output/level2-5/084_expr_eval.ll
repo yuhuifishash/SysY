@@ -789,7 +789,7 @@ L1:
     %r5 = icmp ne i32 %r1,0
     br i1 %r5, label %L6, label %L5
 L3:
-    %r14 = phi i32 [%r10,%L4],[%r1,%L6]
+    %r14 = phi i32 [%r1,%L6],[%r10,%L4]
     %r6 = call i32 @eval()
     call void @putint(i32 %r6)
     call void @putch(i32 10)

@@ -21,14 +21,14 @@ define i32 @EightWhile()
 L0:
     br label %L1
 L1:
-    br label %L34
+    br label %L36
 L3:
-    %r170 = phi i32 [%r179,%L4],[5,%L34]
-    %r168 = phi i32 [%r131,%L4],[6,%L34]
-    %r158 = phi i32 [%r157,%L4],[10,%L34]
+    %r170 = phi i32 [%r179,%L4],[5,%L36]
+    %r168 = phi i32 [%r131,%L4],[6,%L36]
+    %r158 = phi i32 [%r157,%L4],[10,%L36]
     %r19 = add i32 %r170,3
     %r22 = icmp slt i32 %r168,10
-    br i1 %r22, label %L35, label %L9
+    br i1 %r22, label %L34, label %L9
 L4:
     %r134 = icmp slt i32 %r179,20
     br i1 %r134, label %L3, label %L5
@@ -45,9 +45,9 @@ L5:
     %r151 = sub i32 %r143,%r150
     ret i32 %r151
 L7:
-    %r178 = phi i32 [%r175,%L8],[%r19,%L35]
-    %r166 = phi i32 [%r27,%L8],[%r168,%L35]
-    %r156 = phi i32 [%r158,%L35],[%r115,%L8]
+    %r178 = phi i32 [%r19,%L34],[%r175,%L8]
+    %r166 = phi i32 [%r27,%L8],[%r168,%L34]
+    %r156 = phi i32 [%r158,%L34],[%r115,%L8]
     %r27 = add i32 %r166,1
     br label %L11
 L8:
@@ -61,18 +61,18 @@ L9:
     br label %L4
 L11:
     %r38 = icmp slt i32 %r156,20
-    br i1 %r38, label %L38, label %L17
+    br i1 %r38, label %L35, label %L17
 L12:
     br label %L13
 L13:
     br label %L8
 L15:
-    %r174 = phi i32 [%r173,%L16],[%r178,%L38]
-    %r152 = phi i32 [%r156,%L38],[%r43,%L16]
+    %r174 = phi i32 [%r173,%L16],[%r178,%L35]
+    %r152 = phi i32 [%r43,%L16],[%r156,%L35]
     %r43 = add i32 %r152,3
     %r44 = load i32, ptr @e
     %r46 = icmp sgt i32 %r44,1
-    br i1 %r46, label %L39, label %L21
+    br i1 %r46, label %L38, label %L21
 L16:
     %r110 = icmp slt i32 %r43,20
     br i1 %r110, label %L15, label %L17
@@ -82,13 +82,13 @@ L17:
     %r115 = sub i32 %r153,1
     br label %L12
 L19:
-    %r172 = phi i32 [%r174,%L39],[%r181,%L20]
+    %r172 = phi i32 [%r181,%L20],[%r174,%L38]
     %r49 = load i32, ptr @e
     %r51 = sub i32 %r49,1
     store i32 %r51, ptr @e
     %r52 = load i32, ptr @f
     %r54 = icmp sgt i32 %r52,2
-    br i1 %r54, label %L40, label %L25
+    br i1 %r54, label %L39, label %L25
 L20:
     %r100 = load i32, ptr @e
     %r102 = icmp sgt i32 %r100,1
@@ -100,13 +100,13 @@ L21:
     store i32 %r107, ptr @e
     br label %L16
 L23:
-    %r180 = phi i32 [%r183,%L24],[%r172,%L40]
+    %r180 = phi i32 [%r183,%L24],[%r172,%L39]
     %r57 = load i32, ptr @f
     %r59 = sub i32 %r57,2
     store i32 %r59, ptr @f
     %r60 = load i32, ptr @g
     %r62 = icmp slt i32 %r60,3
-    br i1 %r62, label %L36, label %L29
+    br i1 %r62, label %L40, label %L29
 L24:
     %r92 = load i32, ptr @f
     %r94 = icmp sgt i32 %r92,2
@@ -118,7 +118,7 @@ L25:
     store i32 %r99, ptr @f
     br label %L20
 L27:
-    %r182 = phi i32 [%r180,%L36],[%r185,%L28]
+    %r182 = phi i32 [%r180,%L40],[%r185,%L28]
     %r65 = load i32, ptr @g
     %r67 = add i32 %r65,10
     store i32 %r67, ptr @g
@@ -152,19 +152,19 @@ L33:
     store i32 %r83, ptr @h
     br label %L28
 L34:
-    br label %L3
-L35:
     br label %L7
+L35:
+    br label %L15
 L36:
-    br label %L27
+    br label %L3
 L37:
     br label %L31
 L38:
-    br label %L15
-L39:
     br label %L19
-L40:
+L39:
     br label %L23
+L40:
+    br label %L27
 }
 define i32 @main()
 {

@@ -190,8 +190,8 @@ L15:
     %r97 = icmp slt i32 0,%r96
     br i1 %r97, label %L31, label %L19
 L17:
-    %r142 = phi i32 [%r141,%L18],[0,%L31]
-    %r131 = phi i32 [%r130,%L18],[0,%L31]
+    %r142 = phi i32 [0,%L31],[%r141,%L18]
+    %r131 = phi i32 [0,%L31],[%r130,%L18]
     %r101 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r142
     %r102 = load i32, ptr %r101
     %r104 = getelementptr [1005 x i32], ptr @v, i32 0, i32 %r142

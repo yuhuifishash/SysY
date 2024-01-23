@@ -21,7 +21,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	movt r10,#65534  @ -120012
 	str r9,[fp,r10]
 .long_arrayL1:
-.long_arrayL38:
+.long_arrayL39:
 	mov r9,#0
 	movw r10,#11040
 	movt r10,#65534  @ -120032
@@ -67,7 +67,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,r6
 	blt .long_arrayL44
 .long_arrayL5:
-.long_arrayL39:
+.long_arrayL40:
 	mov r9,#0
 	movw r10,#11044
 	movt r10,#65534  @ -120028
@@ -116,7 +116,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,r4
 	blt .long_arrayL45
 .long_arrayL9:
-.long_arrayL40:
+.long_arrayL41:
 	mov r9,#0
 	movw r10,#11032
 	movt r10,#65534  @ -120040
@@ -175,7 +175,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,r2
 	blt .long_arrayL46
 .long_arrayL13:
-.long_arrayL41:
+.long_arrayL42:
 	mov r2,#0
 	mov r1,#0
 .long_arrayL15:
@@ -247,7 +247,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	mov r1,r3
 	bl .long_arrayL15
 .long_arrayL28:
-.long_arrayL43:
+.long_arrayL38:
 	movw r8,#5000
 	movt r8,#0  @ 5000
 	mov r6,r8
@@ -322,7 +322,7 @@ long_array:@r4 r5 r6 r7 r8 r9 r10
 	mov r5,r7
 	bl .long_arrayL37
 .long_arrayL21:
-.long_arrayL42:
+.long_arrayL43:
 	mov r8,r1
 	movw r7,#25528
 	movt r7,#65535  @ -40008

@@ -11,13 +11,13 @@ doubleWhile:@r4 r5 r6 r7 r8
 	sub sp,sp,#8
 .doubleWhileL0:
 .doubleWhileL1:
-.doubleWhileL11:
+.doubleWhileL10:
 	mov r8,#7
 	mov r7,#5
 .doubleWhileL3:
 	add r6,r7,#30
 	cmp r8,#100
-	blt .doubleWhileL10
+	blt .doubleWhileL11
 .doubleWhileL14:
 	mov r5,r8
 .doubleWhileL9:
@@ -34,7 +34,7 @@ doubleWhile:@r4 r5 r6 r7 r8
 	mov r8,r4
 	mov r7,r6
 	bl .doubleWhileL3
-.doubleWhileL10:
+.doubleWhileL11:
 	mov r7,r8
 .doubleWhileL7:
 	add r8,r7,#6

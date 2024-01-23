@@ -51,7 +51,7 @@ L9:
     %r54 = icmp sgt i32 %r50,-1
     br i1 %r54, label %L24, label %L13
 L11:
-    %r124 = phi i32 [%r107,%L12],[%r50,%L24]
+    %r124 = phi i32 [%r50,%L24],[%r107,%L12]
     %r60 = getelementptr i32, ptr %r0, i32 %r124
     %r61 = load i32, ptr %r60
     %r66 = sub i32 %r64,%r124

@@ -179,7 +179,7 @@ L1:
     br label %L6
 L3:
     %r39 = phi float [%r30,%L4],[%r18,%L6]
-    %r37 = phi i32 [10,%L6],[%r33,%L4]
+    %r37 = phi i32 [%r33,%L4],[10,%L6]
     %r26 = fdiv float %r0,%r39
     %r27 = fadd float %r39,%r26
     %r30 = fdiv float %r27,%r29
@@ -261,7 +261,7 @@ L1:
     %r9 = fadd float 0x0,0x0
     br label %L6
 L3:
-    %r71 = phi float [%r51,%L10],[%r9,%L12]
+    %r71 = phi float [%r9,%L12],[%r51,%L10]
     %r69 = phi i32 [0,%L12],[%r54,%L10]
     %r29 = fmul float %r2,%r71
     %r30 = fadd float %r0,%r29
@@ -309,7 +309,7 @@ L1:
     %r5 = fadd float 0x0,0x0
     br label %L14
 L3:
-    %r52 = phi float [%r37,%L4],[%r5,%L14]
+    %r52 = phi float [%r5,%L14],[%r37,%L4]
     %r50 = phi i32 [%r40,%L4],[0,%L14]
     br label %L6
 L4:

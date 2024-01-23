@@ -201,7 +201,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097180
 	str r10,[fp,r9]
 .mainL7:
-.mainL86:
+.mainL84:
 	movw r10,#65500
 	movt r10,#65503  @ -2097188
 	ldr r9,[fp,r10]
@@ -226,7 +226,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097196
 	str r10,[fp,r9]
 .mainL11:
-.mainL83:
+.mainL80:
 	movw r10,#65488
 	movt r10,#65503  @ -2097200
 	ldr r9,[fp,r10]
@@ -251,7 +251,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097208
 	str r10,[fp,r9]
 .mainL15:
-.mainL84:
+.mainL81:
 	movw r10,#65472
 	movt r10,#65503  @ -2097216
 	ldr r9,[fp,r10]
@@ -276,7 +276,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097224
 	str r10,[fp,r9]
 .mainL19:
-.mainL85:
+.mainL82:
 	movw r10,#65456
 	movt r10,#65503  @ -2097232
 	ldr r9,[fp,r10]
@@ -301,7 +301,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097236
 	str r10,[fp,r9]
 .mainL23:
-.mainL80:
+.mainL83:
 	movw r10,#65444
 	movt r10,#65503  @ -2097244
 	ldr r9,[fp,r10]
@@ -326,7 +326,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097248
 	str r10,[fp,r9]
 .mainL27:
-.mainL81:
+.mainL85:
 	movw r10,#65432
 	movt r10,#65503  @ -2097256
 	ldr r9,[fp,r10]
@@ -351,7 +351,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	movt r9,#65503  @ -2097260
 	str r10,[fp,r9]
 .mainL31:
-.mainL82:
+.mainL86:
 	movw r10,#65416
 	movt r10,#65503  @ -2097272
 	ldr r9,[fp,r10]

@@ -58,7 +58,7 @@ L3:
     %r15 = icmp slt i32 1,%r2
     br i1 %r15, label %L12, label %L7
 L5:
-    %r52 = phi i32 [%r23,%L6],[1,%L12]
+    %r52 = phi i32 [1,%L12],[%r23,%L6]
     %r19 = call i32 @getint()
     %r20 = call i32 @insert(i32 %r10,i32 %r19)
     %r23 = add i32 %r52,1
@@ -74,7 +74,7 @@ L7:
     br i1 %r35, label %L13, label %L11
 L9:
     %r56 = phi i32 [%r40,%L10],[%r10,%L13]
-    %r54 = phi i32 [0,%L13],[%r43,%L10]
+    %r54 = phi i32 [%r43,%L10],[0,%L13]
     %r39 = call i32 @getint()
     %r40 = call i32 @delete(i32 %r56,i32 %r39)
     %r43 = add i32 %r54,1
@@ -97,7 +97,7 @@ define i32 @find_minimum(i32 %r0)
 L0:
     br label %L7
 L1:
-    %r23 = phi i32 [%r0,%L7],[%r20,%L5]
+    %r23 = phi i32 [%r20,%L5],[%r0,%L7]
     %r5 = icmp eq i32 %r23,-1
     br i1 %r5, label %L2, label %L3
 L2:
@@ -124,7 +124,7 @@ L0:
     br label %L10
 L1:
     %r39 = phi i32 [%r1,%L10],[%r39,%L7],[%r39,%L8]
-    %r38 = phi i32 [%r30,%L7],[%r35,%L8],[%r0,%L10]
+    %r38 = phi i32 [%r30,%L7],[%r0,%L10],[%r35,%L8]
     %r7 = icmp eq i32 %r38,-1
     br i1 %r7, label %L2, label %L5
 L2:

@@ -27,7 +27,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	sub sp,sp,#20
 .EightWhileL0:
 .EightWhileL1:
-.EightWhileL34:
+.EightWhileL36:
 	mov r8,#10
 	mov r7,#6
 	mov r9,#5
@@ -36,7 +36,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-20]
 	add r5,r9,#3
 	cmp r7,#10
-	blt .EightWhileL35
+	blt .EightWhileL34
 .EightWhileL43:
 	mov r4,r8
 	mov r9,r7
@@ -74,7 +74,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r2
 	str r9,[fp,#-20]
 	bl .EightWhileL3
-.EightWhileL35:
+.EightWhileL34:
 	mov r6,r8
 	mov r8,r7
 	mov r7,r5
@@ -83,7 +83,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	str r9,[fp,#-16]
 .EightWhileL11:
 	cmp r6,#20
-	blt .EightWhileL38
+	blt .EightWhileL35
 .EightWhileL46:
 	mov r3,r6
 	mov r1,r7
@@ -108,7 +108,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	mov r8,r9
 	mov r7,r1
 	bl .EightWhileL7
-.EightWhileL38:
+.EightWhileL35:
 	mov r8,r6
 	mov r6,r7
 .EightWhileL15:
@@ -116,7 +116,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	ldr r5,.LPIC0
 	ldr r4,[r5]
 	cmp r4,#1
-	bgt .EightWhileL39
+	bgt .EightWhileL38
 .EightWhileL49:
 	mov r5,r6
 .EightWhileL21:
@@ -136,7 +136,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	mov r8,r7
 	mov r6,r5
 	bl .EightWhileL15
-.EightWhileL39:
+.EightWhileL38:
 	mov r8,r6
 .EightWhileL19:
 	ldr r6,.LPIC0
@@ -147,7 +147,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	ldr r6,.LPIC1
 	ldr r4,[r6]
 	cmp r4,#2
-	bgt .EightWhileL40
+	bgt .EightWhileL39
 .EightWhileL52:
 	mov r6,r8
 .EightWhileL25:
@@ -167,7 +167,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 .EightWhileL48:
 	mov r8,r6
 	bl .EightWhileL19
-.EightWhileL40:
+.EightWhileL39:
 	mov r5,r8
 .EightWhileL23:
 	ldr r8,.LPIC1
@@ -178,7 +178,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 	ldr r8,.LPIC2
 	ldr r4,[r8]
 	cmp r4,#3
-	blt .EightWhileL36
+	blt .EightWhileL40
 .EightWhileL55:
 	mov r8,r5
 .EightWhileL29:
@@ -198,7 +198,7 @@ EightWhile:@r4 r5 r6 r7 r8 r9 r10
 .EightWhileL51:
 	mov r5,r8
 	bl .EightWhileL23
-.EightWhileL36:
+.EightWhileL40:
 	mov r6,r5
 .EightWhileL27:
 	ldr r5,.LPIC2

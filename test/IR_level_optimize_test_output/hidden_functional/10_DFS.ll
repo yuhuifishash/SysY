@@ -94,7 +94,7 @@ L0:
 L1:
     br label %L6
 L3:
-    %r19 = phi i32 [0,%L6],[%r13,%L4]
+    %r19 = phi i32 [%r13,%L4],[0,%L6]
     %r10 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r19
     store i32 -1, ptr %r10
     %r13 = add i32 %r19,1
@@ -181,7 +181,7 @@ L3:
     %r20 = icmp ne i32 %r16,-1
     br i1 %r20, label %L12, label %L7
 L5:
-    %r51 = phi i32 [%r43,%L6],[%r16,%L12]
+    %r51 = phi i32 [%r16,%L12],[%r43,%L6]
     %r25 = getelementptr [5005 x i32], ptr @to, i32 0, i32 %r51
     %r26 = load i32, ptr %r25
     %r28 = getelementptr [1005 x i32], ptr @vis, i32 0, i32 %r26
@@ -265,7 +265,7 @@ L18:
 L19:
     br label %L31
 L20:
-    %r63 = phi i32 [%r62,%L21],[0,%L31]
+    %r63 = phi i32 [0,%L31],[%r62,%L21]
     %r64 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r63
     store i32 -1, ptr %r64
     %r62 = add i32 %r63,1

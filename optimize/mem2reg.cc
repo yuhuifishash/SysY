@@ -81,7 +81,7 @@ void CFG::mem2reg_no_use_alloca(std::set<int>& no_use_vset)
         for(auto Ins:B1.second->Instruction_list){
             if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
                 if(no_use_vset.find(((store_Instruction*)Ins)->get_defregno()) == no_use_vset.end() || ((store_Instruction*)Ins)->erase_tag ){continue;}
-                ((store_Instruction*)Ins)->set_erase();
+                ((store_Instruction*)Ins)->erase_tag = 1;
             }
         }
     }
@@ -94,12 +94,12 @@ void CFG::mem2reg_in_sameblock(int regno,int block_id)//pointer BB
         if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
             if(((store_Instruction*)Ins)->get_defregno() != regno || ((store_Instruction*)Ins)->erase_tag ){continue;}
             current_regno = ((reg_operand*)(((store_Instruction*)Ins)->getValue()))->getRegNo();
-            ((store_Instruction*)Ins)->set_erase();
+            ((store_Instruction*)Ins)->erase_tag = 1;
         }
         if(Ins->get_opcode() == LOAD && ((load_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
             if(((load_Instruction*)Ins)->get_useregno() != regno || ((load_Instruction*)Ins)->erase_tag){continue;}
             mem2reg_map[Ins->get_resultregno()] = current_regno;
-            ((load_Instruction*)Ins)->set_erase();
+            ((load_Instruction*)Ins)->erase_tag = 1;
         }
     }
 }
@@ -112,7 +112,7 @@ void CFG::mem2reg_onedef_dom_alluses(int regno)//pointer  value
             if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG ){
                 if(((store_Instruction*)Ins)->get_defregno() != regno || ((store_Instruction*)Ins)->erase_tag ){continue;}
                 result = ((reg_operand*)(((store_Instruction*)Ins)->getValue()))->getRegNo();
-                ((store_Instruction*)Ins)->set_erase();
+                ((store_Instruction*)Ins)->erase_tag = 1;
                 break;
             }
         }
@@ -122,7 +122,7 @@ void CFG::mem2reg_onedef_dom_alluses(int regno)//pointer  value
             if(Ins->get_opcode() == LOAD && ((load_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
                 if(((load_Instruction*)Ins)->get_useregno() != regno || ((load_Instruction*)Ins)->erase_tag){continue;}
                 mem2reg_map[Ins->get_resultregno()] = result;
-                ((load_Instruction*)Ins)->set_erase();
+                ((load_Instruction*)Ins)->erase_tag = 1;
             }
         }
     }
@@ -241,7 +241,7 @@ void CFG::var_rename()
                 int v = in_allocas(allocas,I);
                 if(v >= 0){//load instruction is in allocas
                     //如果当前指令是 load，找到对应的 alloca v，将用到 load 结果的地方都替换成 IncomingVals[v]
-                    Ins->set_erase();
+                    Ins->erase_tag = 1;
                     mem2reg_map[Ins->get_resultregno()] = IncomingVals[v]; 
                 }
             }
@@ -250,7 +250,7 @@ void CFG::var_rename()
                 int v = in_allocas(allocas,I);
                 if(v >= 0){//store instruction is in allocas
                     //如果当前指令是 store，找到对应的 alloca v，更新IncomingVals[v] = val,并删除store
-                    Ins->set_erase();
+                    Ins->erase_tag = 1;
                     IncomingVals[v] = ((reg_operand*)(Ins->getValue()))->getRegNo();
                 }
             }

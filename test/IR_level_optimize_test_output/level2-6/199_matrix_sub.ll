@@ -73,7 +73,7 @@ L1:
     store i32 3, ptr @L
     br label %L18
 L3:
-    %r133 = phi i32 [0,%L18],[%r46,%L4]
+    %r133 = phi i32 [%r46,%L4],[0,%L18]
     %r22 = getelementptr [3 x float], ptr %r3, i32 0, i32 %r133
     %r23 = sitofp i32 %r133 to float
     store float %r23, ptr %r22
@@ -106,7 +106,7 @@ L5:
     %r66 = icmp slt i32 %r61,3
     br i1 %r66, label %L19, label %L9
 L7:
-    %r135 = phi i32 [%r61,%L19],[%r76,%L8]
+    %r135 = phi i32 [%r76,%L8],[%r61,%L19]
     %r70 = getelementptr [6 x float], ptr %r9, i32 0, i32 %r135
     %r71 = load float, ptr %r70
     %r72 = fptosi float %r71 to i32
@@ -120,7 +120,7 @@ L9:
     call void @putch(i32 10)
     br label %L20
 L11:
-    %r137 = phi i32 [0,%L20],[%r97,%L12]
+    %r137 = phi i32 [%r97,%L12],[0,%L20]
     %r91 = getelementptr [3 x float], ptr %r10, i32 0, i32 %r137
     %r92 = load float, ptr %r91
     %r93 = fptosi float %r92 to i32
@@ -134,7 +134,7 @@ L13:
     call void @putch(i32 10)
     br label %L21
 L15:
-    %r139 = phi i32 [%r118,%L16],[0,%L21]
+    %r139 = phi i32 [0,%L21],[%r118,%L16]
     %r112 = getelementptr [3 x float], ptr %r11, i32 0, i32 %r139
     %r113 = load float, ptr %r112
     %r114 = fptosi float %r113 to i32

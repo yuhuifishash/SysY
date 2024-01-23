@@ -356,7 +356,7 @@ loop3:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-104]
 .loop3L11:
-.loop3L54:
+.loop3L55:
 	mov r6,#240
 	ldr r9,[fp,#-104]
 	mul r6,r9,r6
@@ -377,7 +377,7 @@ loop3:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-120]
 .loop3L15:
-.loop3L55:
+.loop3L56:
 	mov r8,#60
 	ldr r9,[fp,#-120]
 	mul r8,r9,r8
@@ -398,7 +398,7 @@ loop3:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-128]
 .loop3L19:
-.loop3L56:
+.loop3L57:
 	mov r0,#12
 	ldr r9,[fp,#-128]
 	mul r0,r9,r0
@@ -419,7 +419,7 @@ loop3:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-136]
 .loop3L23:
-.loop3L57:
+.loop3L54:
 	ldr r9,[fp,#-136]
 	lsl r0,r9,#1
 	mov r7,r0
@@ -703,7 +703,7 @@ loop2:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-56]
 .loop2L15:
-.loop2L34:
+.loop2L35:
 	ldr r9,[fp,#-24]
 	ldr r10,[fp,#-56]
 	add r10,r9,r10
@@ -718,7 +718,7 @@ loop2:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#0
 	str r9,[fp,#-60]
 .loop2L19:
-.loop2L35:
+.loop2L36:
 	mov r4,#56
 	ldr r9,[fp,#-60]
 	mul r4,r9,r4
@@ -728,7 +728,7 @@ loop2:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-48]
 	mov r6,#0
 .loop2L23:
-.loop2L36:
+.loop2L34:
 	rsb r2,r6,r6,lsl #3
 	mov r7,r2
 	ldr r9,[fp,#-48]

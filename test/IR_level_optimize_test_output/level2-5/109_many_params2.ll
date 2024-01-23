@@ -80,7 +80,7 @@ L0:
 L1:
     br label %L10
 L3:
-    %r65 = phi i32 [0,%L10],[%r28,%L4]
+    %r65 = phi i32 [%r28,%L4],[0,%L10]
     %r24 = getelementptr i32, ptr %r71, i32 %r65
     %r25 = load i32, ptr %r24
     call void @putint(i32 %r25)
@@ -98,7 +98,7 @@ L5:
     %r41 = icmp slt i32 %r8,10
     br i1 %r41, label %L11, label %L9
 L7:
-    %r69 = phi i32 [%r53,%L8],[%r8,%L11]
+    %r69 = phi i32 [%r8,%L11],[%r53,%L8]
     %r67 = phi i32 [%r7,%L11],[%r56,%L8]
     %r46 = mul i32 %r67,128875
     %r48 = srem i32 %r46,3724

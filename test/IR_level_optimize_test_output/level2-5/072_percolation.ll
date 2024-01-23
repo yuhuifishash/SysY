@@ -194,7 +194,7 @@ L32:
     call void @putch(i32 10)
     br label %L33
 L33:
-    %r213 = phi i32 [1,%L32],[%r215,%L29],[%r215,%L36],[%r215,%L34]
+    %r213 = phi i32 [%r215,%L29],[%r215,%L36],[%r215,%L34],[1,%L32]
     br label %L11
 L34:
     %r177 = call i32 @findfa(i32 0)

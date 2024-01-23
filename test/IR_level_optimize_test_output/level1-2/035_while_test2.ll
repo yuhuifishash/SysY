@@ -21,10 +21,10 @@ L1:
 L3:
     %r98 = phi i32 [%r19,%L4],[5,%L19]
     %r96 = phi i32 [6,%L19],[%r67,%L4]
-    %r86 = phi i32 [10,%L19],[%r85,%L4]
+    %r86 = phi i32 [%r85,%L4],[10,%L19]
     %r19 = add i32 %r98,3
     %r22 = icmp slt i32 %r96,10
-    br i1 %r22, label %L18, label %L9
+    br i1 %r22, label %L20, label %L9
 L4:
     %r70 = icmp slt i32 %r19,20
     br i1 %r70, label %L3, label %L5
@@ -34,8 +34,8 @@ L5:
     %r79 = add i32 %r77,7
     ret i32 %r79
 L7:
-    %r94 = phi i32 [%r27,%L8],[%r96,%L18]
-    %r84 = phi i32 [%r51,%L8],[%r86,%L18]
+    %r94 = phi i32 [%r27,%L8],[%r96,%L20]
+    %r84 = phi i32 [%r51,%L8],[%r86,%L20]
     %r27 = add i32 %r94,1
     br label %L11
 L8:
@@ -48,13 +48,13 @@ L9:
     br label %L4
 L11:
     %r38 = icmp slt i32 %r84,20
-    br i1 %r38, label %L20, label %L17
+    br i1 %r38, label %L18, label %L17
 L12:
     br label %L13
 L13:
     br label %L8
 L15:
-    %r80 = phi i32 [%r43,%L16],[%r84,%L20]
+    %r80 = phi i32 [%r43,%L16],[%r84,%L18]
     %r43 = add i32 %r80,3
     br label %L16
 L16:
@@ -65,11 +65,11 @@ L17:
     %r51 = sub i32 %r81,1
     br label %L12
 L18:
-    br label %L7
+    br label %L15
 L19:
     br label %L3
 L20:
-    br label %L15
+    br label %L7
 }
 define i32 @main()
 {

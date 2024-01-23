@@ -31,9 +31,9 @@ L3:
     %r29 = icmp slt i32 %r0,%r16
     br i1 %r29, label %L8, label %L7
 L5:
-    %r165 = phi i32 [%r164,%L13],[%r0,%L27]
-    %r160 = phi i32 [%r159,%L13],[%r16,%L27]
-    %r153 = phi i32 [%r73,%L13],[%r0,%L27]
+    %r165 = phi i32 [%r164,%L13],[%r0,%L30]
+    %r160 = phi i32 [%r159,%L13],[%r16,%L30]
+    %r153 = phi i32 [%r73,%L13],[%r0,%L30]
     %r42 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r165
     %r43 = load i32, ptr %r42
     %r46 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r160
@@ -48,10 +48,10 @@ L7:
     %r161 = phi i32 [%r16,%L3],[%r16,%L8],[%r159,%L6],[%r159,%L13]
     %r154 = phi i32 [%r0,%L3],[%r0,%L8],[%r73,%L6],[%r73,%L13]
     %r89 = icmp slt i32 %r166,%r16
-    br i1 %r89, label %L28, label %L18
+    br i1 %r89, label %L27, label %L18
 L8:
     %r34 = icmp slt i32 %r16,%r1
-    br i1 %r34, label %L27, label %L7
+    br i1 %r34, label %L30, label %L7
 L10:
     %r53 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r165
     %r54 = load i32, ptr %r53
@@ -75,8 +75,8 @@ L13:
     %r81 = icmp slt i32 %r159,%r1
     br i1 %r81, label %L5, label %L7
 L16:
-    %r167 = phi i32 [%r101,%L17],[%r166,%L28]
-    %r155 = phi i32 [%r104,%L17],[%r154,%L28]
+    %r167 = phi i32 [%r101,%L17],[%r166,%L27]
+    %r155 = phi i32 [%r104,%L17],[%r154,%L27]
     %r94 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r167
     %r95 = load i32, ptr %r94
     %r98 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r155
@@ -90,10 +90,10 @@ L17:
 L18:
     %r156 = phi i32 [%r154,%L7],[%r104,%L17]
     %r112 = icmp slt i32 %r161,%r1
-    br i1 %r112, label %L29, label %L22
+    br i1 %r112, label %L28, label %L22
 L20:
-    %r162 = phi i32 [%r124,%L21],[%r161,%L29]
-    %r157 = phi i32 [%r127,%L21],[%r156,%L29]
+    %r162 = phi i32 [%r124,%L21],[%r161,%L28]
+    %r157 = phi i32 [%r127,%L21],[%r156,%L28]
     %r117 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r162
     %r118 = load i32, ptr %r117
     %r121 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r157
@@ -106,9 +106,9 @@ L21:
     br i1 %r130, label %L20, label %L22
 L22:
     %r135 = icmp slt i32 %r0,%r1
-    br i1 %r135, label %L30, label %L26
+    br i1 %r135, label %L29, label %L26
 L24:
-    %r169 = phi i32 [%r147,%L25],[%r0,%L30]
+    %r169 = phi i32 [%r147,%L25],[%r0,%L29]
     %r140 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r169
     %r141 = load i32, ptr %r140
     %r144 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r169
@@ -121,13 +121,13 @@ L25:
 L26:
     ret void
 L27:
-    br label %L5
-L28:
     br label %L16
-L29:
+L28:
     br label %L20
-L30:
+L29:
     br label %L24
+L30:
+    br label %L5
 }
 define i32 @main()
 {

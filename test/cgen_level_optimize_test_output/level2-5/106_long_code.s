@@ -37,7 +37,7 @@ QuickSort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-16]
 	ldr r10,[fp,#-12]
 	cmp r9,r10
-	blt .QuickSortL29
+	blt .QuickSortL28
 .QuickSortL32:
 	ldr r9,[fp,#-16]
 	mov r10,r9
@@ -74,7 +74,7 @@ QuickSort:@r4 r5 r6 r7 r8 r9 r10
 	pop {r0,r1,r2}
 	add sp,sp,#4 @stack align 8bytes
 	bl .QuickSortL3
-.QuickSortL29:
+.QuickSortL28:
 	ldr r9,[fp,#-12]
 	mov r10,r9
 	str r10,[fp,#-28]
@@ -131,11 +131,11 @@ QuickSort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r8,[r7]
 	ldr r9,[fp,#-24]
 	cmp r8,r9
-	blt .QuickSortL28
+	blt .QuickSortL30
 .QuickSortL43:
 	mov r2,r3
 	bl .QuickSortL21
-.QuickSortL28:
+.QuickSortL30:
 	mov r8,r3
 .QuickSortL19:
 	add r7,r8,#1
@@ -176,12 +176,12 @@ QuickSort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-24]
 	sub r7,r9,#1
 	cmp r8,r7
-	bgt .QuickSortL30
+	bgt .QuickSortL29
 .QuickSortL37:
 	ldr r9,[fp,#-28]
 	mov r4,r9
 	bl .QuickSortL11
-.QuickSortL30:
+.QuickSortL29:
 	ldr r9,[fp,#-28]
 	mov r8,r9
 .QuickSortL9:
@@ -298,13 +298,13 @@ bubblesort:@r4 r5 r6 r7 r8 r9 r10
 	ldr r7,[r8]
 	sub r8,r7,#1
 	cmp r8,#0
-	bgt .bubblesortL13
+	bgt .bubblesortL12
 .bubblesortL5:
 	mov r0,#0
 	add sp,sp,#12
 	pop {r4,r5,r6,r7,r8,r9,r10}
 	pop {fp,pc}
-.bubblesortL13:
+.bubblesortL12:
 	ldr r8,.LPIC0
 	ldr r7,[r8]
 	sub r9,r7,#1
@@ -314,7 +314,7 @@ bubblesort:@r4 r5 r6 r7 r8 r9 r10
 	sub r5,r7,r6
 	sub r4,r5,#1
 	cmp r4,#0
-	bgt .bubblesortL12
+	bgt .bubblesortL13
 .bubblesortL9:
 	add r5,r6,#1
 .bubblesortL4:
@@ -324,7 +324,7 @@ bubblesort:@r4 r5 r6 r7 r8 r9 r10
 .bubblesortL14:
 	mov r6,r5
 	bl .bubblesortL3
-.bubblesortL12:
+.bubblesortL13:
 	ldr r5,.LPIC0
 	ldr r4,[r5]
 	sub r5,r4,r6
@@ -416,7 +416,7 @@ getMost:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r0
 	str r9,[fp,#-4012]
 .getMostL1:
-.getMostL13:
+.getMostL12:
 	mov r9,#0
 	str r9,[fp,#-4024]
 .getMostL3:
@@ -437,7 +437,7 @@ getMost:@r4 r5 r6 r7 r8 r9 r10
 	ldr r6,.LPIC0
 	ldr r5,[r6]
 	cmp r5,#0
-	bgt .getMostL12
+	bgt .getMostL13
 .getMostL16:
 	mov r9,#0
 	str r9,[fp,#-4016]
@@ -449,7 +449,7 @@ getMost:@r4 r5 r6 r7 r8 r9 r10
 	add sp,sp,r9
 	pop {r4,r5,r6,r7,r8,r9,r10}
 	pop {fp,pc}
-.getMostL12:
+.getMostL13:
 	ldr r5,.LPIC0
 	ldr r9,[r5]
 	str r9,[fp,#-4020]
@@ -1010,7 +1010,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 .mainL32:
 .mainL33:
 .mainL31:
-.mainL37:
+.mainL34:
 	mov r9,#0
 	str r9,[fp,#-268]
 .mainL3:
@@ -1037,7 +1037,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	mov r0,r5
 	bl bubblesort
 	mov r6,r0
-.mainL38:
+.mainL35:
 	mov r9,#0
 	str r9,[fp,#-276]
 .mainL7:
@@ -1108,7 +1108,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	mov r4,r0
 	pop {r3}
 	add sp,sp,#4 @stack align 8bytes
-.mainL39:
+.mainL36:
 	mov r9,#0
 	str r9,[fp,#-284]
 .mainL11:
@@ -1153,7 +1153,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	bl insertsort
 	mov r2,r0
 	pop {r0,r3}
-.mainL34:
+.mainL37:
 	mov r9,#0
 	str r9,[fp,#-292]
 .mainL15:
@@ -1195,7 +1195,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	bl QuickSort
 	mov r1,r0
 	pop {r2,r3}
-.mainL35:
+.mainL38:
 	mov r7,#0
 .mainL19:
 	mov r1,r7
@@ -1233,7 +1233,7 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	bl calSum
 	mov r1,r0
 	pop {r2,r3}
-.mainL36:
+.mainL39:
 	mov r5,#0
 .mainL23:
 	mov r1,r5

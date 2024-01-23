@@ -52,7 +52,7 @@ L1:
     %r1 = call i32 @putstr(ptr %r0)
     br label %L11
 L3:
-    %r44 = phi i32 [%r35,%L4],[0,%L11]
+    %r44 = phi i32 [0,%L11],[%r35,%L4]
     %r9 = sdiv i32 %r44,6
     %r13 = srem i32 %r44,6
     %r16 = icmp ne i32 %r9,%r13

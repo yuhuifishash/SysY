@@ -144,7 +144,7 @@ L0:
 L1:
     br label %L15
 L3:
-    %r27 = phi i32 [%r24,%L4],[0,%L15]
+    %r27 = phi i32 [0,%L15],[%r24,%L4]
     br label %L8
 L4:
     br label %L3
@@ -162,7 +162,7 @@ L9:
 L10:
     br label %L14
 L11:
-    %r31 = phi i32 [%r30,%L12],[0,%L14]
+    %r31 = phi i32 [0,%L14],[%r30,%L12]
     %r32 = getelementptr i32, ptr %r8, i32 %r31
     store i32 0, ptr %r32
     %r30 = add i32 %r31,1

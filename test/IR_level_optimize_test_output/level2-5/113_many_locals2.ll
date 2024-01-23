@@ -22,7 +22,7 @@ L1:
     %r65 = icmp eq i32 %r62,5
     br i1 %r65, label %L6, label %L5
 L3:
-    %r203 = phi i32 [%r62,%L6],[%r70,%L4]
+    %r203 = phi i32 [%r70,%L4],[%r62,%L6]
     %r70 = add i32 %r203,1
     br label %L4
 L4:

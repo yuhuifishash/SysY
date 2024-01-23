@@ -220,8 +220,6 @@ protected:
     llvm_ir_opcode opcode;
     int insNo;
 public:
-    int lattice_status = 0;//TOP->0   Constant->1   BOT->2
-    int lattice_val = 0;
     int erase_tag = 0;
 
     int getBlockID(){return BlockID;}
@@ -273,7 +271,6 @@ public:
     int get_resultregno(){return ((reg_operand*)result)->getRegNo();}
     int get_useregno(){return ((reg_operand*)pointer)->getRegNo();}
     operand get_resultreg(){return result;}
-    void set_erase(){erase_tag = 1;}
     void cgen_prework();
     std::vector<int> refering_virtual_regs();
     void replace_by_map(const std::map<int,int>&Rule);
@@ -306,7 +303,6 @@ public:
     int get_resultregno(){return -1;}
     operand get_resultreg(){return nullptr;}
     int get_defregno(){return ((reg_operand*)pointer)->getRegNo();}
-    void set_erase(){erase_tag = 1;}
     void cgen_prework();
     std::vector<int> refering_virtual_regs();
     void replace_by_map(const std::map<int,int>&Rule);

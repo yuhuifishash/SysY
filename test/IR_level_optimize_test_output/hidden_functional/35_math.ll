@@ -90,7 +90,7 @@ L3:
 L5:
     %r41 = phi i32 [%r32,%L6],[%r1,%L10]
     %r39 = phi float [%r29,%L6],[%r0,%L10]
-    %r37 = phi float [%r36,%L6],[%r17,%L10]
+    %r37 = phi float [%r17,%L10],[%r36,%L6]
     %r22 = srem i32 %r41,2
     %r23 = icmp ne i32 %r22,0
     br i1 %r23, label %L8, label %L9

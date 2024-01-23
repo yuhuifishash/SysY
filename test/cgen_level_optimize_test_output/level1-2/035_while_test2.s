@@ -18,7 +18,7 @@ FourWhile:@r4 r5 r6 r7 r8
 .FourWhileL3:
 	add r5,r6,#3
 	cmp r7,#10
-	blt .FourWhileL18
+	blt .FourWhileL20
 .FourWhileL23:
 	mov r4,r8
 	mov r3,r7
@@ -40,14 +40,14 @@ FourWhile:@r4 r5 r6 r7 r8
 	mov r7,r2
 	mov r6,r5
 	bl .FourWhileL3
-.FourWhileL18:
+.FourWhileL20:
 	mov r6,r8
 	mov r8,r7
 .FourWhileL7:
 	add r7,r8,#1
 .FourWhileL11:
 	cmp r6,#20
-	blt .FourWhileL20
+	blt .FourWhileL18
 .FourWhileL26:
 	mov r2,r6
 .FourWhileL17:
@@ -65,7 +65,7 @@ FourWhile:@r4 r5 r6 r7 r8
 	mov r6,r1
 	mov r8,r7
 	bl .FourWhileL7
-.FourWhileL20:
+.FourWhileL18:
 	mov r8,r6
 .FourWhileL15:
 	add r6,r8,#3

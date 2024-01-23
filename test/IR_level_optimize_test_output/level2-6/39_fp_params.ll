@@ -697,7 +697,7 @@ L3:
     %r397 = call i32 @params_mix(float %r0,ptr %r332,i32 %r2,ptr %r334,float %r4,i32 %r5,float %r6,float %r7,ptr %r339,ptr %r340,i32 %r10,i32 %r11,ptr %r343,ptr %r344,ptr %r345,i32 %r15,ptr %r347,ptr %r348,float %r18,float %r19,float %r20,ptr %r352,i32 %r22,float %r23,float %r24,float %r25,ptr %r357,ptr %r358,ptr %r359,ptr %r360,ptr %r361,float %r31,float %r32,ptr %r364,i32 %r34,ptr %r366,ptr %r367,float %r37,float %r38,ptr %r370,ptr %r371,i32 %r41,i32 %r42,float %r43,float %r44,ptr %r376,i32 %r46,ptr %r378,i32 %r48,ptr %r380,ptr %r381,float %r51,float %r52,ptr %r384,i32 %r54,ptr %r386,ptr %r387,float %r57,i32 %r58,float %r59,ptr %r391,ptr %r392,float %r394,i32 %r396)
     ret i32 %r397
 L6:
-    %r398 = phi i32 [%r316,%L7],[0,%L9]
+    %r398 = phi i32 [0,%L9],[%r316,%L7]
     %r304 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r398
     %r305 = load i32, ptr %r304
     %r307 = getelementptr [10 x float], ptr %r99, i32 0, i32 %r398

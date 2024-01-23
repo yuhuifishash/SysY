@@ -35,8 +35,8 @@ L5:
     %r50 = icmp ne i32 %r48,%r36
     br i1 %r50, label %L10, label %L9
 L7:
-    %r113 = phi i32 [%r112,%L15],[9,%L21]
-    %r110 = phi i32 [%r109,%L15],[0,%L21]
+    %r113 = phi i32 [9,%L21],[%r112,%L15]
+    %r110 = phi i32 [0,%L21],[%r109,%L15]
     %r63 = add i32 %r113,%r110
     %r65 = sdiv i32 %r63,2
     %r68 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r65

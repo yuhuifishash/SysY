@@ -20,7 +20,7 @@ L0:
 L1:
     br label %L19
 L3:
-    %r109 = phi i32 [%r14,%L4],[0,%L19]
+    %r109 = phi i32 [0,%L19],[%r14,%L4]
     %r14 = add i32 %r109,1
     %r16 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r109
     store i32 %r14, ptr %r16
@@ -32,9 +32,9 @@ L5:
     %r36 = call i32 @getint()
     br label %L10
 L7:
-    %r111 = phi i32 [%r77,%L14],[0,%L20]
-    %r106 = phi i32 [%r105,%L14],[0,%L20]
-    %r103 = phi i32 [%r102,%L14],[0,%L20]
+    %r111 = phi i32 [0,%L20],[%r77,%L14]
+    %r106 = phi i32 [0,%L20],[%r105,%L14]
+    %r103 = phi i32 [0,%L20],[%r102,%L14]
     %r67 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r111
     %r68 = load i32, ptr %r67
     %r70 = icmp eq i32 %r68,%r36

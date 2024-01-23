@@ -12,97 +12,97 @@ main:@r4 r5 r6 r7 r8 r9 r10
 	sub sp,sp,r9
 .mainL0:
 .mainL1:
-.mainL63:
+.mainL65:
 	mov r9,#0
 	str r9,[fp,#-12]
 	mov r9,#0
 	str r9,[fp,#-16]
 .mainL3:
-.mainL62:
+.mainL66:
 	mov r9,#0
 	str r9,[fp,#-20]
 	ldr r9,[fp,#-16]
 	mov r10,r9
 	str r10,[fp,#-24]
 .mainL7:
-.mainL72:
+.mainL67:
 	mov r9,#0
 	str r9,[fp,#-28]
 	ldr r9,[fp,#-24]
 	mov r10,r9
 	str r10,[fp,#-32]
 .mainL11:
-.mainL73:
+.mainL68:
 	mov r9,#0
 	str r9,[fp,#-36]
 	ldr r9,[fp,#-32]
 	mov r10,r9
 	str r10,[fp,#-40]
 .mainL15:
-.mainL74:
+.mainL64:
 	mov r9,#0
 	str r9,[fp,#-44]
 	ldr r9,[fp,#-40]
 	mov r10,r9
 	str r10,[fp,#-52]
 .mainL19:
-.mainL71:
+.mainL69:
 	mov r9,#0
 	str r9,[fp,#-48]
 	ldr r9,[fp,#-52]
 	mov r10,r9
 	str r10,[fp,#-60]
 .mainL23:
-.mainL64:
+.mainL62:
 	mov r9,#0
 	str r9,[fp,#-56]
 	ldr r9,[fp,#-60]
 	mov r10,r9
 	str r10,[fp,#-68]
 .mainL27:
-.mainL65:
+.mainL63:
 	mov r9,#0
 	str r9,[fp,#-64]
 	ldr r9,[fp,#-68]
 	mov r10,r9
 	str r10,[fp,#-76]
 .mainL31:
-.mainL75:
+.mainL70:
 	mov r9,#0
 	str r9,[fp,#-72]
 	ldr r9,[fp,#-76]
 	mov r10,r9
 	str r10,[fp,#-84]
 .mainL35:
-.mainL69:
+.mainL71:
 	mov r9,#0
 	str r9,[fp,#-80]
 	ldr r9,[fp,#-84]
 	mov r10,r9
 	str r10,[fp,#-88]
 .mainL39:
-.mainL70:
+.mainL72:
 	mov r9,#0
 	str r9,[fp,#-92]
 	ldr r9,[fp,#-88]
 	mov r10,r9
 	str r10,[fp,#-96]
 .mainL43:
-.mainL66:
+.mainL73:
 	mov r9,#0
 	str r9,[fp,#-100]
 	ldr r9,[fp,#-96]
 	mov r10,r9
 	str r10,[fp,#-104]
 .mainL47:
-.mainL67:
+.mainL74:
 	mov r9,#0
 	str r9,[fp,#-108]
 	ldr r9,[fp,#-104]
 	mov r10,r9
 	str r10,[fp,#-112]
 .mainL51:
-.mainL68:
+.mainL75:
 	mov r9,#0
 	str r9,[fp,#-116]
 	ldr r9,[fp,#-112]

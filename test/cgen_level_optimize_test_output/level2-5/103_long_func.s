@@ -38,7 +38,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	@call void @putch(i32 10)
 	mov r0,#10
 	bl putch
-.long_funcL870:
+.long_funcL924:
 	mov r9,#1
 	str r9,[fp,#-12]
 	mov r9,#1
@@ -46,14 +46,14 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#2
 	str r9,[fp,#-44]
 .long_funcL217:
-.long_funcL869:
-	mov r9,#0
-	str r9,[fp,#-68]
+.long_funcL923:
 	mov r9,#1
 	str r9,[fp,#-100]
 	ldr r9,[fp,#-40]
 	mov r10,r9
 	str r10,[fp,#-104]
+	mov r9,#0
+	str r9,[fp,#-68]
 	mov r9,#0
 	str r9,[fp,#-76]
 .long_funcL221:
@@ -101,7 +101,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL229:
 	ldr r9,[fp,#-44]
 	cmp r9,#0
-	bne .long_funcL895
+	bne .long_funcL893
 .long_funcL973:
 	mov r9,#0
 	str r9,[fp,#-36]
@@ -151,7 +151,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r0,#10
 	bl putch
 	pop {r0,r1,r2,r3}
-.long_funcL897:
+.long_funcL885:
 	mov r9,#2
 	str r9,[fp,#-56]
 	ldr r9,[fp,#-48]
@@ -163,7 +163,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL431:
 	ldr r9,[fp,#-56]
 	cmp r9,#0
-	bgt .long_funcL887
+	bgt .long_funcL884
 .long_funcL1005:
 	mov r9,#1
 	str r9,[fp,#-84]
@@ -192,7 +192,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1003
 .long_funcL433:
-.long_funcL871:
+.long_funcL933:
 	mov r9,#0
 	str r9,[fp,#-108]
 	ldr r9,[fp,#-88]
@@ -202,17 +202,17 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL649:
 	ldr r9,[fp,#-108]
 	cmp r9,#0
-	bgt .long_funcL872
+	bgt .long_funcL930
 .long_funcL1075:
 	mov r7,#1
 	mov r8,r2
 	mov r6,r1
 .long_funcL655:
 	ldr r9,[fp,#-108]
-	mov r5,r9
-	ldr r4,.LPIC0
-	add r3,r4,r5,lsl #2
-	ldr r5,[r3]
+	mov r3,r9
+	ldr r5,.LPIC0
+	add r4,r5,r3,lsl #2
+	ldr r5,[r4]
 	cmp r5,r7
 	bne .long_funcL866
 .long_funcL867:
@@ -239,7 +239,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	add sp,sp,r9
 	pop {r4,r5,r6,r7,r8,r9,r10}
 	pop {fp,pc}
-.long_funcL872:
+.long_funcL930:
 	mov r9,#1
 	str r9,[fp,#-112]
 	ldr r9,[fp,#-108]
@@ -248,7 +248,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#2
 	str r9,[fp,#-132]
 .long_funcL653:
-.long_funcL873:
+.long_funcL929:
 	mov r9,#1
 	str r9,[fp,#-156]
 	ldr r9,[fp,#-120]
@@ -303,7 +303,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL665:
 	ldr r9,[fp,#-132]
 	cmp r9,#0
-	bne .long_funcL911
+	bne .long_funcL871
 .long_funcL1113:
 	mov r0,#0
 	ldr r9,[fp,#-136]
@@ -377,7 +377,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r4,r7
 	mov r2,r3
 	bl .long_funcL865
-.long_funcL911:
+.long_funcL871:
 	mov r9,#0
 	str r9,[fp,#-164]
 	ldr r9,[fp,#-132]
@@ -387,7 +387,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-216]
 .long_funcL761:
-.long_funcL919:
+.long_funcL869:
 	mov r9,#1
 	str r9,[fp,#-208]
 	ldr r9,[fp,#-180]
@@ -442,7 +442,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL773:
 	ldr r9,[fp,#-216]
 	cmp r9,#0
-	bne .long_funcL903
+	bne .long_funcL898
 .long_funcL1132:
 	ldr r9,[fp,#-216]
 	mov r10,r9
@@ -516,7 +516,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r4,r5,r2
 	mov r7,r4
 	bl .long_funcL853
-.long_funcL903:
+.long_funcL898:
 	mov r7,#1
 	ldr r5,.LPIC0
 	add r9,r5,r7,lsl #2
@@ -528,7 +528,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-240]
 .long_funcL809:
-.long_funcL925:
+.long_funcL906:
 	ldr r9,[fp,#-232]
 	mov r10,r9
 	str r10,[fp,#-284]
@@ -584,7 +584,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1134
 .long_funcL815:
-.long_funcL926:
+.long_funcL903:
 	ldr r9,[fp,#-232]
 	mov r10,r9
 	str r10,[fp,#-296]
@@ -632,7 +632,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r0,[r9]
 	ldr r9,[fp,#-292]
 	mul r3,r9,r0
-.long_funcL933:
+.long_funcL905:
 	movw r0,#65535
 	movt r0,#0  @ 65535
 	mov r8,r0
@@ -797,7 +797,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL772:
 	ldr r9,[fp,#-216]
 	cmp r9,#0
-	bne .long_funcL920
+	bne .long_funcL900
 .long_funcL1120:
 	ldr r9,[fp,#-164]
 	mov r10,r9
@@ -813,7 +813,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-184]
 	bl .long_funcL773
-.long_funcL920:
+.long_funcL900:
 	mov r6,#1
 	ldr r5,.LPIC1
 	add r9,r5,r6,lsl #2
@@ -825,7 +825,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-288]
 .long_funcL775:
-.long_funcL892:
+.long_funcL868:
 	ldr r9,[fp,#-224]
 	mov r10,r9
 	str r10,[fp,#-232]
@@ -881,7 +881,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1122
 .long_funcL781:
-.long_funcL893:
+.long_funcL904:
 	ldr r9,[fp,#-224]
 	mov r10,r9
 	str r10,[fp,#-284]
@@ -929,7 +929,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r2,[r9]
 	ldr r9,[fp,#-204]
 	mul r0,r9,r2
-.long_funcL902:
+.long_funcL897:
 	movw r2,#65535
 	movt r2,#0  @ 65535
 	mov r6,r2
@@ -1129,7 +1129,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL664:
 	ldr r9,[fp,#-132]
 	cmp r9,#0
-	bne .long_funcL874
+	bne .long_funcL931
 .long_funcL1082:
 	mov r8,#0
 	ldr r9,[fp,#-140]
@@ -1140,7 +1140,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r7
 	str r9,[fp,#-136]
 	bl .long_funcL665
-.long_funcL874:
+.long_funcL931:
 	mov r9,#0
 	str r9,[fp,#-184]
 	ldr r9,[fp,#-132]
@@ -1150,7 +1150,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-260]
 .long_funcL667:
-.long_funcL904:
+.long_funcL934:
 	mov r9,#1
 	str r9,[fp,#-284]
 	ldr r9,[fp,#-248]
@@ -1205,7 +1205,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL679:
 	ldr r9,[fp,#-260]
 	cmp r9,#0
-	bne .long_funcL917
+	bne .long_funcL876
 .long_funcL1101:
 	ldr r9,[fp,#-260]
 	mov r10,r9
@@ -1282,7 +1282,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r3,r8,r7
 	mov r5,r3
 	bl .long_funcL759
-.long_funcL917:
+.long_funcL876:
 	mov r8,#1
 	ldr r7,.LPIC3
 	add r9,r7,r8,lsl #2
@@ -1294,7 +1294,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-292]
 .long_funcL715:
-.long_funcL914:
+.long_funcL875:
 	ldr r9,[fp,#-256]
 	mov r10,r9
 	str r10,[fp,#-212]
@@ -1350,7 +1350,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1103
 .long_funcL721:
-.long_funcL915:
+.long_funcL872:
 	ldr r9,[fp,#-256]
 	mov r10,r9
 	str r10,[fp,#-168]
@@ -1398,7 +1398,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r1,[r9]
 	ldr r9,[fp,#-164]
 	mul r2,r9,r1
-.long_funcL910:
+.long_funcL874:
 	movw r1,#65535
 	movt r1,#0  @ 65535
 	mov r6,r1
@@ -1559,7 +1559,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL678:
 	ldr r9,[fp,#-260]
 	cmp r9,#0
-	bne .long_funcL905
+	bne .long_funcL882
 .long_funcL1089:
 	ldr r9,[fp,#-184]
 	mov r10,r9
@@ -1575,7 +1575,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-228]
 	bl .long_funcL679
-.long_funcL905:
+.long_funcL882:
 	mov r6,#1
 	ldr r5,.LPIC3
 	add r9,r5,r6,lsl #2
@@ -1587,7 +1587,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-176]
 .long_funcL681:
-.long_funcL922:
+.long_funcL935:
 	ldr r9,[fp,#-152]
 	mov r10,r9
 	str r10,[fp,#-188]
@@ -1643,7 +1643,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1091
 .long_funcL687:
-.long_funcL923:
+.long_funcL878:
 	ldr r9,[fp,#-152]
 	mov r10,r9
 	str r10,[fp,#-196]
@@ -1691,7 +1691,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r2,[r9]
 	ldr r9,[fp,#-256]
 	mul r0,r9,r2
-.long_funcL916:
+.long_funcL895:
 	movw r2,#65535
 	movt r2,#0  @ 65535
 	mov r6,r2
@@ -1942,7 +1942,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-64]
 	bl .long_funcL431
-.long_funcL887:
+.long_funcL884:
 	mov r9,#1
 	str r9,[fp,#-268]
 	ldr r9,[fp,#-56]
@@ -1951,7 +1951,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,#2
 	str r9,[fp,#-224]
 .long_funcL435:
-.long_funcL876:
+.long_funcL894:
 	mov r9,#1
 	str r9,[fp,#-256]
 	ldr r9,[fp,#-208]
@@ -2006,7 +2006,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL447:
 	ldr r9,[fp,#-224]
 	cmp r9,#0
-	bne .long_funcL913
+	bne .long_funcL880
 .long_funcL1043:
 	mov r3,#0
 	ldr r9,[fp,#-276]
@@ -2083,7 +2083,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r6,r8
 	mov r0,r4
 	bl .long_funcL647
-.long_funcL913:
+.long_funcL880:
 	mov r9,#0
 	str r9,[fp,#-244]
 	ldr r9,[fp,#-224]
@@ -2093,7 +2093,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-264]
 .long_funcL543:
-.long_funcL912:
+.long_funcL891:
 	mov r9,#1
 	str r9,[fp,#-152]
 	ldr r9,[fp,#-192]
@@ -2148,7 +2148,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL555:
 	ldr r9,[fp,#-264]
 	cmp r9,#0
-	bne .long_funcL929
+	bne .long_funcL926
 .long_funcL1062:
 	ldr r9,[fp,#-264]
 	mov r10,r9
@@ -2222,7 +2222,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r4,r7,r3
 	mov r6,r4
 	bl .long_funcL635
-.long_funcL929:
+.long_funcL926:
 	mov r7,#1
 	ldr r6,.LPIC5
 	add r9,r6,r7,lsl #2
@@ -2234,7 +2234,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-240]
 .long_funcL591:
-.long_funcL930:
+.long_funcL932:
 	ldr r9,[fp,#-280]
 	mov r10,r9
 	str r10,[fp,#-108]
@@ -2290,7 +2290,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1064
 .long_funcL597:
-.long_funcL888:
+.long_funcL925:
 	ldr r9,[fp,#-280]
 	mov r10,r9
 	str r10,[fp,#-160]
@@ -2338,7 +2338,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r1,[r9]
 	ldr r9,[fp,#-116]
 	mul r2,r9,r1
-.long_funcL889:
+.long_funcL927:
 	movw r1,#65535
 	movt r1,#0  @ 65535
 	mov r8,r1
@@ -2503,7 +2503,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL554:
 	ldr r9,[fp,#-264]
 	cmp r9,#0
-	bne .long_funcL891
+	bne .long_funcL886
 .long_funcL1050:
 	ldr r9,[fp,#-244]
 	mov r10,r9
@@ -2519,7 +2519,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-168]
 	bl .long_funcL555
-.long_funcL891:
+.long_funcL886:
 	mov r6,#1
 	ldr r5,.LPIC7
 	add r9,r5,r6,lsl #2
@@ -2531,7 +2531,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-92]
 .long_funcL557:
-.long_funcL875:
+.long_funcL914:
 	ldr r9,[fp,#-64]
 	mov r10,r9
 	str r10,[fp,#-200]
@@ -2587,7 +2587,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1052
 .long_funcL563:
-.long_funcL927:
+.long_funcL912:
 	ldr r9,[fp,#-64]
 	mov r10,r9
 	str r10,[fp,#-284]
@@ -2635,7 +2635,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r2,[r9]
 	ldr r9,[fp,#-260]
 	mul r0,r9,r2
-.long_funcL928:
+.long_funcL881:
 	movw r2,#65535
 	movt r2,#0  @ 65535
 	mov r6,r2
@@ -2835,7 +2835,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL446:
 	ldr r9,[fp,#-224]
 	cmp r9,#0
-	bne .long_funcL886
+	bne .long_funcL922
 .long_funcL1012:
 	mov r8,#0
 	ldr r9,[fp,#-180]
@@ -2846,7 +2846,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r7
 	str r9,[fp,#-276]
 	bl .long_funcL447
-.long_funcL886:
+.long_funcL922:
 	mov r9,#0
 	str r9,[fp,#-156]
 	ldr r9,[fp,#-224]
@@ -2856,7 +2856,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-116]
 .long_funcL449:
-.long_funcL883:
+.long_funcL892:
 	mov r9,#1
 	str r9,[fp,#-236]
 	ldr r9,[fp,#-108]
@@ -2911,7 +2911,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL461:
 	ldr r9,[fp,#-116]
 	cmp r9,#0
-	bne .long_funcL881
+	bne .long_funcL907
 .long_funcL1031:
 	ldr r9,[fp,#-116]
 	mov r10,r9
@@ -2988,7 +2988,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r3,r8,r7
 	mov r5,r3
 	bl .long_funcL541
-.long_funcL881:
+.long_funcL907:
 	mov r8,#1
 	ldr r7,.LPIC9
 	add r9,r7,r8,lsl #2
@@ -3000,7 +3000,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-84]
 .long_funcL497:
-.long_funcL879:
+.long_funcL915:
 	ldr r9,[fp,#-128]
 	mov r10,r9
 	str r10,[fp,#-200]
@@ -3056,7 +3056,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1033
 .long_funcL503:
-.long_funcL880:
+.long_funcL920:
 	ldr r9,[fp,#-128]
 	mov r10,r9
 	str r10,[fp,#-176]
@@ -3104,7 +3104,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r1,[r9]
 	ldr r9,[fp,#-300]
 	mul r2,r9,r1
-.long_funcL878:
+.long_funcL910:
 	movw r1,#65535
 	movt r1,#0  @ 65535
 	mov r6,r1
@@ -3265,7 +3265,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL460:
 	ldr r9,[fp,#-116]
 	cmp r9,#0
-	bne .long_funcL884
+	bne .long_funcL917
 .long_funcL1019:
 	ldr r9,[fp,#-156]
 	mov r10,r9
@@ -3281,7 +3281,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-280]
 	bl .long_funcL461
-.long_funcL884:
+.long_funcL917:
 	mov r6,#1
 	ldr r5,.LPIC9
 	add r9,r5,r6,lsl #2
@@ -3293,15 +3293,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-172]
 .long_funcL463:
-.long_funcL885:
+.long_funcL909:
+	mov r9,#0
+	str r9,[fp,#-248]
 	ldr r9,[fp,#-264]
 	mov r10,r9
 	str r10,[fp,#-300]
 	ldr r9,[fp,#-172]
 	mov r10,r9
 	str r10,[fp,#-64]
-	mov r9,#0
-	str r9,[fp,#-248]
 	mov r9,#0
 	str r9,[fp,#-216]
 .long_funcL467:
@@ -3349,7 +3349,9 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL1021
 .long_funcL469:
-.long_funcL882:
+.long_funcL911:
+	mov r9,#0
+	str r9,[fp,#-176]
 	ldr r9,[fp,#-264]
 	mov r10,r9
 	str r10,[fp,#-284]
@@ -3357,17 +3359,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-272]
 	mov r9,#0
-	str r9,[fp,#-176]
-	mov r9,#0
 	str r9,[fp,#-96]
 .long_funcL478:
 	ldr r9,[fp,#-272]
 	cmp r9,#0
 	ldr r9,[fp,#-272]
-	and r1,r9,#1
+	and r3,r9,#1
 	it lt
-	rsblt r1,r1,#0
-	cmp r1,#0
+	rsblt r3,r3,#0
+	cmp r3,#0
 	bne .long_funcL483
 .long_funcL1025:
 	ldr r9,[fp,#-96]
@@ -3376,13 +3376,13 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL482:
 	ldr r9,[fp,#-272]
 	ldr r10,[fp,#-272]
-	add r1,r9,r10,lsr #31
-	asr r9,r1,#1
+	add r3,r9,r10,lsr #31
+	asr r9,r3,#1
 	str r9,[fp,#-92]
 	ldr r9,[fp,#-284]
 	ldr r10,[fp,#-284]
-	add r1,r9,r10,lsr #31
-	asr r9,r1,#1
+	add r3,r9,r10,lsr #31
+	asr r9,r3,#1
 	str r9,[fp,#-160]
 	ldr r9,[fp,#-176]
 	add r10,r9,#1
@@ -3394,33 +3394,33 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL480:
 .long_funcL486:
 	ldr r9,[fp,#-296]
-	ldr r2,[r9]
+	ldr r1,[r9]
 	ldr r9,[fp,#-260]
-	mul r0,r9,r2
-.long_funcL877:
-	movw r2,#65535
-	movt r2,#0  @ 65535
-	mov r6,r2
-	mov r2,r0
+	mul r0,r9,r1
+.long_funcL908:
+	movw r1,#65535
+	movt r1,#0  @ 65535
+	mov r5,r1
+	mov r1,r0
 	mov r0,#0
-	mov r1,#0
+	mov r3,#0
 .long_funcL489:
-	cmp r2,#0
-	and r3,r2,#1
+	cmp r1,#0
+	and r2,r1,#1
 	it lt
-	rsblt r3,r3,#0
-	cmp r3,#0
+	rsblt r2,r2,#0
+	cmp r2,#0
 	bne .long_funcL494
 .long_funcL1028:
-	mov r8,r1
+	mov r8,r3
 .long_funcL493:
-	add r3,r2,r2,lsr #31
-	asr r4,r3,#1
-	add r3,r6,r6,lsr #31
-	asr r5,r3,#1
-	add r3,r0,#1
+	add r2,r1,r1,lsr #31
+	asr r4,r2,#1
+	add r2,r5,r5,lsr #31
+	asr r7,r2,#1
+	add r2,r0,#1
 .long_funcL490:
-	cmp r3,#16
+	cmp r2,#16
 	blt .long_funcL1027
 .long_funcL491:
 .long_funcL487:
@@ -3431,7 +3431,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-148]
 	mov r10,r9
 	str r10,[fp,#-244]
-	mov r9,r3
+	mov r9,r2
 	str r9,[fp,#-152]
 	bl .long_funcL465
 .long_funcL1018:
@@ -3442,39 +3442,39 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-172]
 	bl .long_funcL463
 .long_funcL1027:
-	mov r6,r5
-	mov r2,r4
-	mov r0,r3
-	mov r1,r8
+	mov r5,r7
+	mov r1,r4
+	mov r0,r2
+	mov r3,r8
 	bl .long_funcL489
 .long_funcL494:
-	cmp r6,#0
-	and r7,r6,#1
+	cmp r5,#0
+	and r7,r5,#1
 	it lt
 	rsblt r7,r7,#0
 	cmp r7,#0
 	bne .long_funcL492
 .long_funcL1029:
-	mov r8,r1
+	mov r8,r3
 	bl .long_funcL493
 .long_funcL492:
 	mov r7,r0
-	ldr r5,.LPIC9
-	add r4,r5,r7,lsl #2
+	ldr r6,.LPIC9
+	add r4,r6,r7,lsl #2
 	ldr r7,[r4]
-	add r5,r1,r7
-	mov r8,r5
+	add r6,r3,r7
+	mov r8,r6
 	bl .long_funcL493
 .long_funcL1024:
+	ldr r9,[fp,#-220]
+	mov r10,r9
+	str r10,[fp,#-176]
 	ldr r9,[fp,#-160]
 	mov r10,r9
 	str r10,[fp,#-284]
 	ldr r9,[fp,#-92]
 	mov r10,r9
 	str r10,[fp,#-272]
-	ldr r9,[fp,#-220]
-	mov r10,r9
-	str r10,[fp,#-176]
 	ldr r9,[fp,#-260]
 	mov r10,r9
 	str r10,[fp,#-96]
@@ -3509,15 +3509,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r9,[fp,#-260]
 	bl .long_funcL482
 .long_funcL1021:
+	ldr r9,[fp,#-232]
+	mov r10,r9
+	str r10,[fp,#-248]
 	ldr r9,[fp,#-188]
 	mov r10,r9
 	str r10,[fp,#-300]
 	ldr r9,[fp,#-192]
 	mov r10,r9
 	str r10,[fp,#-64]
-	ldr r9,[fp,#-232]
-	mov r10,r9
-	str r10,[fp,#-248]
 	ldr r9,[fp,#-148]
 	mov r10,r9
 	str r10,[fp,#-216]
@@ -3671,7 +3671,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r5
 	str r9,[fp,#-52]
 	bl .long_funcL429
-.long_funcL895:
+.long_funcL893:
 	mov r9,#0
 	str r9,[fp,#-132]
 	ldr r9,[fp,#-44]
@@ -3681,20 +3681,20 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-60]
 .long_funcL325:
-.long_funcL899:
+.long_funcL890:
 	mov r9,#1
 	str r9,[fp,#-244]
 	ldr r9,[fp,#-200]
 	mov r10,r9
-	str r10,[fp,#-92]
+	str r10,[fp,#-160]
 	mov r9,#0
 	str r9,[fp,#-252]
 	mov r9,#0
 	str r9,[fp,#-120]
 .long_funcL329:
-	ldr r9,[fp,#-92]
+	ldr r9,[fp,#-160]
 	cmp r9,#0
-	ldr r9,[fp,#-92]
+	ldr r9,[fp,#-160]
 	and r1,r9,#1
 	it lt
 	rsblt r1,r1,#0
@@ -3705,8 +3705,8 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-280]
 .long_funcL333:
-	ldr r9,[fp,#-92]
-	ldr r10,[fp,#-92]
+	ldr r9,[fp,#-160]
+	ldr r10,[fp,#-160]
 	add r0,r9,r10,lsr #31
 	asr r9,r0,#1
 	str r9,[fp,#-88]
@@ -3736,14 +3736,14 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL337:
 	ldr r9,[fp,#-60]
 	cmp r9,#0
-	bne .long_funcL907
+	bne .long_funcL888
 .long_funcL992:
 	ldr r9,[fp,#-60]
 	mov r10,r9
-	str r10,[fp,#-220]
+	str r10,[fp,#-92]
 	ldr r9,[fp,#-84]
 	mov r10,r9
-	str r10,[fp,#-160]
+	str r10,[fp,#-220]
 .long_funcL375:
 .long_funcL407:
 .long_funcL412:
@@ -3775,7 +3775,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-140]
 	mov r10,r9
 	str r10,[fp,#-36]
-	ldr r9,[fp,#-160]
+	ldr r9,[fp,#-220]
 	mov r10,r9
 	str r10,[fp,#-32]
 	bl .long_funcL327
@@ -3785,7 +3785,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-132]
 	mov r9,r2
 	str r9,[fp,#-200]
-	ldr r9,[fp,#-220]
+	ldr r9,[fp,#-92]
 	mov r10,r9
 	str r10,[fp,#-60]
 	bl .long_funcL325
@@ -3811,7 +3811,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r6,r8,r1
 	mov r2,r6
 	bl .long_funcL417
-.long_funcL907:
+.long_funcL888:
 	mov r8,#1
 	ldr r6,.LPIC11
 	add r9,r6,r8,lsl #2
@@ -3823,7 +3823,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-272]
 .long_funcL373:
-.long_funcL894:
+.long_funcL919:
 	ldr r9,[fp,#-96]
 	mov r10,r9
 	str r10,[fp,#-248]
@@ -3831,7 +3831,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-216]
 	mov r9,#0
-	str r9,[fp,#-192]
+	str r9,[fp,#-188]
 	mov r9,#0
 	str r9,[fp,#-172]
 .long_funcL377:
@@ -3859,7 +3859,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL386:
 	ldr r9,[fp,#-284]
 	mov r10,r9
-	str r10,[fp,#-232]
+	str r10,[fp,#-192]
 .long_funcL382:
 	ldr r9,[fp,#-216]
 	ldr r10,[fp,#-216]
@@ -3871,15 +3871,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	add r7,r9,r10,lsr #31
 	asr r9,r7,#1
 	str r9,[fp,#-260]
-	ldr r9,[fp,#-192]
-	add r10,r9,#1
-	str r10,[fp,#-188]
-.long_funcL378:
 	ldr r9,[fp,#-188]
+	add r10,r9,#1
+	str r10,[fp,#-232]
+.long_funcL378:
+	ldr r9,[fp,#-232]
 	cmp r9,#16
 	blt .long_funcL994
 .long_funcL379:
-.long_funcL896:
+.long_funcL899:
 	ldr r9,[fp,#-96]
 	mov r10,r9
 	str r10,[fp,#-144]
@@ -3927,7 +3927,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r0,[r9]
 	ldr r9,[fp,#-296]
 	mul r5,r9,r0
-.long_funcL900:
+.long_funcL921:
 	movw r0,#65535
 	movt r0,#0  @ 65535
 	mov r4,r0
@@ -3958,16 +3958,16 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r7,#0
 	bne .long_funcL991
 .long_funcL993:
-	ldr r9,[fp,#-232]
+	ldr r9,[fp,#-192]
 	mov r10,r9
-	str r10,[fp,#-220]
+	str r10,[fp,#-92]
 	mov r9,r1
-	str r9,[fp,#-160]
+	str r9,[fp,#-220]
 	bl .long_funcL375
 .long_funcL991:
 	mov r9,r7
 	str r9,[fp,#-96]
-	ldr r9,[fp,#-232]
+	ldr r9,[fp,#-192]
 	mov r10,r9
 	str r10,[fp,#-272]
 	bl .long_funcL373
@@ -4041,15 +4041,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-176]
 	mov r10,r9
 	str r10,[fp,#-216]
-	ldr r9,[fp,#-188]
-	mov r10,r9
-	str r10,[fp,#-192]
 	ldr r9,[fp,#-232]
+	mov r10,r9
+	str r10,[fp,#-188]
+	ldr r9,[fp,#-192]
 	mov r10,r9
 	str r10,[fp,#-172]
 	bl .long_funcL377
 .long_funcL385:
-	ldr r9,[fp,#-192]
+	ldr r9,[fp,#-188]
 	mov r8,r9
 	bl .LPIC14
 .LPIC13:
@@ -4077,10 +4077,10 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r8,r9
 .long_funcL384:
 	mov r9,r8
-	str r9,[fp,#-232]
+	str r9,[fp,#-192]
 	bl .long_funcL382
 .long_funcL383:
-	ldr r9,[fp,#-192]
+	ldr r9,[fp,#-188]
 	mov r7,r9
 	ldr r6,.LPIC13
 	add r5,r6,r7,lsl #2
@@ -4092,7 +4092,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL336:
 	ldr r9,[fp,#-60]
 	cmp r9,#0
-	bne .long_funcL909
+	bne .long_funcL877
 .long_funcL980:
 	ldr r9,[fp,#-132]
 	mov r10,r9
@@ -4108,7 +4108,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-84]
 	bl .long_funcL337
-.long_funcL909:
+.long_funcL877:
 	mov r6,#1
 	ldr r5,.LPIC13
 	add r9,r5,r6,lsl #2
@@ -4120,7 +4120,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-116]
 .long_funcL339:
-.long_funcL931:
+.long_funcL873:
 	ldr r9,[fp,#-156]
 	mov r10,r9
 	str r10,[fp,#-208]
@@ -4176,7 +4176,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL982
 .long_funcL345:
-.long_funcL890:
+.long_funcL887:
 	ldr r9,[fp,#-156]
 	mov r10,r9
 	str r10,[fp,#-228]
@@ -4224,7 +4224,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r2,[r9]
 	ldr r9,[fp,#-204]
 	mul r0,r9,r2
-.long_funcL901:
+.long_funcL889:
 	movw r2,#65535
 	movt r2,#0  @ 65535
 	mov r8,r2
@@ -4388,7 +4388,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-244]
 	ldr r9,[fp,#-88]
 	mov r10,r9
-	str r10,[fp,#-92]
+	str r10,[fp,#-160]
 	ldr r9,[fp,#-128]
 	mov r10,r9
 	str r10,[fp,#-252]
@@ -4424,7 +4424,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL228:
 	ldr r9,[fp,#-44]
 	cmp r9,#0
-	bne .long_funcL868
+	bne .long_funcL918
 .long_funcL942:
 	mov r8,#0
 	ldr r9,[fp,#-72]
@@ -4435,20 +4435,20 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r9,r7
 	str r9,[fp,#-24]
 	bl .long_funcL229
-.long_funcL868:
+.long_funcL918:
 	mov r9,#0
 	str r9,[fp,#-52]
 	ldr r9,[fp,#-44]
 	mov r10,r9
-	str r10,[fp,#-220]
+	str r10,[fp,#-92]
 	ldr r9,[fp,#-12]
 	mov r10,r9
 	str r10,[fp,#-144]
 .long_funcL231:
-.long_funcL898:
+.long_funcL913:
 	mov r9,#1
 	str r9,[fp,#-184]
-	ldr r9,[fp,#-220]
+	ldr r9,[fp,#-92]
 	mov r10,r9
 	str r10,[fp,#-176]
 	mov r9,#0
@@ -4478,7 +4478,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r10,[fp,#-184]
 	add r1,r9,r10,lsr #31
 	asr r9,r1,#1
-	str r9,[fp,#-160]
+	str r9,[fp,#-220]
 	ldr r9,[fp,#-36]
 	add r10,r9,#1
 	str r10,[fp,#-64]
@@ -4500,11 +4500,11 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL243:
 	ldr r9,[fp,#-144]
 	cmp r9,#0
-	bne .long_funcL921
+	bne .long_funcL902
 .long_funcL961:
 	ldr r9,[fp,#-144]
 	mov r10,r9
-	str r10,[fp,#-188]
+	str r10,[fp,#-232]
 	ldr r9,[fp,#-148]
 	mov r10,r9
 	str r10,[fp,#-260]
@@ -4513,7 +4513,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL318:
 	movw r5,#32767
 	movt r5,#0  @ 32767
-	ldr r9,[fp,#-220]
+	ldr r9,[fp,#-92]
 	cmp r9,r5
 	bgt .long_funcL321
 .long_funcL322:
@@ -4523,7 +4523,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r6,[r4]
 	@%r1432 = call i32 @__aeabi_idiv(i32 %r4287,i32 %r1431)
 	push {r0,r1,r2,r3}
-	ldr r0,[fp,#-220]
+	ldr r0,[fp,#-92]
 	mov r1,r6
 	bl __aeabi_idiv
 	mov r5,r0
@@ -4546,8 +4546,8 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-52]
 	mov r9,r6
-	str r9,[fp,#-220]
-	ldr r9,[fp,#-188]
+	str r9,[fp,#-92]
+	ldr r9,[fp,#-232]
 	mov r10,r9
 	str r10,[fp,#-144]
 	bl .long_funcL231
@@ -4558,7 +4558,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r8,[r5]
 	@%r1416 = call i32 @__aeabi_idiv(i32 %r4287,i32 %r1415)
 	push {r0,r1,r2,r3}
-	ldr r0,[fp,#-220]
+	ldr r0,[fp,#-92]
 	mov r1,r8
 	bl __aeabi_idiv
 	mov r7,r0
@@ -4571,7 +4571,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	sub r5,r8,r7
 	mov r6,r5
 	bl .long_funcL323
-.long_funcL921:
+.long_funcL902:
 	mov r8,#1
 	ldr r7,.LPIC13
 	add r9,r7,r8,lsl #2
@@ -4581,13 +4581,13 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-284]
 	ldr r9,[fp,#-144]
 	mov r10,r9
-	str r10,[fp,#-232]
+	str r10,[fp,#-192]
 .long_funcL279:
-.long_funcL932:
+.long_funcL879:
 	ldr r9,[fp,#-284]
 	mov r10,r9
 	str r10,[fp,#-180]
-	ldr r9,[fp,#-232]
+	ldr r9,[fp,#-192]
 	mov r10,r9
 	str r10,[fp,#-140]
 	mov r9,#0
@@ -4633,17 +4633,17 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r9,[fp,#-152]
 	ldr r9,[fp,#-248]
 	add r10,r9,#1
-	str r10,[fp,#-192]
+	str r10,[fp,#-188]
 .long_funcL284:
-	ldr r9,[fp,#-192]
+	ldr r9,[fp,#-188]
 	cmp r9,#16
 	blt .long_funcL963
 .long_funcL285:
-.long_funcL934:
+.long_funcL916:
 	ldr r9,[fp,#-284]
 	mov r10,r9
 	str r10,[fp,#-48]
-	ldr r9,[fp,#-232]
+	ldr r9,[fp,#-192]
 	mov r10,r9
 	str r10,[fp,#-204]
 	mov r9,#0
@@ -4687,7 +4687,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r4,[r9]
 	ldr r9,[fp,#-256]
 	mul r3,r9,r4
-.long_funcL935:
+.long_funcL883:
 	movw r4,#65535
 	movt r4,#0  @ 65535
 	mov r2,r4
@@ -4720,7 +4720,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL962:
 	ldr r9,[fp,#-272]
 	mov r10,r9
-	str r10,[fp,#-188]
+	str r10,[fp,#-232]
 	mov r9,r0
 	str r9,[fp,#-260]
 	bl .long_funcL281
@@ -4729,7 +4729,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r9,[fp,#-284]
 	ldr r9,[fp,#-272]
 	mov r10,r9
-	str r10,[fp,#-232]
+	str r10,[fp,#-192]
 	bl .long_funcL279
 .long_funcL969:
 	mov r2,r8
@@ -4805,7 +4805,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r9,[fp,#-172]
 	mov r10,r9
 	str r10,[fp,#-140]
-	ldr r9,[fp,#-192]
+	ldr r9,[fp,#-188]
 	mov r10,r9
 	str r10,[fp,#-248]
 	ldr r9,[fp,#-272]
@@ -4852,7 +4852,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 .long_funcL242:
 	ldr r9,[fp,#-144]
 	cmp r9,#0
-	bne .long_funcL924
+	bne .long_funcL928
 .long_funcL949:
 	ldr r9,[fp,#-52]
 	mov r10,r9
@@ -4868,7 +4868,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-148]
 	bl .long_funcL243
-.long_funcL924:
+.long_funcL928:
 	mov r6,#1
 	ldr r5,.LPIC15
 	add r9,r5,r6,lsl #2
@@ -4880,7 +4880,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-112]
 .long_funcL245:
-.long_funcL918:
+.long_funcL870:
 	ldr r9,[fp,#-136]
 	mov r10,r9
 	str r10,[fp,#-120]
@@ -4936,21 +4936,21 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	cmp r9,#16
 	blt .long_funcL951
 .long_funcL251:
-.long_funcL906:
+.long_funcL901:
 	ldr r9,[fp,#-136]
 	mov r10,r9
 	str r10,[fp,#-252]
 	ldr r9,[fp,#-112]
 	mov r10,r9
-	str r10,[fp,#-92]
+	str r10,[fp,#-160]
 	mov r9,#0
 	str r9,[fp,#-88]
 	mov r9,#0
 	str r9,[fp,#-200]
 .long_funcL260:
-	ldr r9,[fp,#-92]
+	ldr r9,[fp,#-160]
 	cmp r9,#0
-	ldr r9,[fp,#-92]
+	ldr r9,[fp,#-160]
 	and r1,r9,#1
 	it lt
 	rsblt r1,r1,#0
@@ -4961,8 +4961,8 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-132]
 .long_funcL264:
-	ldr r9,[fp,#-92]
-	ldr r10,[fp,#-92]
+	ldr r9,[fp,#-160]
+	ldr r10,[fp,#-160]
 	add r1,r9,r10,lsr #31
 	asr r9,r1,#1
 	str r9,[fp,#-292]
@@ -4984,7 +4984,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	ldr r2,[r9]
 	ldr r9,[fp,#-132]
 	mul r0,r9,r2
-.long_funcL908:
+.long_funcL896:
 	movw r2,#65535
 	movt r2,#0  @ 65535
 	mov r8,r2
@@ -5058,7 +5058,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r10,[fp,#-252]
 	ldr r9,[fp,#-292]
 	mov r10,r9
-	str r10,[fp,#-92]
+	str r10,[fp,#-160]
 	ldr r9,[fp,#-128]
 	mov r10,r9
 	str r10,[fp,#-88]
@@ -5143,7 +5143,7 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	mov r8,r6
 	bl .long_funcL256
 .long_funcL944:
-	ldr r9,[fp,#-160]
+	ldr r9,[fp,#-220]
 	mov r10,r9
 	str r10,[fp,#-184]
 	ldr r9,[fp,#-32]
@@ -5182,15 +5182,15 @@ long_func:@r4 r5 r6 r7 r8 r9 r10
 	str r9,[fp,#-296]
 	bl .long_funcL239
 .long_funcL937:
-	ldr r9,[fp,#-72]
-	mov r10,r9
-	str r10,[fp,#-68]
 	ldr r9,[fp,#-20]
 	mov r10,r9
 	str r10,[fp,#-100]
 	ldr r9,[fp,#-16]
 	mov r10,r9
 	str r10,[fp,#-104]
+	ldr r9,[fp,#-72]
+	mov r10,r9
+	str r10,[fp,#-68]
 	ldr r9,[fp,#-80]
 	mov r10,r9
 	str r10,[fp,#-76]

@@ -188,11 +188,11 @@ quick_read:@r4 r5 r6 r7 r8 r9 r10
 	mov r3,r2
 	bl .quick_readL13
 .quick_readL36:
-	mov r5,#0
-	mov r4,r8
+	mov r5,r8
+	mov r4,#0
 .quick_readL23:
-	mov r3,r5
-	mov r2,r4
+	mov r3,r4
+	mov r2,r5
 .quick_readL3:
 	cmp r2,#45
 	beq .quick_readL8
@@ -228,8 +228,8 @@ quick_read:@r4 r5 r6 r7 r8 r9 r10
 	mov r1,#1
 	bl .quick_readL9
 .quick_readL35:
-	mov r5,#0
-	mov r4,r8
+	mov r5,r8
+	mov r4,#0
 	bl .quick_readL23
 pop_queue:@r6 r7 r8 
 	push {fp,lr}

@@ -41,7 +41,7 @@ L3:
     %r25 = icmp slt i32 3,%r24
     br i1 %r25, label %L8, label %L7
 L5:
-    %r54 = phi i32 [%r43,%L6],[3,%L8]
+    %r54 = phi i32 [3,%L8],[%r43,%L6]
     %r30 = sub i32 %r54,1
     %r31 = getelementptr [10 x i32], ptr %r8, i32 0, i32 %r30
     %r32 = load i32, ptr %r31

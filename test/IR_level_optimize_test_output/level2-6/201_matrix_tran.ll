@@ -147,7 +147,7 @@ L13:
     %r108 = icmp slt i32 0,%r107
     br i1 %r108, label %L21, label %L17
 L15:
-    %r139 = phi i32 [0,%L21],[%r118,%L16]
+    %r139 = phi i32 [%r118,%L16],[0,%L21]
     %r112 = getelementptr [3 x float], ptr %r11, i32 0, i32 %r139
     %r113 = load float, ptr %r112
     %r114 = fptosi float %r113 to i32

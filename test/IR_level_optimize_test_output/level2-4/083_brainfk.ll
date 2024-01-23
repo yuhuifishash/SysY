@@ -25,10 +25,10 @@ L1:
     %r8 = getelementptr i32, ptr %r0, i32 0
     %r9 = load i32, ptr %r8
     %r10 = icmp ne i32 %r9,0
-    br i1 %r10, label %L37, label %L5
+    br i1 %r10, label %L38, label %L5
 L3:
-    %r140 = phi i32 [%r139,%L4],[0,%L37]
-    %r122 = phi i32 [%r117,%L4],[0,%L37]
+    %r140 = phi i32 [%r139,%L4],[0,%L38]
+    %r122 = phi i32 [%r117,%L4],[0,%L38]
     %r12 = getelementptr i32, ptr %r0, i32 %r122
     %r13 = load i32, ptr %r12
     %r16 = icmp eq i32 %r13,62
@@ -120,7 +120,7 @@ L23:
     %r127 = phi i32 [%r122,%L21],[%r126,%L25]
     br label %L20
 L24:
-    br label %L38
+    br label %L37
 L25:
     %r133 = phi i32 [%r140,%L22],[%r140,%L26],[%r142,%L31]
     %r126 = phi i32 [%r122,%L22],[%r122,%L26],[%r90,%L31]
@@ -132,8 +132,8 @@ L26:
     %r78 = icmp ne i32 %r77,0
     br i1 %r78, label %L24, label %L25
 L29:
-    %r143 = phi i32 [%r142,%L30],[1,%L38]
-    %r124 = phi i32 [%r90,%L30],[%r122,%L38]
+    %r143 = phi i32 [%r142,%L30],[1,%L37]
+    %r124 = phi i32 [%r90,%L30],[%r122,%L37]
     %r90 = sub i32 %r124,1
     %r92 = getelementptr i32, ptr %r0, i32 %r90
     %r93 = load i32, ptr %r92
@@ -160,9 +160,9 @@ L36:
     %r145 = phi i32 [%r143,%L33],[%r109,%L35]
     br label %L34
 L37:
-    br label %L3
-L38:
     br label %L29
+L38:
+    br label %L3
 }
 define i32 @main()
 {
@@ -183,7 +183,7 @@ L1:
     %r6 = icmp slt i32 0,%r3
     br i1 %r6, label %L6, label %L5
 L3:
-    %r23 = phi i32 [0,%L6],[%r14,%L4]
+    %r23 = phi i32 [%r14,%L4],[0,%L6]
     %r9 = call i32 @getch()
     %r11 = getelementptr [32768 x i32], ptr @program, i32 0, i32 %r23
     store i32 %r9, ptr %r11

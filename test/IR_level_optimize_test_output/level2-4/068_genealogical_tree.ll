@@ -35,7 +35,7 @@ L5:
     %r86 = icmp slt i32 0,%r0
     br i1 %r86, label %L26, label %L22
 L7:
-    %r103 = phi i32 [%r33,%L8],[1,%L24]
+    %r103 = phi i32 [1,%L24],[%r33,%L8]
     %r24 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r103
     %r25 = load i32, ptr %r24
     %r27 = icmp eq i32 %r25,0
@@ -106,12 +106,12 @@ define i32 @main()
 L0:
     br label %L1
 L1:
-    br label %L10
+    br label %L11
 L3:
-    %r45 = phi i32 [1,%L10],[%r37,%L4]
+    %r45 = phi i32 [%r37,%L4],[1,%L11]
     %r12 = call i32 @getint()
     %r15 = icmp ne i32 %r12,0
-    br i1 %r15, label %L11, label %L9
+    br i1 %r15, label %L10, label %L9
 L4:
     %r40 = icmp sle i32 %r37,5
     br i1 %r40, label %L3, label %L5
@@ -119,7 +119,7 @@ L5:
     call void @topo(i32 5)
     ret i32 0
 L7:
-    %r49 = phi i32 [%r29,%L8],[%r12,%L11]
+    %r49 = phi i32 [%r12,%L10],[%r29,%L8]
     %r21 = getelementptr i32, ptr %r51, i32 %r49
     store i32 1, ptr %r21
     %r23 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r49
@@ -135,8 +135,8 @@ L9:
     %r37 = add i32 %r45,1
     br label %L4
 L10:
-    br label %L3
-L11:
     %r51 = getelementptr [10 x [10 x i32]], ptr @map, i32 0, i32 %r45
     br label %L7
+L11:
+    br label %L3
 }

@@ -206,7 +206,7 @@ L1:
     %r17 = icmp slt i32 0,%r16
     br i1 %r17, label %L18, label %L5
 L3:
-    %r124 = phi i32 [0,%L18],[%r40,%L4]
+    %r124 = phi i32 [%r40,%L4],[0,%L18]
     %r22 = getelementptr [3 x i32], ptr %r3, i32 0, i32 %r124
     store i32 %r124, ptr %r22
     %r25 = getelementptr [3 x i32], ptr %r4, i32 0, i32 %r124

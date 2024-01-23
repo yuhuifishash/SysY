@@ -176,7 +176,7 @@ L9:
     %r46 = icmp sle i32 1,%r45
     br i1 %r46, label %L33, label %L17
 L11:
-    %r122 = phi i32 [0,%L32],[%r29,%L12]
+    %r122 = phi i32 [%r29,%L12],[0,%L32]
     %r26 = getelementptr i32, ptr %r134, i32 %r122
     store i32 1, ptr %r26
     %r29 = add i32 %r122,1

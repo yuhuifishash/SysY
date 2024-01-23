@@ -325,7 +325,7 @@ L17:
 L18:
     br label %L20
 L19:
-    %r574 = phi i32 [0,%L23],[%r573,%L24],[127,%L21]
+    %r574 = phi i32 [%r573,%L24],[127,%L21],[0,%L23]
     %r576 = mul i32 %r574,127
     %r577 = add i32 %r388,%r576
     %r585 = mul i32 %r5,-23
@@ -425,7 +425,7 @@ L24:
 L25:
     br label %L27
 L26:
-    %r765 = phi i32 [%r764,%L31],[0,%L30],[127,%L28]
+    %r765 = phi i32 [0,%L30],[127,%L28],[%r764,%L31]
     %r768 = mul i32 %r765,-106
     %r769 = add i32 %r577,%r768
     %r776 = mul i32 %r5,8
@@ -525,7 +525,7 @@ L31:
 L32:
     br label %L34
 L33:
-    %r956 = phi i32 [127,%L35],[0,%L37],[%r955,%L38]
+    %r956 = phi i32 [127,%L35],[%r955,%L38],[0,%L37]
     %r959 = mul i32 %r956,-3
     %r960 = add i32 %r769,%r959
     %r967 = mul i32 %r5,81
@@ -625,7 +625,7 @@ L38:
 L39:
     br label %L41
 L40:
-    %r1149 = phi i32 [127,%L42],[%r1148,%L45],[0,%L44]
+    %r1149 = phi i32 [0,%L44],[127,%L42],[%r1148,%L45]
     %r1151 = mul i32 %r1149,32
     %r1152 = add i32 %r960,%r1151
     %r1159 = mul i32 %r5,15
@@ -725,7 +725,7 @@ L45:
 L46:
     br label %L48
 L47:
-    %r1339 = phi i32 [127,%L49],[0,%L51],[%r1338,%L52]
+    %r1339 = phi i32 [0,%L51],[%r1338,%L52],[127,%L49]
     %r1342 = mul i32 %r1339,-95
     %r1343 = add i32 %r1152,%r1342
     %r1350 = mul i32 %r5,33
@@ -825,7 +825,7 @@ L52:
 L53:
     br label %L55
 L54:
-    %r1527 = phi i32 [%r1526,%L59],[127,%L56],[0,%L58]
+    %r1527 = phi i32 [0,%L58],[%r1526,%L59],[127,%L56]
     %r1530 = mul i32 %r1527,-50
     %r1531 = add i32 %r1343,%r1530
     %r1539 = mul i32 %r5,-29
@@ -925,7 +925,7 @@ L59:
 L60:
     br label %L62
 L61:
-    %r1724 = phi i32 [0,%L65],[%r1723,%L66],[127,%L63]
+    %r1724 = phi i32 [127,%L63],[0,%L65],[%r1723,%L66]
     %r1727 = mul i32 %r1724,-23
     %r1728 = add i32 %r1531,%r1727
     %r1735 = mul i32 %r5,67
@@ -1025,7 +1025,7 @@ L66:
 L67:
     br label %L69
 L68:
-    %r1914 = phi i32 [0,%L72],[%r1913,%L73],[127,%L70]
+    %r1914 = phi i32 [0,%L72],[127,%L70],[%r1913,%L73]
     %r1916 = mul i32 %r1914,46
     %r1917 = add i32 %r1728,%r1916
     %r1919 = icmp sgt i32 %r1917,0
@@ -1068,18 +1068,18 @@ L0:
 L1:
     %r1 = call i32 @getint()
     %r5 = icmp sgt i32 %r1,0
-    br i1 %r5, label %L17, label %L5
+    br i1 %r5, label %L18, label %L5
 L3:
-    %r72 = phi i32 [%r55,%L4],[%r1,%L17]
-    br label %L18
+    %r72 = phi i32 [%r55,%L4],[%r1,%L18]
+    br label %L19
 L4:
     %r58 = icmp sgt i32 %r55,0
     br i1 %r58, label %L3, label %L5
 L5:
     ret i32 0
 L7:
-    %r70 = phi i32 [%r36,%L8],[0,%L18]
-    br label %L19
+    %r70 = phi i32 [%r36,%L8],[0,%L19]
+    br label %L17
 L8:
     %r39 = icmp slt i32 %r36,5
     br i1 %r39, label %L7, label %L9
@@ -1088,7 +1088,7 @@ L9:
     %r44 = icmp ne i32 %r43,0
     br i1 %r44, label %L14, label %L15
 L11:
-    %r66 = phi i32 [%r28,%L12],[0,%L19]
+    %r66 = phi i32 [%r28,%L12],[0,%L17]
     %r22 = call i32 @getint()
     %r25 = getelementptr i32, ptr %r74, i32 %r66
     store i32 %r22, ptr %r25
@@ -1116,11 +1116,11 @@ L16:
     %r55 = sub i32 %r72,1
     br label %L4
 L17:
-    %r42 = getelementptr i32, ptr %r2, i32 0
-    br label %L3
-L18:
-    br label %L7
-L19:
     %r74 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0, i32 %r70
     br label %L11
+L18:
+    %r42 = getelementptr i32, ptr %r2, i32 0
+    br label %L3
+L19:
+    br label %L7
 }

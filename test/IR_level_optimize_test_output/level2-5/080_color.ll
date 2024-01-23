@@ -183,7 +183,7 @@ L9:
     %r95 = add i32 %r189,1
     br label %L4
 L11:
-    %r183 = phi i32 [%r79,%L12],[0,%L32]
+    %r183 = phi i32 [0,%L32],[%r79,%L12]
     br label %L33
 L12:
     %r82 = icmp slt i32 %r79,18
@@ -192,7 +192,7 @@ L13:
     %r87 = add i32 %r187,1
     br label %L8
 L15:
-    %r177 = phi i32 [0,%L33],[%r71,%L16]
+    %r177 = phi i32 [%r71,%L16],[0,%L33]
     br label %L34
 L16:
     %r74 = icmp slt i32 %r71,18

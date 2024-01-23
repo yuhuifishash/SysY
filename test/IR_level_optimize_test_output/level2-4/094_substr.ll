@@ -50,7 +50,7 @@ L5:
 L6:
     br label %L8
 L7:
-    %r15 = phi i32 [%r11,%L11],[%r11,%L9],[%r14,%L12]
+    %r15 = phi i32 [%r11,%L9],[%r14,%L12],[%r11,%L11]
     %r17 = getelementptr [16 x i32], ptr %r3, i32 0, i32 1
     store i32 %r15, ptr %r17
     %r22 = icmp slt i32 2,%r1
@@ -111,7 +111,7 @@ L5:
     %r84 = load i32, ptr %r83
     ret i32 %r84
 L7:
-    %r87 = phi i32 [%r67,%L8],[1,%L20]
+    %r87 = phi i32 [1,%L20],[%r67,%L8]
     %r27 = load i32, ptr %r26
     %r30 = sub i32 %r87,1
     %r31 = getelementptr i32, ptr %r2, i32 %r30

@@ -33,7 +33,7 @@ L6:
     %r26 = icmp slt i32 0,%r1
     br i1 %r26, label %L40, label %L5
 L9:
-    %r209 = phi i32 [%r135,%L10],[0,%L34]
+    %r209 = phi i32 [0,%L34],[%r135,%L10]
     br label %L35
 L10:
     %r138 = icmp slt i32 %r135,2
@@ -157,7 +157,7 @@ L5:
     %r200 = phi i32 [%r198,%L48],[%r198,%L4]
     ret i32 %r200
 L7:
-    %r253 = phi i32 [%r162,%L8],[0,%L52]
+    %r253 = phi i32 [0,%L52],[%r162,%L8]
     %r197 = phi i32 [%r196,%L8],[%r199,%L52]
     br label %L53
 L8:
@@ -169,9 +169,9 @@ L9:
     %r178 = icmp sge i32 %r175,%r0
     br i1 %r178, label %L48, label %L49
 L11:
-    %r249 = phi i32 [0,%L53],[%r149,%L12]
-    %r195 = phi i32 [%r194,%L12],[%r197,%L53]
-    br label %L54
+    %r249 = phi i32 [%r149,%L12],[0,%L53]
+    %r195 = phi i32 [%r197,%L53],[%r194,%L12]
+    br label %L55
 L12:
     %r157 = icmp slt i32 %r149,1000
     br i1 %r157, label %L11, label %L13
@@ -181,9 +181,9 @@ L13:
     %r165 = icmp sge i32 %r162,%r1
     br i1 %r165, label %L45, label %L46
 L15:
-    %r243 = phi i32 [0,%L54],[%r136,%L16]
-    %r193 = phi i32 [%r195,%L54],[%r192,%L16]
-    br label %L55
+    %r243 = phi i32 [%r136,%L16],[0,%L55]
+    %r193 = phi i32 [%r192,%L16],[%r195,%L55]
+    br label %L56
 L16:
     %r144 = icmp slt i32 %r136,10000
     br i1 %r144, label %L15, label %L17
@@ -193,9 +193,9 @@ L17:
     %r152 = icmp sge i32 %r149,%r2
     br i1 %r152, label %L42, label %L43
 L19:
-    %r235 = phi i32 [0,%L55],[%r123,%L20]
-    %r191 = phi i32 [%r193,%L55],[%r190,%L20]
-    br label %L56
+    %r235 = phi i32 [%r123,%L20],[0,%L56]
+    %r191 = phi i32 [%r193,%L56],[%r190,%L20]
+    br label %L57
 L20:
     %r131 = icmp slt i32 %r123,100000
     br i1 %r131, label %L19, label %L21
@@ -205,9 +205,9 @@ L21:
     %r139 = icmp sge i32 %r136,%r3
     br i1 %r139, label %L39, label %L40
 L23:
-    %r225 = phi i32 [0,%L56],[%r110,%L24]
-    %r189 = phi i32 [%r191,%L56],[%r188,%L24]
-    br label %L57
+    %r225 = phi i32 [%r110,%L24],[0,%L57]
+    %r189 = phi i32 [%r188,%L24],[%r191,%L57]
+    br label %L54
 L24:
     %r118 = icmp slt i32 %r110,1000000
     br i1 %r118, label %L23, label %L25
@@ -217,8 +217,8 @@ L25:
     %r126 = icmp sge i32 %r123,%r4
     br i1 %r126, label %L36, label %L37
 L27:
-    %r213 = phi i32 [0,%L57],[%r97,%L28]
-    %r187 = phi i32 [%r94,%L28],[%r189,%L57]
+    %r213 = phi i32 [0,%L54],[%r97,%L28]
+    %r187 = phi i32 [%r94,%L28],[%r189,%L54]
     %r74 = srem i32 %r187,817
     %r82 = getelementptr i32, ptr %r262, i32 %r213
     %r83 = load i32, ptr %r82
@@ -276,21 +276,21 @@ L53:
     %r264 = getelementptr [3 x [2 x [4 x [8 x [7 x i32]]]]], ptr %r263, i32 %r253
     br label %L11
 L54:
-    %r259 = getelementptr [4 x [5 x [6 x [2 x i32]]]], ptr %r258, i32 %r249
-    %r265 = getelementptr [2 x [4 x [8 x [7 x i32]]]], ptr %r264, i32 %r249
-    br label %L15
-L55:
-    %r260 = getelementptr [5 x [6 x [2 x i32]]], ptr %r259, i32 %r243
-    %r266 = getelementptr [4 x [8 x [7 x i32]]], ptr %r265, i32 %r243
-    br label %L19
-L56:
-    %r261 = getelementptr [6 x [2 x i32]], ptr %r260, i32 %r235
-    %r267 = getelementptr [8 x [7 x i32]], ptr %r266, i32 %r235
-    br label %L23
-L57:
     %r262 = getelementptr [2 x i32], ptr %r261, i32 %r225
     %r268 = getelementptr [7 x i32], ptr %r267, i32 %r225
     br label %L27
+L55:
+    %r259 = getelementptr [4 x [5 x [6 x [2 x i32]]]], ptr %r258, i32 %r249
+    %r265 = getelementptr [2 x [4 x [8 x [7 x i32]]]], ptr %r264, i32 %r249
+    br label %L15
+L56:
+    %r260 = getelementptr [5 x [6 x [2 x i32]]], ptr %r259, i32 %r243
+    %r266 = getelementptr [4 x [8 x [7 x i32]]], ptr %r265, i32 %r243
+    br label %L19
+L57:
+    %r261 = getelementptr [6 x [2 x i32]], ptr %r260, i32 %r235
+    %r267 = getelementptr [8 x [7 x i32]], ptr %r266, i32 %r235
+    br label %L23
 }
 define void @loop2()
 {
@@ -326,7 +326,7 @@ L13:
     br label %L8
 L15:
     %r169 = phi i32 [0,%L33],[%r97,%L16]
-    br label %L34
+    br label %L35
 L16:
     %r100 = icmp slt i32 %r97,2
     br i1 %r100, label %L15, label %L17
@@ -334,8 +334,8 @@ L17:
     %r105 = add i32 %r175,1
     br label %L12
 L19:
-    %r161 = phi i32 [%r89,%L20],[0,%L34]
-    br label %L35
+    %r161 = phi i32 [%r89,%L20],[0,%L35]
+    br label %L36
 L20:
     %r92 = icmp slt i32 %r89,4
     br i1 %r92, label %L19, label %L21
@@ -343,8 +343,8 @@ L21:
     %r97 = add i32 %r169,1
     br label %L16
 L23:
-    %r151 = phi i32 [0,%L35],[%r81,%L24]
-    br label %L36
+    %r151 = phi i32 [%r81,%L24],[0,%L36]
+    br label %L34
 L24:
     %r84 = icmp slt i32 %r81,8
     br i1 %r84, label %L23, label %L25
@@ -352,7 +352,7 @@ L25:
     %r89 = add i32 %r161,1
     br label %L20
 L27:
-    %r139 = phi i32 [%r73,%L28],[0,%L36]
+    %r139 = phi i32 [%r73,%L28],[0,%L34]
     %r62 = add i32 %r60,%r139
     %r70 = getelementptr i32, ptr %r188, i32 %r139
     store i32 %r62, ptr %r70
@@ -377,13 +377,13 @@ L33:
     %r185 = getelementptr [2 x [4 x [8 x [7 x i32]]]], ptr %r184, i32 %r175
     br label %L15
 L34:
+    %r188 = getelementptr [7 x i32], ptr %r187, i32 %r151
+    br label %L27
+L35:
     %r60 = add i32 %r58,%r169
     %r186 = getelementptr [4 x [8 x [7 x i32]]], ptr %r185, i32 %r169
     br label %L19
-L35:
+L36:
     %r187 = getelementptr [8 x [7 x i32]], ptr %r186, i32 %r161
     br label %L23
-L36:
-    %r188 = getelementptr [7 x i32], ptr %r187, i32 %r151
-    br label %L27
 }

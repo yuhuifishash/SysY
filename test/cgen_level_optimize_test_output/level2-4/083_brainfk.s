@@ -37,12 +37,12 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	mov r8,r9
 	ldr r7,[r8]
 	cmp r7,#0
-	bne .interpretL37
+	bne .interpretL38
 .interpretL5:
 	add sp,sp,#64
 	pop {r4,r5,r6,r7,r8,r9,r10}
 	pop {fp,pc}
-.interpretL37:
+.interpretL38:
 	mov r9,#0
 	str r9,[fp,#-64]
 	mov r7,#0
@@ -95,10 +95,10 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-44]
 .interpretL17:
-	ldr r9,[fp,#-44]
+	ldr r9,[fp,#-16]
 	mov r10,r9
 	str r10,[fp,#-20]
-	ldr r9,[fp,#-16]
+	ldr r9,[fp,#-44]
 	mov r10,r9
 	str r10,[fp,#-24]
 .interpretL14:
@@ -116,7 +116,7 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	mov r10,r9
 	str r10,[fp,#-40]
 .interpretL8:
-	ldr r9,[fp,#-40]
+	ldr r9,[fp,#-36]
 	add r0,r9,#1
 .interpretL4:
 	mov r2,r0
@@ -126,7 +126,7 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	cmp r2,#0
 	beq .interpretL5
 .interpretL39:
-	ldr r9,[fp,#-36]
+	ldr r9,[fp,#-40]
 	mov r10,r9
 	str r10,[fp,#-64]
 	mov r7,r0
@@ -146,7 +146,7 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	mov r5,r9
 	bl .interpretL25
 .interpretL24:
-.interpretL38:
+.interpretL37:
 	mov r2,#1
 	mov r1,r7
 .interpretL29:
@@ -246,11 +246,11 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	ldr r8,[r5]
 	add r6,r8,#1
 	str r6,[r5]
+	mov r9,r7
+	str r9,[fp,#-20]
 	ldr r9,[fp,#-64]
 	mov r10,r9
-	str r10,[fp,#-20]
-	mov r9,r7
-	str r9,[fp,#-24]
+	str r10,[fp,#-24]
 	bl .interpretL14
 .interpretL9:
 	ldr r8,.LPIC3
@@ -258,11 +258,11 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	sub r8,r6,#1
 	ldr r6,.LPIC3
 	str r8,[r6]
+	mov r9,r7
+	str r9,[fp,#-28]
 	ldr r9,[fp,#-64]
 	mov r10,r9
-	str r10,[fp,#-28]
-	mov r9,r7
-	str r9,[fp,#-32]
+	str r10,[fp,#-32]
 	bl .interpretL11
 .interpretL6:
 	ldr r8,.LPIC3
@@ -270,11 +270,11 @@ interpret:@r4 r5 r6 r7 r8 r9 r10
 	add r8,r6,#1
 	ldr r6,.LPIC3
 	str r8,[r6]
+	mov r9,r7
+	str r9,[fp,#-36]
 	ldr r9,[fp,#-64]
 	mov r10,r9
-	str r10,[fp,#-36]
-	mov r9,r7
-	str r9,[fp,#-40]
+	str r10,[fp,#-40]
 	bl .interpretL8
 main:@r8 
 	push {fp,lr}

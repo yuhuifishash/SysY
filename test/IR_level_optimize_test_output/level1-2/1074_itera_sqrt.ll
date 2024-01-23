@@ -22,7 +22,7 @@ L1:
     %r13 = icmp ne i32 %r11,0
     br i1 %r13, label %L6, label %L5
 L3:
-    %r33 = phi i32 [%r8,%L6],[%r24,%L4]
+    %r33 = phi i32 [%r24,%L4],[%r8,%L6]
     %r20 = sdiv i32 %r0,%r33
     %r21 = add i32 %r33,%r20
     %r24 = sdiv i32 %r21,2

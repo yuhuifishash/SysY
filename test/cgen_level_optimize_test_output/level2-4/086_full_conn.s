@@ -1622,21 +1622,21 @@ main:@r4 r5 r6 r7 r8
 	bl getint
 	mov r8,r0
 	cmp r8,#0
-	bgt .mainL17
+	bgt .mainL18
 .mainL5:
 	mov r0,#0
 	add sp,sp,#108
 	pop {r4,r5,r6,r7,r8}
 	pop {fp,pc}
-.mainL17:
+.mainL18:
 	mvn r7,#107
 	add r6,fp,r7
 	mov r7,r8
 .mainL3:
-.mainL18:
+.mainL19:
 	mov r8,#0
 .mainL7:
-.mainL19:
+.mainL17:
 	add r5,r8,r8,lsl #2
 	mov r4,r5
 	mvn r5,#107

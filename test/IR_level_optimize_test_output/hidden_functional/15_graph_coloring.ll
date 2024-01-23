@@ -90,7 +90,7 @@ L0:
 L1:
     br label %L6
 L3:
-    %r21 = phi i32 [0,%L6],[%r14,%L4]
+    %r21 = phi i32 [%r14,%L4],[0,%L6]
     %r9 = getelementptr i32, ptr %r0, i32 %r21
     %r10 = load i32, ptr %r9
     call void @putint(i32 %r10)

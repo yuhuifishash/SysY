@@ -73,7 +73,7 @@ L1:
     store i32 3, ptr @L
     br label %L18
 L3:
-    %r124 = phi i32 [0,%L18],[%r40,%L4]
+    %r124 = phi i32 [%r40,%L4],[0,%L18]
     %r22 = getelementptr [3 x i32], ptr %r3, i32 0, i32 %r124
     store i32 %r124, ptr %r22
     %r25 = getelementptr [3 x i32], ptr %r4, i32 0, i32 %r124
@@ -105,7 +105,7 @@ L5:
     %r60 = icmp slt i32 %r55,3
     br i1 %r60, label %L19, label %L9
 L7:
-    %r126 = phi i32 [%r55,%L19],[%r69,%L8]
+    %r126 = phi i32 [%r69,%L8],[%r55,%L19]
     %r64 = getelementptr [6 x i32], ptr %r9, i32 0, i32 %r126
     %r65 = load i32, ptr %r64
     call void @putint(i32 %r65)
@@ -118,7 +118,7 @@ L9:
     call void @putch(i32 10)
     br label %L20
 L11:
-    %r128 = phi i32 [0,%L20],[%r89,%L12]
+    %r128 = phi i32 [%r89,%L12],[0,%L20]
     %r84 = getelementptr [3 x i32], ptr %r10, i32 0, i32 %r128
     %r85 = load i32, ptr %r84
     call void @putint(i32 %r85)

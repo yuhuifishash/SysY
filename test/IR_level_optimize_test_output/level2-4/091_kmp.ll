@@ -42,8 +42,8 @@ L1:
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L13, label %L5
 L3:
-    %r61 = phi i32 [%r60,%L4],[0,%L13]
-    %r57 = phi i32 [0,%L13],[%r56,%L4]
+    %r61 = phi i32 [0,%L13],[%r60,%L4]
+    %r57 = phi i32 [%r56,%L4],[0,%L13]
     %r14 = getelementptr i32, ptr %r0, i32 %r61
     %r15 = load i32, ptr %r14
     %r17 = getelementptr i32, ptr %r1, i32 %r57
@@ -100,7 +100,7 @@ L1:
     %r14 = icmp ne i32 %r13,0
     br i1 %r14, label %L11, label %L5
 L3:
-    %r53 = phi i32 [%r52,%L4],[0,%L11]
+    %r53 = phi i32 [0,%L11],[%r52,%L4]
     %r50 = phi i32 [%r49,%L4],[-1,%L11]
     %r18 = icmp eq i32 %r50,-1
     br i1 %r18, label %L6, label %L9

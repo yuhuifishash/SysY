@@ -35,26 +35,26 @@ func2:@r6 r7 r8
 	sub sp,sp,#8
 .func2L0:
 .func2L5:
-	mov r8,r1
-	mov r7,r0
+	mov r8,r0
+	mov r7,r1
 .func2L1:
-	cmp r8,#0
+	cmp r7,#0
 	bne .func2L2
 .func2L3:
-	mov r0,r7
+	mov r0,r8
 	add sp,sp,#8
 	pop {r6,r7,r8}
 	pop {fp,pc}
 .func2L2:
 	@%r8 = call i32 @__modsi3(i32 %r12,i32 %r13)
 	sub sp,sp,#4 @stack align 8bytes
-	mov r0,r7
-	mov r1,r8
+	mov r0,r8
+	mov r1,r7
 	bl __modsi3
 	mov r6,r0
 	add sp,sp,#4 @stack align 8bytes
-	mov r8,#0
-	mov r7,r6
+	mov r8,r6
+	mov r7,#0
 	bl .func2L1
 func3:@r6 r7 r8 
 	push {fp,lr}
