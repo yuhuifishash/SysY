@@ -15,6 +15,7 @@ public:
     int arraydims = 0;
 };
 
+
 class ConstValue
 {
 public:
@@ -26,13 +27,18 @@ public:
     }val;
 };
 
+
 class NodeAttr
 {
+public:
     Type T;
     ConstValue V;
 };
 
-NodeAttr synthesis_attr(NodeAttr a);
+
+NodeAttr synthesis_attr_plus(NodeAttr a);
+NodeAttr synthesis_attr_minus(NodeAttr b);
+NodeAttr synthesis_attr_not(NodeAttr b);
 NodeAttr synthesis_attr(NodeAttr a,NodeAttr b);
 
 

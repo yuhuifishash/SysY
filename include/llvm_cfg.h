@@ -9,7 +9,7 @@
 #include <bitset>
 #include "basic_block.h"
 #include "SysY_tree.h"
-#include "cgen.h"
+#include "arm_cgen.h"
 
 class CFG;
 

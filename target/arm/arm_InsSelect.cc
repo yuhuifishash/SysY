@@ -1,5 +1,5 @@
-#ifndef INSSELECT_CC
-#define INSSELECT_CC
+#ifndef ARM_INSSELECT_CC
+#define ARM_INSSELECT_CC
 #include "llvm_cfg.h"
 #include "llvm_ir.h"
 extern LLVM_IR llvm_IR;

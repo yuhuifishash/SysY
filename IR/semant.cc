@@ -193,18 +193,11 @@ int get_ArrayIntVal(ArrayVal val,std::vector<int> indexs)
     //[i][j][k] + i*dim[1]*dim[2] + j*dim[2] + k
     //[i][j][k][w] + i*dim[1]*dim[2]*dim[3] + j*dim[2]*dim[3] + k*dim[3] + w
     int idx = 0;
-    // std::cout<<"dims:";
-    // for(auto i:val.dims){
-    //     std::cout<<i<<" ";
-    // }
-    // std::cout<<"\n";
-    // std::cout<<"indexes:";
     for(int curIndex=0;curIndex<indexs.size();curIndex++){
         // std::cout<<indexs[curIndex]<<" ";
         idx *= val.dims[curIndex];
         idx += indexs[curIndex];
     }
-    // std::cout<<"\ntotal index:"<<idx<<"\n";
     return val.IntInitVals[idx];
 }
 
@@ -1324,7 +1317,7 @@ void CompUnit_Decl::type_check()
         if(typedecl == 1){
             solve_Int_InitVal(init,val);
         }
-        else{
+        else if(typedecl == 2){
             solve_Float_InitVal(init,val);
         }
         //for(auto d:val.dims){std::cerr<<d<<" ";}std::cerr<<"\n";
@@ -1337,9 +1330,10 @@ void CompUnit_Decl::type_check()
         if(typedecl == 1){
             lltype = I32;
         }
-        if(typedecl == 2){
+        else if(typedecl == 2){
             lltype = FLOAT32;
         }
+        
         Instruction globalDecl;
         if(def->get_dims()!= nullptr){
             globalDecl = new global_id_define_instruction(def->get_name()->get_string(),lltype,val);

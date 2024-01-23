@@ -1,5 +1,5 @@
-#ifndef CGEN_H
-#define CGEN_H
+#ifndef ARM_CGEN_H
+#define ARM_CGEN_H
 #include <string>
 #include <map>
 #include <queue>

@@ -6,7 +6,7 @@
 #include <fstream>
 #include "semant.h"
 #include "IRgen.h"
-#include "cgen.h"
+#include "arm_cgen.h"
 #include "llvm_ir.h"
 #include "SysY_parser.tab.h"
 #include "llvm_output_test.h"
