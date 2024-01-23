@@ -234,8 +234,8 @@ public:
     void set_ins_no(int new_no){insNo = new_no;}
     static autoCounter insNoCounter;//instruction No counter
     int get_opcode(){return opcode;}//one solution: convert to pointer of subclasses
-    virtual void code(std::ostream& s)=0;
-    virtual void printIR(std::ostream& s)=0;
+    virtual void code(std::ostream& s) = 0;
+    virtual void printIR(std::ostream& s) = 0;
     virtual int get_resultregno() = 0;
     virtual void cgen_prework() = 0;
     virtual std::vector<int> refering_virtual_regs() = 0;
@@ -245,6 +245,8 @@ public:
     virtual void set_nonresult_operands(std::vector<operand> ops) = 0;
     virtual Instruction copy_instruction() = 0;
     virtual int is_funcdef(){return 0;}
+
+    
     virtual int const_propagate(std::map<int,Instruction>& regresult_map) = 0;
 };
 

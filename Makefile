@@ -1,9 +1,14 @@
-SRCDIR := ./src
-SRCDIR += ./src2
-SRCDIR += ./src_optimize
+SRCDIR += ./target
+SRCDIR += ./target/arm
+SRCDIR += ./parser
+SRCDIR += ./lexer
+SRCDIR += ./IR
 SRCDIR += ./include
-SRCDIR += ./tester
-SRCDIR += ./src_optimize/peephole
+SRCDIR += ./unit_test
+SRCDIR += ./optimize
+SRCDIR += ./optimize/peephole
+SRCDIR += ./utils
+SRCDIR += ./optimize/propagating
 
 OBJDIR := ./obj
 
@@ -19,19 +24,23 @@ $(OBJDIR)/%.o : %.cc
 	clang++ -c $(INCS) $< -o $@ -O2 -std=c++11
 
 .PHONY : clean,clean-all,lexer,parser,clean_example_test_output
-lexer:
-	flex -o src/SysY_lexer.cc src/SysY_lexer.l
-parser:
-	bison -dv src/SysY_parser.y
+lexer:lexer/SysY_lexer.l
+	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
+
+parser:parser/SysY_parser.y
+	bison -dv parser/SysY_parser.y
 	rm -r SysY_parser.output
-	mv SysY_parser.tab.c src/SysY_parser.tab.cc
-	mv SysY_parser.tab.h src/SysY_parser.tab.h
-	sed -i '1s/^/#include \"SysY_tree.h\"/' src/SysY_parser.tab.h
+	mv SysY_parser.tab.c parser/SysY_parser.tab.cc
+	mv SysY_parser.tab.h parser/SysY_parser.tab.h
+	sed -i '1s/^/#include \"SysY_tree.h\"/' parser/SysY_parser.tab.h
+
 clean-obj:
 	rm -r ${OBJDIR}/*
+
 clean-all:
 	rm -r ${OBJDIR}/*
 	rm -r bin/*
+
 clean_example_test_output:
 	rm -r test/cgen_test_output/*
 	rm -r test/cgenalloc_test_output/*

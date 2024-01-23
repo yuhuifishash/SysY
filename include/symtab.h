@@ -1,5 +1,7 @@
 #ifndef SYMTAB_H
 #define SYMTAB_H
+
+
 #include <string>
 #include <stack>
 #include <map>

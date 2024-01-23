@@ -6,10 +6,11 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <bitset>
 #include "basic_block.h"
 #include "SysY_tree.h"
 #include "cgen.h"
-#include <bitset>
+
 class CFG;
 
 class NaturalLoop
