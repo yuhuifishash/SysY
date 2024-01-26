@@ -6,6 +6,7 @@
 #include "llvm_cfg.h"
 #include "symtab.h"
 #include "SysY_tree.h"
+#include "type.h"
 
 class IRgenTable
 {

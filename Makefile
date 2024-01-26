@@ -7,8 +7,10 @@ SRCDIR += ./include
 SRCDIR += ./unit_test
 SRCDIR += ./optimize
 SRCDIR += ./optimize/peephole
-SRCDIR += ./utils
 SRCDIR += ./optimize/propagating
+SRCDIR += ./optimize/dce
+SRCDIR += ./utils
+
 
 OBJDIR := ./obj
 

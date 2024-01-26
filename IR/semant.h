@@ -6,6 +6,7 @@
 #include <set>
 #include "symtab.h"
 #include "SysY_tree.h"
+#include "type.h"
 extern IdTable id_table;
 /*
 semant need to do:
