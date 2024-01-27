@@ -67,7 +67,7 @@ void CFG::simple_inst_strength_reduce()
         auto block_id = block_pair.first;
         for(auto ins:block->Instruction_list){
             if(ins->get_opcode() == PHI){
-                auto phi_ins = (phi_instruction*)ins;
+                auto phi_ins = (phi_Instruction*)ins;
                 if(phi_ins->getPhiList().size()==1){
                     auto reg=phi_ins->getResultOp();
                     auto reg_no = ((reg_operand*)reg)->getRegNo();
@@ -135,7 +135,7 @@ void CFG::simple_inst_strength_reduce()
         decltype(block->Instruction_list) new_InsList;
         for(auto ins:block->Instruction_list){
             if(ins->get_opcode() == PHI){
-                auto phi_ins = (phi_instruction*)ins;
+                auto phi_ins = (phi_Instruction*)ins;
                 if(phi_ins->getPhiList().size()==1){
                 }else{
                     new_InsList.push_back(ins);
@@ -211,7 +211,7 @@ void LLVM_IR::decompose_getelementptr(){
             for(auto ins:block->Instruction_list){
                 // ins->printIR(std::cerr);
                 if(ins->get_opcode()==GETELEMENTPTR){
-                    auto gep_ins = (get_elementptr_instruction*)ins;
+                    auto gep_ins = (get_elementptr_Instruction*)ins;
                     auto idx_list = gep_ins->get_indexes();
                     std::deque<int> dim_list;
                     for(auto x:gep_ins->get_dims()){
@@ -232,7 +232,7 @@ void LLVM_IR::decompose_getelementptr(){
                                     for(auto x:dim_list){
                                         cur_dim.push_back(x);
                                     }
-                                    auto ele = new get_elementptr_instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                    auto ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
                                     for(int j=last_non_const_pos+1;j<=i;j++){
                                         int idx_immval = ((imm_i32_operand*)idx_list[j])->getIntImmVal();
                                         ele->push_idx_imm32(idx_immval);
@@ -247,7 +247,7 @@ void LLVM_IR::decompose_getelementptr(){
                             }
                         }
                         else{
-                            get_elementptr_instruction* ele;
+                            get_elementptr_Instruction* ele;
                             int const_end = i;
                             if(last_non_const_pos == -1){
                                 const_end++;
@@ -265,7 +265,7 @@ void LLVM_IR::decompose_getelementptr(){
                                 for(auto x:dim_list){
                                     cur_dim.push_back(x);
                                 }
-                                ele = new get_elementptr_instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
                                 for(int j=last_non_const_pos+1;j<const_end;j++){
                                     if(idx_list[j]->getOperandType() == basic_operand::IMMI32){
                                         int idx_immval = ((imm_i32_operand*)idx_list[j])->getIntImmVal();
@@ -296,7 +296,7 @@ void LLVM_IR::decompose_getelementptr(){
                                 for(auto x:dim_list){
                                     cur_dim.push_back(x);
                                 }
-                                ele = new get_elementptr_instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
                                 operand var_idx = idx_list[i];
                                 if(var_idx->getOperandType()!=basic_operand::REG){
                                     std::cerr<<"not REG not CONST in GEP\n";

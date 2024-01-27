@@ -41,7 +41,7 @@ void NaturalLoop::find_exit_nodes(CFG* cfg)
         if(node->Instruction_list.size() < 1){continue;}
         auto Ins = *(node->Instruction_list.end()-1);
         if(Ins->get_opcode() == BR_UNCOND){
-            auto I = (br_uncond_instruction*)Ins;
+            auto I = (br_uncond_Instruction*)Ins;
             auto nextBB = (*(cfg->block))[I->get_target()];
             if(loop_nodes.find(nextBB) == loop_nodes.end()){
                 exit_nodes.insert(node);
@@ -51,7 +51,7 @@ void NaturalLoop::find_exit_nodes(CFG* cfg)
             exit_nodes.insert(node);
         }
         if(Ins->get_opcode() == BR_COND){
-            auto I = (br_cond_instruction*)Ins;
+            auto I = (br_cond_Instruction*)Ins;
             auto nextBB1 = (*(cfg->block))[((label_operand*)I->getFalseLabel())->getLabelNo()];
             auto nextBB2 = (*(cfg->block))[((label_operand*)I->getTrueLabel())->getLabelNo()];
             if(loop_nodes.find(nextBB1) == loop_nodes.end() || loop_nodes.find(nextBB2) == loop_nodes.end()){

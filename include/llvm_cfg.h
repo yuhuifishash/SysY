@@ -73,7 +73,7 @@ public:
     std::map<int,std::set<int> > uses{};
     std::map<int,int> mem2reg_map{};//<old regno, new regno>
     std::set<int> allocas;
-    std::map<phi_instruction*,int> new_phi_map{};
+    std::map<phi_Instruction*,int> new_phi_map{};
     
     FunctionBasicInfo func_info;
 

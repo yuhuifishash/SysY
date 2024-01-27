@@ -37,7 +37,7 @@ InstCSEInfo GetCSEInfo(Instruction I)
     ans.result_regno = I->get_resultregno();
     auto list = I->get_nonresult_operands();
     if(I->get_opcode() == CALL){
-        auto tI = (call_instruction*)I;
+        auto tI = (call_Instruction*)I;
         ans.func_name = tI->get_funcName();
     }
     for(auto op:list){
@@ -80,7 +80,7 @@ int CFG::BB_CSEFunctionCall()
         std::set<InstCSEInfo> InstCSESet;
         for(auto Ins:b.second->Instruction_list){
             if(Ins->get_opcode() == CALL){
-                auto I = (call_instruction*)Ins;
+                auto I = (call_Instruction*)Ins;
                 if(CFG_M.find(I->get_funcName()) == CFG_M.end()){continue;}
                 auto target_cfg = CFG_M[I->get_funcName()];
                 if(can_CSE(target_cfg->func_info)){

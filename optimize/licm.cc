@@ -33,7 +33,7 @@ void NaturalLoop::add_preheader(CFG* cfg)
     auto preheaderBB = llvm_IR.llvm_Function_BlockArr_map[cfg->func_ins][preheaderBB_id];
     preheader = preheaderBB;
 
-    preheader->push_Ins(1,new br_uncond_instruction(new label_operand(header->block_id)));
+    preheader->push_Ins(1,new br_uncond_Instruction(new label_operand(header->block_id)));
 
     std::set<int> label_changeM;
     //std::cout<<cfg->func_ins->get_Func_name()<<"  "<<header->block_id<<"\n";
@@ -44,11 +44,11 @@ void NaturalLoop::add_preheader(CFG* cfg)
         //std::cout<<preBB->block_id<<"\n";
         auto Ins = *(preBB->Instruction_list.end() - 1);
         if(Ins->get_opcode() == BR_UNCOND){
-            auto I = (br_uncond_instruction*)Ins;
+            auto I = (br_uncond_Instruction*)Ins;
             I->set_target(new label_operand(preheaderBB_id));
         }
         if(Ins->get_opcode() == BR_COND){
-            auto I = (br_cond_instruction*)Ins;
+            auto I = (br_cond_Instruction*)Ins;
             int TrueBB_id = ((label_operand*)(I->getTrueLabel()))->getLabelNo();
             if(TrueBB_id == header->block_id){
                 I->set_truelabel(new label_operand(preheaderBB_id));
@@ -64,11 +64,11 @@ void NaturalLoop::add_preheader(CFG* cfg)
     //next change all the phi Instructions in the header and add phi Instructions to preheader
     for(auto Ins:header->Instruction_list){
         if(Ins->get_opcode() != PHI){break;}
-        auto I = (phi_instruction*)Ins;
+        auto I = (phi_Instruction*)Ins;
         auto& PhiList = I->getPhiList();
 
         ++cfg->max_reg;
-        auto preheaderPHI_Ins = new phi_instruction(I->getDataType(),new reg_operand(cfg->max_reg));
+        auto preheaderPHI_Ins = new phi_Instruction(I->getDataType(),new reg_operand(cfg->max_reg));
         for(auto it = PhiList.begin();it != PhiList.end();){
             auto PhiOP = *it;
             int Lid = ((label_operand*)(PhiOP.first))->getLabelNo();
@@ -116,7 +116,7 @@ bool isInvariant(CFG* cfg,Instruction I,NaturalLoop* L)
     }
     if(I->get_opcode() == PHI){return false;}
     if(I->get_opcode() == CALL){
-        auto tI = (call_instruction*)I;
+        auto tI = (call_Instruction*)I;
         if(CFG_M.find(tI->get_funcName()) == CFG_M.end()){return false;}
         auto target_cfg = CFG_M[tI->get_funcName()];
         if(!target_cfg->func_info.is_independent_tag){
@@ -166,7 +166,7 @@ void CalculateGlobal(CFG* cfg,NaturalLoop* L)
     for(auto b:L->loop_nodes){
         for(auto Ins:b->Instruction_list){
             if(Ins->get_opcode() == CALL){
-                auto I = (call_instruction*)Ins;
+                auto I = (call_Instruction*)Ins;
                 if(CFG_M.find(I->get_funcName()) == CFG_M.end()){
                     loop_call_independent_tag = 0;
                     return;

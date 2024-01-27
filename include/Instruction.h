@@ -423,7 +423,7 @@ public:
 
 //phi syntax:
 //<result>=phi <ty> [val1,label1],[val2,label2],……
-class phi_instruction : public basic_Instruction
+class phi_Instruction : public basic_Instruction
 {
 private: 
     enum llvm_type type; 
@@ -434,13 +434,13 @@ public:
     operand getResultOp(){return result;}
     std::map<operand,operand>& getPhiList(){return val_labels;}
     operand get_resultreg(){return result;}
-    phi_instruction(enum llvm_type type,operand result,std::map<operand,operand>val_labels){
+    phi_Instruction(enum llvm_type type,operand result,std::map<operand,operand>val_labels){
         this->opcode=llvm_ir_opcode::PHI;
         this->type=type;
         this->result=result;
         this->val_labels=val_labels;
     }
-    phi_instruction(enum llvm_type type,operand result){
+    phi_Instruction(enum llvm_type type,operand result){
         this->opcode=llvm_ir_opcode::PHI;
         this->type=type;
         this->result=result;
@@ -463,7 +463,7 @@ public:
 //alloca
 //usage 1: <result>=alloca <type>
 //usage 2: %3 = alloca [20 x [20 x i32]]
-class alloca_instruction:public basic_Instruction
+class alloca_Instruction:public basic_Instruction
 {
     enum llvm_type type;
     operand result;
@@ -473,12 +473,12 @@ public:
     operand getResultOp(){return result;}
     std::vector<int>getDims(){return dims;}
     operand get_resultreg(){return result;}
-    alloca_instruction(enum llvm_type dttype,operand result){
+    alloca_Instruction(enum llvm_type dttype,operand result){
         this->opcode=llvm_ir_opcode::ALLOCA;
         this->type=dttype;
         this->result=result;
     }
-    alloca_instruction(enum llvm_type dttype,std::vector<int>ArrDims,operand result){
+    alloca_Instruction(enum llvm_type dttype,std::vector<int>ArrDims,operand result){
         this->opcode=llvm_ir_opcode::ALLOCA;
         this->type=dttype;
         this->result=result;
@@ -499,7 +499,7 @@ public:
 //Conditional branch
 //Syntax:
 //br i1 <cond>, label <iftrue>, label <iffalse>
-class br_cond_instruction:public basic_Instruction{
+class br_cond_Instruction:public basic_Instruction{
     operand cond;
     operand trueLabel;
     operand falseLabel;
@@ -508,7 +508,7 @@ public:
     operand getTrueLabel(){return trueLabel;}
     operand getFalseLabel(){return falseLabel;}
     operand get_resultreg(){return NULL;}
-    br_cond_instruction(operand cond,operand trueLabel,operand falseLabel){
+    br_cond_Instruction(operand cond,operand trueLabel,operand falseLabel){
         this->opcode=BR_COND;
         this->cond=cond;
         this->trueLabel=trueLabel;
@@ -533,12 +533,12 @@ public:
 //Unconditional branch
 //Syntax:
 //br label <dest>
-class br_uncond_instruction:public basic_Instruction{
+class br_uncond_Instruction:public basic_Instruction{
     operand destLabel;
 public:
     operand getDestLabel(){return destLabel;}
     operand get_resultreg(){return NULL;}
-    br_uncond_instruction(operand destLabel){
+    br_uncond_Instruction(operand destLabel){
         this->opcode=BR_UNCOND;
         this->destLabel=destLabel;
     }
@@ -565,7 +565,7 @@ Example 2:
 Example 3:
     @p = global [105 x [104 x i32]] [[104 x i32] [], [104 x i32] zeroinitializer, ...]
 */
-class global_id_define_instruction:public basic_Instruction{
+class global_id_define_Instruction:public basic_Instruction{
 //Datas About the Instruction
 public:
     //Construction Function:Set All datas
@@ -574,9 +574,9 @@ public:
     std::string name;
     operand init_val;
     ArrayVal arval;
-    global_id_define_instruction(std::string nam,enum llvm_type typ,operand i_val)
+    global_id_define_Instruction(std::string nam,enum llvm_type typ,operand i_val)
     :name(nam),type(typ),init_val(i_val){}
-    global_id_define_instruction(std::string nam,enum llvm_type typ,ArrayVal v)
+    global_id_define_Instruction(std::string nam,enum llvm_type typ,ArrayVal v)
     :name(nam),type(typ),arval(v),init_val{nullptr}{}
     virtual void code(std::ostream& s);
     virtual void printIR(std::ostream& s);
@@ -591,11 +591,11 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map){return 0;}
 };
 
-class global_str_const_instruction:public basic_Instruction{
+class global_str_const_Instruction:public basic_Instruction{
 public:
     std::string str_val;
     std::string str_name;
-    global_str_const_instruction(std::string strval,std::string strname)
+    global_str_const_Instruction(std::string strval,std::string strname)
     :str_val(strval),str_name(strname){}
     virtual void code(std::ostream& s);
     virtual void printIR(std::ostream& s);
@@ -617,7 +617,7 @@ Example 1:
 Example 2:
     call void @DFS(i32 0,i32 %4)
 */
-class call_instruction:public basic_Instruction{
+class call_Instruction:public basic_Instruction{
 //Datas About the Instruction
 private:
     enum llvm_type ret_type;
@@ -626,7 +626,7 @@ private:
     std::vector<std::pair<enum llvm_type,operand> > args;
 public:
     //Construction Function:Set All datas
-    call_instruction(enum llvm_type retType,operand res,std::string FuncName,std::vector<std::pair<enum llvm_type,operand> >arguments):
+    call_Instruction(enum llvm_type retType,operand res,std::string FuncName,std::vector<std::pair<enum llvm_type,operand> >arguments):
     ret_type(retType),result(res),name(FuncName),args(arguments)
     {
         this->opcode = CALL;
@@ -636,7 +636,7 @@ public:
             }
         }
     }
-    call_instruction(enum llvm_type retType,operand res,std::string FuncName):
+    call_Instruction(enum llvm_type retType,operand res,std::string FuncName):
     ret_type(retType),result(res),name(FuncName)
     {
         this->opcode = CALL;
@@ -677,14 +677,14 @@ Example 2:
 Example 3:
     ret i32 %r7
 */
-class ret_instruction:public basic_Instruction{
+class ret_Instruction:public basic_Instruction{
 //Datas About the Instruction
 private:
     enum llvm_type ret_type;
     operand ret_val;
 public:
     //Construction Function:Set All datas
-    ret_instruction(enum llvm_type retType,operand res):ret_type(retType),ret_val(res){
+    ret_Instruction(enum llvm_type retType,operand res):ret_type(retType),ret_val(res){
         this->opcode=RET;
     }
     operand get_resultreg(){return NULL;}
@@ -710,7 +710,7 @@ Syntax:
 <result> = getelementptr inbounds <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
 <result> = getelementptr <ty>, <N x ptr> <ptrval>, [inrange] <vector index type> <idx>
 */
-class get_elementptr_instruction:public basic_Instruction{
+class get_elementptr_Instruction:public basic_Instruction{
 private:
     enum llvm_type type;
     operand result;
@@ -719,18 +719,18 @@ private:
     std::vector<int>dims;
     std::vector<operand>indexes;
 public:
-    get_elementptr_instruction(enum llvm_type typ,operand res,operand ptr):type(typ),result(res),ptrval(ptr){
+    get_elementptr_Instruction(enum llvm_type typ,operand res,operand ptr):type(typ),result(res),ptrval(ptr){
         opcode = GETELEMENTPTR;
     }
-    get_elementptr_instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim)
+    get_elementptr_Instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim)
     :type(typ),result(res),ptrval(ptr),dims(dim){
         opcode = GETELEMENTPTR;
     }
-    get_elementptr_instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim,std::vector<operand> index)
+    get_elementptr_Instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim,std::vector<operand> index)
     :type(typ),result(res),ptrval(ptr),dims(dim),indexes(index){
         opcode = GETELEMENTPTR;
     }
-    //get_elementptr_instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim,std::vector<int>idx):type(typ),result(res),ptrval(ptr),dims(dim),indexes(idx){}
+    //get_elementptr_Instruction(enum llvm_type typ,operand res,operand ptr,std::vector<int>dim,std::vector<int>idx):type(typ),result(res),ptrval(ptr),dims(dim),indexes(idx){}
     void push_dim(int d){dims.push_back(d);}
     void push_idx_reg(int idx_reg_no){indexes.push_back(new reg_operand(idx_reg_no));}
     void push_idx_imm32(int imm_idx){indexes.push_back(new imm_i32_operand(imm_idx));}
@@ -754,7 +754,7 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map);
 };
 
-class func_define_instruction:public basic_Instruction{
+class func_define_Instruction:public basic_Instruction{
 private:
     enum llvm_type return_type;
     std::string Func_name;
@@ -762,7 +762,7 @@ public:
     std::vector<enum llvm_type> formals;
     std::vector<operand> formals_reg;
     operand get_resultreg(){return NULL;}
-    func_define_instruction(enum llvm_type t,std::string n){
+    func_define_Instruction(enum llvm_type t,std::string n){
         return_type = t;
         Func_name = n;
     }
@@ -782,16 +782,16 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map){return 0;}
     virtual int is_funcdef(){return 1;}
 };
-typedef func_define_instruction* Func_Def_Instruction;
+typedef func_define_Instruction* Func_Def_Instruction;
 
-class func_declare_instruction:public basic_Instruction{
+class func_declare_Instruction:public basic_Instruction{
 private:
     enum llvm_type return_type;
     std::string Func_name;
 public:
     operand get_resultreg(){return NULL;}
     std::vector<enum llvm_type> formals;
-    func_declare_instruction(enum llvm_type t,std::string n){
+    func_declare_Instruction(enum llvm_type t,std::string n){
         return_type = t;
         Func_name = n;
     }
@@ -810,12 +810,12 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map){return 0;}
 };
 
-class fptosi_instruction:public basic_Instruction{
+class fptosi_Instruction:public basic_Instruction{
 private:
     operand result;
     operand value;
 public:
-    fptosi_instruction(operand result_receiver,operand value_for_cast)
+    fptosi_Instruction(operand result_receiver,operand value_for_cast)
         :result(result_receiver),
         value(value_for_cast){
             this->opcode = FPTOSI;
@@ -833,12 +833,12 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map);
 };
 
-class sitofp_instruction:public basic_Instruction{
+class sitofp_Instruction:public basic_Instruction{
 private:
     operand result;
     operand value;
 public:
-    sitofp_instruction(operand result_receiver,operand value_for_cast)
+    sitofp_Instruction(operand result_receiver,operand value_for_cast)
         :result(result_receiver),
         value(value_for_cast){}
     operand get_resultreg(){return result;}
@@ -854,7 +854,7 @@ public:
     virtual int const_propagate(std::map<int,Instruction>& regresult_map);
 };
 
-class zext_instruction:public basic_Instruction{
+class zext_Instruction:public basic_Instruction{
 private:
     llvm_type from_type;
     llvm_type to_type;
@@ -864,7 +864,7 @@ public:
     operand get_resultreg(){return result;}
     operand get_in(){return value;}
     operand get_out(){return result;}
-    zext_instruction(llvm_type to_type,operand result_receiver,
+    zext_Instruction(llvm_type to_type,operand result_receiver,
                     llvm_type from_type,operand value_for_cast)
         :to_type(to_type),
         result(result_receiver),

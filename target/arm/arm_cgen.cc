@@ -24,7 +24,7 @@ void basic_block::set_target(int id1,int id2)
     if(Instruction_list.size() < 1){return;}
     auto it = *(Instruction_list.end()-1);
     if(it->get_opcode() == BR_COND){
-        auto I = (br_cond_instruction*)it;
+        auto I = (br_cond_Instruction*)it;
         int id = ((label_operand*)(I->getTrueLabel()))->getLabelNo();
         if(id == id1){
             I->set_truelabel(new label_operand(id2));
@@ -34,7 +34,7 @@ void basic_block::set_target(int id1,int id2)
         }
     }
     if(it->get_opcode() == BR_UNCOND){
-        auto I = (br_uncond_instruction*)it;
+        auto I = (br_uncond_Instruction*)it;
         I->set_target(new label_operand(id2));
     }
 }
@@ -416,7 +416,7 @@ void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block
     auto endI = *(I_list.end()-1);
     
     if(endI->get_opcode() == BR_UNCOND){
-        auto I = (br_uncond_instruction*)endI;
+        auto I = (br_uncond_Instruction*)endI;
 
         //s << "\t@";
         //I->printIR(s);
@@ -428,7 +428,7 @@ void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block
         code_by_blockDFSorder(s,(*block)[I->get_target()],block);
     }
     if(endI->get_opcode() == BR_COND){
-        auto I = (br_cond_instruction*)endI;
+        auto I = (br_cond_Instruction*)endI;
 
         //s << "\t@";
         //I->printIR(s);
@@ -557,7 +557,7 @@ void code_global_define(std::ostream& s)
         global_offset_map[n.first] = global_ins_offset;
     }
 }
-void global_id_define_instruction::code(std::ostream& s)
+void global_id_define_Instruction::code(std::ostream& s)
 {
     s << name << ":\n";
     if(arval.dims.empty()){
@@ -607,14 +607,14 @@ void global_id_define_instruction::code(std::ostream& s)
     global_label_map[name] = -1;
 }
 
-void global_str_const_instruction::code(std::ostream& s)
+void global_str_const_Instruction::code(std::ostream& s)
 {
     // s << str_name << ":\n";
     // s << "\t.ascii \"" << str_val << "\"\n";
 }
 
-void func_define_instruction::code(std::ostream& s){}
-void func_declare_instruction::code(std::ostream& s){}
+void func_define_Instruction::code(std::ostream& s){}
+void func_declare_Instruction::code(std::ostream& s){}
 
 
 
@@ -828,7 +828,7 @@ void mov_reg2function_call(std::map<int,operand>& Mi32,std::map<int,operand>& Mf
 
 }
 
-void call_instruction::code(std::ostream& s)
+void call_Instruction::code(std::ostream& s)
 {
     s << "\t@";
     printIR(s);
@@ -1000,7 +1000,7 @@ void call_instruction::code(std::ostream& s)
     }
 }
 
-void ret_instruction::code(std::ostream& s)
+void ret_Instruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1065,11 +1065,11 @@ void icmp_Instruction::code(std::ostream& s)
     s30_used_flag = 0;
 }
 
-void br_cond_instruction::code(std::ostream& s){}
+void br_cond_Instruction::code(std::ostream& s){}
 
-void br_uncond_instruction::code(std::ostream& s){}
+void br_uncond_Instruction::code(std::ostream& s){}
 
-void zext_instruction::code(std::ostream& s)
+void zext_Instruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1243,7 +1243,7 @@ void pseudo_alg_shift_Instruction::code(std::ostream& s)
     }
 }
 
-void sitofp_instruction::code(std::ostream& s)
+void sitofp_Instruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1272,7 +1272,7 @@ void sitofp_instruction::code(std::ostream& s)
     }
 }
 
-void fptosi_instruction::code(std::ostream& s)
+void fptosi_Instruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);

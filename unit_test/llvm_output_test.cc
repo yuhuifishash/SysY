@@ -40,26 +40,26 @@ void PhiInstructionTest()
     operand val3=new global_operand("TiamaT");
     operand label3=new label_operand();
 
-    Instruction phi_ins=new phi_instruction(llvm_type::I32,result);
+    Instruction phi_ins=new phi_Instruction(llvm_type::I32,result);
 
     phi_ins->printIR(std::cout);
-    ((phi_instruction*)phi_ins)->Insert_phi(val1,label1);
+    ((phi_Instruction*)phi_ins)->Insert_phi(val1,label1);
     phi_ins->printIR(std::cout);
-    ((phi_instruction*)phi_ins)->Insert_phi(val2,label2);
+    ((phi_Instruction*)phi_ins)->Insert_phi(val2,label2);
     phi_ins->printIR(std::cout);
-    ((phi_instruction*)phi_ins)->Insert_phi(val3,label3);
+    ((phi_Instruction*)phi_ins)->Insert_phi(val3,label3);
     phi_ins->printIR(std::cout);
 }
 void CallInstructionTest()
 {
     std::cout<<"Case 1:\n";
-    Instruction ins=new call_instruction(VOID,nullptr,"BakaFunction");
+    Instruction ins=new call_Instruction(VOID,nullptr,"BakaFunction");
     ins->printIR(std::cout);
 
     operand reg0=new reg_operand();
     std::cout<<"\nCase 2:\n";
 
-    ins=new call_instruction(I32,reg0,"CHUNITHM");
+    ins=new call_Instruction(I32,reg0,"CHUNITHM");
     ins->printIR(std::cout);
 
     operand reg1=new reg_operand();
@@ -69,27 +69,27 @@ void CallInstructionTest()
 
     std::cout<<"\nCase 3:\n";
 
-    ins=new call_instruction(FLOAT32,reg1,"GENSHIN_CONFIDENCE");
-    ((call_instruction*)(ins))->push_back_Parameter(I32,i32_imm114514);
-    ((call_instruction*)(ins))->push_back_Parameter(FLOAT32,reg2);
-    ((call_instruction*)(ins))->push_back_Parameter(PTR,glob);
+    ins=new call_Instruction(FLOAT32,reg1,"GENSHIN_CONFIDENCE");
+    ((call_Instruction*)(ins))->push_back_Parameter(I32,i32_imm114514);
+    ((call_Instruction*)(ins))->push_back_Parameter(FLOAT32,reg2);
+    ((call_Instruction*)(ins))->push_back_Parameter(PTR,glob);
     ins->printIR(std::cout);
 }
 void RetInstructionTest()
 {
-    Instruction ins=new ret_instruction(VOID,nullptr);
+    Instruction ins=new ret_Instruction(VOID,nullptr);
     ins->printIR(std::cout);
 
     operand reg0=new reg_operand();
-    ins=new ret_instruction(I32,reg0);
+    ins=new ret_Instruction(I32,reg0);
     ins->printIR(std::cout);
 
     operand imm=new imm_i32_operand(721);
-    ins=new ret_instruction(I32,imm);
+    ins=new ret_Instruction(I32,imm);
     ins->printIR(std::cout);
 
     operand glo=new global_operand("OttoNanaMi");
-    ins=new ret_instruction(FLOAT32,glo);
+    ins=new ret_Instruction(FLOAT32,glo);
     ins->printIR(std::cout);
 }
 void GEPInstructionPrintTest()
@@ -98,7 +98,7 @@ void GEPInstructionPrintTest()
     operand reg1=new reg_operand();
     std::vector<int>dims={4,7,3,6,2,5,1};
     std::vector<int>idx={0,6,2,5,1};
-    get_elementptr_instruction* ins=new get_elementptr_instruction(I32,reg1,reg0,dims);
+    get_elementptr_Instruction* ins=new get_elementptr_Instruction(I32,reg1,reg0,dims);
     ins->push_idx_reg(idx[0]);
     ins->push_idx_reg(idx[1]);
     ins->push_idx_imm32(idx[2]);
@@ -120,7 +120,7 @@ void OneBlockTest()
     immf32=new imm_f32_operand(114.514);
 
     Instruction ins1,ins2,ins3;
-    ins1=new alloca_instruction(llvm_type::FLOAT32,reg0);
+    ins1=new alloca_Instruction(llvm_type::FLOAT32,reg0);
     ins2=new store_Instruction(llvm_type::FLOAT32,reg0,immf32);
     ins3=new load_Instruction(llvm_type::FLOAT32,reg0,reg1);
 
@@ -134,7 +134,7 @@ void OneFunctionTest()
 {
     llvm_block block = new basic_block(0);
     std::cout<<"Test:Function output"<<"\n";
-    Func_Def_Instruction f = new func_define_instruction(llvm_type::I32,std::string("test_func1"));
+    Func_Def_Instruction f = new func_define_Instruction(llvm_type::I32,std::string("test_func1"));
     f->insert_formal(llvm_type::FLOAT32);
     f->insert_formal(llvm_type::I32);
     f->insert_formal(llvm_type::PTR);
@@ -142,7 +142,7 @@ void OneFunctionTest()
 }
 void SimplePhiInsertTestPrepare(std::ostream& out=std::cout)
 {
-    Func_Def_Instruction f = new func_define_instruction(llvm_type::I32,std::string("main"));
+    Func_Def_Instruction f = new func_define_Instruction(llvm_type::I32,std::string("main"));
     std::map<int, llvm_block>blocks;
 
     operand r1=new reg_operand(1);
@@ -161,12 +161,12 @@ void SimplePhiInsertTestPrepare(std::ostream& out=std::cout)
     operand imm0=new imm_i32_operand(0);
 
     llvm_block b0 = new basic_block(0);
-    Instruction ins2=new alloca_instruction(I32,r1);
-    Instruction ins3=new alloca_instruction(I32,r2);
+    Instruction ins2=new alloca_Instruction(I32,r1);
+    Instruction ins3=new alloca_Instruction(I32,r2);
     Instruction ins4=new store_Instruction(I32,r1,imm1);
     Instruction ins5=new load_Instruction(I32,r1,r3);
     Instruction ins6=new icmp_Instruction(I32,r3,imm0,sgt,r4);
-    Instruction ins7=new br_cond_instruction(r4,l5,l8);
+    Instruction ins7=new br_cond_Instruction(r4,l5,l8);
     b0->Instruction_list.push_back(ins2);
     b0->Instruction_list.push_back(ins3);
     b0->Instruction_list.push_back(ins4);
@@ -176,20 +176,20 @@ void SimplePhiInsertTestPrepare(std::ostream& out=std::cout)
 
     llvm_block b5 = new basic_block(5);
     Instruction ins10=new store_Instruction(I32,r2,imm1);
-    Instruction ins11=new br_uncond_instruction(l6);
+    Instruction ins11=new br_uncond_Instruction(l6);
     b5->Instruction_list.push_back(ins10);
     b5->Instruction_list.push_back(ins11);
 
     llvm_block b6 = new basic_block(6);
     Instruction ins14=new load_Instruction(I32,r2,r7);
-    Instruction ins15=new ret_instruction(I32,r7);
+    Instruction ins15=new ret_Instruction(I32,r7);
     b6->Instruction_list.push_back(ins14);
     b6->Instruction_list.push_back(ins15);
 
     llvm_block b8 = new basic_block(8);
     Instruction ins18=new alg_Instruction(SUB,I32,imm0,imm1,r9);
     Instruction ins19=new store_Instruction(I32,r2,r9);
-    Instruction ins20=new br_uncond_instruction(l6);
+    Instruction ins20=new br_uncond_Instruction(l6);
     b8->Instruction_list.push_back(ins18);
     b8->Instruction_list.push_back(ins19);
     b8->Instruction_list.push_back(ins20);
@@ -221,7 +221,7 @@ void SimplePhiInsertTestPrepare(std::ostream& out=std::cout)
 void MultipleFunctionTest()
 {
     //Func1
-    Func_Def_Instruction f1=new func_define_instruction(llvm_type::I32,std::string("LIU_ZHELI"));
+    Func_Def_Instruction f1=new func_define_Instruction(llvm_type::I32,std::string("LIU_ZHELI"));
     std::map<int, llvm_block>f1Blocks;
     //Block 1.1
     f1Blocks[0]=new basic_block(0);
@@ -233,7 +233,7 @@ void MultipleFunctionTest()
     f1Blocks[2]=new basic_block(2);
 
     //Func2
-    Func_Def_Instruction f2=new func_define_instruction(llvm_type::FLOAT32,std::string("ZHONG_ZHIREN"));
+    Func_Def_Instruction f2=new func_define_Instruction(llvm_type::FLOAT32,std::string("ZHONG_ZHIREN"));
     std::map<int, llvm_block>f2Blocks;
     //Block 2.1
     f2Blocks[0]=new basic_block(0);
@@ -245,7 +245,7 @@ void MultipleFunctionTest()
     f2Blocks[2]=new basic_block(2);
 
     //Func3
-    Func_Def_Instruction f3=new func_define_instruction(llvm_type::VOID,std::string("WANG_GANG"));
+    Func_Def_Instruction f3=new func_define_Instruction(llvm_type::VOID,std::string("WANG_GANG"));
     std::map<int, llvm_block>f3Blocks;
     //Block 3.1
     f3Blocks[0]=new basic_block(0);
@@ -293,7 +293,7 @@ public:
 void AdvancedPhiInsertTestPrepare(std::ostream& out=std::cout)
 {
     reg_container regs;
-    Func_Def_Instruction f = new func_define_instruction(llvm_type::I32,std::string("main"));
+    Func_Def_Instruction f = new func_define_Instruction(llvm_type::I32,std::string("main"));
     std::map<int, llvm_block>blocks;
 
     LLVM_IR ir;
@@ -332,7 +332,7 @@ void GlobalArrayTest(){
         }
         std::cout<<"\n";
     }
-    Instruction ins=new global_id_define_instruction("TiamaT",FLOAT32,array_val);
+    Instruction ins=new global_id_define_Instruction("TiamaT",FLOAT32,array_val);
     ins->printIR(std::cout);
 }
 void fptosi_test(){
@@ -344,9 +344,9 @@ void sitofp_test(){
     get_sitofp_Ins(new reg_operand(1),new reg_operand(2))->printIR(std::cout);
 }
 void zext_test(){
-    (new zext_instruction(I32,new reg_operand(),I1,new imm_i32_operand(1)))->printIR(std::cout);
-    (new zext_instruction(I32,new reg_operand(),I1,new reg_operand()))->printIR(std::cout);
-    (new zext_instruction(I32,new global_operand("Yash"),I1,new imm_i32_operand(0)))->printIR(std::cout);
+    (new zext_Instruction(I32,new reg_operand(),I1,new imm_i32_operand(1)))->printIR(std::cout);
+    (new zext_Instruction(I32,new reg_operand(),I1,new reg_operand()))->printIR(std::cout);
+    (new zext_Instruction(I32,new global_operand("Yash"),I1,new imm_i32_operand(0)))->printIR(std::cout);
 }
 void xor_test(){
     get_alg_Ins_i32_1(I32,XOR,1,2,3)->printIR(std::cout);
