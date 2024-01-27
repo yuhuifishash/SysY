@@ -148,16 +148,16 @@ public:
     int size;
     bool T;
     Register Rd;
-    Register Rn;// not used when offset == label
+    Register Rn;// not used when offset_type == LABEL
     enum {IMM = 0,REG_ADD,REG_SUB,LABEL};
     int offset_type;
     union{
         int offset;
         RmOpsh Rmsh;
-    }OFFSET;// not used when offset == label
-    bool ispreindex;// not used when offset == label
-    bool dowriteback;// not used when offset == label
-    Label addr_label;// not used when offset != label
+    }OFFSET;// not used when offset_type == LABEL
+    bool ispreindex;// not used when offset_type == LABEL
+    bool dowriteback;// not used when offset_type == LABEL
+    Label addr_label;// not used when offset_type != LABEL
 };
 
 class Arm_LoadStoreM : Arm_baseins{
