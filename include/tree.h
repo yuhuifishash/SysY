@@ -3,6 +3,7 @@
 
 //tree definition (used for AST)
 #include <iostream>
+#include "type.h"
 
 class tree_node
 {

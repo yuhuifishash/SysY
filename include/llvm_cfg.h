@@ -67,6 +67,7 @@ public:
     std::bitset<65536>* DF;
     std::bitset<65536>* atdom;
 
+
     std::map<int,std::set<int> > defs{}; //set of basic blocks that contain definitions of {name} 
     std::map<int,int> def_num; //def number
     std::map<int,std::set<int> > uses{};
@@ -75,7 +76,6 @@ public:
     std::map<phi_instruction*,int> new_phi_map{};
     
     FunctionBasicInfo func_info;
-    
 
     void build_CFG();
     void build_dominator_tree();
