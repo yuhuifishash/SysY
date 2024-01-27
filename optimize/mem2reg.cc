@@ -135,7 +135,7 @@ void CFG::insert_phi()
     for(auto Ins:entry_BB->Instruction_list){
         if(Ins->get_opcode() != ALLOCA){continue;}
 
-        auto I = (alloca_instruction*)Ins;
+        auto I = (alloca_Instruction*)Ins;
         if(!(I->getDims().empty())){continue;}//array can not be promoted
         int v = I->get_resultregno();
         llvm_type type = I->getDataType();
@@ -186,7 +186,7 @@ void CFG::insert_phi()
             for(auto BB_Y:calc_DF(BB_X)){
                 //std::cout<<v<<" "<<BB_X<<" "<<BB_Y<<"\n";
                 if(F.find(BB_Y) == F.end()){
-                    phi_instruction* phi_ins = new phi_instruction(type,new reg_operand(++max_reg));
+                    phi_Instruction* phi_ins = new phi_Instruction(type,new reg_operand(++max_reg));
                     (*block)[BB_Y]->push_Ins(0,phi_ins);
                     new_phi_map[phi_ins] = v;
                     F.insert(BB_Y);
@@ -255,7 +255,7 @@ void CFG::var_rename()
                 }
             }
             if(I->get_opcode() == PHI){
-                auto Ins = (phi_instruction*)I;
+                auto Ins = (phi_Instruction*)I;
                 if(Ins->erase_tag){continue;}
                 auto it = new_phi_map.find(Ins);
                 if(it != new_phi_map.end()){//phi instruction is in allocas
@@ -269,7 +269,7 @@ void CFG::var_rename()
             WorkList.insert({BBv,IncomingVals});
             for(auto I:(*block)[BBv]->Instruction_list){
                 if(I->get_opcode() != PHI){break;}
-                auto Ins = (phi_instruction*)I;
+                auto Ins = (phi_Instruction*)I;
                 //找到 phi 对应的 alloca
                 auto it = new_phi_map.find(Ins);
                 if(it != new_phi_map.end()){
@@ -304,10 +304,10 @@ void CFG::var_rename()
         auto tmp_Instruction_list = B1.second->Instruction_list;
         B1.second->Instruction_list.clear();
         for(auto I:tmp_Instruction_list){
-            if(I->get_opcode() == ALLOCA && ((alloca_instruction*)I)->erase_tag){continue;}
+            if(I->get_opcode() == ALLOCA && ((alloca_Instruction*)I)->erase_tag){continue;}
             if(I->get_opcode() == LOAD && ((load_Instruction*)I)->erase_tag){continue;}
             if(I->get_opcode() == STORE && ((store_Instruction*)I)->erase_tag){continue;}
-            if(I->get_opcode() == PHI && ((phi_instruction*)I)->erase_tag){continue;}
+            if(I->get_opcode() == PHI && ((phi_Instruction*)I)->erase_tag){continue;}
             B1.second->push_Ins(1,I);
         }
     }

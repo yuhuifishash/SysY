@@ -9,7 +9,7 @@
 -------------------------------------------------------------
 */
 
-extern std::vector<std::string> error_msgs{};
+extern std::vector<std::string> error_msgs;
 
 
 //binary 

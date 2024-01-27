@@ -146,78 +146,78 @@ Instruction get_fcmp_Ins_1(int type,int cmp_op,int reg1,float val,int reg3){
 }
 
 Instruction get_alloca_Ins(int type,int result_reg_no){
-    Instruction Ins = new alloca_instruction((llvm_type)type,new reg_operand(result_reg_no));
+    Instruction Ins = new alloca_Instruction((llvm_type)type,new reg_operand(result_reg_no));
     return Ins;
 }
 
 Instruction get_alloca_Ins(int type,int result_reg_no,std::vector<int> dims){
-    Instruction Ins = new alloca_instruction((llvm_type)type,dims,new reg_operand(result_reg_no));
+    Instruction Ins = new alloca_Instruction((llvm_type)type,dims,new reg_operand(result_reg_no));
     return Ins;
 }
 
 Instruction get_br_cond_Ins(int reg_no,int true_label,int false_label){
-    Instruction Ins = new br_cond_instruction(new reg_operand(reg_no),new label_operand(true_label),new label_operand(false_label));
+    Instruction Ins = new br_cond_Instruction(new reg_operand(reg_no),new label_operand(true_label),new label_operand(false_label));
     return Ins;
 }
 
 Instruction get_br_uncond_Ins(int label){
-    Instruction Ins = new br_uncond_instruction(new label_operand(label));
+    Instruction Ins = new br_uncond_Instruction(new label_operand(label));
     return Ins;
 }
 
 Instruction get_call_Ins(int type,int result_reg_no,std::string func_name,std::vector<std::pair<enum llvm_type,operand> >arguments){
-    Instruction Ins = new call_instruction((llvm_type)type,new reg_operand(result_reg_no),func_name,arguments);
+    Instruction Ins = new call_Instruction((llvm_type)type,new reg_operand(result_reg_no),func_name,arguments);
     return Ins;
 }
 
 Instruction get_call_Ins(int type,int result_reg_no,std::string func_name){
-    Instruction Ins = new call_instruction((llvm_type)type,new reg_operand(result_reg_no),func_name);
+    Instruction Ins = new call_Instruction((llvm_type)type,new reg_operand(result_reg_no),func_name);
     return Ins;
 }
 
 Instruction get_ret_Ins(int type,int reg_no){
-    Instruction Ins = new ret_instruction((llvm_type)type,new reg_operand(reg_no));
+    Instruction Ins = new ret_Instruction((llvm_type)type,new reg_operand(reg_no));
     return Ins;
 }
 
 Instruction get_ret_Ins_i32(int type,int i32_val){
-    Instruction Ins = new ret_instruction((llvm_type)type,new imm_i32_operand(i32_val));
+    Instruction Ins = new ret_Instruction((llvm_type)type,new imm_i32_operand(i32_val));
     return Ins;
 }
 
 Instruction get_ret_Ins_float(int type,float float_val){
-    Instruction Ins = new ret_instruction((llvm_type)type,new imm_f32_operand(float_val));
+    Instruction Ins = new ret_Instruction((llvm_type)type,new imm_f32_operand(float_val));
     return Ins;
 }
 
 Instruction get_ret_Ins_void(){
     // 4 is VOID
-    Instruction Ins = new ret_instruction((llvm_type)4,nullptr);
+    Instruction Ins = new ret_Instruction((llvm_type)4,nullptr);
     return Ins;
 }
 
 Instruction get_getelementptr_Ins(int type,int result_reg_no,int addr_reg_no,std::vector<int> dims){
-    Instruction Ins = new get_elementptr_instruction((llvm_type)type,new reg_operand(result_reg_no),new reg_operand(addr_reg_no),dims);
+    Instruction Ins = new get_elementptr_Instruction((llvm_type)type,new reg_operand(result_reg_no),new reg_operand(addr_reg_no),dims);
     return Ins;
 }
 
 Instruction get_getelementptr_Ins_global(int type,int result_reg_no,Symbol name,std::vector<int> dims){
-    Instruction Ins = new get_elementptr_instruction((llvm_type)type,new reg_operand(result_reg_no),new global_operand(name->get_string()),dims);
+    Instruction Ins = new get_elementptr_Instruction((llvm_type)type,new reg_operand(result_reg_no),new global_operand(name->get_string()),dims);
     return Ins;
 }
 
 Instruction get_fptosi_Ins(operand from_fp,operand to_si){
-    Instruction ins = new fptosi_instruction(to_si,from_fp);
+    Instruction ins = new fptosi_Instruction(to_si,from_fp);
     return ins;
 }
 
 Instruction get_sitofp_Ins(operand from_si,operand to_fp){
-    Instruction ins = new sitofp_instruction(to_fp,from_si);
+    Instruction ins = new sitofp_Instruction(to_fp,from_si);
     return ins;
 }
 
 Instruction get_zext_Ins(int reg1,int reg2){
-    Instruction ins = new zext_instruction(llvm_type::I32,new reg_operand(reg1),llvm_type::I1,new reg_operand(reg2));
+    Instruction ins = new zext_Instruction(llvm_type::I32,new reg_operand(reg1),llvm_type::I1,new reg_operand(reg2));
     return ins;
 }
 
@@ -642,7 +642,7 @@ void LAndExp_and::codeIR()
     now_label = end_label;
     llvm_block B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
     ++max_reg;
-    phi_instruction* phi_ins = new phi_instruction(llvm_type::I32,new reg_operand(max_reg));
+    phi_Instruction* phi_ins = new phi_Instruction(llvm_type::I32,new reg_operand(max_reg));
     phi_ins->Insert_phi(new imm_i32_operand(0),new label_operand(phi1_label));
     phi_ins->Insert_phi(new reg_operand(max_reg-1),new label_operand(phi2_label));
     B3->push_Ins(1,phi_ins);
@@ -692,7 +692,7 @@ void LOrExp_or::codeIR()
     now_label = end_label;
     llvm_block B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
     ++max_reg;
-    phi_instruction* phi_ins = new phi_instruction(llvm_type::I32,new reg_operand(max_reg));
+    phi_Instruction* phi_ins = new phi_Instruction(llvm_type::I32,new reg_operand(max_reg));
     phi_ins->Insert_phi(new imm_i32_operand(1),new label_operand(phi1_label));
     phi_ins->Insert_phi(new reg_operand(max_reg-1),new label_operand(phi2_label));
     B3->push_Ins(1,phi_ins);
@@ -722,7 +722,7 @@ void Lval::codeIR()
             formal_array_flag = irgen_table.formal_array_table[reg1];
             is_array = !(arraydims.size() + formal_array_flag == arrayindexs.size());
             if(type == 1){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(1,max_reg,reg1,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(1,max_reg,reg1,arraydims);
                 if(!formal_array_flag){
                     ArrayIns->push_idx_imm32(0);
                 }
@@ -732,7 +732,7 @@ void Lval::codeIR()
                 B->push_Ins(1,ArrayIns);
             }
             if(type == 2){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(2,max_reg,reg1,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(2,max_reg,reg1,arraydims);
                 if(!formal_array_flag){
                     ArrayIns->push_idx_imm32(0);
                 }
@@ -747,7 +747,7 @@ void Lval::codeIR()
             arraydims = semant_table.global_table[name].dims;
             is_array = !(arraydims.size() == arrayindexs.size());
             if(type == 1){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
                 ArrayIns->push_idx_imm32(0);
                 for(auto idx:arrayindexs){
                     ArrayIns->push_idx_reg(idx);
@@ -755,7 +755,7 @@ void Lval::codeIR()
                 B->push_Ins(1,ArrayIns);
             }
             if(type == 2){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(2,max_reg,name,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(2,max_reg,name,arraydims);
                 ArrayIns->push_idx_imm32(0);
                 for(auto idx:arrayindexs){
                     ArrayIns->push_idx_reg(idx);
@@ -789,14 +789,14 @@ void Lval::codeIR()
             }
             else{
                 if(type == 1){
-                    get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(1,max_reg,reg1,std::vector<int>{});
+                    get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(1,max_reg,reg1,std::vector<int>{});
                     if(!formal_array_flag){
                         ArrayIns->push_idx_imm32(0);
                     }
                     B->push_Ins(1,ArrayIns);
                 }
                 else{
-                    get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(2,max_reg,reg1,std::vector<int>{});
+                    get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(2,max_reg,reg1,std::vector<int>{});
                     if(!formal_array_flag){
                         ArrayIns->push_idx_imm32(0);
                     }
@@ -817,12 +817,12 @@ void Lval::codeIR()
             }
             else{
                 if(type == 1){
-                    get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(1,max_reg,name,std::vector<int>{});
+                    get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(1,max_reg,name,std::vector<int>{});
                     ArrayIns->push_idx_imm32(0);
                     B->push_Ins(1,ArrayIns);
                 }
                 else{
-                    get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(2,max_reg,name,std::vector<int>{});
+                    get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(2,max_reg,name,std::vector<int>{});
                     ArrayIns->push_idx_imm32(0);
                     B->push_Ins(1,ArrayIns);
                 }
@@ -992,7 +992,7 @@ void assign_stmt::codeIR()
             ++max_reg;
             arraydims = irgen_table.reg_table[reg1].first;
             if(lval->get_type() == 1){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(1,max_reg,reg1,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(1,max_reg,reg1,arraydims);
                 if(!formal_array_flag){
                     ArrayIns->push_idx_imm32(0);
                 }
@@ -1002,7 +1002,7 @@ void assign_stmt::codeIR()
                 B->push_Ins(1,ArrayIns);
             }
             if(lval->get_type() == 2){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins(2,max_reg,reg1,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins(2,max_reg,reg1,arraydims);
                 if(!formal_array_flag){
                     ArrayIns->push_idx_imm32(0);
                 }
@@ -1016,7 +1016,7 @@ void assign_stmt::codeIR()
             ++max_reg;
             arraydims = semant_table.global_table[name].dims;
             if(lval->get_type() == 1){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
                 ArrayIns->push_idx_imm32(0);
                 for(auto idx:arrayindexs){
                     ArrayIns->push_idx_reg(idx);
@@ -1024,7 +1024,7 @@ void assign_stmt::codeIR()
                 B->push_Ins(1,ArrayIns);
             }
             if(lval->get_type() == 2){
-                get_elementptr_instruction* ArrayIns = (get_elementptr_instruction*)get_getelementptr_Ins_global(2,max_reg,name,arraydims);
+                get_elementptr_Instruction* ArrayIns = (get_elementptr_Instruction*)get_getelementptr_Ins_global(2,max_reg,name,arraydims);
                 ArrayIns->push_idx_imm32(0);
                 for(auto idx:arrayindexs){
                     ArrayIns->push_idx_reg(idx);
@@ -1415,8 +1415,8 @@ void recursive_Array_Init_IR(llvm_block block,const std::vector<int>dims,int arr
 
             max_reg++;
             int addr_reg = max_reg;
-            get_elementptr_instruction* gep =
-                (get_elementptr_instruction*)
+            get_elementptr_Instruction* gep =
+                (get_elementptr_Instruction*)
                     get_getelementptr_Ins(ArrayType,addr_reg,arrayaddr_reg_no,dims);
 
             // pos, dims -> [][][]...
@@ -1472,7 +1472,7 @@ void VarDecl::codeIR()
                     irgen_table.reg_table[max_reg] = std::pair<std::vector<int>,int>{val.dims,2};
                     B->push_Ins(0,get_alloca_Ins(2,max_reg,val.dims));
                 }
-                call_instruction* memsetCall = new call_instruction(VOID,nullptr,std::string("llvm.memset.p0.i32"));
+                call_Instruction* memsetCall = new call_Instruction(VOID,nullptr,std::string("llvm.memset.p0.i32"));
                 memsetCall->push_back_Parameter(PTR,new reg_operand(max_reg));// max_reg is array addr
                 memsetCall->push_back_Parameter(I8,new imm_i32_operand(0));
                 memsetCall->push_back_Parameter(I32,new imm_i32_operand(array_sz*sizeof(int)));
@@ -1597,7 +1597,7 @@ void ConstDecl::codeIR()
                     B->push_Ins(0,get_alloca_Ins(2,max_reg,val.dims));
                 }
                 //call void @llvm.memset.p0.i32(ptr align 16 %2, i8 0, i32 36, i1 0)
-                call_instruction* memsetCall = new call_instruction(VOID,nullptr,std::string("llvm.memset.p0.i32"));
+                call_Instruction* memsetCall = new call_Instruction(VOID,nullptr,std::string("llvm.memset.p0.i32"));
                 memsetCall->push_back_Parameter(PTR,new reg_operand(max_reg));// max_reg is array addr
                 memsetCall->push_back_Parameter(I8,new imm_i32_operand(0));
                 memsetCall->push_back_Parameter(I32,new imm_i32_operand(array_sz*sizeof(int)));
@@ -1720,7 +1720,7 @@ void __FuncDef::codeIR()
     if(return_type == 2){
         FuncDeclRetType = FLOAT32;
     }
-    Func_Def_Instruction FuncDefIns = new func_define_instruction(FuncDeclRetType,name->get_string());
+    Func_Def_Instruction FuncDefIns = new func_define_Instruction(FuncDeclRetType,name->get_string());
     //std::cerr<<name->get_string()<<"\n";
     max_reg = -1;
     irgen_table.reg_table.clear();
@@ -1800,59 +1800,59 @@ void CompUnit_FuncDef::codeIR()
 
 void add_libfunc_decl()
 {
-    func_declare_instruction* getint = new func_declare_instruction(I32,"getint");
+    func_declare_Instruction* getint = new func_declare_Instruction(I32,"getint");
     llvm_IR.func_declare.push_back(getint);
 
-    func_declare_instruction* getchar = new func_declare_instruction(I32,"getch");
+    func_declare_Instruction* getchar = new func_declare_Instruction(I32,"getch");
     llvm_IR.func_declare.push_back(getchar);
 
-    func_declare_instruction* getfloat = new func_declare_instruction(FLOAT32,"getfloat");
+    func_declare_Instruction* getfloat = new func_declare_Instruction(FLOAT32,"getfloat");
     llvm_IR.func_declare.push_back(getfloat);
 
-    func_declare_instruction* getarray = new func_declare_instruction(I32,"getarray");
+    func_declare_Instruction* getarray = new func_declare_Instruction(I32,"getarray");
     getarray->insert_formal(PTR);
     llvm_IR.func_declare.push_back(getarray);
 
-    func_declare_instruction* getfloatarray = new func_declare_instruction(I32,"getfarray");
+    func_declare_Instruction* getfloatarray = new func_declare_Instruction(I32,"getfarray");
     getfloatarray->insert_formal(PTR);
     llvm_IR.func_declare.push_back(getfloatarray);
 
-    func_declare_instruction* putint = new func_declare_instruction(VOID,"putint");
+    func_declare_Instruction* putint = new func_declare_Instruction(VOID,"putint");
     putint->insert_formal(I32);
     llvm_IR.func_declare.push_back(putint);
 
-    func_declare_instruction* putch = new func_declare_instruction(VOID,"putch");
+    func_declare_Instruction* putch = new func_declare_Instruction(VOID,"putch");
     putch->insert_formal(I32);
     llvm_IR.func_declare.push_back(putch);
 
-    func_declare_instruction* putfloat = new func_declare_instruction(VOID,"putfloat");
+    func_declare_Instruction* putfloat = new func_declare_Instruction(VOID,"putfloat");
     putfloat->insert_formal(FLOAT32);
     llvm_IR.func_declare.push_back(putfloat);
 
-    func_declare_instruction* putarray = new func_declare_instruction(VOID,"putarray");
+    func_declare_Instruction* putarray = new func_declare_Instruction(VOID,"putarray");
     putarray->insert_formal(I32);
     putarray->insert_formal(PTR);
     llvm_IR.func_declare.push_back(putarray);
 
-    func_declare_instruction* putfarray = new func_declare_instruction(VOID,"putfarray");
+    func_declare_Instruction* putfarray = new func_declare_Instruction(VOID,"putfarray");
     putfarray->insert_formal(I32);
     putfarray->insert_formal(PTR);
     llvm_IR.func_declare.push_back(putfarray);
 
     // put format string
-    func_declare_instruction* putf = new func_declare_instruction(VOID,"putf");
+    func_declare_Instruction* putf = new func_declare_Instruction(VOID,"putf");
     putf->insert_formal(PTR);
     llvm_IR.func_declare.push_back(putf);
 
-    func_declare_instruction* starttime = new func_declare_instruction(VOID,"_sysy_starttime");
+    func_declare_Instruction* starttime = new func_declare_Instruction(VOID,"_sysy_starttime");
     starttime->insert_formal(I32);
     llvm_IR.func_declare.push_back(starttime);
 
-    func_declare_instruction* stoptime = new func_declare_instruction(VOID,"_sysy_stoptime");
+    func_declare_Instruction* stoptime = new func_declare_Instruction(VOID,"_sysy_stoptime");
     stoptime->insert_formal(I32);
     llvm_IR.func_declare.push_back(stoptime);
 
-    func_declare_instruction* llvm_memset = new func_declare_instruction(VOID,"llvm.memset.p0.i32");
+    func_declare_Instruction* llvm_memset = new func_declare_Instruction(VOID,"llvm.memset.p0.i32");
     llvm_memset->insert_formal(PTR);
     llvm_memset->insert_formal(I8);
     llvm_memset->insert_formal(I32);

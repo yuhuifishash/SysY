@@ -268,7 +268,7 @@ void icmp_Instruction::printIR(std::ostream&s){
 void fcmp_Instruction::printIR(std::ostream&s){
     s<<result<<" = fcmp "<<cond<<" "<<type<<" "<<op1<<","<<op2<<"\n";
 }
-void phi_instruction::printIR(std::ostream&s){
+void phi_Instruction::printIR(std::ostream&s){
     s<<result<<" = phi "<<type<<" ";
     for(std::map<operand,operand>::iterator it=val_labels.begin();it!=val_labels.end();++it)
     {
@@ -278,7 +278,7 @@ void phi_instruction::printIR(std::ostream&s){
     }
     s<<'\n';
 }
-void alloca_instruction::printIR(std::ostream&s){
+void alloca_Instruction::printIR(std::ostream&s){
     s<<result<<" = alloca ";
     if(dims.empty())
         s<<type<<"\n";//单个变量
@@ -288,11 +288,11 @@ void alloca_instruction::printIR(std::ostream&s){
         s<<type<<std::string(dims.size(),']')<<"\n";
     }
 }
-void br_cond_instruction::printIR(std::ostream&s){
+void br_cond_Instruction::printIR(std::ostream&s){
     //br i1 <cond>, label <iftrue>, label <iffalse>
     s<<"br i1 "<<cond<<", label "<<trueLabel<<", label "<<falseLabel<<"\n";
 }
-void br_uncond_instruction::printIR(std::ostream&s){
+void br_uncond_Instruction::printIR(std::ostream&s){
     //br label <dest>
     s<<"br label "<<destLabel<<"\n";
 }
@@ -301,7 +301,7 @@ void br_uncond_instruction::printIR(std::ostream&s){
 //define void @DFS(i32 %0,i32 %1){
 //  Function Body
 //}
-void func_define_instruction::printIR(std::ostream&s)
+void func_define_Instruction::printIR(std::ostream&s)
 {
     //define void @FunctionName
     s<<"define "<<return_type<<" @"<<Func_name;
@@ -316,7 +316,7 @@ void func_define_instruction::printIR(std::ostream&s)
     s<<")\n";
 }
 
-void func_declare_instruction::printIR(std::ostream& s){
+void func_declare_Instruction::printIR(std::ostream& s){
     //declare void @FunctionName(i32,f32)
     s<<"declare "<<return_type<<" @"<<Func_name<<"(";
     for(uint32_t i = 0;i < formals.size(); ++i){
@@ -464,7 +464,7 @@ void recursive_print(std::ostream& s,llvm_type type,ArrayVal& v,int dimDph,int b
 }
 
 //Remember "\n"
-void global_id_define_instruction::printIR(std::ostream& s)
+void global_id_define_Instruction::printIR(std::ostream& s)
 {
     if(arval.dims.empty()){
         if(init_val != nullptr)
@@ -497,7 +497,7 @@ Example 1:
 Example 2:
     call void @DFS(i32 0,i32 %4)
 */
-void call_instruction::printIR(std::ostream& s)
+void call_Instruction::printIR(std::ostream& s)
 {
     if(ret_type != llvm_type::VOID){
         s<<result<<" = ";
@@ -515,7 +515,7 @@ void call_instruction::printIR(std::ostream& s)
 }
 
 //Remember "\n"
-void ret_instruction::printIR(std::ostream& s)
+void ret_Instruction::printIR(std::ostream& s)
 {
     s<<"ret "<<ret_type;
     if(ret_val!=nullptr){
@@ -530,7 +530,7 @@ Syntax:
 <result> = getelementptr inbounds <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
 <result> = getelementptr <ty>, <N x ptr> <ptrval>, [inrange] <vector index type> <idx>
 */
-void get_elementptr_instruction::printIR(std::ostream& s)
+void get_elementptr_Instruction::printIR(std::ostream& s)
 {
     s<<result<<" = getelementptr ";
     //print type
@@ -552,15 +552,15 @@ void get_elementptr_instruction::printIR(std::ostream& s)
     s<<"\n";
 }
 
-void fptosi_instruction::printIR(std::ostream& s){
+void fptosi_Instruction::printIR(std::ostream& s){
     s<<result<<" = fptosi float"<<" "<<value<<" to "<<"i32"<<"\n";
 }
 
-void sitofp_instruction::printIR(std::ostream& s){
+void sitofp_Instruction::printIR(std::ostream& s){
     s<<result<<" = sitofp i32"<<" "<<value<<" to "<<"float"<<"\n";
 }
 
-void global_str_const_instruction::printIR(std::ostream& s){
+void global_str_const_Instruction::printIR(std::ostream& s){
     //std::cerr<<str_val<<"\n";
     int str_len=str_val.size()+1;
     for(char c:str_val){
@@ -591,7 +591,7 @@ void global_str_const_instruction::printIR(std::ostream& s){
     s<<"\\00"<<"\"\n";
 }
 
-void zext_instruction::printIR(std::ostream& s){
+void zext_Instruction::printIR(std::ostream& s){
     s<<result<<" = zext "<<from_type<<" "<<value<<" to "<<to_type<<"\n";
 }
 

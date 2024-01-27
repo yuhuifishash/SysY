@@ -33,7 +33,7 @@ void CFG::SimpleDCE()
         if(reg_use_count[v] == 0){
             auto resultI = regresult_ins_map[v];
             if(resultI->get_opcode() == CALL){
-                auto I = (call_instruction*)resultI;
+                auto I = (call_Instruction*)resultI;
                 if(CFG_M.find(I->get_funcName()) == CFG_M.end()){continue;}
                 auto target_cfg = CFG_M[I->get_funcName()];
                 if(!target_cfg->func_info.is_independent_tag){continue;}

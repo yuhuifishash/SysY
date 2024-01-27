@@ -143,14 +143,14 @@ void CFG::register_alloc()
             }
 
             if(instruction->get_opcode()==BR_UNCOND){
-                int destLabelNo = ((label_operand*)(((br_uncond_instruction*)instruction)->getDestLabel()))->getLabelNo();
+                int destLabelNo = ((label_operand*)(((br_uncond_Instruction*)instruction)->getDestLabel()))->getLabelNo();
                 
                 if(block_visited.find(destLabelNo)==block_visited.end()){
                     unnumberedBlockID.push(destLabelNo);
                 }
             }else if(instruction->get_opcode()==BR_COND){
-                int trueDestLabelNo = ((label_operand*)(((br_cond_instruction*)instruction)->getTrueLabel()))->getLabelNo();
-                int falseDestLabelNo = ((label_operand*)(((br_cond_instruction*)instruction)->getFalseLabel()))->getLabelNo();
+                int trueDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getTrueLabel()))->getLabelNo();
+                int falseDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getFalseLabel()))->getLabelNo();
                 if(block_visited.find(trueDestLabelNo)==block_visited.end()){
                     unnumberedBlockID.push(trueDestLabelNo);
                 }
@@ -421,9 +421,9 @@ std::vector<int> fcmp_Instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> phi_instruction::refering_virtual_regs(){
+std::vector<int> phi_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
-    // std::cerr<<"Unexpected to get in phi_instruction::refering_virtual_regs()"<<std::endl;
+    // std::cerr<<"Unexpected to get in phi_Instruction::refering_virtual_regs()"<<std::endl;
     if(result->getOperandType() == basic_operand::REG){
         ret.push_back(((reg_operand*)result)->getRegNo());
     }
@@ -436,16 +436,16 @@ std::vector<int> phi_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> alloca_instruction::refering_virtual_regs(){
+std::vector<int> alloca_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
-    // std::cerr<<"Unexpected to get in alloca_instruction::refering_virtual_regs()"<<std::endl;
+    // std::cerr<<"Unexpected to get in alloca_Instruction::refering_virtual_regs()"<<std::endl;
     if(result->getOperandType() == basic_operand::REG){
         ret.push_back(((reg_operand*)result)->getRegNo());
     }
     return ret;
 }
 
-std::vector<int> br_cond_instruction::refering_virtual_regs(){
+std::vector<int> br_cond_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(cond->getOperandType()==basic_operand::REG){
         ret.push_back(
@@ -455,24 +455,24 @@ std::vector<int> br_cond_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> br_uncond_instruction::refering_virtual_regs(){
+std::vector<int> br_uncond_Instruction::refering_virtual_regs(){
     std::vector<int>ret;
     return ret;
 }
 
-std::vector<int> global_id_define_instruction::refering_virtual_regs(){
+std::vector<int> global_id_define_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
-    std::cerr<<"Unexpected to get in global_id_define_instruction::refering_virtual_regs()"<<std::endl;
+    std::cerr<<"Unexpected to get in global_id_define_Instruction::refering_virtual_regs()"<<std::endl;
     return ret;
 }
 
-std::vector<int> global_str_const_instruction::refering_virtual_regs(){
+std::vector<int> global_str_const_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
-    std::cerr<<"Unexpected to get in global_str_const_instruction::refering_virtual_regs()"<<std::endl;
+    std::cerr<<"Unexpected to get in global_str_const_Instruction::refering_virtual_regs()"<<std::endl;
     return ret;
 }
 
-std::vector<int> call_instruction::refering_virtual_regs(){
+std::vector<int> call_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(result != NULL){
         // this->printIR(std::cerr);
@@ -489,7 +489,7 @@ std::vector<int> call_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> ret_instruction::refering_virtual_regs(){
+std::vector<int> ret_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(ret_val != NULL){
         if(ret_val->getOperandType()==basic_operand::REG){
@@ -499,7 +499,7 @@ std::vector<int> ret_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> get_elementptr_instruction::refering_virtual_regs(){
+std::vector<int> get_elementptr_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     // std::cerr<<"Unexpected to get in get_elementptr_instruction::refering_virtual_regs()\n";
     if(result->getOperandType()==basic_operand::REG){
@@ -516,19 +516,19 @@ std::vector<int> get_elementptr_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> func_define_instruction::refering_virtual_regs(){
+std::vector<int> func_define_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
-    std::cerr<<"Unexpected to get in func_define_instruction::refering_virtual_regs()\n";
+    std::cerr<<"Unexpected to get in func_define_Instruction::refering_virtual_regs()\n";
     return ret;
 }
 
-std::vector<int> func_declare_instruction::refering_virtual_regs(){
+std::vector<int> func_declare_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     std::cerr<<"Unexpected to get in func_declare_instruction::refering_virtual_regs()\n";
     return ret;
 }
 
-std::vector<int> fptosi_instruction::refering_virtual_regs(){
+std::vector<int> fptosi_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(result->getOperandType()==basic_operand::REG){
         ret.push_back(
@@ -543,7 +543,7 @@ std::vector<int> fptosi_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> sitofp_instruction::refering_virtual_regs(){
+std::vector<int> sitofp_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(result->getOperandType()==basic_operand::REG){
         ret.push_back(
@@ -558,7 +558,7 @@ std::vector<int> sitofp_instruction::refering_virtual_regs(){
     return ret;
 }
 
-std::vector<int> zext_instruction::refering_virtual_regs(){
+std::vector<int> zext_Instruction::refering_virtual_regs(){
     std::vector<int> ret;
     if(result->getOperandType()==basic_operand::REG){
         ret.push_back(

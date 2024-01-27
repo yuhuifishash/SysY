@@ -19,8 +19,8 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
         if(old_list[next]->get_opcode() != GETELEMENTPTR){
             break;
         }
-        auto gep_previous = (get_elementptr_instruction*)old_list[previous];
-        auto gep_next = (get_elementptr_instruction*)old_list[next];
+        auto gep_previous = (get_elementptr_Instruction*)old_list[previous];
+        auto gep_next = (get_elementptr_Instruction*)old_list[next];
         auto next_ptrval = gep_next->get_ptrVal();
         if(next_ptrval->getOperandType() != basic_operand::REG){
             break;
@@ -61,14 +61,14 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
     if(chain_size == 1){
         return 0;
     }
-    auto begin_gep = (get_elementptr_instruction*)old_list[pos];
+    auto begin_gep = (get_elementptr_Instruction*)old_list[pos];
     auto gep_type = begin_gep->get_type();
 
     decltype(begin_gep->get_indexes()) building_index;
     auto last_dim = begin_gep->get_dims();
     auto last_ptrval = begin_gep->get_ptrVal();
     for(int slide_pos = pos;slide_pos < pos+chain_size;slide_pos++){
-        auto cur_gep = (get_elementptr_instruction*)old_list[slide_pos];
+        auto cur_gep = (get_elementptr_Instruction*)old_list[slide_pos];
         for(auto index:cur_gep->get_indexes()){
             building_index.push_back(index);
         }
@@ -86,11 +86,11 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
             }
         }
         if(code_alive){
-            auto building_gep = new get_elementptr_instruction(gep_type,cur_gep->get_result(),last_ptrval,last_dim,building_index);
+            auto building_gep = new get_elementptr_Instruction(gep_type,cur_gep->get_result(),last_ptrval,last_dim,building_index);
             new_list.push_back(building_gep);
             last_ptrval = cur_gep->get_result();
             if(!is_last){
-                last_dim = ((get_elementptr_instruction*)old_list[slide_pos+1])->get_dims();
+                last_dim = ((get_elementptr_Instruction*)old_list[slide_pos+1])->get_dims();
             }
             building_index.clear();
         }

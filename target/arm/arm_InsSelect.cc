@@ -224,17 +224,17 @@ void CFG::phi_destruction()
                 llvm_IR.llvm_Function_BlockArr_map[func_ins][max_label] = new basic_block(max_label);
                 auto midB = llvm_IR.llvm_Function_BlockArr_map[func_ins][max_label];
                 preB->set_target(B->block_id,max_label);
-                midB->push_Ins(1,new br_uncond_instruction((new label_operand(B->block_id))));
+                midB->push_Ins(1,new br_uncond_Instruction((new label_operand(B->block_id))));
                 for(auto I:B->Instruction_list){
                     if(I->get_opcode() != PHI){break;}
-                    auto Ins = (phi_instruction*)I;
+                    auto Ins = (phi_Instruction*)I;
                     Ins->set_phi_label(preB->block_id,midB->block_id);
                 }
             }
         }
         for(auto I:B->Instruction_list){
             if(I->get_opcode() != PHI){break;}
-            auto Ins = (phi_instruction*)I;
+            auto Ins = (phi_Instruction*)I;
             for(auto &phipa:Ins->getPhiList()){
                 int labelid = ((label_operand*)phipa.first)->getLabelNo();
                 auto B = (*block)[labelid];
@@ -761,7 +761,7 @@ void alg_Instruction::cgen_prework(){
             block_now->push_Ins(1,new pseudo_alg_shift_Instruction(ADD_SHIFT,op1,op1,-31,new reg_operand(max_prereg)));
             block_now->push_Ins(1,new alg_Instruction(ASHR,I32,new reg_operand(max_prereg),new imm_i32_operand(1),result));
         }else{
-            call_instruction* div_call = new call_instruction(I32,result,"__aeabi_idiv");
+            call_Instruction* div_call = new call_Instruction(I32,result,"__aeabi_idiv");
             div_call->push_back_Parameter(I32,op1);
             div_call->push_back_Parameter(I32,op2);
 
@@ -781,7 +781,7 @@ void alg_Instruction::cgen_prework(){
     //      r3 <- ???
     //      r# <- KEEP
     if(opcode==MOD){
-        call_instruction* mod_call = new call_instruction(I32,result,"__modsi3");
+        call_Instruction* mod_call = new call_Instruction(I32,result,"__modsi3");
         mod_call->push_back_Parameter(I32,op1);
         mod_call->push_back_Parameter(I32,op2);
 
@@ -831,8 +831,8 @@ void fcmp_Instruction::cgen_prework(){
     //%6 = fcmp ogt float %4,%5
     //br i1 %6,label,label
 }
-void phi_instruction::cgen_prework(){}
-void alloca_instruction::cgen_prework(){
+void phi_Instruction::cgen_prework(){}
+void alloca_Instruction::cgen_prework(){
     // alloca for temp variables
     // sub sp, sp, #size
     // add %?, fp, #pos
@@ -846,26 +846,26 @@ void alloca_instruction::cgen_prework(){
     // this->printIR(std::cerr);
     // std::cerr<<"  "<<next_negative_offset<<std::endl;
 }
-void br_cond_instruction::cgen_prework(){
+void br_cond_Instruction::cgen_prework(){
     // (in codeARM)
     // cmp cond,#0
     // beq FalseLabel
     // bne TrueLabel
     block_now->push_Ins(1,this);
 }
-void br_uncond_instruction::cgen_prework(){
+void br_uncond_Instruction::cgen_prework(){
     //b <label>
     block_now->push_Ins(1,this);
 }
-void global_id_define_instruction::cgen_prework(){
-    std::cerr<<"Unexpected global_id_define_instruction.\n";
-    std::cerr<<"See global_id_define_instruction::cgen_prework()\n";
+void global_id_define_Instruction::cgen_prework(){
+    std::cerr<<"Unexpected global_id_define_Instruction.\n";
+    std::cerr<<"See global_id_define_Instruction::cgen_prework()\n";
 }
-void global_str_const_instruction::cgen_prework(){
-    std::cerr<<"Unexpected global_str_const_instruction.\n";
-    std::cerr<<"See global_str_const_instruction::cgen_prework()\n";
+void global_str_const_Instruction::cgen_prework(){
+    std::cerr<<"Unexpected global_str_const_Instruction.\n";
+    std::cerr<<"See global_str_const_Instruction::cgen_prework()\n";
 }
-void call_instruction::cgen_prework(){
+void call_Instruction::cgen_prework(){
     // calling convention
     // Deal with calling conventions later
 
@@ -873,8 +873,8 @@ void call_instruction::cgen_prework(){
     // 
 
     if(this->name == "llvm.memset.p0.i32"){
-        // std::cerr<<"memset branch in call_instruction::cgen_prework()\n";
-        call_instruction* memsetCall = new call_instruction(VOID,nullptr,std::string("memset"));
+        // std::cerr<<"memset branch in call_Instruction::cgen_prework()\n";
+        call_Instruction* memsetCall = new call_Instruction(VOID,nullptr,std::string("memset"));
         operand base_addr = args[0].second;
         if(base_addr->getOperandType() != basic_operand::REG){
             std::cerr<<"ASSERT FAILED: memset addr not REG\n";
@@ -932,7 +932,7 @@ void call_instruction::cgen_prework(){
     }
     block_now->push_Ins(1,this);
 }
-void ret_instruction::cgen_prework(){
+void ret_Instruction::cgen_prework(){
     //mov r0, <retrun value>
 
     // r0: Part of calling convention
@@ -948,7 +948,7 @@ std::vector<int> calc_1b(unsigned int a);
 
 
 
-void get_elementptr_instruction::cgen_prework(){
+void get_elementptr_Instruction::cgen_prework(){
     // [ 3 x [ 4 x [5 x float ] ] ], ptr, idx1, idx2, idx3, idx4
     // 3*4*5*idx1 + 4*5*idx2 + 5*idx3 + idx4
 
@@ -1052,22 +1052,22 @@ void get_elementptr_instruction::cgen_prework(){
         std::cerr<<"Unexpected ptrval type\n";
     }
 }
-void func_define_instruction::cgen_prework(){
-    std::cerr<<"Unexpected func_define_instruction.\n";
-    std::cerr<<"See func_define_instruction::cgen_prework()\n";
+void func_define_Instruction::cgen_prework(){
+    std::cerr<<"Unexpected func_define_Instruction.\n";
+    std::cerr<<"See func_define_Instruction::cgen_prework()\n";
 }
-void func_declare_instruction::cgen_prework(){
-    std::cerr<<"Unexpected func_declare_instruction.\n";
-    std::cerr<<"See func_declare_instruction::cgen_prework()\n";
+void func_declare_Instruction::cgen_prework(){
+    std::cerr<<"Unexpected func_declare_Instruction.\n";
+    std::cerr<<"See func_declare_Instruction::cgen_prework()\n";
 }
-void fptosi_instruction::cgen_prework(){
+void fptosi_Instruction::cgen_prework(){
     if(value->getOperandType() == basic_operand::REG){
         ((reg_operand*)value)->changeRegNo();
     }
     // Instruction vmov = new vmov_instruction(value,result);
     block_now->push_Ins(1,this);
 }
-void sitofp_instruction::cgen_prework(){
+void sitofp_Instruction::cgen_prework(){
     if(result->getOperandType() == basic_operand::REG){
         ((reg_operand*)result)->changeRegNo();
     }
@@ -1080,7 +1080,7 @@ void sitofp_instruction::cgen_prework(){
     // Instruction vmov=new vmov_instruction(value,result);
     block_now->push_Ins(1,this);
 }
-void zext_instruction::cgen_prework(){
+void zext_Instruction::cgen_prework(){
     block_now->push_Ins(1,this);
 }
 void mov_instruction::cgen_prework(){

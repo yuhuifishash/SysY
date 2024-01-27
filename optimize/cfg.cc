@@ -36,13 +36,13 @@ void CFG::build_CFG()
         Instruction blocklast = block_pair.second->Instruction_list[block_pair.second->Instruction_list.size()-1];
         // blocklast->printIR(std::cerr);
         if(blocklast->get_opcode() == BR_UNCOND){
-            br_uncond_instruction* bruncond = (br_uncond_instruction*)blocklast;
+            br_uncond_Instruction* bruncond = (br_uncond_Instruction*)blocklast;
             int target_block_no = ((label_operand*)bruncond->getDestLabel())->getLabelNo();
             G[block_pair.first].push_back((*block)[target_block_no]);
             invG[target_block_no].push_back(block_pair.second);
         }else
         if(blocklast->get_opcode() == BR_COND){
-            br_cond_instruction* brcond = (br_cond_instruction*)blocklast;
+            br_cond_Instruction* brcond = (br_cond_Instruction*)blocklast;
             int target_trueblock_no = ((label_operand*)brcond->getTrueLabel())->getLabelNo();
             int target_falseblock_no = ((label_operand*)brcond->getFalseLabel())->getLabelNo();
             G[block_pair.first].push_back((*block)[target_trueblock_no]);

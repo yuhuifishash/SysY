@@ -46,7 +46,7 @@ void CFG::GetFunctionBasicInfo()
             }
             if(I->get_opcode() == CALL){
                 func_info.call_tag = 1;
-                auto tI = (call_instruction*)I;
+                auto tI = (call_Instruction*)I;
                 if(tI->get_funcName() == this->func_ins->get_Func_name()){
                     func_info.rec_call_tag = 1;
                 }
@@ -58,7 +58,7 @@ void CFG::GetFunctionBasicInfo()
                 }
             }
             if(I->get_opcode() == GETELEMENTPTR){
-                auto tI = (get_elementptr_instruction*)I;
+                auto tI = (get_elementptr_Instruction*)I;
                 if(tI->get_ptrVal()->getOperandType() == basic_operand::GLOBAL){
                     func_info.store_global_tag = 1;
                 }
@@ -75,7 +75,7 @@ int CFG::GetRecursionInfo()
         auto BB = bb.second;
         for(auto I:BB->Instruction_list){
             if(I->get_opcode() == CALL){
-                auto tI = (call_instruction*)I;
+                auto tI = (call_Instruction*)I;
                 if(CFG_M.find(tI->get_funcName()) == CFG_M.end()){
                     if(func_info.is_independent_tag == 1){
                         func_info.is_independent_tag = 0;
@@ -122,19 +122,19 @@ void cgen_inline_Func(CFG* now_cfg,CFG* inline_cfg,llvm_block startBB,llvm_block
 
         for(auto Ins:BB->Instruction_list){
             if(Ins->get_opcode() == RET){
-                nowBB->push_Ins(1,new br_uncond_instruction(new label_operand(endBB->block_id)));
+                nowBB->push_Ins(1,new br_uncond_Instruction(new label_operand(endBB->block_id)));
                 continue;
             }
             auto nIns = Ins->copy_instruction();
             if(Ins->get_opcode() == BR_COND){
-                auto nI = (br_cond_instruction*)nIns;
+                auto nI = (br_cond_Instruction*)nIns;
                 int true_target = ((label_operand*)nI->getTrueLabel())->getLabelNo();
                 nI->set_truelabel(new label_operand(label_replace_map[true_target]->block_id));
                 int false_target = ((label_operand*)nI->getFalseLabel())->getLabelNo();
                 nI->set_falselabel(new label_operand(label_replace_map[false_target]->block_id));
             }
             if(Ins->get_opcode() == BR_UNCOND){
-                auto nI = (br_uncond_instruction*)nIns;
+                auto nI = (br_uncond_Instruction*)nIns;
                 int target = nI->get_target();
                 nI->set_target(new label_operand(label_replace_map[target]->block_id));
             }
@@ -168,7 +168,7 @@ void cgen_inline_Func(CFG* now_cfg,CFG* inline_cfg,llvm_block startBB,llvm_block
                 }
             }
             if(nIns->get_opcode() == PHI){
-                auto nI = (phi_instruction*)nIns;
+                auto nI = (phi_Instruction*)nIns;
                 auto phi_list = nI->getPhiList();
                 std::map<operand,operand> nphi_list;
                 for(auto phi_op:phi_list){
@@ -186,7 +186,7 @@ void cgen_inline_Func(CFG* now_cfg,CFG* inline_cfg,llvm_block startBB,llvm_block
         if(BB->Instruction_list.size() < 1){continue;}
         auto Ins = *(BB->Instruction_list.end() - 1);
         if(Ins->get_opcode() == RET){
-            auto I = (ret_instruction*)Ins;
+            auto I = (ret_Instruction*)Ins;
             auto result = I->get_result();
             if(result != NULL){
                 if(result->getOperandType() == result->REG){
@@ -208,7 +208,7 @@ void CFG::FunctionInline()
         for(auto it = BB->Instruction_list.begin();it != BB->Instruction_list.end();++it){
             auto Ins = *it;
             if(Ins->get_opcode() == CALL){
-                auto I = (call_instruction*)Ins;
+                auto I = (call_Instruction*)Ins;
                 if(CFG_M.find(I->get_funcName()) == CFG_M.end()){continue;}
                 
                 auto target_cfg = CFG_M[I->get_funcName()];
@@ -231,10 +231,10 @@ void CFG::FunctionInline()
                 cgen_inline_Func(this,target_cfg,FBB,endBB);
 
                 if(I->get_result() != NULL){
-                    endBB->push_Ins(1,new phi_instruction(I->get_RetType(),I->get_result(),ret_phi_map));
+                    endBB->push_Ins(1,new phi_Instruction(I->get_RetType(),I->get_result(),ret_phi_map));
                 }
                 
-                *it = new br_uncond_instruction(new label_operand(FBB_id));
+                *it = new br_uncond_Instruction(new label_operand(FBB_id));
                 for(auto it_ed = ++it;it_ed != BB->Instruction_list.end();){
                     endBB->push_Ins(1,*it_ed);
                     it_ed = BB->Instruction_list.erase(it_ed);
@@ -243,7 +243,7 @@ void CFG::FunctionInline()
                 for(auto nextBB:G[BB->block_id]){
                     for(auto Ins:nextBB->Instruction_list){
                         if(Ins->get_opcode() != PHI){break;}
-                        auto I = (phi_instruction*)Ins;
+                        auto I = (phi_Instruction*)Ins;
                         I->set_phi_label(BB->block_id,endBB->block_id);
                     }
                 }
@@ -279,10 +279,10 @@ void CFG::TailCall2Loop()
             auto I1 = Ilist[i];
             auto I2 = Ilist[i+1];
             if(I1->get_opcode() != CALL || I2->get_opcode() != RET){continue;}
-            auto tI = (call_instruction*)I1;
+            auto tI = (call_Instruction*)I1;
             if(tI->get_funcName() != this->func_ins->get_Func_name()){continue;}
             //I1->printIR(std::cerr);
-            I1 = new br_uncond_instruction(new label_operand(1));
+            I1 = new br_uncond_Instruction(new label_operand(1));
             bb.second->Instruction_list.pop_back();
             bb.second->Instruction_list.pop_back();
             bb.second->push_Ins(1,I1);
@@ -294,7 +294,7 @@ void CFG::TailCall2Loop()
                 for(auto op:tI->get_parameterList()){
                     ++cnt;
                     ++max_reg;
-                    auto nI = new phi_instruction(op.first,new reg_operand(max_reg));
+                    auto nI = new phi_Instruction(op.first,new reg_operand(max_reg));
                     nI->Insert_phi(new reg_operand(cnt),new label_operand(0));
                     phi_map[cnt] = nI;
                     reg_replace_map[cnt] = max_reg;
@@ -304,7 +304,7 @@ void CFG::TailCall2Loop()
             int cnt = -1;
             for(auto op:tI->get_parameterList()){
                 ++cnt;
-                auto nI = (phi_instruction*)phi_map[cnt];
+                auto nI = (phi_Instruction*)phi_map[cnt];
                 if(op.second->getOperandType() == basic_operand::REG){
                     int regno = ((reg_operand*)op.second)->getRegNo();
                     if(regno <= tI->get_parameterList().size()){
