@@ -112,12 +112,8 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
-    // llvm_IR.printIR(std::cerr);
     llvm_IR.phi_destruction();
-    // std::cerr<<"Pre Begin\n";
-    // llvm_IR.printIR(std::cerr);
     llvm_IR.cgen_prework();
-    // std::cerr<<"pre safe\n";
     if(strcmp(argv[step_tag],"-cgenpre") == 0){
         //llvm_IR.printIR(fout);
         cgenpre_IR.printIR(fout);

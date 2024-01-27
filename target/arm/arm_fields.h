@@ -25,8 +25,10 @@ struct RmOpsh{
         prop(){}
     }properties;
     RmOpsh(Register Rm){
-        type = RRX;
-        properties.RRX.Rm = Rm;
+        type = RSHIFTI;
+        properties.regShiftImm.Rm = Rm;
+        properties.regShiftImm.shift_type = LSL;
+        properties.regShiftImm.shift = 0;
     }
     RmOpsh(Register Rm,ShiftType shiftype,int shift){
         if(shiftype != ::RRX){
@@ -66,16 +68,26 @@ public:
         properties.imm8m = imm8m;
     }
     Operand2(Register Rm,ShiftType shiftype,Register Rs){
-        type = RSHIFTR;
-        properties.regShiftReg.Rm = Rm;
-        properties.regShiftReg.shift_type = shiftype;
-        properties.regShiftReg.Rs = Rs;
+        if(shiftype != ::RRX){
+            type = RSHIFTR;
+            properties.regShiftReg.Rm = Rm;
+            properties.regShiftReg.shift_type = shiftype;
+            properties.regShiftReg.Rs = Rs;
+        }else{
+            type = RRX;
+            properties.RRX.Rm = Rm;
+        }
     }
     Operand2(Register Rm,ShiftType shiftype,int shift){
-        type = RSHIFTI;
-        properties.regShiftImm.Rm = Rm;
-        properties.regShiftImm.shift_type = shiftype;
-        properties.regShiftImm.shift = shift;
+        if(shiftype != ::RRX){
+            type = RSHIFTI;
+            properties.regShiftImm.Rm = Rm;
+            properties.regShiftImm.shift_type = shiftype;
+            properties.regShiftImm.shift = shift;
+        }else{
+            type = RRX;
+            properties.RRX.Rm = Rm;
+        }
     }
 };
 

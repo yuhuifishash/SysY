@@ -1,4 +1,3 @@
-char* str2="ADD";
 #include "arm_cgen.h"
 #include "llvm_ir.h"
 #include <cstring>

@@ -5,7 +5,7 @@
 #include <vector>
 class Arm_baseins{
 public:
-    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MUL,MLA,MLS,SMULL,SMMUL}ins_type;
+    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB}ins_type;
     // Complete this
 
     enum {EQ = 0,NE}cond;
@@ -101,16 +101,16 @@ public:
 
 class Arm_it : Arm_baseins{
 public:
-    // high   low
-    // 0000   0000
-    // length pattern
+    // high  |low
+    // 0000  |0000
+    // length|pattern
 
-    // length == 0 ==> 0000 0000 ==> pattern = ''
-    // length == 1 ==> 0001 0000 ==> pattern = 'E'
-    // length == 1 ==> 0001 0001 ==> pattern = 'T'
-    // legnth == 2 ==> 0010 0010 ==> pattern = 'TE'
-    // legnth == 2 ==> 0010 0001 ==> pattern = 'ET'
-    // length == 3 ==> 0011 0101 ==> pattern = 'TET'
+    // length == 0 , 0000 0000 ==> pattern = ''
+    // length == 1 , 0001 0000 ==> pattern = 'E'
+    // length == 1 , 0001 0001 ==> pattern = 'T'
+    // legnth == 2 , 0010 0010 ==> pattern = 'TE'
+    // legnth == 2 , 0010 0001 ==> pattern = 'ET'
+    // length == 3 , 0011 0101 ==> pattern = 'TET'
     int pattern;
     // assist functions like setlegnth(),setbit() may be helpful
 
