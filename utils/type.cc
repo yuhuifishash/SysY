@@ -11,6 +11,8 @@
 
 extern std::vector<std::string> error_msgs{};
 
+
+//binary 
 NodeAttr BinaryAddInt(NodeAttr a,NodeAttr b)
 {
     NodeAttr result;
@@ -415,6 +417,85 @@ NodeAttr (*SemantBinaryNode[5][5])(NodeAttr a,NodeAttr b,NodeAttr::opcode opcode
 };
 
 
+//single
+NodeAttr SingleAddInt(NodeAttr a)
+{
+
+}
+
+NodeAttr SingleSubInt(NodeAttr a)
+{
+
+}
+
+NodeAttr SingleNotInt(NodeAttr a)
+{
+
+}
+
+NodeAttr (*SingleCalculatedInt[15])(NodeAttr a)={
+    [NodeAttr::ADD] = SingleAddInt,
+    [NodeAttr::SUB] = SingleSubInt,
+    [NodeAttr::NOT] = SingleNotInt,
+};
+
+
+
+
+NodeAttr SingleAddFloat(NodeAttr a)
+{
+
+}
+
+NodeAttr SingleSubFloat(NodeAttr a)
+{
+
+}
+
+NodeAttr SingleNotFloat(NodeAttr a)
+{
+
+}
+
+NodeAttr (*SingleCalculatedFloat[15])(NodeAttr a)={
+    [NodeAttr::ADD] = SingleAddFloat,
+    [NodeAttr::SUB] = SingleSubFloat,
+    [NodeAttr::NOT] = SingleNotFloat,
+};
+
+
+
+
+NodeAttr SemantInt(NodeAttr a,NodeAttr::opcode opcode)
+{
+
+}
+
+NodeAttr SemantFloat(NodeAttr a,NodeAttr::opcode opcode)
+{
+
+}
+
+NodeAttr SemantError(NodeAttr a,NodeAttr::opcode opcode)
+{
+    error_msgs.push_back("invalid operators in line " + std::to_string(a.line_number) + "\n");
+    NodeAttr result;
+    result.T.type = Type::VOID;
+    result.V.ConstTag = 0;
+    return result;
+}
+
+NodeAttr (*SemantSingleNode[5])(NodeAttr a,NodeAttr::opcode opcode)={
+    [Type::INT] = SemantInt,
+    [Type::FLOAT] = SemantFloat,
+    [Type::BOOL] = SemantError,
+    [Type::PTR] = SemantError,
+    [Type::VOID] = SemantError,
+    
+};
+
+
+
 /*
 -------------------------------------------------------------
 |                         IRgen                             |
@@ -432,6 +513,7 @@ Instruction IRgen_sitofp_Ins(llvm_block B,int src,int dst);
 Instruction IRgen_zext_Ins(llvm_block B,int src,int dst);
 
 
+//binary
 void BinaryAddIRInt(llvm_block B,int reg1,int reg2)
 {
     IRgen_alg_i32_Ins(B,llvm_ir_opcode::ADD,reg1,reg2,++max_reg);
@@ -680,4 +762,81 @@ void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttr::opcode opcode,
     [Type::VOID][Type::BOOL] = IRgenError,
     [Type::VOID][Type::PTR] = IRgenError,
     [Type::VOID][Type::VOID] = IRgenError,
+};
+
+
+//single
+void SingleAddIRInt(llvm_block B,int reg1)
+{
+
+}
+
+void SingleSubIRInt(llvm_block B,int reg1)
+{
+
+}
+
+void SingleNotIRInt(llvm_block B,int reg1)
+{
+
+}
+
+void (*SingleIRgenInt[15])(llvm_block B,int reg1)={
+    [NodeAttr::ADD] = SingleAddIRInt,
+    [NodeAttr::SUB] = SingleSubIRInt,
+    [NodeAttr::NOT] = SingleNotIRInt,
+};
+
+
+
+
+void SingleAddIRFloat(llvm_block B,int reg1)
+{
+
+}
+
+void SingleSubIRFloat(llvm_block B,int reg1)
+{
+
+}
+
+void SingleNotIRFloat(llvm_block B,int reg1)
+{
+
+}
+
+void (*SingleIRgenFloat[15])(llvm_block B,int reg1)={
+    [NodeAttr::ADD] = SingleAddIRFloat,
+    [NodeAttr::SUB] = SingleSubIRFloat,
+    [NodeAttr::NOT] = SingleNotIRFloat,
+};
+
+
+
+
+void IRgenInt(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+    SingleIRgenInt[opcode](B,reg1);
+}
+
+void IRgenFloat(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+    SingleIRgenFloat[opcode](B,reg1);
+}
+
+void IRgenError(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+{
+    assert(false);
+}
+
+void (*IRgenSingleNode[5])(tree_node* a,NodeAttr::opcode opcode,llvm_block B)={
+    [Type::INT] = IRgenInt,
+    [Type::FLOAT] = IRgenFloat,
+    [Type::BOOL] = IRgenError,
+    [Type::PTR] = IRgenError,
+    [Type::VOID] = IRgenError,
 };

@@ -1,4 +1,7 @@
 #include "Instruction.h"
+
+
+
 std::vector<operand> load_Instruction::get_nonresult_operands(){
     std::vector<operand> ret;
     ret.push_back(pointer);
@@ -106,7 +109,7 @@ std::vector<operand> call_instruction::get_nonresult_operands(){
     return ret;
 }
 void call_instruction::set_nonresult_operands(std::vector<operand> ops){
-    int i=0;
+    int i = 0;
     for(auto&arg_pair:args){
         arg_pair.second = ops[i];
         i++;
