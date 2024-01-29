@@ -118,4 +118,10 @@ public:
     Label(std::string name):label_name(name){}
     void printArm(std::ostream& s);
 };
+std::ostream& operator<<(std::ostream& s,ShiftType typ);
+std::ostream& operator<<(std::ostream& s,Register reg);
+std::ostream& operator<<(std::ostream& s,RmOpsh rmo);
+std::ostream& operator<<(std::ostream& s,Operand2 op2);
+std::ostream& operator<<(std::ostream& s,Rssh rsh);
+std::ostream& operator<<(std::ostream& s,Label lbl);
 #endif
