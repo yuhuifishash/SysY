@@ -7,8 +7,10 @@ class Arm_baseins{
 public:
     enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM}ins_type;
     std::string comment;
+
     enum {EQ = 0,NE,CS_HS,CC_LO,MI,PL,VS,VC,HI,LS,GE,LT,GT,LE,AL};
     int cond;
+
     virtual void printArm(std::ostream& s) = 0;
 };
 
@@ -35,10 +37,11 @@ public:
     Register Rd,Rn;
     int imm12;
     virtual void printArm(std::ostream& s);
-    Arm_addsubImm(int opcode,Register Rd,Register Rn,int imm12,int cond)
+    Arm_addsubImm(int opcode,Register Rd,Register Rn,int imm12,int cond,std::string comment = std::string())
     :opcode(opcode),Rd(Rd),Rn(Rn),imm12(imm12){
         ins_type = ADDSUBIMM;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -50,10 +53,11 @@ public:
     int prefix,opcode;
     Register Rd,Rn,Rm;
     virtual void printArm(std::ostream& s);
-    Arm_parallelAddsub(int prefix,int opcode,Register Rd,Register Rn,Register Rm,int cond)
+    Arm_parallelAddsub(int prefix,int opcode,Register Rd,Register Rn,Register Rm,int cond,std::string comment = std::string())
     :prefix(prefix),opcode(opcode),Rd(Rd),Rn(Rn),Rm(Rm){
         ins_type = PARALLELADDSUB;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -67,10 +71,11 @@ public:
     // Rd - RdLo
     // Rn - RdHi
     virtual void printArm(std::ostream& s);
-    Arm_mulas(int opcode,bool SR,Register Rd,Register Rm,Register Rs,Register Rn,int cond)
+    Arm_mulas(int opcode,bool SR,Register Rd,Register Rm,Register Rs,Register Rn,int cond,std::string comment = std::string())
     :opcode(opcode),SR(SR),Rd(Rd),Rm(Rm),Rs(Rs),Rn(Rn){
         ins_type = MULAS;
         this->cond = cond;
+        this->comment = comment;
     }
     // Construction function Here
     // printArm() Decl Here
@@ -84,10 +89,11 @@ public:
     Register Rd;
     Operand2 op2;
     virtual void printArm(std::ostream& s);
-    Arm_move(int opcode,bool S,Register Rd,Operand2 op2,int cond)
+    Arm_move(int opcode,bool S,Register Rd,Operand2 op2,int cond,std::string comment = std::string())
     :opcode(opcode),S(S),Rd(Rd),op2(op2){
         ins_type = MOVE;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -97,10 +103,11 @@ public:
     Register R;
     int imm16;
     virtual void printArm(std::ostream& s);
-    Arm_movwt(Register R,int imm16,int cond)
+    Arm_movwt(Register R,int imm16,int cond,std::string comment = std::string())
     :R(R),imm16(imm16){
         ins_type = MOVWT;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -110,10 +117,11 @@ public:
     Register Rd;
     RmOpsh Rmsh;
     virtual void printArm(std::ostream& s);
-    Arm_shift(bool S,Register Rd,RmOpsh Rmsh,int cond)
+    Arm_shift(bool S,Register Rd,RmOpsh Rmsh,int cond,std::string comment = std::string())
     :S(S),Rd(Rd),Rmsh(Rmsh){
         ins_type = SHIFT;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -123,10 +131,11 @@ public:
     Register Rn;
     Operand2 op2;
     virtual void printArm(std::ostream& s);
-    Arm_cmp(Register Rn,Operand2 op2,int cond)
+    Arm_cmp(Register Rn,Operand2 op2,int cond,std::string comment = std::string())
     :Rn(Rn),op2(op2){
         ins_type = _CMP;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -145,10 +154,11 @@ public:
     int pattern;
     // assist functions like setlegnth(),setbit() may be helpful
     virtual void printArm(std::ostream& s);
-    Arm_it(int pattern,int cond)
+    Arm_it(int pattern,int cond,std::string comment = std::string())
     :pattern(pattern){
         ins_type = IT;
         this->cond = cond;
+        this->comment = comment;
     }
 
     // cond field in Arm_baseins
@@ -161,10 +171,11 @@ public:
     int opcode;
     Label target;
     virtual void printArm(std::ostream& s);
-    Arm_branch_label(int opcode,Label target,int cond)
+    Arm_branch_label(int opcode,Label target,int cond,std::string comment = std::string())
     :opcode(opcode),target(target){
         ins_type = BRANCH_LABEL;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -174,10 +185,11 @@ public:
     int opcode;
     Register Rm;
     virtual void printArm(std::ostream& s);
-    Arm_branch_reg(int opcode,Register Rm,int cond)
+    Arm_branch_reg(int opcode,Register Rm,int cond,std::string comment = std::string())
     :opcode(opcode),Rm(Rm){
         ins_type = BRANCH_REG;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -187,10 +199,11 @@ public:
     Register Rn;
     Label target;
     virtual void printArm(std::ostream& s);
-    Arm_branch_labelreg(bool N,Register Rn,Label target,int cond)
+    Arm_branch_labelreg(bool N,Register Rn,Label target,int cond,std::string comment = std::string())
     :N(N),Rn(Rn),target(target){
         ins_type = BRANCH_LABELREG;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -213,10 +226,11 @@ public:
     bool dowriteback;// not used when offset_type == LABEL
     Label addr_label;// not used when offset_type != LABEL
     virtual void printArm(std::ostream& s);
-    Arm_LoadStore(int op,int size,bool T,Register Rd,Register Rn,int offset_type,bool ispreindex,bool dowriteback,Label addr_label,int cond)
+    Arm_LoadStore(int op,int size,bool T,Register Rd,Register Rn,int offset_type,bool ispreindex,bool dowriteback,Label addr_label,int cond,std::string comment = std::string())
     :op(op),size(size),T(T),Rd(Rd),Rn(Rn),offset_type(offset_type),OFFSET(OFFSET),ispreindex(ispreindex),dowriteback(dowriteback),addr_label(addr_label){
         ins_type = LOADSTORE;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -230,10 +244,11 @@ public:
     std::vector<Register> reglist;
     bool hat;
     virtual void printArm(std::ostream& s);
-    Arm_LoadStoreM(int op,Register Rn,bool dowriteback,std::vector<Register> reglist,bool hat,int cond)
+    Arm_LoadStoreM(int op,Register Rn,bool dowriteback,std::vector<Register> reglist,bool hat,int cond,std::string comment = std::string())
     :op(op),Rn(Rn),dowriteback(dowriteback),reglist(reglist),hat(hat){
         ins_type = LOADSTOREM;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 
@@ -241,10 +256,11 @@ class Arm_pushpop : Arm_baseins{
     enum {PUSH = 0,POP};
     std::vector<Register> reglist;
     virtual void printArm(std::ostream& s);
-    Arm_pushpop(std::vector<Register> reglist,int cond)
+    Arm_pushpop(std::vector<Register> reglist,int cond,std::string comment = std::string())
     :reglist(reglist){
         ins_type = LOADSTOREM;
         this->cond = cond;
+        this->comment = comment;
     }
 };// push pop
 
@@ -253,10 +269,11 @@ class VFP_vbin : Arm_baseins{
     int P;
     Register Fd,Fn,Fm;
     virtual void printArm(std::ostream& s);
-    VFP_vbin(int P,Register Fd,Register Fn,Register Fm,int cond)
+    VFP_vbin(int P,Register Fd,Register Fn,Register Fm,int cond,std::string comment = std::string())
     :P(P),Fd(Fd),Fn(Fn),Fm(Fm){
         ins_type = VBIN;
         this->cond = cond;
+        this->comment = comment;
     }
 };// VADD VSUB VMUL VDIV
 class VFP_vcmp : Arm_baseins{
@@ -264,10 +281,11 @@ class VFP_vcmp : Arm_baseins{
     int P;
     Register Fd,Fm;
     virtual void printArm(std::ostream& s);
-    VFP_vcmp(bool E,int P,Register Fd,Register Fm,int cond)
+    VFP_vcmp(bool E,int P,Register Fd,Register Fm,int cond,std::string comment = std::string())
     :E(E),P(P),Fd(Fd),Fm(Fm){
         ins_type = VCMP;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 class VFP_vcvt : Arm_baseins{
@@ -276,20 +294,22 @@ class VFP_vcvt : Arm_baseins{
     Register Fd,Fm;
     int fbits;
     virtual void printArm(std::ostream& s);
-    VFP_vcvt(bool R,int type,Register Fd,Register Fm,int fbits,int cond)
+    VFP_vcvt(bool R,int type,Register Fd,Register Fm,int fbits,int cond,std::string comment = std::string())
     :R(R),type(type),Fd(Fd),Fm(Fm),fbits(fbits){
         ins_type = VCVT;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 class VFP_vmov : Arm_baseins{
     int P;
     Register Fd,Fm,Fn;
     virtual void printArm(std::ostream& s);
-    VFP_vmov(int P,Register Fd,Register Fm,Register Fn,int cond)
+    VFP_vmov(int P,Register Fd,Register Fm,Register Fn,int cond,std::string comment = std::string())
     :P(P),Fd(Fd),Fm(Fm),Fn(Fn){
         ins_type = VMOV;
         this->cond = cond;
+        this->comment = comment;
     }
 };
 class VFP_vldst : Arm_baseins{
@@ -297,20 +317,22 @@ class VFP_vldst : Arm_baseins{
     Register Fd;
     int immed,label;
     virtual void printArm(std::ostream& s);
-    VFP_vldst(Register Fd,int immed,int label,int cond)
+    VFP_vldst(Register Fd,int immed,int label,int cond,std::string comment = std::string())
     :Fd(Fd),immed(immed),label(label){
         ins_type = VLDST;
         this->cond = cond;
+        this->comment = comment;
     }
 };// VLDR VSTR
 class VFP_vpushpop : Arm_baseins {
     enum {VPUSH = 0,VPOP};
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vpushpop(std::vector<Register> VFPregs,int cond)
+    VFP_vpushpop(std::vector<Register> VFPregs,int cond,std::string comment = std::string())
     :VFPregs(VFPregs){
         ins_type = VPUSHPOP;
         this->cond = cond;
+        this->comment = comment;
     }
 };// VPUSH VPOP
 class VFP_vstm : Arm_baseins {
@@ -318,10 +340,11 @@ class VFP_vstm : Arm_baseins {
     Register Rn;
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vstm(Register Rn,std::vector<Register> VFPregs,int cond)
+    VFP_vstm(Register Rn,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
     :Rn(Rn),VFPregs(VFPregs){
         ins_type = _VSTM;
         this->cond = cond;
+        this->comment = comment;
     }
 };// VSTM VSTMDB VLDM VLDMDB
 #endif
