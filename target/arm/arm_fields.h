@@ -41,6 +41,7 @@ struct RmOpsh{
             properties.RRX.Rm = Rm;
         }
     }
+    void printArm(std::ostream& s);
 };
 
 struct Operand2{
@@ -89,6 +90,7 @@ public:
             properties.RRX.Rm = Rm;
         }
     }
+    void printArm(std::ostream& s);
 };
 
 struct Rssh{
@@ -107,11 +109,13 @@ public:
         type = SH;
         properties.shift = shift;
     }
+    void printArm(std::ostream& s);
 };
 
 struct Label{
 public:
     std::string label_name;
     Label(std::string name):label_name(name){}
+    void printArm(std::ostream& s);
 };
 #endif

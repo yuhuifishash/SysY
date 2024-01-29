@@ -1,9 +1,27 @@
 #include "arm.h"
+//-----Arm Field Print-----
 void Register::printArm(std::ostream& s){
     // s<<
 }
 
+void RmOpsh::printArm(std::ostream& s){
 
+}
+
+void Operand2::printArm(std::ostream& s){
+
+}
+
+void Rssh::printArm(std::ostream& s){
+
+}
+
+void Label::printArm(std::ostream& s){
+
+}
+//-------------------------
+
+//-----Arm Instruction Print-----
 void Arm_binary::printArm(std::ostream& s){
     // s<<
 }
