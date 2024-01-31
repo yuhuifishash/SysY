@@ -4,6 +4,6 @@
 #include <deque>
 class Arm_block{
 public:
-    
+    std::deque<Arm_baseins*>block;
 };
 #endif
