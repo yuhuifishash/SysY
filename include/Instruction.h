@@ -43,7 +43,8 @@ enum llvm_ir_opcode
     RSBS=30,
     SNIPPET=31,// unused
     BICS=32,
-    AND_b=33
+    AND_b=33,
+    SITOFP=34
 };
 
 enum arm_cond{
@@ -841,7 +842,9 @@ private:
 public:
     sitofp_Instruction(operand result_receiver,operand value_for_cast)
         :result(result_receiver),
-        value(value_for_cast){}
+        value(value_for_cast){
+            this->opcode = SITOFP;
+        }
     operand get_resultreg(){return result;}
     void code(std::ostream& s);
     void printIR(std::ostream& s);
