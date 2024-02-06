@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-bin/SysYc test/test/example/example5.sy -cgenalloc -o test/cgenalloc_test_output/example5.out.ll -O1
-

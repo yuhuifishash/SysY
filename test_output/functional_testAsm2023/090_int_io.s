@@ -1,0 +1,228 @@
+.arch armv7-a
+.fpu vfpv3-d16
+.arm
+.data
+ascii_0:
+	.word  48
+.text
+.global main
+.LPIC0:
+	.word  ascii_0
+my_getint:@r6 r7 r8 
+	push {fp,lr}
+	push {r6,r7,r8}
+	add fp,sp,#4
+	sub sp,sp,#16
+.my_getintL0:
+.my_getintL1:
+	mov r8,#0
+	str r8,[fp,#-16]
+	mov r8,#0
+	str r8,[fp,#-12]
+	mov r8,#1
+	cmp r8,#0
+	bne .my_getintL3
+.my_getintL5:
+	ldr r8,[fp,#-12]
+	str r8,[fp,#-16]
+	mov r8,#1
+	cmp r8,#0
+	bne .my_getintL14
+.my_getintL16:
+	ldr r8,[fp,#-16]
+	mov r0,r8
+	add sp,sp,#16
+	pop {r6,r7,r8}
+	pop {fp,pc}
+.my_getintL14:
+	@%r27 = call i32 @getch()
+	sub sp,sp,#4 @stack align 8bytes
+	bl getch
+	mov r8,r0
+	add sp,sp,#4 @stack align 8bytes
+	ldr r7,.LPIC0
+	ldr r6,[r7]
+	sub r7,r8,r6
+	str r7,[fp,#-12]
+	ldr r8,[fp,#-12]
+	mov r7,#0
+	cmp r8,r7
+	bge .my_getintL20
+.my_getintL18:
+	bl .my_getintL16
+.my_getintL20:
+	ldr r8,[fp,#-12]
+	mov r7,#9
+	cmp r8,r7
+	bgt .my_getintL18
+.my_getintL17:
+	ldr r8,[fp,#-16]
+	mov r7,#10
+	mul r6,r8,r7
+	ldr r8,[fp,#-12]
+	add r7,r6,r8
+	str r7,[fp,#-16]
+.my_getintL19:
+.my_getintL15:
+	mov r8,#1
+	cmp r8,#0
+	bne .my_getintL14
+	beq .my_getintL16
+.my_getintL3:
+	@%r6 = call i32 @getch()
+	sub sp,sp,#4 @stack align 8bytes
+	bl getch
+	mov r8,r0
+	add sp,sp,#4 @stack align 8bytes
+	ldr r7,.LPIC0
+	ldr r6,[r7]
+	sub r7,r8,r6
+	str r7,[fp,#-12]
+	ldr r8,[fp,#-12]
+	mov r7,#0
+	cmp r8,r7
+	blt .my_getintL6
+.my_getintL9:
+	ldr r8,[fp,#-12]
+	mov r7,#9
+	cmp r8,r7
+	bgt .my_getintL6
+.my_getintL7:
+	bl .my_getintL5
+.my_getintL6:
+.my_getintL4:
+	mov r8,#1
+	cmp r8,#0
+	bne .my_getintL3
+	beq .my_getintL5
+my_putint:@r5 r6 r7 r8 
+	push {fp,lr}
+	push {r5,r6,r7,r8}
+	add fp,sp,#4
+	sub sp,sp,#80
+.my_putintL0:
+	str r0,[fp,#-80]
+.my_putintL1:
+	mov r8,#0
+	str r8,[fp,#-12]
+	ldr r8,[fp,#-80]
+	mov r7,#0
+	cmp r8,r7
+	bgt .my_putintL3
+.my_putintL5:
+	ldr r8,[fp,#-12]
+	mov r7,#0
+	cmp r8,r7
+	bgt .my_putintL7
+.my_putintL9:
+	add sp,sp,#80
+	pop {r5,r6,r7,r8}
+	pop {fp,pc}
+.my_putintL7:
+	ldr r8,[fp,#-12]
+	mov r7,#1
+	sub r6,r8,r7
+	str r6,[fp,#-12]
+	ldr r8,[fp,#-12]
+	mov r7,r8
+	mvn r8,#75
+	add r6,fp,r8
+	add r8,r6,r7,lsl #2
+	ldr r7,[r8]
+	@call void @putch(i32 %r38)
+	mov r0,r7
+	bl putch
+.my_putintL8:
+	ldr r8,[fp,#-12]
+	mov r7,#0
+	cmp r8,r7
+	bgt .my_putintL7
+	ble .my_putintL9
+.my_putintL3:
+	ldr r8,[fp,#-80]
+	mov r7,#10
+	@%r12 = call i32 @__modsi3(i32 %r10,i32 %r11)
+	mov r0,r8
+	mov r1,r7
+	bl __modsi3
+	mov r6,r0
+	ldr r8,.LPIC0
+	ldr r7,[r8]
+	add r8,r6,r7
+	ldr r7,[fp,#-12]
+	mov r6,r7
+	mvn r7,#75
+	add r5,fp,r7
+	add r7,r5,r6,lsl #2
+	str r8,[r7]
+	ldr r8,[fp,#-80]
+	mov r7,#10
+	@%r19 = call i32 @__aeabi_idiv(i32 %r17,i32 %r18)
+	mov r0,r8
+	mov r1,r7
+	bl __aeabi_idiv
+	mov r6,r0
+	str r6,[fp,#-80]
+	ldr r8,[fp,#-12]
+	mov r7,#1
+	add r6,r8,r7
+	str r6,[fp,#-12]
+.my_putintL4:
+	ldr r8,[fp,#-80]
+	mov r7,#0
+	cmp r8,r7
+	bgt .my_putintL3
+	ble .my_putintL5
+main:@r6 r7 r8 
+	push {fp,lr}
+	push {r6,r7,r8}
+	add fp,sp,#4
+	sub sp,sp,#16
+.mainL0:
+.mainL1:
+	@%r1 = call i32 @my_getint()
+	sub sp,sp,#4 @stack align 8bytes
+	bl my_getint
+	mov r8,r0
+	add sp,sp,#4 @stack align 8bytes
+	str r8,[fp,#-16]
+	ldr r8,[fp,#-16]
+	mov r7,#0
+	cmp r8,r7
+	bgt .mainL3
+.mainL5:
+	mov r8,#0
+	mov r0,r8
+	add sp,sp,#16
+	pop {r6,r7,r8}
+	pop {fp,pc}
+.mainL3:
+	@%r8 = call i32 @my_getint()
+	sub sp,sp,#4 @stack align 8bytes
+	bl my_getint
+	mov r8,r0
+	add sp,sp,#4 @stack align 8bytes
+	str r8,[fp,#-12]
+	ldr r8,[fp,#-12]
+	@call void @my_putint(i32 %r9)
+	sub sp,sp,#4 @stack align 8bytes
+	mov r0,r8
+	bl my_putint
+	add sp,sp,#4 @stack align 8bytes
+	mov r8,#10
+	@call void @putch(i32 %r10)
+	sub sp,sp,#4 @stack align 8bytes
+	mov r0,r8
+	bl putch
+	add sp,sp,#4 @stack align 8bytes
+	ldr r8,[fp,#-16]
+	mov r7,#1
+	sub r6,r8,r7
+	str r6,[fp,#-16]
+.mainL4:
+	ldr r8,[fp,#-16]
+	mov r7,#0
+	cmp r8,r7
+	bgt .mainL3
+	ble .mainL5
+	.section	.note.GNU-stack,"",%progbits

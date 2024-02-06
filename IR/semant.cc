@@ -4,7 +4,7 @@
 #include "type.h" 
 
 extern SymbolTable symbol_table;
-extern LLVM_IR llvm_IR;
+extern LLVMIR llvm_IR;
 extern StringTable str_table;
 
 static int global_var_cnt = 0;
@@ -923,7 +923,7 @@ void StringConst::type_check()
 {
     // Value, Name
     // Name: str%d, %d : index in map
-    llvm_IR.global_def.push_back(new global_str_const_Instruction(str->get_string(),std::string(".str")+std::to_string(str_table.string_no[str->get_string()])));
+    llvm_IR.global_def.push_back(new GlobalStringConstInstruction(str->get_string(),std::string(".str")+std::to_string(str_table.string_no[str->get_string()])));
     type = 3;
 }
 
@@ -1326,7 +1326,7 @@ void CompUnit_Decl::type_check()
 
         //for(auto d:val.dims){std::cerr<<d<<" ";}std::cerr<<"\n";
         //add Global Decl llvm ins
-        llvm_type lltype;
+        LLVMType lltype;
         if(typedecl == 1){
             lltype = I32;
         }
@@ -1336,13 +1336,13 @@ void CompUnit_Decl::type_check()
         
         Instruction globalDecl;
         if(def->get_dims()!= nullptr){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,val);
+            globalDecl = new GlobalVarDefineInstruction(def->get_name()->get_string(),lltype,val);
         }else if(init == nullptr){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,nullptr);
+            globalDecl = new GlobalVarDefineInstruction(def->get_name()->get_string(),lltype,nullptr);
         }else if(lltype == I32){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,new imm_i32_operand(val.IntInitVals[0]));
+            globalDecl = new GlobalVarDefineInstruction(def->get_name()->get_string(),lltype,new ImmI32Operand(val.IntInitVals[0]));
         }else if(lltype == FLOAT32){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,new imm_f32_operand(val.FloatInitVals[0]));
+            globalDecl = new GlobalVarDefineInstruction(def->get_name()->get_string(),lltype,new ImmF32Operand(val.FloatInitVals[0]));
         }
         llvm_IR.global_def.push_back(globalDecl);
 

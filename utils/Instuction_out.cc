@@ -3,14 +3,14 @@
 #include "llvm_ir.h"
 #include "SysY_tree.h"
 #include <sstream>
-autoCounter basic_Instruction::insNoCounter;
-autoCounter reg_operand::curRegNo;
-autoCounter label_operand::curLabelNo;
+AutoCounter BasicInstruction::insNoCounter;
+AutoCounter RegOperand::curRegNo;
+AutoCounter LabelOperand::curLabelNo;
 
 CFG* current_CFG;
 extern int output_Physical_reg;
 
-std::ostream& operator<<(std::ostream&s,llvm_type type)
+std::ostream& operator<<(std::ostream&s,LLVMType type)
 { 
     switch(type)
     {
@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream&s,llvm_type type)
     } 
     return s;
 }
-std::ostream& operator<<(std::ostream&s,llvm_ir_opcode type)
+std::ostream& operator<<(std::ostream&s,LLVMIROpcode type)
 { 
     switch(type)
     { 
@@ -122,7 +122,7 @@ std::ostream& operator<<(std::ostream&s,llvm_ir_opcode type)
     } 
     return s;
 }
-std::ostream& operator<<(std::ostream&s,cmp_cond type)
+std::ostream& operator<<(std::ostream&s,IcmpCond type)
 { 
     switch(type)
     { 
@@ -159,7 +159,7 @@ std::ostream& operator<<(std::ostream&s,cmp_cond type)
     } 
     return s;
 }
-std::ostream& operator<<(std::ostream&s,fcmp_cond type){
+std::ostream& operator<<(std::ostream&s,FcmpCond type){
     switch(type){
         case FALSE:
             s<<"false";
@@ -213,7 +213,7 @@ std::ostream& operator<<(std::ostream&s,fcmp_cond type){
     return s;
 }
 
-std::string reg_operand::getFullName(){
+std::string RegOperand::GetFullName(){
     
     if(output_Physical_reg == 0){
         if(reg_no>=0)
@@ -228,47 +228,47 @@ std::string reg_operand::getFullName(){
     
 }
 
-std::string imm_i32_operand::getFullName(){
+std::string ImmI32Operand::GetFullName(){
     return std::to_string(immVal);
 }
 
-std::string imm_f32_operand::getFullName(){
+std::string ImmF32Operand::GetFullName(){
     std::stringstream ss;
-    ss<<"0x"<<std::hex<<getFloatByteVal();
+    ss<<"0x"<<std::hex<<GetFloatByteVal();
     ss<<std::dec;
     return ss.str();
 }
 
-std::string label_operand::getFullName(){
+std::string LabelOperand::GetFullName(){
     return "%L"+std::to_string(label_no);
 }
 
-std::string global_operand::getFullName(){
+std::string global_operand::GetFullName(){
     return "@"+name;
 }
 
 // @Output a operand
-std::ostream&operator<<(std::ostream&s,operand op){
-    s<<op->getFullName();
+std::ostream&operator<<(std::ostream&s,Operand op){
+    s<<op->GetFullName();
     return s;
 }
 
-void load_Instruction::printIR(std::ostream& s){
+void LoadInstruction::PrintIR(std::ostream& s){
     s<<result<<" = load "<<type<<", ptr "<<pointer<<"\n";
 }
-void store_Instruction::printIR(std::ostream& s){
+void StoreInstruction::PrintIR(std::ostream& s){
     s<<"store "<<type<<" "<<value<<", ptr "<<pointer<<"\n";
 }
-void alg_Instruction::printIR(std::ostream&s){
+void ArithmeticInstruction::PrintIR(std::ostream&s){
     s<<result<<" = "<<opcode<<" "<<type<<" "<<op1<<","<<op2<<"\n";
 }
-void icmp_Instruction::printIR(std::ostream&s){
+void IcmpInstruction::PrintIR(std::ostream&s){
     s<<result<<" = icmp "<<cond<<" "<<type<<" "<<op1<<","<<op2<<"\n";
 }
-void fcmp_Instruction::printIR(std::ostream&s){
+void FcmpInstruction::PrintIR(std::ostream&s){
     s<<result<<" = fcmp "<<cond<<" "<<type<<" "<<op1<<","<<op2<<"\n";
 }
-void phi_Instruction::printIR(std::ostream&s){
+void PhiInstruction::PrintIR(std::ostream&s){
     s<<result<<" = phi "<<type<<" ";
     for(auto it=val_labels.begin();it!=val_labels.end();++it)
     {
@@ -278,7 +278,7 @@ void phi_Instruction::printIR(std::ostream&s){
     }
     s<<'\n';
 }
-void alloca_Instruction::printIR(std::ostream&s){
+void AllocaInstruction::PrintIR(std::ostream&s){
     s<<result<<" = alloca ";
     if(dims.empty())
         s<<type<<"\n";//单个变量
@@ -288,11 +288,11 @@ void alloca_Instruction::printIR(std::ostream&s){
         s<<type<<std::string(dims.size(),']')<<"\n";
     }
 }
-void br_cond_Instruction::printIR(std::ostream&s){
+void BrCondInstruction::PrintIR(std::ostream&s){
     //br i1 <cond>, label <iftrue>, label <iffalse>
     s<<"br i1 "<<cond<<", label "<<trueLabel<<", label "<<falseLabel<<"\n";
 }
-void br_uncond_Instruction::printIR(std::ostream&s){
+void BrUncondInstruction::PrintIR(std::ostream&s){
     //br label <dest>
     s<<"br label "<<destLabel<<"\n";
 }
@@ -301,7 +301,7 @@ void br_uncond_Instruction::printIR(std::ostream&s){
 //define void @DFS(i32 %0,i32 %1){
 //  Function Body
 //}
-void func_define_Instruction::printIR(std::ostream&s)
+void FunctionDefineInstruction::PrintIR(std::ostream&s)
 {
     //define void @FunctionName
     s<<"define "<<return_type<<" @"<<Func_name;
@@ -316,7 +316,7 @@ void func_define_Instruction::printIR(std::ostream&s)
     s<<")\n";
 }
 
-void func_declare_Instruction::printIR(std::ostream& s){
+void FunctionDeclareInstruction::PrintIR(std::ostream& s){
     //declare void @FunctionName(i32,f32)
     s<<"declare "<<return_type<<" @"<<Func_name<<"(";
     for(uint32_t i = 0;i < formals.size(); ++i){
@@ -326,25 +326,25 @@ void func_declare_Instruction::printIR(std::ostream& s){
     s<<")\n";
 }
 
-void basic_block::printIR(std::ostream&s)
+void BasicBlock::printIR(std::ostream&s)
 {
     s<<"L"<<block_id<<":\n";
     for(Instruction ins:Instruction_list){
         s<<"    ";
-        ins->printIR(s);//Auto "\n" In Instruction::printIR()
+        ins->PrintIR(s);//Auto "\n" In Instruction::printIR()
     }
 }
 
-void LLVM_IR::printIR(std::ostream&s)
+void LLVMIR::printIR(std::ostream&s)
 {
     //output lib func decl
     for(Instruction lib_func_decl:func_declare){
-        lib_func_decl->printIR(s);
+        lib_func_decl->PrintIR(s);
     }
 
     //output global
     for(Instruction global_decl_ins:global_def){
-        global_decl_ins->printIR(s);
+        global_decl_ins->PrintIR(s);
     }
 
     //output Functions
@@ -355,7 +355,7 @@ void LLVM_IR::printIR(std::ostream&s)
         // ASSERT(current_CFG != NULL)
         current_CFG = llvm_cfg[f];
         //output function Syntax
-        f->printIR(s);
+        f->PrintIR(s);
 
         //output Blocks in functions
         s<<"{\n";
@@ -406,12 +406,12 @@ long long Float_to_Byte(float f){
     return out_rawFloatByte;
 }
 
-long long imm_f32_operand::getFloatByteVal()
+long long ImmF32Operand::GetFloatByteVal()
 {
     return Float_to_Byte(immVal);
 }
 
-void recursive_print(std::ostream& s,llvm_type type,ArrayVal& v,int dimDph,int beginPos,int endPos)
+void recursive_print(std::ostream& s,LLVMType type,ArrayVal& v,int dimDph,int beginPos,int endPos)
 {
     if(dimDph == 0){
         int allzero = 1;
@@ -464,7 +464,7 @@ void recursive_print(std::ostream& s,llvm_type type,ArrayVal& v,int dimDph,int b
 }
 
 //Remember "\n"
-void global_id_define_Instruction::printIR(std::ostream& s)
+void GlobalVarDefineInstruction::PrintIR(std::ostream& s)
 {
     if(arval.dims.empty()){
         if(init_val != nullptr)
@@ -497,16 +497,16 @@ Example 1:
 Example 2:
     call void @DFS(i32 0,i32 %4)
 */
-void call_Instruction::printIR(std::ostream& s)
+void CallInstruction::PrintIR(std::ostream& s)
 {
-    if(ret_type != llvm_type::VOID){
+    if(ret_type != LLVMType::VOID){
         s<<result<<" = ";
     }
     s<<"call "<<ret_type<<" @"<<name;
     
     //print Parameter List
     s<<"(";
-    for(std::vector<std::pair<llvm_type,operand>>::iterator it=args.begin();it!=args.end();++it)
+    for(std::vector<std::pair<LLVMType,Operand>>::iterator it=args.begin();it!=args.end();++it)
     {
         s<<it->first<<" "<<it->second;
         if(it+1!=args.end())s<<",";
@@ -515,7 +515,7 @@ void call_Instruction::printIR(std::ostream& s)
 }
 
 //Remember "\n"
-void ret_Instruction::printIR(std::ostream& s)
+void RetInstruction::PrintIR(std::ostream& s)
 {
     s<<"ret "<<ret_type;
     if(ret_val!=nullptr){
@@ -530,7 +530,7 @@ Syntax:
 <result> = getelementptr inbounds <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
 <result> = getelementptr <ty>, <N x ptr> <ptrval>, [inrange] <vector index type> <idx>
 */
-void get_elementptr_Instruction::printIR(std::ostream& s)
+void GetElementprtInstruction::PrintIR(std::ostream& s)
 {
     s<<result<<" = getelementptr ";
     //print type
@@ -547,20 +547,20 @@ void get_elementptr_Instruction::printIR(std::ostream& s)
     //print ptrval
     s<<", ptr "<<ptrval;
     //print indexes
-    for(operand idx:indexes)
+    for(Operand idx:indexes)
         s<<", i32 "<<idx;
     s<<"\n";
 }
 
-void fptosi_Instruction::printIR(std::ostream& s){
+void FptosiInstruction::PrintIR(std::ostream& s){
     s<<result<<" = fptosi float"<<" "<<value<<" to "<<"i32"<<"\n";
 }
 
-void sitofp_Instruction::printIR(std::ostream& s){
+void SitofpInstruction::PrintIR(std::ostream& s){
     s<<result<<" = sitofp i32"<<" "<<value<<" to "<<"float"<<"\n";
 }
 
-void global_str_const_Instruction::printIR(std::ostream& s){
+void GlobalStringConstInstruction::PrintIR(std::ostream& s){
     //std::cerr<<str_val<<"\n";
     int str_len=str_val.size()+1;
     for(char c:str_val){
@@ -591,40 +591,40 @@ void global_str_const_Instruction::printIR(std::ostream& s){
     s<<"\\00"<<"\"\n";
 }
 
-void zext_Instruction::printIR(std::ostream& s){
+void ZextInstruction::PrintIR(std::ostream& s){
     s<<result<<" = zext "<<from_type<<" "<<value<<" to "<<to_type<<"\n";
 }
 
-void load_fp_instruction::printIR(std::ostream& s){
-    if(offset->getOperandType() != basic_operand::REG)
+void load_fp_instruction::PrintIR(std::ostream& s){
+    if(offset->GetOperandType() != BasicOperand::REG)
         s<<"ldr "<<result<<",[fp,#"<<offset<<"];pseudo IR code\n";
     else
         s<<"ldr "<<result<<",[fp,"<<offset<<"];pseudo IR code\n";
 }
 
-void store_fp_instruction::printIR(std::ostream& s){
-    if(offset->getOperandType() != basic_operand::REG)
+void store_fp_instruction::PrintIR(std::ostream& s){
+    if(offset->GetOperandType() != BasicOperand::REG)
         s<<"str "<<str_val<<",[fp,#"<<offset<<"];pseudo IR code\n";
     else
         s<<"str "<<str_val<<",[fp,"<<offset<<"];pseudo IR code\n";
 }
 
-void get_addr_by_fp_offset_instruction::printIR(std::ostream& s){
-    if(offset->getOperandType() != basic_operand::REG)  
+void get_addr_by_fp_offset_instruction::PrintIR(std::ostream& s){
+    if(offset->GetOperandType() != BasicOperand::REG)  
         s<<"add "<<result<<",fp,#"<<offset<<";pseudo IR code\n";
     else
         s<<"add "<<result<<",fp,"<<offset<<";pseudo IR code\n";
 }
 
-void mov_instruction::printIR(std::ostream& s){
+void mov_instruction::PrintIR(std::ostream& s){
     s<<"mov "<<result<<","<<source<<";pseudo IR code\n";
 }
 
-void load_imm_instruction::printIR(std::ostream& s){
+void load_imm_instruction::PrintIR(std::ostream& s){
     s<<"ldr "<<result<<",="<<Byte<<";pseudo IR code\n";
 }
 
-void vmov_instruction::printIR(std::ostream& s){
+void vmov_instruction::PrintIR(std::ostream& s){
     s<<"vmov "<<result<<","<<from<<";pseudo IR code\n";
 }
 
@@ -632,15 +632,15 @@ void vmov_instruction::printIR(std::ostream& s){
 //     return "[fp,#"+std::to_string(negative_offset)+"]";
 // }
 
-void pseudo_load_label_instruction::printIR(std::ostream& s){
+void pseudo_load_label_instruction::PrintIR(std::ostream& s){
     s<<"ldr "<<result<<",="<<from<<"\n";
 }
 
-void pseudo_alg_shift_Instruction::printIR(std::ostream& s){
+void pseudo_alg_shift_Instruction::PrintIR(std::ostream& s){
     s<<opcode<<" "<<result<<","<<op1<<","<<op2<<",leftshift #"<<shift_bit<<",is_a_shift:"<<is_a_shift<<";pseudo IR code\n";
 }
 
-void it_instruction::printIR(std::ostream& s){
+void it_instruction::PrintIR(std::ostream& s){
     if(exec_cond == NONE){
         s<<"it "<<"NONE\n";
     }else if(exec_cond == EX_CS){

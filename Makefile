@@ -1,5 +1,6 @@
 SRCDIR += ./target
 SRCDIR += ./target/arm
+SRCDIR += ./target/arm/register_alloc
 SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./IR
@@ -9,6 +10,9 @@ SRCDIR += ./optimize
 SRCDIR += ./optimize/peephole
 SRCDIR += ./optimize/propagating
 SRCDIR += ./optimize/dce
+SRCDIR += ./optimize/cfg
+SRCDIR += ./optimize/loop
+SRCDIR += ./optimize/function
 SRCDIR += ./utils
 
 

@@ -17,8 +17,8 @@
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR,CISU,PROP,STR3,STR4)\
 fout <<std::fixed<<std::setprecision(12)<<std::setw(15)<<std::left<<STR<<" "<<std::setw(20)<<std::left<<CISU<<" "<<std::setw(32)<<std::left<<PROP<<std::setw(15)<<std::left<<STR3<<std::setw(15)<<std::left<<STR4<<"\n"
 
-extern LLVM_IR cgenpre_IR;
-extern LLVM_IR llvm_IR;
+extern LLVMIR cgenpre_IR;
+extern LLVMIR llvm_IR;
 extern Program ast_root;
 extern FILE* yyin;
 extern int error_num;

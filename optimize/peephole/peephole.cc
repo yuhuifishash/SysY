@@ -4,7 +4,7 @@
 #include "basic_block.h"
 #include "peeholeRules.h"
 
-void LLVM_IR::peephole_optimize()
+void LLVMIR::peephole_optimize()
 {
     for(auto node:llvm_cfg){
         node.second->simple_instcombine();
@@ -61,47 +61,47 @@ std::vector<int> calc_1b(unsigned int a){
 void CFG::simple_inst_strength_reduce()
 {
     // std::cerr<<func_ins->get_Func_name()<<"\n";
-    std::map<int,operand> replace_val;
+    std::map<int,Operand> replace_val;
     for(auto&block_pair:*block){
         auto&block = block_pair.second;
         auto block_id = block_pair.first;
         for(auto ins:block->Instruction_list){
-            if(ins->get_opcode() == PHI){
-                auto phi_ins = (phi_Instruction*)ins;
+            if(ins->GetOpcode() == PHI){
+                auto phi_ins = (PhiInstruction*)ins;
                 if(phi_ins->getPhiList().size()==1){
                     auto reg=phi_ins->getResultOp();
-                    auto reg_no = ((reg_operand*)reg)->getRegNo();
+                    auto reg_no = ((RegOperand*)reg)->GetRegNo();
                     replace_val[reg_no]=phi_ins->getPhiList().begin()->second;
                 }
-            }else if(ins->get_opcode() == MUL){
-                operand candidate_imm_op = NULL;
-                operand candidate_reg_op = NULL;
-                auto alg_ins = (alg_Instruction*)ins;
-                if(alg_ins->getOp1()->getOperandType() == basic_operand::IMMI32){
-                    candidate_imm_op = alg_ins->getOp1();
-                    candidate_reg_op = alg_ins->getOp2();
-                }else if(alg_ins->getOp2()->getOperandType() == basic_operand::IMMI32){
-                    candidate_imm_op = alg_ins->getOp2();
-                    candidate_reg_op = alg_ins->getOp1();
+            }else if(ins->GetOpcode() == MUL){
+                Operand candidate_imm_op = NULL;
+                Operand candidate_reg_op = NULL;
+                auto alg_ins = (ArithmeticInstruction*)ins;
+                if(alg_ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32){
+                    candidate_imm_op = alg_ins->GetOperand1();
+                    candidate_reg_op = alg_ins->GetOperand2();
+                }else if(alg_ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+                    candidate_imm_op = alg_ins->GetOperand2();
+                    candidate_reg_op = alg_ins->GetOperand1();
                 }
                 if(candidate_imm_op != NULL){
-                    int candidate_imm = ((imm_i32_operand*)candidate_imm_op)->getIntImmVal();
-                    auto reg=alg_ins->getResultOp();
-                    auto reg_no = ((reg_operand*)reg)->getRegNo();
+                    int candidate_imm = ((ImmI32Operand*)candidate_imm_op)->GetIntImmVal();
+                    auto reg=alg_ins->GetResultOperand();
+                    auto reg_no = ((RegOperand*)reg)->GetRegNo();
                     if(candidate_imm == 0){
-                        replace_val[reg_no] = new imm_i32_operand(0);
+                        replace_val[reg_no] = new ImmI32Operand(0);
                     }else if(candidate_imm == 1){
                         replace_val[reg_no] = candidate_reg_op;
                     }
                 }
-            }else if(ins->get_opcode() == DIV){
-                auto alg_ins = (alg_Instruction*)ins;
-                auto reg=alg_ins->getResultOp();
-                auto reg_no = ((reg_operand*)reg)->getRegNo();
-                if(alg_ins->getOp2()->getOperandType() == basic_operand::IMMI32){
-                    auto imm = ((imm_i32_operand*)alg_ins->getOp2())->getIntImmVal();
+            }else if(ins->GetOpcode() == DIV){
+                auto alg_ins = (ArithmeticInstruction*)ins;
+                auto reg=alg_ins->GetResultOperand();
+                auto reg_no = ((RegOperand*)reg)->GetRegNo();
+                if(alg_ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+                    auto imm = ((ImmI32Operand*)alg_ins->GetOperand2())->GetIntImmVal();
                     if(imm == 1){
-                        replace_val[reg_no] = alg_ins->getOp1();
+                        replace_val[reg_no] = alg_ins->GetOperand1();
                     }
                 }
             }
@@ -114,18 +114,18 @@ void CFG::simple_inst_strength_reduce()
             auto&block = block_pair.second;
             auto block_id = block_pair.first;
             for(auto&ins:block->Instruction_list){
-                auto reg_nres = ins->get_nonresult_operands();
+                auto reg_nres = ins->GetNonResultOperands();
                 for(int i=0;i<reg_nres.size();i++){
                     auto res_ob = reg_nres[i];
-                    if(res_ob->getOperandType() == basic_operand::REG){
-                        int reg_no=((reg_operand*)res_ob)->getRegNo();
+                    if(res_ob->GetOperandType() == BasicOperand::REG){
+                        int reg_no=((RegOperand*)res_ob)->GetRegNo();
                         if(replace_val.find(reg_no)!=replace_val.end()){
                             reg_nres[i] = replace_val[reg_no];
                             changed = 1;
                         }
                     }
                 }
-                ins->set_nonresult_operands(reg_nres);
+                ins->SetNonResultOperands(reg_nres);
             }
         }
     }
@@ -134,27 +134,27 @@ void CFG::simple_inst_strength_reduce()
         auto block_id = block_pair.first;
         decltype(block->Instruction_list) new_InsList;
         for(auto ins:block->Instruction_list){
-            if(ins->get_opcode() == PHI){
-                auto phi_ins = (phi_Instruction*)ins;
+            if(ins->GetOpcode() == PHI){
+                auto phi_ins = (PhiInstruction*)ins;
                 if(phi_ins->getPhiList().size()==1){
                 }else{
                     new_InsList.push_back(ins);
                 }
-            }else if(ins->get_opcode() == MUL){
-                operand candidate_imm_op = NULL;
-                operand candidate_reg_op = NULL;
-                auto alg_ins = (alg_Instruction*)ins;
-                if(alg_ins->getOp1()->getOperandType() == basic_operand::IMMI32){
-                    candidate_imm_op = alg_ins->getOp1();
-                    candidate_reg_op = alg_ins->getOp2();
-                }else if(alg_ins->getOp2()->getOperandType() == basic_operand::IMMI32){
-                    candidate_imm_op = alg_ins->getOp2();
-                    candidate_reg_op = alg_ins->getOp1();
+            }else if(ins->GetOpcode() == MUL){
+                Operand candidate_imm_op = NULL;
+                Operand candidate_reg_op = NULL;
+                auto alg_ins = (ArithmeticInstruction*)ins;
+                if(alg_ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32){
+                    candidate_imm_op = alg_ins->GetOperand1();
+                    candidate_reg_op = alg_ins->GetOperand2();
+                }else if(alg_ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+                    candidate_imm_op = alg_ins->GetOperand2();
+                    candidate_reg_op = alg_ins->GetOperand1();
                 }
                 if(candidate_imm_op == NULL){
                     new_InsList.push_back(ins);
                 }else{
-                    int candidate_imm = ((imm_i32_operand*)candidate_imm_op)->getIntImmVal();
+                    int candidate_imm = ((ImmI32Operand*)candidate_imm_op)->GetIntImmVal();
                     if(candidate_imm == 0 || candidate_imm == 1){
                         continue;
                     }
@@ -189,7 +189,7 @@ void CFG::simple_inst_strength_reduce()
                 //         new_InsList.push_back(ins);
                 //     }
                 }
-            }else if(ins->get_opcode() == DIV){
+            }else if(ins->GetOpcode() == DIV){
                 new_InsList.push_back(ins);
             }else{
                 new_InsList.push_back(ins);
@@ -199,7 +199,7 @@ void CFG::simple_inst_strength_reduce()
     }
 }
 
-void LLVM_IR::decompose_getelementptr(){
+void LLVMIR::decompose_getelementptr(){
     // std::cerr<<"LLVM_IR::decompose_getelementptr()\n";
     for(auto& func_CFG:llvm_cfg){
         auto cfg = func_CFG.second;
@@ -210,8 +210,8 @@ void LLVM_IR::decompose_getelementptr(){
             // std::cerr<<"AA\n";
             for(auto ins:block->Instruction_list){
                 // ins->printIR(std::cerr);
-                if(ins->get_opcode()==GETELEMENTPTR){
-                    auto gep_ins = (get_elementptr_Instruction*)ins;
+                if(ins->GetOpcode()==GETELEMENTPTR){
+                    auto gep_ins = (GetElementprtInstruction*)ins;
                     auto idx_list = gep_ins->get_indexes();
                     std::deque<int> dim_list;
                     for(auto x:gep_ins->get_dims()){
@@ -223,7 +223,7 @@ void LLVM_IR::decompose_getelementptr(){
                         new_insList.push_back(ins);
                     }
                     for(int i=0;i<idx_list.size();i++){
-                        if(idx_list[i]->getOperandType() == basic_operand::IMMI32){
+                        if(idx_list[i]->GetOperandType() == BasicOperand::IMMI32){
                             if(i == idx_list.size()-1){
                                 if(last_non_const_pos+1<=i){
                                     // cfg->max_reg++;
@@ -232,31 +232,31 @@ void LLVM_IR::decompose_getelementptr(){
                                     for(auto x:dim_list){
                                         cur_dim.push_back(x);
                                     }
-                                    auto ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                    auto ele = new GetElementprtInstruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
                                     for(int j=last_non_const_pos+1;j<=i;j++){
-                                        int idx_immval = ((imm_i32_operand*)idx_list[j])->getIntImmVal();
+                                        int idx_immval = ((ImmI32Operand*)idx_list[j])->GetIntImmVal();
                                         ele->push_idx_imm32(idx_immval);
                                         if(!dim_list.empty())
                                             dim_list.pop_front();
                                     }
                                     new_insList.push_back(ele);
-                                    cfg->regresult_ins_map[ele->get_resultregno()] = ele;
-                                    ele->setBlockID(block->block_id);
+                                    cfg->regresult_ins_map[ele->GetResultRegNo()] = ele;
+                                    ele->SetBlockID(block->block_id);
                                     cur_ptrval = cur_result;
                                 }
                             }
                         }
                         else{
-                            get_elementptr_Instruction* ele;
+                            GetElementprtInstruction* ele;
                             int const_end = i;
                             if(last_non_const_pos == -1){
                                 const_end++;
                             }
                             if(last_non_const_pos+1<const_end){
-                                operand cur_result;
+                                Operand cur_result;
                                 if(const_end != idx_list.size()){
                                     cfg->max_reg++;
-                                    cur_result = new reg_operand(cfg->max_reg);
+                                    cur_result = new RegOperand(cfg->max_reg);
                                 }
                                 else{
                                     cur_result = gep_ins->get_result();
@@ -265,29 +265,29 @@ void LLVM_IR::decompose_getelementptr(){
                                 for(auto x:dim_list){
                                     cur_dim.push_back(x);
                                 }
-                                ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                ele = new GetElementprtInstruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
                                 for(int j=last_non_const_pos+1;j<const_end;j++){
-                                    if(idx_list[j]->getOperandType() == basic_operand::IMMI32){
-                                        int idx_immval = ((imm_i32_operand*)idx_list[j])->getIntImmVal();
+                                    if(idx_list[j]->GetOperandType() == BasicOperand::IMMI32){
+                                        int idx_immval = ((ImmI32Operand*)idx_list[j])->GetIntImmVal();
                                         ele->push_idx_imm32(idx_immval);
                                     }else{
-                                        int reg_no = ((reg_operand*)idx_list[j])->getRegNo();
+                                        int reg_no = ((RegOperand*)idx_list[j])->GetRegNo();
                                         ele->push_idx_reg(reg_no);
                                     }
                                     if(!dim_list.empty())
                                         dim_list.pop_front();
                                 }
                                 new_insList.push_back(ele);
-                                cfg->regresult_ins_map[ele->get_resultregno()] = ele;
-                                ele->setBlockID(block->block_id);
+                                cfg->regresult_ins_map[ele->GetResultRegNo()] = ele;
+                                ele->SetBlockID(block->block_id);
                                 cur_ptrval = cur_result;
                             }
 
                             if(last_non_const_pos != -1){
-                                operand cur_result;
+                                Operand cur_result;
                                 if(i != idx_list.size()-1){
                                     cfg->max_reg++;
-                                    cur_result = new reg_operand(cfg->max_reg);
+                                    cur_result = new RegOperand(cfg->max_reg);
                                 }
                                 else{
                                     cur_result = gep_ins->get_result();
@@ -296,18 +296,18 @@ void LLVM_IR::decompose_getelementptr(){
                                 for(auto x:dim_list){
                                     cur_dim.push_back(x);
                                 }
-                                ele = new get_elementptr_Instruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
-                                operand var_idx = idx_list[i];
-                                if(var_idx->getOperandType()!=basic_operand::REG){
+                                ele = new GetElementprtInstruction(gep_ins->get_type(),cur_result,cur_ptrval,cur_dim);
+                                Operand var_idx = idx_list[i];
+                                if(var_idx->GetOperandType()!=BasicOperand::REG){
                                     std::cerr<<"not REG not CONST in GEP\n";
                                 }
-                                ele->push_idx_reg(((reg_operand*)var_idx)->getRegNo());
+                                ele->push_idx_reg(((RegOperand*)var_idx)->GetRegNo());
                                 if(!dim_list.empty()){
                                     dim_list.pop_front();
                                 }
                                 new_insList.push_back(ele);
-                                cfg->regresult_ins_map[ele->get_resultregno()] = ele;
-                                ele->setBlockID(block->block_id);
+                                cfg->regresult_ins_map[ele->GetResultRegNo()] = ele;
+                                ele->SetBlockID(block->block_id);
                                 cur_ptrval = cur_result;
                             }
                             last_non_const_pos = i;

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+if [ $# != 3 ] ; then 
+    echo "arguments number is invalid" 
+    exit 1; 
+fi
+
+if [[ "$2" != "O1" ]] && [[ "$2" != "O0" ]] ; then 
+    echo "optimize_flag is invalid" 
+    exit 1; 
+fi
+
+#user example:
+#./Sysy_test.sh llvm O1 2023
+#./Sysy_test.sh llvm O0 2023
+#./Sysy_test.sh S O0 2023
+step=$1
+optimize_flag=$2
+year=$3
+
+if [ $1 == 'llvm' ] ; then
+    score=0
+    score_all=0
+    pwdin=testcase/functional_test$3
+    pwdout=test_output/functional_testIR$3
+    rm -rf ${pwdout}/*
+    for file in ${pwdin}/*.sy
+    do
+        score_all=`expr ${score_all} + 1`
+        var=${file%.*}
+        bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.ll \-${optimize_flag}
+        clang ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w
+        clang -static ${pwdout}/${var##*/}.o lib/libsysy_x86.a
+        rm -rf ${pwdout}/${var##*/}.o
+        mv a.out ${pwdout}/${var##*/}
+        if [ -f "${pwdin}/${var##*/}.in" ];then
+            ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        else
+            ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        fi
+        diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        if [ $? == 0 ];then
+            echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
+            score=`expr ${score} + 1`
+            rm ${pwdout}/${var##*/}.out
+        else
+            echo -e "\033[0;31;1m" Wrong answer "\033[0;37;1m" on ${var##*/}
+        fi
+        rm ${pwdout}/${var##*/}
+    done
+    echo IRTest:${score}/${score_all}
+elif [ $1 == 'S' ] ; then
+    score=0
+    score_all=0
+    pwdin=testcase/functional_test$3
+    pwdout=test_output/functional_testAsm$3
+    rm -rf ${pwdout}/*
+    for file in ${pwdin}/*.sy
+    do
+        score_all=`expr ${score_all} + 1`
+        var=${file%.*}
+        bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.s \-${optimize_flag}
+        arm-linux-gnueabihf-gcc ${pwdout}/${var##*/}.s -c -static -march=armv7
+        arm-linux-gnueabihf-gcc -static ${var##*/}.o lib/libsysy.a
+        rm -rf ${var##*/}.o
+        mv a.out ${pwdout}/${var##*/}
+        if [ -f "${pwdin}/${var##*/}.in" ];then
+            timeout 30 qemu-arm ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        else
+            timeout 30 qemu-arm ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        fi
+        diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        if [ $? == 0 ];then
+            echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
+            rm ${pwdout}/${var##*/}.out
+            score=`expr ${score} + 1`
+        else
+            echo -e "\033[0;31;1m" Wrong answer "\033[0;37;1m" on ${var##*/}
+        fi
+        rm ${pwdout}/${var##*/}
+    done
+    echo AsmTest:${score}/${score_all}
+else
+    echo "step arguments is invalid"
+fi

@@ -1,5 +1,5 @@
 #include "liveness_test.h"
-extern LLVM_IR cgenpre_IR;
+extern LLVMIR cgenpre_IR;
 void UnitTest_CalcLive(){
     for(auto CFG_pair:cgenpre_IR.llvm_cfg){
         auto func_inst = CFG_pair.first;

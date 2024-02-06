@@ -3,14 +3,14 @@
 
 #include "llvm_cfg.h"
 
-class LLVM_IR
+class LLVMIR
 {
 public:
     std::vector<Instruction> global_def{};
     std::vector<Instruction> func_declare{};
     std::map<Func_Def_Instruction, int> sp_offset_map{};
     std::map<Func_Def_Instruction, CFG*> llvm_cfg{}; //<function,cfg>
-    std::map<Func_Def_Instruction, std::map<int, llvm_block> > llvm_Function_BlockArr_map; //<function,<id,block> >
+    std::map<Func_Def_Instruction, std::map<int, LLVMBlock> > llvm_Function_BlockArr_map; //<function,<id,block> >
     std::map<Func_Def_Instruction, int> max_label_map{};
     std::map<Func_Def_Instruction, int> max_reg_map{}; 
 

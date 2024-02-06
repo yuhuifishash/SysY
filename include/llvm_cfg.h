@@ -16,11 +16,11 @@ class CFG;
 class NaturalLoop
 {
 public:
-    std::set<llvm_block> loop_nodes;
-    std::set<llvm_block> exit_nodes;
+    std::set<LLVMBlock> loop_nodes;
+    std::set<LLVMBlock> exit_nodes;
     std::vector<Instruction> InvariantInsList;
-    llvm_block header;
-    llvm_block preheader;
+    LLVMBlock header;
+    LLVMBlock preheader;
     int loop_id;
     NaturalLoop* loop_fa;
     void find_exit_nodes(CFG* cfg);
@@ -32,7 +32,7 @@ class NaturalLoopForest
 public:
     std::set<NaturalLoop*> loops;
     std::vector<std::vector<NaturalLoop*> > loopG;
-    std::map<llvm_block,NaturalLoop*> header_loop_map;
+    std::map<LLVMBlock,NaturalLoop*> header_loop_map;
     void combine_loops();
     void build_loopforest();
 };
@@ -55,14 +55,14 @@ class CFG
 public:
     int max_label = 0;
     int max_reg = 0;
-    std::map<int, llvm_block>* block;
+    std::map<int, LLVMBlock>* block;
     Func_Def_Instruction func_ins;
     
-    std::vector<std::vector<llvm_block> > G{}; //control flow graph
-    std::vector<std::vector<llvm_block> > invG{}; // inv control flow graph
+    std::vector<std::vector<LLVMBlock> > G{}; //control flow graph
+    std::vector<std::vector<LLVMBlock> > invG{}; // inv control flow graph
 
-    std::vector<std::vector<llvm_block> > dominator_tree{};
-    std::vector<llvm_block> idom{};
+    std::vector<std::vector<LLVMBlock> > dominator_tree{};
+    std::vector<LLVMBlock> idom{};
 
     std::bitset<65536>* DF;
     std::bitset<65536>* atdom;
@@ -73,7 +73,7 @@ public:
     std::map<int,std::set<int> > uses{};
     std::map<int,int> mem2reg_map{};//<old regno, new regno>
     std::set<int> allocas;
-    std::map<phi_Instruction*,int> new_phi_map{};
+    std::map<PhiInstruction*,int> new_phi_map{};
     
     FunctionBasicInfo func_info;
 

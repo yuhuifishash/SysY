@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-for file in test/test/example/*.sy
-do
-    var=${file%.*}
-    bin/SysYc $file -llvm -o test/IR_test_output/${var##*/}.out.ll
-done
-

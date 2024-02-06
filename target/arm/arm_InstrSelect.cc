@@ -3,64 +3,66 @@
 #include "llvm_cfg.h"
 #include "llvm_ir.h"
 #include "arm_block.h"
+
+template<>
+void Arm_block::ConvertAndAppend<LoadInstruction*>(LoadInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<StoreInstruction*>(StoreInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<IcmpInstruction*>(IcmpInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<FcmpInstruction*>(FcmpInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<AllocaInstruction*>(AllocaInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<BrCondInstruction*>(BrCondInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<BrUncondInstruction*>(BrUncondInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<CallInstruction*>(CallInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<RetInstruction*>(RetInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<FptosiInstruction*>(FptosiInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<SitofpInstruction*>(SitofpInstruction* ins){
+}
+
+template<>
+void Arm_block::ConvertAndAppend<ZextInstruction*>(ZextInstruction* ins){
+}
+
 template<>
 void Arm_block::ConvertAndAppend<Instruction>(Instruction ins){
-    switch(ins->get_opcode()){
+    switch(ins->GetOpcode()){
         case LOAD:
-        ConvertAndAppend<load_Instruction*>((load_Instruction*)ins);
+        ConvertAndAppend<LoadInstruction*>((LoadInstruction*)ins);
         break;
     }
 }
 
-template<>
-void Arm_block::ConvertAndAppend<load_Instruction*>(load_Instruction* ins){
-}
 
-template<>
-void Arm_block::ConvertAndAppend<store_Instruction*>(store_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<icmp_Instruction*>(icmp_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<fcmp_Instruction*>(fcmp_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<alloca_Instruction*>(alloca_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<br_cond_Instruction*>(br_cond_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<br_uncond_Instruction*>(br_uncond_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<call_Instruction*>(call_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<ret_Instruction*>(ret_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<fptosi_Instruction*>(fptosi_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<sitofp_Instruction*>(sitofp_Instruction* ins){
-}
-
-template<>
-void Arm_block::ConvertAndAppend<zext_Instruction*>(zext_Instruction* ins){
-}
-
-Arm_asm::Arm_asm(LLVM_IR& IR){
+Arm_asm::Arm_asm(LLVMIR& IR){
     global_def = IR.global_def;
     for(auto func_pair:IR.llvm_cfg){
         auto cfg = func_pair.second;
@@ -80,4 +82,5 @@ Arm_asm::Arm_asm(LLVM_IR& IR){
         }
     }
 }
+
 #endif

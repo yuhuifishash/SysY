@@ -4,30 +4,30 @@
 #include "IRgen.h"
 #include <bitset>
 
-extern LLVM_IR llvm_IR;
+extern LLVMIR llvm_IR;
 
-void LLVM_IR::build_dominator_tree()
+void LLVMIR::build_dominator_tree()
 {
     for(auto node:llvm_cfg){
         node.second->build_dominator_tree();
     }
 }
 
-void LLVM_IR::insert_phi()
+void LLVMIR::insert_phi()
 {
     for(auto node:llvm_cfg){
         node.second->insert_phi();
     }
 }
 
-void LLVM_IR::var_rename()
+void LLVMIR::var_rename()
 {
     for(auto node:llvm_cfg){
         node.second->var_rename();
     }
 }
 
-void LLVM_IR::mem2reg()
+void LLVMIR::mem2reg()
 {
     build_dominator_tree();
     insert_phi();
@@ -39,12 +39,12 @@ void CFG::calc_defs_uses()
     for(auto B1:*block){
         for(auto Ins:B1.second->Instruction_list){
             
-            if(Ins->get_opcode() == STORE){
-                defs[((store_Instruction*)Ins)->get_defregno()].insert(B1.first);
-                def_num[((store_Instruction*)Ins)->get_defregno()]++;
+            if(Ins->GetOpcode() == STORE){
+                defs[((StoreInstruction*)Ins)->GetDefRegNo()].insert(B1.first);
+                def_num[((StoreInstruction*)Ins)->GetDefRegNo()]++;
             }
-            if(Ins->get_opcode() == LOAD){
-                uses[((load_Instruction*)Ins)->get_useregno()].insert(B1.first);
+            if(Ins->GetOpcode() == LOAD){
+                uses[((LoadInstruction*)Ins)->get_useregno()].insert(B1.first);
             }
         }
     }
@@ -80,9 +80,9 @@ void CFG::mem2reg_no_use_alloca(std::set<int>& no_use_vset)
 {
     for(auto B1:*block){
         for(auto Ins:B1.second->Instruction_list){
-            if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
-                if(no_use_vset.find(((store_Instruction*)Ins)->get_defregno()) == no_use_vset.end() || ((store_Instruction*)Ins)->erase_tag ){continue;}
-                ((store_Instruction*)Ins)->erase_tag = 1;
+            if(Ins->GetOpcode() == STORE && ((StoreInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG){
+                if(no_use_vset.find(((StoreInstruction*)Ins)->GetDefRegNo()) == no_use_vset.end() || ((StoreInstruction*)Ins)->erase_tag ){continue;}
+                ((StoreInstruction*)Ins)->erase_tag = 1;
             }
         }
     }
@@ -92,15 +92,15 @@ void CFG::mem2reg_in_sameblock(int regno,int block_id)//pointer BB
 {
     int current_regno = 0;
     for(auto Ins:(*block)[block_id]->Instruction_list){
-        if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
-            if(((store_Instruction*)Ins)->get_defregno() != regno || ((store_Instruction*)Ins)->erase_tag ){continue;}
-            current_regno = ((reg_operand*)(((store_Instruction*)Ins)->getValue()))->getRegNo();
-            ((store_Instruction*)Ins)->erase_tag = 1;
+        if(Ins->GetOpcode() == STORE && ((StoreInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG){
+            if(((StoreInstruction*)Ins)->GetDefRegNo() != regno || ((StoreInstruction*)Ins)->erase_tag ){continue;}
+            current_regno = ((RegOperand*)(((StoreInstruction*)Ins)->GetValue()))->GetRegNo();
+            ((StoreInstruction*)Ins)->erase_tag = 1;
         }
-        if(Ins->get_opcode() == LOAD && ((load_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
-            if(((load_Instruction*)Ins)->get_useregno() != regno || ((load_Instruction*)Ins)->erase_tag){continue;}
-            mem2reg_map[Ins->get_resultregno()] = current_regno;
-            ((load_Instruction*)Ins)->erase_tag = 1;
+        if(Ins->GetOpcode() == LOAD && ((LoadInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG){
+            if(((LoadInstruction*)Ins)->get_useregno() != regno || ((LoadInstruction*)Ins)->erase_tag){continue;}
+            mem2reg_map[Ins->GetResultRegNo()] = current_regno;
+            ((LoadInstruction*)Ins)->erase_tag = 1;
         }
     }
 }
@@ -110,20 +110,20 @@ void CFG::mem2reg_onedef_dom_alluses(int regno)//pointer  value
     int result = 0;
     for(auto B1:*block){
         for(auto Ins:B1.second->Instruction_list){
-            if(Ins->get_opcode() == STORE && ((store_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG ){
-                if(((store_Instruction*)Ins)->get_defregno() != regno || ((store_Instruction*)Ins)->erase_tag ){continue;}
-                result = ((reg_operand*)(((store_Instruction*)Ins)->getValue()))->getRegNo();
-                ((store_Instruction*)Ins)->erase_tag = 1;
+            if(Ins->GetOpcode() == STORE && ((StoreInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG ){
+                if(((StoreInstruction*)Ins)->GetDefRegNo() != regno || ((StoreInstruction*)Ins)->erase_tag ){continue;}
+                result = ((RegOperand*)(((StoreInstruction*)Ins)->GetValue()))->GetRegNo();
+                ((StoreInstruction*)Ins)->erase_tag = 1;
                 break;
             }
         }
     }
     for(auto B1:*block){
         for(auto Ins:B1.second->Instruction_list){
-            if(Ins->get_opcode() == LOAD && ((load_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
-                if(((load_Instruction*)Ins)->get_useregno() != regno || ((load_Instruction*)Ins)->erase_tag){continue;}
-                mem2reg_map[Ins->get_resultregno()] = result;
-                ((load_Instruction*)Ins)->erase_tag = 1;
+            if(Ins->GetOpcode() == LOAD && ((LoadInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG){
+                if(((LoadInstruction*)Ins)->get_useregno() != regno || ((LoadInstruction*)Ins)->erase_tag){continue;}
+                mem2reg_map[Ins->GetResultRegNo()] = result;
+                ((LoadInstruction*)Ins)->erase_tag = 1;
             }
         }
     }
@@ -131,15 +131,15 @@ void CFG::mem2reg_onedef_dom_alluses(int regno)//pointer  value
 
 void CFG::insert_phi()
 {
-    llvm_block entry_BB = (*block)[0];
+    LLVMBlock entry_BB = (*block)[0];
     std::set<int> no_use_vset;
     for(auto Ins:entry_BB->Instruction_list){
-        if(Ins->get_opcode() != ALLOCA){continue;}
+        if(Ins->GetOpcode() != ALLOCA){continue;}
 
-        auto I = (alloca_Instruction*)Ins;
+        auto I = (AllocaInstruction*)Ins;
         if(!(I->getDims().empty())){continue;}//array can not be promoted
-        int v = I->get_resultregno();
-        llvm_type type = I->getDataType();
+        int v = I->GetResultRegNo();
+        LLVMType type = I->getDataType();
 
         auto I_defs = defs[v];
         auto I_uses = uses[v];
@@ -187,7 +187,7 @@ void CFG::insert_phi()
             for(auto BB_Y:calc_DF(BB_X)){
                 //std::cout<<v<<" "<<BB_X<<" "<<BB_Y<<"\n";
                 if(F.find(BB_Y) == F.end()){
-                    phi_Instruction* phi_ins = new phi_Instruction(type,new reg_operand(++max_reg));
+                    PhiInstruction* phi_ins = new PhiInstruction(type,new RegOperand(++max_reg));
                     (*block)[BB_Y]->push_Ins(0,phi_ins);
                     new_phi_map[phi_ins] = v;
                     F.insert(BB_Y);
@@ -205,18 +205,18 @@ void CFG::insert_phi()
 
 int in_allocas(std::set<int>& S,Instruction I)
 {
-    if(I->get_opcode() == LOAD){
-        auto Ins = (load_Instruction*)I;
-        if(Ins->getPointer()->getOperandType() != basic_operand::REG){return -1;}
+    if(I->GetOpcode() == LOAD){
+        auto Ins = (LoadInstruction*)I;
+        if(Ins->GetPointer()->GetOperandType() != BasicOperand::REG){return -1;}
         int pointer = Ins->get_useregno();
         if(S.find(pointer) != S.end()){
             return pointer;
         }
     }
-    if(I->get_opcode() == STORE){
-        auto Ins = (store_Instruction*)I;
-        if(Ins->getPointer()->getOperandType() != basic_operand::REG){return -1;}
-        int pointer = Ins->get_defregno();
+    if(I->GetOpcode() == STORE){
+        auto Ins = (StoreInstruction*)I;
+        if(Ins->GetPointer()->GetOperandType() != BasicOperand::REG){return -1;}
+        int pointer = Ins->GetDefRegNo();
         if(S.find(pointer) != S.end()){
             return pointer;
         }
@@ -237,31 +237,31 @@ void CFG::var_rename()
         if(BBvis[BB]){continue;}
         BBvis[BB] = 1;
         for(auto &I:(*block)[BB]->Instruction_list){
-            if(I->get_opcode() == LOAD){
-                auto Ins = (load_Instruction*)I;
+            if(I->GetOpcode() == LOAD){
+                auto Ins = (LoadInstruction*)I;
                 int v = in_allocas(allocas,I);
                 if(v >= 0){//load instruction is in allocas
                     //如果当前指令是 load，找到对应的 alloca v，将用到 load 结果的地方都替换成 IncomingVals[v]
                     Ins->erase_tag = 1;
-                    mem2reg_map[Ins->get_resultregno()] = IncomingVals[v]; 
+                    mem2reg_map[Ins->GetResultRegNo()] = IncomingVals[v]; 
                 }
             }
-            if(I->get_opcode() == STORE){
-                auto Ins = (store_Instruction*)I;
+            if(I->GetOpcode() == STORE){
+                auto Ins = (StoreInstruction*)I;
                 int v = in_allocas(allocas,I);
                 if(v >= 0){//store instruction is in allocas
                     //如果当前指令是 store，找到对应的 alloca v，更新IncomingVals[v] = val,并删除store
                     Ins->erase_tag = 1;
-                    IncomingVals[v] = ((reg_operand*)(Ins->getValue()))->getRegNo();
+                    IncomingVals[v] = ((RegOperand*)(Ins->GetValue()))->GetRegNo();
                 }
             }
-            if(I->get_opcode() == PHI){
-                auto Ins = (phi_Instruction*)I;
+            if(I->GetOpcode() == PHI){
+                auto Ins = (PhiInstruction*)I;
                 if(Ins->erase_tag){continue;}
                 auto it = new_phi_map.find(Ins);
                 if(it != new_phi_map.end()){//phi instruction is in allocas
                     //更新IncomingVals[v] = val
-                    IncomingVals[it->second] = Ins->get_resultregno();
+                    IncomingVals[it->second] = Ins->GetResultRegNo();
                 }
             }
         }
@@ -269,8 +269,8 @@ void CFG::var_rename()
             int BBv = succ->block_id;
             WorkList.insert({BBv,IncomingVals});
             for(auto I:(*block)[BBv]->Instruction_list){
-                if(I->get_opcode() != PHI){break;}
-                auto Ins = (phi_Instruction*)I;
+                if(I->GetOpcode() != PHI){break;}
+                auto Ins = (PhiInstruction*)I;
                 //找到 phi 对应的 alloca
                 auto it = new_phi_map.find(Ins);
                 if(it != new_phi_map.end()){
@@ -280,7 +280,7 @@ void CFG::var_rename()
                         continue;
                     }
                     //为 phi 添加前驱块到当前块的边
-                    Ins->Insert_phi(new reg_operand(IncomingVals[v]),new label_operand(BB));
+                    Ins->Insert_phi(new RegOperand(IncomingVals[v]),new LabelOperand(BB));
                 }
             }
         }
@@ -288,8 +288,8 @@ void CFG::var_rename()
 
     for(auto B1:*block){
         for(auto Ins:B1.second->Instruction_list){
-            if(Ins->get_opcode() == LOAD && ((load_Instruction*)Ins)->getPointer()->getOperandType() == basic_operand::REG){
-                int result = Ins->get_resultregno();
+            if(Ins->GetOpcode() == LOAD && ((LoadInstruction*)Ins)->GetPointer()->GetOperandType() == BasicOperand::REG){
+                int result = Ins->GetResultRegNo();
                 if(mem2reg_map.find(result) != mem2reg_map.end()){
                     int result2 = mem2reg_map[result];
                     while(mem2reg_map.find(result2) != mem2reg_map.end()){
@@ -305,10 +305,10 @@ void CFG::var_rename()
         auto tmp_Instruction_list = B1.second->Instruction_list;
         B1.second->Instruction_list.clear();
         for(auto I:tmp_Instruction_list){
-            if(I->get_opcode() == ALLOCA && ((alloca_Instruction*)I)->erase_tag){continue;}
-            if(I->get_opcode() == LOAD && ((load_Instruction*)I)->erase_tag){continue;}
-            if(I->get_opcode() == STORE && ((store_Instruction*)I)->erase_tag){continue;}
-            if(I->get_opcode() == PHI && ((phi_Instruction*)I)->erase_tag){continue;}
+            if(I->GetOpcode() == ALLOCA && ((AllocaInstruction*)I)->erase_tag){continue;}
+            if(I->GetOpcode() == LOAD && ((LoadInstruction*)I)->erase_tag){continue;}
+            if(I->GetOpcode() == STORE && ((StoreInstruction*)I)->erase_tag){continue;}
+            if(I->GetOpcode() == PHI && ((PhiInstruction*)I)->erase_tag){continue;}
             B1.second->push_Ins(1,I);
         }
     }
@@ -316,7 +316,7 @@ void CFG::var_rename()
     for(auto B1:*block){
         for(auto I:B1.second->Instruction_list){
             // replace mem2reg_map
-            I->replace_by_map(mem2reg_map);
+            I->ReplaceByMap(mem2reg_map);
         }
     }
     defs.clear();

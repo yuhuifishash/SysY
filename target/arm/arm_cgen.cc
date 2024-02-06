@@ -2,7 +2,7 @@
 #include "llvm_ir.h"
 #include <cstring>
 
-extern LLVM_IR llvm_IR;
+extern LLVMIR llvm_IR;
 // static int max_prereg = -1;
 static Func_Def_Instruction func_now;
 // static llvm_block block_now;
@@ -15,32 +15,32 @@ int output_Physical_reg = 0;
 static std::map<int,PhysicalAllocDiscriptor>* current_reg_V2P;
 static CFG* current_CFG;
 
-extern LLVM_IR cgenpre_IR;
+extern LLVMIR cgenpre_IR;
 
-operand get_any_imm32(int i32_val);
+Operand get_any_imm32(int i32_val);
 bool Immediate_8_Condition(unsigned int val);
-void basic_block::set_target(int id1,int id2)
+void BasicBlock::set_target(int id1,int id2)
 {
     if(Instruction_list.size() < 1){return;}
     auto it = *(Instruction_list.end()-1);
-    if(it->get_opcode() == BR_COND){
-        auto I = (br_cond_Instruction*)it;
-        int id = ((label_operand*)(I->getTrueLabel()))->getLabelNo();
+    if(it->GetOpcode() == BR_COND){
+        auto I = (BrCondInstruction*)it;
+        int id = ((LabelOperand*)(I->getTrueLabel()))->GetLabelNo();
         if(id == id1){
-            I->set_truelabel(new label_operand(id2));
+            I->set_truelabel(new LabelOperand(id2));
         }
         else{
-            I->set_falselabel(new label_operand(id2));
+            I->set_falselabel(new LabelOperand(id2));
         }
     }
-    if(it->get_opcode() == BR_UNCOND){
-        auto I = (br_uncond_Instruction*)it;
-        I->set_target(new label_operand(id2));
+    if(it->GetOpcode() == BR_UNCOND){
+        auto I = (BrUncondInstruction*)it;
+        I->set_target(new LabelOperand(id2));
     }
 }
 
 
-std::string get_cond_str(cmp_cond T)
+std::string get_cond_str(IcmpCond T)
 {
     std::string ans;
     switch(T)
@@ -69,28 +69,28 @@ std::string get_cond_str(cmp_cond T)
     return ans;
 }
 
-cmp_cond fcond2icond(fcmp_cond T)
+IcmpCond fcond2icond(FcmpCond T)
 {
-    cmp_cond ans;
+    IcmpCond ans;
     switch(T)
     {
         case OEQ:
-            ans = cmp_cond::eq;
+            ans = IcmpCond::eq;
             break;
         case ONE:
-            ans = cmp_cond::ne;
+            ans = IcmpCond::ne;
             break;
         case OGT:
-            ans = cmp_cond::sgt;
+            ans = IcmpCond::sgt;
             break;
         case OGE:
-            ans = cmp_cond::sge;
+            ans = IcmpCond::sge;
             break;
         case OLT:
-            ans = cmp_cond::slt;
+            ans = IcmpCond::slt;
             break;
         case OLE:
-            ans = cmp_cond::sle;
+            ans = IcmpCond::sle;
             break;
         default:
             break;
@@ -98,7 +98,7 @@ cmp_cond fcond2icond(fcmp_cond T)
     return ans;
 }
 
-std::string get_inv_cond_str(cmp_cond T)
+std::string get_inv_cond_str(IcmpCond T)
 {
     std::string ans;
     switch(T)
@@ -131,7 +131,7 @@ std::string get_inv_cond_str(cmp_cond T)
 
 static int r9_used_flag = 0;
 static int s30_used_flag = 0;
-static cmp_cond curr_cmp_cond;
+static IcmpCond curr_cmp_cond;
 static int cond_inv_flag = 0;
 static int float_cmp_flag = 0;
 static int result_flag = 0;
@@ -323,12 +323,12 @@ void code_ldr(int type,int offset,int result,std::ostream& s)
     }
 }
 
-std::string get_op_str(operand op,std::ostream& s)
+std::string get_op_str(Operand op,std::ostream& s)
 {
     std::string ans;
     
-    if(op->getOperandType() == basic_operand::REG){
-        int v_reg = ((reg_operand*)op)->getRegNo();
+    if(op->GetOperandType() == BasicOperand::REG){
+        int v_reg = ((RegOperand*)op)->GetRegNo();
         auto phy_reg = (*current_reg_V2P)[v_reg];
         if(phy_reg.alloc_type == phy_reg.PHY_REG_I32){
             ans = "r" + std::to_string(phy_reg.address.physicalRegNo_i32);
@@ -365,21 +365,21 @@ std::string get_op_str(operand op,std::ostream& s)
             }
         }
     }
-    if(op->getOperandType() == basic_operand::IMMI32){
-        int val = ((imm_i32_operand*)op)->getIntImmVal();
+    if(op->GetOperandType() == BasicOperand::IMMI32){
+        int val = ((ImmI32Operand*)op)->GetIntImmVal();
         ans = "#" + std::to_string(val);
     }
-    if(op->getOperandType() == basic_operand::IMMF32){
-        float val = ((imm_f32_operand*)op)->getFloatVal();
+    if(op->GetOperandType() == BasicOperand::IMMF32){
+        float val = ((ImmF32Operand*)op)->GetFloatVal();
         ans = "#" + std::to_string(val);
     }
-    if(op->getOperandType() == basic_operand::GLOBAL){
+    if(op->GetOperandType() == BasicOperand::GLOBAL){
         ans = ((global_operand*)op)->getName();
     }
     return ans;
 }
 
-void LLVM_IR::code(std::ostream& s){
+void LLVMIR::code(std::ostream& s){
     output_Physical_reg = 0;
     cgen_define(s);
     for(auto node:llvm_cfg){
@@ -388,7 +388,7 @@ void LLVM_IR::code(std::ostream& s){
     s << "\t.section	.note.GNU-stack,\"\",%progbits"<<"\n";
 }
 void code_global_define(std::ostream& s);
-void LLVM_IR::cgen_define(std::ostream& s)
+void LLVMIR::cgen_define(std::ostream& s)
 {
     s << ".arch armv7-a\n";
     s << ".fpu vfpv3-d16\n";
@@ -405,7 +405,7 @@ void LLVM_IR::cgen_define(std::ostream& s)
     code_global_define(s);
 }
 
-void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block>* block)
+void code_by_blockDFSorder(std::ostream& s,LLVMBlock B,std::map<int, LLVMBlock>* block)
 {
     if(BB_vis[B->block_id]){return;}
     BB_vis[B->block_id] = 1;
@@ -415,8 +415,8 @@ void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block
     if(I_list.empty()){return;}
     auto endI = *(I_list.end()-1);
     
-    if(endI->get_opcode() == BR_UNCOND){
-        auto I = (br_uncond_Instruction*)endI;
+    if(endI->GetOpcode() == BR_UNCOND){
+        auto I = (BrUncondInstruction*)endI;
 
         //s << "\t@";
         //I->printIR(s);
@@ -427,8 +427,8 @@ void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block
         }
         code_by_blockDFSorder(s,(*block)[I->get_target()],block);
     }
-    if(endI->get_opcode() == BR_COND){
-        auto I = (br_cond_Instruction*)endI;
+    if(endI->GetOpcode() == BR_COND){
+        auto I = (BrCondInstruction*)endI;
 
         //s << "\t@";
         //I->printIR(s);
@@ -438,8 +438,8 @@ void code_by_blockDFSorder(std::ostream& s,llvm_block B,std::map<int, llvm_block
             s << "\tvmrs APSR_nzcv, FPSCR\n";
             float_cmp_flag = 0;
         }   
-        int trueBB = ((label_operand*)(I->getTrueLabel()))->getLabelNo();
-        int falseBB = ((label_operand*)(I->getFalseLabel()))->getLabelNo();
+        int trueBB = ((LabelOperand*)(I->getTrueLabel()))->GetLabelNo();
+        int falseBB = ((LabelOperand*)(I->getFalseLabel()))->GetLabelNo();
 
         if(BB_vis[trueBB] && BB_vis[falseBB]){
             global_ins_offset+=4;
@@ -527,7 +527,7 @@ void CFG::code(std::ostream& s)
     code_by_blockDFSorder(s,(*block)[0],block);
 }
 
-void basic_block::code(std::ostream& s)
+void BasicBlock::code(std::ostream& s)
 {
     s <<"."<< func_now->get_Func_name() << "L" << block_id << ":\n";
     for(auto I:Instruction_list){
@@ -536,12 +536,12 @@ void basic_block::code(std::ostream& s)
     }
 }
 
-void imm_i32_operand::code(std::ostream& s)
+void ImmI32Operand::code(std::ostream& s)
 {
     s << immVal;
 }
 
-void imm_f32_operand::code(std::ostream& s)
+void ImmF32Operand::code(std::ostream& s)
 {
     s << *(int*)(&immVal);
 }
@@ -557,7 +557,7 @@ void code_global_define(std::ostream& s)
         global_offset_map[n.first] = global_ins_offset;
     }
 }
-void global_id_define_Instruction::code(std::ostream& s)
+void GlobalVarDefineInstruction::code(std::ostream& s)
 {
     s << name << ":\n";
     if(arval.dims.empty()){
@@ -572,7 +572,7 @@ void global_id_define_Instruction::code(std::ostream& s)
         global_label_map[name] = -1;
         return; 
     }
-    if(type == llvm_type::I32){
+    if(type == LLVMType::I32){
         int zero_continue = 0;
         for(auto v:arval.IntInitVals){
             if(v == 0){
@@ -588,7 +588,7 @@ void global_id_define_Instruction::code(std::ostream& s)
             s << "\t.space  " << zero_continue*4 <<"\n";
         }
     }
-    if(type == llvm_type::FLOAT32){
+    if(type == LLVMType::FLOAT32){
         int zero_continue = 0;
         for(auto v:arval.FloatInitVals){
             if(v == 0){
@@ -607,18 +607,18 @@ void global_id_define_Instruction::code(std::ostream& s)
     global_label_map[name] = -1;
 }
 
-void global_str_const_Instruction::code(std::ostream& s)
+void GlobalStringConstInstruction::code(std::ostream& s)
 {
     // s << str_name << ":\n";
     // s << "\t.ascii \"" << str_val << "\"\n";
 }
 
-void func_define_Instruction::code(std::ostream& s){}
-void func_declare_Instruction::code(std::ostream& s){}
+void FunctionDefineInstruction::code(std::ostream& s){}
+void FunctionDeclareInstruction::code(std::ostream& s){}
 
 
 
-void store_Instruction::code(std::ostream& s)
+void StoreInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -626,17 +626,17 @@ void store_Instruction::code(std::ostream& s)
     std::string reg1 = get_op_str(value,s);
     std::string reg2 = get_op_str(pointer,s);
 
-    if(type == llvm_type::I32){
+    if(type == LLVMType::I32){
         s<<"\tstr " << reg1 <<",["<< reg2 <<"]\n";
     }
-    if(type == llvm_type::FLOAT32){
+    if(type == LLVMType::FLOAT32){
         s<<"\tvstr.32 " << reg1 <<",["<< reg2 <<"]\n";
     }
     r9_used_flag = 0;
     s30_used_flag = 0;
 }
 
-void load_Instruction::code(std::ostream& s)
+void LoadInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -646,10 +646,10 @@ void load_Instruction::code(std::ostream& s)
     result_flag = 1;
     std::string s_result = get_op_str(result,s);
     
-    if(type == llvm_type::I32){
+    if(type == LLVMType::I32){
         s<<"\tldr " << s_result <<",["<< s_value <<"]\n";
     }
-    else if(type == llvm_type::FLOAT32){
+    else if(type == LLVMType::FLOAT32){
         s<<"\tvldr.32 " << s_result <<",["<< s_value <<"]\n";
     }
 
@@ -667,10 +667,10 @@ void load_Instruction::code(std::ostream& s)
     }
 }
 
-int get_phy_regno(operand op)
+int get_phy_regno(Operand op)
 {
-    if(op->getOperandType() == basic_operand::REG){
-        int v_reg = ((reg_operand*)op)->getRegNo();
+    if(op->GetOperandType() == BasicOperand::REG){
+        int v_reg = ((RegOperand*)op)->GetRegNo();
         auto phy_reg = (*current_reg_V2P)[v_reg];
         if(phy_reg.alloc_type == phy_reg.PHY_REG_I32){
             return phy_reg.address.physicalRegNo_i32;
@@ -682,17 +682,17 @@ int get_phy_regno(operand op)
     return -1;
 }
 
-bool judge_if_need_move(int target,operand op)
+bool judge_if_need_move(int target,Operand op)
 {
     int regno = get_phy_regno(op);
     if(regno >= 0 && regno == target){return false;}
     return true;
 }
 
-bool judge_if_need_moveall(std::map<int,operand>& M)
+bool judge_if_need_moveall(std::map<int,Operand>& M)
 {
     for(auto n:M){
-        operand op = n.second;
+        Operand op = n.second;
         int regno = get_phy_regno(op);
         if(regno >= 0 && regno == n.first){continue;}
         return true;
@@ -700,33 +700,33 @@ bool judge_if_need_moveall(std::map<int,operand>& M)
     return false;
 }
 
-bool judge_if_can_move(std::map<int,operand>& M,int to)
+bool judge_if_can_move(std::map<int,Operand>& M,int to)
 {
     for(auto n:M){
-        operand op = n.second;
+        Operand op = n.second;
         int regno = get_phy_regno(op);
         if(regno >= 0 && regno == to){return false;}
     }
     return true;
 }
 
-void move(int target,operand src,int type,std::ostream& s)
+void move(int target,Operand src,int type,std::ostream& s)
 {
     if(type == 1){
-        if(src->getOperandType() == basic_operand::GLOBAL){
+        if(src->GetOperandType() == BasicOperand::GLOBAL){
             // global_operand* glo = (global_operand*)src;
             // auto name = glo->getName();
             // s<<"ldr "<<target<<",["<<name<<"]\n";
             // ldr r1,name
             std::cerr<<"GLOBAL I32\n";
         }
-        else if(src->getOperandType() == basic_operand::IMMI32){
-            int imm_val = ((imm_i32_operand*)src)->getIntImmVal();
+        else if(src->GetOperandType() == BasicOperand::IMMI32){
+            int imm_val = ((ImmI32Operand*)src)->GetIntImmVal();
             // s<<"\tldr "<<"r"<<target<<", ="<<imm_val<<"\n";
             code_ldr_imm(std::string("r")+std::to_string(target),imm_val,s);
         }
-        else if(src->getOperandType() == basic_operand::REG){
-            int vir_reg_no = ((reg_operand*)src)->getRegNo();
+        else if(src->GetOperandType() == BasicOperand::REG){
+            int vir_reg_no = ((RegOperand*)src)->GetRegNo();
             auto reg_phy = (*current_reg_V2P)[vir_reg_no];
             if(reg_phy.alloc_type == PhysicalAllocDiscriptor::PHY_REG_I32){
                 s<<"\tmov r"<<target<<",r"<<reg_phy.address.physicalRegNo_i32<<"\n";
@@ -737,15 +737,15 @@ void move(int target,operand src,int type,std::ostream& s)
         }
     }
     if(type == 2){
-        if(src->getOperandType() == basic_operand::GLOBAL){
+        if(src->GetOperandType() == BasicOperand::GLOBAL){
             // global_operand* glo = (global_operand*)src;
             // auto name = glo->getName();
             // s<<"ldr "<<target<<",["<<name<<"]\n";
             // ldr r1,name
             std::cerr<<"GLOBAL F32\n";
         }
-        else if(src->getOperandType() == basic_operand::REG){
-            int vir_reg_no = ((reg_operand*)src)->getRegNo();
+        else if(src->GetOperandType() == BasicOperand::REG){
+            int vir_reg_no = ((RegOperand*)src)->GetRegNo();
             auto reg_phy = (*current_reg_V2P)[vir_reg_no];
             if(reg_phy.alloc_type == PhysicalAllocDiscriptor::PHY_REG_F32){
                 s<<"\tvmov.f32 s"<<target<<",s"<<reg_phy.address.physicalRegNo_f32<<"\n";
@@ -757,7 +757,7 @@ void move(int target,operand src,int type,std::ostream& s)
     }
 }
 
-void mov_reg2function_call(std::map<int,operand>& Mi32,std::map<int,operand>& Mfloat,std::ostream& s)
+void mov_reg2function_call(std::map<int,Operand>& Mi32,std::map<int,Operand>& Mfloat,std::ostream& s)
 {
     while(judge_if_need_moveall(Mi32)){
         int move_tag = 0;
@@ -788,7 +788,7 @@ void mov_reg2function_call(std::map<int,operand>& Mi32,std::map<int,operand>& Mf
                     break;
                 }
             }
-            Mi32[change_id] = new reg_operand(0x7FFFFFFF);
+            Mi32[change_id] = new RegOperand(0x7FFFFFFF);
         }
     }
 
@@ -822,21 +822,21 @@ void mov_reg2function_call(std::map<int,operand>& Mi32,std::map<int,operand>& Mf
                     break;
                 }
             }
-            Mfloat[change_id] = new reg_operand(0x7FFFFFFF-1);
+            Mfloat[change_id] = new RegOperand(0x7FFFFFFF-1);
         }
     }
 
 }
 
-void call_Instruction::code(std::ostream& s)
+void CallInstruction::code(std::ostream& s)
 {
     s << "\t@";
-    printIR(s);
+    PrintIR(s);
     std::vector<int> activeacrossreg_i32;
     std::vector<int> activeacrossreg_f32;
     // std::cerr<<"calling "<<this->get_funcName()<<",reusable size:"<<current_CFG->get_reusable_size(this->insNo)<<"\n";
     if(result != nullptr && ret_type == I32){
-        int Vresult_reg = ((reg_operand*)result)->getRegNo();
+        int Vresult_reg = ((RegOperand*)result)->GetRegNo();
         auto phy_reg = (*current_reg_V2P)[Vresult_reg];
         int result_reg = -1;
         if(phy_reg.alloc_type == phy_reg.PHY_REG_I32){
@@ -851,12 +851,12 @@ void call_Instruction::code(std::ostream& s)
 
     int save_sp_offset = activeacrossreg_i32.size()*4;
     
-    std::map<operand,int> operand_vis;
-    std::map<int,operand> Mi32;
-    std::map<int,operand> Mfloat;
+    std::map<Operand,int> operand_vis;
+    std::map<int,Operand> Mi32;
+    std::map<int,Operand> Mfloat;
     int r_cnt = -1,s_cnt = -1;
     for(auto arg:args){
-        if(arg.first == llvm_type::I32 || arg.first == llvm_type::PTR){
+        if(arg.first == LLVMType::I32 || arg.first == LLVMType::PTR){
             Mi32[++r_cnt] = arg.second;
             operand_vis[arg.second] = 1;
         }
@@ -864,7 +864,7 @@ void call_Instruction::code(std::ostream& s)
     }
 
     for(auto arg:args){
-        if(arg.first == llvm_type::FLOAT32){
+        if(arg.first == LLVMType::FLOAT32){
             Mfloat[++s_cnt] = arg.second;
             operand_vis[arg.second] = 1;
         }
@@ -875,7 +875,7 @@ void call_Instruction::code(std::ostream& s)
     int sp_sub_val = 0;
     
     for(auto i = (int)args.size()-1;i >= 0; --i){
-        operand arg_op = args[i].second;
+        Operand arg_op = args[i].second;
         if(operand_vis[arg_op]){continue;}
         sp_sub_val += 4;
     }
@@ -909,7 +909,7 @@ void call_Instruction::code(std::ostream& s)
 
     int tmp_sp_sub_val = sp_sub_val;
     for(auto i = (int)args.size()-1;i >= 0; --i){
-        operand arg_op = args[i].second;
+        Operand arg_op = args[i].second;
         if(operand_vis[arg_op]){continue;}
         sp_sub_val -= 4;
         std::string s_arg = get_op_str(arg_op,s);
@@ -1000,17 +1000,17 @@ void call_Instruction::code(std::ostream& s)
     }
 }
 
-void ret_Instruction::code(std::ostream& s)
+void RetInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
 
-    if(ret_type != llvm_type::VOID){
+    if(ret_type != LLVMType::VOID){
         std::string s_val = get_op_str(ret_val,s);
-        if(ret_type == llvm_type::I32 && ( s_val[1] != '0' || s_val[0] != 'r') ){
+        if(ret_type == LLVMType::I32 && ( s_val[1] != '0' || s_val[0] != 'r') ){
             s<<"\tmov r0,"<<s_val<<"\n";
         }
-        if(ret_type == llvm_type::FLOAT32 && ( s_val[1] != '0' || s_val[0] != 's') ){
+        if(ret_type == LLVMType::FLOAT32 && ( s_val[1] != '0' || s_val[0] != 's') ){
             s<<"\tvmov.f32 s0,"<<s_val<<"\n";
         }
     }
@@ -1048,7 +1048,7 @@ void ret_Instruction::code(std::ostream& s)
     s<<"\tpop {fp,pc}\n";
 }
 
-void icmp_Instruction::code(std::ostream& s)
+void IcmpInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1065,11 +1065,11 @@ void icmp_Instruction::code(std::ostream& s)
     s30_used_flag = 0;
 }
 
-void br_cond_Instruction::code(std::ostream& s){}
+void BrCondInstruction::code(std::ostream& s){}
 
-void br_uncond_Instruction::code(std::ostream& s){}
+void BrUncondInstruction::code(std::ostream& s){}
 
-void zext_Instruction::code(std::ostream& s)
+void ZextInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1106,7 +1106,7 @@ void zext_Instruction::code(std::ostream& s)
     }
 }
 
-void alg_Instruction::code(std::ostream& s)
+void ArithmeticInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1243,7 +1243,7 @@ void pseudo_alg_shift_Instruction::code(std::ostream& s)
     }
 }
 
-void sitofp_Instruction::code(std::ostream& s)
+void SitofpInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1272,7 +1272,7 @@ void sitofp_Instruction::code(std::ostream& s)
     }
 }
 
-void fptosi_Instruction::code(std::ostream& s)
+void FptosiInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1302,7 +1302,7 @@ void fptosi_Instruction::code(std::ostream& s)
     }
 }
 
-void fcmp_Instruction::code(std::ostream& s)
+void FcmpInstruction::code(std::ostream& s)
 {
     //s << "\t@";
     //printIR(s);
@@ -1418,7 +1418,7 @@ void get_addr_by_fp_offset_instruction::code(std::ostream& s)
     std::string s_result = get_op_str(result,s);
 
     if(offset_str[0] == '#'){
-        int val = ((imm_i32_operand*)offset)->getIntImmVal();
+        int val = ((ImmI32Operand*)offset)->GetIntImmVal();
         if(abs(val) >= 128){
             // s << "\tldr r10,="<<val<<"\n";
             code_ldr_imm("r10",val,s);
@@ -1456,12 +1456,12 @@ void load_fp_instruction::code(std::ostream& s)
 
     if(s_result[0] == 'r'){
         if(offset_str[0] == '#' && offset_str[1] != '-'){
-            int val = ((imm_i32_operand*)offset)->getIntImmVal() + arg_offset;
+            int val = ((ImmI32Operand*)offset)->GetIntImmVal() + arg_offset;
             code_ldr(1,val,s_result,s);
         }
         else{
             if(offset_str[0] == '#'){
-                code_ldr(1,((imm_i32_operand*)offset)->getIntImmVal(),s_result,s);
+                code_ldr(1,((ImmI32Operand*)offset)->GetIntImmVal(),s_result,s);
             }
             else{
                 s<<"\tldr " << s_result <<",[fp,"<<offset_str<<"]\n";
@@ -1470,12 +1470,12 @@ void load_fp_instruction::code(std::ostream& s)
     }
     if(s_result[0] == 's'){
         if(offset_str[0] == '#' && offset_str[1] != '-'){
-            int val = ((imm_i32_operand*)offset)->getIntImmVal() + arg_offset;
+            int val = ((ImmI32Operand*)offset)->GetIntImmVal() + arg_offset;
             code_ldr(2,val,s_result,s);
         }
         else{
             if(offset_str[0] == '#'){
-                code_ldr(2,((imm_i32_operand*)offset)->getIntImmVal(),s_result,s);
+                code_ldr(2,((ImmI32Operand*)offset)->GetIntImmVal(),s_result,s);
             }
             else{
                 global_ins_offset+=4;
@@ -1506,7 +1506,7 @@ void store_fp_instruction::code(std::ostream& s)
 
     if(s_value[0] == 'r' ){
         if(offset_str[0] == '#'){
-            code_str(1,((imm_i32_operand*)offset)->getIntImmVal(),s_value,s);
+            code_str(1,((ImmI32Operand*)offset)->GetIntImmVal(),s_value,s);
         }
         else{
             s<<"\tstr " << s_value <<",[fp,"<<offset_str<<"]\n";
@@ -1514,7 +1514,7 @@ void store_fp_instruction::code(std::ostream& s)
     }
     if(s_value[0] == 's'){
         if(offset_str[0] == '#'){
-            code_str(2,((imm_i32_operand*)offset)->getIntImmVal(),s_value,s);
+            code_str(2,((ImmI32Operand*)offset)->GetIntImmVal(),s_value,s);
         }
         else{
             global_ins_offset+=4;

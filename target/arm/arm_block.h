@@ -25,6 +25,6 @@ public:
     std::vector<Instruction> global_def{};
     std::vector<Arm_func*> functions;
     void emit(std::ostream& s);
-    Arm_asm(LLVM_IR& IR);
+    Arm_asm(LLVMIR& IR);
 };
 #endif

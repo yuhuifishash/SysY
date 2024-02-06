@@ -1,8 +1,8 @@
 #include "mem2reg_test.h"
-extern LLVM_IR llvm_IR;
+extern LLVMIR llvm_IR;
 void dfs_cfg(
             int cur,
-            const std::vector<std::vector<llvm_block> >&theG,
+            const std::vector<std::vector<LLVMBlock> >&theG,
             std::vector<int>&vsd
             ){
     vsd[cur] = 1;

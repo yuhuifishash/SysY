@@ -504,73 +504,73 @@ NodeAttr (*SemantSingleNode[5])(NodeAttr a,NodeAttr::opcode opcode)={
 
 extern int max_reg;
 
-Instruction IRgen_alg_i32_Ins(llvm_block B,llvm_ir_opcode opcode,int reg1,int reg2,int result_reg);
-Instruction IRgen_alg_f32_Ins(llvm_block B,llvm_ir_opcode opcode,int reg1,int reg2,int result_reg);
-Instruction IRgen_icmp_Ins(llvm_block B,cmp_cond cmp_op,int reg1,int reg2,int result_reg);
-Instruction IRgen_fcmp_Ins(llvm_block B,cmp_cond cmp_op,int reg1,int reg2,int result_reg);
-Instruction IRgen_fptosi_Ins(llvm_block B,int src,int dst);
-Instruction IRgen_sitofp_Ins(llvm_block B,int src,int dst);
-Instruction IRgen_zext_Ins(llvm_block B,int src,int dst);
+Instruction IRgen_alg_i32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
+Instruction IRgen_alg_f32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
+Instruction IRgen_icmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg);
+Instruction IRgen_fcmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg);
+Instruction IRgen_fptosi_Ins(LLVMBlock B,int src,int dst);
+Instruction IRgen_sitofp_Ins(LLVMBlock B,int src,int dst);
+Instruction IRgen_zext_Ins(LLVMBlock B,int src,int dst);
 
 
 //binary
-void BinaryAddIRInt(llvm_block B,int reg1,int reg2)
+void BinaryAddIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    IRgen_alg_i32_Ins(B,llvm_ir_opcode::ADD,reg1,reg2,++max_reg);
+    IRgen_alg_i32_Ins(B,LLVMIROpcode::ADD,reg1,reg2,++max_reg);
 }
 
-void BinarySubIRInt(llvm_block B,int reg1,int reg2)
+void BinarySubIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    IRgen_alg_i32_Ins(B,llvm_ir_opcode::SUB,reg1,reg2,++max_reg);
+    IRgen_alg_i32_Ins(B,LLVMIROpcode::SUB,reg1,reg2,++max_reg);
 }
 
-void BinaryMulIRInt(llvm_block B,int reg1,int reg2)
+void BinaryMulIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    IRgen_alg_i32_Ins(B,llvm_ir_opcode::MUL,reg1,reg2,++max_reg);
+    IRgen_alg_i32_Ins(B,LLVMIROpcode::MUL,reg1,reg2,++max_reg);
 }
 
-void BinaryDivIRInt(llvm_block B,int reg1,int reg2)
+void BinaryDivIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    IRgen_alg_i32_Ins(B,llvm_ir_opcode::DIV,reg1,reg2,++max_reg);
+    IRgen_alg_i32_Ins(B,LLVMIROpcode::DIV,reg1,reg2,++max_reg);
 }
 
-void BinaryModIRInt(llvm_block B,int reg1,int reg2)
+void BinaryModIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    IRgen_alg_i32_Ins(B,llvm_ir_opcode::MOD,reg1,reg2,++max_reg);
+    IRgen_alg_i32_Ins(B,LLVMIROpcode::MOD,reg1,reg2,++max_reg);
 }
 
-void BinaryGeqIRInt(llvm_block B,int reg1,int reg2)
+void BinaryGeqIRInt(LLVMBlock B,int reg1,int reg2)
 {
     
 }
 
-void BinaryGtIRInt(llvm_block B,int reg1,int reg2)
+void BinaryGtIRInt(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryLeqIRInt(llvm_block B,int reg1,int reg2)
+void BinaryLeqIRInt(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryLtIRInt(llvm_block B,int reg1,int reg2)
+void BinaryLtIRInt(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryEqIRInt(llvm_block B,int reg1,int reg2)
+void BinaryEqIRInt(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryNeIRInt(llvm_block B,int reg1,int reg2)
+void BinaryNeIRInt(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
 
-void (*BinaryIRgenInt[15])(llvm_block B,int reg1,int reg2)={
+void (*BinaryIRgenInt[15])(LLVMBlock B,int reg1,int reg2)={
     [NodeAttr::ADD] = BinaryAddIRInt,
     [NodeAttr::SUB] = BinarySubIRInt,
     [NodeAttr::MUL] = BinaryMulIRInt,
@@ -589,63 +589,63 @@ void (*BinaryIRgenInt[15])(llvm_block B,int reg1,int reg2)={
 
 
 
-void BinaryAddIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryAddIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinarySubIRFloat(llvm_block B,int reg1,int reg2)
+void BinarySubIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryMulIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryMulIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryDivIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryDivIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryModIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryModIRFloat(LLVMBlock B,int reg1,int reg2)
 {
     assert(false);
 }
 
-void BinaryGeqIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryGeqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryGtIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryGtIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryLeqIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryLeqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryLtIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryLtIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryEqIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryEqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
 
 }
 
-void BinaryNeIRFloat(llvm_block B,int reg1,int reg2)
+void BinaryNeIRFloat(LLVMBlock B,int reg1,int reg2)
 {
     
 }
 
 
-void (*BinaryIRgenFloat[15])(llvm_block B,int reg1,int reg2)={
+void (*BinaryIRgenFloat[15])(LLVMBlock B,int reg1,int reg2)={
     [NodeAttr::ADD] = BinaryAddIRFloat,
     [NodeAttr::SUB] = BinarySubIRFloat,
     [NodeAttr::MUL] = BinaryMulIRFloat,
@@ -660,7 +660,7 @@ void (*BinaryIRgenFloat[15])(llvm_block B,int reg1,int reg2)={
 };
 
 
-void IRgenIntInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenIntInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
@@ -671,7 +671,7 @@ void IRgenIntInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
     BinaryIRgenInt[opcode](B,reg1,reg2);
 }
 
-void IRgenIntFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenIntFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
@@ -686,7 +686,7 @@ void IRgenIntFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block 
     BinaryIRgenFloat[opcode](B,reg1,reg2);
 }
 
-void IRgenFloatInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenFloatInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
@@ -701,7 +701,7 @@ void IRgenFloatInt(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block 
     BinaryIRgenFloat[opcode](B,reg1,reg2);
 }
 
-void IRgenFloatFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenFloatFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
@@ -712,7 +712,7 @@ void IRgenFloatFloat(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_bloc
     BinaryIRgenFloat[opcode](B,reg1,reg2);
 }
 
-void IRgenBoolBool(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenBoolBool(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
@@ -731,13 +731,13 @@ void IRgenBoolBool(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block 
     BinaryIRgenInt[opcode](B,reg1,reg2);
 }
 
-void IRgenError(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)
+void IRgenError(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)
 {
     assert(false);
 }
 
 
-void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttr::opcode opcode,llvm_block B)={
+void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttr::opcode opcode,LLVMBlock B)={
     [Type::INT][Type::INT] = IRgenIntInt,
     [Type::INT][Type::FLOAT] = IRgenIntFloat,
     [Type::INT][Type::BOOL] = IRgenError,
@@ -767,22 +767,22 @@ void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttr::opcode opcode,
 
 
 //single
-void SingleAddIRInt(llvm_block B,int reg1)
+void SingleAddIRInt(LLVMBlock B,int reg1)
 {
 
 }
 
-void SingleSubIRInt(llvm_block B,int reg1)
+void SingleSubIRInt(LLVMBlock B,int reg1)
 {
 
 }
 
-void SingleNotIRInt(llvm_block B,int reg1)
+void SingleNotIRInt(LLVMBlock B,int reg1)
 {
 
 }
 
-void (*SingleIRgenInt[15])(llvm_block B,int reg1)={
+void (*SingleIRgenInt[15])(LLVMBlock B,int reg1)={
     [NodeAttr::ADD] = SingleAddIRInt,
     [NodeAttr::SUB] = SingleSubIRInt,
     [NodeAttr::NOT] = SingleNotIRInt,
@@ -791,22 +791,22 @@ void (*SingleIRgenInt[15])(llvm_block B,int reg1)={
 
 
 
-void SingleAddIRFloat(llvm_block B,int reg1)
+void SingleAddIRFloat(LLVMBlock B,int reg1)
 {
 
 }
 
-void SingleSubIRFloat(llvm_block B,int reg1)
+void SingleSubIRFloat(LLVMBlock B,int reg1)
 {
 
 }
 
-void SingleNotIRFloat(llvm_block B,int reg1)
+void SingleNotIRFloat(LLVMBlock B,int reg1)
 {
 
 }
 
-void (*SingleIRgenFloat[15])(llvm_block B,int reg1)={
+void (*SingleIRgenFloat[15])(LLVMBlock B,int reg1)={
     [NodeAttr::ADD] = SingleAddIRFloat,
     [NodeAttr::SUB] = SingleSubIRFloat,
     [NodeAttr::NOT] = SingleNotIRFloat,
@@ -815,26 +815,26 @@ void (*SingleIRgenFloat[15])(llvm_block B,int reg1)={
 
 
 
-void IRgenInt(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+void IRgenInt(tree_node* a,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
     SingleIRgenInt[opcode](B,reg1);
 }
 
-void IRgenFloat(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+void IRgenFloat(tree_node* a,NodeAttr::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
     int reg1 = max_reg;
     SingleIRgenFloat[opcode](B,reg1);
 }
 
-void IRgenError(tree_node* a,NodeAttr::opcode opcode,llvm_block B)
+void IRgenError(tree_node* a,NodeAttr::opcode opcode,LLVMBlock B)
 {
     assert(false);
 }
 
-void (*IRgenSingleNode[5])(tree_node* a,NodeAttr::opcode opcode,llvm_block B)={
+void (*IRgenSingleNode[5])(tree_node* a,NodeAttr::opcode opcode,LLVMBlock B)={
     [Type::INT] = IRgenInt,
     [Type::FLOAT] = IRgenFloat,
     [Type::BOOL] = IRgenError,
@@ -842,7 +842,7 @@ void (*IRgenSingleNode[5])(tree_node* a,NodeAttr::opcode opcode,llvm_block B)={
     [Type::VOID] = IRgenError,
 };
 
-void IRgenTypeConverse(llvm_block B,Type::ty type_src,Type::ty type_dst,int src,int dst)
+void IRgenTypeConverse(LLVMBlock B,Type::ty type_src,Type::ty type_dst,int src,int dst)
 {
     if(type_src == type_dst){return;}
     if(type_src == Type::INT && type_dst == Type::FLOAT){

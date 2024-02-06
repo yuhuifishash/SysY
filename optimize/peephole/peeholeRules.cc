@@ -6,7 +6,7 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
     if(pos+1 >= old_list.size()){
         return 0;
     }
-    if(old_list[pos]->get_opcode() != GETELEMENTPTR){
+    if(old_list[pos]->GetOpcode() != GETELEMENTPTR){
         return 0;
     }
     // Check op
@@ -16,16 +16,16 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
     int chain_size = 1;
     for(int next = pos+1;next < old_list.size();next++){
         int previous = next-1;
-        if(old_list[next]->get_opcode() != GETELEMENTPTR){
+        if(old_list[next]->GetOpcode() != GETELEMENTPTR){
             break;
         }
-        auto gep_previous = (get_elementptr_Instruction*)old_list[previous];
-        auto gep_next = (get_elementptr_Instruction*)old_list[next];
+        auto gep_previous = (GetElementprtInstruction*)old_list[previous];
+        auto gep_next = (GetElementprtInstruction*)old_list[next];
         auto next_ptrval = gep_next->get_ptrVal();
-        if(next_ptrval->getOperandType() != basic_operand::REG){
+        if(next_ptrval->GetOperandType() != BasicOperand::REG){
             break;
         }
-        if(gep_previous->get_resultregno() == ((reg_operand*)next_ptrval)->getRegNo()){
+        if(gep_previous->GetResultRegNo() == ((RegOperand*)next_ptrval)->GetRegNo()){
             // Check dims
             auto dims_pre = gep_previous->get_dims();
             auto dims_next = gep_next->get_dims();
@@ -61,20 +61,20 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
     if(chain_size == 1){
         return 0;
     }
-    auto begin_gep = (get_elementptr_Instruction*)old_list[pos];
+    auto begin_gep = (GetElementprtInstruction*)old_list[pos];
     auto gep_type = begin_gep->get_type();
 
     decltype(begin_gep->get_indexes()) building_index;
     auto last_dim = begin_gep->get_dims();
     auto last_ptrval = begin_gep->get_ptrVal();
     for(int slide_pos = pos;slide_pos < pos+chain_size;slide_pos++){
-        auto cur_gep = (get_elementptr_Instruction*)old_list[slide_pos];
+        auto cur_gep = (GetElementprtInstruction*)old_list[slide_pos];
         for(auto index:cur_gep->get_indexes()){
             building_index.push_back(index);
         }
         int code_alive = 1;
         int is_last = (slide_pos == pos+chain_size-1);
-        auto cur_reg_no = cur_gep->get_resultregno();
+        auto cur_reg_no = cur_gep->GetResultRegNo();
         // std::cerr<<"After\n";
         if(!is_last){
             if(cfg->reg_reference_count[cur_reg_no] <= 2){
@@ -86,11 +86,11 @@ int gep_combine(const std::deque<Instruction>&old_list,int pos,std::deque<Instru
             }
         }
         if(code_alive){
-            auto building_gep = new get_elementptr_Instruction(gep_type,cur_gep->get_result(),last_ptrval,last_dim,building_index);
+            auto building_gep = new GetElementprtInstruction(gep_type,cur_gep->get_result(),last_ptrval,last_dim,building_index);
             new_list.push_back(building_gep);
             last_ptrval = cur_gep->get_result();
             if(!is_last){
-                last_dim = ((get_elementptr_Instruction*)old_list[slide_pos+1])->get_dims();
+                last_dim = ((GetElementprtInstruction*)old_list[slide_pos+1])->get_dims();
             }
             building_index.clear();
         }
@@ -106,30 +106,30 @@ int algconst_combine(const std::deque<Instruction>&old_list,int pos,std::deque<I
     if(pos+1 >= old_list.size()){
         return 0;
     }
-    auto oldest_opcode = old_list[pos]->get_opcode();
+    auto oldest_opcode = old_list[pos]->GetOpcode();
     if(oldest_opcode != ADD && oldest_opcode != MUL){
         return 0;
     }
-    llvm_type oldest_type = I32;
-    reg_operand* oldest_reg_op = NULL;
+    LLVMType oldest_type = I32;
+    RegOperand* oldest_reg_op = NULL;
     {
-        operand candidate_next_imm_op = NULL;
-        operand candidate_next_reg_op = NULL;
-        auto alg_next = (alg_Instruction*)old_list[pos];
-        if(alg_next->getDataType() != I32){
+        Operand candidate_next_imm_op = NULL;
+        Operand candidate_next_reg_op = NULL;
+        auto alg_next = (ArithmeticInstruction*)old_list[pos];
+        if(alg_next->GetDataType() != I32){
             return 0;
         }
-        if(alg_next->getOp1()->getOperandType() == basic_operand::IMMI32){
-            candidate_next_imm_op = alg_next->getOp1();
-            candidate_next_reg_op = alg_next->getOp2();
-        }else if(alg_next->getOp2()->getOperandType() == basic_operand::IMMI32){
-            candidate_next_imm_op = alg_next->getOp2();
-            candidate_next_reg_op = alg_next->getOp1();
+        if(alg_next->GetOperand1()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_next_imm_op = alg_next->GetOperand1();
+            candidate_next_reg_op = alg_next->GetOperand2();
+        }else if(alg_next->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_next_imm_op = alg_next->GetOperand2();
+            candidate_next_reg_op = alg_next->GetOperand1();
         }
         if(candidate_next_imm_op == NULL){
             return 0;
         }
-        oldest_reg_op = (reg_operand*)candidate_next_reg_op;
+        oldest_reg_op = (RegOperand*)candidate_next_reg_op;
     }
     // Example:
     // a=a+1;
@@ -141,26 +141,26 @@ int algconst_combine(const std::deque<Instruction>&old_list,int pos,std::deque<I
     int chain_size = 1;
     for(int next = pos+1;next<old_list.size();next++){
         int previous = next - 1;
-        if(old_list[next]->get_opcode() != oldest_opcode){
+        if(old_list[next]->GetOpcode() != oldest_opcode){
             break;
         }
-        auto alg_previous = (alg_Instruction*)old_list[previous];
-        auto alg_next = (alg_Instruction*)old_list[next];
-        auto previous_result = alg_previous->getResultOp();
-        operand candidate_next_imm_op = NULL;
-        operand candidate_next_reg_op = NULL;
-        if(alg_next->getOp1()->getOperandType() == basic_operand::IMMI32){
-            candidate_next_imm_op = alg_next->getOp1();
-            candidate_next_reg_op = alg_next->getOp2();
-        }else if(alg_next->getOp2()->getOperandType() == basic_operand::IMMI32){
-            candidate_next_imm_op = alg_next->getOp2();
-            candidate_next_reg_op = alg_next->getOp1();
+        auto alg_previous = (ArithmeticInstruction*)old_list[previous];
+        auto alg_next = (ArithmeticInstruction*)old_list[next];
+        auto previous_result = alg_previous->GetResultOperand();
+        Operand candidate_next_imm_op = NULL;
+        Operand candidate_next_reg_op = NULL;
+        if(alg_next->GetOperand1()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_next_imm_op = alg_next->GetOperand1();
+            candidate_next_reg_op = alg_next->GetOperand2();
+        }else if(alg_next->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_next_imm_op = alg_next->GetOperand2();
+            candidate_next_reg_op = alg_next->GetOperand1();
         }
         if(candidate_next_imm_op == NULL){
             break;
         }
-        int previous_reg_no = alg_previous->get_resultregno();
-        int next_reg_no = ((reg_operand*)candidate_next_reg_op)->getRegNo();
+        int previous_reg_no = alg_previous->GetResultRegNo();
+        int next_reg_no = ((RegOperand*)candidate_next_reg_op)->GetRegNo();
         if(previous_reg_no != next_reg_no){
             break;
         }
@@ -174,31 +174,31 @@ int algconst_combine(const std::deque<Instruction>&old_list,int pos,std::deque<I
     else if(oldest_opcode == MUL){cum_const = 1;}
     else{std::cerr<<"See ::algconst_combine() in peeholeRules.cc qwe\n";}
     for(int cur = pos;cur<pos+chain_size;cur++){
-        auto cur_alg_instruction = (alg_Instruction*)old_list[cur];
-        operand candidate_imm_op = NULL;
-        operand candidate_reg_op = NULL;
-        if(cur_alg_instruction->getOp1()->getOperandType() == basic_operand::IMMI32){
-            candidate_imm_op = cur_alg_instruction->getOp1();
-            candidate_reg_op = cur_alg_instruction->getOp2();
-        }else if(cur_alg_instruction->getOp2()->getOperandType() == basic_operand::IMMI32){
-            candidate_imm_op = cur_alg_instruction->getOp2();
-            candidate_reg_op = cur_alg_instruction->getOp1();
+        auto cur_alg_instruction = (ArithmeticInstruction*)old_list[cur];
+        Operand candidate_imm_op = NULL;
+        Operand candidate_reg_op = NULL;
+        if(cur_alg_instruction->GetOperand1()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_imm_op = cur_alg_instruction->GetOperand1();
+            candidate_reg_op = cur_alg_instruction->GetOperand2();
+        }else if(cur_alg_instruction->GetOperand2()->GetOperandType() == BasicOperand::IMMI32){
+            candidate_imm_op = cur_alg_instruction->GetOperand2();
+            candidate_reg_op = cur_alg_instruction->GetOperand1();
         }
         // ASSERT candidate_imm_op != NULL
         if(candidate_imm_op == NULL){
             std::cerr<<"See ::algconst_combine() in peeholeRules.cc asd\n";
         }
         if(oldest_opcode == ADD){
-            cum_const += ((imm_i32_operand*)candidate_imm_op)->getIntImmVal();
+            cum_const += ((ImmI32Operand*)candidate_imm_op)->GetIntImmVal();
         }else if(oldest_opcode == MUL){
-            cum_const *= ((imm_i32_operand*)candidate_imm_op)->getIntImmVal();
+            cum_const *= ((ImmI32Operand*)candidate_imm_op)->GetIntImmVal();
         }
         
         // Check cur_alg_instruction->getResultOp(); Reference Count
         int is_last = (cur == pos+chain_size-1);
         int code_alive = 1;
         // std::cerr<<"B4\n";
-        auto cur_reg_no = cur_alg_instruction->get_resultregno();
+        auto cur_reg_no = cur_alg_instruction->GetResultRegNo();
         // std::cerr<<"After\n";
         if(!is_last){
             if(cfg->reg_reference_count[cur_reg_no] <= 2){
@@ -211,7 +211,7 @@ int algconst_combine(const std::deque<Instruction>&old_list,int pos,std::deque<I
         }
         if(code_alive)
         {
-            auto candidate_instruction = new alg_Instruction((llvm_ir_opcode)oldest_opcode,oldest_type,oldest_reg_op,new imm_i32_operand(cum_const),cur_alg_instruction->getResultOp());
+            auto candidate_instruction = new ArithmeticInstruction((LLVMIROpcode)oldest_opcode,oldest_type,oldest_reg_op,new ImmI32Operand(cum_const),cur_alg_instruction->GetResultOperand());
             new_list.push_back(candidate_instruction);
         }
     }

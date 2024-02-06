@@ -1,120 +1,120 @@
 #include "Instruction.h"
 #include "basic_block.h"
 
-Instruction IRgen_alg_i32_Ins(llvm_block B,llvm_ir_opcode opcode,int reg1,int reg2,int result_reg)
+Instruction IRgen_alg_i32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_alg_f32_Ins(llvm_block B,llvm_ir_opcode opcode,int reg1,int reg2,int result_reg)
+Instruction IRgen_alg_f32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_icmp_Ins(llvm_block B,cmp_cond cmp_op,int reg1,int reg2,int result_reg)
+Instruction IRgen_icmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_fcmp_Ins(llvm_block B,cmp_cond cmp_op,int reg1,int reg2,int result_reg)
+Instruction IRgen_fcmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_fptosi_Ins(llvm_block B,int src,int dst)
+Instruction IRgen_fptosi_Ins(LLVMBlock B,int src,int dst)
 {
 
 }
 
-Instruction IRgen_sitofp_Ins(llvm_block B,int src,int dst)
+Instruction IRgen_sitofp_Ins(LLVMBlock B,int src,int dst)
 {
 
 }
 
-Instruction IRgen_zext_Ins(llvm_block B,int src,int dst)
+Instruction IRgen_zext_Ins(LLVMBlock B,int src,int dst)
 {
 
 }
 
 
 
-std::vector<operand> load_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> LoadInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(pointer);
     return ret;
 }
 
-void load_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void LoadInstruction::SetNonResultOperands(std::vector<Operand> ops){
     pointer = ops[0];
 }
 
-std::vector<operand> store_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> StoreInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(pointer);
     ret.push_back(value);
     return ret;
 }
 
-void store_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void StoreInstruction::SetNonResultOperands(std::vector<Operand> ops){
     pointer = ops[0];
     value = ops[1];
 }
 
-std::vector<operand> alg_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> ArithmeticInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
     return ret;
 }
 
-void alg_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void ArithmeticInstruction::SetNonResultOperands(std::vector<Operand> ops){
     op1 = ops[0];
     op2 = ops[1];
 }
 
-std::vector<operand> icmp_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
-    ret.push_back(op1);
-    ret.push_back(op2);
-    // ret.push_back(cond);
-    return ret;
-}
-
-void icmp_Instruction::set_nonresult_operands(std::vector<operand> ops){
-    op1 = ops[0];
-    op2 = ops[1];
-}
-
-std::vector<operand> fcmp_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> IcmpInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
     // ret.push_back(cond);
     return ret;
 }
 
-void fcmp_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void IcmpInstruction::SetNonResultOperands(std::vector<Operand> ops){
     op1 = ops[0];
     op2 = ops[1];
 }
 
-void phi_Instruction::set_phi_label(int pre_id,int new_id){
+std::vector<Operand> FcmpInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
+    ret.push_back(op1);
+    ret.push_back(op2);
+    // ret.push_back(cond);
+    return ret;
+}
+
+void FcmpInstruction::SetNonResultOperands(std::vector<Operand> ops){
+    op1 = ops[0];
+    op2 = ops[1];
+}
+
+void PhiInstruction::set_phi_label(int pre_id,int new_id){
     for(auto phi_pair:val_labels){
-        auto l = (label_operand*)phi_pair.first;
-        if(l->getLabelNo() == pre_id){
-            l->setLabelNo(new_id);
+        auto l = (LabelOperand*)phi_pair.first;
+        if(l->GetLabelNo() == pre_id){
+            l->SetLabelNo(new_id);
         }
     }
 }
 
-std::vector<operand> phi_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> PhiInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     for(auto label_val_pair:val_labels){
         ret.push_back(label_val_pair.second);
     }
     return ret;
 }
-void phi_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void PhiInstruction::SetNonResultOperands(std::vector<Operand> ops){
     int i=0;
     for(auto&label_val_pair:val_labels){
         label_val_pair.second = ops[i];
@@ -122,29 +122,29 @@ void phi_Instruction::set_nonresult_operands(std::vector<operand> ops){
     }
 }
 
-std::vector<operand> br_cond_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> BrCondInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(cond);
     return ret;
 }
-void br_cond_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void BrCondInstruction::SetNonResultOperands(std::vector<Operand> ops){
     cond = ops[0];
 }
 
-int call_Instruction::get_resultregno(){
+int CallInstruction::GetResultRegNo(){
     if(result!=NULL)
-        return ((reg_operand*)result)->getRegNo();
+        return ((RegOperand*)result)->GetRegNo();
     else return -1;
 }
 
-std::vector<operand> call_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> CallInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     for(auto arg_pair:args){
         ret.push_back(arg_pair.second);
     }
     return ret;
 }
-void call_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void CallInstruction::SetNonResultOperands(std::vector<Operand> ops){
     int i = 0;
     for(auto&arg_pair:args){
         arg_pair.second = ops[i];
@@ -152,13 +152,13 @@ void call_Instruction::set_nonresult_operands(std::vector<operand> ops){
     }
 }
 
-std::vector<operand> ret_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> RetInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     if(ret_val != NULL)
         ret.push_back(ret_val);
     return ret;
 }
-void ret_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void RetInstruction::SetNonResultOperands(std::vector<Operand> ops){
     if(ops.empty()){
         ret_val = NULL;
     }else{
@@ -166,522 +166,522 @@ void ret_Instruction::set_nonresult_operands(std::vector<operand> ops){
     }
 }
 
-std::vector<operand> get_elementptr_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret(indexes);
+std::vector<Operand> GetElementprtInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret(indexes);
     ret.push_back(ptrval);
     return ret;
 }
-void get_elementptr_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void GetElementprtInstruction::SetNonResultOperands(std::vector<Operand> ops){
     indexes = ops;
     indexes.pop_back();
     ptrval = ops[ops.size()-1];
 }
 
-void func_define_Instruction::insert_formal(enum llvm_type t){
+void FunctionDefineInstruction::insert_formal(enum LLVMType t){
     formals.push_back(t);
-    formals_reg.push_back(new reg_operand(formals_reg.size()));
+    formals_reg.push_back(new RegOperand(formals_reg.size()));
 }
 
-std::vector<operand> func_define_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> FunctionDefineInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     std::cerr<<"func_define_Instruction get_nonresult_operands()\n";
     return ret;
 }
 
-std::vector<operand> func_declare_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> FunctionDeclareInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     std::cerr<<"func_declare_Instruction get_nonresult_operands()\n";
     return ret;
 }
 
-std::vector<operand> fptosi_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> FptosiInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(value);
     return ret;
 }
-void fptosi_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void FptosiInstruction::SetNonResultOperands(std::vector<Operand> ops){
     value = ops[0];
 }
 
-std::vector<operand> sitofp_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> SitofpInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(value);
     return ret;
 }
-void sitofp_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void SitofpInstruction::SetNonResultOperands(std::vector<Operand> ops){
     value = ops[0];
 }
 
-std::vector<operand> zext_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> ZextInstruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(value);
     return ret;
 }
-void zext_Instruction::set_nonresult_operands(std::vector<operand> ops){
+void ZextInstruction::SetNonResultOperands(std::vector<Operand> ops){
     value = ops[0];
 }
 
-std::vector<operand> mov_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> mov_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     // std::cerr<<"mov_instruction::get_nonresult_operands()\n";
     ret.push_back(source);
     return ret;
 }
 
-std::vector<operand> load_fp_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> load_fp_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     // std::cerr<<"load_fp_instruction::get_nonresult_operands()\n";
     ret.push_back(offset);
     return ret;
 }
 
-std::vector<operand> store_fp_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> store_fp_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(offset);
     return ret;
 }
 
-std::vector<operand> get_addr_by_fp_offset_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> get_addr_by_fp_offset_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(offset);
     return ret;
 }
 
-std::vector<operand> vmov_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> vmov_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(from);
     return ret;
 }
 
-std::vector<operand> pseudo_load_label_instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> pseudo_load_label_instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(from);
     return ret;
 }
 
-std::vector<operand> pseudo_alg_shift_Instruction::get_nonresult_operands(){
-    std::vector<operand> ret;
+std::vector<Operand> pseudo_alg_shift_Instruction::GetNonResultOperands(){
+    std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
     return ret;
 }
 
-operand reg_operand::copy_operand()
+Operand RegOperand::CopyOperand()
 {
-    return new reg_operand(reg_no);
+    return new RegOperand(reg_no);
 }
 
-operand imm_i32_operand::copy_operand()
+Operand ImmI32Operand::CopyOperand()
 {
-    return new imm_i32_operand(immVal);
+    return new ImmI32Operand(immVal);
 }
 
-operand imm_f32_operand::copy_operand()
+Operand ImmF32Operand::CopyOperand()
 {
-    return new imm_f32_operand(immVal);
+    return new ImmF32Operand(immVal);
 }
 
-operand label_operand::copy_operand()
+Operand LabelOperand::CopyOperand()
 {
-    return new label_operand(label_no);
+    return new LabelOperand(label_no);
 }
 
-operand global_operand::copy_operand()
+Operand global_operand::CopyOperand()
 {
     return new global_operand(name);
 }
 
-Instruction load_Instruction::copy_instruction()
+Instruction LoadInstruction::CopyInstruction()
 {
-    operand npointer = pointer->copy_operand();
-    operand nresult = result->copy_operand();
-    return new load_Instruction(type,npointer,nresult);
+    Operand npointer = pointer->CopyOperand();
+    Operand nresult = result->CopyOperand();
+    return new LoadInstruction(type,npointer,nresult);
 }
 
-Instruction store_Instruction::copy_instruction()
+Instruction StoreInstruction::CopyInstruction()
 {
-    operand npointer = pointer->copy_operand();
-    operand nvalue = value->copy_operand();
-    return new store_Instruction(type,npointer,nvalue);
+    Operand npointer = pointer->CopyOperand();
+    Operand nvalue = value->CopyOperand();
+    return new StoreInstruction(type,npointer,nvalue);
 }
 
-Instruction alg_Instruction::copy_instruction()
+Instruction ArithmeticInstruction::CopyInstruction()
 {
-    operand nop1 = op1->copy_operand();
-    operand nop2 = op2->copy_operand();
-    operand nresult = result->copy_operand();
-    return new alg_Instruction(opcode,type,nop1,nop2,nresult);
+    Operand nop1 = op1->CopyOperand();
+    Operand nop2 = op2->CopyOperand();
+    Operand nresult = result->CopyOperand();
+    return new ArithmeticInstruction(opcode,type,nop1,nop2,nresult);
 }
 
-Instruction icmp_Instruction::copy_instruction()
+Instruction IcmpInstruction::CopyInstruction()
 {
-    operand nop1 = op1->copy_operand();
-    operand nop2 = op2->copy_operand();
-    operand nresult = result->copy_operand();
-    return new icmp_Instruction(type,nop1,nop2,cond,nresult);
+    Operand nop1 = op1->CopyOperand();
+    Operand nop2 = op2->CopyOperand();
+    Operand nresult = result->CopyOperand();
+    return new IcmpInstruction(type,nop1,nop2,cond,nresult);
 }
 
-Instruction fcmp_Instruction::copy_instruction()
+Instruction FcmpInstruction::CopyInstruction()
 {
-    operand nop1 = op1->copy_operand();
-    operand nop2 = op2->copy_operand();
-    operand nresult = result->copy_operand();
-    return new fcmp_Instruction(type,nop1,nop2,cond,nresult);
+    Operand nop1 = op1->CopyOperand();
+    Operand nop2 = op2->CopyOperand();
+    Operand nresult = result->CopyOperand();
+    return new FcmpInstruction(type,nop1,nop2,cond,nresult);
 }
 
-Instruction phi_Instruction::copy_instruction()
+Instruction PhiInstruction::CopyInstruction()
 {
-    operand nresult = result->copy_operand();
-    std::vector<std::pair<operand,operand> > nval_labels;
+    Operand nresult = result->CopyOperand();
+    std::vector<std::pair<Operand,Operand> > nval_labels;
     // std::map<operand,operand> nval_labels;
 
     for(auto Phiop:val_labels){
-        operand nlabel = Phiop.first->copy_operand();
-        operand nvalue = Phiop.second->copy_operand();
+        Operand nlabel = Phiop.first->CopyOperand();
+        Operand nvalue = Phiop.second->CopyOperand();
         // nval_labels.push_back({nlabel,nvalue});
         nval_labels.push_back(std::make_pair(nlabel,nvalue));
     }
 
-    return new phi_Instruction(type,nresult,nval_labels);
+    return new PhiInstruction(type,nresult,nval_labels);
 }
 
-Instruction alloca_Instruction::copy_instruction(){return nullptr;}
+Instruction AllocaInstruction::CopyInstruction(){return nullptr;}
 
-Instruction br_cond_Instruction::copy_instruction()
+Instruction BrCondInstruction::CopyInstruction()
 {
-    operand ncond = cond->copy_operand();
-    operand ntrueLabel = trueLabel->copy_operand();
-    operand nfalseLabel = falseLabel->copy_operand();
-    return new br_cond_Instruction(ncond,ntrueLabel,nfalseLabel);
+    Operand ncond = cond->CopyOperand();
+    Operand ntrueLabel = trueLabel->CopyOperand();
+    Operand nfalseLabel = falseLabel->CopyOperand();
+    return new BrCondInstruction(ncond,ntrueLabel,nfalseLabel);
 }
 
-Instruction br_uncond_Instruction::copy_instruction()
+Instruction BrUncondInstruction::CopyInstruction()
 {
-    operand ndestLabel = destLabel->copy_operand();
-    return new br_uncond_Instruction(ndestLabel);
+    Operand ndestLabel = destLabel->CopyOperand();
+    return new BrUncondInstruction(ndestLabel);
 }
 
-Instruction call_Instruction::copy_instruction()
+Instruction CallInstruction::CopyInstruction()
 {
-    operand nresult = NULL;
+    Operand nresult = NULL;
     if(ret_type != VOID){
-        nresult = result->copy_operand();
+        nresult = result->CopyOperand();
     }
-    std::vector<std::pair<enum llvm_type,operand> > nargs;
+    std::vector<std::pair<enum LLVMType,Operand> > nargs;
     for(auto n:args){
-        nargs.push_back({n.first,n.second->copy_operand()});
+        nargs.push_back({n.first,n.second->CopyOperand()});
     }
-    return new call_Instruction(ret_type,nresult,name,nargs);
+    return new CallInstruction(ret_type,nresult,name,nargs);
 }
 
-Instruction ret_Instruction::copy_instruction(){return nullptr;}
+Instruction RetInstruction::CopyInstruction(){return nullptr;}
 
-Instruction get_elementptr_Instruction::copy_instruction()
+Instruction GetElementprtInstruction::CopyInstruction()
 {
-    operand nresult = result->copy_operand();
-    operand nptrval = ptrval->copy_operand();
-    std::vector<operand> nindexes;
+    Operand nresult = result->CopyOperand();
+    Operand nptrval = ptrval->CopyOperand();
+    std::vector<Operand> nindexes;
     for(auto index:indexes){
-        operand nindex = index->copy_operand();
+        Operand nindex = index->CopyOperand();
         nindexes.push_back(nindex); 
     }
 
-    return new get_elementptr_Instruction(type,nresult,nptrval,dims,nindexes);
+    return new GetElementprtInstruction(type,nresult,nptrval,dims,nindexes);
 
 }
 
-Instruction fptosi_Instruction::copy_instruction()
+Instruction FptosiInstruction::CopyInstruction()
 {
-    operand nresult = result->copy_operand();
-    operand nvalue = value->copy_operand();
+    Operand nresult = result->CopyOperand();
+    Operand nvalue = value->CopyOperand();
 
-    return new fptosi_Instruction(nresult,nvalue);
+    return new FptosiInstruction(nresult,nvalue);
 }
 
-Instruction sitofp_Instruction::copy_instruction()
+Instruction SitofpInstruction::CopyInstruction()
 {
-    operand nresult = result->copy_operand();
-    operand nvalue = value->copy_operand();
+    Operand nresult = result->CopyOperand();
+    Operand nvalue = value->CopyOperand();
 
-    return new sitofp_Instruction(nresult,nvalue);
+    return new SitofpInstruction(nresult,nvalue);
 }
 
-Instruction zext_Instruction::copy_instruction()
+Instruction ZextInstruction::CopyInstruction()
 {
-    operand nresult = result->copy_operand();
-    operand nvalue = value->copy_operand();
+    Operand nresult = result->CopyOperand();
+    Operand nvalue = value->CopyOperand();
 
-    return new zext_Instruction(to_type,nresult,from_type,nvalue);
+    return new ZextInstruction(to_type,nresult,from_type,nvalue);
 }
 
-void load_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(pointer->getOperandType()==basic_operand::REG){
-        auto pointer_reg = (reg_operand*)pointer;
-        if(Rule.find(pointer_reg->getRegNo())!=Rule.end())
-            pointer_reg->setRegNo((*(Rule.find(pointer_reg->getRegNo()))).second);
+void LoadInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(pointer->GetOperandType()==BasicOperand::REG){
+        auto pointer_reg = (RegOperand*)pointer;
+        if(Rule.find(pointer_reg->GetRegNo())!=Rule.end())
+            pointer_reg->SetRegNo((*(Rule.find(pointer_reg->GetRegNo()))).second);
     }
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
-    }
-}
-
-void store_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(pointer->getOperandType()==basic_operand::REG){
-        auto pointer_reg = (reg_operand*)pointer;
-        if(Rule.find(pointer_reg->getRegNo())!=Rule.end())
-            pointer_reg->setRegNo((*(Rule.find(pointer_reg->getRegNo()))).second);
-    }
-    if(value->getOperandType()==basic_operand::REG){
-        auto value_reg = (reg_operand*)value;
-        if(Rule.find(value_reg->getRegNo())!=Rule.end())
-            value_reg->setRegNo((*(Rule.find(value_reg->getRegNo()))).second);
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void alg_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(op2->getOperandType()==basic_operand::REG){
-        auto op2_reg = (reg_operand*)op2;
-        if(Rule.find(op2_reg->getRegNo())!=Rule.end())
-            op2_reg->setRegNo((*(Rule.find(op2_reg->getRegNo()))).second);
+void StoreInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(pointer->GetOperandType()==BasicOperand::REG){
+        auto pointer_reg = (RegOperand*)pointer;
+        if(Rule.find(pointer_reg->GetRegNo())!=Rule.end())
+            pointer_reg->SetRegNo((*(Rule.find(pointer_reg->GetRegNo()))).second);
     }
-    if(op1->getOperandType()==basic_operand::REG){
-        auto op1_reg = (reg_operand*)op1;
-        if(Rule.find(op1_reg->getRegNo())!=Rule.end())
-            op1_reg->setRegNo((*(Rule.find(op1_reg->getRegNo()))).second);
-    }
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(value->GetOperandType()==BasicOperand::REG){
+        auto value_reg = (RegOperand*)value;
+        if(Rule.find(value_reg->GetRegNo())!=Rule.end())
+            value_reg->SetRegNo((*(Rule.find(value_reg->GetRegNo()))).second);
     }
 }
 
-void icmp_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(op2->getOperandType()==basic_operand::REG){
-        auto op2_reg = (reg_operand*)op2;
-        if(Rule.find(op2_reg->getRegNo())!=Rule.end())
-            op2_reg->setRegNo((*(Rule.find(op2_reg->getRegNo()))).second);
+void ArithmeticInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(op2->GetOperandType()==BasicOperand::REG){
+        auto op2_reg = (RegOperand*)op2;
+        if(Rule.find(op2_reg->GetRegNo())!=Rule.end())
+            op2_reg->SetRegNo((*(Rule.find(op2_reg->GetRegNo()))).second);
     }
-    if(op1->getOperandType()==basic_operand::REG){
-        auto op1_reg = (reg_operand*)op1;
-        if(Rule.find(op1_reg->getRegNo())!=Rule.end())
-            op1_reg->setRegNo((*(Rule.find(op1_reg->getRegNo()))).second);
+    if(op1->GetOperandType()==BasicOperand::REG){
+        auto op1_reg = (RegOperand*)op1;
+        if(Rule.find(op1_reg->GetRegNo())!=Rule.end())
+            op1_reg->SetRegNo((*(Rule.find(op1_reg->GetRegNo()))).second);
     }
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
-    }
-}
-
-void fcmp_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(op2->getOperandType()==basic_operand::REG){
-        auto op2_reg = (reg_operand*)op2;
-        if(Rule.find(op2_reg->getRegNo())!=Rule.end())
-            op2_reg->setRegNo((*(Rule.find(op2_reg->getRegNo()))).second);
-    }
-    if(op1->getOperandType()==basic_operand::REG){
-        auto op1_reg = (reg_operand*)op1;
-        if(Rule.find(op1_reg->getRegNo())!=Rule.end())
-            op1_reg->setRegNo((*(Rule.find(op1_reg->getRegNo()))).second);
-    }
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void phi_Instruction::replace_by_map(const std::map<int,int>&Rule){
+void IcmpInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(op2->GetOperandType()==BasicOperand::REG){
+        auto op2_reg = (RegOperand*)op2;
+        if(Rule.find(op2_reg->GetRegNo())!=Rule.end())
+            op2_reg->SetRegNo((*(Rule.find(op2_reg->GetRegNo()))).second);
+    }
+    if(op1->GetOperandType()==BasicOperand::REG){
+        auto op1_reg = (RegOperand*)op1;
+        if(Rule.find(op1_reg->GetRegNo())!=Rule.end())
+            op1_reg->SetRegNo((*(Rule.find(op1_reg->GetRegNo()))).second);
+    }
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
+    }
+}
+
+void FcmpInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(op2->GetOperandType()==BasicOperand::REG){
+        auto op2_reg = (RegOperand*)op2;
+        if(Rule.find(op2_reg->GetRegNo())!=Rule.end())
+            op2_reg->SetRegNo((*(Rule.find(op2_reg->GetRegNo()))).second);
+    }
+    if(op1->GetOperandType()==BasicOperand::REG){
+        auto op1_reg = (RegOperand*)op1;
+        if(Rule.find(op1_reg->GetRegNo())!=Rule.end())
+            op1_reg->SetRegNo((*(Rule.find(op1_reg->GetRegNo()))).second);
+    }
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
+    }
+}
+
+void PhiInstruction::ReplaceByMap(const std::map<int,int>&Rule){
     for(auto label_pair : val_labels){
         auto op1 = label_pair.first;
-        if(op1->getOperandType()==basic_operand::REG){
-            auto op1_reg = (reg_operand*)op1;
-            if(Rule.find(op1_reg->getRegNo())!=Rule.end())
-                op1_reg->setRegNo((*(Rule.find(op1_reg->getRegNo()))).second);
+        if(op1->GetOperandType()==BasicOperand::REG){
+            auto op1_reg = (RegOperand*)op1;
+            if(Rule.find(op1_reg->GetRegNo())!=Rule.end())
+                op1_reg->SetRegNo((*(Rule.find(op1_reg->GetRegNo()))).second);
         }
         auto op2 = label_pair.second;
-        if(op2->getOperandType()==basic_operand::REG){
-            auto op2_reg = (reg_operand*)op2;
-            if(Rule.find(op2_reg->getRegNo())!=Rule.end())
-                op2_reg->setRegNo((*(Rule.find(op2_reg->getRegNo()))).second);
+        if(op2->GetOperandType()==BasicOperand::REG){
+            auto op2_reg = (RegOperand*)op2;
+            if(Rule.find(op2_reg->GetRegNo())!=Rule.end())
+                op2_reg->SetRegNo((*(Rule.find(op2_reg->GetRegNo()))).second);
         }
     }
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void alloca_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void AllocaInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void br_cond_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(cond->getOperandType()==basic_operand::REG){
-        auto cond_reg = (reg_operand*)cond;
-        if(Rule.find(cond_reg->getRegNo())!=Rule.end())
-            cond_reg->setRegNo((*(Rule.find(cond_reg->getRegNo()))).second);
+void BrCondInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(cond->GetOperandType()==BasicOperand::REG){
+        auto cond_reg = (RegOperand*)cond;
+        if(Rule.find(cond_reg->GetRegNo())!=Rule.end())
+            cond_reg->SetRegNo((*(Rule.find(cond_reg->GetRegNo()))).second);
     }
 }
 
-void br_uncond_Instruction::replace_by_map(const std::map<int,int>&Rule){}
+void BrUncondInstruction::ReplaceByMap(const std::map<int,int>&Rule){}
 
-void global_id_define_Instruction::replace_by_map(const std::map<int,int>&Rule){}
+void GlobalVarDefineInstruction::ReplaceByMap(const std::map<int,int>&Rule){}
 
-void global_str_const_Instruction::replace_by_map(const std::map<int,int>&Rule){}
+void GlobalStringConstInstruction::ReplaceByMap(const std::map<int,int>&Rule){}
 
-void call_Instruction::replace_by_map(const std::map<int,int>&Rule){
+void CallInstruction::ReplaceByMap(const std::map<int,int>&Rule){
     for(auto arg_pair:args){
-        if(arg_pair.second->getOperandType()==basic_operand::REG){
-            auto op = (reg_operand*)arg_pair.second;
-            if(Rule.find(op->getRegNo())!=Rule.end())
-                op->setRegNo((*(Rule.find(op->getRegNo()))).second);
+        if(arg_pair.second->GetOperandType()==BasicOperand::REG){
+            auto op = (RegOperand*)arg_pair.second;
+            if(Rule.find(op->GetRegNo())!=Rule.end())
+                op->SetRegNo((*(Rule.find(op->GetRegNo()))).second);
         }
     }
     if(result != NULL){
-        if(result->getOperandType()==basic_operand::REG){
-            auto result_reg = (reg_operand*)result;
-            if(Rule.find(result_reg->getRegNo())!=Rule.end())
-                result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+        if(result->GetOperandType()==BasicOperand::REG){
+            auto result_reg = (RegOperand*)result;
+            if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+                result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
         }
     }
 }
 
-void ret_Instruction::replace_by_map(const std::map<int,int>&Rule){
+void RetInstruction::ReplaceByMap(const std::map<int,int>&Rule){
     if(ret_val != NULL){
-        if(ret_val->getOperandType()==basic_operand::REG){
-            auto result_reg = (reg_operand*)ret_val;
-            if(Rule.find(result_reg->getRegNo())!=Rule.end())
-                result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+        if(ret_val->GetOperandType()==BasicOperand::REG){
+            auto result_reg = (RegOperand*)ret_val;
+            if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+                result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
         }
     }
 }
 
-void get_elementptr_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void GetElementprtInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
-    if(ptrval->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)ptrval;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(ptrval->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)ptrval;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
     for(auto idx_pair:indexes){
-        if(idx_pair->getOperandType()==basic_operand::REG){
-            auto idx_reg = (reg_operand*)idx_pair;
-            if(Rule.find(idx_reg->getRegNo())!=Rule.end())
-                idx_reg->setRegNo((*(Rule.find(idx_reg->getRegNo()))).second);
+        if(idx_pair->GetOperandType()==BasicOperand::REG){
+            auto idx_reg = (RegOperand*)idx_pair;
+            if(Rule.find(idx_reg->GetRegNo())!=Rule.end())
+                idx_reg->SetRegNo((*(Rule.find(idx_reg->GetRegNo()))).second);
         }
     }
 }
 
-void func_define_Instruction::replace_by_map(const std::map<int,int>&Rule){}
+void FunctionDefineInstruction::ReplaceByMap(const std::map<int,int>&Rule){}
 
-void func_declare_Instruction::replace_by_map(const std::map<int,int>&Rule){}
+void FunctionDeclareInstruction::ReplaceByMap(const std::map<int,int>&Rule){}
 
-void fptosi_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void FptosiInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
-    if(value->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)value;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(value->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)value;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void sitofp_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void SitofpInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
-    if(value->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)value;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
-    }
-}
-
-void zext_Instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
-    }
-    if(value->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)value;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(value->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)value;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void mov_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void ZextInstruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
-    if(source->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)source;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
-    }
-}
-
-void load_fp_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+    if(value->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)value;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void store_fp_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(str_val->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)str_val;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void mov_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
+    }
+    if(source->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)source;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void get_addr_by_fp_offset_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void load_fp_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void load_imm_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void store_fp_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(str_val->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)str_val;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
 
-void vmov_instruction::replace_by_map(const std::map<int,int>&Rule){
-    if(result->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)result;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+void get_addr_by_fp_offset_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
-    if(from->getOperandType()==basic_operand::REG){
-        auto result_reg = (reg_operand*)from;
-        if(Rule.find(result_reg->getRegNo())!=Rule.end())
-            result_reg->setRegNo((*(Rule.find(result_reg->getRegNo()))).second);
+}
+
+void load_imm_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
+    }
+}
+
+void vmov_instruction::ReplaceByMap(const std::map<int,int>&Rule){
+    if(result->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)result;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
+    }
+    if(from->GetOperandType()==BasicOperand::REG){
+        auto result_reg = (RegOperand*)from;
+        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
+            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
     }
 }
