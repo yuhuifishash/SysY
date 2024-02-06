@@ -332,12 +332,14 @@ Instruction fcmp_Instruction::copy_instruction()
 Instruction phi_Instruction::copy_instruction()
 {
     operand nresult = result->copy_operand();
-    std::map<operand,operand> nval_labels;
+    std::vector<std::pair<operand,operand> > nval_labels;
+    // std::map<operand,operand> nval_labels;
 
     for(auto Phiop:val_labels){
         operand nlabel = Phiop.first->copy_operand();
         operand nvalue = Phiop.second->copy_operand();
-        nval_labels.insert({nlabel,nvalue});
+        // nval_labels.push_back({nlabel,nvalue});
+        nval_labels.push_back(std::make_pair(nlabel,nvalue));
     }
 
     return new phi_Instruction(type,nresult,nval_labels);

@@ -270,10 +270,10 @@ void fcmp_Instruction::printIR(std::ostream&s){
 }
 void phi_Instruction::printIR(std::ostream&s){
     s<<result<<" = phi "<<type<<" ";
-    for(std::map<operand,operand>::iterator it=val_labels.begin();it!=val_labels.end();++it)
+    for(auto it=val_labels.begin();it!=val_labels.end();++it)
     {
         s<<"["<<it->second<<","<<it->first<<"]";
-        std::map<operand,operand>::iterator jt=it;
+        auto jt=it;
         if((++jt)!=val_labels.end())s<<",";
     }
     s<<'\n';

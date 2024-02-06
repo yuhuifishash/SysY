@@ -43,7 +43,8 @@ enum llvm_ir_opcode
     RSBS=30,
     SNIPPET=31,// unused
     BICS=32,
-    AND_b=33
+    AND_b=33,
+    SITOFP=34
 };
 
 enum arm_cond{
@@ -428,13 +429,14 @@ class phi_Instruction : public basic_Instruction
 private: 
     enum llvm_type type; 
     operand result; 
-    std::map<operand,operand>val_labels;
+    // std::map<operand,operand>val_labels;
+    std::vector<std::pair<operand,operand> >val_labels;
 public:
     enum llvm_type getDataType(){return type;}
     operand getResultOp(){return result;}
-    std::map<operand,operand>& getPhiList(){return val_labels;}
+    decltype(val_labels)& getPhiList(){return val_labels;}
     operand get_resultreg(){return result;}
-    phi_Instruction(enum llvm_type type,operand result,std::map<operand,operand>val_labels){
+    phi_Instruction(enum llvm_type type,operand result,decltype(val_labels) val_labels){
         this->opcode=llvm_ir_opcode::PHI;
         this->type=type;
         this->result=result;
@@ -445,10 +447,10 @@ public:
         this->type=type;
         this->result=result;
     }
-    void Insert_phi(operand val,operand label){val_labels[label]=val;}
+    void Insert_phi(operand val,operand label){val_labels.push_back(std::make_pair(label,val));}
     virtual void code(std::ostream& s){}
     virtual void printIR(std::ostream& s);
-    void set_philist(std::map<operand,operand> phi_list){val_labels = phi_list;}
+    void set_philist(decltype(val_labels) phi_list){val_labels = phi_list;}
     int get_resultregno(){return ((reg_operand*)result)->getRegNo();}
     void cgen_prework();
     std::vector<int> refering_virtual_regs();
@@ -840,7 +842,9 @@ private:
 public:
     sitofp_Instruction(operand result_receiver,operand value_for_cast)
         :result(result_receiver),
-        value(value_for_cast){}
+        value(value_for_cast){
+            this->opcode = SITOFP;
+        }
     operand get_resultreg(){return result;}
     void code(std::ostream& s);
     void printIR(std::ostream& s);
