@@ -9,6 +9,7 @@ class tree_node
 {
 protected:
     int line_number;
+    NodeAttribute attribute;
     int type;//void 0  int 1  float 2
     int IntVal;//used for const exp    
     float FloatVal;//used for const exp   

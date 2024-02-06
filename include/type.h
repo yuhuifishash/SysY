@@ -33,7 +33,7 @@ public:
 };
 
 
-class NodeAttr
+class NodeAttribute
 {
 public:
     enum opcode{

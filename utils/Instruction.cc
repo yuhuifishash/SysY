@@ -1,37 +1,37 @@
 #include "Instruction.h"
 #include "basic_block.h"
 
-Instruction IRgen_alg_i32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
+Instruction IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_alg_f32_Ins(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
+Instruction IRgenArithmeticF32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_icmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
+Instruction IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_fcmp_Ins(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
+Instruction IRgenFcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
 
 }
 
-Instruction IRgen_fptosi_Ins(LLVMBlock B,int src,int dst)
+Instruction IRgenFptosi(LLVMBlock B,int src,int dst)
 {
 
 }
 
-Instruction IRgen_sitofp_Ins(LLVMBlock B,int src,int dst)
+Instruction IRgenSitofp(LLVMBlock B,int src,int dst)
 {
 
 }
 
-Instruction IRgen_zext_Ins(LLVMBlock B,int src,int dst)
+Instruction IRgenZext(LLVMBlock B,int src,int dst)
 {
 
 }

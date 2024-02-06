@@ -1,0 +1,24 @@
+Program
+  FuncDef   name:main   return_type:int
+    Block   Size:4
+      VarDecls   Type:int
+        VarDef   name:a   scope:-1
+          init:
+            VarInitVal_exp
+              Intconst   val:3   type:void
+      VarDecls   Type:float
+        VarDef   name:b   scope:-1
+          init:
+            VarInitVal_exp
+              Floatconst   val:4.5   type:void
+      VarDecls   Type:int
+        VarDef   name:c   scope:-1
+          init:
+            VarInitVal_exp
+              Intconst   val:6   type:void
+      ReturnStmt:
+        AddExp_plus: (+)   type:void
+          AddExp_plus: (+)   type:void
+            Lval   type:void   name:a   scope:-1
+            Lval   type:void   name:b   scope:-1
+          Lval   type:void   name:c   scope:-1

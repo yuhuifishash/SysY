@@ -98,7 +98,10 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
-    
+    if(strcmp(argv[step_tag],"-semant") == 0){
+        ast_root->printAST(fout,0);
+    }
+
     if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){O1_flag = 1;}
     ast_root->codeIR();
     // llvm_IR.printIR(fout);
