@@ -526,22 +526,22 @@ void BinarySubIRInt(llvm_block B,int reg1,int reg2)
 
 void BinaryMulIRInt(llvm_block B,int reg1,int reg2)
 {
-
+    IRgen_alg_i32_Ins(B,llvm_ir_opcode::MUL,reg1,reg2,++max_reg);
 }
 
 void BinaryDivIRInt(llvm_block B,int reg1,int reg2)
 {
-
+    IRgen_alg_i32_Ins(B,llvm_ir_opcode::DIV,reg1,reg2,++max_reg);
 }
 
 void BinaryModIRInt(llvm_block B,int reg1,int reg2)
 {
-
+    IRgen_alg_i32_Ins(B,llvm_ir_opcode::MOD,reg1,reg2,++max_reg);
 }
 
 void BinaryGeqIRInt(llvm_block B,int reg1,int reg2)
 {
-
+    
 }
 
 void BinaryGtIRInt(llvm_block B,int reg1,int reg2)
@@ -641,6 +641,7 @@ void BinaryEqIRFloat(llvm_block B,int reg1,int reg2)
 
 void BinaryNeIRFloat(llvm_block B,int reg1,int reg2)
 {
+    
 }
 
 
@@ -840,3 +841,17 @@ void (*IRgenSingleNode[5])(tree_node* a,NodeAttr::opcode opcode,llvm_block B)={
     [Type::PTR] = IRgenError,
     [Type::VOID] = IRgenError,
 };
+
+void IRgenTypeConverse(llvm_block B,Type::ty type_src,Type::ty type_dst,int src,int dst)
+{
+    if(type_src == type_dst){return;}
+    if(type_src == Type::INT && type_dst == Type::FLOAT){
+        IRgen_sitofp_Ins(B,src,dst);
+    }
+    else if(type_src == Type::BOOL && type_dst == Type::INT){
+        IRgen_zext_Ins(B,src,dst);
+    }
+    else if(type_src == Type::FLOAT && type_dst == Type::INT){
+        IRgen_fptosi_Ins(B,src,dst);
+    }
+}

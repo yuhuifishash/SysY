@@ -103,7 +103,7 @@ void CFG::build_dominator_tree()
             // Goal: calculate
             // dom(u) |= {u} | {& dom(v)}
             // First: 
-            // dom(u) = {& dom(v)}, v is qianqu
+            // dom(u) = {& dom(v)}, v is pre
             if(!invG[u].empty()){
                 new_dom_u = indom[(*(invG[u].begin()))->block_id];
                 for(auto v:invG[u]){

@@ -8,7 +8,7 @@
 class Type
 {
 public:
-    enum{
+    enum ty{
         VOID = 0,
         INT = 1,
         FLOAT = 2,

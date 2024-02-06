@@ -19,11 +19,11 @@ SRCS := $(foreach dir,$(SRCDIR),$(wildcard $(dir)/*.cc))
 OBJS := $(patsubst %.cc,$(OBJDIR)/%.o,$(SRCS))
 
 SysYc : ${OBJS}
-	clang++ $(OBJS) -o bin/SysYc -O2 -std=c++11
+	clang++ $(OBJS) -o bin/SysYc -O2 -std=c++17
 
 $(OBJDIR)/%.o : %.cc
 	mkdir -p $(dir $@)
-	clang++ -c $(INCS) $< -o $@ -O2 -std=c++11
+	clang++ -c $(INCS) $< -o $@ -O2 -std=c++17
 
 .PHONY : clean,clean-all,lexer,parser,clean_example_test_output
 lexer:lexer/SysY_lexer.l

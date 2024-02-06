@@ -81,6 +81,15 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
+
+    if(strcmp(argv[step_tag],"-parser") == 0){
+        ast_root->printAST(fout,0);
+        //ast_root->printAST(std::cout,0);
+        fout.close();
+        return 0;
+    }
+
+
     ast_root->type_check();
     if(error_msgs.size() > 0){
         for(auto msg:error_msgs){
@@ -89,12 +98,7 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
-    if(strcmp(argv[step_tag],"-parser") == 0){
-        ast_root->printAST(fout,0);
-        //ast_root->printAST(std::cout,0);
-        fout.close();
-        return 0;
-    }
+    
     if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){O1_flag = 1;}
     ast_root->codeIR();
     // llvm_IR.printIR(fout);
@@ -104,7 +108,9 @@ int main(int argc,char** argv)
     llvm_IR.elimate_dead_ins_and_blocks();
     llvm_IR.build_CFG();
     
-    if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){llvm_IR.optimize();}
+    if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){
+        llvm_IR.optimize();
+    }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
         llvm_IR.printIR(fout);

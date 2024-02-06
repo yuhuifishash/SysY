@@ -29,6 +29,7 @@ void LLVM_IR::var_rename()
 
 void LLVM_IR::mem2reg()
 {
+    build_dominator_tree();
     insert_phi();
     var_rename();
 }

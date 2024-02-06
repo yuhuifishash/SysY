@@ -8,8 +8,6 @@ extern LLVM_IR llvm_IR;
 
 void LLVM_IR::optimize()
 {
-    build_dominator_tree();
-
     mem2reg();
     SCCP();
 
