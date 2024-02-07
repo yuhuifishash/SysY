@@ -5,7 +5,7 @@
 extern LLVMIR llvm_IR;
 LLVMIR cgenpre_IR;
 static int max_prereg = -1;
-static Func_Def_Instruction func_now;
+static Func_Def_Instruction function_now;
 static LLVMBlock block_now;
 static std::map<int,int>reg_fpNegativeoffset_map;
 static int next_negative_offset = -8;
@@ -282,7 +282,7 @@ void LLVMIR::cgen_prework()
 }
 void CFG::cgen_prework()
 {
-    func_now = this->func_ins;
+    function_now = this->func_ins;
     // std::cerr<<func_ins->get_Func_name()<<std::endl;
     max_prereg = this->max_reg;
     // std::cerr<<func_ins->get_Func_name()<<std::endl;
@@ -315,8 +315,8 @@ void CFG::cgen_prework()
         }
     }
     int next_para_fp_offset = 4;
-    cgenpre_IR.llvm_Function_BlockArr_map[func_now][0] = new BasicBlock(0);
-    auto temp_block = cgenpre_IR.llvm_Function_BlockArr_map[func_now][0];
+    cgenpre_IR.llvm_Function_BlockArr_map[function_now][0] = new BasicBlock(0);
+    auto temp_block = cgenpre_IR.llvm_Function_BlockArr_map[function_now][0];
     
     i32_in_stack_para_cnt = i32_in_stack_para_cnt>=0?i32_in_stack_para_cnt:0;
     f32_in_stack_para_cnt = f32_in_stack_para_cnt>=0?f32_in_stack_para_cnt:0;
@@ -346,15 +346,15 @@ void CFG::cgen_prework()
     for(auto B:*block){
         B.second->cgen_prework();
     }
-    cgenpre_IR.sp_offset_map[func_now] = next_negative_offset;
+    cgenpre_IR.sp_offset_map[function_now] = next_negative_offset;
 }
 void BasicBlock::cgen_prework()
 {
-    // std::cerr<<func_now->get_Func_name()<<" "<<block_id<<"\n";
+    // std::cerr<<function_now->get_Func_name()<<" "<<block_id<<"\n";
     if(block_id != 0){
-        cgenpre_IR.llvm_Function_BlockArr_map[func_now][block_id] = new BasicBlock(block_id);
+        cgenpre_IR.llvm_Function_BlockArr_map[function_now][block_id] = new BasicBlock(block_id);
     }
-    block_now = cgenpre_IR.llvm_Function_BlockArr_map[func_now][block_id];
+    block_now = cgenpre_IR.llvm_Function_BlockArr_map[function_now][block_id];
     
     // std::cerr<<"Block "<<block_id<<"\n";
     for(auto I:Instruction_list){

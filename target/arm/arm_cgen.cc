@@ -4,7 +4,7 @@
 
 extern LLVMIR llvm_IR;
 // static int max_prereg = -1;
-static Func_Def_Instruction func_now;
+static Func_Def_Instruction function_now;
 // static llvm_block block_now;
 // static std::map<int,int>reg_fpNegativeoffset_map;
 // static int next_negative_offset = -8;
@@ -423,7 +423,7 @@ void code_by_blockDFSorder(std::ostream& s,LLVMBlock B,std::map<int, LLVMBlock>*
 
         if(BB_vis[I->get_target()]){
             global_ins_offset+=4;
-            s <<"\tbl ."<< func_now->get_Func_name() << "L" << I->get_target() << "\n";
+            s <<"\tbl ."<< function_now->get_Func_name() << "L" << I->get_target() << "\n";
         }
         code_by_blockDFSorder(s,(*block)[I->get_target()],block);
     }
@@ -443,23 +443,23 @@ void code_by_blockDFSorder(std::ostream& s,LLVMBlock B,std::map<int, LLVMBlock>*
 
         if(BB_vis[trueBB] && BB_vis[falseBB]){
             global_ins_offset+=4;
-            s <<"\tb"<<get_cond_str(curr_cmp_cond)<<" ."<< func_now->get_Func_name() << "L" << trueBB << "\n";
+            s <<"\tb"<<get_cond_str(curr_cmp_cond)<<" ."<< function_now->get_Func_name() << "L" << trueBB << "\n";
             global_ins_offset+=4;
-            s <<"\tb"<<get_inv_cond_str(curr_cmp_cond)<<" ."<< func_now->get_Func_name() << "L" << falseBB << "\n";
+            s <<"\tb"<<get_inv_cond_str(curr_cmp_cond)<<" ."<< function_now->get_Func_name() << "L" << falseBB << "\n";
 
             code_by_blockDFSorder(s,(*block)[falseBB],block);
             code_by_blockDFSorder(s,(*block)[trueBB],block);
         }
         else if(BB_vis[falseBB]){
             global_ins_offset+=4;
-            s <<"\tb"<<get_inv_cond_str(curr_cmp_cond)<<" ."<< func_now->get_Func_name() << "L" << falseBB << "\n";
+            s <<"\tb"<<get_inv_cond_str(curr_cmp_cond)<<" ."<< function_now->get_Func_name() << "L" << falseBB << "\n";
 
             code_by_blockDFSorder(s,(*block)[trueBB],block);
             code_by_blockDFSorder(s,(*block)[falseBB],block);
         }
         else{
             global_ins_offset+=4;
-            s <<"\tb"<<get_cond_str(curr_cmp_cond)<<" ."<< func_now->get_Func_name() << "L" << trueBB << "\n";
+            s <<"\tb"<<get_cond_str(curr_cmp_cond)<<" ."<< function_now->get_Func_name() << "L" << trueBB << "\n";
 
             code_by_blockDFSorder(s,(*block)[falseBB],block);
             code_by_blockDFSorder(s,(*block)[trueBB],block);
@@ -477,7 +477,7 @@ void CFG::code(std::ostream& s)
     current_savesp_offset = active_i32reglist.size()*4;
     
     s << func_ins->get_Func_name() << ":@";
-    func_now = func_ins;
+    function_now = func_ins;
     for(auto r:active_i32reglist){
         s << "r" << r << " ";
     }
@@ -529,7 +529,7 @@ void CFG::code(std::ostream& s)
 
 void BasicBlock::code(std::ostream& s)
 {
-    s <<"."<< func_now->get_Func_name() << "L" << block_id << ":\n";
+    s <<"."<< function_now->get_Func_name() << "L" << block_id << ":\n";
     for(auto I:Instruction_list){
         global_ins_offset+=4;
         I->code(s);

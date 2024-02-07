@@ -84,7 +84,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "parser/SysY_parser.y"
+#line 14 "parser/SysY_parser.y"
 
     char* error_msg;
     Symbol symbol_token;

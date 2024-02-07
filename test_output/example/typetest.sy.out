@@ -1,24 +1,100 @@
 Program
-  FuncDef   name:main   return_type:int
-    Block   Size:4
-      VarDecls   Type:int
-        VarDef   name:a   scope:-1
-          init:
-            VarInitVal_exp
-              Intconst   val:3   type:void
-      VarDecls   Type:float
-        VarDef   name:b   scope:-1
-          init:
-            VarInitVal_exp
-              Floatconst   val:4.5   type:void
-      VarDecls   Type:int
-        VarDef   name:c   scope:-1
-          init:
-            VarInitVal_exp
-              Intconst   val:6   type:void
+  FuncDef   Name:f   ReturnType: Float
+    Block   Size:1
       ReturnStmt:
-        AddExp_plus: (+)   type:void
-          AddExp_plus: (+)   type:void
-            Lval   type:void   name:a   scope:-1
-            Lval   type:void   name:b   scope:-1
-          Lval   type:void   name:c   scope:-1
+        Floatconst   val:3.5   Type: Float   ConstValue: 0.000000
+  FuncDef   Name:g   ReturnType: Void
+    Block   Size:1
+      ReturnStmt_void   type:void
+  FuncDef   Name:h   ReturnType: Int
+    Block   Size:1
+      ReturnStmt:
+        Intconst   val:5   Type: Int   ConstValue: 5
+  ConstDecls   Type: Int
+    ConstDef   name:t   scope:0
+      init:
+        ConstInitVal_exp   Type: Int   ConstValue: 5
+          Intconst   val:5   Type: Int   ConstValue: 5
+  ConstDecls   Type: Int
+    ConstDef   name:A   scope:0
+      Dimensions:
+        Intconst   val:5   Type: Int   ConstValue: 5
+      Dimensions:
+        Intconst   val:5   Type: Int   ConstValue: 5
+      init:
+        ConstInitVal
+          ConstInitVal
+            ConstInitVal_exp   Type: Int   ConstValue: 1
+              Intconst   val:1   Type: Int   ConstValue: 1
+            ConstInitVal_exp   Type: Int   ConstValue: 2
+              Intconst   val:2   Type: Int   ConstValue: 2
+            ConstInitVal_exp   Type: Int   ConstValue: 3
+              Intconst   val:3   Type: Int   ConstValue: 3
+            ConstInitVal_exp   Type: Int   ConstValue: 4
+              Intconst   val:4   Type: Int   ConstValue: 4
+            ConstInitVal_exp   Type: Int   ConstValue: 5
+              Intconst   val:5   Type: Int   ConstValue: 5
+          ConstInitVal
+            ConstInitVal_exp   Type: Int   ConstValue: 2
+              Intconst   val:2   Type: Int   ConstValue: 2
+            ConstInitVal_exp   Type: Int   ConstValue: 3
+              Intconst   val:3   Type: Int   ConstValue: 3
+            ConstInitVal_exp   Type: Int   ConstValue: 4
+              Intconst   val:4   Type: Int   ConstValue: 4
+            ConstInitVal_exp   Type: Int   ConstValue: 150
+              MulExp_mul: (*)   Type: Int   ConstValue: 150
+                MulExp_mul: (*)   Type: Int   ConstValue: 30
+                  Intconst   val:5   Type: Int   ConstValue: 5
+                  Intconst   val:6   Type: Int   ConstValue: 6
+                Lval   Type: Int   ConstValue: 5   name:t   scope:0
+            ConstInitVal_exp   Type: Int   ConstValue: 3
+              Intconst   val:3   Type: Int   ConstValue: 3
+  FuncDef   Name:main   ReturnType: Int
+    Block   Size:6
+      ConstDecls   Type: Int
+        ConstDef   name:T   scope:1
+          init:
+            ConstInitVal_exp   Type: Int   ConstValue: 18
+              AddExp_plus: (+)   Type: Int   ConstValue: 18
+                Intconst   val:3   Type: Int   ConstValue: 3
+                MulExp_mul: (*)   Type: Int   ConstValue: 15
+                  Lval   Type: Int   ConstValue: 5   name:t   scope:0
+                  Intconst   val:3   Type: Int   ConstValue: 3
+      ConstDecls   Type: Int
+        ConstDef   name:a   scope:1
+          init:
+            ConstInitVal_exp   Type: Int   ConstValue: 153
+              AddExp_plus: (+)   Type: Int   ConstValue: 153
+                Intconst   val:3   Type: Int   ConstValue: 3
+                Lval   Type: Int   ConstValue: 150   name:A   scope:0
+                  dims:
+                    Intconst   val:1   Type: Int   ConstValue: 1
+                    Intconst   val:3   Type: Int   ConstValue: 3
+      VarDecls   Type: Float
+        VarDef   name:b   scope:1
+          init:
+            VarInitVal_exp
+              Floatconst   val:4.5   Type: Float   ConstValue: 0.000000
+      ConstDecls   Type: Int
+        ConstDef   name:c   scope:1
+          init:
+            ConstInitVal_exp   Type: Int   ConstValue: 159
+              AddExp_plus: (+)   Type: Int   ConstValue: 159
+                Intconst   val:6   Type: Int   ConstValue: 6
+                Lval   Type: Int   ConstValue: 153   name:a   scope:1
+      Expression   Stmt   Type: Void   
+        FuncCall   name:putint   Type: Void   
+          FuncRParams:
+            Lval   Type: Int   ConstValue: 159   name:c   scope:1
+      ReturnStmt:
+        AddExp_plus: (+)   Type: Float   
+          AddExp_plus: (+)   Type: Float   
+            AddExp_plus: (+)   Type: Float   
+              AddExp_plus: (+)   Type: Float   
+                Lval   Type: Int   ConstValue: 153   name:a   scope:1
+                Lval   Type: Float      name:b   scope:1
+              Lval   Type: Int   ConstValue: 159   name:c   scope:1
+            FuncCall   name:f   Type: Float   
+              Empty params
+          FuncCall   name:getint   Type: Int   
+            Empty params

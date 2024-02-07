@@ -28,12 +28,12 @@ Symbol IdTable::add_id(std::string s)
     }
 }
 
-void SymbolTable::add_Symbol(Symbol C,ArrayVal val)
+void SymbolTable::add_Symbol(Symbol C,VarAttribute val)
 {
     symbol_table[current_scope][C] = val;
 }
 
-int SymbolTable::lookup_type(Symbol C)
+Type::ty SymbolTable::lookup_type(Symbol C)
 {
     for(int i = current_scope; i >= 0; --i){
         auto it = symbol_table[i].find(C);
@@ -41,7 +41,7 @@ int SymbolTable::lookup_type(Symbol C)
             return it->second.type;
         }
     }
-    return -1;
+    return Type::VOID;
 }
 
 int SymbolTable::lookup_scope(Symbol C)
@@ -55,7 +55,7 @@ int SymbolTable::lookup_scope(Symbol C)
     return -1;
 }
 
-ArrayVal SymbolTable::lookup_val(Symbol C)
+VarAttribute SymbolTable::lookup_val(Symbol C)
 {
     for(int i = current_scope; i >= 0; --i){
         auto it = symbol_table[i].find(C);
@@ -63,13 +63,13 @@ ArrayVal SymbolTable::lookup_val(Symbol C)
             return it->second;
         }
     }
-    return ArrayVal();
+    return VarAttribute();
 }
 
 void SymbolTable::enter_scope()
 {   
     ++current_scope;
-    symbol_table.push_back(std::map<Symbol,ArrayVal>());
+    symbol_table.push_back(std::map<Symbol,VarAttribute>());
 }
 
 void SymbolTable::exit_scope()

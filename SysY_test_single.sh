@@ -21,5 +21,10 @@ pwdout=test_output/example
 #you can type the command in your shell :  
 # ./SysY_test_single.sh  DFS.sy  parser  O1
 #the ouput file is in the test_output/example
-
-bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out \-${optimize_flag}
+if [ $step == "llvm" ] ; then 
+    bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out.ll \-${optimize_flag}
+elif [ $step == "S" ] ; then
+    bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out.s \-${optimize_flag}
+else 
+    bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out \-${optimize_flag}
+fi

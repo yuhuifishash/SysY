@@ -420,17 +420,35 @@ NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttr
 //single
 NodeAttribute SingleAddInt(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::INT;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.IntVal = a.V.val.IntVal;
+    }
+    return result;
 }
 
 NodeAttribute SingleSubInt(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::INT;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.IntVal = -a.V.val.IntVal;
+    }
+    return result;
 }
 
 NodeAttribute SingleNotInt(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::BOOL;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.BoolVal = !a.V.val.IntVal;
+    }
+    return result;
 }
 
 NodeAttribute (*SingleCalculatedInt[15])(NodeAttribute a)={
@@ -444,17 +462,35 @@ NodeAttribute (*SingleCalculatedInt[15])(NodeAttribute a)={
 
 NodeAttribute SingleAddFloat(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::FLOAT;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.FloatVal = a.V.val.FloatVal;
+    }
+    return result;
 }
 
 NodeAttribute SingleSubFloat(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::FLOAT;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.FloatVal = a.V.val.FloatVal;
+    }
+    return result;
 }
 
 NodeAttribute SingleNotFloat(NodeAttribute a)
 {
-
+    NodeAttribute result;
+    result.T.type = Type::BOOL;
+    result.V.ConstTag = a.V.ConstTag;
+    if(result.V.ConstTag){
+        result.V.val.BoolVal = !a.V.val.FloatVal;
+    }
+    return result;
 }
 
 NodeAttribute (*SingleCalculatedFloat[15])(NodeAttribute a)={
@@ -468,12 +504,20 @@ NodeAttribute (*SingleCalculatedFloat[15])(NodeAttribute a)={
 
 NodeAttribute SemantInt(NodeAttribute a,NodeAttribute::opcode opcode)
 {
-
+    return SingleCalculatedInt[opcode](a);
 }
 
 NodeAttribute SemantFloat(NodeAttribute a,NodeAttribute::opcode opcode)
 {
+    return SingleCalculatedInt[opcode](a);
+}
 
+NodeAttribute SemantBool(NodeAttribute a,NodeAttribute::opcode opcode)
+{
+    NodeAttribute tmp_a = a;
+    tmp_a.T.type = Type::INT;
+    tmp_a.V.val.IntVal = a.V.val.BoolVal;
+    return SingleCalculatedInt[opcode](tmp_a);
 }
 
 NodeAttribute SemantError(NodeAttribute a,NodeAttribute::opcode opcode)
@@ -488,10 +532,9 @@ NodeAttribute SemantError(NodeAttribute a,NodeAttribute::opcode opcode)
 NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcode)={
     [Type::INT] = SemantInt,
     [Type::FLOAT] = SemantFloat,
-    [Type::BOOL] = SemantError,
+    [Type::BOOL] = SemantBool,
     [Type::PTR] = SemantError,
     [Type::VOID] = SemantError,
-    
 };
 
 
@@ -541,32 +584,32 @@ void BinaryModIRInt(LLVMBlock B,int reg1,int reg2)
 
 void BinaryGeqIRInt(LLVMBlock B,int reg1,int reg2)
 {
-    
+    IRgenIcmp(B,IcmpCond::sge,reg1,reg2,++max_reg);
 }
 
 void BinaryGtIRInt(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenIcmp(B,IcmpCond::sgt,reg1,reg2,++max_reg);
 }
 
 void BinaryLeqIRInt(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenIcmp(B,IcmpCond::sle,reg1,reg2,++max_reg);
 }
 
 void BinaryLtIRInt(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenIcmp(B,IcmpCond::slt,reg1,reg2,++max_reg);
 }
 
 void BinaryEqIRInt(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenIcmp(B,IcmpCond::eq,reg1,reg2,++max_reg);
 }
 
 void BinaryNeIRInt(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenIcmp(B,IcmpCond::ne,reg1,reg2,++max_reg);
 }
 
 

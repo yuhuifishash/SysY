@@ -10,45 +10,8 @@
 #include "basic_block.h"
 #include "SysY_tree.h"
 #include "arm_cgen.h"
-
-class CFG;
-
-class NaturalLoop
-{
-public:
-    std::set<LLVMBlock> loop_nodes;
-    std::set<LLVMBlock> exit_nodes;
-    std::vector<Instruction> InvariantInsList;
-    LLVMBlock header;
-    LLVMBlock preheader;
-    int loop_id;
-    NaturalLoop* loop_fa;
-    void find_exit_nodes(CFG* cfg);
-    void add_preheader(CFG* cfg);
-};
-
-class NaturalLoopForest
-{
-public:
-    std::set<NaturalLoop*> loops;
-    std::vector<std::vector<NaturalLoop*> > loopG;
-    std::map<LLVMBlock,NaturalLoop*> header_loop_map;
-    void combine_loops();
-    void build_loopforest();
-};
-
-class FunctionBasicInfo
-{
-public:
-    int Ins_num = 0;
-    int rec_call_tag;//recursion call tag
-    int call_tag;//call Instruction
-    int alloca_tag;//if use alloca Instruction
-    int array_formal_tag;
-    int Formal_num = 0;
-    int store_global_tag;
-    int is_independent_tag;
-};
+#include "function_basicinfo.h"
+#include "loop.h"
 
 class CFG
 {   

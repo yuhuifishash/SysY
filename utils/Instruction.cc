@@ -16,7 +16,7 @@ Instruction IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_r
 
 }
 
-Instruction IRgenFcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
+Instruction IRgenFcmp(LLVMBlock B,FcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
 
 }

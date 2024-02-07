@@ -3,7 +3,7 @@
 #include "Instruction.h"
 #include "lattice.h"
 
-extern std::map<std::string,ArrayVal> global_const_map;
+extern std::map<std::string,VarAttribute> GlobalConstMap;
 
 static std::map<Instruction,ConstLattice> const_lattice_map;
 
@@ -16,8 +16,8 @@ void CFG::global_const_replace()
             auto I = (LoadInstruction*)Ins;
             if(I->GetPointer()->GetOperandType() != BasicOperand::GLOBAL){continue;}
             auto pointer = (global_operand*)I->GetPointer();
-            if(global_const_map.find(pointer->getName()) != global_const_map.end()){
-                ArrayVal val =  global_const_map[pointer->getName()];
+            if(GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()){
+                VarAttribute val =  GlobalConstMap[pointer->getName()];
                 if(val.type == 1){
                     Ins = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(val.IntInitVals[0]),I->GetResultReg());
                 }

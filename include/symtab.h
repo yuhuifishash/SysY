@@ -6,6 +6,7 @@
 #include <stack>
 #include <map>
 #include <vector>
+#include "type.h"
 
 class Entry
 {
@@ -38,18 +39,7 @@ public:
     Symbol add_id(std::string s);
 };
 
-class ArrayVal
-{
-public:
-    int type = 0;//1->int  2->float
-    int const_flag = 0;
-    std::vector<int> dims{};
-    std::vector<int> IntInitVals{};//used for array
-    std::vector<float> FloatInitVals{};
-    ArrayVal(){}
-};
 /*
-look_up(Symbol t)  return int;
 enter_scope()
 exit_scope()
 */
@@ -57,15 +47,15 @@ class SymbolTable
 {
 private:
     int current_scope = -1;
-    std::vector<std::map<Symbol,ArrayVal> > symbol_table;
+    std::vector<std::map<Symbol,VarAttribute> > symbol_table;
 public:
     int get_current_scope(){return current_scope;}
-    void add_Symbol(Symbol C,ArrayVal val);
+    void add_Symbol(Symbol C,VarAttribute val);
 
     //in semant   return type of C   
-    int lookup_type(Symbol C);
+    Type::ty lookup_type(Symbol C);
     int lookup_scope(Symbol C);
-    ArrayVal lookup_val(Symbol C);
+    VarAttribute lookup_val(Symbol C);
     void enter_scope();
     void exit_scope();
 };

@@ -105,8 +105,8 @@ void LLVMIR::optimize_zext_br()
             && list[l4+1]->GetOpcode() == ZEXT
             && list[l4+2]->GetOpcode() == ICMP
             && list[l4+3]->GetOpcode() == BR_COND
-            &&  ((ZextInstruction*)list[l4+1])->get_in()->GetOperandType() == BasicOperand::REG
-            && list[l4]->GetResultRegNo() == ((RegOperand*)((ZextInstruction*)list[l4+1])->get_in())->GetRegNo()
+            &&  ((ZextInstruction*)list[l4+1])->GetSrc()->GetOperandType() == BasicOperand::REG
+            && list[l4]->GetResultRegNo() == ((RegOperand*)((ZextInstruction*)list[l4+1])->GetSrc())->GetRegNo()
             &&  (
                     (
                         ((IcmpInstruction*)list[l4+2])->getCompareCondition() == ne

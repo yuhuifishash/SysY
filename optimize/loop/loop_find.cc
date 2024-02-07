@@ -2,6 +2,7 @@
 #include "llvm_ir.h"
 #include "Instruction.h"
 #include "mem2reg_test.h"
+#include "loop.h"
 #include <stack>
 
 int loop_cnt = -1;

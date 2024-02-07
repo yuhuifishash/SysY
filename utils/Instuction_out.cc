@@ -411,7 +411,7 @@ long long ImmF32Operand::GetFloatByteVal()
     return Float_to_Byte(immVal);
 }
 
-void recursive_print(std::ostream& s,LLVMType type,ArrayVal& v,int dimDph,int beginPos,int endPos)
+void recursive_print(std::ostream& s,LLVMType type,VarAttribute& v,int dimDph,int beginPos,int endPos)
 {
     if(dimDph == 0){
         int allzero = 1;

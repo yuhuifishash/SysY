@@ -25,11 +25,9 @@ extern int error_num;
 int line_number = 0;
 int col_number = 0;
 int cur_col_number = 0;
-int O1_flag = 0;
 std::ofstream fout;
 StringTable str_table;
 IdTable id_table;
-SymbolTable symbol_table;
 extern int yylex();
 extern YYSTYPE yylval;
 extern char* yytext;
@@ -90,7 +88,7 @@ int main(int argc,char** argv)
     }
 
 
-    ast_root->type_check();
+    ast_root->TypeCheck();
     if(error_msgs.size() > 0){
         for(auto msg:error_msgs){
             fout << msg << std::endl;
@@ -98,18 +96,18 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
+    //std::cerr<<"finish semant\n";
     if(strcmp(argv[step_tag],"-semant") == 0){
         ast_root->printAST(fout,0);
     }
 
-    if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){O1_flag = 1;}
-    ast_root->codeIR();
+    //ast_root->codeIR();
     // llvm_IR.printIR(fout);
     
-    llvm_IR.optimize_zext_br();
-    llvm_IR.optimize_shortcircult_br();
-    llvm_IR.elimate_dead_ins_and_blocks();
-    llvm_IR.build_CFG();
+    //llvm_IR.optimize_zext_br();
+    //llvm_IR.optimize_shortcircult_br();
+    //llvm_IR.elimate_dead_ins_and_blocks();
+    //llvm_IR.build_CFG();
     
     if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){
         llvm_IR.optimize();

@@ -16,6 +16,7 @@ public:
         PTR = 4
     }type;
     int arraydims = 0;
+    std::string GetTypeInfo();
 };
 
 
@@ -30,8 +31,20 @@ public:
         int IntVal;
         float FloatVal;
     }val;
+    std::string GetConstValueInfo(Type ty);
+    ConstValue(){val.IntVal = 0; ConstTag = false;}
 };
 
+class VarAttribute
+{
+public:
+    Type::ty type;
+    bool ConstTag = 0;
+    std::vector<int> dims{};
+    std::vector<int> IntInitVals{};//used for array
+    std::vector<float> FloatInitVals{};
+    VarAttribute(){type = Type::VOID; ConstTag = false;}
+};
 
 class NodeAttribute
 {
@@ -55,6 +68,7 @@ public:
     int line_number;
     Type T;
     ConstValue V;
+    std::string GetAttributeInfo();
 };
 
 

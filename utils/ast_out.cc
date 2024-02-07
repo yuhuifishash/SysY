@@ -1,20 +1,34 @@
-#include   "SysY_tree.h"
+#include "SysY_tree.h"
+#include "type.h"
 
-std::string ast_symbol_type_str(int type,int _bool = 0)
+std::string type_status[5] = {"Void","Int","Float","Bool","Ptr"};
+
+std::string Type::GetTypeInfo()
 {
-    switch(type)
-    {
-        case 0:return std::string("void");
-        case 1:
-        if(!_bool)
-            return std::string("int");
-        else
-            return std::string("bool");
-        case 2:return std::string("float");
-        case 3:return std::string("string");
-        default:break;
+    return "Type: " + type_status[type];
+}
+
+std::string ConstValue::GetConstValueInfo(Type ty)
+{
+    if(!ConstTag){return "";}
+
+    if(ty.type == Type::INT){
+        return "ConstValue: " + std::to_string(val.IntVal);
     }
-    return NULL;
+    else if(ty.type == Type::FLOAT){
+        return "ConstValue: " + std::to_string(val.FloatVal);
+    }
+    else if(ty.type == Type::BOOL){
+        return "ConstValue: " + std::to_string(val.BoolVal);
+    }
+    else{
+        return "";
+    }
+}
+
+std::string NodeAttribute::GetAttributeInfo()
+{
+    return T.GetTypeInfo() + "   " + V.GetConstValueInfo(T);
 }
 
 void __Program::printAST(std::ostream& s,int pad)
@@ -43,7 +57,7 @@ DeclStmt
 */
 void VarDecl::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"VarDecls   "<<"Type:"<<ast_symbol_type_str(type_decl)<<"\n";
+    s<<std::string(pad,' ')<<"VarDecls   "<<"Type: "<<type_status[type_decl]<<"\n";
     if(var_def_list!=nullptr)
     for(auto var:(*var_def_list))
     {
@@ -97,7 +111,7 @@ void ConstDef::printAST(std::ostream& s,int pad)
             dim->printAST(s,pad+4);
         }
     }
-    s<<std::string(pad+2,' ')<<"init:";
+    s<<std::string(pad+2,' ')<<"init:\n";
     init->printAST(s,pad+4);
 }
 
@@ -112,7 +126,7 @@ void ConstInitVal::printAST(std::ostream& s,int pad)
 
 void ConstInitVal_exp::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"ConstInitVal_exp   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"ConstInitVal_exp   "<<attribute.GetAttributeInfo()<<"\n";
     if(exp!=nullptr){
         exp->printAST(s,pad+2);
     }
@@ -142,7 +156,7 @@ void VarInitVal_exp::printAST(std::ostream& s,int pad)
 
 void ConstDecl::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"ConstDecls   "<<"Type:"<<ast_symbol_type_str(type_decl)<<"\n";
+    s<<std::string(pad,' ')<<"ConstDecls   "<<"Type: "<<type_status[type_decl]<<"\n";
     for(auto var:(*var_def_list))
     {
         var->printAST(s,pad+2);
@@ -179,7 +193,7 @@ void CompUnit_FuncDef::printAST(std::ostream& s,int pad)
 //FunctionDefine function name:main, type:int()
 void __FuncDef::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"FuncDef   name:"<<name->get_string()<<"   return_type:"<<ast_symbol_type_str(return_type)<<"\n";
+    s<<std::string(pad,' ')<<"FuncDef   Name:"<<name->get_string()<<"   ReturnType: "<<type_status[return_type]<<"\n";
     //s<<std::string(pad+2,' ')<<"FuncParams\n";
     for(auto param:(*formals))
     {
@@ -192,7 +206,7 @@ void __FuncDef::printAST(std::ostream& s,int pad)
 
 void __FuncFParam::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"FuncFParam   name:"<<name->get_string()<<"   type:"<<ast_symbol_type_str(type_decl)<<"   "<<"scope:"<<scope<<"\n";
+    s<<std::string(pad,' ')<<"FuncFParam   name:"<<name->get_string()<<"   Type:"<<type_status[type_decl]<<"   "<<"scope:"<<scope<<"\n";
     // std::cout<<std::string(pad,' ')<<"Dims in FuncFParam:"<<dims<<"\n";
     if(dims != nullptr){
         s<<std::string(pad+2,' ')<<"Dimensions:\n";
@@ -249,7 +263,7 @@ void assign_stmt::printAST(std::ostream& s,int pad)
 
 void expr_stmt::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"Expression   Stmt   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"Expression   Stmt   "<<attribute.GetAttributeInfo()<<"\n";
     // std::cout<<"Expr\n";
     exp->printAST(s,pad+2);
 }
@@ -263,55 +277,55 @@ void block_stmt::printAST(std::ostream& s,int pad)
 
 void Exp::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"Expression   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"Expression   "<<attribute.GetAttributeInfo()<<"\n";
     addexp->printAST(s,pad+2);
 }
 
 void AddExp_plus::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"AddExp_plus: (+)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"AddExp_plus: (+)   "<<attribute.GetAttributeInfo()<<"\n";
     addexp->printAST(s,pad+2);
     mulexp->printAST(s,pad+2);
 }
 
 void AddExp_sub::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"AddExp_sub: (-)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"AddExp_sub: (-)   "<<attribute.GetAttributeInfo()<<"\n";
     addexp->printAST(s,pad+2);
     mulexp->printAST(s,pad+2);
 }
 
 void MulExp_mul::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"MulExp_mul: (*)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"MulExp_mul: (*)   "<<attribute.GetAttributeInfo()<<"\n";
     mulexp->printAST(s,pad+2);
     unary_exp->printAST(s,pad+2);
 }
 
 void MulExp_div::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"MulExp_div: (/)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"MulExp_div: (/)   "<<attribute.GetAttributeInfo()<<"\n";
     mulexp->printAST(s,pad+2);
     unary_exp->printAST(s,pad+2);
 }
 
 void MulExp_mod::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"MulExp_mod: (%)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"MulExp_mod: (%)   "<<attribute.GetAttributeInfo()<<"\n";
     mulexp->printAST(s,pad+2);
     unary_exp->printAST(s,pad+2);
 }
 
 void RelExp_leq::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"RelExp_leq: (<=)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"RelExp_leq: (<=)   "<<attribute.GetAttributeInfo()<<"\n";
     relexp->printAST(s,pad+2);
     addexp->printAST(s,pad+2);
 }
 
 void RelExp_lt::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"RelExp_lt: (<)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"RelExp_lt: (<)   "<<attribute.GetAttributeInfo()<<"\n";
     // std::cout<<std::string(pad,' ')<<"relexp in RelExp_lt:"<<relexp<<"\n";
     relexp->printAST(s,pad+2);
     // std::cout<<std::string(pad,' ')<<"addexp in RelExp_lt:"<<addexp<<"\n";
@@ -320,56 +334,56 @@ void RelExp_lt::printAST(std::ostream& s,int pad)
 
 void RelExp_geq::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"RelExp_geq: (>=)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"RelExp_geq: (>=)   "<<attribute.GetAttributeInfo()<<"\n";
     relexp->printAST(s,pad+2);
     addexp->printAST(s,pad+2);
 }
 
 void RelExp_gt::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"RelExp_gt: (>)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"RelExp_gt: (>)   "<<attribute.GetAttributeInfo()<<"\n";
     relexp->printAST(s,pad+2);
     addexp->printAST(s,pad+2);
 }
 
 void EqExp_eq::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"EqExp_eq: (==)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"EqExp_eq: (==)   "<<attribute.GetAttributeInfo()<<"\n";
     eqexp->printAST(s,pad+2);
     relexp->printAST(s,pad+2);
 }
 
 void EqExp_neq::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"EqExp_neq: (!=)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"EqExp_neq: (!=)   "<<attribute.GetAttributeInfo()<<"\n";
     eqexp->printAST(s,pad+2);
     relexp->printAST(s,pad+2);
 }
 
 void LAndExp_and::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"LAndExp_and: (&&)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"LAndExp_and: (&&)   "<<attribute.GetAttributeInfo()<<"\n";
     landexp->printAST(s,pad+2);
     eqexp->printAST(s,pad+2);
 }
 
 void LOrExp_or::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"LOrExp_or: (||)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"LOrExp_or: (||)   "<<attribute.GetAttributeInfo()<<"\n";
     lorexp->printAST(s,pad+2);
     landexp->printAST(s,pad+2);
 }
 
 void ConstExp::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"ConstExp   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"ConstExp   "<<attribute.GetAttributeInfo()<<"\n";
     addexp->printAST(s,pad+2);
 }
 
 void Lval::printAST(std::ostream& s,int pad)
 {
     // std::cout<<"lval\n";
-    s<<std::string(pad,' ')<<"Lval   type:"<<ast_symbol_type_str(type)<<"   name:"<<name->get_string()<<"   "<<"scope:"<<scope<<"\n";
+    s<<std::string(pad,' ')<<"Lval   "<<attribute.GetAttributeInfo()<<"   name:"<<name->get_string()<<"   "<<"scope:"<<scope<<"\n";
     if(dims!=nullptr){
         s<<std::string(pad+2,' ')<<"dims:\n";
         for(auto dim:(*dims))
@@ -391,7 +405,7 @@ void FuncRParams::printAST(std::ostream& s,int pad)
 void Func_call::printAST(std::ostream& s,int pad)
 {
     // std::cout<<"FuncCall\n";
-    s<<std::string(pad,' ')<<"FuncCall   name:"<<name->get_string()<<"   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"FuncCall   name:"<<name->get_string()<<"   "<<attribute.GetAttributeInfo()<<"\n";
     if(funcr_params!=nullptr){
         funcr_params->printAST(s,pad+2);
     } else {
@@ -401,35 +415,35 @@ void Func_call::printAST(std::ostream& s,int pad)
 
 void UnaryExp_plus::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"UnaryExp_plus:(+)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"UnaryExp_plus:(+)   "<<attribute.GetAttributeInfo()<<"\n";
     unary_exp->printAST(s,pad+2);
 }
 
 void UnaryExp_neg::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"UnaryExp_neg:(-)   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"UnaryExp_neg:(-)   "<<attribute.GetAttributeInfo()<<"\n";
     unary_exp->printAST(s,pad+2);
 }
 
 void UnaryExp_not::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"UnaryExp_not:(!)   type:"<<ast_symbol_type_str(type,1)<<"\n";
+    s<<std::string(pad,' ')<<"UnaryExp_not:(!)   "<<attribute.GetAttributeInfo()<<"\n";
     unary_exp->printAST(s,pad+2);
 }
 
 void IntConst::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"Intconst   val:"<<val<<"   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"Intconst   val:"<<val<<"   "<<attribute.GetAttributeInfo()<<"\n";
 }
 
 void FloatConst::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"Floatconst   val:"<<val<<"   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"Floatconst   val:"<<val<<"   "<<attribute.GetAttributeInfo()<<"\n";
 }
 
 void PrimaryExp_branch::printAST(std::ostream& s,int pad)
 {
-    s<<std::string(pad,' ')<<"PrimaryExp_branch   type:"<<ast_symbol_type_str(type)<<"\n";
+    s<<std::string(pad,' ')<<"PrimaryExp_branch   "<<attribute.GetAttributeInfo()<<"\n";
     exp->printAST(s,pad+2);
 }
 

@@ -302,11 +302,11 @@ void AdvancedPhiInsertTestPrepare(std::ostream& out=std::cout)
     ir.llvm_cfg[f]=&cfg;
     delete f;
 }
-void solve_Int_InitVal(InitVal,ArrayVal&);
-void solve_Float_InitVal(InitVal,ArrayVal&);
+void SolveIntInitVal(InitVal,VarAttribute&);
+void SolveFloatInitVal(InitVal,VarAttribute&);
 void GlobalArrayTest(){
     std::cout<<"Test:Global Array\n";
-    ArrayVal array_val;
+    VarAttribute array_val;
     Expression exp1=new FloatConst(1.1);
     Expression exp2=new FloatConst(2.2);
     Expression exp3=new FloatConst(3.3);
@@ -318,9 +318,9 @@ void GlobalArrayTest(){
         new ConstInitVal(new std::vector<InitVal>{}),
         new ConstInitVal_exp(exp3)
     });
-    ival->type_check();
+    ival->TypeCheck();
     array_val.dims={3,4,2};
-    solve_Float_InitVal(ival,array_val);
+    SolveFloatInitVal(ival,array_val);
     int pos=0;
     for(int i=0;i<3;i++){
         for(int j=0;j<4;j++){

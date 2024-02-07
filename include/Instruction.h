@@ -575,10 +575,10 @@ public:
     enum LLVMType type;
     std::string name;
     Operand init_val;
-    ArrayVal arval;
+    VarAttribute arval;
     GlobalVarDefineInstruction(std::string nam,enum LLVMType typ,Operand i_val)
     :name(nam),type(typ),init_val(i_val){}
-    GlobalVarDefineInstruction(std::string nam,enum LLVMType typ,ArrayVal v)
+    GlobalVarDefineInstruction(std::string nam,enum LLVMType typ,VarAttribute v)
     :name(nam),type(typ),arval(v),init_val{nullptr}{}
     virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
@@ -866,8 +866,8 @@ private:
     Operand value;
 public:
     Operand GetResultReg(){return result;}
-    Operand get_in(){return value;}
-    Operand get_out(){return result;}
+    Operand GetSrc(){return value;}
+    Operand GetDst(){return result;}
     ZextInstruction(LLVMType to_type,Operand result_receiver,
                     LLVMType from_type,Operand value_for_cast)
         :to_type(to_type),

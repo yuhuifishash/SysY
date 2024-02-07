@@ -6,9 +6,8 @@ IRgenTable irgen_table;
 LLVMIR llvm_IR;
 extern StringTable str_table;
 extern SemantTable semant_table;
-extern int O1_flag;
-static Func_Def_Instruction func_now;
-static int func_returntype = 0;
+static Func_Def_Instruction function_now;
+static int function_returntype = 0;
 int max_reg = -1; 
 int max_blocklabel = -1;
 static int now_label = 0;
@@ -233,16 +232,16 @@ bool is_ret(Instruction ins){
 
 void add_no_return_block()
 {
-    for(auto block:llvm_IR.llvm_Function_BlockArr_map[func_now]){
+    for(auto block:llvm_IR.llvm_Function_BlockArr_map[function_now]){
         LLVMBlock B = block.second;
         if(B->Instruction_list.empty() || (!is_ret(B->Instruction_list.back()) && !is_br(B->Instruction_list.back())) ){
-            if(func_returntype == 0){
+            if(function_returntype == 0){
                 B->push_Ins(1,get_ret_Ins_void());
             }
-            if(func_returntype == 1){
+            if(function_returntype == 1){
                 B->push_Ins(1,get_ret_Ins_i32(1,0));
             }
-            if(func_returntype == 2){
+            if(function_returntype == 2){
                 B->push_Ins(1,get_ret_Ins_float(2,0.0));
             }
         }
@@ -266,7 +265,7 @@ void Exp::codeIR()
 
 void AddExp_plus::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     addexp->codeIR();
     int reg1 = max_reg;
     mulexp->codeIR();
@@ -294,7 +293,7 @@ void AddExp_plus::codeIR()
 
 void AddExp_sub::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     addexp->codeIR();
     int reg1 = max_reg;
     mulexp->codeIR();
@@ -322,7 +321,7 @@ void AddExp_sub::codeIR()
 
 void MulExp_mul::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     mulexp->codeIR();
     int reg1 = max_reg;
     unary_exp->codeIR();
@@ -350,7 +349,7 @@ void MulExp_mul::codeIR()
 
 void MulExp_div::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     mulexp->codeIR();
     int reg1 = max_reg;
     unary_exp->codeIR();
@@ -378,7 +377,7 @@ void MulExp_div::codeIR()
 
 void MulExp_mod::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     mulexp->codeIR();
     int reg1 = max_reg;
     unary_exp->codeIR();
@@ -389,7 +388,7 @@ void MulExp_mod::codeIR()
 
 void RelExp_leq::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     relexp->codeIR();
     int reg1 = max_reg;
     addexp->codeIR();
@@ -424,7 +423,7 @@ void RelExp_leq::codeIR()
 
 void RelExp_lt::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     relexp->codeIR();
     int reg1 = max_reg;
     addexp->codeIR();
@@ -459,7 +458,7 @@ void RelExp_lt::codeIR()
 
 void RelExp_geq::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     relexp->codeIR();
     int reg1 = max_reg;
     addexp->codeIR();
@@ -494,7 +493,7 @@ void RelExp_geq::codeIR()
 
 void RelExp_gt::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     relexp->codeIR();
     int reg1 = max_reg;
     addexp->codeIR();
@@ -529,7 +528,7 @@ void RelExp_gt::codeIR()
 
 void EqExp_eq::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     eqexp->codeIR();
     int reg1 = max_reg;
     relexp->codeIR();
@@ -564,7 +563,7 @@ void EqExp_eq::codeIR()
 
 void EqExp_neq::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     eqexp->codeIR();
     int reg1 = max_reg;
     relexp->codeIR();
@@ -603,14 +602,14 @@ void LAndExp_and::codeIR()
 
     ++max_blocklabel;
     int lefttrue_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     landexp->codeIR();
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     if(landexp->get_type() == 1){
         B1->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -623,7 +622,7 @@ void LAndExp_and::codeIR()
 
     now_label = lefttrue_label;
     eqexp->codeIR();
-    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     if(eqexp->get_type() == 1){
         B2->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -640,7 +639,7 @@ void LAndExp_and::codeIR()
 
 
     now_label = end_label;
-    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     PhiInstruction* phi_ins = new PhiInstruction(LLVMType::I32,new RegOperand(max_reg));
     phi_ins->Insert_phi(new ImmI32Operand(0),new LabelOperand(phi1_label));
@@ -654,14 +653,14 @@ void LOrExp_or::codeIR()
 
     ++max_blocklabel;
     int leftfalse_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     lorexp->codeIR();
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     if(lorexp->get_type() == 1){
         B1->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::eq,max_reg-1,0,max_reg));
@@ -674,7 +673,7 @@ void LOrExp_or::codeIR()
 
     now_label = leftfalse_label;
     landexp->codeIR();
-    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     if(landexp->get_type() == 1){
         B2->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -690,7 +689,7 @@ void LOrExp_or::codeIR()
     int phi2_label = now_label;
     
     now_label = end_label;
-    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     PhiInstruction* phi_ins = new PhiInstruction(LLVMType::I32,new RegOperand(max_reg));
     phi_ins->Insert_phi(new ImmI32Operand(1),new LabelOperand(phi1_label));
@@ -705,7 +704,7 @@ void ConstExp::codeIR()
 
 void Lval::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     std::vector<int> arrayindexs;
     int formal_array_flag = 0;
     if(dims != nullptr){
@@ -744,7 +743,7 @@ void Lval::codeIR()
         }
         else{//global
             ++max_reg;
-            arraydims = semant_table.global_table[name].dims;
+            arraydims = semant_table.GlobalTable[name].dims;
             is_array = !(arraydims.size() == arrayindexs.size());
             if(type == 1){
                 GetElementprtInstruction* ArrayIns = (GetElementprtInstruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
@@ -806,7 +805,7 @@ void Lval::codeIR()
         }
         else{//global
             ++max_reg;
-            is_array = (bool)semant_table.global_table[name].dims.size();
+            is_array = (bool)semant_table.GlobalTable[name].dims.size();
             if(is_array == 0){
                 if(type == 1){
                     B->push_Ins(1,get_load_Ins_global(1,max_reg,name));
@@ -835,7 +834,7 @@ void FuncRParams::codeIR(){}
 
 void Func_call::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     if(name->get_string() == "putf"){
         std::vector<std::pair<LLVMType,Operand> > arguments;
         auto params = ((FuncRParams*)funcr_params)->params;
@@ -857,7 +856,7 @@ void Func_call::codeIR()
     else if(funcr_params != nullptr){
         std::vector<std::pair<LLVMType,Operand> > arguments;
         auto params = ((FuncRParams*)funcr_params)->params;
-        auto fparams = semant_table.func_table[name]->formals;
+        auto fparams = semant_table.FunctionTable[name]->formals;
         for(int i = 0;i < (*params).size(); ++i){
             auto param = (*params)[i];
             auto fparam = (*fparams)[i];
@@ -883,7 +882,7 @@ void Func_call::codeIR()
                 arguments.push_back(std::pair<LLVMType,Operand>{LLVMType::FLOAT32,new RegOperand(max_reg)});
             }
         }
-        int return_type = semant_table.func_table[name]->return_type;
+        int return_type = semant_table.FunctionTable[name]->return_type;
         if(return_type == 0){
             B->push_Ins(1,get_call_Ins(4,-1,name->get_string(),arguments));
         }
@@ -893,7 +892,7 @@ void Func_call::codeIR()
         }
     }
     else{
-        int return_type = semant_table.func_table[name]->return_type;
+        int return_type = semant_table.FunctionTable[name]->return_type;
         if(return_type == 0){
             B->push_Ins(1,get_call_Ins(4,-1,name->get_string()));
         }
@@ -906,7 +905,7 @@ void Func_call::codeIR()
 
 void UnaryExp_plus::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     unary_exp->codeIR();
     int reg1 = max_reg;
     ++max_reg;
@@ -920,7 +919,7 @@ void UnaryExp_plus::codeIR()
 
 void UnaryExp_neg::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     unary_exp->codeIR();
     int reg1 = max_reg;
     ++max_reg;
@@ -934,7 +933,7 @@ void UnaryExp_neg::codeIR()
 
 void UnaryExp_not::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     unary_exp->codeIR();
     int reg1 = max_reg;
     ++max_reg;
@@ -952,14 +951,14 @@ void UnaryExp_not::codeIR()
 
 void IntConst::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     B->push_Ins(1,get_alg_Ins_i32_2(1,3,0,IntVal,max_reg));
 }   
 
 void FloatConst::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     ++max_reg;
     B->push_Ins(1,get_alg_Ins_f32_2(2,12,0.0,FloatVal,max_reg));
 }
@@ -973,7 +972,7 @@ void PrimaryExp_branch::codeIR()
 
 void assign_stmt::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     exp->codeIR();
     int exp_reg = max_reg;
     auto LVAL = (Lval*)lval;
@@ -1014,7 +1013,7 @@ void assign_stmt::codeIR()
         }
         else{//global
             ++max_reg;
-            arraydims = semant_table.global_table[name].dims;
+            arraydims = semant_table.GlobalTable[name].dims;
             if(lval->get_type() == 1){
                 GetElementprtInstruction* ArrayIns = (GetElementprtInstruction*)get_getelementptr_Ins_global(1,max_reg,name,arraydims);
                 ArrayIns->push_idx_imm32(0);
@@ -1109,18 +1108,18 @@ void ifelse_stmt::codeIR()
 {
     ++max_blocklabel;
     int if_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int else_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     Cond->codeIR();
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     if(Cond->get_type() == 1){
         ++max_reg;
         B1->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -1133,12 +1132,12 @@ void ifelse_stmt::codeIR()
 
     now_label = if_label;
     if_stmt->codeIR();
-    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B2->push_Ins(1,get_br_uncond_Ins(end_label));
 
     now_label = else_label;
     else_stmt->codeIR();
-    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B3->push_Ins(1,get_br_uncond_Ins(end_label));
 
     now_label = end_label;
@@ -1148,14 +1147,14 @@ void if_stmt::codeIR()
 {
     ++max_blocklabel;
     int if_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     Cond->codeIR();
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     if(Cond->get_type() == 1){
         ++max_reg;
         B1->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -1169,7 +1168,7 @@ void if_stmt::codeIR()
 
     now_label = if_label;
     ifstmt->codeIR();
-    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B2->push_Ins(1,get_br_uncond_Ins(end_label));
 
     now_label = end_label;
@@ -1178,30 +1177,29 @@ void if_stmt::codeIR()
 void while_stmt::codeIR()
 {
     //prework for LICM optimize(we must change all the while to do_while)
-    if(O1_flag){code_dowhileIR();return;}
     
     ++max_blocklabel;
     int judge_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int body_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     ++max_blocklabel;
     int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
     int t1 = loop_start_label;
     int t2 = loop_end_label;
     loop_start_label = judge_label;
     loop_end_label = end_label;
 
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B1->push_Ins(1,get_br_uncond_Ins(judge_label));
     now_label = judge_label; 
     Cond->codeIR();
-    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B2 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     if(Cond->get_type() == 1){
         ++max_reg;
         B2->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
@@ -1214,7 +1212,7 @@ void while_stmt::codeIR()
 
     now_label = body_label;
     body->codeIR();
-    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B3->push_Ins(1,get_br_uncond_Ins(judge_label));
 
     now_label = end_label;
@@ -1222,114 +1220,44 @@ void while_stmt::codeIR()
     loop_start_label = t1;
     loop_end_label = t2;
 }
-/*
-while(Cond)Stmt
-
-if(Cond){
-    do 
-        Stmt
-    while(Cond)
-}
-*/
-//prework for LICM optimize(we must change all the while to do_while)
-void while_stmt::code_dowhileIR()
-{
-    ++max_blocklabel;
-    int ifjudge_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
-
-    ++max_blocklabel;
-    int body_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
-
-    ++max_blocklabel;
-    int whilejudge_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
-
-    ++max_blocklabel;
-    int end_label = max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
-    
-
-    int t1 = loop_start_label;
-    int t2 = loop_end_label;
-    loop_start_label = whilejudge_label;
-    loop_end_label = end_label;
-
-    Cond->codeIR();
-    LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
-    if(Cond->get_type() == 1){
-        ++max_reg;
-        B1->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
-    }
-    if(Cond->get_type() == 2){
-        ++max_reg;
-        B1->push_Ins(1,get_fcmp_Ins_1(2,FcmpCond::ONE,max_reg-1,0.0,max_reg));
-    }
-    B1->push_Ins(1,get_br_cond_Ins(max_reg,body_label,end_label));
-
-    now_label = body_label;
-    body->codeIR();
-    LLVMBlock B3 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
-    B3->push_Ins(1,get_br_uncond_Ins(whilejudge_label));
-
-    now_label = whilejudge_label;
-    Cond->codeIR();
-    LLVMBlock B4 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
-    if(Cond->get_type() == 1){
-        ++max_reg;
-        B4->push_Ins(1,get_icmp_Ins_1(1,IcmpCond::ne,max_reg-1,0,max_reg));
-    }
-    if(Cond->get_type() == 2){
-        ++max_reg;
-        B4->push_Ins(1,get_fcmp_Ins_1(2,FcmpCond::ONE,max_reg-1,0.0,max_reg));
-    }
-    B4->push_Ins(1,get_br_cond_Ins(max_reg,body_label,end_label));
-
-    now_label = end_label;
-    
-    loop_start_label = t1;
-    loop_end_label = t2;
-}
-
 
 void continue_stmt::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B->push_Ins(1,get_br_uncond_Ins(loop_start_label));
     ++max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
     now_label = max_blocklabel;
 }
 
 void break_stmt::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B->push_Ins(1,get_br_uncond_Ins(loop_end_label));
     ++max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
     now_label = max_blocklabel;
 }
 
 void return_stmt::codeIR()
 {
     return_exp->codeIR();
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     //add i32 to float or float to i32 here(use sitofp,fptosi)
-    if(return_exp->get_type() == 2 && func_returntype == 1){
+    if(return_exp->get_type() == 2 && function_returntype == 1){
         ++max_reg;
         B->push_Ins(1,get_fptosi_Ins(new RegOperand(max_reg-1),new RegOperand(max_reg)));
     }
-    if(return_exp->get_type() == 1 && func_returntype == 2){
+    if(return_exp->get_type() == 1 && function_returntype == 2){
         ++max_reg;
         B->push_Ins(1,get_sitofp_Ins(new RegOperand(max_reg-1),new RegOperand(max_reg)));
     }
-    B->push_Ins(1,get_ret_Ins(func_now->get_return_type(),max_reg));
+    B->push_Ins(1,get_ret_Ins(function_now->get_return_type(),max_reg));
 }
 
 void return_stmt_void::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
     B->push_Ins(1,get_ret_Ins_void());
 }
 
@@ -1388,10 +1316,10 @@ void recursive_Array_Init_IR(LLVMBlock block,const std::vector<int>dims,int arra
     int pos=beginPos;
     //For Debug
     //std::cerr<<std::string(dimsIdx*2,' ')<<"From:"<<beginPos<<" To:"<<endPos<<"\n";
-    //std::cerr<<std::string(dimsIdx*2,' ')<<"subBlockNum:"<<(init->get_List())->size()<<"\n";
-    for(InitVal iv:*(init->get_List())){
+    //std::cerr<<std::string(dimsIdx*2,' ')<<"subBlockNum:"<<(init->GetList())->size()<<"\n";
+    for(InitVal iv:*(init->GetList())){
         //std::cerr<<std::string(dimsIdx*2,' ')<<"pos:"<<pos<<"\n";
-        if(iv->is_exp()){
+        if(iv->IsExp()){
             // iv->get_type()
             // val[pos] <- Exp
             //std::cerr<<"initval_exp:"<<iv<<"\n";
@@ -1444,16 +1372,16 @@ void recursive_Array_Init_IR(LLVMBlock block,const std::vector<int>dims,int arra
 
 void VarDecl::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][0];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][0];
     auto def_vector = *var_def_list;
     for(auto def:def_vector){
         ++max_reg;
-        irgen_table.symbol_table.add_Symbol(def->get_name(),max_reg);
-        ArrayVal val;
-        val.const_flag = 0;
-        if(def->get_dims() != nullptr){
+        irgen_table.symbol_table.add_Symbol(def->GetName(),max_reg);
+        VarAttribute val;
+        val.ConstTag = 0;
+        if(def->GetDims() != nullptr){
             irgen_table.is_array_table[max_reg] = 1;
-            auto dim_vector = *def->get_dims();
+            auto dim_vector = *def->GetDims();
             for(auto d:dim_vector){
                 val.dims.push_back(d->get_Intval());
             }
@@ -1461,7 +1389,7 @@ void VarDecl::codeIR()
             for(auto d:val.dims){
                 array_sz *= d;
             }
-            InitVal init = def->get_init();
+            InitVal init = def->GetInit();
 
             if(init != nullptr){
                 if(type_decl == 1){
@@ -1477,10 +1405,10 @@ void VarDecl::codeIR()
                 memsetCall->push_back_Parameter(I8,new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32,new ImmI32Operand(array_sz*sizeof(int)));
                 memsetCall->push_back_Parameter(I1,new ImmI32Operand(0));
-                llvm_IR.llvm_Function_BlockArr_map[func_now][now_label]->push_Ins(1,memsetCall);
+                llvm_IR.llvm_Function_BlockArr_map[function_now][now_label]->push_Ins(1,memsetCall);
                 // recursive_Array_Init_IR
                 recursive_Array_Init_IR(
-                    llvm_IR.llvm_Function_BlockArr_map[func_now][now_label],
+                    llvm_IR.llvm_Function_BlockArr_map[function_now][now_label],
                     val.dims,
                     max_reg,
                     init,
@@ -1500,7 +1428,7 @@ void VarDecl::codeIR()
         else{
             irgen_table.is_array_table[max_reg] = 0;
 
-            InitVal init = def->get_init();
+            InitVal init = def->GetInit();
             if(init != nullptr){
                 if(type_decl == 1){
                     irgen_table.reg_table[max_reg] = std::pair<std::vector<int>,int>{std::vector<int>{},1};
@@ -1512,9 +1440,9 @@ void VarDecl::codeIR()
                 }
                 int storeAddrReg=max_reg;
                 //store
-                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
                 if(type_decl == 1){
-                    Expression initExp = init->get_exp();
+                    Expression initExp = init->GetExp();
                     //ASSERT(initExp != null)
 
                     initExp->codeIR();
@@ -1530,7 +1458,7 @@ void VarDecl::codeIR()
                     B1->push_Ins(1,get_store_Ins(1,ExpResultReg,storeAddrReg));
                 }
                 if(type_decl == 2){
-                    Expression initExp = init->get_exp();
+                    Expression initExp = init->GetExp();
 
                     initExp->codeIR();
                     int ExpResultReg = max_reg;
@@ -1545,7 +1473,7 @@ void VarDecl::codeIR()
                 }
             }
             else{
-                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];//not define  suppose initval is 0
+                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];//not define  suppose initval is 0
                 if(type_decl == 1){
                     irgen_table.reg_table[max_reg] = std::pair<std::vector<int>,int>{std::vector<int>{},1};
                     B->push_Ins(0,get_alloca_Ins(1,max_reg));
@@ -1567,18 +1495,18 @@ void VarDecl::codeIR()
 
 void ConstDecl::codeIR()
 {
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][0];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][0];
     auto def_vector = *var_def_list;
     for(auto def:def_vector){
         ++max_reg;
-        irgen_table.symbol_table.add_Symbol(def->get_name(),max_reg);
-        ArrayVal val;
-        val.const_flag = 0;
+        irgen_table.symbol_table.add_Symbol(def->GetName(),max_reg);
+        VarAttribute val;
+        val.ConstTag = 0;
 
-        if(def->get_dims() != nullptr){
+        if(def->GetDims() != nullptr){
             irgen_table.is_array_table[max_reg] = 1;
 
-            auto dim_vector = *def->get_dims();
+            auto dim_vector = *def->GetDims();
             for(auto d:dim_vector){
                 val.dims.push_back(d->get_Intval());
             }
@@ -1586,7 +1514,7 @@ void ConstDecl::codeIR()
             for(auto d:val.dims){
                 array_sz *= d;
             }
-            InitVal init = def->get_init();
+            InitVal init = def->GetInit();
             if(init != nullptr){
                 if(type_decl == 1){
                     irgen_table.reg_table[max_reg] = std::pair<std::vector<int>,int>{val.dims,1};
@@ -1602,11 +1530,11 @@ void ConstDecl::codeIR()
                 memsetCall->push_back_Parameter(I8,new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32,new ImmI32Operand(array_sz*sizeof(int)));
                 memsetCall->push_back_Parameter(I1,new ImmI32Operand(0));
-                llvm_IR.llvm_Function_BlockArr_map[func_now][now_label]->push_Ins(1,memsetCall);
+                llvm_IR.llvm_Function_BlockArr_map[function_now][now_label]->push_Ins(1,memsetCall);
 
                 // recursive_Array_Init_IR
                 recursive_Array_Init_IR(
-                    llvm_IR.llvm_Function_BlockArr_map[func_now][now_label],
+                    llvm_IR.llvm_Function_BlockArr_map[function_now][now_label],
                     val.dims,
                     max_reg,
                     init,
@@ -1624,7 +1552,7 @@ void ConstDecl::codeIR()
         else{
             irgen_table.is_array_table[max_reg] = 0;
 
-            InitVal init = def->get_init();
+            InitVal init = def->GetInit();
             if(init != nullptr){
                 if(type_decl == 1){
                     irgen_table.reg_table[max_reg] = std::pair<std::vector<int>,int>{std::vector<int>{},1};
@@ -1636,9 +1564,9 @@ void ConstDecl::codeIR()
                 }
                 int storeAddrReg=max_reg;
                 //store
-                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[func_now][now_label];
+                LLVMBlock B1 = llvm_IR.llvm_Function_BlockArr_map[function_now][now_label];
                 if(type_decl == 1){
-                    Expression initExp = init->get_exp();
+                    Expression initExp = init->GetExp();
                     //ASSERT(initExp != null)
 
                     initExp->codeIR();
@@ -1654,7 +1582,7 @@ void ConstDecl::codeIR()
                     B1->push_Ins(1,get_store_Ins(1,ExpResultReg,storeAddrReg));
                 }
                 if(type_decl == 2){
-                    Expression initExp = init->get_exp();
+                    Expression initExp = init->GetExp();
 
                     initExp->codeIR();
                     int ExpResultReg = max_reg;
@@ -1753,11 +1681,11 @@ void __FuncDef::codeIR()
 
     now_label = 0;
     max_blocklabel = 0;
-    func_now = FuncDefIns;
-    func_returntype = return_type;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    function_now = FuncDefIns;
+    function_returntype = return_type;
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
 
-    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[func_now][0];
+    LLVMBlock B = llvm_IR.llvm_Function_BlockArr_map[function_now][0];
     int formal_id = 0;
     for(auto formal:formal_vector){
         if(formal->dims == nullptr){
@@ -1781,7 +1709,7 @@ void __FuncDef::codeIR()
     }
     B->push_Ins(1,get_br_uncond_Ins(1));
     ++max_blocklabel;
-    llvm_IR.llvm_Function_BlockArr_map[func_now][max_blocklabel] = new BasicBlock(max_blocklabel);
+    llvm_IR.llvm_Function_BlockArr_map[function_now][max_blocklabel] = new BasicBlock(max_blocklabel);
     now_label = max_blocklabel;
     block->codeIR();
 
