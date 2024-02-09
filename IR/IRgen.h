@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <assert.h>
 #include "llvm_cfg.h"
 #include "symtab.h"
 #include "SysY_tree.h"
@@ -12,10 +13,9 @@ class IRgenTable
 {
 public:
     //reg  <arraydim,type>
-    //eg. %r0 = alloca [3 x [3 x float]] -> reg_map[0] = {{3,3},2};
-    std::map<int,std::pair<std::vector<int>,int> > reg_table ;
-    std::map<int,int> is_array_table;
-    std::map<int,int> formal_array_table;
+    //eg. %r0 = alloca [3 x [3 x float]] -> reg_map[0] = {{3,3},FLOAT32};
+    std::map<int,VarAttribute> RegTable;
+    std::map<int,int> FormalArrayTable;
     SymbolRegTable symbol_table;
     IRgenTable(){}
 };

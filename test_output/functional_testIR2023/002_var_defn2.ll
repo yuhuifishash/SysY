@@ -20,7 +20,7 @@ L0:
     %r0 = alloca i32
     br label %L1
 L1:
-    %r1 = add i32 0,5
+    %r1 = add i32 5,0
     store i32 %r1, ptr %r0
     %r2 = load i32, ptr %r0
     %r3 = load i32, ptr @b

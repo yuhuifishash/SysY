@@ -15,62 +15,57 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @whileIf()
 {
 L0:
-    %r3 = alloca i32
+    %r2 = alloca i32
     %r0 = alloca i32
     br label %L1
 L1:
+    store i32 0, ptr %r0
     %r1 = add i32 0,0
     store i32 %r1, ptr %r0
-    %r2 = add i32 0,0
-    store i32 %r2, ptr %r0
-    %r4 = add i32 0,0
-    store i32 %r4, ptr %r3
-    %r5 = add i32 0,0
-    store i32 %r5, ptr %r3
-    %r6 = load i32, ptr %r0
-    %r7 = add i32 0,100
-    %r8 = icmp slt i32 %r6,%r7
-    br i1 %r8, label %L3, label %L5
+    store i32 0, ptr %r2
+    %r3 = add i32 0,0
+    store i32 %r3, ptr %r2
+    br label %L2
+L2:
+    %r4 = load i32, ptr %r0
+    %r5 = add i32 100,0
+    %r6 = icmp slt i32 %r4,%r5
+    br i1 %r6, label %L3, label %L4
 L3:
-    %r11 = load i32, ptr %r0
-    %r12 = add i32 0,5
-    %r13 = icmp eq i32 %r11,%r12
-    br i1 %r13, label %L6, label %L7
+    %r7 = load i32, ptr %r0
+    %r8 = add i32 5,0
+    %r9 = icmp eq i32 %r7,%r8
+    br i1 %r9, label %L5, label %L6
 L4:
-    %r29 = load i32, ptr %r0
-    %r30 = add i32 0,100
-    %r31 = icmp slt i32 %r29,%r30
-    br i1 %r31, label %L3, label %L5
+    %r21 = load i32, ptr %r2
+    ret i32 %r21
 L5:
-    %r34 = load i32, ptr %r3
-    ret i32 %r34
+    %r10 = add i32 25,0
+    store i32 %r10, ptr %r2
+    br label %L7
 L6:
-    %r16 = add i32 0,25
-    store i32 %r16, ptr %r3
-    br label %L8
+    %r11 = load i32, ptr %r0
+    %r12 = add i32 10,0
+    %r13 = icmp eq i32 %r11,%r12
+    br i1 %r13, label %L8, label %L9
 L7:
-    %r17 = load i32, ptr %r0
-    %r18 = add i32 0,10
-    %r19 = icmp eq i32 %r17,%r18
-    br i1 %r19, label %L9, label %L10
+    %r18 = load i32, ptr %r0
+    %r19 = add i32 1,0
+    %r20 = add i32 %r18,%r19
+    store i32 %r20, ptr %r0
+    br label %L2
 L8:
-    %r26 = load i32, ptr %r0
-    %r27 = add i32 0,1
-    %r28 = add i32 %r26,%r27
-    store i32 %r28, ptr %r0
-    br label %L4
+    %r14 = add i32 42,0
+    store i32 %r14, ptr %r2
+    br label %L10
 L9:
-    %r22 = add i32 0,42
-    store i32 %r22, ptr %r3
-    br label %L11
+    %r15 = load i32, ptr %r0
+    %r16 = add i32 2,0
+    %r17 = mul i32 %r15,%r16
+    store i32 %r17, ptr %r2
+    br label %L10
 L10:
-    %r23 = load i32, ptr %r0
-    %r24 = add i32 0,2
-    %r25 = mul i32 %r23,%r24
-    store i32 %r25, ptr %r3
-    br label %L11
-L11:
-    br label %L8
+    br label %L7
 }
 define i32 @main()
 {

@@ -1,5 +1,6 @@
 #ifndef ARM_INSTRSELECT_CC
 #define ARM_INSTRSELECT_CC
+
 #include "llvm_cfg.h"
 #include "llvm_ir.h"
 #include "arm_block.h"
@@ -66,7 +67,7 @@ Arm_asm::Arm_asm(LLVMIR& IR){
     global_def = IR.global_def;
     for(auto func_pair:IR.llvm_cfg){
         auto cfg = func_pair.second;
-        std::string name = cfg->func_ins->get_Func_name();
+        std::string name = cfg->func_ins->GetFunctionName();
         auto cur_armfunc = new Arm_func(name);
         functions.push_back(cur_armfunc);
         for(auto block_pair:*(cfg->block)){

@@ -18,29 +18,29 @@ define i32 @f1(ptr %r0)
 L0:
     br label %L1
 L1:
-    %r1 = add i32 0,4000
-    %r2 = add i32 0,5
-    %r3 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r2
-    store i32 %r1, ptr %r3
-    %r4 = add i32 0,3
-    %r5 = add i32 0,4000
-    %r6 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r5
-    store i32 %r4, ptr %r6
-    %r7 = add i32 0,7
-    %r8 = add i32 0,4095
-    %r9 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r8
-    store i32 %r7, ptr %r9
-    %r10 = add i32 0,2216
+    %r1 = add i32 5,0
+    %r2 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r1
+    %r3 = add i32 4000,0
+    store i32 %r3, ptr %r2
+    %r4 = add i32 4000,0
+    %r5 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r4
+    %r6 = add i32 3,0
+    store i32 %r6, ptr %r5
+    %r7 = add i32 4095,0
+    %r8 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r7
+    %r9 = add i32 7,0
+    store i32 %r9, ptr %r8
+    %r10 = add i32 4095,0
     %r11 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r10
     %r12 = load i32, ptr %r11
-    %r13 = add i32 0,9
-    %r14 = add i32 %r12,%r13
-    %r15 = add i32 0,4095
-    %r16 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r15
-    %r17 = load i32, ptr %r16
-    %r18 = getelementptr i32, ptr %r0, i32 %r17
-    store i32 %r14, ptr %r18
-    %r19 = add i32 0,5
+    %r13 = getelementptr i32, ptr %r0, i32 %r12
+    %r14 = add i32 2216,0
+    %r15 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r14
+    %r16 = load i32, ptr %r15
+    %r17 = add i32 9,0
+    %r18 = add i32 %r16,%r17
+    store i32 %r18, ptr %r13
+    %r19 = add i32 5,0
     %r20 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r19
     %r21 = load i32, ptr %r20
     %r22 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r21
@@ -55,44 +55,44 @@ L0:
     br label %L1
 L1:
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 16384,i1 0)
-    %r1 = add i32 0,1
+    %r1 = add i32 1,0
     %r2 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 1, i32 0
     store i32 %r1, ptr %r2
-    %r3 = add i32 0,2
+    %r3 = add i32 2,0
     %r4 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 2, i32 0
     store i32 %r3, ptr %r4
-    %r5 = add i32 0,3
+    %r5 = add i32 3,0
     %r6 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 2, i32 1
     store i32 %r5, ptr %r6
-    %r7 = add i32 0,4
+    %r7 = add i32 4,0
     %r8 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 3, i32 0
     store i32 %r7, ptr %r8
-    %r9 = add i32 0,5
+    %r9 = add i32 5,0
     %r10 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 3, i32 1
     store i32 %r9, ptr %r10
-    %r11 = add i32 0,6
+    %r11 = add i32 6,0
     %r12 = getelementptr [4 x [1024 x i32]], ptr %r0, i32 0, i32 3, i32 2
     store i32 %r11, ptr %r12
     call void @llvm.memset.p0.i32(ptr %r13,i8 0,i32 16384,i1 0)
-    %r14 = add i32 0,1
+    %r14 = add i32 1,0
     %r15 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 0, i32 0
     store i32 %r14, ptr %r15
-    %r16 = add i32 0,2
+    %r16 = add i32 2,0
     %r17 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 0, i32 1
     store i32 %r16, ptr %r17
-    %r18 = add i32 0,3
+    %r18 = add i32 3,0
     %r19 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 1, i32 0
     store i32 %r18, ptr %r19
-    %r20 = add i32 0,4
+    %r20 = add i32 4,0
     %r21 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 1, i32 1
     store i32 %r20, ptr %r21
     %r22 = add i32 0,0
     %r23 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 %r22
     %r24 = call i32 @f1(ptr %r23)
     call void @putint(i32 %r24)
-    %r25 = add i32 0,10
+    %r25 = add i32 10,0
     call void @putch(i32 %r25)
-    %r26 = add i32 0,2
+    %r26 = add i32 2,0
     %r27 = add i32 0,0
     %r28 = getelementptr [1024 x [4 x i32]], ptr %r13, i32 0, i32 %r26, i32 %r27
     %r29 = load i32, ptr %r28

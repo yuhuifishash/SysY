@@ -18,10 +18,9 @@ L0:
     %r0 = alloca i32
     br label %L1
 L1:
-    %r1 = add i32 0,0
+    store i32 0, ptr %r0
+    %r1 = add i32 5,0
     store i32 %r1, ptr %r0
-    %r2 = add i32 0,5
-    store i32 %r2, ptr %r0
-    %r3 = load i32, ptr %r0
-    ret i32 %r3
+    %r2 = load i32, ptr %r0
+    ret i32 %r2
 }

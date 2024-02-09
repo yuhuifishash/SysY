@@ -1,41 +1,178 @@
 #include "Instruction.h"
 #include "basic_block.h"
 
-Instruction IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
+void IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::I32,
+                            new RegOperand(reg1),new RegOperand(reg2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenArithmeticF32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
+void IRgenArithmeticF32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::FLOAT32,
+                            new RegOperand(reg1),new RegOperand(reg2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
+void IRgenArithmeticI32ImmLeft(LLVMBlock B,LLVMIROpcode opcode,int val1,int reg2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::I32,
+                            new ImmI32Operand(val1),new RegOperand(reg2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenFcmp(LLVMBlock B,FcmpCond cmp_op,int reg1,int reg2,int result_reg)
+void IRgenArithmeticF32ImmLeft(LLVMBlock B,LLVMIROpcode opcode,float val1,int reg2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::FLOAT32,
+                            new ImmF32Operand(val1),new RegOperand(reg2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenFptosi(LLVMBlock B,int src,int dst)
+void IRgenArithmeticI32ImmAll(LLVMBlock B,LLVMIROpcode opcode,int val1,int val2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::I32,
+                            new ImmI32Operand(val1),new ImmI32Operand(val2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenSitofp(LLVMBlock B,int src,int dst)
+void IRgenArithmeticF32ImmAll(LLVMBlock B,LLVMIROpcode opcode,float val1,float val2,int result_reg)
 {
-
+    B->InsertInstruction(1,new ArithmeticInstruction(opcode,LLVMType::FLOAT32,
+                            new ImmF32Operand(val1),new ImmF32Operand(val2),
+                            new RegOperand(result_reg)));
 }
 
-Instruction IRgenZext(LLVMBlock B,int src,int dst)
+void IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg)
 {
-
+    B->InsertInstruction(1,new IcmpInstruction(LLVMType::I32,
+                            new RegOperand(reg1),new RegOperand(reg2),
+                            cmp_op,new RegOperand(result_reg)));
 }
 
+void IRgenFcmp(LLVMBlock B,FcmpCond cmp_op,int reg1,int reg2,int result_reg)
+{
+    B->InsertInstruction(1,new FcmpInstruction(LLVMType::FLOAT32,
+                            new RegOperand(reg1),new RegOperand(reg2),
+                            cmp_op,new RegOperand(result_reg)));
+}
+
+void IRgenIcmpImmRight(LLVMBlock B,IcmpCond cmp_op,int reg1,int val2,int result_reg)
+{
+    B->InsertInstruction(1,new IcmpInstruction(LLVMType::I32,
+                            new RegOperand(reg1),new ImmI32Operand(val2),
+                            cmp_op,new RegOperand(result_reg)));
+}
+
+void IRgenFcmpImmRight(LLVMBlock B,FcmpCond cmp_op,int reg1,float val2,int result_reg)
+{
+    B->InsertInstruction(1,new FcmpInstruction(LLVMType::FLOAT32,
+                            new RegOperand(reg1),new ImmF32Operand(val2),
+                            cmp_op,new RegOperand(result_reg)));
+}
+
+void IRgenFptosi(LLVMBlock B,int src,int dst)
+{
+    B->InsertInstruction(1,new FptosiInstruction(
+                            new RegOperand(dst),new RegOperand(src)));
+}
+
+void IRgenSitofp(LLVMBlock B,int src,int dst)
+{
+    B->InsertInstruction(1,new SitofpInstruction(
+                            new RegOperand(dst),new RegOperand(src)));
+}
+
+void IRgenZextI1toI32(LLVMBlock B,int src,int dst)
+{
+    B->InsertInstruction(1,new ZextInstruction(
+                            LLVMType::I32,new RegOperand(dst),
+                            LLVMType::I1,new RegOperand(src)));
+}
+
+void IRgenGetElementptr(LLVMBlock B,LLVMType type,int result_reg,Operand ptr,
+                        std::vector<int> dims,std::vector<Operand> indexs)
+{
+    B->InsertInstruction(1,new GetElementprtInstruction(
+                            type,new RegOperand(result_reg),ptr,dims,indexs));
+}
+
+void IRgenLoad(LLVMBlock B,LLVMType type,int result_reg,Operand ptr)
+{
+    B->InsertInstruction(1,new LoadInstruction(type,ptr,new RegOperand(result_reg)));
+}
+
+void IRgenStore(LLVMBlock B,LLVMType type,int value_reg,Operand ptr)
+{
+    B->InsertInstruction(1,new StoreInstruction(type,ptr,new RegOperand(value_reg)));
+}
+
+void IRgenStore(LLVMBlock B,LLVMType type,Operand value,Operand ptr)
+{
+    B->InsertInstruction(1,new StoreInstruction(type,ptr,value));
+}
+
+void IRgenCall(LLVMBlock B,LLVMType type,int result_reg,
+                std::vector<std::pair<enum LLVMType,Operand> > args,std::string name)
+{
+    B->InsertInstruction(1,new CallInstruction(type,new RegOperand(result_reg),name,args));
+}
+
+void IRgenCallVoid(LLVMBlock B,LLVMType type,std::vector<std::pair<enum LLVMType,Operand> > args,std::string name)
+{
+    B->InsertInstruction(1,new CallInstruction(type,new RegOperand(-1),name,args));
+}
+
+void IRgenCallNoArgs(LLVMBlock B,LLVMType type,int result_reg,std::string name)
+{
+    B->InsertInstruction(1,new CallInstruction(type,new RegOperand(result_reg),name));
+}
+
+void IRgenCallVoidNoArgs(LLVMBlock B,LLVMType type,std::string name)
+{
+    B->InsertInstruction(1,new CallInstruction(type,new RegOperand(-1),name));
+}
+
+void IRgenRetReg(LLVMBlock B,LLVMType type,int reg)
+{
+    B->InsertInstruction(1,new RetInstruction(type,new RegOperand(reg)));
+}
+
+void IRgenRetImmInt(LLVMBlock B,LLVMType type,int val)
+{
+    B->InsertInstruction(1,new RetInstruction(type,new ImmI32Operand(val)));
+}
+
+void IRgenRetImmFloat(LLVMBlock B,LLVMType type,float val)
+{
+    B->InsertInstruction(1,new RetInstruction(type,new ImmF32Operand(val)));
+}
+
+void IRgenRetVoid(LLVMBlock B)
+{
+    B->InsertInstruction(1,new RetInstruction(LLVMType::VOID,nullptr));
+}
+
+void IRgenBRUnCond(LLVMBlock B,int dst_label)
+{
+    B->InsertInstruction(1,new BrUncondInstruction(new LabelOperand(dst_label)));
+}
+
+void IRgenBrCond(LLVMBlock B,int cond_reg,int true_label,int false_label)
+{
+    B->InsertInstruction(1,new BrCondInstruction(new RegOperand(cond_reg),
+                        new LabelOperand(true_label),new LabelOperand(false_label)));
+}
+
+void IRgenAlloca(LLVMBlock B,LLVMType type,int reg)
+{
+    B->InsertInstruction(0,new AllocaInstruction(type,new RegOperand(reg)));
+}
+
+void IRgenAllocaArray(LLVMBlock B,LLVMType type,int reg,std::vector<int> dims)
+{
+    B->InsertInstruction(0,new AllocaInstruction(type,dims,new RegOperand(reg)));
+}
 
 
 std::vector<Operand> LoadInstruction::GetNonResultOperands(){
@@ -96,15 +233,6 @@ std::vector<Operand> FcmpInstruction::GetNonResultOperands(){
 void FcmpInstruction::SetNonResultOperands(std::vector<Operand> ops){
     op1 = ops[0];
     op2 = ops[1];
-}
-
-void PhiInstruction::set_phi_label(int pre_id,int new_id){
-    for(auto phi_pair:val_labels){
-        auto l = (LabelOperand*)phi_pair.first;
-        if(l->GetLabelNo() == pre_id){
-            l->SetLabelNo(new_id);
-        }
-    }
 }
 
 std::vector<Operand> PhiInstruction::GetNonResultOperands(){
@@ -177,7 +305,7 @@ void GetElementprtInstruction::SetNonResultOperands(std::vector<Operand> ops){
     ptrval = ops[ops.size()-1];
 }
 
-void FunctionDefineInstruction::insert_formal(enum LLVMType t){
+void FunctionDefineInstruction::InsertFormal(enum LLVMType t){
     formals.push_back(t);
     formals_reg.push_back(new RegOperand(formals_reg.size()));
 }
@@ -221,51 +349,6 @@ void ZextInstruction::SetNonResultOperands(std::vector<Operand> ops){
     value = ops[0];
 }
 
-std::vector<Operand> mov_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    // std::cerr<<"mov_instruction::get_nonresult_operands()\n";
-    ret.push_back(source);
-    return ret;
-}
-
-std::vector<Operand> load_fp_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    // std::cerr<<"load_fp_instruction::get_nonresult_operands()\n";
-    ret.push_back(offset);
-    return ret;
-}
-
-std::vector<Operand> store_fp_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    ret.push_back(offset);
-    return ret;
-}
-
-std::vector<Operand> get_addr_by_fp_offset_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    ret.push_back(offset);
-    return ret;
-}
-
-std::vector<Operand> vmov_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    ret.push_back(from);
-    return ret;
-}
-
-std::vector<Operand> pseudo_load_label_instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    ret.push_back(from);
-    return ret;
-}
-
-std::vector<Operand> pseudo_alg_shift_Instruction::GetNonResultOperands(){
-    std::vector<Operand> ret;
-    ret.push_back(op1);
-    ret.push_back(op2);
-    return ret;
-}
-
 Operand RegOperand::CopyOperand()
 {
     return new RegOperand(reg_no);
@@ -286,9 +369,9 @@ Operand LabelOperand::CopyOperand()
     return new LabelOperand(label_no);
 }
 
-Operand global_operand::CopyOperand()
+Operand GlobalOperand::CopyOperand()
 {
-    return new global_operand(name);
+    return new GlobalOperand(name);
 }
 
 Instruction LoadInstruction::CopyInstruction()
@@ -628,60 +711,3 @@ void ZextInstruction::ReplaceByMap(const std::map<int,int>&Rule){
     }
 }
 
-void mov_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(result->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)result;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-    if(source->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)source;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}
-
-void load_fp_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(result->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)result;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}
-
-void store_fp_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(str_val->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)str_val;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}
-
-void get_addr_by_fp_offset_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(result->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)result;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}
-
-void load_imm_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(result->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)result;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}
-
-void vmov_instruction::ReplaceByMap(const std::map<int,int>&Rule){
-    if(result->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)result;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-    if(from->GetOperandType()==BasicOperand::REG){
-        auto result_reg = (RegOperand*)from;
-        if(Rule.find(result_reg->GetRegNo())!=Rule.end())
-            result_reg->SetRegNo((*(Rule.find(result_reg->GetRegNo()))).second);
-    }
-}

@@ -356,6 +356,14 @@ NodeAttribute SemantIntFloat(NodeAttribute a,NodeAttribute b,NodeAttribute::opco
     return BinaryCalculatedFloat[opcode](tmp_a,b);
 }
 
+NodeAttribute SemantIntBool(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
+{
+    NodeAttribute tmp_b = b;
+    tmp_b.T.type = Type::INT;
+    tmp_b.V.val.IntVal = tmp_b.V.val.BoolVal;
+    return BinaryCalculatedInt[opcode](a,tmp_b);
+}
+
 NodeAttribute SemantFloatInt(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
 {
     NodeAttribute tmp_b = b;
@@ -367,6 +375,30 @@ NodeAttribute SemantFloatInt(NodeAttribute a,NodeAttribute b,NodeAttribute::opco
 NodeAttribute SemantFloatFloat(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
 {
     return BinaryCalculatedFloat[opcode](a,b);
+}
+
+NodeAttribute SemantFloatBool(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
+{
+    NodeAttribute tmp_b = b;
+    tmp_b.T.type = Type::FLOAT;
+    tmp_b.V.val.FloatVal = tmp_b.V.val.BoolVal;
+    return BinaryCalculatedFloat[opcode](a,tmp_b);
+}
+
+NodeAttribute SemantBoolInt(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
+{
+    NodeAttribute tmp_a = a;
+    tmp_a.T.type = Type::INT;
+    tmp_a.V.val.IntVal = tmp_a.V.val.BoolVal;
+    return BinaryCalculatedInt[opcode](a,tmp_a);
+}
+
+NodeAttribute SemantBoolFloat(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
+{
+    NodeAttribute tmp_a = a;
+    tmp_a.T.type = Type::FLOAT;
+    tmp_a.V.val.FloatVal = tmp_a.V.val.BoolVal;
+    return BinaryCalculatedFloat[opcode](a,tmp_a);
 }
 
 NodeAttribute SemantBoolBool(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)
@@ -391,16 +423,16 @@ NodeAttribute SemantError(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode 
 NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)={
     [Type::INT][Type::INT] = SemantIntInt,
     [Type::INT][Type::FLOAT] = SemantIntFloat,
-    [Type::INT][Type::BOOL] = SemantError,
+    [Type::INT][Type::BOOL] = SemantIntBool,
     [Type::INT][Type::PTR] = SemantError,
     [Type::INT][Type::VOID] = SemantError,
     [Type::FLOAT][Type::INT] = SemantFloatInt,
     [Type::FLOAT][Type::FLOAT] = SemantFloatFloat,
-    [Type::FLOAT][Type::BOOL] = SemantError,
+    [Type::FLOAT][Type::BOOL] = SemantFloatBool,
     [Type::FLOAT][Type::PTR] = SemantError,
     [Type::FLOAT][Type::VOID] = SemantError,
-    [Type::BOOL][Type::INT] = SemantError,
-    [Type::BOOL][Type::FLOAT] = SemantError,
+    [Type::BOOL][Type::INT] = SemantBoolInt,
+    [Type::BOOL][Type::FLOAT] = SemantBoolFloat,
     [Type::BOOL][Type::BOOL] = SemantBoolBool,
     [Type::BOOL][Type::PTR] = SemantError,
     [Type::BOOL][Type::VOID] = SemantError,
@@ -509,7 +541,7 @@ NodeAttribute SemantInt(NodeAttribute a,NodeAttribute::opcode opcode)
 
 NodeAttribute SemantFloat(NodeAttribute a,NodeAttribute::opcode opcode)
 {
-    return SingleCalculatedInt[opcode](a);
+    return SingleCalculatedFloat[opcode](a);
 }
 
 NodeAttribute SemantBool(NodeAttribute a,NodeAttribute::opcode opcode)
@@ -547,13 +579,18 @@ NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcod
 
 extern int max_reg;
 
-Instruction IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
-Instruction IRgenArithmeticF32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
-Instruction IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg);
-Instruction IRgenFcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg);
-Instruction IRgenFptosi(LLVMBlock B,int src,int dst);
-Instruction IRgenSitofp(LLVMBlock B,int src,int dst);
-Instruction IRgenZext(LLVMBlock B,int src,int dst);
+void IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
+void IRgenArithmeticF32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg);
+void IRgenArithmeticI32ImmLeft(LLVMBlock B,LLVMIROpcode opcode,int val1,int reg2,int result_reg);
+void IRgenArithmeticF32ImmLeft(LLVMBlock B,LLVMIROpcode opcode,float val1,int reg2,int result_reg);
+void IRgenIcmp(LLVMBlock B,IcmpCond cmp_op,int reg1,int reg2,int result_reg);
+void IRgenFcmp(LLVMBlock B,FcmpCond cmp_op,int reg1,int reg2,int result_reg);
+void IRgenIcmpImmRight(LLVMBlock B,IcmpCond cmp_op,int reg1,int val2,int result_reg);
+void IRgenFcmpImmRight(LLVMBlock B,FcmpCond cmp_op,int reg1,float val2,int result_reg);
+void IRgenFptosi(LLVMBlock B,int src,int dst);
+void IRgenSitofp(LLVMBlock B,int src,int dst);
+void IRgenZextI1toI32(LLVMBlock B,int src,int dst);
+
 
 
 //binary
@@ -634,22 +671,22 @@ void (*BinaryIRgenInt[15])(LLVMBlock B,int reg1,int reg2)={
 
 void BinaryAddIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenArithmeticF32(B,LLVMIROpcode::FADD,reg1,reg2,++max_reg);
 }
 
 void BinarySubIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenArithmeticF32(B,LLVMIROpcode::FSUB,reg1,reg2,++max_reg);
 }
 
 void BinaryMulIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenArithmeticF32(B,LLVMIROpcode::FMUL,reg1,reg2,++max_reg);
 }
 
 void BinaryDivIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenArithmeticF32(B,LLVMIROpcode::FDIV,reg1,reg2,++max_reg);
 }
 
 void BinaryModIRFloat(LLVMBlock B,int reg1,int reg2)
@@ -659,32 +696,32 @@ void BinaryModIRFloat(LLVMBlock B,int reg1,int reg2)
 
 void BinaryGeqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenFcmp(B,FcmpCond::OGE,reg1,reg2,++max_reg);
 }
 
 void BinaryGtIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenFcmp(B,FcmpCond::OGT,reg1,reg2,++max_reg);
 }
 
 void BinaryLeqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenFcmp(B,FcmpCond::OLE,reg1,reg2,++max_reg);
 }
 
 void BinaryLtIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenFcmp(B,FcmpCond::OLT,reg1,reg2,++max_reg);
 }
 
 void BinaryEqIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-
+    IRgenFcmp(B,FcmpCond::OEQ,reg1,reg2,++max_reg);
 }
 
 void BinaryNeIRFloat(LLVMBlock B,int reg1,int reg2)
 {
-    
+    IRgenFcmp(B,FcmpCond::ONE,reg1,reg2,++max_reg);
 }
 
 
@@ -722,11 +759,24 @@ void IRgenIntFloat(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBl
     b->codeIR();
     int reg2 = max_reg;
 
-    ++max_reg;
-    IRgenSitofp(B,reg1,max_reg);//a int->float
+    IRgenSitofp(B,reg1,++max_reg);//a int->float
     reg1 = max_reg;
 
     BinaryIRgenFloat[opcode](B,reg1,reg2);
+}
+
+void IRgenIntBool(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+
+    b->codeIR();
+    int reg2 = max_reg;
+
+    IRgenZextI1toI32(B,reg2,++max_reg);//bool -> int
+    reg2 = max_reg;
+
+    BinaryIRgenInt[opcode](B,reg1,reg2);
 }
 
 void IRgenFloatInt(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
@@ -737,8 +787,7 @@ void IRgenFloatInt(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBl
     b->codeIR();
     int reg2 = max_reg;
 
-    ++max_reg;
-    IRgenSitofp(B,reg2,max_reg);//b int->float
+    IRgenSitofp(B,reg2,++max_reg);//b int->float
     reg2 = max_reg;
 
     BinaryIRgenFloat[opcode](B,reg1,reg2);
@@ -755,6 +804,54 @@ void IRgenFloatFloat(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVM
     BinaryIRgenFloat[opcode](B,reg1,reg2);
 }
 
+void IRgenFloatBool(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+
+    b->codeIR();
+    int reg2 = max_reg;
+
+    IRgenZextI1toI32(B,reg2,++max_reg);//bool -> int
+    reg2 = max_reg;
+
+    IRgenSitofp(B,reg2,++max_reg);//int -> float
+    reg2 = max_reg;
+
+    BinaryIRgenFloat[opcode](B,reg1,reg2);
+}
+
+void IRgenBoolInt(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+
+    b->codeIR();
+    int reg2 = max_reg;
+
+    IRgenZextI1toI32(B,reg1,++max_reg);//bool -> int
+    reg1 = max_reg;
+
+    BinaryIRgenInt[opcode](B,reg1,reg2);
+}
+
+void IRgenBoolFloat(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+
+    b->codeIR();
+    int reg2 = max_reg;
+
+    IRgenZextI1toI32(B,reg1,++max_reg);//bool -> int
+    reg1 = max_reg;
+
+    IRgenSitofp(B,reg1,++max_reg);//int -> float
+    reg1 = max_reg;
+
+    BinaryIRgenFloat[opcode](B,reg1,reg2);
+}
+
 void IRgenBoolBool(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)
 {
     a->codeIR();
@@ -763,12 +860,10 @@ void IRgenBoolBool(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBl
     b->codeIR();
     int reg2 = max_reg;
 
-    ++max_reg;
-    IRgenZext(B,reg1,max_reg);//bool -> int
+    IRgenZextI1toI32(B,reg1,++max_reg);//bool -> int
     reg1 = max_reg;
 
-    ++max_reg;
-    IRgenZext(B,reg2,max_reg);//bool -> int
+    IRgenZextI1toI32(B,reg2,++max_reg);//bool -> int
     reg2 = max_reg;
 
     BinaryIRgenInt[opcode](B,reg1,reg2);
@@ -783,16 +878,16 @@ void IRgenError(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock
 void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)={
     [Type::INT][Type::INT] = IRgenIntInt,
     [Type::INT][Type::FLOAT] = IRgenIntFloat,
-    [Type::INT][Type::BOOL] = IRgenError,
+    [Type::INT][Type::BOOL] = IRgenIntBool,
     [Type::INT][Type::PTR] = IRgenError,
     [Type::INT][Type::VOID] = IRgenError,
     [Type::FLOAT][Type::INT] = IRgenFloatInt,
     [Type::FLOAT][Type::FLOAT] = IRgenFloatFloat,
-    [Type::FLOAT][Type::BOOL] = IRgenError,
+    [Type::FLOAT][Type::BOOL] = IRgenFloatBool,
     [Type::FLOAT][Type::PTR] = IRgenError,
     [Type::FLOAT][Type::VOID] = IRgenError,
-    [Type::BOOL][Type::INT] = IRgenError,
-    [Type::BOOL][Type::FLOAT] = IRgenError,
+    [Type::BOOL][Type::INT] = IRgenBoolInt,
+    [Type::BOOL][Type::FLOAT] = IRgenBoolFloat,
     [Type::BOOL][Type::BOOL] = IRgenBoolBool,
     [Type::BOOL][Type::PTR] = IRgenError,
     [Type::BOOL][Type::VOID] = IRgenError,
@@ -810,19 +905,16 @@ void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttribute::opcode op
 
 
 //single
-void SingleAddIRInt(LLVMBlock B,int reg1)
-{
-
-}
+void SingleAddIRInt(LLVMBlock B,int reg1){}
 
 void SingleSubIRInt(LLVMBlock B,int reg1)
 {
-
+    IRgenArithmeticI32ImmLeft(B,LLVMIROpcode::SUB,0,reg1,++max_reg);
 }
 
 void SingleNotIRInt(LLVMBlock B,int reg1)
 {
-
+    IRgenIcmpImmRight(B,IcmpCond::eq,reg1,0,++max_reg);
 }
 
 void (*SingleIRgenInt[15])(LLVMBlock B,int reg1)={
@@ -834,19 +926,15 @@ void (*SingleIRgenInt[15])(LLVMBlock B,int reg1)={
 
 
 
-void SingleAddIRFloat(LLVMBlock B,int reg1)
-{
-
-}
+void SingleAddIRFloat(LLVMBlock B,int reg1){}
 
 void SingleSubIRFloat(LLVMBlock B,int reg1)
 {
-
+    IRgenArithmeticF32ImmLeft(B,LLVMIROpcode::FSUB,0,reg1,++max_reg);
 }
-
 void SingleNotIRFloat(LLVMBlock B,int reg1)
 {
-
+    IRgenFcmpImmRight(B,FcmpCond::OEQ,reg1,0,++max_reg);
 }
 
 void (*SingleIRgenFloat[15])(LLVMBlock B,int reg1)={
@@ -872,6 +960,16 @@ void IRgenFloat(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)
     SingleIRgenFloat[opcode](B,reg1);
 }
 
+void IRgenBool(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)
+{
+    a->codeIR();
+    int reg1 = max_reg;
+    IRgenZextI1toI32(B,reg1,++max_reg);
+    reg1 = max_reg;
+
+    SingleIRgenInt[opcode](B,reg1);
+}
+
 void IRgenError(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)
 {
     assert(false);
@@ -880,21 +978,29 @@ void IRgenError(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)
 void (*IRgenSingleNode[5])(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)={
     [Type::INT] = IRgenInt,
     [Type::FLOAT] = IRgenFloat,
-    [Type::BOOL] = IRgenError,
+    [Type::BOOL] = IRgenBool,
     [Type::PTR] = IRgenError,
     [Type::VOID] = IRgenError,
 };
 
-void IRgenTypeConverse(LLVMBlock B,Type::ty type_src,Type::ty type_dst,int src,int dst)
+void IRgenTypeConverse(LLVMBlock B,Type::ty type_src,Type::ty type_dst,int src)
 {
     if(type_src == type_dst){return;}
     if(type_src == Type::INT && type_dst == Type::FLOAT){
-        IRgenSitofp(B,src,dst);
-    }
-    else if(type_src == Type::BOOL && type_dst == Type::INT){
-        IRgenZext(B,src,dst);
-    }
-    else if(type_src == Type::FLOAT && type_dst == Type::INT){
-        IRgenFptosi(B,src,dst);
+        IRgenSitofp(B,src,++max_reg);
+    }else if(type_src == Type::INT && type_dst == Type::BOOL){
+        IRgenIcmpImmRight(B,IcmpCond::ne,src,0,++max_reg);
+    }else if(type_src == Type::FLOAT && type_dst == Type::INT){
+        IRgenFptosi(B,src,++max_reg);
+    }else if(type_src == Type::FLOAT && type_dst == Type::BOOL){
+        IRgenFcmpImmRight(B,FcmpCond::ONE,src,0,++max_reg);
+    }else if(type_src == Type::BOOL && type_dst == Type::INT){
+        IRgenZextI1toI32(B,src,++max_reg);
+    }else if(type_src == Type::BOOL && type_dst == Type::FLOAT){
+        IRgenZextI1toI32(B,src,++max_reg);
+        src = max_reg;
+        IRgenSitofp(B,src,++max_reg);
+    }else{
+        assert(false);
     }
 }

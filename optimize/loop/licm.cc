@@ -33,7 +33,7 @@
 //     auto preheaderBB = llvm_IR.llvm_Function_BlockArr_map[cfg->func_ins][preheaderBB_id];
 //     preheader = preheaderBB;
 
-//     preheader->push_Ins(1,new br_uncond_Instruction(new label_operand(header->block_id)));
+//     preheader->PushIns(1,new br_uncond_Instruction(new label_operand(header->block_id)));
 
 //     std::set<int> label_changeM;
 //     //std::cout<<cfg->func_ins->get_Func_name()<<"  "<<header->block_id<<"\n";
@@ -80,7 +80,7 @@
 //                 ++it;
 //             }
 //         }
-//         preheader->push_Ins(0,preheaderPHI_Ins);
+//         preheader->PushIns(0,preheaderPHI_Ins);
 
 //         I->Insert_phi(new reg_operand(cfg->max_reg),new label_operand(preheaderBB_id));
 //     }
@@ -234,7 +234,7 @@
 //             //move to preheader
 //             EraseInsSet.insert(I);
 //             I->setBlockID(L->preheader->block_id);
-//             L->preheader->push_Ins(1,I);
+//             L->preheader->PushIns(1,I);
 //             //I->printIR(std::cerr);
 //             it = L->InvariantInsList.erase(it);//erase this Instruction
 //             //std::cerr<<"code motion ";I->printIR(std::cerr);

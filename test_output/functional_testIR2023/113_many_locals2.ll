@@ -16,311 +16,275 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
 L0:
-    %r196 = alloca i32
-    %r164 = alloca i32
-    %r60 = alloca i32
-    %r58 = alloca i32
-    %r56 = alloca i32
-    %r54 = alloca i32
-    %r52 = alloca i32
-    %r50 = alloca i32
-    %r48 = alloca i32
-    %r46 = alloca i32
-    %r44 = alloca i32
-    %r42 = alloca i32
-    %r40 = alloca i32
-    %r38 = alloca i32
-    %r36 = alloca i32
-    %r34 = alloca i32
-    %r32 = alloca i32
+    %r157 = alloca i32
+    %r126 = alloca i32
     %r30 = alloca i32
+    %r29 = alloca i32
     %r28 = alloca i32
+    %r27 = alloca i32
     %r26 = alloca i32
+    %r25 = alloca i32
     %r24 = alloca i32
+    %r23 = alloca i32
     %r22 = alloca i32
+    %r21 = alloca i32
     %r20 = alloca i32
+    %r19 = alloca i32
     %r18 = alloca i32
+    %r17 = alloca i32
     %r16 = alloca i32
+    %r15 = alloca i32
     %r14 = alloca i32
+    %r13 = alloca i32
     %r12 = alloca i32
+    %r11 = alloca i32
     %r10 = alloca i32
+    %r9 = alloca i32
     %r8 = alloca i32
+    %r7 = alloca i32
     %r6 = alloca i32
+    %r5 = alloca i32
     %r4 = alloca i32
+    %r3 = alloca i32
     %r2 = alloca i32
+    %r1 = alloca i32
     %r0 = alloca i32
     br label %L1
 L1:
-    %r1 = add i32 0,0
-    store i32 %r1, ptr %r0
-    %r3 = add i32 0,0
-    store i32 %r3, ptr %r2
-    %r5 = add i32 0,0
-    store i32 %r5, ptr %r4
-    %r7 = add i32 0,0
-    store i32 %r7, ptr %r6
-    %r9 = add i32 0,0
-    store i32 %r9, ptr %r8
-    %r11 = add i32 0,0
-    store i32 %r11, ptr %r10
-    %r13 = add i32 0,0
-    store i32 %r13, ptr %r12
-    %r15 = add i32 0,0
-    store i32 %r15, ptr %r14
-    %r17 = add i32 0,0
-    store i32 %r17, ptr %r16
-    %r19 = add i32 0,0
-    store i32 %r19, ptr %r18
-    %r21 = add i32 0,0
-    store i32 %r21, ptr %r20
-    %r23 = add i32 0,0
-    store i32 %r23, ptr %r22
-    %r25 = add i32 0,0
-    store i32 %r25, ptr %r24
-    %r27 = add i32 0,0
-    store i32 %r27, ptr %r26
-    %r29 = add i32 0,0
-    store i32 %r29, ptr %r28
-    %r31 = add i32 0,0
+    store i32 0, ptr %r0
+    store i32 0, ptr %r1
+    store i32 0, ptr %r2
+    store i32 0, ptr %r3
+    store i32 0, ptr %r4
+    store i32 0, ptr %r5
+    store i32 0, ptr %r6
+    store i32 0, ptr %r7
+    store i32 0, ptr %r8
+    store i32 0, ptr %r9
+    store i32 0, ptr %r10
+    store i32 0, ptr %r11
+    store i32 0, ptr %r12
+    store i32 0, ptr %r13
+    store i32 0, ptr %r14
+    store i32 0, ptr %r15
+    store i32 0, ptr %r16
+    store i32 0, ptr %r17
+    store i32 0, ptr %r18
+    store i32 0, ptr %r19
+    store i32 0, ptr %r20
+    store i32 0, ptr %r21
+    store i32 0, ptr %r22
+    store i32 0, ptr %r23
+    store i32 0, ptr %r24
+    store i32 0, ptr %r25
+    store i32 0, ptr %r26
+    store i32 0, ptr %r27
+    store i32 0, ptr %r28
+    store i32 0, ptr %r29
+    store i32 0, ptr %r30
+    %r31 = call i32 @getint()
     store i32 %r31, ptr %r30
-    %r33 = add i32 0,0
-    store i32 %r33, ptr %r32
-    %r35 = add i32 0,0
-    store i32 %r35, ptr %r34
-    %r37 = add i32 0,0
-    store i32 %r37, ptr %r36
-    %r39 = add i32 0,0
-    store i32 %r39, ptr %r38
-    %r41 = add i32 0,0
-    store i32 %r41, ptr %r40
-    %r43 = add i32 0,0
-    store i32 %r43, ptr %r42
-    %r45 = add i32 0,0
-    store i32 %r45, ptr %r44
-    %r47 = add i32 0,0
-    store i32 %r47, ptr %r46
-    %r49 = add i32 0,0
-    store i32 %r49, ptr %r48
-    %r51 = add i32 0,0
-    store i32 %r51, ptr %r50
-    %r53 = add i32 0,0
-    store i32 %r53, ptr %r52
-    %r55 = add i32 0,0
-    store i32 %r55, ptr %r54
-    %r57 = add i32 0,0
-    store i32 %r57, ptr %r56
-    %r59 = add i32 0,0
-    store i32 %r59, ptr %r58
-    %r61 = add i32 0,0
-    store i32 %r61, ptr %r60
-    %r62 = call i32 @getint()
-    store i32 %r62, ptr %r60
-    %r63 = load i32, ptr %r60
-    %r64 = add i32 0,5
-    %r65 = icmp eq i32 %r63,%r64
-    br i1 %r65, label %L3, label %L5
+    br label %L2
+L2:
+    %r32 = load i32, ptr %r30
+    %r33 = add i32 5,0
+    %r34 = icmp eq i32 %r32,%r33
+    br i1 %r34, label %L3, label %L4
 L3:
-    %r68 = load i32, ptr %r60
-    %r69 = add i32 0,1
-    %r70 = add i32 %r68,%r69
-    store i32 %r70, ptr %r60
-    br label %L4
+    %r35 = load i32, ptr %r30
+    %r36 = add i32 1,0
+    %r37 = add i32 %r35,%r36
+    store i32 %r37, ptr %r30
+    br label %L2
 L4:
-    %r71 = load i32, ptr %r60
-    %r72 = add i32 0,5
-    %r73 = icmp eq i32 %r71,%r72
-    br i1 %r73, label %L3, label %L5
-L5:
-    %r76 = add i32 0,0
-    store i32 %r76, ptr %r0
-    %r77 = load i32, ptr %r0
-    %r78 = add i32 0,1
-    %r79 = add i32 %r77,%r78
-    store i32 %r79, ptr %r2
-    %r80 = load i32, ptr %r2
-    %r81 = add i32 0,1
-    %r82 = add i32 %r80,%r81
-    store i32 %r82, ptr %r4
-    %r83 = load i32, ptr %r4
-    %r84 = add i32 0,1
-    %r85 = add i32 %r83,%r84
-    store i32 %r85, ptr %r6
-    %r86 = load i32, ptr %r6
-    %r87 = add i32 0,1
-    %r88 = add i32 %r86,%r87
-    store i32 %r88, ptr %r8
-    %r89 = load i32, ptr %r8
-    %r90 = add i32 0,1
-    %r91 = add i32 %r89,%r90
-    store i32 %r91, ptr %r10
-    %r92 = load i32, ptr %r10
-    %r93 = add i32 0,1
-    %r94 = add i32 %r92,%r93
-    store i32 %r94, ptr %r12
-    %r95 = load i32, ptr %r12
-    %r96 = add i32 0,1
-    %r97 = add i32 %r95,%r96
-    store i32 %r97, ptr %r14
-    %r98 = load i32, ptr %r14
-    %r99 = add i32 0,1
-    %r100 = add i32 %r98,%r99
-    store i32 %r100, ptr %r16
-    %r101 = load i32, ptr %r16
-    %r102 = add i32 0,1
-    %r103 = add i32 %r101,%r102
-    store i32 %r103, ptr %r18
-    %r104 = load i32, ptr %r18
-    %r105 = add i32 0,1
-    %r106 = add i32 %r104,%r105
-    store i32 %r106, ptr %r20
-    %r107 = load i32, ptr %r20
-    %r108 = add i32 0,1
-    %r109 = add i32 %r107,%r108
-    store i32 %r109, ptr %r22
-    %r110 = load i32, ptr %r22
-    %r111 = add i32 0,1
-    %r112 = add i32 %r110,%r111
-    store i32 %r112, ptr %r24
-    %r113 = load i32, ptr %r24
-    %r114 = add i32 0,1
-    %r115 = add i32 %r113,%r114
-    store i32 %r115, ptr %r26
-    %r116 = load i32, ptr %r26
-    %r117 = add i32 0,1
-    %r118 = add i32 %r116,%r117
-    store i32 %r118, ptr %r28
-    %r119 = load i32, ptr %r28
-    %r120 = add i32 0,1
-    %r121 = add i32 %r119,%r120
-    store i32 %r121, ptr %r30
-    %r122 = load i32, ptr %r30
-    %r123 = add i32 0,1
-    %r124 = add i32 %r122,%r123
-    store i32 %r124, ptr %r32
-    %r125 = load i32, ptr %r32
-    %r126 = add i32 0,1
-    %r127 = add i32 %r125,%r126
-    store i32 %r127, ptr %r34
-    %r128 = load i32, ptr %r34
-    %r129 = add i32 0,1
-    %r130 = add i32 %r128,%r129
-    store i32 %r130, ptr %r36
-    %r131 = load i32, ptr %r36
-    %r132 = add i32 0,1
-    %r133 = add i32 %r131,%r132
-    store i32 %r133, ptr %r38
-    %r134 = load i32, ptr %r38
-    %r135 = add i32 0,1
-    %r136 = add i32 %r134,%r135
-    store i32 %r136, ptr %r40
-    %r137 = load i32, ptr %r40
-    %r138 = add i32 0,1
-    %r139 = add i32 %r137,%r138
-    store i32 %r139, ptr %r42
-    %r140 = load i32, ptr %r42
-    %r141 = add i32 0,1
-    %r142 = add i32 %r140,%r141
-    store i32 %r142, ptr %r44
-    %r143 = load i32, ptr %r44
-    %r144 = add i32 0,1
-    %r145 = add i32 %r143,%r144
-    store i32 %r145, ptr %r46
-    %r146 = load i32, ptr %r46
-    %r147 = add i32 0,1
-    %r148 = add i32 %r146,%r147
-    store i32 %r148, ptr %r48
-    %r149 = load i32, ptr %r48
-    %r150 = add i32 0,1
-    %r151 = add i32 %r149,%r150
-    store i32 %r151, ptr %r50
-    %r152 = load i32, ptr %r50
-    %r153 = add i32 0,1
-    %r154 = add i32 %r152,%r153
-    store i32 %r154, ptr %r52
-    %r155 = load i32, ptr %r52
-    %r156 = add i32 0,1
-    %r157 = add i32 %r155,%r156
-    store i32 %r157, ptr %r54
-    %r158 = load i32, ptr %r54
-    %r159 = add i32 0,1
-    %r160 = add i32 %r158,%r159
-    store i32 %r160, ptr %r56
-    %r161 = load i32, ptr %r56
-    %r162 = add i32 0,1
-    %r163 = add i32 %r161,%r162
-    store i32 %r163, ptr %r58
-    %r165 = add i32 0,0
-    store i32 %r165, ptr %r164
-    %r166 = load i32, ptr %r0
-    call void @putint(i32 %r166)
-    %r167 = load i32, ptr %r2
-    call void @putint(i32 %r167)
-    %r168 = load i32, ptr %r4
-    call void @putint(i32 %r168)
-    %r169 = load i32, ptr %r6
-    call void @putint(i32 %r169)
-    %r170 = load i32, ptr %r8
-    call void @putint(i32 %r170)
-    %r171 = load i32, ptr %r10
-    call void @putint(i32 %r171)
-    %r172 = load i32, ptr %r12
-    call void @putint(i32 %r172)
-    %r173 = load i32, ptr %r14
-    call void @putint(i32 %r173)
-    %r174 = load i32, ptr %r16
-    call void @putint(i32 %r174)
-    %r175 = load i32, ptr %r18
-    call void @putint(i32 %r175)
-    %r176 = load i32, ptr %r20
-    call void @putint(i32 %r176)
-    %r177 = load i32, ptr %r22
-    call void @putint(i32 %r177)
-    %r178 = load i32, ptr %r24
-    call void @putint(i32 %r178)
-    %r179 = load i32, ptr %r26
-    call void @putint(i32 %r179)
-    %r180 = load i32, ptr %r28
-    call void @putint(i32 %r180)
-    %r181 = load i32, ptr %r30
-    call void @putint(i32 %r181)
-    %r182 = load i32, ptr %r32
-    call void @putint(i32 %r182)
-    %r183 = load i32, ptr %r34
-    call void @putint(i32 %r183)
-    %r184 = load i32, ptr %r36
-    call void @putint(i32 %r184)
-    %r185 = load i32, ptr %r38
-    call void @putint(i32 %r185)
-    %r186 = load i32, ptr %r40
-    call void @putint(i32 %r186)
-    %r187 = load i32, ptr %r42
-    call void @putint(i32 %r187)
-    %r188 = load i32, ptr %r44
-    call void @putint(i32 %r188)
-    %r189 = load i32, ptr %r46
-    call void @putint(i32 %r189)
-    %r190 = load i32, ptr %r48
-    call void @putint(i32 %r190)
-    %r191 = load i32, ptr %r50
-    call void @putint(i32 %r191)
-    %r192 = load i32, ptr %r52
-    call void @putint(i32 %r192)
-    %r193 = load i32, ptr %r54
-    call void @putint(i32 %r193)
-    %r194 = load i32, ptr %r56
-    call void @putint(i32 %r194)
-    %r195 = load i32, ptr %r58
-    call void @putint(i32 %r195)
-    %r197 = add i32 0,0
-    store i32 %r197, ptr %r196
-    %r198 = add i32 0,10
-    store i32 %r198, ptr %r196
-    %r199 = load i32, ptr %r196
-    call void @putch(i32 %r199)
-    %r200 = load i32, ptr %r60
-    call void @putint(i32 %r200)
-    %r201 = load i32, ptr %r196
-    call void @putch(i32 %r201)
-    %r202 = load i32, ptr %r50
-    ret i32 %r202
+    %r38 = add i32 0,0
+    store i32 %r38, ptr %r0
+    %r39 = load i32, ptr %r0
+    %r40 = add i32 1,0
+    %r41 = add i32 %r39,%r40
+    store i32 %r41, ptr %r1
+    %r42 = load i32, ptr %r1
+    %r43 = add i32 1,0
+    %r44 = add i32 %r42,%r43
+    store i32 %r44, ptr %r2
+    %r45 = load i32, ptr %r2
+    %r46 = add i32 1,0
+    %r47 = add i32 %r45,%r46
+    store i32 %r47, ptr %r3
+    %r48 = load i32, ptr %r3
+    %r49 = add i32 1,0
+    %r50 = add i32 %r48,%r49
+    store i32 %r50, ptr %r4
+    %r51 = load i32, ptr %r4
+    %r52 = add i32 1,0
+    %r53 = add i32 %r51,%r52
+    store i32 %r53, ptr %r5
+    %r54 = load i32, ptr %r5
+    %r55 = add i32 1,0
+    %r56 = add i32 %r54,%r55
+    store i32 %r56, ptr %r6
+    %r57 = load i32, ptr %r6
+    %r58 = add i32 1,0
+    %r59 = add i32 %r57,%r58
+    store i32 %r59, ptr %r7
+    %r60 = load i32, ptr %r7
+    %r61 = add i32 1,0
+    %r62 = add i32 %r60,%r61
+    store i32 %r62, ptr %r8
+    %r63 = load i32, ptr %r8
+    %r64 = add i32 1,0
+    %r65 = add i32 %r63,%r64
+    store i32 %r65, ptr %r9
+    %r66 = load i32, ptr %r9
+    %r67 = add i32 1,0
+    %r68 = add i32 %r66,%r67
+    store i32 %r68, ptr %r10
+    %r69 = load i32, ptr %r10
+    %r70 = add i32 1,0
+    %r71 = add i32 %r69,%r70
+    store i32 %r71, ptr %r11
+    %r72 = load i32, ptr %r11
+    %r73 = add i32 1,0
+    %r74 = add i32 %r72,%r73
+    store i32 %r74, ptr %r12
+    %r75 = load i32, ptr %r12
+    %r76 = add i32 1,0
+    %r77 = add i32 %r75,%r76
+    store i32 %r77, ptr %r13
+    %r78 = load i32, ptr %r13
+    %r79 = add i32 1,0
+    %r80 = add i32 %r78,%r79
+    store i32 %r80, ptr %r14
+    %r81 = load i32, ptr %r14
+    %r82 = add i32 1,0
+    %r83 = add i32 %r81,%r82
+    store i32 %r83, ptr %r15
+    %r84 = load i32, ptr %r15
+    %r85 = add i32 1,0
+    %r86 = add i32 %r84,%r85
+    store i32 %r86, ptr %r16
+    %r87 = load i32, ptr %r16
+    %r88 = add i32 1,0
+    %r89 = add i32 %r87,%r88
+    store i32 %r89, ptr %r17
+    %r90 = load i32, ptr %r17
+    %r91 = add i32 1,0
+    %r92 = add i32 %r90,%r91
+    store i32 %r92, ptr %r18
+    %r93 = load i32, ptr %r18
+    %r94 = add i32 1,0
+    %r95 = add i32 %r93,%r94
+    store i32 %r95, ptr %r19
+    %r96 = load i32, ptr %r19
+    %r97 = add i32 1,0
+    %r98 = add i32 %r96,%r97
+    store i32 %r98, ptr %r20
+    %r99 = load i32, ptr %r20
+    %r100 = add i32 1,0
+    %r101 = add i32 %r99,%r100
+    store i32 %r101, ptr %r21
+    %r102 = load i32, ptr %r21
+    %r103 = add i32 1,0
+    %r104 = add i32 %r102,%r103
+    store i32 %r104, ptr %r22
+    %r105 = load i32, ptr %r22
+    %r106 = add i32 1,0
+    %r107 = add i32 %r105,%r106
+    store i32 %r107, ptr %r23
+    %r108 = load i32, ptr %r23
+    %r109 = add i32 1,0
+    %r110 = add i32 %r108,%r109
+    store i32 %r110, ptr %r24
+    %r111 = load i32, ptr %r24
+    %r112 = add i32 1,0
+    %r113 = add i32 %r111,%r112
+    store i32 %r113, ptr %r25
+    %r114 = load i32, ptr %r25
+    %r115 = add i32 1,0
+    %r116 = add i32 %r114,%r115
+    store i32 %r116, ptr %r26
+    %r117 = load i32, ptr %r26
+    %r118 = add i32 1,0
+    %r119 = add i32 %r117,%r118
+    store i32 %r119, ptr %r27
+    %r120 = load i32, ptr %r27
+    %r121 = add i32 1,0
+    %r122 = add i32 %r120,%r121
+    store i32 %r122, ptr %r28
+    %r123 = load i32, ptr %r28
+    %r124 = add i32 1,0
+    %r125 = add i32 %r123,%r124
+    store i32 %r125, ptr %r29
+    store i32 0, ptr %r126
+    %r127 = load i32, ptr %r0
+    call void @putint(i32 %r127)
+    %r128 = load i32, ptr %r1
+    call void @putint(i32 %r128)
+    %r129 = load i32, ptr %r2
+    call void @putint(i32 %r129)
+    %r130 = load i32, ptr %r3
+    call void @putint(i32 %r130)
+    %r131 = load i32, ptr %r4
+    call void @putint(i32 %r131)
+    %r132 = load i32, ptr %r5
+    call void @putint(i32 %r132)
+    %r133 = load i32, ptr %r6
+    call void @putint(i32 %r133)
+    %r134 = load i32, ptr %r7
+    call void @putint(i32 %r134)
+    %r135 = load i32, ptr %r8
+    call void @putint(i32 %r135)
+    %r136 = load i32, ptr %r9
+    call void @putint(i32 %r136)
+    %r137 = load i32, ptr %r10
+    call void @putint(i32 %r137)
+    %r138 = load i32, ptr %r11
+    call void @putint(i32 %r138)
+    %r139 = load i32, ptr %r12
+    call void @putint(i32 %r139)
+    %r140 = load i32, ptr %r13
+    call void @putint(i32 %r140)
+    %r141 = load i32, ptr %r14
+    call void @putint(i32 %r141)
+    %r142 = load i32, ptr %r15
+    call void @putint(i32 %r142)
+    %r143 = load i32, ptr %r16
+    call void @putint(i32 %r143)
+    %r144 = load i32, ptr %r17
+    call void @putint(i32 %r144)
+    %r145 = load i32, ptr %r18
+    call void @putint(i32 %r145)
+    %r146 = load i32, ptr %r19
+    call void @putint(i32 %r146)
+    %r147 = load i32, ptr %r20
+    call void @putint(i32 %r147)
+    %r148 = load i32, ptr %r21
+    call void @putint(i32 %r148)
+    %r149 = load i32, ptr %r22
+    call void @putint(i32 %r149)
+    %r150 = load i32, ptr %r23
+    call void @putint(i32 %r150)
+    %r151 = load i32, ptr %r24
+    call void @putint(i32 %r151)
+    %r152 = load i32, ptr %r25
+    call void @putint(i32 %r152)
+    %r153 = load i32, ptr %r26
+    call void @putint(i32 %r153)
+    %r154 = load i32, ptr %r27
+    call void @putint(i32 %r154)
+    %r155 = load i32, ptr %r28
+    call void @putint(i32 %r155)
+    %r156 = load i32, ptr %r29
+    call void @putint(i32 %r156)
+    store i32 0, ptr %r157
+    %r158 = add i32 10,0
+    store i32 %r158, ptr %r157
+    %r159 = load i32, ptr %r157
+    call void @putch(i32 %r159)
+    %r160 = load i32, ptr %r30
+    call void @putint(i32 %r160)
+    %r161 = load i32, ptr %r157
+    call void @putch(i32 %r161)
+    %r162 = load i32, ptr %r25
+    ret i32 %r162
 }

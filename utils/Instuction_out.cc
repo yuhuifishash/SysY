@@ -214,18 +214,9 @@ std::ostream& operator<<(std::ostream&s,FcmpCond type){
 }
 
 std::string RegOperand::GetFullName(){
-    
-    if(output_Physical_reg == 0){
-        if(reg_no>=0)
-            return "%r"+std::to_string(reg_no);
-        else
-            return "%s"+std::to_string(-reg_no);
+    if(reg_no >= 0){
+        return "%r"+std::to_string(reg_no);
     }
-    if(output_Physical_reg == 1){
-        // std::cerr<<current_CFG<<std::endl;
-        return current_CFG->reg_V2P[reg_no].getPhysicalName();
-    }
-    
 }
 
 std::string ImmI32Operand::GetFullName(){
@@ -243,7 +234,7 @@ std::string LabelOperand::GetFullName(){
     return "%L"+std::to_string(label_no);
 }
 
-std::string global_operand::GetFullName(){
+std::string GlobalOperand::GetFullName(){
     return "@"+name;
 }
 
@@ -348,11 +339,8 @@ void LLVMIR::printIR(std::ostream&s)
     }
 
     //output Functions
-    for(auto Func_Block_item:llvm_Function_BlockArr_map){//<function,<id,block> >
-        // std::cerr<<"Ougggggggggggahhhhhhhhhh\n";
-        Func_Def_Instruction f = Func_Block_item.first;
-        //std::cerr<<f->get_Func_name()<<" "<<f<<" "<<llvm_cfg[f]<<"\n";
-        // ASSERT(current_CFG != NULL)
+    for(auto Func_Block_item:function_block_map){//<function,<id,block> >
+        FuncDefInstruction f = Func_Block_item.first;
         current_CFG = llvm_cfg[f];
         //output function Syntax
         f->PrintIR(s);
@@ -400,7 +388,6 @@ long long Float_to_Byte(float f){
         1    0000 101                   ---8 bits   (exp bits)
         1100 1010 0000 1110 0101 011    ---23 bits  (part 1)
     
-    More Examples:exp Rules are Not that easy
 */
     
     return out_rawFloatByte;
@@ -417,22 +404,21 @@ void recursive_print(std::ostream& s,LLVMType type,VarAttribute& v,int dimDph,in
         int allzero = 1;
         if(v.type == 1){
             for(auto x:v.IntInitVals){
-                if(x!=0){
+                if(x != 0){
                     allzero = 0;
                     break;
                 }
             }
         }else{
             for(auto x:v.FloatInitVals){
-                if(x!=0){
+                if(x != 0){
                     allzero = 0;
                     break;
                 }
             }
         }
         if(allzero){
-            for(int dim:v.dims)
-            {
+            for(int dim:v.dims){
                 s<<"["<<dim<<"x ";
             }
             s<<type<<std::string(v.dims.size(),']')<<" "<<"zeroinitializer";
@@ -440,11 +426,13 @@ void recursive_print(std::ostream& s,LLVMType type,VarAttribute& v,int dimDph,in
         }
     }
     if(beginPos==endPos){
-        if(type==I32)
+        if(type==I32){
             s<<type<<" "<<v.IntInitVals[beginPos];
-        else if(type==FLOAT32)
+        }
+        else if(type==FLOAT32){
             s<<type<<" "<<"0x"<<std::hex<<Float_to_Byte(v.FloatInitVals[beginPos]);
             s<<std::dec;
+        }
         return;
     }
     for(int i=dimDph;i<v.dims.size();i++){
@@ -452,13 +440,13 @@ void recursive_print(std::ostream& s,LLVMType type,VarAttribute& v,int dimDph,in
     }
     s<<type<<std::string(v.dims.size()-dimDph,']')<<" ";
     s<<"[";
-    int step=1;
-    for(int i=dimDph+1;i<v.dims.size();i++){
-        step*=v.dims[i];
+    int step = 1;
+    for(int i = dimDph + 1;i < v.dims.size();i++){
+        step *= v.dims[i];
     }
-    for(int i=0;i<v.dims[dimDph];i++){
-        recursive_print(s,type,v,dimDph+1,beginPos+i*step,beginPos+(i+1)*step-1);
-        if(i!=v.dims[dimDph]-1)s<<",";//Not the last element
+    for(int i = 0;i < v.dims[dimDph];i++){
+        recursive_print(s,type,v,dimDph + 1,beginPos + i*step,beginPos + (i + 1)*step-1);
+        if(i != v.dims[dimDph]-1)s<<",";//Not the last element
     }
     s<<"]";
 }
@@ -475,11 +463,6 @@ void GlobalVarDefineInstruction::PrintIR(std::ostream& s)
     }
     s<<"@"<<name<<" = global ";
     //print type
-    // for(int dim:dims)
-    // {
-    //     s<<"["<<dim<<"x ";
-    // }
-    // s<<type<<std::string(dims.size(),']');
     //print init_val
     int step=1;
     for(int i=0;i<arval.dims.size();i++){
@@ -506,8 +489,7 @@ void CallInstruction::PrintIR(std::ostream& s)
     
     //print Parameter List
     s<<"(";
-    for(std::vector<std::pair<LLVMType,Operand>>::iterator it=args.begin();it!=args.end();++it)
-    {
+    for(std::vector<std::pair<LLVMType,Operand>>::iterator it=args.begin();it!=args.end();++it){
         s<<it->first<<" "<<it->second;
         if(it+1!=args.end())s<<",";
     }
@@ -536,8 +518,7 @@ void GetElementprtInstruction::PrintIR(std::ostream& s)
     //print type
     if(dims.empty())s<<type;
     else{
-        for(int dim:dims)
-        {
+        for(int dim:dims){
             s<<"["<<dim<<" x ";
         }
         s<<type;
@@ -561,7 +542,6 @@ void SitofpInstruction::PrintIR(std::ostream& s){
 }
 
 void GlobalStringConstInstruction::PrintIR(std::ostream& s){
-    //std::cerr<<str_val<<"\n";
     int str_len=str_val.size()+1;
     for(char c:str_val){
         if(c=='\\')str_len--;
@@ -593,61 +573,4 @@ void GlobalStringConstInstruction::PrintIR(std::ostream& s){
 
 void ZextInstruction::PrintIR(std::ostream& s){
     s<<result<<" = zext "<<from_type<<" "<<value<<" to "<<to_type<<"\n";
-}
-
-void load_fp_instruction::PrintIR(std::ostream& s){
-    if(offset->GetOperandType() != BasicOperand::REG)
-        s<<"ldr "<<result<<",[fp,#"<<offset<<"];pseudo IR code\n";
-    else
-        s<<"ldr "<<result<<",[fp,"<<offset<<"];pseudo IR code\n";
-}
-
-void store_fp_instruction::PrintIR(std::ostream& s){
-    if(offset->GetOperandType() != BasicOperand::REG)
-        s<<"str "<<str_val<<",[fp,#"<<offset<<"];pseudo IR code\n";
-    else
-        s<<"str "<<str_val<<",[fp,"<<offset<<"];pseudo IR code\n";
-}
-
-void get_addr_by_fp_offset_instruction::PrintIR(std::ostream& s){
-    if(offset->GetOperandType() != BasicOperand::REG)  
-        s<<"add "<<result<<",fp,#"<<offset<<";pseudo IR code\n";
-    else
-        s<<"add "<<result<<",fp,"<<offset<<";pseudo IR code\n";
-}
-
-void mov_instruction::PrintIR(std::ostream& s){
-    s<<"mov "<<result<<","<<source<<";pseudo IR code\n";
-}
-
-void load_imm_instruction::PrintIR(std::ostream& s){
-    s<<"ldr "<<result<<",="<<Byte<<";pseudo IR code\n";
-}
-
-void vmov_instruction::PrintIR(std::ostream& s){
-    s<<"vmov "<<result<<","<<from<<";pseudo IR code\n";
-}
-
-// std::string pseudo_fp_addr_operand::getFullName(){
-//     return "[fp,#"+std::to_string(negative_offset)+"]";
-// }
-
-void pseudo_load_label_instruction::PrintIR(std::ostream& s){
-    s<<"ldr "<<result<<",="<<from<<"\n";
-}
-
-void pseudo_alg_shift_Instruction::PrintIR(std::ostream& s){
-    s<<opcode<<" "<<result<<","<<op1<<","<<op2<<",leftshift #"<<shift_bit<<",is_a_shift:"<<is_a_shift<<";pseudo IR code\n";
-}
-
-void it_instruction::PrintIR(std::ostream& s){
-    if(exec_cond == NONE){
-        s<<"it "<<"NONE\n";
-    }else if(exec_cond == EX_CS){
-        s<<"it "<<"cs\n";
-    }else if(exec_cond == EX_LT){
-        s<<"it "<<"lt\n";
-    }else if(exec_cond == EX_PL){
-        s<<"it "<<"pl\n";
-    }
 }

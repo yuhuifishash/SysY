@@ -54,7 +54,7 @@
 //         B1.second->Instruction_list.clear();
 //         for(auto I:tmp_Instruction_list){
 //             if(I->erase_tag){continue;}
-//             B1.second->push_Ins(1,I);
+//             B1.second->PushIns(1,I);
 //         }
 //     }
 // }

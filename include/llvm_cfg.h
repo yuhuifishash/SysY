@@ -9,7 +9,6 @@
 #include <bitset>
 #include "basic_block.h"
 #include "SysY_tree.h"
-#include "arm_cgen.h"
 #include "function_basicinfo.h"
 #include "loop.h"
 
@@ -19,7 +18,7 @@ public:
     int max_label = 0;
     int max_reg = 0;
     std::map<int, LLVMBlock>* block;
-    Func_Def_Instruction func_ins;
+    FuncDefInstruction func_ins;
     
     std::vector<std::vector<LLVMBlock> > G{}; //control flow graph
     std::vector<std::vector<LLVMBlock> > invG{}; // inv control flow graph
@@ -82,38 +81,6 @@ public:
     void GetFunctionBasicInfo();
     int GetRecursionInfo();
     void TailCall2Loop();
-
-    void phi_destruction();
-    void cgen_prework();
-    void calculate_liveness();
-    void register_alloc();
-    void code(std::ostream& s);
-
-    int get_min_active_mem_offset(int insno);
-    int get_reusable_size(int insno);
-
-    int have_mem_i32;
-    int have_mem_f32;
-    std::vector<int> get_used_physical_i32_reg();
-    std::vector<int> get_used_physical_f32_reg();
-
-    std::map<int,RegSegment> intervals;
-
-    std::map<int,PhysicalAllocDiscriptor> reg_V2P;
-
-    int next_fp_offset_to_allocate;
-
-    // r0-r3 only
-    std::vector<int> get_phsical_i32_regs_across_ins(int Ins_no);// in: Ins No
-    std::vector<int> get_phsical_i32_regs_across_ins_noresult(int Ins_no,int result_regno);
-    int* ins_across_r[4];
-    // ins_across_r[0] [ins]
-
-    // s0-s15 only
-    std::vector<int> get_phsical_f32_regs_across_ins(int Ins_no);// in: Ins No
-    int* ins_across_s[16];
-
-    int total_ins_count;
 };
 
 

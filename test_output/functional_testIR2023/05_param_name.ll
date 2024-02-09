@@ -20,7 +20,7 @@ L0:
     br label %L1
 L1:
     %r2 = load i32, ptr %r1
-    %r3 = add i32 0,2
+    %r3 = add i32 2,0
     %r4 = mul i32 %r2,%r3
     ret i32 %r4
 }
@@ -29,7 +29,7 @@ define i32 @main()
 L0:
     br label %L1
 L1:
-    %r0 = add i32 0,10
+    %r0 = add i32 10,0
     %r1 = call i32 @f(i32 %r0)
     ret i32 %r1
 }

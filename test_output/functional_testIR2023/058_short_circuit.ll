@@ -35,106 +35,105 @@ L0:
     %r0 = alloca i32
     br label %L1
 L1:
-    %r1 = add i32 0,0
+    store i32 0, ptr %r0
+    %r1 = call i32 @getint()
     store i32 %r1, ptr %r0
-    %r2 = call i32 @getint()
-    store i32 %r2, ptr %r0
-    %r3 = load i32, ptr %r0
-    %r4 = add i32 0,10
-    %r5 = icmp sgt i32 %r3,%r4
-    br i1 %r5, label %L5, label %L3
+    %r2 = load i32, ptr %r0
+    %r3 = add i32 10,0
+    %r4 = icmp sgt i32 %r2,%r3
+    br i1 %r4, label %L5, label %L3
 L2:
-    %r14 = add i32 0,1
-    store i32 %r14, ptr %r0
+    %r8 = add i32 1,0
+    store i32 %r8, ptr %r0
     br label %L4
 L3:
-    %r15 = add i32 0,0
-    store i32 %r15, ptr %r0
+    %r9 = add i32 0,0
+    store i32 %r9, ptr %r0
     br label %L4
 L4:
-    %r16 = call i32 @getint()
-    store i32 %r16, ptr %r0
-    %r17 = load i32, ptr %r0
-    %r18 = add i32 0,11
-    %r19 = icmp sgt i32 %r17,%r18
-    br i1 %r19, label %L10, label %L8
+    %r10 = call i32 @getint()
+    store i32 %r10, ptr %r0
+    %r11 = load i32, ptr %r0
+    %r12 = add i32 11,0
+    %r13 = icmp sgt i32 %r11,%r12
+    br i1 %r13, label %L9, label %L7
 L5:
-    %r8 = load i32, ptr %r0
-    %r9 = call i32 @func(i32 %r8)
-    %r10 = icmp ne i32 %r9,0
-    br i1 %r10, label %L2, label %L3
+    %r5 = load i32, ptr %r0
+    %r6 = call i32 @func(i32 %r5)
+    %r7 = icmp ne i32 %r6,0
+    br i1 %r7, label %L2, label %L3
+L6:
+    %r17 = add i32 1,0
+    store i32 %r17, ptr %r0
+    br label %L8
 L7:
-    %r28 = add i32 0,1
-    store i32 %r28, ptr %r0
-    br label %L9
+    %r18 = add i32 0,0
+    store i32 %r18, ptr %r0
+    br label %L8
 L8:
-    %r29 = add i32 0,0
-    store i32 %r29, ptr %r0
-    br label %L9
+    %r19 = call i32 @getint()
+    store i32 %r19, ptr %r0
+    %r20 = load i32, ptr %r0
+    %r21 = add i32 99,0
+    %r22 = icmp sle i32 %r20,%r21
+    br i1 %r22, label %L10, label %L13
 L9:
-    %r30 = call i32 @getint()
-    store i32 %r30, ptr %r0
-    %r31 = load i32, ptr %r0
-    %r32 = add i32 0,99
-    %r33 = icmp sle i32 %r31,%r32
-    br i1 %r33, label %L12, label %L15
+    %r14 = load i32, ptr %r0
+    %r15 = call i32 @func(i32 %r14)
+    %r16 = icmp ne i32 %r15,0
+    br i1 %r16, label %L6, label %L7
 L10:
-    %r22 = load i32, ptr %r0
-    %r23 = call i32 @func(i32 %r22)
-    %r24 = icmp ne i32 %r23,0
-    br i1 %r24, label %L7, label %L8
+    %r26 = add i32 1,0
+    store i32 %r26, ptr %r0
+    br label %L12
+L11:
+    %r27 = add i32 0,0
+    store i32 %r27, ptr %r0
+    br label %L12
 L12:
-    %r42 = add i32 0,1
-    store i32 %r42, ptr %r0
-    br label %L14
+    %r28 = call i32 @getint()
+    store i32 %r28, ptr %r0
+    %r29 = load i32, ptr %r0
+    %r30 = add i32 100,0
+    %r31 = icmp sle i32 %r29,%r30
+    br i1 %r31, label %L14, label %L17
 L13:
-    %r43 = add i32 0,0
-    store i32 %r43, ptr %r0
-    br label %L14
+    %r23 = load i32, ptr %r0
+    %r24 = call i32 @func(i32 %r23)
+    %r25 = icmp ne i32 %r24,0
+    br i1 %r25, label %L10, label %L11
 L14:
-    %r44 = call i32 @getint()
-    store i32 %r44, ptr %r0
-    %r45 = load i32, ptr %r0
-    %r46 = add i32 0,100
-    %r47 = icmp sle i32 %r45,%r46
-    br i1 %r47, label %L17, label %L20
+    %r35 = add i32 1,0
+    store i32 %r35, ptr %r0
+    br label %L16
 L15:
-    %r36 = load i32, ptr %r0
-    %r37 = call i32 @func(i32 %r36)
-    %r38 = icmp ne i32 %r37,0
-    br i1 %r38, label %L12, label %L13
+    %r36 = add i32 0,0
+    store i32 %r36, ptr %r0
+    br label %L16
+L16:
+    %r37 = add i32 99,0
+    %r38 = call i32 @func(i32 %r37)
+    %r39 = icmp eq i32 %r38,0
+    br i1 %r39, label %L21, label %L19
 L17:
-    %r56 = add i32 0,1
-    store i32 %r56, ptr %r0
-    br label %L19
+    %r32 = load i32, ptr %r0
+    %r33 = call i32 @func(i32 %r32)
+    %r34 = icmp ne i32 %r33,0
+    br i1 %r34, label %L14, label %L15
 L18:
-    %r57 = add i32 0,0
-    store i32 %r57, ptr %r0
-    br label %L19
+    %r43 = add i32 1,0
+    store i32 %r43, ptr %r0
+    br label %L20
 L19:
-    %r58 = add i32 0,99
-    %r59 = call i32 @func(i32 %r58)
-    %r60 = icmp eq i32 %r59,0
-    br i1 %r60, label %L25, label %L23
+    %r44 = add i32 0,0
+    store i32 %r44, ptr %r0
+    br label %L20
 L20:
-    %r50 = load i32, ptr %r0
-    %r51 = call i32 @func(i32 %r50)
-    %r52 = icmp ne i32 %r51,0
-    br i1 %r52, label %L17, label %L18
-L22:
-    %r69 = add i32 0,1
-    store i32 %r69, ptr %r0
-    br label %L24
-L23:
-    %r70 = add i32 0,0
-    store i32 %r70, ptr %r0
-    br label %L24
-L24:
-    %r71 = add i32 0,0
-    ret i32 %r71
-L25:
-    %r63 = add i32 0,100
-    %r64 = call i32 @func(i32 %r63)
-    %r65 = icmp ne i32 %r64,0
-    br i1 %r65, label %L22, label %L23
+    %r45 = add i32 0,0
+    ret i32 %r45
+L21:
+    %r40 = add i32 100,0
+    %r41 = call i32 @func(i32 %r40)
+    %r42 = icmp ne i32 %r41,0
+    br i1 %r42, label %L18, label %L19
 }

@@ -20,19 +20,23 @@ L0:
     br label %L1
 L1:
     %r2 = load i32, ptr %r1
-    %r3 = add i32 0,50
+    %r3 = add i32 50,0
     %r4 = icmp sle i32 %r2,%r3
     br i1 %r4, label %L2, label %L3
 L2:
+    %r5 = load i32, ptr %r1
+    call void @putint(i32 %r5)
+    %r6 = add i32 1,0
+    ret i32 %r6
+    br label %L4
+L3:
     %r7 = load i32, ptr %r1
     call void @putint(i32 %r7)
-    %r8 = add i32 0,1
+    %r8 = add i32 0,0
     ret i32 %r8
-L3:
-    %r9 = load i32, ptr %r1
-    call void @putint(i32 %r9)
-    %r10 = add i32 0,0
-    ret i32 %r10
+    br label %L4
+L4:
+    ret i32 0
 }
 define i32 @main()
 {
@@ -40,60 +44,59 @@ L0:
     %r0 = alloca i32
     br label %L1
 L1:
+    store i32 0, ptr %r0
     %r1 = add i32 0,0
-    store i32 %r1, ptr %r0
-    %r2 = add i32 0,0
-    %r3 = call i32 @func(i32 %r2)
-    %r4 = add i32 0,1
-    %r5 = icmp eq i32 %r3,%r4
-    br i1 %r5, label %L2, label %L5
+    %r2 = call i32 @func(i32 %r1)
+    %r3 = add i32 1,0
+    %r4 = icmp eq i32 %r2,%r3
+    br i1 %r4, label %L2, label %L5
 L2:
-    %r26 = add i32 0,0
-    store i32 %r26, ptr %r0
+    %r13 = add i32 0,0
+    store i32 %r13, ptr %r0
     br label %L4
 L3:
-    %r27 = add i32 0,1
-    store i32 %r27, ptr %r0
+    %r14 = add i32 1,0
+    store i32 %r14, ptr %r0
     br label %L4
 L4:
-    %r28 = add i32 0,50
-    %r29 = call i32 @func(i32 %r28)
-    %r30 = add i32 0,1
-    %r31 = icmp eq i32 %r29,%r30
-    br i1 %r31, label %L14, label %L12
+    %r15 = add i32 50,0
+    %r16 = call i32 @func(i32 %r15)
+    %r17 = add i32 1,0
+    %r18 = icmp eq i32 %r16,%r17
+    br i1 %r18, label %L11, label %L10
 L5:
-    %r8 = add i32 0,50
-    %r9 = call i32 @func(i32 %r8)
-    %r10 = add i32 0,1
-    %r11 = icmp eq i32 %r9,%r10
-    br i1 %r11, label %L7, label %L3
+    %r5 = add i32 50,0
+    %r6 = call i32 @func(i32 %r5)
+    %r7 = add i32 1,0
+    %r8 = icmp eq i32 %r6,%r7
+    br i1 %r8, label %L6, label %L3
+L6:
+    %r9 = add i32 100,0
+    %r10 = call i32 @func(i32 %r9)
+    %r11 = add i32 0,0
+    %r12 = icmp eq i32 %r10,%r11
+    br i1 %r12, label %L2, label %L3
 L7:
-    %r14 = add i32 0,100
-    %r15 = call i32 @func(i32 %r14)
-    %r16 = add i32 0,0
-    %r17 = icmp eq i32 %r15,%r16
-    br i1 %r17, label %L2, label %L3
+    %r27 = add i32 0,0
+    store i32 %r27, ptr %r0
+    br label %L9
+L8:
+    %r28 = add i32 1,0
+    store i32 %r28, ptr %r0
+    br label %L9
 L9:
-    %r52 = add i32 0,0
-    store i32 %r52, ptr %r0
-    br label %L11
+    %r29 = add i32 0,0
+    ret i32 %r29
 L10:
-    %r53 = add i32 0,1
-    store i32 %r53, ptr %r0
-    br label %L11
+    %r23 = add i32 1,0
+    %r24 = call i32 @func(i32 %r23)
+    %r25 = add i32 1,0
+    %r26 = icmp eq i32 %r24,%r25
+    br i1 %r26, label %L7, label %L8
 L11:
-    %r54 = add i32 0,0
-    ret i32 %r54
-L12:
-    %r43 = add i32 0,1
-    %r44 = call i32 @func(i32 %r43)
-    %r45 = add i32 0,1
-    %r46 = icmp eq i32 %r44,%r45
-    br i1 %r46, label %L9, label %L10
-L14:
-    %r34 = add i32 0,40
-    %r35 = call i32 @func(i32 %r34)
-    %r36 = add i32 0,1
-    %r37 = icmp eq i32 %r35,%r36
-    br i1 %r37, label %L9, label %L12
+    %r19 = add i32 40,0
+    %r20 = call i32 @func(i32 %r19)
+    %r21 = add i32 1,0
+    %r22 = icmp eq i32 %r20,%r21
+    br i1 %r22, label %L7, label %L10
 }

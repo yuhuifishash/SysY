@@ -8,12 +8,25 @@ class LLVMIR
 public:
     std::vector<Instruction> global_def{};
     std::vector<Instruction> func_declare{};
-    std::map<Func_Def_Instruction, int> sp_offset_map{};
-    std::map<Func_Def_Instruction, CFG*> llvm_cfg{}; //<function,cfg>
-    std::map<Func_Def_Instruction, std::map<int, LLVMBlock> > llvm_Function_BlockArr_map; //<function,<id,block> >
-    std::map<Func_Def_Instruction, int> max_label_map{};
-    std::map<Func_Def_Instruction, int> max_reg_map{}; 
+    std::map<FuncDefInstruction, CFG*> llvm_cfg{}; //<function,cfg>
+    std::map<FuncDefInstruction, std::map<int, LLVMBlock> > function_block_map; //<function,<id,block> >
+    std::map<FuncDefInstruction, int> max_label_map{};
+    std::map<FuncDefInstruction, int> max_reg_map{}; 
 
+    void NewFunction(FuncDefInstruction I){
+        function_block_map[I] = {};
+    }
+    LLVMBlock GetBlock(FuncDefInstruction I,int now_label){
+        return function_block_map[I][now_label];
+    }
+    LLVMBlock NewBlock(FuncDefInstruction I,int& max_label){
+        ++max_label;
+        function_block_map[I][max_label] = new BasicBlock(max_label);
+        return GetBlock(I,max_label);
+    }
+
+
+    std::map<FuncDefInstruction, int> sp_offset_map{};
     void mem2reg();
     void SCCP();
     void peephole_optimize();
@@ -38,12 +51,6 @@ public:
     void build_dominator_tree();
     void insert_phi();
     void var_rename();
-
-    void phi_destruction();
-    void cgen_prework();
-
-    void register_alloc();
-    void code(std::ostream& s);
 };
 
 #endif

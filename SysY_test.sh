@@ -33,10 +33,10 @@ if [ $1 == 'llvm' ] ; then
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 5 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 5 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null

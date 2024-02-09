@@ -6,13 +6,14 @@
 #include <vector>
 #include "tree.h"
 #include "symtab.h"
+#include "Instruction.h"
 
 //exp basic_class
 class __Expression:public tree_node
 {
 public:
-    int is_array = 0;
-    virtual int is_lval(){return 0;}
+    int true_label = -1;
+    int false_label = -1;
 };
 typedef __Expression* Expression;
 
@@ -211,7 +212,7 @@ class LOrExp_or:public __Expression
 {
 public:
     Expression lorexp;
-    Expression landexp;
+    Expression landexp;;
     LOrExp_or(Expression lorexp,Expression landexp):lorexp(lorexp),landexp(landexp){}
     void codeIR();
     void TypeCheck();
@@ -241,11 +242,11 @@ public:
     std::vector<Expression>* dims;
     bool is_left = true;//left value or right value
     int scope = -1;
+    Operand ptr;//use IRgen, determine the ptr of this lval
     Lval(Symbol n,std::vector<Expression>* d):name(n),dims(d){}
     void codeIR();
     void TypeCheck();
     void printAST(std::ostream& s,int pad);
-    int is_lval(){return 1;}
 };
 
 //{Exp,Exp,Exp,Exp}
@@ -436,10 +437,10 @@ class ifelse_stmt:public __Stmt
 {
 public:
     Expression Cond;
-    Stmt if_stmt;
-    Stmt else_stmt;//else
+    Stmt ifstmt;
+    Stmt elsestmt;//else
     //construction
-    ifelse_stmt(Expression c,Stmt i,Stmt t):Cond(c),if_stmt(i),else_stmt(t){}
+    ifelse_stmt(Expression c,Stmt i,Stmt t):Cond(c),ifstmt(i),elsestmt(t){}
     void codeIR();
     void TypeCheck();
     void printAST(std::ostream& s,int pad);
@@ -809,6 +810,10 @@ public:
     __FuncFParam(Type::ty t,Symbol n,std::vector<Expression>* d){
         type_decl = t;
         name = n;
+        dims = d;
+    }
+    __FuncFParam(Type::ty t,std::vector<Expression>* d){
+        type_decl = t;
         dims = d;
     }
     __FuncFParam(Type::ty t):type_decl(t){}

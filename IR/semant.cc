@@ -3,7 +3,7 @@
 #include "llvm_ir.h"
 #include "type.h" 
 
-extern LLVMIR llvm_IR;
+extern LLVMIR llvmIR;
 extern StringTable str_table;
 
 static int GlobalVarCnt = 0;
@@ -14,6 +14,9 @@ std::vector<std::string> error_msgs{};
 
 static bool MainTag = 0;
 static int InWhileCount = 0;
+
+//Type::VOID -> VOID    Type::Int -> I32    Type::FLOAT -> FLOAT32
+LLVMType Type2LLvm[5] = {LLVMType::VOID,LLVMType::I32,LLVMType::FLOAT32,LLVMType::I1,LLVMType::PTR};
 
 extern NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode);
 extern NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcode);
@@ -139,9 +142,6 @@ void SolveFloatInitVal(InitVal init,VarAttribute& val)//used for global or const
         arraySz *= d;
     }
     val.FloatInitVals.resize(arraySz,0);
-    if(init == NULL){
-        return;
-    }
     if(val.dims.empty()){
         if(init->GetExp() != nullptr){
             if(init->GetExp()->attribute.T.type == Type::VOID){
@@ -420,7 +420,6 @@ void Func_call::TypeCheck()
     }
 
     attribute.T.type = semant_table.FunctionTable[name]->return_type;
-    attribute.T.arraydims = 0;
     attribute.V.ConstTag = false;
 }
 
@@ -445,7 +444,6 @@ void UnaryExp_not::TypeCheck()
 void IntConst::TypeCheck()
 {
     attribute.T.type = Type::INT;
-    attribute.T.arraydims = 0;
     attribute.V.ConstTag = true;
     attribute.V.val.IntVal = val;
 }
@@ -453,9 +451,8 @@ void IntConst::TypeCheck()
 void FloatConst::TypeCheck()
 {
     attribute.T.type = Type::FLOAT;
-    attribute.T.arraydims = 0;
     attribute.V.ConstTag = true;
-    attribute.V.val.IntVal = val;
+    attribute.V.val.FloatVal = val;
 }
 
 void StringConst::TypeCheck()
@@ -496,8 +493,8 @@ void ifelse_stmt::TypeCheck()
     if(Cond->attribute.T.type == Type::VOID){
         error_msgs.push_back("if cond type is invalid " + std::to_string(line_number) + "\n");
     }
-    if_stmt->TypeCheck();
-    else_stmt->TypeCheck();
+    ifstmt->TypeCheck();
+    elsestmt->TypeCheck();
 }
 
 void if_stmt::TypeCheck()
@@ -667,8 +664,7 @@ void ConstDecl::TypeCheck()
             init->TypeCheck();
             if(type_decl == Type::INT){
                 SolveIntInitVal(init,val);
-            }
-            else if(type_decl == Type::FLOAT){
+            }else if(type_decl == Type::FLOAT){
                 SolveFloatInitVal(init,val);
             }
         } 
@@ -706,9 +702,7 @@ void __FuncFParam::TypeCheck()
 
     if(dims != nullptr){
         auto dim_vector = *dims;
-        if(dim_vector.size() > 1){
-            val.dims.push_back(-1);
-        }
+        val.dims.push_back(-1);
         for(int i = 1;i < dim_vector.size();++i){
             auto d = dim_vector[i];
             d->TypeCheck();
@@ -726,11 +720,12 @@ void __FuncFParam::TypeCheck()
         attribute.T.type = type_decl;
     }
 
-    if(semant_table.symbol_table.lookup_scope(name) != -1){
-        error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() + " in line " + std::to_string(line_number) + "\n");
+    if(name != nullptr){
+        if(semant_table.symbol_table.lookup_scope(name) != -1){
+            error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() + " in line " + std::to_string(line_number) + "\n");
+        }
+        semant_table.symbol_table.add_Symbol(name,val);
     }
-    
-    semant_table.symbol_table.add_Symbol(name,val);
 }
 
 void __FuncDef::TypeCheck()
@@ -750,10 +745,12 @@ void __FuncDef::TypeCheck()
         formal->TypeCheck();
     }
     
-    //block type check
-    auto item_vector = *(block->item_list);
-    for(auto item:item_vector){
-        item->TypeCheck();
+    //block TypeCheck
+    if(block != nullptr){
+        auto item_vector = *(block->item_list);
+        for(auto item:item_vector){
+            item->TypeCheck();
+        }
     }
 
     semant_table.symbol_table.exit_scope();
@@ -802,8 +799,7 @@ void CompUnit_Decl::TypeCheck()
             init->TypeCheck();
             if(type_decl == Type::INT){
                 SolveIntInitVal(init,val);
-            }
-            else if(type_decl == Type::FLOAT){
+            }else if(type_decl == Type::FLOAT){
                 SolveFloatInitVal(init,val);
             }
         }        
@@ -811,13 +807,7 @@ void CompUnit_Decl::TypeCheck()
         semant_table.GlobalTable[def->GetName()] = val;
 
         //add Global Decl llvm ins
-        LLVMType lltype;
-        if(type_decl == Type::INT){
-            lltype = I32;
-        }
-        else if(type_decl == Type::FLOAT){
-            lltype = FLOAT32;
-        }
+        LLVMType lltype = Type2LLvm[type_decl];
         
         Instruction globalDecl;
         if(def->GetDims() != nullptr){
@@ -829,7 +819,7 @@ void CompUnit_Decl::TypeCheck()
         }else if(lltype == FLOAT32){
             globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(),lltype,new ImmF32Operand(val.FloatInitVals[0]));
         }
-        llvm_IR.global_def.push_back(globalDecl);
+        llvmIR.global_def.push_back(globalDecl);
     }
 }
 

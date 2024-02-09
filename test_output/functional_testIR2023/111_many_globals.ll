@@ -52,78 +52,40 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a37 = global i32 zeroinitializer
 @a38 = global i32 zeroinitializer
 @a39 = global i32 zeroinitializer
-define i32 @testParam8(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7)
-{
-L0:
-    %r8 = alloca i32
-    store i32 %r0, ptr %r8
-    %r9 = alloca i32
-    store i32 %r1, ptr %r9
-    %r10 = alloca i32
-    store i32 %r2, ptr %r10
-    %r11 = alloca i32
-    store i32 %r3, ptr %r11
-    %r12 = alloca i32
-    store i32 %r4, ptr %r12
-    %r13 = alloca i32
-    store i32 %r5, ptr %r13
-    %r14 = alloca i32
-    store i32 %r6, ptr %r14
-    %r15 = alloca i32
-    store i32 %r7, ptr %r15
-    br label %L1
-L1:
-    %r16 = load i32, ptr %r8
-    %r17 = load i32, ptr %r9
-    %r18 = add i32 %r16,%r17
-    %r19 = load i32, ptr %r10
-    %r20 = add i32 %r18,%r19
-    %r21 = load i32, ptr %r11
-    %r22 = add i32 %r20,%r21
-    %r23 = load i32, ptr %r12
-    %r24 = add i32 %r22,%r23
-    %r25 = load i32, ptr %r13
-    %r26 = add i32 %r24,%r25
-    %r27 = load i32, ptr %r14
-    %r28 = add i32 %r26,%r27
-    %r29 = load i32, ptr %r15
-    %r30 = add i32 %r28,%r29
-    ret i32 %r30
-}
 define i32 @testParam16(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15)
 {
 L0:
+    %r31 = alloca i32
+    %r30 = alloca i32
+    %r29 = alloca i32
+    %r28 = alloca i32
+    %r27 = alloca i32
+    %r26 = alloca i32
+    %r25 = alloca i32
+    %r24 = alloca i32
+    %r23 = alloca i32
+    %r22 = alloca i32
+    %r21 = alloca i32
+    %r20 = alloca i32
+    %r19 = alloca i32
+    %r18 = alloca i32
+    %r17 = alloca i32
     %r16 = alloca i32
     store i32 %r0, ptr %r16
-    %r17 = alloca i32
     store i32 %r1, ptr %r17
-    %r18 = alloca i32
     store i32 %r2, ptr %r18
-    %r19 = alloca i32
     store i32 %r3, ptr %r19
-    %r20 = alloca i32
     store i32 %r4, ptr %r20
-    %r21 = alloca i32
     store i32 %r5, ptr %r21
-    %r22 = alloca i32
     store i32 %r6, ptr %r22
-    %r23 = alloca i32
     store i32 %r7, ptr %r23
-    %r24 = alloca i32
     store i32 %r8, ptr %r24
-    %r25 = alloca i32
     store i32 %r9, ptr %r25
-    %r26 = alloca i32
     store i32 %r10, ptr %r26
-    %r27 = alloca i32
     store i32 %r11, ptr %r27
-    %r28 = alloca i32
     store i32 %r12, ptr %r28
-    %r29 = alloca i32
     store i32 %r13, ptr %r29
-    %r30 = alloca i32
     store i32 %r14, ptr %r30
-    %r31 = alloca i32
     store i32 %r15, ptr %r31
     br label %L1
 L1:
@@ -163,69 +125,69 @@ L1:
 define i32 @testParam32(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15,i32 %r16,i32 %r17,i32 %r18,i32 %r19,i32 %r20,i32 %r21,i32 %r22,i32 %r23,i32 %r24,i32 %r25,i32 %r26,i32 %r27,i32 %r28,i32 %r29,i32 %r30,i32 %r31)
 {
 L0:
+    %r63 = alloca i32
+    %r62 = alloca i32
+    %r61 = alloca i32
+    %r60 = alloca i32
+    %r59 = alloca i32
+    %r58 = alloca i32
+    %r57 = alloca i32
+    %r56 = alloca i32
+    %r55 = alloca i32
+    %r54 = alloca i32
+    %r53 = alloca i32
+    %r52 = alloca i32
+    %r51 = alloca i32
+    %r50 = alloca i32
+    %r49 = alloca i32
+    %r48 = alloca i32
+    %r47 = alloca i32
+    %r46 = alloca i32
+    %r45 = alloca i32
+    %r44 = alloca i32
+    %r43 = alloca i32
+    %r42 = alloca i32
+    %r41 = alloca i32
+    %r40 = alloca i32
+    %r39 = alloca i32
+    %r38 = alloca i32
+    %r37 = alloca i32
+    %r36 = alloca i32
+    %r35 = alloca i32
+    %r34 = alloca i32
+    %r33 = alloca i32
     %r32 = alloca i32
     store i32 %r0, ptr %r32
-    %r33 = alloca i32
     store i32 %r1, ptr %r33
-    %r34 = alloca i32
     store i32 %r2, ptr %r34
-    %r35 = alloca i32
     store i32 %r3, ptr %r35
-    %r36 = alloca i32
     store i32 %r4, ptr %r36
-    %r37 = alloca i32
     store i32 %r5, ptr %r37
-    %r38 = alloca i32
     store i32 %r6, ptr %r38
-    %r39 = alloca i32
     store i32 %r7, ptr %r39
-    %r40 = alloca i32
     store i32 %r8, ptr %r40
-    %r41 = alloca i32
     store i32 %r9, ptr %r41
-    %r42 = alloca i32
     store i32 %r10, ptr %r42
-    %r43 = alloca i32
     store i32 %r11, ptr %r43
-    %r44 = alloca i32
     store i32 %r12, ptr %r44
-    %r45 = alloca i32
     store i32 %r13, ptr %r45
-    %r46 = alloca i32
     store i32 %r14, ptr %r46
-    %r47 = alloca i32
     store i32 %r15, ptr %r47
-    %r48 = alloca i32
     store i32 %r16, ptr %r48
-    %r49 = alloca i32
     store i32 %r17, ptr %r49
-    %r50 = alloca i32
     store i32 %r18, ptr %r50
-    %r51 = alloca i32
     store i32 %r19, ptr %r51
-    %r52 = alloca i32
     store i32 %r20, ptr %r52
-    %r53 = alloca i32
     store i32 %r21, ptr %r53
-    %r54 = alloca i32
     store i32 %r22, ptr %r54
-    %r55 = alloca i32
     store i32 %r23, ptr %r55
-    %r56 = alloca i32
     store i32 %r24, ptr %r56
-    %r57 = alloca i32
     store i32 %r25, ptr %r57
-    %r58 = alloca i32
     store i32 %r26, ptr %r58
-    %r59 = alloca i32
     store i32 %r27, ptr %r59
-    %r60 = alloca i32
     store i32 %r28, ptr %r60
-    %r61 = alloca i32
     store i32 %r29, ptr %r61
-    %r62 = alloca i32
     store i32 %r30, ptr %r62
-    %r63 = alloca i32
     store i32 %r31, ptr %r63
     br label %L1
 L1:
@@ -294,6 +256,44 @@ L1:
     %r126 = add i32 %r124,%r125
     ret i32 %r126
 }
+define i32 @testParam8(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7)
+{
+L0:
+    %r15 = alloca i32
+    %r14 = alloca i32
+    %r13 = alloca i32
+    %r12 = alloca i32
+    %r11 = alloca i32
+    %r10 = alloca i32
+    %r9 = alloca i32
+    %r8 = alloca i32
+    store i32 %r0, ptr %r8
+    store i32 %r1, ptr %r9
+    store i32 %r2, ptr %r10
+    store i32 %r3, ptr %r11
+    store i32 %r4, ptr %r12
+    store i32 %r5, ptr %r13
+    store i32 %r6, ptr %r14
+    store i32 %r7, ptr %r15
+    br label %L1
+L1:
+    %r16 = load i32, ptr %r8
+    %r17 = load i32, ptr %r9
+    %r18 = add i32 %r16,%r17
+    %r19 = load i32, ptr %r10
+    %r20 = add i32 %r18,%r19
+    %r21 = load i32, ptr %r11
+    %r22 = add i32 %r20,%r21
+    %r23 = load i32, ptr %r12
+    %r24 = add i32 %r22,%r23
+    %r25 = load i32, ptr %r13
+    %r26 = add i32 %r24,%r25
+    %r27 = load i32, ptr %r14
+    %r28 = add i32 %r26,%r27
+    %r29 = load i32, ptr %r15
+    %r30 = add i32 %r28,%r29
+    ret i32 %r30
+}
 define i32 @main()
 {
 L0:
@@ -301,83 +301,83 @@ L0:
 L1:
     %r0 = add i32 0,0
     store i32 %r0, ptr @a0
-    %r1 = add i32 0,1
+    %r1 = add i32 1,0
     store i32 %r1, ptr @a1
-    %r2 = add i32 0,2
+    %r2 = add i32 2,0
     store i32 %r2, ptr @a2
-    %r3 = add i32 0,3
+    %r3 = add i32 3,0
     store i32 %r3, ptr @a3
-    %r4 = add i32 0,4
+    %r4 = add i32 4,0
     store i32 %r4, ptr @a4
-    %r5 = add i32 0,5
+    %r5 = add i32 5,0
     store i32 %r5, ptr @a5
-    %r6 = add i32 0,6
+    %r6 = add i32 6,0
     store i32 %r6, ptr @a6
-    %r7 = add i32 0,7
+    %r7 = add i32 7,0
     store i32 %r7, ptr @a7
-    %r8 = add i32 0,8
+    %r8 = add i32 8,0
     store i32 %r8, ptr @a8
-    %r9 = add i32 0,9
+    %r9 = add i32 9,0
     store i32 %r9, ptr @a9
     %r10 = add i32 0,0
     store i32 %r10, ptr @a10
-    %r11 = add i32 0,1
+    %r11 = add i32 1,0
     store i32 %r11, ptr @a11
-    %r12 = add i32 0,2
+    %r12 = add i32 2,0
     store i32 %r12, ptr @a12
-    %r13 = add i32 0,3
+    %r13 = add i32 3,0
     store i32 %r13, ptr @a13
-    %r14 = add i32 0,4
+    %r14 = add i32 4,0
     store i32 %r14, ptr @a14
-    %r15 = add i32 0,5
+    %r15 = add i32 5,0
     store i32 %r15, ptr @a15
-    %r16 = add i32 0,6
+    %r16 = add i32 6,0
     store i32 %r16, ptr @a16
-    %r17 = add i32 0,7
+    %r17 = add i32 7,0
     store i32 %r17, ptr @a17
-    %r18 = add i32 0,8
+    %r18 = add i32 8,0
     store i32 %r18, ptr @a18
-    %r19 = add i32 0,9
+    %r19 = add i32 9,0
     store i32 %r19, ptr @a19
     %r20 = add i32 0,0
     store i32 %r20, ptr @a20
-    %r21 = add i32 0,1
+    %r21 = add i32 1,0
     store i32 %r21, ptr @a21
-    %r22 = add i32 0,2
+    %r22 = add i32 2,0
     store i32 %r22, ptr @a22
-    %r23 = add i32 0,3
+    %r23 = add i32 3,0
     store i32 %r23, ptr @a23
-    %r24 = add i32 0,4
+    %r24 = add i32 4,0
     store i32 %r24, ptr @a24
-    %r25 = add i32 0,5
+    %r25 = add i32 5,0
     store i32 %r25, ptr @a25
-    %r26 = add i32 0,6
+    %r26 = add i32 6,0
     store i32 %r26, ptr @a26
-    %r27 = add i32 0,7
+    %r27 = add i32 7,0
     store i32 %r27, ptr @a27
-    %r28 = add i32 0,8
+    %r28 = add i32 8,0
     store i32 %r28, ptr @a28
-    %r29 = add i32 0,9
+    %r29 = add i32 9,0
     store i32 %r29, ptr @a29
     %r30 = add i32 0,0
     store i32 %r30, ptr @a30
-    %r31 = add i32 0,1
+    %r31 = add i32 1,0
     store i32 %r31, ptr @a31
-    %r32 = add i32 0,4
+    %r32 = add i32 4,0
     store i32 %r32, ptr @a32
-    %r33 = add i32 0,5
+    %r33 = add i32 5,0
     store i32 %r33, ptr @a33
-    %r34 = add i32 0,6
+    %r34 = add i32 6,0
     store i32 %r34, ptr @a34
-    %r35 = add i32 0,7
+    %r35 = add i32 7,0
     store i32 %r35, ptr @a35
-    %r36 = add i32 0,8
+    %r36 = add i32 8,0
     store i32 %r36, ptr @a36
-    %r37 = add i32 0,9
+    %r37 = add i32 9,0
     store i32 %r37, ptr @a37
     %r38 = add i32 0,0
     store i32 %r38, ptr @a38
-    %r39 = add i32 0,1
+    %r39 = add i32 1,0
     store i32 %r39, ptr @a39
     %r40 = load i32, ptr @a0
     %r41 = load i32, ptr @a1

@@ -15,7 +15,6 @@ public:
         BOOL = 3,
         PTR = 4
     }type;
-    int arraydims = 0;
     std::string GetTypeInfo();
 };
 

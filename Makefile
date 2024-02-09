@@ -5,7 +5,6 @@ SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./IR
 SRCDIR += ./include
-SRCDIR += ./unit_test
 SRCDIR += ./optimize
 SRCDIR += ./optimize/peephole
 SRCDIR += ./optimize/propagating

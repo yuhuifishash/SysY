@@ -118,7 +118,6 @@ public:
     operand_type GetOperandType(){return operandType;}
     virtual std::string GetFullName() = 0;
     virtual Operand CopyOperand() = 0;
-    virtual void code(std::ostream& s){}
 };
 
 // @register operand;%r+register No 
@@ -154,7 +153,6 @@ public:
         this->immVal=immVal;
     }
     virtual std::string GetFullName();
-    virtual void code(std::ostream& s);
     virtual Operand CopyOperand();
 };
 
@@ -171,7 +169,6 @@ public:
         this->immVal=immVal;
     }
     virtual std::string GetFullName();
-    virtual void code(std::ostream& s);
     virtual Operand CopyOperand();
 };
 
@@ -197,12 +194,12 @@ public:
 };
 
 // @global identifier @+name 
-class global_operand:public BasicOperand{
+class GlobalOperand:public BasicOperand{
     std::string name;
 public:
     std::string getName(){return name;}
 
-    global_operand(std::string gloName){
+    GlobalOperand(std::string gloName){
         this->operandType=GLOBAL;
         this->name=gloName;
     }
@@ -233,11 +230,9 @@ public:
     void SetInstructionNo(int new_no){insNo = new_no;}
     static AutoCounter insNoCounter;//instruction No counter
     int GetOpcode(){return opcode;}//one solution: convert to pointer of subclasses
-    virtual void code(std::ostream& s) = 0;
+
     virtual void PrintIR(std::ostream& s) = 0;
     virtual int GetResultRegNo() = 0;
-    virtual void cgen_prework() = 0;
-    virtual std::vector<int> refering_virtual_regs() = 0;
     virtual Operand GetResultReg() = 0;
     virtual void ReplaceByMap(const std::map<int,int>&Rule) = 0;
     virtual std::vector<Operand> GetNonResultOperands() = 0;
@@ -267,13 +262,10 @@ public:
         this->result=result;
         this->pointer=pointer;
     }
-    virtual void code(std::ostream& s);
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     int get_useregno(){return ((RegOperand*)pointer)->GetRegNo();}
     Operand GetResultReg(){return result;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -299,13 +291,10 @@ public:
         this->pointer=pointer;
         this->value=value;
     }
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
     Operand GetResultReg(){return nullptr;}
     int GetDefRegNo(){return ((RegOperand*)pointer)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -338,11 +327,8 @@ public:
         this->type=type;
         this->exec_cond = NONE;
     }
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -373,12 +359,9 @@ public:
         this->cond=cond;
         this->result=result;
     }
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     Operand GetResultReg(){return result;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -409,12 +392,9 @@ public:
         this->cond=cond;
         this->result=result;
     }
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     Operand GetResultReg(){return result;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -432,8 +412,8 @@ private:
     // std::map<operand,operand>val_labels;
     std::vector<std::pair<Operand,Operand> >val_labels;
 public:
-    enum LLVMType getDataType(){return type;}
-    Operand getResultOp(){return result;}
+    enum LLVMType GetDataType(){return type;}
+    Operand GetResultOp(){return result;}
     decltype(val_labels)& getPhiList(){return val_labels;}
     Operand GetResultReg(){return result;}
     PhiInstruction(enum LLVMType type,Operand result,decltype(val_labels) val_labels){
@@ -448,14 +428,10 @@ public:
         this->result=result;
     }
     void Insert_phi(Operand val,Operand label){val_labels.push_back(std::make_pair(label,val));}
-    virtual void code(std::ostream& s){}
     virtual void PrintIR(std::ostream& s);
-    void set_philist(decltype(val_labels) phi_list){val_labels = phi_list;}
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
+
     void ReplaceByMap(const std::map<int,int>&Rule);
-    void set_phi_label(int pre_id,int new_id);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -471,9 +447,9 @@ class AllocaInstruction:public BasicInstruction
     Operand result;
     std::vector<int>dims;
 public:
-    enum LLVMType getDataType(){return type;}
-    Operand getResultOp(){return result;}
-    std::vector<int>getDims(){return dims;}
+    enum LLVMType GetDataType(){return type;}
+    Operand GetResultOp(){return result;}
+    std::vector<int>GetDims(){return dims;}
     Operand GetResultReg(){return result;}
     AllocaInstruction(enum LLVMType dttype,Operand result){
         this->opcode=LLVMIROpcode::ALLOCA;
@@ -486,11 +462,8 @@ public:
         this->result=result;
         dims=ArrDims;
     }
-    virtual void code(std::ostream& s){}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>{};}
     void SetNonResultOperands(std::vector<Operand> ops){}
@@ -516,15 +489,13 @@ public:
         this->trueLabel=trueLabel;
         this->falseLabel=falseLabel;
     }
-    virtual void code(std::ostream& s);
+
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
-    void set_cond(Operand r1){cond = r1;}
-    void set_truelabel(Operand l1){trueLabel = l1;}
-    void set_falselabel(Operand l1){falseLabel = l1;}
-    void swap_label(){std::swap(trueLabel,falseLabel);}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
+    void SetCond(Operand r1){cond = r1;}
+    void SetTrueLabel(Operand l1){trueLabel = l1;}
+    void SetFalseLabel(Operand l1){falseLabel = l1;}
+
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -538,19 +509,17 @@ public:
 class BrUncondInstruction:public BasicInstruction{
     Operand destLabel;
 public:
-    Operand getDestLabel(){return destLabel;}
-    Operand GetResultReg(){return NULL;}
+    Operand GetDestLabel(){return destLabel;}
+    Operand GetResultReg(){return nullptr;}
     BrUncondInstruction(Operand destLabel){
         this->opcode=BR_UNCOND;
         this->destLabel=destLabel;
     }
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
-    int get_target(){return ((LabelOperand*)destLabel)->GetLabelNo();}
-    void set_target(Operand l1){destLabel = l1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
+    int GetTarget(){return ((LabelOperand*)destLabel)->GetLabelNo();}
+    void SetTarget(Operand l1){destLabel = l1;}
+
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>{};}
     void SetNonResultOperands(std::vector<Operand> ops){}
@@ -580,11 +549,9 @@ public:
     :name(nam),type(typ),init_val(i_val){}
     GlobalVarDefineInstruction(std::string nam,enum LLVMType typ,VarAttribute v)
     :name(nam),type(typ),arval(v),init_val{nullptr}{}
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
+
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>{};}
     Operand GetResultReg(){return NULL;}
@@ -599,11 +566,10 @@ public:
     std::string str_name;
     GlobalStringConstInstruction(std::string strval,std::string strname)
     :str_val(strval),str_name(strname){}
-    virtual void code(std::ostream& s);
+
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
+
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>();}
     Operand GetResultReg(){return NULL;}
@@ -650,19 +616,16 @@ public:
     }
 
     //Getters
-    enum LLVMType get_RetType(){return ret_type;}
-    Operand get_result(){return result;}
+    enum LLVMType GetRetType(){return ret_type;}
+    Operand GetResult(){return result;}
     Operand GetResultReg(){return result;}
-    std::string get_funcName(){return name;}
+    std::string GetFunctionName(){return name;}
     std::vector<std::pair<enum LLVMType,Operand> > get_parameterList(){return args;}
     void push_back_Parameter(std::pair<enum LLVMType,Operand> newPara){args.push_back(newPara);}
     void push_back_Parameter(enum LLVMType type,Operand val){args.push_back(std::make_pair(type,val));}
 
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo();
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -691,14 +654,11 @@ public:
     }
     Operand GetResultReg(){return NULL;}
     //Getters
-    enum LLVMType get_type(){return ret_type;}
-    Operand get_result(){return ret_val;}
+    enum LLVMType GetType(){return ret_type;}
+    Operand GetResult(){return ret_val;}
 
-    virtual void code(std::ostream& s);
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -737,18 +697,16 @@ public:
     void push_idx_reg(int idx_reg_no){indexes.push_back(new RegOperand(idx_reg_no));}
     void push_idx_imm32(int imm_idx){indexes.push_back(new ImmI32Operand(imm_idx));}
     void push_index(Operand idx){indexes.push_back(idx);}
-    Operand GetResultReg(){return result;}
-    enum LLVMType get_type(){return type;}
-    Operand get_result(){return result;}
-    Operand get_ptrVal(){return ptrval;}
-    std::vector<int>get_dims(){return dims;}
-    std::vector<Operand>get_indexes(){return indexes;}
 
-    void code(std::ostream& s){}
+    Operand GetResultReg(){return result;}
+    enum LLVMType GetType(){return type;}
+    Operand GetResult(){return result;}
+    Operand GetPtrVal(){return ptrval;}
+    std::vector<int> GetDims(){return dims;}
+    std::vector<Operand> GetIndexes(){return indexes;}
+
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -768,15 +726,13 @@ public:
         return_type = t;
         Func_name = n;
     }
-    void insert_formal(enum LLVMType t);
-    int get_formal_size(){return formals.size();}
-    enum LLVMType get_return_type(){return return_type;}
-    std::string get_Func_name(){return Func_name;}
-    void code(std::ostream& s);
+    void InsertFormal(enum LLVMType t);
+    int GetFormalSize(){return formals.size();}
+    enum LLVMType GetReturnType(){return return_type;}
+    std::string GetFunctionName(){return Func_name;}
+
     void PrintIR(std::ostream &s);
     int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops){}
@@ -784,7 +740,7 @@ public:
     virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
     virtual int IsFuncDef(){return 1;}
 };
-typedef FunctionDefineInstruction* Func_Def_Instruction;
+typedef FunctionDefineInstruction* FuncDefInstruction;
 
 class FunctionDeclareInstruction:public BasicInstruction{
 private:
@@ -797,14 +753,12 @@ public:
         return_type = t;
         Func_name = n;
     }
-    void insert_formal(enum LLVMType t){formals.push_back(t);}
-    enum LLVMType get_return_type(){return return_type;}
-    std::string get_Func_name(){return Func_name;}
-    void code(std::ostream& s);
+    void InsertFormal(enum LLVMType t){formals.push_back(t);}
+    enum LLVMType GetReturnType(){return return_type;}
+    std::string GetFunctionName(){return Func_name;}
+
     void PrintIR(std::ostream &s);
     int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops){}
@@ -823,11 +777,8 @@ public:
             this->opcode = FPTOSI;
         }
     Operand GetResultReg(){return result;}
-    void code(std::ostream& s);
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -846,11 +797,8 @@ public:
             this->opcode = SITOFP;
         }
     Operand GetResultReg(){return result;}
-    void code(std::ostream& s);
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -876,217 +824,13 @@ public:
         value(value_for_cast){
             this->opcode = ZEXT;
         }
-    void code(std::ostream& s);
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
     virtual int ConstPropagate(std::map<int,Instruction>& regresult_map);
-};
-
-// pseudo instructions for prework
-// mov result,source
-// mov result,<imm32>
-// mov result,<reg>
-class mov_instruction:public BasicInstruction{
-private:
-    Operand result;
-    Operand source;
-public:
-    enum arm_cond exec_cond;
-    Operand GetResultReg(){return result;}
-    mov_instruction(Operand result,Operand source):result(result),source(source){opcode = OTHER;exec_cond = NONE;}
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-//ldr result,[fp,#-8]
-class load_fp_instruction:public BasicInstruction{
-private:
-    Operand result;
-    Operand offset;
-    // int negative_offset;
-public:
-    Operand GetResultReg(){return result;}
-    load_fp_instruction(Operand result,int negative_offset):
-    result(result),offset(new ImmI32Operand(negative_offset)){opcode = OTHER;}
-    load_fp_instruction(Operand result,Operand offset):
-    result(result),offset(offset){opcode = OTHER;}
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-//str %r,[fp,#-8]
-class store_fp_instruction:public BasicInstruction{
-private:
-    Operand str_val;
-    Operand offset;
-    // int negative_offset;
-public:
-    Operand GetResultReg(){return nullptr;}
-    store_fp_instruction(Operand str_val,int negative_offset):
-    str_val(str_val),offset(new ImmI32Operand(negative_offset)){opcode = OTHER;}
-    store_fp_instruction(Operand str_val,Operand offset):
-    str_val(str_val),offset(offset){opcode = OTHER;}
-
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return -1;}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-//add %result,fp,#negative_offset
-class get_addr_by_fp_offset_instruction:public BasicInstruction{
-private:
-    Operand result;
-    Operand offset;
-    // int negative_offset;
-public:
-    Operand GetResultReg(){return result;}
-    get_addr_by_fp_offset_instruction(Operand result,int negative_offset):
-    result(result),
-    offset(new ImmI32Operand(negative_offset)){opcode = OTHER;}
-    get_addr_by_fp_offset_instruction(Operand result,Operand offset):
-    result(result),
-    offset(offset){opcode = OTHER;}
-
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-class load_imm_instruction:public BasicInstruction{
-private:
-    Operand result;
-    int Byte;
-public:
-    Operand GetResultReg(){return result;}
-    load_imm_instruction(Operand result,int Byte):
-    result(result),Byte(Byte){opcode = OTHER;}
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework(){}
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>();}
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-class vmov_instruction:public BasicInstruction{
-private:
-    Operand result;
-    Operand from;
-public:
-    Operand GetResultReg(){return result;}
-    vmov_instruction(Operand result,Operand from):
-    from(from),result(result){opcode = OTHER;}
-    virtual void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework(){}
-    std::vector<int> refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule);
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-class pseudo_load_label_instruction:public BasicInstruction{
-private:
-    Operand result;
-    Operand from;
-public:
-    Operand GetResultReg(){return result;}
-    pseudo_load_label_instruction(Operand result,Operand from)
-    :result(result),from(from){opcode = OTHER;}
-    void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int>refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule){}
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-class pseudo_alg_shift_Instruction : public BasicInstruction{
-private:
-    Operand result;
-    Operand op1;
-    Operand op2;
-    int is_a_shift;
-    int shift_bit;
-public:
-    pseudo_alg_shift_Instruction(LLVMIROpcode opcode,Operand op1,Operand op2,int sh_bit,Operand result,int is_a_shift = 0)
-    :op1(op1),op2(op2),shift_bit(sh_bit),result(result),is_a_shift(is_a_shift){
-        this->opcode = opcode;
-    }
-    Operand GetResultReg(){return result;}
-    void code(std::ostream& s);
-    void PrintIR(std::ostream& s);
-    int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    void cgen_prework();
-    std::vector<int>refering_virtual_regs();
-    void ReplaceByMap(const std::map<int,int>&Rule){}
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
-};
-
-class it_instruction : public BasicInstruction
-{
-public:
-    enum arm_cond exec_cond;
-    it_instruction(enum arm_cond exec_cond):exec_cond(exec_cond){}
-    virtual void code(std::ostream& s);
-    virtual void PrintIR(std::ostream& s);
-    virtual int GetResultRegNo(){return -1;}
-    virtual void cgen_prework(){}
-    virtual std::vector<int> refering_virtual_regs(){return std::vector<int>();}
-    virtual Operand GetResultReg(){return nullptr;}
-    virtual void ReplaceByMap(const std::map<int,int>&Rule){}
-    virtual std::vector<Operand> GetNonResultOperands(){return std::vector<Operand>();}
-    virtual void SetNonResultOperands(std::vector<Operand> ops){}
-    virtual Instruction CopyInstruction(){return nullptr;}
-    virtual int ConstPropagate(std::map<int,Instruction>& regresult_map){return 0;}
 };
 
 std::ostream& operator<<(std::ostream&s,LLVMType type);

@@ -25,24 +25,24 @@ L0:
     %r2 = alloca i32
     br label %L1
 L1:
-    %r0 = add i32 0,97
+    %r0 = add i32 97,0
     call void @putch(i32 %r0)
-    %r1 = add i32 0,10
+    %r1 = add i32 10,0
     call void @putch(i32 %r1)
-    %r3 = add i32 0,1
+    %r3 = add i32 1,0
     store i32 %r3, ptr %r2
     %r5 = add i32 0,0
     store i32 %r5, ptr %r4
     %r6 = load i32, ptr %r2
-    %r7 = add i32 0,2
+    %r7 = add i32 2,0
     %r8 = add i32 %r6,%r7
     store i32 %r8, ptr %r2
     %r10 = load i32, ptr %r2
-    %r11 = add i32 0,3
+    %r11 = add i32 3,0
     %r12 = add i32 %r10,%r11
     store i32 %r12, ptr %r9
     %r13 = load i32, ptr %r9
-    %r14 = add i32 0,4
+    %r14 = add i32 4,0
     %r15 = add i32 %r13,%r14
     store i32 %r15, ptr %r9
     %r16 = load i32, ptr %r4
@@ -52,11 +52,11 @@ L1:
     %r20 = add i32 %r18,%r19
     store i32 %r20, ptr %r4
     %r21 = load i32, ptr %r9
-    %r22 = add i32 0,5
+    %r22 = add i32 5,0
     %r23 = add i32 %r21,%r22
     store i32 %r23, ptr %r9
     %r25 = load i32, ptr %r9
-    %r26 = add i32 0,6
+    %r26 = add i32 6,0
     %r27 = add i32 %r25,%r26
     store i32 %r27, ptr %r24
     %r28 = load i32, ptr %r2
@@ -76,11 +76,11 @@ L1:
     %r40 = add i32 %r38,%r39
     store i32 %r40, ptr %r9
     %r42 = load i32, ptr %r24
-    %r43 = add i32 0,7
+    %r43 = add i32 7,0
     %r44 = add i32 %r42,%r43
     store i32 %r44, ptr %r41
     %r45 = load i32, ptr %r41
-    %r46 = add i32 0,8
+    %r46 = add i32 8,0
     %r47 = add i32 %r45,%r46
     store i32 %r47, ptr %r41
     %r48 = load i32, ptr %r4
@@ -96,17 +96,17 @@ L1:
     %r57 = add i32 %r55,%r56
     store i32 %r57, ptr %r9
     %r59 = load i32, ptr %r24
-    %r60 = add i32 0,9
+    %r60 = add i32 9,0
     %r61 = add i32 %r59,%r60
     store i32 %r61, ptr %r58
     %r62 = load i32, ptr %r41
-    %r63 = add i32 0,10
+    %r63 = add i32 10,0
     %r64 = add i32 %r62,%r63
     store i32 %r64, ptr %r41
-    %r66 = add i32 0,11
+    %r66 = add i32 11,0
     store i32 %r66, ptr %r65
     %r67 = load i32, ptr %r58
-    %r68 = add i32 0,12
+    %r68 = add i32 12,0
     %r69 = add i32 %r67,%r68
     store i32 %r69, ptr %r58
     %r70 = load i32, ptr %r4
@@ -122,7 +122,7 @@ L1:
     %r79 = add i32 %r77,%r78
     store i32 %r79, ptr %r24
     %r81 = load i32, ptr %r58
-    %r82 = add i32 0,13
+    %r82 = add i32 13,0
     %r83 = add i32 %r81,%r82
     store i32 %r83, ptr %r80
     %r84 = load i32, ptr %r80
@@ -150,7 +150,7 @@ L1:
     %r102 = sub i32 %r100,%r101
     store i32 %r102, ptr %r4
     %r103 = load i32, ptr %r4
-    %r104 = add i32 0,77
+    %r104 = add i32 77,0
     %r105 = srem i32 %r103,%r104
     ret i32 %r105
 }

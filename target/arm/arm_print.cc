@@ -1,4 +1,5 @@
 #include "arm.h"
+
 std::ostream& operator<<(std::ostream& s,ShiftType typ){
     switch (typ)
     {

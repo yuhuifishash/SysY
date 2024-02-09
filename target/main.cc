@@ -6,19 +6,13 @@
 #include <fstream>
 #include "semant.h"
 #include "IRgen.h"
-#include "arm_cgen.h"
 #include "llvm_ir.h"
 #include "SysY_parser.tab.h"
-#include "llvm_output_test.h"
-#include "mem2reg_test.h"
-#include "sccp_test.h"
-#include "liveness_test.h"
 
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR,CISU,PROP,STR3,STR4)\
 fout <<std::fixed<<std::setprecision(12)<<std::setw(15)<<std::left<<STR<<" "<<std::setw(20)<<std::left<<CISU<<" "<<std::setw(32)<<std::left<<PROP<<std::setw(15)<<std::left<<STR3<<std::setw(15)<<std::left<<STR4<<"\n"
 
-extern LLVMIR cgenpre_IR;
-extern LLVMIR llvm_IR;
+extern LLVMIR llvmIR;
 extern Program ast_root;
 extern FILE* yyin;
 extern int error_num;
@@ -99,42 +93,27 @@ int main(int argc,char** argv)
     //std::cerr<<"finish semant\n";
     if(strcmp(argv[step_tag],"-semant") == 0){
         ast_root->printAST(fout,0);
+        return 0;
     }
 
-    //ast_root->codeIR();
-    // llvm_IR.printIR(fout);
-    
-    //llvm_IR.optimize_zext_br();
-    //llvm_IR.optimize_shortcircult_br();
+    ast_root->codeIR();
+
     //llvm_IR.elimate_dead_ins_and_blocks();
     //llvm_IR.build_CFG();
     
     if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){
-        llvm_IR.optimize();
+        llvmIR.optimize();
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
-        llvm_IR.printIR(fout);
+        llvmIR.printIR(fout);
         // llvm_IR.printIR(std::cout);
         fout.close();
         return 0;
     }
-    llvm_IR.phi_destruction();
-    llvm_IR.cgen_prework();
-    if(strcmp(argv[step_tag],"-cgenpre") == 0){
-        //llvm_IR.printIR(fout);
-        cgenpre_IR.printIR(fout);
-        // UnitTest_CalcLive();
-        return 0;
-    }
-    cgenpre_IR.register_alloc();
-    // std::cerr<<"alloc\n";
-    if(strcmp(argv[step_tag],"-cgenalloc") == 0){
-        cgenpre_IR.printIR(fout);
-        return 0;
-    }
     if(strcmp(argv[step_tag],"-S") == 0){
-        cgenpre_IR.code(fout);
+        std::cerr<<"-S is not implemented now\n";
+        assert(false);
     }
     fout.close();
     return 0;

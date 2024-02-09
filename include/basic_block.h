@@ -21,14 +21,14 @@ public:
     void code(std::ostream& s);
     void set_target(int id1,int id2);
 
+
     //pos = 1 -> end   pos = 0 -> begin
     /*
         ins1  <- front
         ...
         ins5  <- back
     */
-    void push_Ins(int pos,Instruction Ins);
-
+    void InsertInstruction(int pos,Instruction Ins);
     void printIR(std::ostream& s);
     BasicBlock(int id):block_id(id){}
 };
