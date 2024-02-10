@@ -5344,7 +5344,6 @@ L731:
 L732:
     %r3027 = add i32 1,0
     ret i32 %r3027
-    br label %L733
 L733:
     %r3028 = load i32, ptr %r4
     %r3029 = add i32 1,0

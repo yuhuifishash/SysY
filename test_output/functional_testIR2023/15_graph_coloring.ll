@@ -116,7 +116,6 @@ L7:
 L8:
     %r26 = add i32 0,0
     ret i32 %r26
-    br label %L9
 L9:
     %r27 = load i32, ptr %r7
     %r28 = add i32 1,0
@@ -162,11 +161,9 @@ L4:
     call void @printSolution(ptr %r13)
     %r14 = add i32 1,0
     ret i32 %r14
-    br label %L5
 L5:
     %r15 = add i32 0,0
     ret i32 %r15
-    br label %L3
 L6:
     %r18 = load i32, ptr %r16
     %r19 = load i32, ptr %r4
@@ -192,7 +189,6 @@ L8:
 L9:
     %r32 = add i32 1,0
     ret i32 %r32
-    br label %L10
 L10:
     %r33 = load i32, ptr %r5
     %r34 = getelementptr i32, ptr %r3, i32 %r33

@@ -68,6 +68,7 @@ void IRgenTypeConverse(LLVMBlock B,Type::ty type_src,Type::ty type_dst,int src);
 
 void BasicBlock::InsertInstruction(int pos,Instruction Ins)
 {
+    assert(pos == 0 || pos == 1);
     if(pos == 0){
         Instruction_list.push_front(Ins);
     }else if(pos == 1){
@@ -786,62 +787,62 @@ void CompUnit_FuncDef::codeIR()
 void AddLibFunctionDeclare()
 {
     FunctionDeclareInstruction* getint = new FunctionDeclareInstruction(I32,"getint");
-    llvmIR.func_declare.push_back(getint);
+    llvmIR.function_declare.push_back(getint);
 
     FunctionDeclareInstruction* getchar = new FunctionDeclareInstruction(I32,"getch");
-    llvmIR.func_declare.push_back(getchar);
+    llvmIR.function_declare.push_back(getchar);
 
     FunctionDeclareInstruction* getfloat = new FunctionDeclareInstruction(FLOAT32,"getfloat");
-    llvmIR.func_declare.push_back(getfloat);
+    llvmIR.function_declare.push_back(getfloat);
 
     FunctionDeclareInstruction* getarray = new FunctionDeclareInstruction(I32,"getarray");
     getarray->InsertFormal(PTR);
-    llvmIR.func_declare.push_back(getarray);
+    llvmIR.function_declare.push_back(getarray);
 
     FunctionDeclareInstruction* getfloatarray = new FunctionDeclareInstruction(I32,"getfarray");
     getfloatarray->InsertFormal(PTR);
-    llvmIR.func_declare.push_back(getfloatarray);
+    llvmIR.function_declare.push_back(getfloatarray);
 
     FunctionDeclareInstruction* putint = new FunctionDeclareInstruction(VOID,"putint");
     putint->InsertFormal(I32);
-    llvmIR.func_declare.push_back(putint);
+    llvmIR.function_declare.push_back(putint);
 
     FunctionDeclareInstruction* putch = new FunctionDeclareInstruction(VOID,"putch");
     putch->InsertFormal(I32);
-    llvmIR.func_declare.push_back(putch);
+    llvmIR.function_declare.push_back(putch);
 
     FunctionDeclareInstruction* putfloat = new FunctionDeclareInstruction(VOID,"putfloat");
     putfloat->InsertFormal(FLOAT32);
-    llvmIR.func_declare.push_back(putfloat);
+    llvmIR.function_declare.push_back(putfloat);
 
     FunctionDeclareInstruction* putarray = new FunctionDeclareInstruction(VOID,"putarray");
     putarray->InsertFormal(I32);
     putarray->InsertFormal(PTR);
-    llvmIR.func_declare.push_back(putarray);
+    llvmIR.function_declare.push_back(putarray);
 
     FunctionDeclareInstruction* putfarray = new FunctionDeclareInstruction(VOID,"putfarray");
     putfarray->InsertFormal(I32);
     putfarray->InsertFormal(PTR);
-    llvmIR.func_declare.push_back(putfarray);
+    llvmIR.function_declare.push_back(putfarray);
 
     // put format string
     FunctionDeclareInstruction* putf = new FunctionDeclareInstruction(VOID,"putf");
     putf->InsertFormal(PTR);
-    llvmIR.func_declare.push_back(putf);
+    llvmIR.function_declare.push_back(putf);
 
     FunctionDeclareInstruction* starttime = new FunctionDeclareInstruction(VOID,"_sysy_starttime");
     starttime->InsertFormal(I32);
-    llvmIR.func_declare.push_back(starttime);
+    llvmIR.function_declare.push_back(starttime);
 
     FunctionDeclareInstruction* stoptime = new FunctionDeclareInstruction(VOID,"_sysy_stoptime");
     stoptime->InsertFormal(I32);
-    llvmIR.func_declare.push_back(stoptime);
+    llvmIR.function_declare.push_back(stoptime);
 
     FunctionDeclareInstruction* llvm_memset = new FunctionDeclareInstruction(VOID,"llvm.memset.p0.i32");
     llvm_memset->InsertFormal(PTR);
     llvm_memset->InsertFormal(I8);
     llvm_memset->InsertFormal(I32);
     llvm_memset->InsertFormal(I1);
-    llvmIR.func_declare.push_back(llvm_memset);
+    llvmIR.function_declare.push_back(llvm_memset);
 }
 

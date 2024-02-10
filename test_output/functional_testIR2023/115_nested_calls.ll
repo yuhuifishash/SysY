@@ -32,7 +32,6 @@ L2:
     %r10 = load i32, ptr %r4
     %r11 = mul i32 %r9,%r10
     ret i32 %r11
-    br label %L4
 L3:
     %r12 = load i32, ptr %r3
     %r13 = load i32, ptr %r4
@@ -41,9 +40,6 @@ L3:
     %r16 = add i32 0,0
     %r17 = call i32 @func1(i32 %r12,i32 %r15,i32 %r16)
     ret i32 %r17
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @func6(i32 %r0,i32 %r1)
 {
@@ -60,13 +56,9 @@ L1:
 L2:
     %r8 = add i32 1,0
     ret i32 %r8
-    br label %L4
 L3:
     %r9 = add i32 0,0
     ret i32 %r9
-    br label %L4
-L4:
-    ret i32 0
 L5:
     %r6 = load i32, ptr %r3
     %r7 = icmp ne i32 %r6,0
@@ -90,7 +82,6 @@ L2:
     %r8 = add i32 1,0
     %r9 = add i32 %r7,%r8
     ret i32 %r9
-    br label %L4
 L3:
     %r10 = load i32, ptr %r2
     %r11 = load i32, ptr %r3
@@ -98,9 +89,6 @@ L3:
     %r13 = add i32 0,0
     %r14 = call i32 @func3(i32 %r12,i32 %r13)
     ret i32 %r14
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @func2(i32 %r0,i32 %r1)
 {
@@ -121,13 +109,9 @@ L2:
     %r9 = add i32 0,0
     %r10 = call i32 @func2(i32 %r8,i32 %r9)
     ret i32 %r10
-    br label %L4
 L3:
     %r11 = load i32, ptr %r2
     ret i32 %r11
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @func4(i32 %r0,i32 %r1,i32 %r2)
 {
@@ -146,13 +130,9 @@ L1:
 L2:
     %r8 = load i32, ptr %r4
     ret i32 %r8
-    br label %L4
 L3:
     %r9 = load i32, ptr %r5
     ret i32 %r9
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @main()
 {
@@ -324,11 +304,7 @@ L1:
 L2:
     %r4 = add i32 1,0
     ret i32 %r4
-    br label %L4
 L3:
     %r5 = add i32 0,0
     ret i32 %r5
-    br label %L4
-L4:
-    ret i32 0
 }

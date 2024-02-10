@@ -91,13 +91,9 @@ L12:
     %r33 = load i32, ptr %r2
     %r34 = sub i32 0,%r33
     ret i32 %r34
-    br label %L14
 L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
-    br label %L14
-L14:
-    ret i32 0
 }
 define void @clear()
 {
@@ -223,7 +219,6 @@ L1:
 L2:
     %r10 = add i32 1,0
     ret i32 %r10
-    br label %L3
 L3:
     %r12 = load i32, ptr %r2
     %r13 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r12
@@ -252,7 +247,6 @@ L6:
 L7:
     %r31 = add i32 1,0
     ret i32 %r31
-    br label %L8
 L8:
     %r32 = load i32, ptr %r11
     %r33 = getelementptr [5005 x i32], ptr @next, i32 0, i32 %r32

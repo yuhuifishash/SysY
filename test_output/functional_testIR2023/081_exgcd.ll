@@ -38,7 +38,6 @@ L2:
     store i32 %r14, ptr %r13
     %r15 = load i32, ptr %r4
     ret i32 %r15
-    br label %L4
 L3:
     %r17 = load i32, ptr %r5
     %r18 = load i32, ptr %r4
@@ -72,9 +71,6 @@ L3:
     store i32 %r43, ptr %r34
     %r44 = load i32, ptr %r16
     ret i32 %r44
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @main()
 {

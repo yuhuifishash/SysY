@@ -42,13 +42,9 @@ L1:
 L2:
     %r8 = add i32 1,0
     ret i32 %r8
-    br label %L4
 L3:
     %r9 = add i32 0,0
     ret i32 %r9
-    br label %L4
-L4:
-    ret i32 0
 L5:
     %r5 = load i32, ptr %r1
     %r6 = add i32 10,0
@@ -124,7 +120,6 @@ L1:
 L2:
     %r8 = add i32 10,0
     ret i32 %r8
-    br label %L3
 L3:
     %r9 = load i32, ptr %r1
     %r10 = add i32 42,0
@@ -138,7 +133,6 @@ L4:
 L5:
     %r18 = add i32 20,0
     ret i32 %r18
-    br label %L6
 L6:
     %r19 = add i32 0,0
     ret i32 %r19
@@ -190,13 +184,9 @@ L1:
 L2:
     %r8 = add i32 1,0
     ret i32 %r8
-    br label %L4
 L3:
     %r9 = add i32 0,0
     ret i32 %r9
-    br label %L4
-L4:
-    ret i32 0
 L5:
     %r5 = load i32, ptr %r1
     %r6 = add i32 57,0
@@ -291,7 +281,6 @@ L2:
     %r10 = load i32, ptr %r5
     %r11 = add i32 %r9,%r10
     ret i32 %r11
-    br label %L3
 L3:
     %r12 = load i32, ptr %r3
     %r13 = add i32 45,0
@@ -302,7 +291,6 @@ L4:
     %r16 = load i32, ptr %r5
     %r17 = sub i32 %r15,%r16
     ret i32 %r17
-    br label %L5
 L5:
     %r18 = load i32, ptr %r3
     %r19 = add i32 42,0
@@ -313,7 +301,6 @@ L6:
     %r22 = load i32, ptr %r5
     %r23 = mul i32 %r21,%r22
     ret i32 %r23
-    br label %L7
 L7:
     %r24 = load i32, ptr %r3
     %r25 = add i32 47,0
@@ -324,7 +311,6 @@ L8:
     %r28 = load i32, ptr %r5
     %r29 = sdiv i32 %r27,%r28
     ret i32 %r29
-    br label %L9
 L9:
     %r30 = load i32, ptr %r3
     %r31 = add i32 37,0
@@ -335,7 +321,6 @@ L10:
     %r34 = load i32, ptr %r5
     %r35 = srem i32 %r33,%r34
     ret i32 %r35
-    br label %L11
 L11:
     %r36 = add i32 0,0
     ret i32 %r36
@@ -363,7 +348,6 @@ L1:
 L2:
     %r5 = call i32 @panic()
     ret i32 %r5
-    br label %L3
 L3:
     %r6 = getelementptr [256 x i32], ptr %r0, i32 0
     %r7 = load i32, ptr @num
@@ -390,8 +374,6 @@ L7:
 L8:
     %r17 = call i32 @next_token()
     br label %L10
-L9:
-    br label %L8
 L10:
     %r18 = getelementptr [256 x i32], ptr %r1, i32 0
     %r19 = call i32 @stack_size(ptr %r18)
@@ -433,7 +415,6 @@ L13:
 L14:
     %r46 = call i32 @panic()
     ret i32 %r46
-    br label %L15
 L15:
     %r47 = getelementptr [256 x i32], ptr %r0, i32 0
     %r48 = load i32, ptr @num

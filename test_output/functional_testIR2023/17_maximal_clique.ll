@@ -70,7 +70,6 @@ L7:
 L8:
     %r24 = add i32 0,0
     ret i32 %r24
-    br label %L9
 L9:
     %r25 = load i32, ptr %r7
     %r26 = add i32 1,0

@@ -7,9 +7,11 @@ class LLVMIR
 {
 public:
     std::vector<Instruction> global_def{};
-    std::vector<Instruction> func_declare{};
+    std::vector<Instruction> function_declare{};
+
     std::map<FuncDefInstruction, CFG*> llvm_cfg{}; //<function,cfg>
     std::map<FuncDefInstruction, std::map<int, LLVMBlock> > function_block_map; //<function,<id,block> >
+
     std::map<FuncDefInstruction, int> max_label_map{};
     std::map<FuncDefInstruction, int> max_reg_map{}; 
 
@@ -24,9 +26,23 @@ public:
         function_block_map[I][max_label] = new BasicBlock(max_label);
         return GetBlock(I,max_label);
     }
+    void printIR(std::ostream& s);
 
+    /*this function elimate unreached instructions and blocks. it is called after IRgen
+      it will elimate instructions after ret and unreached blocks(start with bb0)*/
+    void ElimateUnreachedInstructionAndBlocks();
+    void CFGInit();
+    void BuildCFG();
+    void BuildDominatorTree();
 
-    std::map<FuncDefInstruction, int> sp_offset_map{};
+    /*this function will execute the pass you write, you can use function pointer to 
+      tell it to execute what, it will execute through all the CFG* in this LLVMIR*/
+    void PassExecutor(void (*Pass)(CFG*)){
+        for(auto [defI,cfg]:llvm_cfg){
+            Pass(cfg);
+        }
+    }
+
     void mem2reg();
     void SCCP();
     void peephole_optimize();
@@ -38,13 +54,6 @@ public:
     void SimpleCSE();
     void SimpleDCE();
 
-    void printIR(std::ostream& s);
-    void optimize();
-    void build_CFG();
-    void cgen_define(std::ostream& s);
-    void optimize_zext_br();//icmp zext icmp br || fcmp zext icmp br
-    void optimize_shortcircult_br();
-    void elimate_dead_ins_and_blocks();
 
     void decompose_getelementptr();
 

@@ -89,8 +89,6 @@ L9:
     %r25 = add i32 %r23,%r24
     store i32 %r25, ptr %r7
     br label %L5
-L10:
-    br label %L9
 L11:
     %r37 = load i32, ptr %r7
     %r38 = load i32, ptr %r1

@@ -31,7 +31,6 @@ L1:
 L2:
     %r10 = add i32 1,0
     ret i32 %r10
-    br label %L3
 L3:
     store i32 0, ptr %r12
     store i32 0, ptr %r13

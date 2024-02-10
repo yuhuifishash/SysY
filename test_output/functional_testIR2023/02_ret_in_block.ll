@@ -72,46 +72,4 @@ L1:
     %r40 = add i32 21,0
     %r41 = srem i32 %r39,%r40
     ret i32 %r41
-    %r42 = load i32, ptr %r2
-    %r43 = load i32, ptr %r4
-    %r44 = add i32 %r42,%r43
-    %r45 = add i32 97,0
-    %r46 = sub i32 %r44,%r45
-    store i32 %r46, ptr %r4
-    %r47 = load i32, ptr %r2
-    %r48 = load i32, ptr %r4
-    %r49 = sub i32 %r47,%r48
-    %r50 = add i32 62,0
-    %r51 = srem i32 %r49,%r50
-    store i32 %r51, ptr %r2
-    %r52 = load i32, ptr %r4
-    %r53 = load i32, ptr %r2
-    %r54 = add i32 %r52,%r53
-    %r55 = add i32 17,0
-    %r56 = srem i32 %r54,%r55
-    ret i32 %r56
-    %r57 = load i32, ptr %r4
-    %r58 = load i32, ptr %r2
-    %r59 = add i32 %r57,%r58
-    %r60 = add i32 13,0
-    %r61 = srem i32 %r59,%r60
-    ret i32 %r61
-    %r62 = load i32, ptr %r2
-    %r63 = load i32, ptr %r0
-    %r64 = mul i32 %r62,%r63
-    %r65 = add i32 83,0
-    %r66 = srem i32 %r64,%r65
-    store i32 %r66, ptr %r0
-    %r67 = load i32, ptr %r0
-    %r68 = load i32, ptr %r2
-    %r69 = add i32 %r67,%r68
-    %r70 = add i32 771,0
-    %r71 = sub i32 %r69,%r70
-    store i32 %r71, ptr %r2
-    %r72 = load i32, ptr %r0
-    %r73 = load i32, ptr %r2
-    %r74 = add i32 %r72,%r73
-    %r75 = add i32 11,0
-    %r76 = srem i32 %r74,%r75
-    ret i32 %r76
 }

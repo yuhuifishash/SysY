@@ -29,7 +29,6 @@ L1:
 L2:
     %r6 = add i32 1,0
     ret i32 %r6
-    br label %L3
 L3:
     %r7 = add i32 0,0
     %r8 = getelementptr i32, ptr %r0, i32 %r7
@@ -42,7 +41,6 @@ L3:
 L4:
     %r14 = add i32 1,0
     ret i32 %r14
-    br label %L5
 L5:
     store i32 0, ptr %r16
     %r17 = add i32 0,0

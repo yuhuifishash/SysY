@@ -55,6 +55,4 @@ L6:
     %r18 = add i32 %r16,%r17
     store i32 %r18, ptr %r0
     br label %L2
-L7:
-    br label %L6
 }

@@ -28,7 +28,6 @@ L1:
 L2:
     %r6 = add i32 0,0
     ret i32 %r6
-    br label %L3
 L3:
     store i32 0, ptr %r7
     %r8 = load i32, ptr %r2
@@ -64,7 +63,6 @@ L7:
 L8:
     %r27 = add i32 0,0
     ret i32 %r27
-    br label %L9
 L9:
     store i32 0, ptr %r28
     %r29 = load i32, ptr %r7
@@ -101,7 +99,6 @@ L13:
     %r48 = sub i32 %r46,%r47
     %r49 = sub i32 %r43,%r48
     ret i32 %r49
-    br label %L14
 L14:
     %r50 = load i32, ptr %r28
     %r51 = add i32 1,0

@@ -35,7 +35,6 @@ L1:
 L2:
     %r8 = add i32 1,0
     ret i32 %r8
-    br label %L3
 L3:
     %r9 = add i32 0,0
     ret i32 %r9
@@ -386,8 +385,6 @@ L27:
     br label %L21
 L28:
     br label %L19
-L29:
-    br label %L28
 L30:
     br label %L32
 L31:
@@ -452,8 +449,6 @@ L40:
     br label %L34
 L41:
     br label %L32
-L42:
-    br label %L41
 L43:
     br label %L45
 L44:
@@ -504,8 +499,6 @@ L51:
     br label %L47
 L52:
     br label %L45
-L53:
-    br label %L52
 L54:
     br label %L56
 L55:
@@ -556,8 +549,6 @@ L62:
     br label %L58
 L63:
     br label %L56
-L64:
-    br label %L63
 L65:
     br label %L67
 L66:
@@ -611,8 +602,6 @@ L73:
     br label %L69
 L74:
     br label %L67
-L75:
-    br label %L74
 L76:
     %r229 = load i32, ptr @chat
     %r230 = add i32 0,0
@@ -872,7 +861,6 @@ L1:
 L2:
     %r15 = add i32 0,0
     ret i32 %r15
-    br label %L3
 L3:
     %r16 = add i32 1,0
     ret i32 %r16

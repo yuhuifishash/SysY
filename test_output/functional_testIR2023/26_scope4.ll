@@ -226,8 +226,6 @@ L15:
     %r37 = call i32 @getA()
     store i32 %r37, ptr %r5
     br label %L11
-L16:
-    br label %L15
 L17:
     %r42 = call i32 @getA()
     store i32 %r42, ptr %r41
@@ -254,12 +252,4 @@ L19:
     %r51 = add i32 %r49,%r50
     store i32 %r51, ptr %r27
     br label %L8
-L20:
-    br label %L19
-L21:
-    br label %L7
-L22:
-    br label %L5
-L23:
-    br label %L2
 }

@@ -67,7 +67,7 @@ Arm_asm::Arm_asm(LLVMIR& IR){
     global_def = IR.global_def;
     for(auto func_pair:IR.llvm_cfg){
         auto cfg = func_pair.second;
-        std::string name = cfg->func_ins->GetFunctionName();
+        std::string name = cfg->function_def->GetFunctionName();
         auto cur_armfunc = new Arm_func(name);
         functions.push_back(cur_armfunc);
         for(auto block_pair:*(cfg->block)){

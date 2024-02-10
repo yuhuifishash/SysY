@@ -51,7 +51,6 @@ L5:
     %r14 = add i32 10,0
     call void @putch(i32 %r14)
     ret void
-    br label %L7
 L6:
     %r15 = add i32 32,0
     call void @putch(i32 %r15)

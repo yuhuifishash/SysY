@@ -34,7 +34,6 @@ L1:
     br i1 %r8, label %L2, label %L3
 L2:
     ret void
-    br label %L3
 L3:
     %r10 = load i32, ptr %r2
     %r11 = load i32, ptr %r3

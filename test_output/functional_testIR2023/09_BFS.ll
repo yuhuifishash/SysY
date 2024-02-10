@@ -143,13 +143,9 @@ L12:
     %r33 = load i32, ptr %r2
     %r34 = sub i32 0,%r33
     ret i32 %r34
-    br label %L14
 L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
-    br label %L14
-L14:
-    ret i32 0
 }
 define void @add_edge(i32 %r0,i32 %r1)
 {

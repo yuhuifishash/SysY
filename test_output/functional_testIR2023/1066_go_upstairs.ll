@@ -28,7 +28,6 @@ L1:
 L2:
     %r5 = load i32, ptr %r1
     ret i32 %r5
-    br label %L3
 L3:
     %r7 = add i32 0,0
     %r8 = getelementptr [10 x i32], ptr %r6, i32 0, i32 %r7

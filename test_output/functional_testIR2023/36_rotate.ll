@@ -96,7 +96,6 @@ L1:
 L2:
     %r68 = add i32 0,0
     ret i32 %r68
-    br label %L3
 L3:
     %r69 = load i32, ptr %r42
     %r70 = load i32, ptr @width
@@ -137,7 +136,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
@@ -180,7 +178,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fadd float 0x4008000000000000,0x0
@@ -264,7 +261,6 @@ L2:
     %r6 = add i32 1,0
     %r7 = sub i32 0,%r6
     ret i32 %r7
-    br label %L3
 L3:
     %r8 = call i32 @getint()
     store i32 %r8, ptr @width
@@ -283,7 +279,6 @@ L5:
     %r19 = add i32 1,0
     %r20 = sub i32 0,%r19
     ret i32 %r20
-    br label %L6
 L6:
     %r22 = add i32 0,0
     store i32 %r22, ptr %r21
@@ -369,7 +364,6 @@ L2:
     %r6 = add i32 1,0
     %r7 = sub i32 0,%r6
     ret i32 %r7
-    br label %L3
 L3:
     %r8 = load float, ptr %r0
     call void @write_pgm(float %r8)

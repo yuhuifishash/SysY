@@ -91,13 +91,9 @@ L12:
     %r33 = load i32, ptr %r2
     %r34 = sub i32 0,%r33
     ret i32 %r34
-    br label %L14
 L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
-    br label %L14
-L14:
-    ret i32 0
 }
 define void @tree(i32 %r0,i32 %r1)
 {
@@ -319,7 +315,6 @@ L9:
 L10:
     %r49 = load i32, ptr %r2
     ret i32 %r49
-    br label %L11
 L11:
     %r50 = add i32 19,0
     store i32 %r50, ptr %r15

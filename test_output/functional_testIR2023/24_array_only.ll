@@ -264,8 +264,6 @@ L8:
     br label %L4
 L9:
     br label %L2
-L10:
-    br label %L9
 }
 define void @sub(ptr %r0,ptr %r1)
 {

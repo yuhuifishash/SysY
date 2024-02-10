@@ -90,8 +90,6 @@ L5:
     br label %L4
 L6:
     br label %L2
-L7:
-    br label %L6
 L8:
     call void @llvm.memset.p0.i32(ptr %r39,i8 0,i32 140,i1 0)
     %r40 = add i32 2,0

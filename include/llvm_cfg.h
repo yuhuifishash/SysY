@@ -11,17 +11,24 @@
 #include "SysY_tree.h"
 #include "function_basicinfo.h"
 #include "loop.h"
+#include "dominator_tree.h"
 
 class CFG
 {   
 public:
     int max_label = 0;
     int max_reg = 0;
-    std::map<int, LLVMBlock>* block;
-    FuncDefInstruction func_ins;
+    /*this is the pointer to the value of LLVMIR.function_block_map
+      you can see it in the LLVMIR::CFGInit()*/
+    std::map<int, LLVMBlock>* block_map;
+    FuncDefInstruction function_def;
     
     std::vector<std::vector<LLVMBlock> > G{}; //control flow graph
     std::vector<std::vector<LLVMBlock> > invG{}; // inv control flow graph
+    DominatorTree DomTree;
+
+    void BuildCFG();
+    void BuildDominatorTree();
 
     std::vector<std::vector<LLVMBlock> > dominator_tree{};
     std::vector<LLVMBlock> idom{};
@@ -38,9 +45,6 @@ public:
     std::map<PhiInstruction*,int> new_phi_map{};
     
     FunctionBasicInfo func_info;
-
-    void build_CFG();
-    void build_dominator_tree();
 
     void calc_defs_uses();
     std::set<int> calc_DF(std::set<int> S);

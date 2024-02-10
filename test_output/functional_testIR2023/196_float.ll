@@ -53,13 +53,9 @@ L2:
     %r16 = fdiv float %r13,%r15
     %r17 = fptosi float %r16 to i32
     ret i32 %r17
-    br label %L4
 L3:
     %r18 = add i32 0,0
     ret i32 %r18
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @main()
 {
@@ -227,7 +223,6 @@ L2:
     %r6 = load float, ptr %r1
     %r7 = fsub float 0x0,%r6
     ret float %r7
-    br label %L3
 L3:
     %r8 = load float, ptr %r1
     ret float %r8

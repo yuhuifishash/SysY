@@ -89,13 +89,9 @@ L12:
     %r33 = load i32, ptr %r2
     %r34 = sub i32 0,%r33
     ret i32 %r34
-    br label %L14
 L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
-    br label %L14
-L14:
-    ret i32 0
 }
 define void @sortA(ptr %r0)
 {
@@ -439,7 +435,6 @@ L10:
 L11:
     %r64 = add i32 1,0
     ret i32 %r64
-    br label %L12
 L12:
     %r65 = load i32, ptr %r1
     %r66 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r65
@@ -449,7 +444,6 @@ L12:
 L13:
     %r69 = add i32 2,0
     ret i32 %r69
-    br label %L14
 L14:
     %r70 = load i32, ptr %r1
     %r71 = add i32 1,0

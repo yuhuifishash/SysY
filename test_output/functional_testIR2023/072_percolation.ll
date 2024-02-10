@@ -342,7 +342,6 @@ L1:
 L2:
     %r7 = load i32, ptr %r1
     ret i32 %r7
-    br label %L4
 L3:
     %r8 = load i32, ptr %r1
     %r9 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r8
@@ -355,7 +354,4 @@ L3:
     %r15 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r14
     %r16 = load i32, ptr %r15
     ret i32 %r16
-    br label %L4
-L4:
-    ret i32 0
 }

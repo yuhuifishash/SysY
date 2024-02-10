@@ -35,13 +35,9 @@ L2:
     store i32 %r9, ptr %r2
     %r10 = add i32 1,0
     ret i32 %r10
-    br label %L4
 L3:
     %r11 = add i32 0,0
     ret i32 %r11
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @main()
 {

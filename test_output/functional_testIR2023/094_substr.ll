@@ -94,24 +94,17 @@ L1:
 L2:
     %r7 = load i32, ptr %r2
     ret i32 %r7
-    br label %L4
 L3:
     %r8 = load i32, ptr %r2
     %r9 = load i32, ptr %r3
     %r10 = icmp sgt i32 %r8,%r9
     br i1 %r10, label %L5, label %L6
-L4:
-    ret i32 0
 L5:
     %r11 = load i32, ptr %r2
     ret i32 %r11
-    br label %L7
 L6:
     %r12 = load i32, ptr %r3
     ret i32 %r12
-    br label %L7
-L7:
-    br label %L4
 }
 define i32 @longest_common_subseq(ptr %r0,i32 %r1,ptr %r2,i32 %r3)
 {

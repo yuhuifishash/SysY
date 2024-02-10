@@ -51,7 +51,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
@@ -153,7 +152,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fadd float 0x4008000000000000,0x0

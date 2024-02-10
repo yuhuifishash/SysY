@@ -1,59 +1,113 @@
-// #include "llvm_cfg.h"
-// #include "llvm_ir.h"
-// #include "Instruction.h"
-// #include "IRgen.h"
-// #include <bitset>
+#include "llvm_cfg.h"
+#include "llvm_ir.h"
+#include "Instruction.h"
+#include "IRgen.h"
+#include <bitset>
 
-// extern LLVMIR llvmIR;
+void LLVMIR::ElimateUnreachedInstructionAndBlocks(){
+    for(auto& [defI,blocks]:function_block_map){
+        std::stack<int> stk;
+        stk.push(0);
+        std::map<int,int> reachable;
+        while(!stk.empty()){
+            int cur = stk.top();
+            stk.pop();
+            reachable[cur] = 1;
+            auto& block = blocks[cur];
+            auto& blockList = block->Instruction_list;
+            int ret_pos = blockList.size();
+            for(int i = 0;i < blockList.size();i++){
+                if(blockList[i]->GetOpcode() == RET){
+                    ret_pos = i;
+                    break;
+                }
+            }
+            while(blockList.size() > ret_pos+1){
+                blockList.pop_back();
+            }
+            Instruction blocklast = blockList[blockList.size()-1];
+            if(blocklast->GetOpcode() == BR_UNCOND){
+                BrUncondInstruction* bruncond = (BrUncondInstruction*)blocklast;
+                int target_block_no = ((LabelOperand*)bruncond->GetDestLabel())->GetLabelNo();
+                if(reachable[target_block_no] == 0){
+                    reachable[target_block_no] = 1;
+                    stk.push(target_block_no);
+                }
+            }
+            if(blocklast->GetOpcode() == BR_COND){
+                BrCondInstruction* brcond = (BrCondInstruction*)blocklast;
+                int target_trueblock_no = ((LabelOperand*)brcond->getTrueLabel())->GetLabelNo();
+                int target_falseblock_no = ((LabelOperand*)brcond->getFalseLabel())->GetLabelNo();
+                if(reachable[target_trueblock_no] == 0){
+                    reachable[target_trueblock_no] = 1;
+                    stk.push(target_trueblock_no);
+                }
+                if(reachable[target_falseblock_no] == 0){
+                    reachable[target_falseblock_no] = 1;
+                    stk.push(target_falseblock_no);
+                }
+            }
+        }
+        std::queue<int> deadblocks;
+        for(auto id_block_pair:blocks){
+            if(reachable[id_block_pair.first] == 0){
+                deadblocks.push(id_block_pair.first);
+            }
+        }
+        while(!deadblocks.empty()){
+            blocks.erase(deadblocks.front());
+            deadblocks.pop();
+        }
+    }
+}
 
-// void LLVMIR::build_CFG()
-// {   
-//     for(auto& n:function_block_map){
-//         CFG* cfg = new CFG();
-//         cfg->block = &n.second;
-//         cfg->func_ins = n.first;
-//         cfg->next_fp_offset_to_allocate = sp_offset_map[n.first];
-//         cfg->max_reg = max_reg_map[n.first];
-//         cfg->max_label = max_label_map[n.first];
-//         // std::cerr<<"build "<<cfg->func_ins->get_Func_name()<<"\n";
-//         cfg->build_CFG();
-//         // std::cerr<<"  .b\n";
-//         llvm_cfg[n.first] = cfg;
-//         //std::cerr<<n.first->get_Func_name()<<" "<<n.first<<" "<<llvm_cfg[n.first]<<"\n";
-//     }
-// }
+void LLVMIR::CFGInit()
+{   
+    ElimateUnreachedInstructionAndBlocks();
+    for(auto& [defI,bb_map]:function_block_map){
+        CFG* cfg = new CFG();
 
-// void CFG::build_CFG()
-// {
-//     G.clear();
-//     invG.clear();
+        cfg->block_map = &bb_map;
+        cfg->function_def = defI;
+        cfg->max_reg = max_reg_map[defI];
+        cfg->max_label = max_label_map[defI];
+        llvm_cfg[defI] = cfg;
+    }
+}
 
-//     G.resize(max_label+1);
-//     invG.resize(max_label+1);
-//     // std::cerr<<"Safe max_label = "<<max_label<<"\n";
-//     for(auto block_pair:*block){
-//         // std::cerr<<"Safe "<<block_pair.first<<" Size "<<block_pair.second<<"\n";
-//         Instruction blocklast = block_pair.second->Instruction_list[block_pair.second->Instruction_list.size()-1];
-//         // blocklast->printIR(std::cerr);
-//         if(blocklast->GetOpcode() == BR_UNCOND){
-//             BrUncondInstruction* bruncond = (BrUncondInstruction*)blocklast;
-//             int target_block_no = ((LabelOperand*)bruncond->GetDestLabel())->GetLabelNo();
-//             G[block_pair.first].push_back((*block)[target_block_no]);
-//             invG[target_block_no].push_back(block_pair.second);
-//         }else
-//         if(blocklast->GetOpcode() == BR_COND){
-//             BrCondInstruction* brcond = (BrCondInstruction*)blocklast;
-//             int target_trueblock_no = ((LabelOperand*)brcond->getTrueLabel())->GetLabelNo();
-//             int target_falseblock_no = ((LabelOperand*)brcond->getFalseLabel())->GetLabelNo();
-//             G[block_pair.first].push_back((*block)[target_trueblock_no]);
-//             G[block_pair.first].push_back((*block)[target_falseblock_no]);
-//             invG[target_trueblock_no].push_back(block_pair.second);
-//             invG[target_falseblock_no].push_back(block_pair.second);
-//         }else{
-//             // std::cerr<<"not br\n";
-//         }
-//     }
-// }
+void LLVMIR::BuildCFG()
+{
+    for(auto [defI,cfg]:llvm_cfg){
+        cfg->BuildCFG();
+    }
+}
+
+void CFG::BuildCFG()
+{
+    G.clear();
+    invG.clear();
+
+    G.resize(max_label + 1);
+    invG.resize(max_label + 1);
+
+    for(auto [id,bb]:*block_map){
+        Instruction lastIns = bb->Instruction_list[bb->Instruction_list.size() - 1];
+        if(lastIns->GetOpcode() == BR_UNCOND){
+            BrUncondInstruction* bruncond = (BrUncondInstruction*)lastIns;
+            int target_block_no = ((LabelOperand*)bruncond->GetDestLabel())->GetLabelNo();
+            G[id].push_back((*block_map)[target_block_no]);
+            invG[target_block_no].push_back(bb);
+        }else if(lastIns->GetOpcode() == BR_COND){
+            BrCondInstruction* brcond = (BrCondInstruction*)lastIns;
+            int target_trueblock_no = ((LabelOperand*)brcond->getTrueLabel())->GetLabelNo();
+            int target_falseblock_no = ((LabelOperand*)brcond->getFalseLabel())->GetLabelNo();
+            G[id].push_back((*block_map)[target_trueblock_no]);
+            G[id].push_back((*block_map)[target_falseblock_no]);
+            invG[target_trueblock_no].push_back(bb);
+            invG[target_falseblock_no].push_back(bb);
+        }
+    }
+}
 
 // void dfs_postorder(int cur,const std::vector<std::vector<LLVMBlock> >&G,std::vector<int>&result,std::vector<int>&vsd){
 //     vsd[cur] = 1;

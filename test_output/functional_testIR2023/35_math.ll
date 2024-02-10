@@ -68,7 +68,6 @@ L2:
     %r12 = sitofp i32 %r7 to float
     %r13 = fdiv float %r12,%r11
     ret float %r13
-    br label %L3
 L3:
     %r15 = fadd float 0x3ff0000000000000,0x0
     store float %r15, ptr %r14
@@ -118,7 +117,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
@@ -169,7 +167,6 @@ L2:
     %r34 = sitofp i32 %r33 to float
     %r35 = fdiv float %r32,%r34
     ret float %r35
-    br label %L3
 L3:
     %r36 = load i32, ptr %r5
     %r37 = add i32 2,0
@@ -195,7 +192,6 @@ L4:
     %r55 = sitofp i32 %r54 to float
     %r56 = fdiv float %r53,%r55
     ret float %r56
-    br label %L5
 L5:
     %r57 = add i32 0,0
     %r58 = sitofp i32 %r57 to float
@@ -224,7 +220,6 @@ L2:
     %r11 = call float @my_sqrt(float %r10)
     %r12 = fmul float %r6,%r11
     ret float %r12
-    br label %L3
 L3:
     %r14 = load float, ptr %r1
     %r15 = add i32 8,0
@@ -308,7 +303,6 @@ L2:
     %r10 = sitofp i32 %r6 to float
     %r11 = fdiv float %r10,%r9
     ret float %r11
-    br label %L3
 L3:
     %r13 = load float, ptr %r1
     %r14 = fptosi float %r13 to i32
@@ -392,7 +386,6 @@ L2:
     %r49 = fdiv float %r47,%r48
     %r50 = fadd float %r42,%r49
     ret float %r50
-    br label %L3
 L3:
     %r51 = load float, ptr %r5
     %r52 = load float, ptr %r10
@@ -438,7 +431,6 @@ L2:
     %r12 = load float, ptr %r5
     %r13 = fmul float %r11,%r12
     ret float %r13
-    br label %L3
 L3:
     %r14 = add i32 1,0
     %r15 = load float, ptr %r1

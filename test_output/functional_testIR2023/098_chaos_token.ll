@@ -108,6 +108,4 @@ L7:
     br label %L4
 L8:
     br label %L2
-L9:
-    br label %L8
 }

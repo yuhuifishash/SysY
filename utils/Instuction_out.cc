@@ -329,7 +329,7 @@ void BasicBlock::printIR(std::ostream&s)
 void LLVMIR::printIR(std::ostream&s)
 {
     //output lib func decl
-    for(Instruction lib_func_decl:func_declare){
+    for(Instruction lib_func_decl:function_declare){
         lib_func_decl->PrintIR(s);
     }
 

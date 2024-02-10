@@ -74,16 +74,14 @@ void RecursiveArrayInit(InitVal init,VarAttribute& val,int begPos,int endPos,int
             if(val.type == Type::INT){
                 if(iv->attribute.T.type == Type::INT){
                     val.IntInitVals[pos] = iv->attribute.V.val.IntVal;
-                }
-                if(iv->attribute.T.type == Type::FLOAT){
+                }else if(iv->attribute.T.type == Type::FLOAT){
                     val.IntInitVals[pos] = iv->attribute.V.val.FloatVal;
                 }
             }
             if(val.type == Type::FLOAT){
                 if(iv->attribute.T.type == Type::INT){
                     val.FloatInitVals[pos] = iv->attribute.V.val.IntVal;
-                }
-                if(iv->attribute.T.type == Type::FLOAT){
+                }else if(iv->attribute.T.type == Type::FLOAT){
                     val.FloatInitVals[pos] = iv->attribute.V.val.FloatVal;
                 }
             }
@@ -111,11 +109,9 @@ void SolveIntInitVal(InitVal init,VarAttribute& val)//used for global or const
         if(init->GetExp() != nullptr){
             if(init->GetExp()->attribute.T.type == Type::VOID){
                 error_msgs.push_back("Expression can not be void in initval in line " + std::to_string(init->GetLineNumber()) + "\n");
-            }
-            if(init->GetExp()->attribute.T.type == Type::INT){
+            }else if(init->GetExp()->attribute.T.type == Type::INT){
                 val.IntInitVals[0] = init->GetExp()->attribute.V.val.IntVal;
-            }
-            if(init->GetExp()->attribute.T.type == Type::FLOAT){
+            }else if(init->GetExp()->attribute.T.type == Type::FLOAT){
                 val.IntInitVals[0] = init->GetExp()->attribute.V.val.FloatVal;
             }
         }

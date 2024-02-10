@@ -70,7 +70,6 @@ L1:
 L2:
     %r9 = load i32, ptr %r5
     ret i32 %r9
-    br label %L3
 L3:
     %r10 = load i32, ptr %r3
     %r11 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r10
@@ -112,8 +111,6 @@ L8:
     %r34 = add i32 0,0
     %r35 = icmp sle i32 %r33,%r34
     br i1 %r35, label %L10, label %L11
-L9:
-    br label %L8
 L10:
     %r36 = load i32, ptr %r13
     %r37 = add i32 1,0
@@ -129,8 +126,6 @@ L11:
     %r44 = load i32, ptr %r43
     %r45 = icmp slt i32 %r40,%r44
     br i1 %r45, label %L13, label %L14
-L12:
-    br label %L11
 L13:
     %r46 = load i32, ptr %r5
     store i32 %r46, ptr %r39
@@ -190,7 +185,6 @@ L16:
     store i32 %r91, ptr %r79
     %r92 = load i32, ptr %r51
     ret i32 %r92
-    br label %L17
 L17:
     %r93 = load i32, ptr %r13
     %r94 = add i32 1,0
@@ -364,7 +358,6 @@ L4:
 L5:
     %r19 = load i32, ptr %r4
     ret i32 %r19
-    br label %L6
 L6:
     %r20 = load i32, ptr %r4
     %r21 = load i32, ptr %r11

@@ -90,13 +90,9 @@ L12:
     %r33 = load i32, ptr %r2
     %r34 = sub i32 0,%r33
     ret i32 %r34
-    br label %L14
 L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
-    br label %L14
-L14:
-    ret i32 0
 }
 define i32 @same(i32 %r0,i32 %r1)
 {
@@ -120,7 +116,6 @@ L1:
 L2:
     %r11 = add i32 1,0
     ret i32 %r11
-    br label %L3
 L3:
     %r12 = add i32 0,0
     ret i32 %r12
@@ -142,7 +137,6 @@ L1:
 L2:
     %r7 = load i32, ptr %r1
     ret i32 %r7
-    br label %L3
 L3:
     %r9 = load i32, ptr %r1
     %r10 = getelementptr [1005 x i32], ptr @fa, i32 0, i32 %r9
@@ -315,8 +309,6 @@ L17:
     %r98 = add i32 %r96,%r97
     store i32 %r98, ptr %r0
     br label %L13
-L18:
-    br label %L17
 }
 define i32 @main()
 {

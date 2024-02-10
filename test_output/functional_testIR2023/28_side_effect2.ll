@@ -34,7 +34,6 @@ L1:
 L2:
     %r13 = add i32 0,0
     ret i32 %r13
-    br label %L3
 L3:
     %r14 = load i32, ptr %r2
     %r15 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r14
@@ -54,7 +53,6 @@ L5:
     %r21 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r20
     %r22 = load i32, ptr %r21
     ret i32 %r22
-    br label %L7
 L6:
     %r23 = load i32, ptr %r2
     %r24 = add i32 1,0
@@ -62,9 +60,6 @@ L6:
     %r26 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r25
     %r27 = load i32, ptr %r26
     ret i32 %r27
-    br label %L7
-L7:
-    ret i32 0
 }
 define i32 @main()
 {
@@ -551,7 +546,6 @@ L1:
 L2:
     %r13 = add i32 1,0
     ret i32 %r13
-    br label %L3
 L3:
     %r14 = load i32, ptr %r2
     %r15 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r14
@@ -571,7 +565,6 @@ L5:
     %r21 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r20
     %r22 = load i32, ptr %r21
     ret i32 %r22
-    br label %L7
 L6:
     %r23 = load i32, ptr %r2
     %r24 = add i32 1,0
@@ -579,9 +572,6 @@ L6:
     %r26 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r25
     %r27 = load i32, ptr %r26
     ret i32 %r27
-    br label %L7
-L7:
-    ret i32 0
 }
 define i32 @h(i32 %r0)
 {
@@ -601,7 +591,6 @@ L1:
 L2:
     %r11 = add i32 0,0
     ret i32 %r11
-    br label %L3
 L3:
     %r12 = load i32, ptr %r1
     %r13 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r12

@@ -50,9 +50,6 @@ L2:
 L3:
     %r80 = add i32 1,0
     ret i32 %r80
-    br label %L4
-L4:
-    ret i32 0
 L5:
     %r19 = load i32, ptr %r6
     %r20 = add i32 0,0
@@ -66,9 +63,6 @@ L6:
 L7:
     %r79 = add i32 2,0
     ret i32 %r79
-    br label %L8
-L8:
-    br label %L4
 L9:
     %r24 = load i32, ptr %r0
     %r25 = icmp eq i32 %r24,0
@@ -80,15 +74,12 @@ L9:
 L10:
     %r38 = add i32 3,0
     ret i32 %r38
-    br label %L12
 L11:
     %r39 = load i32, ptr %r10
     %r40 = load i32, ptr %r4
     %r41 = srem i32 %r39,%r40
     %r42 = icmp ne i32 %r41,0
     br i1 %r42, label %L17, label %L15
-L12:
-    br label %L8
 L13:
     %r33 = load i32, ptr %r6
     %r34 = load i32, ptr %r8
@@ -99,7 +90,6 @@ L13:
 L14:
     %r45 = add i32 4,0
     ret i32 %r45
-    br label %L16
 L15:
     %r46 = load i32, ptr %r6
     %r47 = load i32, ptr %r2
@@ -109,8 +99,6 @@ L15:
     %r51 = add i32 2,0
     %r52 = icmp sge i32 %r50,%r51
     br i1 %r52, label %L18, label %L19
-L16:
-    br label %L12
 L17:
     %r43 = load i32, ptr %r8
     %r44 = icmp ne i32 %r43,0
@@ -125,20 +113,14 @@ L18:
 L19:
     %r78 = add i32 5,0
     ret i32 %r78
-    br label %L20
-L20:
-    br label %L16
 L21:
     %r61 = add i32 6,0
     ret i32 %r61
-    br label %L23
 L22:
     %r62 = load i32, ptr %r4
     %r63 = load i32, ptr %r10
     %r64 = icmp ne i32 %r62,%r63
     br i1 %r64, label %L25, label %L26
-L23:
-    br label %L20
 L24:
     %r58 = load i32, ptr %r6
     %r59 = add i32 4,0
@@ -156,9 +138,6 @@ L25:
 L26:
     %r77 = add i32 7,0
     ret i32 %r77
-    br label %L27
-L27:
-    br label %L23
 L28:
     %r72 = load i32, ptr %r10
     %r73 = icmp eq i32 %r72,0
@@ -166,17 +145,10 @@ L28:
 L29:
     %r76 = add i32 8,0
     ret i32 %r76
-    br label %L30
-L30:
-    br label %L27
 L31:
     %r74 = add i32 9,0
     ret i32 %r74
-    br label %L33
 L32:
     %r75 = add i32 10,0
     ret i32 %r75
-    br label %L33
-L33:
-    br label %L30
 }

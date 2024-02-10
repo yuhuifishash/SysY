@@ -509,44 +509,30 @@ L23:
     br label %L22
 L24:
     br label %L20
-L25:
-    br label %L24
 L26:
     br label %L19
 L27:
     br label %L17
-L28:
-    br label %L27
 L29:
     br label %L16
 L30:
     br label %L14
-L31:
-    br label %L30
 L32:
     br label %L13
 L33:
     br label %L11
-L34:
-    br label %L33
 L35:
     br label %L10
 L36:
     br label %L8
-L37:
-    br label %L36
 L38:
     br label %L7
 L39:
     br label %L5
-L40:
-    br label %L39
 L41:
     br label %L4
 L42:
     br label %L2
-L43:
-    br label %L42
 }
 define i32 @main()
 {

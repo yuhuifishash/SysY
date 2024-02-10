@@ -45,7 +45,6 @@ L1:
 L2:
     %r9 = load i32, ptr @INF
     ret i32 %r9
-    br label %L3
 L3:
     %r11 = load i32, ptr @INF
     store i32 %r11, ptr %r10
@@ -115,12 +114,9 @@ L12:
     %r33 = load i32, ptr @y_1
     %r34 = icmp eq i32 %r32,%r33
     br i1 %r34, label %L10, label %L11
-L13:
-    br label %L11
 L14:
     %r56 = add i32 1,0
     ret i32 %r56
-    br label %L15
 L15:
     %r57 = load i32, ptr %r17
     %r58 = add i32 1,0
@@ -142,8 +138,6 @@ L18:
     %r64 = add i32 0,0
     %r65 = icmp eq i32 %r63,%r64
     br i1 %r65, label %L20, label %L24
-L19:
-    br label %L18
 L20:
     %r79 = load i32, ptr %r12
     %r80 = add i32 1,0
@@ -198,8 +192,6 @@ L24:
     %r69 = add i32 %r67,%r68
     %r70 = icmp eq i32 %r66,%r69
     br i1 %r70, label %L20, label %L23
-L25:
-    br label %L21
 L26:
     %r108 = load i32, ptr %r86
     store i32 %r108, ptr %r10
@@ -218,7 +210,6 @@ L27:
 L28:
     %r119 = load i32, ptr @INF
     ret i32 %r119
-    br label %L29
 L29:
     %r120 = load i32, ptr %r10
     ret i32 %r120

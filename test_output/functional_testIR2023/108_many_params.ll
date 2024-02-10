@@ -228,7 +228,6 @@ L1:
 L2:
     %r67 = load i32, ptr %r33
     ret i32 %r67
-    br label %L4
 L3:
     %r68 = load i32, ptr %r32
     %r69 = add i32 1,0
@@ -270,9 +269,6 @@ L3:
     %r105 = add i32 0,0
     %r106 = call i32 @param32_rec(i32 %r70,i32 %r75,i32 %r76,i32 %r77,i32 %r78,i32 %r79,i32 %r80,i32 %r81,i32 %r82,i32 %r83,i32 %r84,i32 %r85,i32 %r86,i32 %r87,i32 %r88,i32 %r89,i32 %r90,i32 %r91,i32 %r92,i32 %r93,i32 %r94,i32 %r95,i32 %r96,i32 %r97,i32 %r98,i32 %r99,i32 %r100,i32 %r101,i32 %r102,i32 %r103,i32 %r104,i32 %r105)
     ret i32 %r106
-    br label %L4
-L4:
-    ret i32 0
 }
 define void @sort(ptr %r0,i32 %r1)
 {

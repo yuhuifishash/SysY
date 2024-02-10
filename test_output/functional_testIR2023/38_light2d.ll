@@ -37,7 +37,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
@@ -58,7 +57,6 @@ L1:
 L2:
     %r6 = load float, ptr %r1
     ret float %r6
-    br label %L3
 L3:
     %r7 = load float, ptr %r1
     %r8 = fadd float 0x4008000000000000,0x0
@@ -339,7 +337,6 @@ L6:
     %r36 = getelementptr [2 x float], ptr %r18, i32 0, i32 %r35
     %r37 = load float, ptr %r36
     ret float %r37
-    br label %L7
 L7:
     %r38 = load float, ptr %r8
     %r39 = add i32 0,0

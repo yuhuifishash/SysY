@@ -509,7 +509,6 @@ L2:
     %r19 = add i32 2,0
     %r20 = sdiv i32 %r18,%r19
     ret i32 %r20
-    br label %L4
 L3:
     %r21 = load i32, ptr @n
     %r22 = add i32 2,0
@@ -519,9 +518,6 @@ L3:
     %r25 = getelementptr i32, ptr %r0, i32 %r24
     %r26 = load i32, ptr %r25
     ret i32 %r26
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @revert(ptr %r0)
 {

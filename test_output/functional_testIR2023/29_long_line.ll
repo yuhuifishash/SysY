@@ -1151,7 +1151,6 @@ L1:
 L2:
     %r5 = add i32 1,0
     ret i32 %r5
-    br label %L3
 L3:
     store i32 0, ptr %r6
     store i32 0, ptr %r7

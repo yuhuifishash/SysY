@@ -107,7 +107,6 @@ L7:
 L8:
     %r40 = add i32 0,0
     ret i32 %r40
-    br label %L10
 L9:
     %r41 = getelementptr i32, ptr %r0
     %r42 = load i32, ptr %r5

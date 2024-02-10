@@ -45,17 +45,11 @@ L5:
     br label %L2
 L6:
     br label %L4
-L7:
-    br label %L2
 L8:
     %r11 = load i32, ptr %r2
     %r12 = add i32 9,0
     %r13 = icmp sgt i32 %r11,%r12
     br i1 %r13, label %L5, label %L6
-L9:
-    br label %L7
-L10:
-    br label %L7
 L11:
     %r15 = add i32 1,0
     %r16 = icmp ne i32 %r15,0
@@ -89,8 +83,6 @@ L17:
     %r24 = add i32 9,0
     %r25 = icmp sle i32 %r23,%r24
     br i1 %r25, label %L14, label %L15
-L18:
-    br label %L16
 }
 define void @my_putint(i32 %r0)
 {

@@ -57,7 +57,6 @@ L2:
     %r29 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r23, i32 %r24, i32 %r25, i32 %r26, i32 %r27, i32 %r28
     %r30 = load i32, ptr %r29
     ret i32 %r30
-    br label %L3
 L3:
     %r31 = load i32, ptr %r6
     %r32 = load i32, ptr %r7
@@ -74,7 +73,6 @@ L3:
 L4:
     %r42 = add i32 1,0
     ret i32 %r42
-    br label %L5
 L5:
     %r44 = add i32 0,0
     store i32 %r44, ptr %r43
@@ -249,7 +247,6 @@ L1:
 L2:
     %r7 = add i32 1,0
     ret i32 %r7
-    br label %L3
 L3:
     %r8 = add i32 0,0
     ret i32 %r8

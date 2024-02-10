@@ -36,7 +36,6 @@ L1:
 L2:
     %r13 = load i32, ptr %r2
     ret i32 %r13
-    br label %L4
 L3:
     %r14 = load i32, ptr %r3
     %r15 = load i32, ptr %r2
@@ -44,8 +43,6 @@ L3:
     %r17 = load i32, ptr %r16
     %r18 = icmp sgt i32 %r14,%r17
     br i1 %r18, label %L6, label %L7
-L4:
-    ret i32 0
 L5:
     %r8 = load i32, ptr %r2
     %r9 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r8
@@ -60,7 +57,6 @@ L6:
     %r22 = load i32, ptr %r3
     %r23 = call i32 @search(i32 %r21,i32 %r22)
     ret i32 %r23
-    br label %L8
 L7:
     %r24 = load i32, ptr %r2
     %r25 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r24
@@ -68,9 +64,6 @@ L7:
     %r27 = load i32, ptr %r3
     %r28 = call i32 @search(i32 %r26,i32 %r27)
     ret i32 %r28
-    br label %L8
-L8:
-    br label %L4
 }
 define i32 @new_node(i32 %r0)
 {
@@ -118,7 +111,6 @@ L2:
     %r6 = add i32 1,0
     %r7 = sub i32 0,%r6
     ret i32 %r7
-    br label %L4
 L3:
     %r8 = load i32, ptr %r1
     %r9 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r8
@@ -136,7 +128,6 @@ L5:
     %r16 = load i32, ptr %r15
     %r17 = call i32 @find_minimum(i32 %r16)
     ret i32 %r17
-    br label %L6
 L6:
     br label %L4
 }
@@ -158,7 +149,6 @@ L2:
     %r8 = load i32, ptr %r3
     %r9 = call i32 @new_node(i32 %r8)
     ret i32 %r9
-    br label %L4
 L3:
     %r10 = load i32, ptr %r3
     %r11 = load i32, ptr %r2
@@ -210,7 +200,6 @@ L1:
 L2:
     %r5 = add i32 0,0
     ret i32 %r5
-    br label %L3
 L3:
     %r7 = call i32 @getint()
     %r8 = call i32 @new_node(i32 %r7)
@@ -284,7 +273,6 @@ L2:
     %r8 = add i32 1,0
     %r9 = sub i32 0,%r8
     ret i32 %r9
-    br label %L3
 L3:
     %r10 = load i32, ptr %r3
     %r11 = load i32, ptr %r2
@@ -336,7 +324,6 @@ L10:
     %r46 = add i32 1,0
     %r47 = sub i32 0,%r46
     ret i32 %r47
-    br label %L12
 L11:
     %r48 = load i32, ptr %r2
     %r49 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r48
@@ -401,15 +388,11 @@ L18:
     %r67 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r66
     %r68 = load i32, ptr %r67
     ret i32 %r68
-    br label %L20
 L19:
     %r69 = load i32, ptr %r2
     %r70 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r69
     %r71 = load i32, ptr %r70
     ret i32 %r71
-    br label %L20
-L20:
-    br label %L16
 }
 define void @inorder(i32 %r0)
 {

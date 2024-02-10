@@ -32,7 +32,6 @@ L1:
 L2:
     %r10 = load i32, ptr %r0
     ret i32 %r10
-    br label %L4
 L3:
     %r11 = load i32, ptr %r2
     %r12 = add i32 10,0

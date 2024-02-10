@@ -116,10 +116,6 @@ L21:
     br label %L13
 L22:
     br label %L19
-L23:
-    br label %L11
-L24:
-    br label %L22
 L25:
     %r41 = load i32, ptr %r39
     %r42 = add i32 2,0
@@ -141,14 +137,6 @@ L27:
     %r55 = add i32 %r53,%r54
     store i32 %r55, ptr %r0
     br label %L11
-L28:
-    br label %L27
-L29:
-    %r47 = load i32, ptr %r0
-    %r48 = add i32 1,0
-    %r49 = add i32 %r47,%r48
-    store i32 %r49, ptr %r0
-    br label %L25
 L30:
     %r56 = add i32 1,0
     %r57 = icmp ne i32 %r56,0
@@ -169,14 +157,4 @@ L34:
     br label %L35
 L35:
     br label %L32
-L36:
-    br label %L33
-L37:
-    br label %L30
-L38:
-    %r66 = load i32, ptr %r7
-    %r67 = add i32 1,0
-    %r68 = add i32 %r66,%r67
-    store i32 %r68, ptr %r7
-    br label %L5
 }

@@ -28,15 +28,11 @@ L2:
     call void @putint(i32 %r5)
     %r6 = add i32 1,0
     ret i32 %r6
-    br label %L4
 L3:
     %r7 = load i32, ptr %r1
     call void @putint(i32 %r7)
     %r8 = add i32 0,0
     ret i32 %r8
-    br label %L4
-L4:
-    ret i32 0
 }
 define i32 @main()
 {

@@ -26,7 +26,7 @@ extern int yylex();
 extern YYSTYPE yylval;
 extern char* yytext;
 extern std::vector<std::string> error_msgs;
-void print_lexer_result(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int line_number);
+void PrintLexerResult(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int line_number);
 
 #define step_tag 2
 #define o_tag 3
@@ -60,8 +60,7 @@ int main(int argc,char** argv)
         int token;
         ALIGNED_FORMAT_OUTPUT_HEAD("Token","Lexeme","Property","Line","Column");
         while((token = yylex()) != 0){
-            print_lexer_result(fout,yytext,yylval,token,line_number);
-            //print_lexer_result(std::cout,yytext,yylval,token,line_number);
+            PrintLexerResult(fout,yytext,yylval,token,line_number);
         }
         fout.close();
         return 0;
@@ -98,11 +97,11 @@ int main(int argc,char** argv)
 
     ast_root->codeIR();
 
-    //llvm_IR.elimate_dead_ins_and_blocks();
-    //llvm_IR.build_CFG();
-    
+    llvmIR.CFGInit();
+    llvmIR.BuildCFG();
+
     if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){
-        llvmIR.optimize();
+        
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
@@ -127,7 +126,7 @@ int main(int argc,char** argv)
 #define ALIGNED_FORMAT_OUTPUT(STR,CISU,PROP)\
 s <<std::fixed<<std::setprecision(12)<<std::setw(15)<<std::left<<STR<<" "<<std::setw(20)<<std::left<<CISU<<" "<<std::setw(32)<<std::left<<PROP<<" "<<std::setw(15)<<std::left<<line_number<<std::setw(15)<<std::left<<cur_col_number<<"\n"
 
-void print_lexer_result(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int line_number)
+void PrintLexerResult(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int line_number)
 {
     std::setfill(' ');
     switch(token){

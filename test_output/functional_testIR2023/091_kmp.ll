@@ -160,7 +160,6 @@ L7:
 L8:
     %r30 = load i32, ptr %r7
     ret i32 %r30
-    br label %L9
 L9:
     br label %L7
 L10:
@@ -215,6 +214,4 @@ L6:
     %r15 = add i32 %r13,%r14
     store i32 %r15, ptr %r1
     br label %L2
-L7:
-    br label %L6
 }
