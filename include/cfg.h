@@ -1,5 +1,5 @@
-#ifndef LLVM_CFG_H
-#define LLVM_CFG_H
+#ifndef CFG_H
+#define CFG_H
 
 #include <vector>
 #include <queue>

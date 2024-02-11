@@ -1,5 +1,5 @@
-#ifndef LLVM_IR_H
-#define LLVM_IR_H
+#ifndef IR_H
+#define IR_H
 
 #include "cfg.h"
 
