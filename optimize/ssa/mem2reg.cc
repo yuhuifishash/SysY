@@ -99,7 +99,41 @@ void Mem2RegOneDefDomAllUses(CFG* C,std::set<int> vset)
 void InsertPhi(CFG* C)
 {
     auto [defs,uses,def_num] = CalculatedDefAndUse(C);
-    
+    LLVMBlock entry_BB = (*C->block_map)[0];
+    std::set<int> no_use_vset, onedom_vset;
+    std::map<int,std::set<int> > sameblock_vset_map;
+
+    for(auto I:entry_BB->Instruction_list){
+        if(I->GetOpcode() != ALLOCA){continue;}
+
+        auto AllocaI = (AllocaInstruction*)I;
+        if(!(AllocaI->GetDims().empty())){continue;}//array can not be promoted
+        int v = AllocaI->GetResultRegNo();
+        LLVMType type = AllocaI->GetDataType();
+
+        auto alloca_defs = defs[v];
+        auto alloca_uses = uses[v];
+        if(alloca_uses.size() == 0){//not use
+            EraseSet.insert(I);
+            no_use_vset.insert(v);
+            continue;
+        }
+
+        if(alloca_defs.size() == 1){
+            int block_id = *(alloca_defs.begin());
+            if(alloca_uses.size() == 1 && *(alloca_uses.begin()) == block_id){//def and use in the same block
+                EraseSet.insert(I);
+                sameblock_vset_map[block_id].insert(v);
+                continue;
+            }
+        }
+
+    }
+    Mem2RegNoUseAlloca(C,no_use_vset);
+    Mem2RegOneDefDomAllUses(C,onedom_vset);
+    for(auto [id,vset]:sameblock_vset_map){
+        Mem2RegUseDefInSameBlock(C,vset,id);
+    }
 }
 
 void VarRename(CFG* C)
