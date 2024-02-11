@@ -1,5 +1,5 @@
-#include "llvm_cfg.h"
-#include "llvm_ir.h"
+#include "cfg.h"
+#include "ir.h"
 #include "Instruction.h"
 #include "lattice.h"
 

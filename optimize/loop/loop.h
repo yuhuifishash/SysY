@@ -1,7 +1,7 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include "llvm_cfg.h"
+#include "cfg.h"
 class CFG;
 
 class NaturalLoop

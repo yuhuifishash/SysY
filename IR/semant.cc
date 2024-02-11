@@ -1,6 +1,6 @@
 #include "semant.h"
 #include "SysY_tree.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include "type.h" 
 
 extern LLVMIR llvmIR;

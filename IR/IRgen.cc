@@ -1,6 +1,6 @@
 #include "IRgen.h"
 #include "semant.h"
-#include "llvm_ir.h"
+#include "ir.h"
 
 
 extern StringTable str_table;

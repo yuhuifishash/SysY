@@ -1,7 +1,7 @@
 #ifndef LLVM_IR_H
 #define LLVM_IR_H
 
-#include "llvm_cfg.h"
+#include "cfg.h"
 
 class LLVMIR
 {
@@ -42,24 +42,6 @@ public:
             Pass(cfg);
         }
     }
-
-    void mem2reg();
-    void SCCP();
-    void peephole_optimize();
-    void loop_find();
-    void LICM();
-    void GetFunctionBasicInfo();
-    void FunctionInline();
-    void TailCall2Loop();
-    void SimpleCSE();
-    void SimpleDCE();
-
-
-    void decompose_getelementptr();
-
-    void build_dominator_tree();
-    void insert_phi();
-    void var_rename();
 };
 
 #endif

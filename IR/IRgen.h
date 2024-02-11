@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 #include <assert.h>
-#include "llvm_cfg.h"
+#include "cfg.h"
 #include "symtab.h"
 #include "SysY_tree.h"
 #include "type.h"

@@ -1,6 +1,6 @@
 #include "Instruction.h"
 #include "basic_block.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include "SysY_tree.h"
 #include <sstream>
 AutoCounter BasicInstruction::insNoCounter;

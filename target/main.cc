@@ -6,7 +6,7 @@
 #include <fstream>
 #include "semant.h"
 #include "IRgen.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include "SysY_parser.tab.h"
 
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR,CISU,PROP,STR3,STR4)\
@@ -44,7 +44,8 @@ SysYc *.sy -S -o *.s (-O1)
 
 //compiler -S -o testcase.s testcase.sy
 
-//#define TEMP_OUTPUT_TEST
+void Mem2Reg(CFG*);
+
 int main(int argc,char** argv)
 {
     FILE* fin = fopen(argv[file_in],"r");
@@ -75,7 +76,6 @@ int main(int argc,char** argv)
 
     if(strcmp(argv[step_tag],"-parser") == 0){
         ast_root->printAST(fout,0);
-        //ast_root->printAST(std::cout,0);
         fout.close();
         return 0;
     }
@@ -89,7 +89,7 @@ int main(int argc,char** argv)
         fout.close();
         return 0;
     }
-    //std::cerr<<"finish semant\n";
+
     if(strcmp(argv[step_tag],"-semant") == 0){
         ast_root->printAST(fout,0);
         return 0;
@@ -100,13 +100,14 @@ int main(int argc,char** argv)
     llvmIR.CFGInit();
     llvmIR.BuildCFG();
 
-    if(argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0)){
-        
+    bool optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0));
+    if(optimize_flag){
+        llvmIR.BuildDominatorTree();
+        llvmIR.PassExecutor( Mem2Reg );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
         llvmIR.printIR(fout);
-        // llvm_IR.printIR(std::cout);
         fout.close();
         return 0;
     }

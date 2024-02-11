@@ -1,7 +1,7 @@
 #ifndef ARM_H
 #define ARM_H
 #include "arm_fields.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include "Instruction.h"
 #include <iostream>
 #include <vector>
