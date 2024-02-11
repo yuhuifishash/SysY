@@ -32,27 +32,10 @@ enum LLVMIROpcode
     RET=19,
     ZEXT=20,
     SHL=21,
-    LSHR=22,
-    ASHR=23,
     FPTOSI=24,
     GETELEMENTPTR=25,
     CALL=26,
-    ADD_SHIFT=27,
-    RSBS_SHIFT=28,
-    SMMUL=29,
-    RSBS=30,
-    SNIPPET=31,// unused
-    BICS=32,
-    AND_b=33,
-    SITOFP=34
-};
-
-enum arm_cond{
-    NONE = 0,
-    EX_CS = 1,
-    EX_LT = 2,
-    EX_PL = 3,
-    EX_S = 4
+    SITOFP=27
 };
 
 // @Operand datatypes 
@@ -313,7 +296,6 @@ class ArithmeticInstruction : public BasicInstruction
     Operand op2;
     Operand result;
 public:
-    enum arm_cond exec_cond;
     enum LLVMType GetDataType(){return type;}
     Operand GetOperand1(){return op1;}
     Operand GetOperand2(){return op2;}
@@ -325,7 +307,6 @@ public:
         this->op2=op2;
         this->result=result;
         this->type=type;
-        this->exec_cond = NONE;
     }
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}

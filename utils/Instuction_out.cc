@@ -95,30 +95,6 @@ std::ostream& operator<<(std::ostream&s,LLVMIROpcode type)
     case SHL:
         s<<"shl";
         break;
-    case LSHR:
-        s<<"lshr";
-        break;
-    case ASHR:
-        s<<"ashr";
-        break;
-    case ADD_SHIFT:
-        s<<"add";
-        break;
-    case RSBS_SHIFT:
-        s<<"rsbs";
-        break;
-    case SMMUL:
-        s<<"smmul";
-        break;
-    case RSBS:
-        s<<"rsbs";
-        break;
-    case BICS:
-        s<<"bics";
-        break;
-    case AND_b:
-        s<<"and";
-        break;
     } 
     return s;
 }
