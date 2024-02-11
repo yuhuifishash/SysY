@@ -108,7 +108,7 @@ class RegOperand:public BasicOperand{
     int reg_no;
 public:
     int GetRegNo(){return reg_no;}
-    void ChangeRegNo(){if(reg_no>=0){reg_no=-reg_no-1;}}
+    void ChangeRegNo(){if(reg_no >= 0){reg_no = -reg_no - 1;}}
     void SetRegNo(int new_no){reg_no = new_no;}
 
     static AutoCounter curRegNo;
@@ -201,7 +201,6 @@ protected:
     LLVMIROpcode opcode;
     int insNo;
 public:
-    int erase_tag = 0;
 
     int GetBlockID(){return BlockID;}
     void SetBlockID(int blockno){BlockID = blockno;}
@@ -247,7 +246,7 @@ public:
     }
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
-    int get_useregno(){return ((RegOperand*)pointer)->GetRegNo();}
+    int GetUseRegNo(){return ((RegOperand*)pointer)->GetRegNo();}
     Operand GetResultReg(){return result;}
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();

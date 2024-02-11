@@ -16,9 +16,9 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @QuickSort(ptr %r0,i32 %r1,i32 %r2)
 {
 L0:
-    %r68 = alloca i32
-    %r12 = alloca i32
-    %r10 = alloca i32
+    %r71 = alloca i32
+    %r14 = alloca i32
+    %r11 = alloca i32
     %r8 = alloca i32
     %r4 = alloca i32
     %r3 = alloca i32
@@ -31,126 +31,130 @@ L1:
     %r7 = icmp slt i32 %r5,%r6
     br i1 %r7, label %L2, label %L3
 L2:
-    store i32 0, ptr %r8
-    %r9 = load i32, ptr %r3
+    %r9 = add i32 0,0
     store i32 %r9, ptr %r8
-    store i32 0, ptr %r10
-    %r11 = load i32, ptr %r4
-    store i32 %r11, ptr %r10
-    store i32 0, ptr %r12
-    %r13 = load i32, ptr %r3
-    %r14 = getelementptr i32, ptr %r0, i32 %r13
-    %r15 = load i32, ptr %r14
-    store i32 %r15, ptr %r12
+    %r10 = load i32, ptr %r3
+    store i32 %r10, ptr %r8
+    %r12 = add i32 0,0
+    store i32 %r12, ptr %r11
+    %r13 = load i32, ptr %r4
+    store i32 %r13, ptr %r11
+    %r15 = add i32 0,0
+    store i32 %r15, ptr %r14
+    %r16 = load i32, ptr %r3
+    %r17 = getelementptr i32, ptr %r0, i32 %r16
+    %r18 = load i32, ptr %r17
+    store i32 %r18, ptr %r14
     br label %L4
 L3:
-    %r83 = add i32 0,0
-    ret i32 %r83
+    %r87 = add i32 0,0
+    ret i32 %r87
 L4:
-    %r16 = load i32, ptr %r8
-    %r17 = load i32, ptr %r10
-    %r18 = icmp slt i32 %r16,%r17
-    br i1 %r18, label %L5, label %L6
+    %r19 = load i32, ptr %r8
+    %r20 = load i32, ptr %r11
+    %r21 = icmp slt i32 %r19,%r20
+    br i1 %r21, label %L5, label %L6
 L5:
     br label %L7
 L6:
-    %r65 = load i32, ptr %r8
-    %r66 = getelementptr i32, ptr %r0, i32 %r65
-    %r67 = load i32, ptr %r12
-    store i32 %r67, ptr %r66
-    store i32 0, ptr %r68
-    %r69 = load i32, ptr %r8
-    %r70 = add i32 1,0
-    %r71 = sub i32 %r69,%r70
-    store i32 %r71, ptr %r68
-    %r72 = getelementptr i32, ptr %r0
-    %r73 = load i32, ptr %r3
-    %r74 = load i32, ptr %r68
-    %r75 = call i32 @QuickSort(ptr %r72,i32 %r73,i32 %r74)
-    store i32 %r75, ptr %r68
-    %r76 = load i32, ptr %r8
-    %r77 = add i32 1,0
-    %r78 = add i32 %r76,%r77
-    store i32 %r78, ptr %r68
-    %r79 = getelementptr i32, ptr %r0
-    %r80 = load i32, ptr %r68
-    %r81 = load i32, ptr %r4
-    %r82 = call i32 @QuickSort(ptr %r79,i32 %r80,i32 %r81)
-    store i32 %r82, ptr %r68
+    %r68 = load i32, ptr %r8
+    %r69 = getelementptr i32, ptr %r0, i32 %r68
+    %r70 = load i32, ptr %r14
+    store i32 %r70, ptr %r69
+    %r72 = add i32 0,0
+    store i32 %r72, ptr %r71
+    %r73 = load i32, ptr %r8
+    %r74 = add i32 1,0
+    %r75 = sub i32 %r73,%r74
+    store i32 %r75, ptr %r71
+    %r76 = getelementptr i32, ptr %r0
+    %r77 = load i32, ptr %r3
+    %r78 = load i32, ptr %r71
+    %r79 = call i32 @QuickSort(ptr %r76,i32 %r77,i32 %r78)
+    store i32 %r79, ptr %r71
+    %r80 = load i32, ptr %r8
+    %r81 = add i32 1,0
+    %r82 = add i32 %r80,%r81
+    store i32 %r82, ptr %r71
+    %r83 = getelementptr i32, ptr %r0
+    %r84 = load i32, ptr %r71
+    %r85 = load i32, ptr %r4
+    %r86 = call i32 @QuickSort(ptr %r83,i32 %r84,i32 %r85)
+    store i32 %r86, ptr %r71
     br label %L3
 L7:
-    %r19 = load i32, ptr %r8
-    %r20 = load i32, ptr %r10
-    %r21 = icmp slt i32 %r19,%r20
-    br i1 %r21, label %L10, label %L9
+    %r22 = load i32, ptr %r8
+    %r23 = load i32, ptr %r11
+    %r24 = icmp slt i32 %r22,%r23
+    br i1 %r24, label %L10, label %L9
 L8:
-    %r29 = load i32, ptr %r10
-    %r30 = add i32 1,0
-    %r31 = sub i32 %r29,%r30
-    store i32 %r31, ptr %r10
+    %r32 = load i32, ptr %r11
+    %r33 = add i32 1,0
+    %r34 = sub i32 %r32,%r33
+    store i32 %r34, ptr %r11
     br label %L7
 L9:
-    %r32 = load i32, ptr %r8
-    %r33 = load i32, ptr %r10
-    %r34 = icmp slt i32 %r32,%r33
-    br i1 %r34, label %L11, label %L12
-L10:
-    %r22 = load i32, ptr %r10
-    %r23 = getelementptr i32, ptr %r0, i32 %r22
-    %r24 = load i32, ptr %r23
-    %r25 = load i32, ptr %r12
-    %r26 = add i32 1,0
-    %r27 = sub i32 %r25,%r26
-    %r28 = icmp sgt i32 %r24,%r27
-    br i1 %r28, label %L8, label %L9
-L11:
     %r35 = load i32, ptr %r8
-    %r36 = getelementptr i32, ptr %r0, i32 %r35
-    %r37 = load i32, ptr %r10
-    %r38 = getelementptr i32, ptr %r0, i32 %r37
-    %r39 = load i32, ptr %r38
-    store i32 %r39, ptr %r36
-    %r40 = load i32, ptr %r8
-    %r41 = add i32 1,0
-    %r42 = add i32 %r40,%r41
-    store i32 %r42, ptr %r8
+    %r36 = load i32, ptr %r11
+    %r37 = icmp slt i32 %r35,%r36
+    br i1 %r37, label %L11, label %L12
+L10:
+    %r25 = load i32, ptr %r11
+    %r26 = getelementptr i32, ptr %r0, i32 %r25
+    %r27 = load i32, ptr %r26
+    %r28 = load i32, ptr %r14
+    %r29 = add i32 1,0
+    %r30 = sub i32 %r28,%r29
+    %r31 = icmp sgt i32 %r27,%r30
+    br i1 %r31, label %L8, label %L9
+L11:
+    %r38 = load i32, ptr %r8
+    %r39 = getelementptr i32, ptr %r0, i32 %r38
+    %r40 = load i32, ptr %r11
+    %r41 = getelementptr i32, ptr %r0, i32 %r40
+    %r42 = load i32, ptr %r41
+    store i32 %r42, ptr %r39
+    %r43 = load i32, ptr %r8
+    %r44 = add i32 1,0
+    %r45 = add i32 %r43,%r44
+    store i32 %r45, ptr %r8
     br label %L12
 L12:
     br label %L13
 L13:
-    %r43 = load i32, ptr %r8
-    %r44 = load i32, ptr %r10
-    %r45 = icmp slt i32 %r43,%r44
-    br i1 %r45, label %L16, label %L15
+    %r46 = load i32, ptr %r8
+    %r47 = load i32, ptr %r11
+    %r48 = icmp slt i32 %r46,%r47
+    br i1 %r48, label %L16, label %L15
 L14:
-    %r51 = load i32, ptr %r8
-    %r52 = add i32 1,0
-    %r53 = add i32 %r51,%r52
-    store i32 %r53, ptr %r8
+    %r54 = load i32, ptr %r8
+    %r55 = add i32 1,0
+    %r56 = add i32 %r54,%r55
+    store i32 %r56, ptr %r8
     br label %L13
 L15:
-    %r54 = load i32, ptr %r8
-    %r55 = load i32, ptr %r10
-    %r56 = icmp slt i32 %r54,%r55
-    br i1 %r56, label %L17, label %L18
+    %r57 = load i32, ptr %r8
+    %r58 = load i32, ptr %r11
+    %r59 = icmp slt i32 %r57,%r58
+    br i1 %r59, label %L17, label %L18
 L16:
-    %r46 = load i32, ptr %r8
-    %r47 = getelementptr i32, ptr %r0, i32 %r46
-    %r48 = load i32, ptr %r47
-    %r49 = load i32, ptr %r12
-    %r50 = icmp slt i32 %r48,%r49
-    br i1 %r50, label %L14, label %L15
+    %r49 = load i32, ptr %r8
+    %r50 = getelementptr i32, ptr %r0, i32 %r49
+    %r51 = load i32, ptr %r50
+    %r52 = load i32, ptr %r14
+    %r53 = icmp slt i32 %r51,%r52
+    br i1 %r53, label %L14, label %L15
 L17:
-    %r57 = load i32, ptr %r10
-    %r58 = getelementptr i32, ptr %r0, i32 %r57
-    %r59 = load i32, ptr %r8
-    %r60 = getelementptr i32, ptr %r0, i32 %r59
-    %r61 = load i32, ptr %r60
-    store i32 %r61, ptr %r58
-    %r62 = load i32, ptr %r10
-    %r63 = add i32 1,0
-    %r64 = sub i32 %r62,%r63
-    store i32 %r64, ptr %r10
+    %r60 = load i32, ptr %r11
+    %r61 = getelementptr i32, ptr %r0, i32 %r60
+    %r62 = load i32, ptr %r8
+    %r63 = getelementptr i32, ptr %r0, i32 %r62
+    %r64 = load i32, ptr %r63
+    store i32 %r64, ptr %r61
+    %r65 = load i32, ptr %r11
+    %r66 = add i32 1,0
+    %r67 = sub i32 %r65,%r66
+    store i32 %r67, ptr %r11
     br label %L18
 L18:
     br label %L4
@@ -158,8 +162,8 @@ L18:
 define i32 @main()
 {
 L0:
-    %r43 = alloca i32
-    %r34 = alloca i32
+    %r45 = alloca i32
+    %r35 = alloca i32
     %r32 = alloca i32
     %r1 = alloca [10 x i32]
     br label %L1
@@ -206,41 +210,44 @@ L1:
     %r30 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r29
     %r31 = add i32 8,0
     store i32 %r31, ptr %r30
-    store i32 0, ptr %r32
     %r33 = add i32 0,0
     store i32 %r33, ptr %r32
-    store i32 0, ptr %r34
-    %r35 = add i32 9,0
-    store i32 %r35, ptr %r34
-    %r36 = getelementptr [10 x i32], ptr %r1, i32 0
-    %r37 = load i32, ptr %r32
-    %r38 = load i32, ptr %r34
-    %r39 = call i32 @QuickSort(ptr %r36,i32 %r37,i32 %r38)
-    store i32 %r39, ptr %r32
+    %r34 = add i32 0,0
+    store i32 %r34, ptr %r32
+    %r36 = add i32 0,0
+    store i32 %r36, ptr %r35
+    %r37 = add i32 9,0
+    store i32 %r37, ptr %r35
+    %r38 = getelementptr [10 x i32], ptr %r1, i32 0
+    %r39 = load i32, ptr %r32
+    %r40 = load i32, ptr %r35
+    %r41 = call i32 @QuickSort(ptr %r38,i32 %r39,i32 %r40)
+    store i32 %r41, ptr %r32
     br label %L2
 L2:
-    %r40 = load i32, ptr %r32
-    %r41 = load i32, ptr @n
-    %r42 = icmp slt i32 %r40,%r41
-    br i1 %r42, label %L3, label %L4
+    %r42 = load i32, ptr %r32
+    %r43 = load i32, ptr @n
+    %r44 = icmp slt i32 %r42,%r43
+    br i1 %r44, label %L3, label %L4
 L3:
-    store i32 0, ptr %r43
-    %r44 = load i32, ptr %r32
-    %r45 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r44
-    %r46 = load i32, ptr %r45
-    store i32 %r46, ptr %r43
-    %r47 = load i32, ptr %r43
-    call void @putint(i32 %r47)
-    %r48 = add i32 10,0
-    store i32 %r48, ptr %r43
-    %r49 = load i32, ptr %r43
-    call void @putch(i32 %r49)
-    %r50 = load i32, ptr %r32
-    %r51 = add i32 1,0
-    %r52 = add i32 %r50,%r51
-    store i32 %r52, ptr %r32
+    %r46 = add i32 0,0
+    store i32 %r46, ptr %r45
+    %r47 = load i32, ptr %r32
+    %r48 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r47
+    %r49 = load i32, ptr %r48
+    store i32 %r49, ptr %r45
+    %r50 = load i32, ptr %r45
+    call void @putint(i32 %r50)
+    %r51 = add i32 10,0
+    store i32 %r51, ptr %r45
+    %r52 = load i32, ptr %r45
+    call void @putch(i32 %r52)
+    %r53 = load i32, ptr %r32
+    %r54 = add i32 1,0
+    %r55 = add i32 %r53,%r54
+    store i32 %r55, ptr %r32
     br label %L2
 L4:
-    %r53 = add i32 0,0
-    ret i32 %r53
+    %r56 = add i32 0,0
+    ret i32 %r56
 }

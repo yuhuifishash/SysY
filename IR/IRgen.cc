@@ -629,8 +629,13 @@ void VarDecl::codeIR()
                 val_operand = new RegOperand(max_reg);
             }
             else{//we consume that no init will be 0 by default
-                if(type_decl == Type::INT){val_operand = new ImmI32Operand(0);}
-                else if(type_decl == Type::FLOAT){val_operand = new ImmF32Operand(0);}
+                if(type_decl == Type::INT){
+                    IRgenArithmeticI32ImmAll(InitB,LLVMIROpcode::ADD,0,0,++max_reg);
+                    val_operand = new RegOperand(max_reg);
+                }else if(type_decl == Type::FLOAT){
+                    IRgenArithmeticF32ImmAll(InitB,LLVMIROpcode::FADD,0,0,++max_reg);
+                    val_operand = new RegOperand(max_reg);
+                }
             }
             //store the value
             IRgenStore(InitB,Type2LLvm[type_decl],val_operand,new RegOperand(alloca_reg));
@@ -678,16 +683,13 @@ void ConstDecl::codeIR()
             irgen_table.RegTable[alloca_reg] = val;
             Operand val_operand;
             InitVal init = def->GetInit();
-            if(init != nullptr){
-                Expression initExp = init->GetExp();
-                initExp->codeIR();
-                IRgenTypeConverse(InitB, initExp->attribute.T.type, type_decl, max_reg);
-                val_operand = new RegOperand(max_reg);
-            }
-            else{//we consume that no init will be 0 by default
-                if(type_decl == Type::INT){val_operand = new ImmI32Operand(0);}
-                else if(type_decl == Type::FLOAT){val_operand = new ImmF32Operand(0);}
-            }
+
+            assert(init != nullptr);
+            Expression initExp = init->GetExp();
+            initExp->codeIR();
+            IRgenTypeConverse(InitB, initExp->attribute.T.type, type_decl, max_reg);
+            val_operand = new RegOperand(max_reg);
+
             IRgenStore(InitB,Type2LLvm[type_decl],val_operand,new RegOperand(alloca_reg));
         }
     }

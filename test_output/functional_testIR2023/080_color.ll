@@ -17,6 +17,26 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @dp = global [18x [18x [18x [18x [18x [7x i32]]]]]] zeroinitializer
 @list = global [200x i32] zeroinitializer
 @cns = global [20x i32] zeroinitializer
+define i32 @equal(i32 %r0,i32 %r1)
+{
+L0:
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
+    br label %L1
+L1:
+    %r4 = load i32, ptr %r2
+    %r5 = load i32, ptr %r3
+    %r6 = icmp eq i32 %r4,%r5
+    br i1 %r6, label %L2, label %L3
+L2:
+    %r7 = add i32 1,0
+    ret i32 %r7
+L3:
+    %r8 = add i32 0,0
+    ret i32 %r8
+}
 define i32 @dfs(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5)
 {
 L0:
@@ -230,26 +250,6 @@ L15:
     %r170 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r164, i32 %r165, i32 %r166, i32 %r167, i32 %r168, i32 %r169
     %r171 = load i32, ptr %r170
     ret i32 %r171
-}
-define i32 @equal(i32 %r0,i32 %r1)
-{
-L0:
-    %r3 = alloca i32
-    %r2 = alloca i32
-    store i32 %r0, ptr %r2
-    store i32 %r1, ptr %r3
-    br label %L1
-L1:
-    %r4 = load i32, ptr %r2
-    %r5 = load i32, ptr %r3
-    %r6 = icmp eq i32 %r4,%r5
-    br i1 %r6, label %L2, label %L3
-L2:
-    %r7 = add i32 1,0
-    ret i32 %r7
-L3:
-    %r8 = add i32 0,0
-    ret i32 %r8
 }
 define i32 @main()
 {

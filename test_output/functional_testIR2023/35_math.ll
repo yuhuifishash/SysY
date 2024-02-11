@@ -13,37 +13,92 @@ declare void @_sysy_starttime(i32)
 declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @e = global float 0x4005bf0a80000000
-define float @F1(float %r0)
+define float @my_fabs(float %r0)
 {
 L0:
     %r1 = alloca float
     store float %r0, ptr %r1
     br label %L1
 L1:
-    %r2 = add i32 1,0
-    %r3 = load float, ptr %r1
-    %r4 = sitofp i32 %r2 to float
-    %r5 = fdiv float %r4,%r3
-    ret float %r5
+    %r2 = load float, ptr %r1
+    %r3 = add i32 0,0
+    %r4 = sitofp i32 %r3 to float
+    %r5 = fcmp ogt float %r2,%r4
+    br i1 %r5, label %L2, label %L3
+L2:
+    %r6 = load float, ptr %r1
+    ret float %r6
+L3:
+    %r7 = load float, ptr %r1
+    %r8 = fsub float 0x0,%r7
+    ret float %r8
 }
-define float @F2(float %r0)
+define float @my_sqrt(float %r0)
 {
 L0:
+    %r30 = alloca i32
+    %r13 = alloca float
     %r1 = alloca float
     store float %r0, ptr %r1
     br label %L1
 L1:
-    %r2 = add i32 1,0
-    %r3 = add i32 1,0
-    %r4 = load float, ptr %r1
-    %r5 = load float, ptr %r1
-    %r6 = fmul float %r4,%r5
-    %r7 = sitofp i32 %r3 to float
-    %r8 = fsub float %r7,%r6
-    %r9 = call float @my_sqrt(float %r8)
-    %r10 = sitofp i32 %r2 to float
-    %r11 = fdiv float %r10,%r9
-    ret float %r11
+    %r2 = load float, ptr %r1
+    %r3 = add i32 100,0
+    %r4 = sitofp i32 %r3 to float
+    %r5 = fcmp ogt float %r2,%r4
+    br i1 %r5, label %L2, label %L3
+L2:
+    %r6 = fadd float 0x4024000000000000,0x0
+    %r7 = load float, ptr %r1
+    %r8 = add i32 100,0
+    %r9 = sitofp i32 %r8 to float
+    %r10 = fdiv float %r7,%r9
+    %r11 = call float @my_sqrt(float %r10)
+    %r12 = fmul float %r6,%r11
+    ret float %r12
+L3:
+    %r14 = load float, ptr %r1
+    %r15 = add i32 8,0
+    %r16 = sitofp i32 %r15 to float
+    %r17 = fdiv float %r14,%r16
+    %r18 = fadd float 0x3fe0000000000000,0x0
+    %r19 = fadd float %r17,%r18
+    %r20 = add i32 2,0
+    %r21 = load float, ptr %r1
+    %r22 = sitofp i32 %r20 to float
+    %r23 = fmul float %r22,%r21
+    %r24 = add i32 4,0
+    %r25 = load float, ptr %r1
+    %r26 = sitofp i32 %r24 to float
+    %r27 = fadd float %r26,%r25
+    %r28 = fdiv float %r23,%r27
+    %r29 = fadd float %r19,%r28
+    store float %r29, ptr %r13
+    %r31 = add i32 10,0
+    store i32 %r31, ptr %r30
+    br label %L4
+L4:
+    %r32 = load i32, ptr %r30
+    %r33 = icmp ne i32 %r32,0
+    br i1 %r33, label %L5, label %L6
+L5:
+    %r34 = load float, ptr %r13
+    %r35 = load float, ptr %r1
+    %r36 = load float, ptr %r13
+    %r37 = fdiv float %r35,%r36
+    %r38 = fadd float %r34,%r37
+    %r39 = add i32 2,0
+    %r40 = sitofp i32 %r39 to float
+    %r41 = fdiv float %r38,%r40
+    store float %r41, ptr %r13
+    %r42 = load i32, ptr %r30
+    %r43 = add i32 1,0
+    %r44 = sub i32 %r42,%r43
+    store i32 %r44, ptr %r30
+    br label %L4
+L6:
+    %r45 = load float, ptr %r13
+    ret float %r45
 }
 define float @my_pow(float %r0,i32 %r1)
 {
@@ -102,25 +157,37 @@ L8:
     store i32 %r30, ptr %r3
     br label %L4
 }
-define float @my_fabs(float %r0)
+define float @F1(float %r0)
 {
 L0:
     %r1 = alloca float
     store float %r0, ptr %r1
     br label %L1
 L1:
-    %r2 = load float, ptr %r1
-    %r3 = add i32 0,0
-    %r4 = sitofp i32 %r3 to float
-    %r5 = fcmp ogt float %r2,%r4
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = load float, ptr %r1
-    ret float %r6
-L3:
-    %r7 = load float, ptr %r1
-    %r8 = fsub float 0x0,%r7
-    ret float %r8
+    %r2 = add i32 1,0
+    %r3 = load float, ptr %r1
+    %r4 = sitofp i32 %r2 to float
+    %r5 = fdiv float %r4,%r3
+    ret float %r5
+}
+define float @F2(float %r0)
+{
+L0:
+    %r1 = alloca float
+    store float %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = add i32 1,0
+    %r3 = add i32 1,0
+    %r4 = load float, ptr %r1
+    %r5 = load float, ptr %r1
+    %r6 = fmul float %r4,%r5
+    %r7 = sitofp i32 %r3 to float
+    %r8 = fsub float %r7,%r6
+    %r9 = call float @my_sqrt(float %r8)
+    %r10 = sitofp i32 %r2 to float
+    %r11 = fdiv float %r10,%r9
+    ret float %r11
 }
 define float @simpson(float %r0,float %r1,i32 %r2)
 {
@@ -196,133 +263,6 @@ L5:
     %r57 = add i32 0,0
     %r58 = sitofp i32 %r57 to float
     ret float %r58
-}
-define float @my_sqrt(float %r0)
-{
-L0:
-    %r30 = alloca i32
-    %r13 = alloca float
-    %r1 = alloca float
-    store float %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load float, ptr %r1
-    %r3 = add i32 100,0
-    %r4 = sitofp i32 %r3 to float
-    %r5 = fcmp ogt float %r2,%r4
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = fadd float 0x4024000000000000,0x0
-    %r7 = load float, ptr %r1
-    %r8 = add i32 100,0
-    %r9 = sitofp i32 %r8 to float
-    %r10 = fdiv float %r7,%r9
-    %r11 = call float @my_sqrt(float %r10)
-    %r12 = fmul float %r6,%r11
-    ret float %r12
-L3:
-    %r14 = load float, ptr %r1
-    %r15 = add i32 8,0
-    %r16 = sitofp i32 %r15 to float
-    %r17 = fdiv float %r14,%r16
-    %r18 = fadd float 0x3fe0000000000000,0x0
-    %r19 = fadd float %r17,%r18
-    %r20 = add i32 2,0
-    %r21 = load float, ptr %r1
-    %r22 = sitofp i32 %r20 to float
-    %r23 = fmul float %r22,%r21
-    %r24 = add i32 4,0
-    %r25 = load float, ptr %r1
-    %r26 = sitofp i32 %r24 to float
-    %r27 = fadd float %r26,%r25
-    %r28 = fdiv float %r23,%r27
-    %r29 = fadd float %r19,%r28
-    store float %r29, ptr %r13
-    %r31 = add i32 10,0
-    store i32 %r31, ptr %r30
-    br label %L4
-L4:
-    %r32 = load i32, ptr %r30
-    %r33 = icmp ne i32 %r32,0
-    br i1 %r33, label %L5, label %L6
-L5:
-    %r34 = load float, ptr %r13
-    %r35 = load float, ptr %r1
-    %r36 = load float, ptr %r13
-    %r37 = fdiv float %r35,%r36
-    %r38 = fadd float %r34,%r37
-    %r39 = add i32 2,0
-    %r40 = sitofp i32 %r39 to float
-    %r41 = fdiv float %r38,%r40
-    store float %r41, ptr %r13
-    %r42 = load i32, ptr %r30
-    %r43 = add i32 1,0
-    %r44 = sub i32 %r42,%r43
-    store i32 %r44, ptr %r30
-    br label %L4
-L6:
-    %r45 = load float, ptr %r13
-    ret float %r45
-}
-define float @my_log(float %r0,float %r1)
-{
-L0:
-    %r3 = alloca float
-    %r2 = alloca float
-    store float %r0, ptr %r2
-    store float %r1, ptr %r3
-    br label %L1
-L1:
-    %r4 = load float, ptr %r3
-    %r5 = call float @my_ln(float %r4)
-    %r6 = load float, ptr %r2
-    %r7 = call float @my_ln(float %r6)
-    %r8 = fdiv float %r5,%r7
-    ret float %r8
-}
-define float @my_exp(float %r0)
-{
-L0:
-    %r23 = alloca float
-    %r19 = alloca float
-    %r12 = alloca i32
-    %r1 = alloca float
-    store float %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load float, ptr %r1
-    %r3 = add i32 0,0
-    %r4 = sitofp i32 %r3 to float
-    %r5 = fcmp olt float %r2,%r4
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = add i32 1,0
-    %r7 = load float, ptr %r1
-    %r8 = fsub float 0x0,%r7
-    %r9 = call float @my_exp(float %r8)
-    %r10 = sitofp i32 %r6 to float
-    %r11 = fdiv float %r10,%r9
-    ret float %r11
-L3:
-    %r13 = load float, ptr %r1
-    %r14 = fptosi float %r13 to i32
-    store i32 %r14, ptr %r12
-    %r15 = load float, ptr %r1
-    %r16 = load i32, ptr %r12
-    %r17 = sitofp i32 %r16 to float
-    %r18 = fsub float %r15,%r17
-    store float %r18, ptr %r1
-    %r20 = load float, ptr @e
-    %r21 = load i32, ptr %r12
-    %r22 = call float @my_pow(float %r20,i32 %r21)
-    store float %r22, ptr %r19
-    %r24 = load float, ptr %r1
-    %r25 = call float @eee(float %r24)
-    store float %r25, ptr %r23
-    %r26 = load float, ptr %r19
-    %r27 = load float, ptr %r23
-    %r28 = fmul float %r26,%r27
-    ret float %r28
 }
 define float @asr5(float %r0,float %r1,float %r2,float %r3,i32 %r4)
 {
@@ -408,6 +348,30 @@ L3:
     %r69 = fadd float %r59,%r68
     ret float %r69
 }
+define float @asr4(float %r0,float %r1,float %r2,i32 %r3)
+{
+L0:
+    %r7 = alloca i32
+    %r6 = alloca float
+    %r5 = alloca float
+    %r4 = alloca float
+    store float %r0, ptr %r4
+    store float %r1, ptr %r5
+    store float %r2, ptr %r6
+    store i32 %r3, ptr %r7
+    br label %L1
+L1:
+    %r8 = load float, ptr %r4
+    %r9 = load float, ptr %r5
+    %r10 = load float, ptr %r6
+    %r11 = load float, ptr %r4
+    %r12 = load float, ptr %r5
+    %r13 = load i32, ptr %r7
+    %r14 = call float @simpson(float %r11,float %r12,i32 %r13)
+    %r15 = load i32, ptr %r7
+    %r16 = call float @asr5(float %r8,float %r9,float %r10,float %r14,i32 %r15)
+    ret float %r16
+}
 define float @eee(float %r0)
 {
 L0:
@@ -466,21 +430,49 @@ L3:
     %r45 = fadd float %r38,%r44
     ret float %r45
 }
-define float @my_powf(float %r0,float %r1)
+define float @my_exp(float %r0)
 {
 L0:
-    %r3 = alloca float
-    %r2 = alloca float
-    store float %r0, ptr %r2
-    store float %r1, ptr %r3
+    %r23 = alloca float
+    %r19 = alloca float
+    %r12 = alloca i32
+    %r1 = alloca float
+    store float %r0, ptr %r1
     br label %L1
 L1:
-    %r4 = load float, ptr %r3
-    %r5 = load float, ptr %r2
-    %r6 = call float @my_ln(float %r5)
-    %r7 = fmul float %r4,%r6
-    %r8 = call float @my_exp(float %r7)
-    ret float %r8
+    %r2 = load float, ptr %r1
+    %r3 = add i32 0,0
+    %r4 = sitofp i32 %r3 to float
+    %r5 = fcmp olt float %r2,%r4
+    br i1 %r5, label %L2, label %L3
+L2:
+    %r6 = add i32 1,0
+    %r7 = load float, ptr %r1
+    %r8 = fsub float 0x0,%r7
+    %r9 = call float @my_exp(float %r8)
+    %r10 = sitofp i32 %r6 to float
+    %r11 = fdiv float %r10,%r9
+    ret float %r11
+L3:
+    %r13 = load float, ptr %r1
+    %r14 = fptosi float %r13 to i32
+    store i32 %r14, ptr %r12
+    %r15 = load float, ptr %r1
+    %r16 = load i32, ptr %r12
+    %r17 = sitofp i32 %r16 to float
+    %r18 = fsub float %r15,%r17
+    store float %r18, ptr %r1
+    %r20 = load float, ptr @e
+    %r21 = load i32, ptr %r12
+    %r22 = call float @my_pow(float %r20,i32 %r21)
+    store float %r22, ptr %r19
+    %r24 = load float, ptr %r1
+    %r25 = call float @eee(float %r24)
+    store float %r25, ptr %r23
+    %r26 = load float, ptr %r19
+    %r27 = load float, ptr %r23
+    %r28 = fmul float %r26,%r27
+    ret float %r28
 }
 define float @my_ln(float %r0)
 {
@@ -497,29 +489,37 @@ L1:
     %r7 = call float @asr4(float %r3,float %r4,float %r5,i32 %r6)
     ret float %r7
 }
-define float @asr4(float %r0,float %r1,float %r2,i32 %r3)
+define float @my_log(float %r0,float %r1)
 {
 L0:
-    %r7 = alloca i32
-    %r6 = alloca float
-    %r5 = alloca float
-    %r4 = alloca float
-    store float %r0, ptr %r4
-    store float %r1, ptr %r5
-    store float %r2, ptr %r6
-    store i32 %r3, ptr %r7
+    %r3 = alloca float
+    %r2 = alloca float
+    store float %r0, ptr %r2
+    store float %r1, ptr %r3
     br label %L1
 L1:
-    %r8 = load float, ptr %r4
-    %r9 = load float, ptr %r5
-    %r10 = load float, ptr %r6
-    %r11 = load float, ptr %r4
-    %r12 = load float, ptr %r5
-    %r13 = load i32, ptr %r7
-    %r14 = call float @simpson(float %r11,float %r12,i32 %r13)
-    %r15 = load i32, ptr %r7
-    %r16 = call float @asr5(float %r8,float %r9,float %r10,float %r14,i32 %r15)
-    ret float %r16
+    %r4 = load float, ptr %r3
+    %r5 = call float @my_ln(float %r4)
+    %r6 = load float, ptr %r2
+    %r7 = call float @my_ln(float %r6)
+    %r8 = fdiv float %r5,%r7
+    ret float %r8
+}
+define float @my_powf(float %r0,float %r1)
+{
+L0:
+    %r3 = alloca float
+    %r2 = alloca float
+    store float %r0, ptr %r2
+    store float %r1, ptr %r3
+    br label %L1
+L1:
+    %r4 = load float, ptr %r3
+    %r5 = load float, ptr %r2
+    %r6 = call float @my_ln(float %r5)
+    %r7 = fmul float %r4,%r6
+    %r8 = call float @my_exp(float %r7)
+    ret float %r8
 }
 define i32 @main()
 {

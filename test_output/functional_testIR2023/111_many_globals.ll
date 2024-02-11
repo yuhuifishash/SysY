@@ -52,6 +52,44 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a37 = global i32 zeroinitializer
 @a38 = global i32 zeroinitializer
 @a39 = global i32 zeroinitializer
+define i32 @testParam8(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7)
+{
+L0:
+    %r15 = alloca i32
+    %r14 = alloca i32
+    %r13 = alloca i32
+    %r12 = alloca i32
+    %r11 = alloca i32
+    %r10 = alloca i32
+    %r9 = alloca i32
+    %r8 = alloca i32
+    store i32 %r0, ptr %r8
+    store i32 %r1, ptr %r9
+    store i32 %r2, ptr %r10
+    store i32 %r3, ptr %r11
+    store i32 %r4, ptr %r12
+    store i32 %r5, ptr %r13
+    store i32 %r6, ptr %r14
+    store i32 %r7, ptr %r15
+    br label %L1
+L1:
+    %r16 = load i32, ptr %r8
+    %r17 = load i32, ptr %r9
+    %r18 = add i32 %r16,%r17
+    %r19 = load i32, ptr %r10
+    %r20 = add i32 %r18,%r19
+    %r21 = load i32, ptr %r11
+    %r22 = add i32 %r20,%r21
+    %r23 = load i32, ptr %r12
+    %r24 = add i32 %r22,%r23
+    %r25 = load i32, ptr %r13
+    %r26 = add i32 %r24,%r25
+    %r27 = load i32, ptr %r14
+    %r28 = add i32 %r26,%r27
+    %r29 = load i32, ptr %r15
+    %r30 = add i32 %r28,%r29
+    ret i32 %r30
+}
 define i32 @testParam16(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15)
 {
 L0:
@@ -255,44 +293,6 @@ L1:
     %r125 = load i32, ptr %r63
     %r126 = add i32 %r124,%r125
     ret i32 %r126
-}
-define i32 @testParam8(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7)
-{
-L0:
-    %r15 = alloca i32
-    %r14 = alloca i32
-    %r13 = alloca i32
-    %r12 = alloca i32
-    %r11 = alloca i32
-    %r10 = alloca i32
-    %r9 = alloca i32
-    %r8 = alloca i32
-    store i32 %r0, ptr %r8
-    store i32 %r1, ptr %r9
-    store i32 %r2, ptr %r10
-    store i32 %r3, ptr %r11
-    store i32 %r4, ptr %r12
-    store i32 %r5, ptr %r13
-    store i32 %r6, ptr %r14
-    store i32 %r7, ptr %r15
-    br label %L1
-L1:
-    %r16 = load i32, ptr %r8
-    %r17 = load i32, ptr %r9
-    %r18 = add i32 %r16,%r17
-    %r19 = load i32, ptr %r10
-    %r20 = add i32 %r18,%r19
-    %r21 = load i32, ptr %r11
-    %r22 = add i32 %r20,%r21
-    %r23 = load i32, ptr %r12
-    %r24 = add i32 %r22,%r23
-    %r25 = load i32, ptr %r13
-    %r26 = add i32 %r24,%r25
-    %r27 = load i32, ptr %r14
-    %r28 = add i32 %r26,%r27
-    %r29 = load i32, ptr %r15
-    %r30 = add i32 %r28,%r29
-    ret i32 %r30
 }
 define i32 @main()
 {

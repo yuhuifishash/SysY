@@ -96,69 +96,70 @@ L13:
 define void @sortA(ptr %r0)
 {
 L0:
-    %r20 = alloca i32
+    %r21 = alloca i32
     %r3 = alloca i32
     %r1 = alloca i32
     br label %L1
 L1:
     %r2 = add i32 0,0
     store i32 %r2, ptr %r1
-    store i32 0, ptr %r3
+    %r4 = add i32 0,0
+    store i32 %r4, ptr %r3
     br label %L2
 L2:
-    %r4 = load i32, ptr %r1
-    %r5 = load i32, ptr @n
-    %r6 = icmp slt i32 %r4,%r5
-    br i1 %r6, label %L3, label %L4
+    %r5 = load i32, ptr %r1
+    %r6 = load i32, ptr @n
+    %r7 = icmp slt i32 %r5,%r6
+    br i1 %r7, label %L3, label %L4
 L3:
-    %r7 = load i32, ptr %r1
-    %r8 = add i32 1,0
-    %r9 = add i32 %r7,%r8
-    store i32 %r9, ptr %r3
+    %r8 = load i32, ptr %r1
+    %r9 = add i32 1,0
+    %r10 = add i32 %r8,%r9
+    store i32 %r10, ptr %r3
     br label %L5
 L4:
     ret void
 L5:
-    %r10 = load i32, ptr %r3
-    %r11 = load i32, ptr @n
-    %r12 = icmp slt i32 %r10,%r11
-    br i1 %r12, label %L6, label %L7
+    %r11 = load i32, ptr %r3
+    %r12 = load i32, ptr @n
+    %r13 = icmp slt i32 %r11,%r12
+    br i1 %r13, label %L6, label %L7
 L6:
-    %r13 = load i32, ptr %r1
-    %r14 = getelementptr i32, ptr %r0, i32 %r13
-    %r15 = load i32, ptr %r14
-    %r16 = load i32, ptr %r3
-    %r17 = getelementptr i32, ptr %r0, i32 %r16
-    %r18 = load i32, ptr %r17
-    %r19 = icmp sgt i32 %r15,%r18
-    br i1 %r19, label %L8, label %L9
+    %r14 = load i32, ptr %r1
+    %r15 = getelementptr i32, ptr %r0, i32 %r14
+    %r16 = load i32, ptr %r15
+    %r17 = load i32, ptr %r3
+    %r18 = getelementptr i32, ptr %r0, i32 %r17
+    %r19 = load i32, ptr %r18
+    %r20 = icmp sgt i32 %r16,%r19
+    br i1 %r20, label %L8, label %L9
 L7:
-    %r35 = load i32, ptr %r1
-    %r36 = add i32 1,0
-    %r37 = add i32 %r35,%r36
-    store i32 %r37, ptr %r1
+    %r36 = load i32, ptr %r1
+    %r37 = add i32 1,0
+    %r38 = add i32 %r36,%r37
+    store i32 %r38, ptr %r1
     br label %L2
 L8:
-    %r21 = load i32, ptr %r1
-    %r22 = getelementptr i32, ptr %r0, i32 %r21
-    %r23 = load i32, ptr %r22
-    store i32 %r23, ptr %r20
-    %r24 = load i32, ptr %r1
-    %r25 = getelementptr i32, ptr %r0, i32 %r24
-    %r26 = load i32, ptr %r3
-    %r27 = getelementptr i32, ptr %r0, i32 %r26
-    %r28 = load i32, ptr %r27
-    store i32 %r28, ptr %r25
-    %r29 = load i32, ptr %r3
-    %r30 = getelementptr i32, ptr %r0, i32 %r29
-    %r31 = load i32, ptr %r20
-    store i32 %r31, ptr %r30
+    %r22 = load i32, ptr %r1
+    %r23 = getelementptr i32, ptr %r0, i32 %r22
+    %r24 = load i32, ptr %r23
+    store i32 %r24, ptr %r21
+    %r25 = load i32, ptr %r1
+    %r26 = getelementptr i32, ptr %r0, i32 %r25
+    %r27 = load i32, ptr %r3
+    %r28 = getelementptr i32, ptr %r0, i32 %r27
+    %r29 = load i32, ptr %r28
+    store i32 %r29, ptr %r26
+    %r30 = load i32, ptr %r3
+    %r31 = getelementptr i32, ptr %r0, i32 %r30
+    %r32 = load i32, ptr %r21
+    store i32 %r32, ptr %r31
     br label %L9
 L9:
-    %r32 = load i32, ptr %r3
-    %r33 = add i32 1,0
-    %r34 = add i32 %r32,%r33
-    store i32 %r34, ptr %r3
+    %r33 = load i32, ptr %r3
+    %r34 = add i32 1,0
+    %r35 = add i32 %r33,%r34
+    store i32 %r35, ptr %r3
     br label %L5
 }
 define void @sortB(ptr %r0)

@@ -20,107 +20,6 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @PI = global float 0x400921fb60000000
 @TWO_PI = global float 0x401921fb60000000
 @EPSILON = global float 0x3eb0c6f7a0000000
-define i32 @rotate(i32 %r0,i32 %r1,float %r2)
-{
-L0:
-    %r42 = alloca i32
-    %r28 = alloca i32
-    %r24 = alloca i32
-    %r20 = alloca i32
-    %r16 = alloca i32
-    %r12 = alloca i32
-    %r9 = alloca float
-    %r6 = alloca float
-    %r5 = alloca float
-    %r4 = alloca i32
-    %r3 = alloca i32
-    store i32 %r0, ptr %r3
-    store i32 %r1, ptr %r4
-    store float %r2, ptr %r5
-    br label %L1
-L1:
-    %r7 = load float, ptr %r5
-    %r8 = call float @my_sin(float %r7)
-    store float %r8, ptr %r6
-    %r10 = load float, ptr %r5
-    %r11 = call float @my_cos(float %r10)
-    store float %r11, ptr %r9
-    %r13 = load i32, ptr @width
-    %r14 = add i32 2,0
-    %r15 = sdiv i32 %r13,%r14
-    store i32 %r15, ptr %r12
-    %r17 = load i32, ptr @height
-    %r18 = add i32 2,0
-    %r19 = sdiv i32 %r17,%r18
-    store i32 %r19, ptr %r16
-    %r21 = load i32, ptr %r3
-    %r22 = load i32, ptr %r12
-    %r23 = sub i32 %r21,%r22
-    store i32 %r23, ptr %r20
-    %r25 = load i32, ptr %r4
-    %r26 = load i32, ptr %r16
-    %r27 = sub i32 %r25,%r26
-    store i32 %r27, ptr %r24
-    %r29 = load i32, ptr %r20
-    %r30 = load float, ptr %r9
-    %r31 = sitofp i32 %r29 to float
-    %r32 = fmul float %r31,%r30
-    %r33 = load i32, ptr %r24
-    %r34 = load float, ptr %r6
-    %r35 = sitofp i32 %r33 to float
-    %r36 = fmul float %r35,%r34
-    %r37 = fsub float %r32,%r36
-    %r38 = load i32, ptr %r12
-    %r39 = sitofp i32 %r38 to float
-    %r40 = fadd float %r37,%r39
-    %r41 = fptosi float %r40 to i32
-    store i32 %r41, ptr %r28
-    %r43 = load i32, ptr %r20
-    %r44 = load float, ptr %r6
-    %r45 = sitofp i32 %r43 to float
-    %r46 = fmul float %r45,%r44
-    %r47 = load i32, ptr %r24
-    %r48 = load float, ptr %r9
-    %r49 = sitofp i32 %r47 to float
-    %r50 = fmul float %r49,%r48
-    %r51 = fadd float %r46,%r50
-    %r52 = load i32, ptr %r16
-    %r53 = sitofp i32 %r52 to float
-    %r54 = fadd float %r51,%r53
-    %r55 = fptosi float %r54 to i32
-    store i32 %r55, ptr %r42
-    %r56 = load i32, ptr %r28
-    %r57 = add i32 0,0
-    %r58 = icmp slt i32 %r56,%r57
-    br i1 %r58, label %L2, label %L6
-L2:
-    %r68 = add i32 0,0
-    ret i32 %r68
-L3:
-    %r69 = load i32, ptr %r42
-    %r70 = load i32, ptr @width
-    %r71 = mul i32 %r69,%r70
-    %r72 = load i32, ptr %r28
-    %r73 = add i32 %r71,%r72
-    %r74 = getelementptr [1048576 x i32], ptr @image, i32 0, i32 %r73
-    %r75 = load i32, ptr %r74
-    ret i32 %r75
-L4:
-    %r65 = load i32, ptr %r42
-    %r66 = load i32, ptr @height
-    %r67 = icmp sge i32 %r65,%r66
-    br i1 %r67, label %L2, label %L3
-L5:
-    %r62 = load i32, ptr %r42
-    %r63 = add i32 0,0
-    %r64 = icmp slt i32 %r62,%r63
-    br i1 %r64, label %L2, label %L4
-L6:
-    %r59 = load i32, ptr %r28
-    %r60 = load i32, ptr @width
-    %r61 = icmp sge i32 %r59,%r60
-    br i1 %r61, label %L2, label %L5
-}
 define float @my_fabs(float %r0)
 {
 L0:
@@ -139,6 +38,22 @@ L2:
 L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
+    ret float %r8
+}
+define float @my_cos(float %r0)
+{
+L0:
+    %r1 = alloca float
+    store float %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load float, ptr %r1
+    %r3 = load float, ptr @PI
+    %r4 = add i32 2,0
+    %r5 = sitofp i32 %r4 to float
+    %r6 = fdiv float %r3,%r5
+    %r7 = fadd float %r2,%r6
+    %r8 = call float @my_sin(float %r7)
     ret float %r8
 }
 define float @p(float %r0)
@@ -331,44 +246,106 @@ L14:
     store i32 %r43, ptr %r21
     br label %L9
 }
-define float @my_cos(float %r0)
+define i32 @rotate(i32 %r0,i32 %r1,float %r2)
 {
 L0:
-    %r1 = alloca float
-    store float %r0, ptr %r1
+    %r42 = alloca i32
+    %r28 = alloca i32
+    %r24 = alloca i32
+    %r20 = alloca i32
+    %r16 = alloca i32
+    %r12 = alloca i32
+    %r9 = alloca float
+    %r6 = alloca float
+    %r5 = alloca float
+    %r4 = alloca i32
+    %r3 = alloca i32
+    store i32 %r0, ptr %r3
+    store i32 %r1, ptr %r4
+    store float %r2, ptr %r5
     br label %L1
 L1:
-    %r2 = load float, ptr %r1
-    %r3 = load float, ptr @PI
-    %r4 = add i32 2,0
-    %r5 = sitofp i32 %r4 to float
-    %r6 = fdiv float %r3,%r5
-    %r7 = fadd float %r2,%r6
+    %r7 = load float, ptr %r5
     %r8 = call float @my_sin(float %r7)
-    ret float %r8
-}
-define i32 @main()
-{
-L0:
-    %r0 = alloca float
-    br label %L1
-L1:
-    %r1 = call float @getfloat()
-    store float %r1, ptr %r0
-    %r2 = call i32 @getch()
-    %r3 = call i32 @read_image()
-    %r4 = add i32 0,0
-    %r5 = icmp slt i32 %r3,%r4
-    br i1 %r5, label %L2, label %L3
+    store float %r8, ptr %r6
+    %r10 = load float, ptr %r5
+    %r11 = call float @my_cos(float %r10)
+    store float %r11, ptr %r9
+    %r13 = load i32, ptr @width
+    %r14 = add i32 2,0
+    %r15 = sdiv i32 %r13,%r14
+    store i32 %r15, ptr %r12
+    %r17 = load i32, ptr @height
+    %r18 = add i32 2,0
+    %r19 = sdiv i32 %r17,%r18
+    store i32 %r19, ptr %r16
+    %r21 = load i32, ptr %r3
+    %r22 = load i32, ptr %r12
+    %r23 = sub i32 %r21,%r22
+    store i32 %r23, ptr %r20
+    %r25 = load i32, ptr %r4
+    %r26 = load i32, ptr %r16
+    %r27 = sub i32 %r25,%r26
+    store i32 %r27, ptr %r24
+    %r29 = load i32, ptr %r20
+    %r30 = load float, ptr %r9
+    %r31 = sitofp i32 %r29 to float
+    %r32 = fmul float %r31,%r30
+    %r33 = load i32, ptr %r24
+    %r34 = load float, ptr %r6
+    %r35 = sitofp i32 %r33 to float
+    %r36 = fmul float %r35,%r34
+    %r37 = fsub float %r32,%r36
+    %r38 = load i32, ptr %r12
+    %r39 = sitofp i32 %r38 to float
+    %r40 = fadd float %r37,%r39
+    %r41 = fptosi float %r40 to i32
+    store i32 %r41, ptr %r28
+    %r43 = load i32, ptr %r20
+    %r44 = load float, ptr %r6
+    %r45 = sitofp i32 %r43 to float
+    %r46 = fmul float %r45,%r44
+    %r47 = load i32, ptr %r24
+    %r48 = load float, ptr %r9
+    %r49 = sitofp i32 %r47 to float
+    %r50 = fmul float %r49,%r48
+    %r51 = fadd float %r46,%r50
+    %r52 = load i32, ptr %r16
+    %r53 = sitofp i32 %r52 to float
+    %r54 = fadd float %r51,%r53
+    %r55 = fptosi float %r54 to i32
+    store i32 %r55, ptr %r42
+    %r56 = load i32, ptr %r28
+    %r57 = add i32 0,0
+    %r58 = icmp slt i32 %r56,%r57
+    br i1 %r58, label %L2, label %L6
 L2:
-    %r6 = add i32 1,0
-    %r7 = sub i32 0,%r6
-    ret i32 %r7
+    %r68 = add i32 0,0
+    ret i32 %r68
 L3:
-    %r8 = load float, ptr %r0
-    call void @write_pgm(float %r8)
-    %r9 = add i32 0,0
-    ret i32 %r9
+    %r69 = load i32, ptr %r42
+    %r70 = load i32, ptr @width
+    %r71 = mul i32 %r69,%r70
+    %r72 = load i32, ptr %r28
+    %r73 = add i32 %r71,%r72
+    %r74 = getelementptr [1048576 x i32], ptr @image, i32 0, i32 %r73
+    %r75 = load i32, ptr %r74
+    ret i32 %r75
+L4:
+    %r65 = load i32, ptr %r42
+    %r66 = load i32, ptr @height
+    %r67 = icmp sge i32 %r65,%r66
+    br i1 %r67, label %L2, label %L3
+L5:
+    %r62 = load i32, ptr %r42
+    %r63 = add i32 0,0
+    %r64 = icmp slt i32 %r62,%r63
+    br i1 %r64, label %L2, label %L4
+L6:
+    %r59 = load i32, ptr %r28
+    %r60 = load i32, ptr @width
+    %r61 = icmp sge i32 %r59,%r60
+    br i1 %r61, label %L2, label %L5
 }
 define void @write_pgm(float %r0)
 {
@@ -437,4 +414,27 @@ L7:
     %r32 = add i32 %r30,%r31
     store i32 %r32, ptr %r11
     br label %L2
+}
+define i32 @main()
+{
+L0:
+    %r0 = alloca float
+    br label %L1
+L1:
+    %r1 = call float @getfloat()
+    store float %r1, ptr %r0
+    %r2 = call i32 @getch()
+    %r3 = call i32 @read_image()
+    %r4 = add i32 0,0
+    %r5 = icmp slt i32 %r3,%r4
+    br i1 %r5, label %L2, label %L3
+L2:
+    %r6 = add i32 1,0
+    %r7 = sub i32 0,%r6
+    ret i32 %r7
+L3:
+    %r8 = load float, ptr %r0
+    call void @write_pgm(float %r8)
+    %r9 = add i32 0,0
+    ret i32 %r9
 }

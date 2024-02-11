@@ -22,6 +22,55 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @EPSILON = global float 0x3eb0c6f7a0000000
 @RAND_MAX = global i32 100000006
 @seed = global i32 0
+define i32 @rand()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = load i32, ptr @seed
+    %r1 = add i32 19980130,0
+    %r2 = mul i32 %r0,%r1
+    %r3 = add i32 23333,0
+    %r4 = add i32 %r2,%r3
+    %r5 = add i32 100000007,0
+    %r6 = srem i32 %r4,%r5
+    store i32 %r6, ptr @seed
+    %r7 = load i32, ptr @seed
+    %r8 = add i32 0,0
+    %r9 = icmp slt i32 %r7,%r8
+    br i1 %r9, label %L2, label %L3
+L2:
+    %r10 = load i32, ptr @seed
+    %r11 = add i32 100000007,0
+    %r12 = add i32 %r10,%r11
+    store i32 %r12, ptr @seed
+    br label %L3
+L3:
+    %r13 = load i32, ptr @seed
+    ret i32 %r13
+}
+define float @p(float %r0)
+{
+L0:
+    %r1 = alloca float
+    store float %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = add i32 3,0
+    %r3 = load float, ptr %r1
+    %r4 = sitofp i32 %r2 to float
+    %r5 = fmul float %r4,%r3
+    %r6 = add i32 4,0
+    %r7 = load float, ptr %r1
+    %r8 = sitofp i32 %r6 to float
+    %r9 = fmul float %r8,%r7
+    %r10 = load float, ptr %r1
+    %r11 = fmul float %r9,%r10
+    %r12 = load float, ptr %r1
+    %r13 = fmul float %r11,%r12
+    %r14 = fsub float %r5,%r13
+    ret float %r14
+}
 define float @my_fabs(float %r0)
 {
 L0:
@@ -41,29 +90,6 @@ L3:
     %r7 = load float, ptr %r1
     %r8 = fsub float 0x0,%r7
     ret float %r8
-}
-define float @my_sin_impl(float %r0)
-{
-L0:
-    %r1 = alloca float
-    store float %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load float, ptr %r1
-    %r3 = call float @my_fabs(float %r2)
-    %r4 = load float, ptr @EPSILON
-    %r5 = fcmp ole float %r3,%r4
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = load float, ptr %r1
-    ret float %r6
-L3:
-    %r7 = load float, ptr %r1
-    %r8 = fadd float 0x4008000000000000,0x0
-    %r9 = fdiv float %r7,%r8
-    %r10 = call float @my_sin_impl(float %r9)
-    %r11 = call float @p(float %r10)
-    ret float %r11
 }
 define float @my_sqrt(float %r0)
 {
@@ -117,32 +143,28 @@ L4:
     %r34 = load float, ptr %r2
     ret float %r34
 }
-define i32 @rand()
+define float @my_sin_impl(float %r0)
 {
 L0:
+    %r1 = alloca float
+    store float %r0, ptr %r1
     br label %L1
 L1:
-    %r0 = load i32, ptr @seed
-    %r1 = add i32 19980130,0
-    %r2 = mul i32 %r0,%r1
-    %r3 = add i32 23333,0
-    %r4 = add i32 %r2,%r3
-    %r5 = add i32 100000007,0
-    %r6 = srem i32 %r4,%r5
-    store i32 %r6, ptr @seed
-    %r7 = load i32, ptr @seed
-    %r8 = add i32 0,0
-    %r9 = icmp slt i32 %r7,%r8
-    br i1 %r9, label %L2, label %L3
+    %r2 = load float, ptr %r1
+    %r3 = call float @my_fabs(float %r2)
+    %r4 = load float, ptr @EPSILON
+    %r5 = fcmp ole float %r3,%r4
+    br i1 %r5, label %L2, label %L3
 L2:
-    %r10 = load i32, ptr @seed
-    %r11 = add i32 100000007,0
-    %r12 = add i32 %r10,%r11
-    store i32 %r12, ptr @seed
-    br label %L3
+    %r6 = load float, ptr %r1
+    ret float %r6
 L3:
-    %r13 = load i32, ptr @seed
-    ret i32 %r13
+    %r7 = load float, ptr %r1
+    %r8 = fadd float 0x4008000000000000,0x0
+    %r9 = fdiv float %r7,%r8
+    %r10 = call float @my_sin_impl(float %r9)
+    %r11 = call float @p(float %r10)
+    ret float %r11
 }
 define float @my_sin(float %r0)
 {
@@ -204,27 +226,21 @@ L8:
     %r34 = call float @my_sin_impl(float %r33)
     ret float %r34
 }
-define float @p(float %r0)
+define float @my_cos(float %r0)
 {
 L0:
     %r1 = alloca float
     store float %r0, ptr %r1
     br label %L1
 L1:
-    %r2 = add i32 3,0
-    %r3 = load float, ptr %r1
-    %r4 = sitofp i32 %r2 to float
-    %r5 = fmul float %r4,%r3
-    %r6 = add i32 4,0
-    %r7 = load float, ptr %r1
-    %r8 = sitofp i32 %r6 to float
-    %r9 = fmul float %r8,%r7
-    %r10 = load float, ptr %r1
-    %r11 = fmul float %r9,%r10
-    %r12 = load float, ptr %r1
-    %r13 = fmul float %r11,%r12
-    %r14 = fsub float %r5,%r13
-    ret float %r14
+    %r2 = load float, ptr %r1
+    %r3 = load float, ptr @PI
+    %r4 = add i32 2,0
+    %r5 = sitofp i32 %r4 to float
+    %r6 = fdiv float %r3,%r5
+    %r7 = fadd float %r2,%r6
+    %r8 = call float @my_sin(float %r7)
+    ret float %r8
 }
 define float @circle_sdf(float %r0,float %r1,float %r2,float %r3,float %r4)
 {
@@ -263,21 +279,57 @@ L1:
     %r27 = fsub float %r25,%r26
     ret float %r27
 }
-define float @my_cos(float %r0)
+define void @scene(float %r0,float %r1,ptr %r2)
 {
 L0:
-    %r1 = alloca float
-    store float %r0, ptr %r1
+    %r12 = alloca float
+    %r5 = alloca float
+    %r4 = alloca float
+    %r3 = alloca float
+    store float %r0, ptr %r3
+    store float %r1, ptr %r4
     br label %L1
 L1:
-    %r2 = load float, ptr %r1
-    %r3 = load float, ptr @PI
-    %r4 = add i32 2,0
-    %r5 = sitofp i32 %r4 to float
-    %r6 = fdiv float %r3,%r5
-    %r7 = fadd float %r2,%r6
-    %r8 = call float @my_sin(float %r7)
-    ret float %r8
+    %r6 = load float, ptr %r3
+    %r7 = load float, ptr %r4
+    %r8 = fadd float 0x3fd99999a0000000,0x0
+    %r9 = fadd float 0x3fd99999a0000000,0x0
+    %r10 = fadd float 0x3fb99999a0000000,0x0
+    %r11 = call float @circle_sdf(float %r6,float %r7,float %r8,float %r9,float %r10)
+    store float %r11, ptr %r5
+    %r13 = load float, ptr %r3
+    %r14 = load float, ptr %r4
+    %r15 = fadd float 0x3fe3333340000000,0x0
+    %r16 = fadd float 0x3fe3333340000000,0x0
+    %r17 = fadd float 0x3fa99999a0000000,0x0
+    %r18 = call float @circle_sdf(float %r13,float %r14,float %r15,float %r16,float %r17)
+    store float %r18, ptr %r12
+    %r19 = load float, ptr %r5
+    %r20 = load float, ptr %r12
+    %r21 = fcmp olt float %r19,%r20
+    br i1 %r21, label %L2, label %L3
+L2:
+    %r22 = add i32 0,0
+    %r23 = getelementptr float, ptr %r2, i32 %r22
+    %r24 = load float, ptr %r5
+    store float %r24, ptr %r23
+    %r25 = add i32 1,0
+    %r26 = getelementptr float, ptr %r2, i32 %r25
+    %r27 = fadd float 0x4008000000000000,0x0
+    store float %r27, ptr %r26
+    br label %L4
+L3:
+    %r28 = add i32 0,0
+    %r29 = getelementptr float, ptr %r2, i32 %r28
+    %r30 = load float, ptr %r12
+    store float %r30, ptr %r29
+    %r31 = add i32 1,0
+    %r32 = getelementptr float, ptr %r2, i32 %r31
+    %r33 = fadd float 0x0,0x0
+    store float %r33, ptr %r32
+    br label %L4
+L4:
+    ret void
 }
 define float @trace(float %r0,float %r1,float %r2,float %r3)
 {
@@ -350,66 +402,67 @@ L7:
     store i32 %r45, ptr %r10
     br label %L2
 }
-define i32 @main()
+define float @sample(float %r0,float %r1)
 {
 L0:
-    br label %L1
-L1:
-    call void @write_pgm()
-    %r0 = add i32 0,0
-    ret i32 %r0
-}
-define void @scene(float %r0,float %r1,ptr %r2)
-{
-L0:
-    %r12 = alloca float
-    %r5 = alloca float
+    %r14 = alloca float
+    %r11 = alloca float
+    %r6 = alloca i32
     %r4 = alloca float
     %r3 = alloca float
-    store float %r0, ptr %r3
-    store float %r1, ptr %r4
+    %r2 = alloca float
+    store float %r0, ptr %r2
+    store float %r1, ptr %r3
     br label %L1
 L1:
-    %r6 = load float, ptr %r3
-    %r7 = load float, ptr %r4
-    %r8 = fadd float 0x3fd99999a0000000,0x0
-    %r9 = fadd float 0x3fd99999a0000000,0x0
-    %r10 = fadd float 0x3fb99999a0000000,0x0
-    %r11 = call float @circle_sdf(float %r6,float %r7,float %r8,float %r9,float %r10)
-    store float %r11, ptr %r5
-    %r13 = load float, ptr %r3
-    %r14 = load float, ptr %r4
-    %r15 = fadd float 0x3fe3333340000000,0x0
-    %r16 = fadd float 0x3fe3333340000000,0x0
-    %r17 = fadd float 0x3fa99999a0000000,0x0
-    %r18 = call float @circle_sdf(float %r13,float %r14,float %r15,float %r16,float %r17)
-    store float %r18, ptr %r12
-    %r19 = load float, ptr %r5
-    %r20 = load float, ptr %r12
-    %r21 = fcmp olt float %r19,%r20
-    br i1 %r21, label %L2, label %L3
+    %r5 = fadd float 0x0,0x0
+    store float %r5, ptr %r4
+    %r7 = add i32 0,0
+    store i32 %r7, ptr %r6
+    br label %L2
 L2:
-    %r22 = add i32 0,0
-    %r23 = getelementptr float, ptr %r2, i32 %r22
-    %r24 = load float, ptr %r5
-    store float %r24, ptr %r23
-    %r25 = add i32 1,0
-    %r26 = getelementptr float, ptr %r2, i32 %r25
-    %r27 = fadd float 0x4008000000000000,0x0
-    store float %r27, ptr %r26
-    br label %L4
+    %r8 = load i32, ptr %r6
+    %r9 = load i32, ptr @N
+    %r10 = icmp slt i32 %r8,%r9
+    br i1 %r10, label %L3, label %L4
 L3:
-    %r28 = add i32 0,0
-    %r29 = getelementptr float, ptr %r2, i32 %r28
-    %r30 = load float, ptr %r12
-    store float %r30, ptr %r29
-    %r31 = add i32 1,0
-    %r32 = getelementptr float, ptr %r2, i32 %r31
-    %r33 = fadd float 0x0,0x0
-    store float %r33, ptr %r32
-    br label %L4
+    %r12 = call i32 @rand()
+    %r13 = sitofp i32 %r12 to float
+    store float %r13, ptr %r11
+    %r15 = load float, ptr @TWO_PI
+    %r16 = load i32, ptr %r6
+    %r17 = load float, ptr %r11
+    %r18 = load i32, ptr @RAND_MAX
+    %r19 = sitofp i32 %r18 to float
+    %r20 = fdiv float %r17,%r19
+    %r21 = sitofp i32 %r16 to float
+    %r22 = fadd float %r21,%r20
+    %r23 = fmul float %r15,%r22
+    %r24 = load i32, ptr @N
+    %r25 = sitofp i32 %r24 to float
+    %r26 = fdiv float %r23,%r25
+    store float %r26, ptr %r14
+    %r27 = load float, ptr %r4
+    %r28 = load float, ptr %r2
+    %r29 = load float, ptr %r3
+    %r30 = load float, ptr %r14
+    %r31 = call float @my_cos(float %r30)
+    %r32 = load float, ptr %r14
+    %r33 = call float @my_sin(float %r32)
+    %r34 = call float @trace(float %r28,float %r29,float %r31,float %r33)
+    %r35 = fadd float %r27,%r34
+    store float %r35, ptr %r4
+    %r36 = load i32, ptr %r6
+    %r37 = add i32 1,0
+    %r38 = add i32 %r36,%r37
+    store i32 %r38, ptr %r6
+    br label %L2
 L4:
-    ret void
+    %r39 = load float, ptr %r4
+    %r40 = load i32, ptr @N
+    %r41 = sitofp i32 %r40 to float
+    %r42 = fdiv float %r39,%r41
+    ret float %r42
 }
 define void @write_pgm()
 {
@@ -505,65 +558,12 @@ L9:
     store i32 %r46, ptr %r14
     br label %L5
 }
-define float @sample(float %r0,float %r1)
+define i32 @main()
 {
 L0:
-    %r14 = alloca float
-    %r11 = alloca float
-    %r6 = alloca i32
-    %r4 = alloca float
-    %r3 = alloca float
-    %r2 = alloca float
-    store float %r0, ptr %r2
-    store float %r1, ptr %r3
     br label %L1
 L1:
-    %r5 = fadd float 0x0,0x0
-    store float %r5, ptr %r4
-    %r7 = add i32 0,0
-    store i32 %r7, ptr %r6
-    br label %L2
-L2:
-    %r8 = load i32, ptr %r6
-    %r9 = load i32, ptr @N
-    %r10 = icmp slt i32 %r8,%r9
-    br i1 %r10, label %L3, label %L4
-L3:
-    %r12 = call i32 @rand()
-    %r13 = sitofp i32 %r12 to float
-    store float %r13, ptr %r11
-    %r15 = load float, ptr @TWO_PI
-    %r16 = load i32, ptr %r6
-    %r17 = load float, ptr %r11
-    %r18 = load i32, ptr @RAND_MAX
-    %r19 = sitofp i32 %r18 to float
-    %r20 = fdiv float %r17,%r19
-    %r21 = sitofp i32 %r16 to float
-    %r22 = fadd float %r21,%r20
-    %r23 = fmul float %r15,%r22
-    %r24 = load i32, ptr @N
-    %r25 = sitofp i32 %r24 to float
-    %r26 = fdiv float %r23,%r25
-    store float %r26, ptr %r14
-    %r27 = load float, ptr %r4
-    %r28 = load float, ptr %r2
-    %r29 = load float, ptr %r3
-    %r30 = load float, ptr %r14
-    %r31 = call float @my_cos(float %r30)
-    %r32 = load float, ptr %r14
-    %r33 = call float @my_sin(float %r32)
-    %r34 = call float @trace(float %r28,float %r29,float %r31,float %r33)
-    %r35 = fadd float %r27,%r34
-    store float %r35, ptr %r4
-    %r36 = load i32, ptr %r6
-    %r37 = add i32 1,0
-    %r38 = add i32 %r36,%r37
-    store i32 %r38, ptr %r6
-    br label %L2
-L4:
-    %r39 = load float, ptr %r4
-    %r40 = load i32, ptr @N
-    %r41 = sitofp i32 %r40 to float
-    %r42 = fdiv float %r39,%r41
-    ret float %r42
+    call void @write_pgm()
+    %r0 = add i32 0,0
+    ret i32 %r0
 }

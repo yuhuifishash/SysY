@@ -95,61 +95,6 @@ L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
 }
-define void @clear()
-{
-L0:
-    %r0 = alloca i32
-    br label %L1
-L1:
-    %r1 = add i32 1,0
-    store i32 %r1, ptr %r0
-    br label %L2
-L2:
-    %r2 = load i32, ptr %r0
-    %r3 = load i32, ptr @n
-    %r4 = icmp sle i32 %r2,%r3
-    br i1 %r4, label %L3, label %L4
-L3:
-    %r5 = load i32, ptr %r0
-    %r6 = getelementptr [1005 x i32], ptr @vis, i32 0, i32 %r5
-    %r7 = add i32 0,0
-    store i32 %r7, ptr %r6
-    %r8 = load i32, ptr %r0
-    %r9 = add i32 1,0
-    %r10 = add i32 %r8,%r9
-    store i32 %r10, ptr %r0
-    br label %L2
-L4:
-    ret void
-}
-define void @init()
-{
-L0:
-    %r0 = alloca i32
-    br label %L1
-L1:
-    %r1 = add i32 0,0
-    store i32 %r1, ptr %r0
-    br label %L2
-L2:
-    %r2 = load i32, ptr %r0
-    %r3 = load i32, ptr @maxn
-    %r4 = icmp slt i32 %r2,%r3
-    br i1 %r4, label %L3, label %L4
-L3:
-    %r5 = load i32, ptr %r0
-    %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r5
-    %r7 = add i32 1,0
-    %r8 = sub i32 0,%r7
-    store i32 %r8, ptr %r6
-    %r9 = load i32, ptr %r0
-    %r10 = add i32 1,0
-    %r11 = add i32 %r9,%r10
-    store i32 %r11, ptr %r0
-    br label %L2
-L4:
-    ret void
-}
 define void @add_edge(i32 %r0,i32 %r1)
 {
 L0:
@@ -195,6 +140,61 @@ L1:
     %r30 = add i32 1,0
     %r31 = add i32 %r29,%r30
     store i32 %r31, ptr @cnt
+    ret void
+}
+define void @init()
+{
+L0:
+    %r0 = alloca i32
+    br label %L1
+L1:
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
+    br label %L2
+L2:
+    %r2 = load i32, ptr %r0
+    %r3 = load i32, ptr @maxn
+    %r4 = icmp slt i32 %r2,%r3
+    br i1 %r4, label %L3, label %L4
+L3:
+    %r5 = load i32, ptr %r0
+    %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r5
+    %r7 = add i32 1,0
+    %r8 = sub i32 0,%r7
+    store i32 %r8, ptr %r6
+    %r9 = load i32, ptr %r0
+    %r10 = add i32 1,0
+    %r11 = add i32 %r9,%r10
+    store i32 %r11, ptr %r0
+    br label %L2
+L4:
+    ret void
+}
+define void @clear()
+{
+L0:
+    %r0 = alloca i32
+    br label %L1
+L1:
+    %r1 = add i32 1,0
+    store i32 %r1, ptr %r0
+    br label %L2
+L2:
+    %r2 = load i32, ptr %r0
+    %r3 = load i32, ptr @n
+    %r4 = icmp sle i32 %r2,%r3
+    br i1 %r4, label %L3, label %L4
+L3:
+    %r5 = load i32, ptr %r0
+    %r6 = getelementptr [1005 x i32], ptr @vis, i32 0, i32 %r5
+    %r7 = add i32 0,0
+    store i32 %r7, ptr %r6
+    %r8 = load i32, ptr %r0
+    %r9 = add i32 1,0
+    %r10 = add i32 %r8,%r9
+    store i32 %r10, ptr %r0
+    br label %L2
+L4:
     ret void
 }
 define i32 @same(i32 %r0,i32 %r1)

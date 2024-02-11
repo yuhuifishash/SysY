@@ -28,6 +28,29 @@ L1:
     %r1 = load i32, ptr @last_char
     ret i32 %r1
 }
+define i32 @is_num(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr %r1
+    %r3 = add i32 48,0
+    %r4 = icmp sge i32 %r2,%r3
+    br i1 %r4, label %L5, label %L3
+L2:
+    %r8 = add i32 1,0
+    ret i32 %r8
+L3:
+    %r9 = add i32 0,0
+    ret i32 %r9
+L5:
+    %r5 = load i32, ptr %r1
+    %r6 = add i32 57,0
+    %r7 = icmp sle i32 %r5,%r6
+    br i1 %r7, label %L2, label %L3
+}
 define i32 @is_space(i32 %r0)
 {
 L0:
@@ -106,6 +129,29 @@ L10:
     store i32 %r20, ptr @cur_token
     br label %L7
 }
+define i32 @panic()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = add i32 112,0
+    call void @putch(i32 %r0)
+    %r1 = add i32 97,0
+    call void @putch(i32 %r1)
+    %r2 = add i32 110,0
+    call void @putch(i32 %r2)
+    %r3 = add i32 105,0
+    call void @putch(i32 %r3)
+    %r4 = add i32 99,0
+    call void @putch(i32 %r4)
+    %r5 = add i32 33,0
+    call void @putch(i32 %r5)
+    %r6 = add i32 10,0
+    call void @putch(i32 %r6)
+    %r7 = add i32 1,0
+    %r8 = sub i32 0,%r7
+    ret i32 %r8
+}
 define i32 @get_op_prec(i32 %r0)
 {
 L0:
@@ -147,52 +193,6 @@ L8:
     %r14 = icmp eq i32 %r12,%r13
     br i1 %r14, label %L5, label %L7
 }
-define i32 @panic()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = add i32 112,0
-    call void @putch(i32 %r0)
-    %r1 = add i32 97,0
-    call void @putch(i32 %r1)
-    %r2 = add i32 110,0
-    call void @putch(i32 %r2)
-    %r3 = add i32 105,0
-    call void @putch(i32 %r3)
-    %r4 = add i32 99,0
-    call void @putch(i32 %r4)
-    %r5 = add i32 33,0
-    call void @putch(i32 %r5)
-    %r6 = add i32 10,0
-    call void @putch(i32 %r6)
-    %r7 = add i32 1,0
-    %r8 = sub i32 0,%r7
-    ret i32 %r8
-}
-define i32 @is_num(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr %r1
-    %r3 = add i32 48,0
-    %r4 = icmp sge i32 %r2,%r3
-    br i1 %r4, label %L5, label %L3
-L2:
-    %r8 = add i32 1,0
-    ret i32 %r8
-L3:
-    %r9 = add i32 0,0
-    ret i32 %r9
-L5:
-    %r5 = load i32, ptr %r1
-    %r6 = add i32 57,0
-    %r7 = icmp sle i32 %r5,%r6
-    br i1 %r7, label %L2, label %L3
-}
 define void @stack_push(ptr %r0,i32 %r1)
 {
 L0:
@@ -215,16 +215,6 @@ L1:
     %r14 = load i32, ptr %r2
     store i32 %r14, ptr %r13
     ret void
-}
-define i32 @stack_size(ptr %r0)
-{
-L0:
-    br label %L1
-L1:
-    %r1 = add i32 0,0
-    %r2 = getelementptr i32, ptr %r0, i32 %r1
-    %r3 = load i32, ptr %r2
-    ret i32 %r3
 }
 define i32 @stack_pop(ptr %r0)
 {
@@ -260,6 +250,16 @@ L1:
     %r4 = getelementptr i32, ptr %r0, i32 %r3
     %r5 = load i32, ptr %r4
     ret i32 %r5
+}
+define i32 @stack_size(ptr %r0)
+{
+L0:
+    br label %L1
+L1:
+    %r1 = add i32 0,0
+    %r2 = getelementptr i32, ptr %r0, i32 %r1
+    %r3 = load i32, ptr %r2
+    ret i32 %r3
 }
 define i32 @eval_op(i32 %r0,i32 %r1,i32 %r2)
 {

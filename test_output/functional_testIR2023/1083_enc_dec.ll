@@ -69,26 +69,28 @@ L4:
 define i32 @main()
 {
 L0:
-    %r2 = alloca i32
+    %r3 = alloca i32
     %r0 = alloca i32
     br label %L1
 L1:
-    store i32 0, ptr %r0
-    %r1 = add i32 400,0
+    %r1 = add i32 0,0
     store i32 %r1, ptr %r0
-    store i32 0, ptr %r2
-    %r3 = load i32, ptr %r0
-    %r4 = call i32 @enc(i32 %r3)
-    store i32 %r4, ptr %r2
-    %r5 = load i32, ptr %r2
-    %r6 = call i32 @dec(i32 %r5)
-    store i32 %r6, ptr %r2
-    %r7 = load i32, ptr %r2
-    call void @putint(i32 %r7)
-    %r8 = add i32 10,0
-    store i32 %r8, ptr %r2
-    %r9 = load i32, ptr %r2
-    call void @putch(i32 %r9)
-    %r10 = add i32 0,0
-    ret i32 %r10
+    %r2 = add i32 400,0
+    store i32 %r2, ptr %r0
+    %r4 = add i32 0,0
+    store i32 %r4, ptr %r3
+    %r5 = load i32, ptr %r0
+    %r6 = call i32 @enc(i32 %r5)
+    store i32 %r6, ptr %r3
+    %r7 = load i32, ptr %r3
+    %r8 = call i32 @dec(i32 %r7)
+    store i32 %r8, ptr %r3
+    %r9 = load i32, ptr %r3
+    call void @putint(i32 %r9)
+    %r10 = add i32 10,0
+    store i32 %r10, ptr %r3
+    %r11 = load i32, ptr %r3
+    call void @putch(i32 %r11)
+    %r12 = add i32 0,0
+    ret i32 %r12
 }

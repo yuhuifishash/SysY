@@ -15,31 +15,6 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @V = global i32 4
 @space = global i32 32
 @LF = global i32 10
-define void @printMessage()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = add i32 78,0
-    call void @putch(i32 %r0)
-    %r1 = add i32 111,0
-    call void @putch(i32 %r1)
-    %r2 = add i32 116,0
-    call void @putch(i32 %r2)
-    %r3 = load i32, ptr @space
-    call void @putch(i32 %r3)
-    %r4 = add i32 101,0
-    call void @putch(i32 %r4)
-    %r5 = add i32 120,0
-    call void @putch(i32 %r5)
-    %r6 = add i32 105,0
-    call void @putch(i32 %r6)
-    %r7 = add i32 115,0
-    call void @putch(i32 %r7)
-    %r8 = add i32 116,0
-    call void @putch(i32 %r8)
-    ret void
-}
 define void @printSolution(ptr %r0)
 {
 L0:
@@ -69,6 +44,31 @@ L3:
 L4:
     %r13 = load i32, ptr @LF
     call void @putch(i32 %r13)
+    ret void
+}
+define void @printMessage()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = add i32 78,0
+    call void @putch(i32 %r0)
+    %r1 = add i32 111,0
+    call void @putch(i32 %r1)
+    %r2 = add i32 116,0
+    call void @putch(i32 %r2)
+    %r3 = load i32, ptr @space
+    call void @putch(i32 %r3)
+    %r4 = add i32 101,0
+    call void @putch(i32 %r4)
+    %r5 = add i32 120,0
+    call void @putch(i32 %r5)
+    %r6 = add i32 105,0
+    call void @putch(i32 %r6)
+    %r7 = add i32 115,0
+    call void @putch(i32 %r7)
+    %r8 = add i32 116,0
+    call void @putch(i32 %r8)
     ret void
 }
 define i32 @isSafe(ptr %r0,ptr %r1)

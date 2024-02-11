@@ -27,6 +27,24 @@ L1:
     %r3 = load i32, ptr @count
     ret i32 %r3
 }
+define void @f2()
+{
+L0:
+    %r3 = alloca i32
+    br label %L1
+L1:
+    %r0 = load i32, ptr @sum
+    %r1 = load i32, ptr @a
+    %r2 = add i32 %r0,%r1
+    store i32 %r2, ptr @sum
+    %r4 = call i32 @getA()
+    store i32 %r4, ptr %r3
+    %r5 = load i32, ptr @sum
+    %r6 = load i32, ptr @a
+    %r7 = add i32 %r5,%r6
+    store i32 %r7, ptr @sum
+    ret void
+}
 define void @f1(i32 %r0)
 {
 L0:
@@ -92,24 +110,6 @@ L1:
     %r12 = load i32, ptr %r0
     %r13 = add i32 %r11,%r12
     store i32 %r13, ptr @sum
-    ret void
-}
-define void @f2()
-{
-L0:
-    %r3 = alloca i32
-    br label %L1
-L1:
-    %r0 = load i32, ptr @sum
-    %r1 = load i32, ptr @a
-    %r2 = add i32 %r0,%r1
-    store i32 %r2, ptr @sum
-    %r4 = call i32 @getA()
-    store i32 %r4, ptr %r3
-    %r5 = load i32, ptr @sum
-    %r6 = load i32, ptr @a
-    %r7 = add i32 %r5,%r6
-    store i32 %r7, ptr @sum
     ret void
 }
 define i32 @main()

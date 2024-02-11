@@ -22,67 +22,68 @@ L0:
 L1:
     %r1 = add i32 0,0
     store i32 %r1, ptr %r0
-    store i32 0, ptr %r2
+    %r3 = add i32 0,0
+    store i32 %r3, ptr %r2
     br label %L2
 L2:
-    %r3 = add i32 1,0
-    %r4 = icmp ne i32 %r3,0
-    br i1 %r4, label %L3, label %L4
+    %r4 = add i32 1,0
+    %r5 = icmp ne i32 %r4,0
+    br i1 %r5, label %L3, label %L4
 L3:
-    %r5 = call i32 @getch()
-    %r6 = load i32, ptr @ascii_0
-    %r7 = sub i32 %r5,%r6
-    store i32 %r7, ptr %r2
-    %r8 = load i32, ptr %r2
-    %r9 = add i32 0,0
-    %r10 = icmp slt i32 %r8,%r9
-    br i1 %r10, label %L5, label %L8
+    %r6 = call i32 @getch()
+    %r7 = load i32, ptr @ascii_0
+    %r8 = sub i32 %r6,%r7
+    store i32 %r8, ptr %r2
+    %r9 = load i32, ptr %r2
+    %r10 = add i32 0,0
+    %r11 = icmp slt i32 %r9,%r10
+    br i1 %r11, label %L5, label %L8
 L4:
-    %r14 = load i32, ptr %r2
-    store i32 %r14, ptr %r0
+    %r15 = load i32, ptr %r2
+    store i32 %r15, ptr %r0
     br label %L11
 L5:
     br label %L2
 L6:
     br label %L4
 L8:
-    %r11 = load i32, ptr %r2
-    %r12 = add i32 9,0
-    %r13 = icmp sgt i32 %r11,%r12
-    br i1 %r13, label %L5, label %L6
+    %r12 = load i32, ptr %r2
+    %r13 = add i32 9,0
+    %r14 = icmp sgt i32 %r12,%r13
+    br i1 %r14, label %L5, label %L6
 L11:
-    %r15 = add i32 1,0
-    %r16 = icmp ne i32 %r15,0
-    br i1 %r16, label %L12, label %L13
+    %r16 = add i32 1,0
+    %r17 = icmp ne i32 %r16,0
+    br i1 %r17, label %L12, label %L13
 L12:
-    %r17 = call i32 @getch()
-    %r18 = load i32, ptr @ascii_0
-    %r19 = sub i32 %r17,%r18
-    store i32 %r19, ptr %r2
-    %r20 = load i32, ptr %r2
-    %r21 = add i32 0,0
-    %r22 = icmp sge i32 %r20,%r21
-    br i1 %r22, label %L17, label %L15
+    %r18 = call i32 @getch()
+    %r19 = load i32, ptr @ascii_0
+    %r20 = sub i32 %r18,%r19
+    store i32 %r20, ptr %r2
+    %r21 = load i32, ptr %r2
+    %r22 = add i32 0,0
+    %r23 = icmp sge i32 %r21,%r22
+    br i1 %r23, label %L17, label %L15
 L13:
-    %r31 = load i32, ptr %r0
-    ret i32 %r31
+    %r32 = load i32, ptr %r0
+    ret i32 %r32
 L14:
-    %r26 = load i32, ptr %r0
-    %r27 = add i32 10,0
-    %r28 = mul i32 %r26,%r27
-    %r29 = load i32, ptr %r2
-    %r30 = add i32 %r28,%r29
-    store i32 %r30, ptr %r0
+    %r27 = load i32, ptr %r0
+    %r28 = add i32 10,0
+    %r29 = mul i32 %r27,%r28
+    %r30 = load i32, ptr %r2
+    %r31 = add i32 %r29,%r30
+    store i32 %r31, ptr %r0
     br label %L16
 L15:
     br label %L13
 L16:
     br label %L11
 L17:
-    %r23 = load i32, ptr %r2
-    %r24 = add i32 9,0
-    %r25 = icmp sle i32 %r23,%r24
-    br i1 %r25, label %L14, label %L15
+    %r24 = load i32, ptr %r2
+    %r25 = add i32 9,0
+    %r26 = icmp sle i32 %r24,%r25
+    br i1 %r26, label %L14, label %L15
 }
 define void @my_putint(i32 %r0)
 {

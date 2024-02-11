@@ -88,9 +88,9 @@ L3:
 define i32 @main()
 {
 L0:
-    %r18 = alloca i32
+    %r21 = alloca i32
+    %r19 = alloca i32
     %r17 = alloca i32
-    %r16 = alloca i32
     %r15 = alloca i32
     %r11 = alloca i32
     %r9 = alloca i32
@@ -114,166 +114,170 @@ L1:
     %r13 = add i32 1,0
     %r14 = sub i32 %r12,%r13
     store i32 %r14, ptr %r11
-    store i32 0, ptr %r15
-    store i32 0, ptr %r16
-    store i32 0, ptr %r17
-    store i32 0, ptr %r18
-    %r19 = add i32 0,0
-    %r20 = load i32, ptr %r0
-    %r21 = load i32, ptr %r3
-    %r22 = call i32 @get_ans(i32 %r19,i32 %r20,i32 %r21)
-    store i32 %r22, ptr %r15
-    %r23 = load i32, ptr %r15
+    %r16 = add i32 0,0
+    store i32 %r16, ptr %r15
+    %r18 = add i32 0,0
+    store i32 %r18, ptr %r17
+    %r20 = add i32 0,0
+    store i32 %r20, ptr %r19
+    %r22 = add i32 0,0
+    store i32 %r22, ptr %r21
+    %r23 = add i32 0,0
     %r24 = load i32, ptr %r0
-    %r25 = add i32 1,0
-    %r26 = add i32 %r24,%r25
-    %r27 = load i32, ptr %r5
-    %r28 = call i32 @get_ans(i32 %r23,i32 %r26,i32 %r27)
-    store i32 %r28, ptr %r15
-    %r29 = load i32, ptr %r15
-    %r30 = load i32, ptr %r0
-    %r31 = load i32, ptr %r9
-    %r32 = sub i32 0,%r31
-    %r33 = add i32 1,0
-    %r34 = sub i32 %r32,%r33
-    %r35 = call i32 @get_ans(i32 %r29,i32 %r30,i32 %r34)
-    store i32 %r35, ptr %r15
-    %r36 = load i32, ptr %r15
-    %r37 = load i32, ptr %r0
-    %r38 = load i32, ptr %r11
-    %r39 = add i32 1,0
-    %r40 = add i32 %r38,%r39
-    %r41 = call i32 @get_ans(i32 %r36,i32 %r37,i32 %r40)
-    store i32 %r41, ptr %r15
-    %r42 = load i32, ptr %r15
-    %r43 = load i32, ptr %r3
-    %r44 = add i32 2,0
-    %r45 = sdiv i32 %r43,%r44
-    %r46 = load i32, ptr %r5
-    %r47 = add i32 2,0
-    %r48 = sdiv i32 %r46,%r47
-    %r49 = call i32 @get_ans(i32 %r42,i32 %r45,i32 %r48)
-    store i32 %r49, ptr %r15
-    %r50 = load i32, ptr %r15
-    %r51 = load i32, ptr %r3
-    %r52 = load i32, ptr %r9
-    %r53 = sub i32 0,%r52
-    %r54 = add i32 1,0
-    %r55 = sub i32 %r53,%r54
-    %r56 = call i32 @get_ans(i32 %r50,i32 %r51,i32 %r55)
-    store i32 %r56, ptr %r15
-    %r57 = load i32, ptr %r15
-    %r58 = load i32, ptr %r3
-    %r59 = load i32, ptr %r11
-    %r60 = add i32 1,0
-    %r61 = add i32 %r59,%r60
-    %r62 = call i32 @get_ans(i32 %r57,i32 %r58,i32 %r61)
-    store i32 %r62, ptr %r15
-    %r63 = add i32 0,0
-    %r64 = load i32, ptr %r5
-    %r65 = load i32, ptr %r9
-    %r66 = call i32 @get_ans(i32 %r63,i32 %r64,i32 %r65)
-    store i32 %r66, ptr %r16
-    %r67 = load i32, ptr %r16
+    %r25 = load i32, ptr %r3
+    %r26 = call i32 @get_ans(i32 %r23,i32 %r24,i32 %r25)
+    store i32 %r26, ptr %r15
+    %r27 = load i32, ptr %r15
+    %r28 = load i32, ptr %r0
+    %r29 = add i32 1,0
+    %r30 = add i32 %r28,%r29
+    %r31 = load i32, ptr %r5
+    %r32 = call i32 @get_ans(i32 %r27,i32 %r30,i32 %r31)
+    store i32 %r32, ptr %r15
+    %r33 = load i32, ptr %r15
+    %r34 = load i32, ptr %r0
+    %r35 = load i32, ptr %r9
+    %r36 = sub i32 0,%r35
+    %r37 = add i32 1,0
+    %r38 = sub i32 %r36,%r37
+    %r39 = call i32 @get_ans(i32 %r33,i32 %r34,i32 %r38)
+    store i32 %r39, ptr %r15
+    %r40 = load i32, ptr %r15
+    %r41 = load i32, ptr %r0
+    %r42 = load i32, ptr %r11
+    %r43 = add i32 1,0
+    %r44 = add i32 %r42,%r43
+    %r45 = call i32 @get_ans(i32 %r40,i32 %r41,i32 %r44)
+    store i32 %r45, ptr %r15
+    %r46 = load i32, ptr %r15
+    %r47 = load i32, ptr %r3
+    %r48 = add i32 2,0
+    %r49 = sdiv i32 %r47,%r48
+    %r50 = load i32, ptr %r5
+    %r51 = add i32 2,0
+    %r52 = sdiv i32 %r50,%r51
+    %r53 = call i32 @get_ans(i32 %r46,i32 %r49,i32 %r52)
+    store i32 %r53, ptr %r15
+    %r54 = load i32, ptr %r15
+    %r55 = load i32, ptr %r3
+    %r56 = load i32, ptr %r9
+    %r57 = sub i32 0,%r56
+    %r58 = add i32 1,0
+    %r59 = sub i32 %r57,%r58
+    %r60 = call i32 @get_ans(i32 %r54,i32 %r55,i32 %r59)
+    store i32 %r60, ptr %r15
+    %r61 = load i32, ptr %r15
+    %r62 = load i32, ptr %r3
+    %r63 = load i32, ptr %r11
+    %r64 = add i32 1,0
+    %r65 = add i32 %r63,%r64
+    %r66 = call i32 @get_ans(i32 %r61,i32 %r62,i32 %r65)
+    store i32 %r66, ptr %r15
+    %r67 = add i32 0,0
     %r68 = load i32, ptr %r5
-    %r69 = load i32, ptr %r11
+    %r69 = load i32, ptr %r9
     %r70 = call i32 @get_ans(i32 %r67,i32 %r68,i32 %r69)
-    store i32 %r70, ptr %r16
-    %r71 = load i32, ptr %r16
-    %r72 = load i32, ptr %r9
+    store i32 %r70, ptr %r17
+    %r71 = load i32, ptr %r17
+    %r72 = load i32, ptr %r5
     %r73 = load i32, ptr %r11
     %r74 = call i32 @get_ans(i32 %r71,i32 %r72,i32 %r73)
-    store i32 %r74, ptr %r16
-    %r75 = load i32, ptr %r16
-    %r76 = load i32, ptr %r0
-    %r77 = add i32 2,0
-    %r78 = sdiv i32 %r76,%r77
-    %r79 = load i32, ptr %r3
-    %r80 = add i32 2,0
-    %r81 = sdiv i32 %r79,%r80
-    %r82 = call i32 @get_ans(i32 %r75,i32 %r78,i32 %r81)
-    store i32 %r82, ptr %r16
-    %r83 = add i32 0,0
-    %r84 = load i32, ptr %r0
-    %r85 = load i32, ptr %r3
-    %r86 = call i32 @get_ans_se(i32 %r83,i32 %r84,i32 %r85)
+    store i32 %r74, ptr %r17
+    %r75 = load i32, ptr %r17
+    %r76 = load i32, ptr %r9
+    %r77 = load i32, ptr %r11
+    %r78 = call i32 @get_ans(i32 %r75,i32 %r76,i32 %r77)
+    store i32 %r78, ptr %r17
+    %r79 = load i32, ptr %r17
+    %r80 = load i32, ptr %r0
+    %r81 = add i32 2,0
+    %r82 = sdiv i32 %r80,%r81
+    %r83 = load i32, ptr %r3
+    %r84 = add i32 2,0
+    %r85 = sdiv i32 %r83,%r84
+    %r86 = call i32 @get_ans(i32 %r79,i32 %r82,i32 %r85)
     store i32 %r86, ptr %r17
-    %r87 = load i32, ptr %r17
+    %r87 = add i32 0,0
     %r88 = load i32, ptr %r0
-    %r89 = add i32 1,0
-    %r90 = add i32 %r88,%r89
-    %r91 = load i32, ptr %r5
-    %r92 = call i32 @get_ans_se(i32 %r87,i32 %r90,i32 %r91)
-    store i32 %r92, ptr %r17
-    %r93 = load i32, ptr %r17
-    %r94 = load i32, ptr %r0
-    %r95 = load i32, ptr %r9
-    %r96 = sub i32 0,%r95
-    %r97 = add i32 1,0
-    %r98 = sub i32 %r96,%r97
-    %r99 = call i32 @get_ans_se(i32 %r93,i32 %r94,i32 %r98)
-    store i32 %r99, ptr %r17
-    %r100 = load i32, ptr %r17
-    %r101 = load i32, ptr %r0
-    %r102 = load i32, ptr %r11
-    %r103 = add i32 1,0
-    %r104 = add i32 %r102,%r103
-    %r105 = call i32 @get_ans_se(i32 %r100,i32 %r101,i32 %r104)
-    store i32 %r105, ptr %r17
-    %r106 = load i32, ptr %r17
-    %r107 = load i32, ptr %r3
-    %r108 = add i32 2,0
-    %r109 = sdiv i32 %r107,%r108
-    %r110 = load i32, ptr %r5
-    %r111 = add i32 2,0
-    %r112 = sdiv i32 %r110,%r111
-    %r113 = call i32 @get_ans_se(i32 %r106,i32 %r109,i32 %r112)
-    store i32 %r113, ptr %r17
-    %r114 = load i32, ptr %r17
-    %r115 = load i32, ptr %r3
-    %r116 = load i32, ptr %r9
-    %r117 = sub i32 0,%r116
-    %r118 = add i32 1,0
-    %r119 = sub i32 %r117,%r118
-    %r120 = call i32 @get_ans_se(i32 %r114,i32 %r115,i32 %r119)
-    store i32 %r120, ptr %r17
-    %r121 = load i32, ptr %r17
-    %r122 = load i32, ptr %r3
-    %r123 = load i32, ptr %r11
-    %r124 = add i32 1,0
-    %r125 = add i32 %r123,%r124
-    %r126 = call i32 @get_ans_se(i32 %r121,i32 %r122,i32 %r125)
-    store i32 %r126, ptr %r17
-    %r127 = add i32 0,0
-    %r128 = load i32, ptr %r5
-    %r129 = load i32, ptr %r9
-    %r130 = call i32 @get_ans_se(i32 %r127,i32 %r128,i32 %r129)
-    store i32 %r130, ptr %r18
-    %r131 = load i32, ptr %r18
+    %r89 = load i32, ptr %r3
+    %r90 = call i32 @get_ans_se(i32 %r87,i32 %r88,i32 %r89)
+    store i32 %r90, ptr %r19
+    %r91 = load i32, ptr %r19
+    %r92 = load i32, ptr %r0
+    %r93 = add i32 1,0
+    %r94 = add i32 %r92,%r93
+    %r95 = load i32, ptr %r5
+    %r96 = call i32 @get_ans_se(i32 %r91,i32 %r94,i32 %r95)
+    store i32 %r96, ptr %r19
+    %r97 = load i32, ptr %r19
+    %r98 = load i32, ptr %r0
+    %r99 = load i32, ptr %r9
+    %r100 = sub i32 0,%r99
+    %r101 = add i32 1,0
+    %r102 = sub i32 %r100,%r101
+    %r103 = call i32 @get_ans_se(i32 %r97,i32 %r98,i32 %r102)
+    store i32 %r103, ptr %r19
+    %r104 = load i32, ptr %r19
+    %r105 = load i32, ptr %r0
+    %r106 = load i32, ptr %r11
+    %r107 = add i32 1,0
+    %r108 = add i32 %r106,%r107
+    %r109 = call i32 @get_ans_se(i32 %r104,i32 %r105,i32 %r108)
+    store i32 %r109, ptr %r19
+    %r110 = load i32, ptr %r19
+    %r111 = load i32, ptr %r3
+    %r112 = add i32 2,0
+    %r113 = sdiv i32 %r111,%r112
+    %r114 = load i32, ptr %r5
+    %r115 = add i32 2,0
+    %r116 = sdiv i32 %r114,%r115
+    %r117 = call i32 @get_ans_se(i32 %r110,i32 %r113,i32 %r116)
+    store i32 %r117, ptr %r19
+    %r118 = load i32, ptr %r19
+    %r119 = load i32, ptr %r3
+    %r120 = load i32, ptr %r9
+    %r121 = sub i32 0,%r120
+    %r122 = add i32 1,0
+    %r123 = sub i32 %r121,%r122
+    %r124 = call i32 @get_ans_se(i32 %r118,i32 %r119,i32 %r123)
+    store i32 %r124, ptr %r19
+    %r125 = load i32, ptr %r19
+    %r126 = load i32, ptr %r3
+    %r127 = load i32, ptr %r11
+    %r128 = add i32 1,0
+    %r129 = add i32 %r127,%r128
+    %r130 = call i32 @get_ans_se(i32 %r125,i32 %r126,i32 %r129)
+    store i32 %r130, ptr %r19
+    %r131 = add i32 0,0
     %r132 = load i32, ptr %r5
-    %r133 = load i32, ptr %r11
+    %r133 = load i32, ptr %r9
     %r134 = call i32 @get_ans_se(i32 %r131,i32 %r132,i32 %r133)
-    store i32 %r134, ptr %r18
-    %r135 = load i32, ptr %r18
-    %r136 = load i32, ptr %r9
+    store i32 %r134, ptr %r21
+    %r135 = load i32, ptr %r21
+    %r136 = load i32, ptr %r5
     %r137 = load i32, ptr %r11
     %r138 = call i32 @get_ans_se(i32 %r135,i32 %r136,i32 %r137)
-    store i32 %r138, ptr %r18
-    %r139 = load i32, ptr %r18
-    %r140 = load i32, ptr %r0
-    %r141 = add i32 2,0
-    %r142 = sdiv i32 %r140,%r141
-    %r143 = load i32, ptr %r3
-    %r144 = add i32 2,0
-    %r145 = sdiv i32 %r143,%r144
-    %r146 = call i32 @get_ans_se(i32 %r139,i32 %r142,i32 %r145)
-    store i32 %r146, ptr %r18
-    %r147 = load i32, ptr %r15
-    %r148 = load i32, ptr %r16
-    %r149 = add i32 %r147,%r148
-    %r150 = load i32, ptr %r17
-    %r151 = add i32 %r149,%r150
-    %r152 = load i32, ptr %r18
+    store i32 %r138, ptr %r21
+    %r139 = load i32, ptr %r21
+    %r140 = load i32, ptr %r9
+    %r141 = load i32, ptr %r11
+    %r142 = call i32 @get_ans_se(i32 %r139,i32 %r140,i32 %r141)
+    store i32 %r142, ptr %r21
+    %r143 = load i32, ptr %r21
+    %r144 = load i32, ptr %r0
+    %r145 = add i32 2,0
+    %r146 = sdiv i32 %r144,%r145
+    %r147 = load i32, ptr %r3
+    %r148 = add i32 2,0
+    %r149 = sdiv i32 %r147,%r148
+    %r150 = call i32 @get_ans_se(i32 %r143,i32 %r146,i32 %r149)
+    store i32 %r150, ptr %r21
+    %r151 = load i32, ptr %r15
+    %r152 = load i32, ptr %r17
     %r153 = add i32 %r151,%r152
-    ret i32 %r153
+    %r154 = load i32, ptr %r19
+    %r155 = add i32 %r153,%r154
+    %r156 = load i32, ptr %r21
+    %r157 = add i32 %r155,%r156
+    ret i32 %r157
 }

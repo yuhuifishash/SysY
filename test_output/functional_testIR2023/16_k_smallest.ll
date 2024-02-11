@@ -41,61 +41,6 @@ L1:
     store i32 %r15, ptr %r14
     ret void
 }
-define i32 @findPivot(i32 %r0,i32 %r1)
-{
-L0:
-    %r10 = alloca i32
-    %r8 = alloca i32
-    %r4 = alloca i32
-    %r3 = alloca i32
-    %r2 = alloca i32
-    store i32 %r0, ptr %r2
-    store i32 %r1, ptr %r3
-    br label %L1
-L1:
-    %r5 = load i32, ptr %r3
-    %r6 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r5
-    %r7 = load i32, ptr %r6
-    store i32 %r7, ptr %r4
-    %r9 = load i32, ptr %r2
-    store i32 %r9, ptr %r8
-    %r11 = load i32, ptr %r2
-    store i32 %r11, ptr %r10
-    br label %L2
-L2:
-    %r12 = load i32, ptr %r10
-    %r13 = load i32, ptr %r3
-    %r14 = icmp slt i32 %r12,%r13
-    br i1 %r14, label %L3, label %L4
-L3:
-    %r15 = load i32, ptr %r10
-    %r16 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r15
-    %r17 = load i32, ptr %r16
-    %r18 = load i32, ptr %r4
-    %r19 = icmp sle i32 %r17,%r18
-    br i1 %r19, label %L5, label %L6
-L4:
-    %r28 = load i32, ptr %r8
-    %r29 = load i32, ptr %r3
-    call void @swap(i32 %r28,i32 %r29)
-    %r30 = load i32, ptr %r8
-    ret i32 %r30
-L5:
-    %r20 = load i32, ptr %r10
-    %r21 = load i32, ptr %r8
-    call void @swap(i32 %r20,i32 %r21)
-    %r22 = load i32, ptr %r8
-    %r23 = add i32 1,0
-    %r24 = add i32 %r22,%r23
-    store i32 %r24, ptr %r8
-    br label %L6
-L6:
-    %r25 = load i32, ptr %r10
-    %r26 = add i32 1,0
-    %r27 = add i32 %r25,%r26
-    store i32 %r27, ptr %r10
-    br label %L2
-}
 define void @findSmallest(i32 %r0,i32 %r1,i32 %r2,i32 %r3)
 {
 L0:
@@ -178,6 +123,61 @@ L12:
     br label %L13
 L13:
     br label %L7
+}
+define i32 @findPivot(i32 %r0,i32 %r1)
+{
+L0:
+    %r10 = alloca i32
+    %r8 = alloca i32
+    %r4 = alloca i32
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
+    br label %L1
+L1:
+    %r5 = load i32, ptr %r3
+    %r6 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r5
+    %r7 = load i32, ptr %r6
+    store i32 %r7, ptr %r4
+    %r9 = load i32, ptr %r2
+    store i32 %r9, ptr %r8
+    %r11 = load i32, ptr %r2
+    store i32 %r11, ptr %r10
+    br label %L2
+L2:
+    %r12 = load i32, ptr %r10
+    %r13 = load i32, ptr %r3
+    %r14 = icmp slt i32 %r12,%r13
+    br i1 %r14, label %L3, label %L4
+L3:
+    %r15 = load i32, ptr %r10
+    %r16 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r15
+    %r17 = load i32, ptr %r16
+    %r18 = load i32, ptr %r4
+    %r19 = icmp sle i32 %r17,%r18
+    br i1 %r19, label %L5, label %L6
+L4:
+    %r28 = load i32, ptr %r8
+    %r29 = load i32, ptr %r3
+    call void @swap(i32 %r28,i32 %r29)
+    %r30 = load i32, ptr %r8
+    ret i32 %r30
+L5:
+    %r20 = load i32, ptr %r10
+    %r21 = load i32, ptr %r8
+    call void @swap(i32 %r20,i32 %r21)
+    %r22 = load i32, ptr %r8
+    %r23 = add i32 1,0
+    %r24 = add i32 %r22,%r23
+    store i32 %r24, ptr %r8
+    br label %L6
+L6:
+    %r25 = load i32, ptr %r10
+    %r26 = add i32 1,0
+    %r27 = add i32 %r25,%r26
+    store i32 %r27, ptr %r10
+    br label %L2
 }
 define i32 @main()
 {

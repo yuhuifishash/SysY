@@ -94,32 +94,6 @@ L13:
     %r35 = load i32, ptr %r2
     ret i32 %r35
 }
-define i32 @same(i32 %r0,i32 %r1)
-{
-L0:
-    %r3 = alloca i32
-    %r2 = alloca i32
-    store i32 %r0, ptr %r2
-    store i32 %r1, ptr %r3
-    br label %L1
-L1:
-    %r4 = load i32, ptr %r2
-    %r5 = call i32 @find(i32 %r4)
-    store i32 %r5, ptr %r2
-    %r6 = load i32, ptr %r3
-    %r7 = call i32 @find(i32 %r6)
-    store i32 %r7, ptr %r3
-    %r8 = load i32, ptr %r2
-    %r9 = load i32, ptr %r3
-    %r10 = icmp eq i32 %r8,%r9
-    br i1 %r10, label %L2, label %L3
-L2:
-    %r11 = add i32 1,0
-    ret i32 %r11
-L3:
-    %r12 = add i32 0,0
-    ret i32 %r12
-}
 define i32 @find(i32 %r0)
 {
 L0:
@@ -149,6 +123,32 @@ L3:
     store i32 %r15, ptr %r14
     %r16 = load i32, ptr %r8
     ret i32 %r16
+}
+define i32 @same(i32 %r0,i32 %r1)
+{
+L0:
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
+    br label %L1
+L1:
+    %r4 = load i32, ptr %r2
+    %r5 = call i32 @find(i32 %r4)
+    store i32 %r5, ptr %r2
+    %r6 = load i32, ptr %r3
+    %r7 = call i32 @find(i32 %r6)
+    store i32 %r7, ptr %r3
+    %r8 = load i32, ptr %r2
+    %r9 = load i32, ptr %r3
+    %r10 = icmp eq i32 %r8,%r9
+    br i1 %r10, label %L2, label %L3
+L2:
+    %r11 = add i32 1,0
+    ret i32 %r11
+L3:
+    %r12 = add i32 0,0
+    ret i32 %r12
 }
 define i32 @prim()
 {

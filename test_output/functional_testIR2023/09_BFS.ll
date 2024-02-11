@@ -24,55 +24,6 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @h = global i32 zeroinitializer
 @tail = global i32 zeroinitializer
 @inq = global [1005x i32] zeroinitializer
-define void @inqueue(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr %r1
-    %r3 = getelementptr [1005 x i32], ptr @inq, i32 0, i32 %r2
-    %r4 = add i32 1,0
-    store i32 %r4, ptr %r3
-    %r5 = load i32, ptr @tail
-    %r6 = add i32 1,0
-    %r7 = add i32 %r5,%r6
-    store i32 %r7, ptr @tail
-    %r8 = load i32, ptr @tail
-    %r9 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r8
-    %r10 = load i32, ptr %r1
-    store i32 %r10, ptr %r9
-    ret void
-}
-define void @init()
-{
-L0:
-    %r0 = alloca i32
-    br label %L1
-L1:
-    %r1 = add i32 0,0
-    store i32 %r1, ptr %r0
-    br label %L2
-L2:
-    %r2 = load i32, ptr %r0
-    %r3 = load i32, ptr @maxn
-    %r4 = icmp slt i32 %r2,%r3
-    br i1 %r4, label %L3, label %L4
-L3:
-    %r5 = load i32, ptr %r0
-    %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r5
-    %r7 = add i32 1,0
-    %r8 = sub i32 0,%r7
-    store i32 %r8, ptr %r6
-    %r9 = load i32, ptr %r0
-    %r10 = add i32 1,0
-    %r11 = add i32 %r9,%r10
-    store i32 %r11, ptr %r0
-    br label %L2
-L4:
-    ret void
-}
 define i32 @quick_read()
 {
 L0:
@@ -192,6 +143,55 @@ L1:
     %r30 = add i32 1,0
     %r31 = add i32 %r29,%r30
     store i32 %r31, ptr @cnt
+    ret void
+}
+define void @init()
+{
+L0:
+    %r0 = alloca i32
+    br label %L1
+L1:
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
+    br label %L2
+L2:
+    %r2 = load i32, ptr %r0
+    %r3 = load i32, ptr @maxn
+    %r4 = icmp slt i32 %r2,%r3
+    br i1 %r4, label %L3, label %L4
+L3:
+    %r5 = load i32, ptr %r0
+    %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r5
+    %r7 = add i32 1,0
+    %r8 = sub i32 0,%r7
+    store i32 %r8, ptr %r6
+    %r9 = load i32, ptr %r0
+    %r10 = add i32 1,0
+    %r11 = add i32 %r9,%r10
+    store i32 %r11, ptr %r0
+    br label %L2
+L4:
+    ret void
+}
+define void @inqueue(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr %r1
+    %r3 = getelementptr [1005 x i32], ptr @inq, i32 0, i32 %r2
+    %r4 = add i32 1,0
+    store i32 %r4, ptr %r3
+    %r5 = load i32, ptr @tail
+    %r6 = add i32 1,0
+    %r7 = add i32 %r5,%r6
+    store i32 %r7, ptr @tail
+    %r8 = load i32, ptr @tail
+    %r9 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r8
+    %r10 = load i32, ptr %r1
+    store i32 %r10, ptr %r9
     ret void
 }
 define i32 @pop_queue()

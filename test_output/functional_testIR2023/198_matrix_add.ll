@@ -21,59 +21,60 @@ L0:
     %r9 = alloca i32
     br label %L1
 L1:
-    store i32 0, ptr %r9
     %r10 = add i32 0,0
     store i32 %r10, ptr %r9
+    %r11 = add i32 0,0
+    store i32 %r11, ptr %r9
     br label %L2
 L2:
-    %r11 = load i32, ptr %r9
-    %r12 = load i32, ptr @M
-    %r13 = icmp slt i32 %r11,%r12
-    br i1 %r13, label %L3, label %L4
+    %r12 = load i32, ptr %r9
+    %r13 = load i32, ptr @M
+    %r14 = icmp slt i32 %r12,%r13
+    br i1 %r14, label %L3, label %L4
 L3:
-    %r14 = load i32, ptr %r9
-    %r15 = getelementptr float, ptr %r6, i32 %r14
-    %r16 = load i32, ptr %r9
-    %r17 = getelementptr float, ptr %r0, i32 %r16
-    %r18 = load float, ptr %r17
-    %r19 = load i32, ptr %r9
-    %r20 = getelementptr float, ptr %r3, i32 %r19
-    %r21 = load float, ptr %r20
-    %r22 = fadd float %r18,%r21
-    store float %r22, ptr %r15
-    %r23 = load i32, ptr %r9
-    %r24 = getelementptr float, ptr %r7, i32 %r23
-    %r25 = load i32, ptr %r9
-    %r26 = getelementptr float, ptr %r1, i32 %r25
-    %r27 = load float, ptr %r26
-    %r28 = load i32, ptr %r9
-    %r29 = getelementptr float, ptr %r4, i32 %r28
-    %r30 = load float, ptr %r29
-    %r31 = fadd float %r27,%r30
-    store float %r31, ptr %r24
-    %r32 = load i32, ptr %r9
-    %r33 = getelementptr float, ptr %r8, i32 %r32
-    %r34 = load i32, ptr %r9
-    %r35 = getelementptr float, ptr %r2, i32 %r34
-    %r36 = load float, ptr %r35
-    %r37 = load i32, ptr %r9
-    %r38 = getelementptr float, ptr %r5, i32 %r37
-    %r39 = load float, ptr %r38
-    %r40 = fadd float %r36,%r39
-    store float %r40, ptr %r33
-    %r41 = load i32, ptr %r9
-    %r42 = add i32 1,0
-    %r43 = add i32 %r41,%r42
-    store i32 %r43, ptr %r9
+    %r15 = load i32, ptr %r9
+    %r16 = getelementptr float, ptr %r6, i32 %r15
+    %r17 = load i32, ptr %r9
+    %r18 = getelementptr float, ptr %r0, i32 %r17
+    %r19 = load float, ptr %r18
+    %r20 = load i32, ptr %r9
+    %r21 = getelementptr float, ptr %r3, i32 %r20
+    %r22 = load float, ptr %r21
+    %r23 = fadd float %r19,%r22
+    store float %r23, ptr %r16
+    %r24 = load i32, ptr %r9
+    %r25 = getelementptr float, ptr %r7, i32 %r24
+    %r26 = load i32, ptr %r9
+    %r27 = getelementptr float, ptr %r1, i32 %r26
+    %r28 = load float, ptr %r27
+    %r29 = load i32, ptr %r9
+    %r30 = getelementptr float, ptr %r4, i32 %r29
+    %r31 = load float, ptr %r30
+    %r32 = fadd float %r28,%r31
+    store float %r32, ptr %r25
+    %r33 = load i32, ptr %r9
+    %r34 = getelementptr float, ptr %r8, i32 %r33
+    %r35 = load i32, ptr %r9
+    %r36 = getelementptr float, ptr %r2, i32 %r35
+    %r37 = load float, ptr %r36
+    %r38 = load i32, ptr %r9
+    %r39 = getelementptr float, ptr %r5, i32 %r38
+    %r40 = load float, ptr %r39
+    %r41 = fadd float %r37,%r40
+    store float %r41, ptr %r34
+    %r42 = load i32, ptr %r9
+    %r43 = add i32 1,0
+    %r44 = add i32 %r42,%r43
+    store i32 %r44, ptr %r9
     br label %L2
 L4:
-    %r44 = add i32 0,0
-    ret i32 %r44
+    %r45 = add i32 0,0
+    ret i32 %r45
 }
 define i32 @main()
 {
 L0:
-    %r54 = alloca i32
+    %r55 = alloca i32
     %r12 = alloca i32
     %r11 = alloca [3 x float]
     %r10 = alloca [3 x float]
@@ -92,140 +93,142 @@ L1:
     store i32 %r1, ptr @M
     %r2 = add i32 3,0
     store i32 %r2, ptr @L
-    store i32 0, ptr %r12
     %r13 = add i32 0,0
     store i32 %r13, ptr %r12
+    %r14 = add i32 0,0
+    store i32 %r14, ptr %r12
     br label %L2
 L2:
-    %r14 = load i32, ptr %r12
-    %r15 = load i32, ptr @M
-    %r16 = icmp slt i32 %r14,%r15
-    br i1 %r16, label %L3, label %L4
+    %r15 = load i32, ptr %r12
+    %r16 = load i32, ptr @M
+    %r17 = icmp slt i32 %r15,%r16
+    br i1 %r17, label %L3, label %L4
 L3:
-    %r17 = load i32, ptr %r12
-    %r18 = getelementptr [3 x float], ptr %r3, i32 0, i32 %r17
-    %r19 = load i32, ptr %r12
-    %r20 = sitofp i32 %r19 to float
-    store float %r20, ptr %r18
-    %r21 = load i32, ptr %r12
-    %r22 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r21
-    %r23 = load i32, ptr %r12
-    %r24 = sitofp i32 %r23 to float
-    store float %r24, ptr %r22
-    %r25 = load i32, ptr %r12
-    %r26 = getelementptr [3 x float], ptr %r5, i32 0, i32 %r25
-    %r27 = load i32, ptr %r12
-    %r28 = sitofp i32 %r27 to float
-    store float %r28, ptr %r26
-    %r29 = load i32, ptr %r12
-    %r30 = getelementptr [3 x float], ptr %r6, i32 0, i32 %r29
-    %r31 = load i32, ptr %r12
-    %r32 = sitofp i32 %r31 to float
-    store float %r32, ptr %r30
-    %r33 = load i32, ptr %r12
-    %r34 = getelementptr [3 x float], ptr %r7, i32 0, i32 %r33
-    %r35 = load i32, ptr %r12
-    %r36 = sitofp i32 %r35 to float
-    store float %r36, ptr %r34
-    %r37 = load i32, ptr %r12
-    %r38 = getelementptr [3 x float], ptr %r8, i32 0, i32 %r37
-    %r39 = load i32, ptr %r12
-    %r40 = sitofp i32 %r39 to float
-    store float %r40, ptr %r38
-    %r41 = load i32, ptr %r12
-    %r42 = add i32 1,0
-    %r43 = add i32 %r41,%r42
-    store i32 %r43, ptr %r12
+    %r18 = load i32, ptr %r12
+    %r19 = getelementptr [3 x float], ptr %r3, i32 0, i32 %r18
+    %r20 = load i32, ptr %r12
+    %r21 = sitofp i32 %r20 to float
+    store float %r21, ptr %r19
+    %r22 = load i32, ptr %r12
+    %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r22
+    %r24 = load i32, ptr %r12
+    %r25 = sitofp i32 %r24 to float
+    store float %r25, ptr %r23
+    %r26 = load i32, ptr %r12
+    %r27 = getelementptr [3 x float], ptr %r5, i32 0, i32 %r26
+    %r28 = load i32, ptr %r12
+    %r29 = sitofp i32 %r28 to float
+    store float %r29, ptr %r27
+    %r30 = load i32, ptr %r12
+    %r31 = getelementptr [3 x float], ptr %r6, i32 0, i32 %r30
+    %r32 = load i32, ptr %r12
+    %r33 = sitofp i32 %r32 to float
+    store float %r33, ptr %r31
+    %r34 = load i32, ptr %r12
+    %r35 = getelementptr [3 x float], ptr %r7, i32 0, i32 %r34
+    %r36 = load i32, ptr %r12
+    %r37 = sitofp i32 %r36 to float
+    store float %r37, ptr %r35
+    %r38 = load i32, ptr %r12
+    %r39 = getelementptr [3 x float], ptr %r8, i32 0, i32 %r38
+    %r40 = load i32, ptr %r12
+    %r41 = sitofp i32 %r40 to float
+    store float %r41, ptr %r39
+    %r42 = load i32, ptr %r12
+    %r43 = add i32 1,0
+    %r44 = add i32 %r42,%r43
+    store i32 %r44, ptr %r12
     br label %L2
 L4:
-    %r44 = getelementptr [3 x float], ptr %r3, i32 0
-    %r45 = getelementptr [3 x float], ptr %r4, i32 0
-    %r46 = getelementptr [3 x float], ptr %r5, i32 0
-    %r47 = getelementptr [3 x float], ptr %r6, i32 0
-    %r48 = getelementptr [3 x float], ptr %r7, i32 0
-    %r49 = getelementptr [3 x float], ptr %r8, i32 0
-    %r50 = getelementptr [6 x float], ptr %r9, i32 0
-    %r51 = getelementptr [3 x float], ptr %r10, i32 0
-    %r52 = getelementptr [3 x float], ptr %r11, i32 0
-    %r53 = call i32 @add(ptr %r44,ptr %r45,ptr %r46,ptr %r47,ptr %r48,ptr %r49,ptr %r50,ptr %r51,ptr %r52)
-    store i32 %r53, ptr %r12
-    store i32 0, ptr %r54
+    %r45 = getelementptr [3 x float], ptr %r3, i32 0
+    %r46 = getelementptr [3 x float], ptr %r4, i32 0
+    %r47 = getelementptr [3 x float], ptr %r5, i32 0
+    %r48 = getelementptr [3 x float], ptr %r6, i32 0
+    %r49 = getelementptr [3 x float], ptr %r7, i32 0
+    %r50 = getelementptr [3 x float], ptr %r8, i32 0
+    %r51 = getelementptr [6 x float], ptr %r9, i32 0
+    %r52 = getelementptr [3 x float], ptr %r10, i32 0
+    %r53 = getelementptr [3 x float], ptr %r11, i32 0
+    %r54 = call i32 @add(ptr %r45,ptr %r46,ptr %r47,ptr %r48,ptr %r49,ptr %r50,ptr %r51,ptr %r52,ptr %r53)
+    store i32 %r54, ptr %r12
+    %r56 = add i32 0,0
+    store i32 %r56, ptr %r55
     br label %L5
 L5:
-    %r55 = load i32, ptr %r12
-    %r56 = load i32, ptr @N
-    %r57 = icmp slt i32 %r55,%r56
-    br i1 %r57, label %L6, label %L7
+    %r57 = load i32, ptr %r12
+    %r58 = load i32, ptr @N
+    %r59 = icmp slt i32 %r57,%r58
+    br i1 %r59, label %L6, label %L7
 L6:
-    %r58 = load i32, ptr %r12
-    %r59 = getelementptr [6 x float], ptr %r9, i32 0, i32 %r58
-    %r60 = load float, ptr %r59
-    %r61 = fptosi float %r60 to i32
-    store i32 %r61, ptr %r54
-    %r62 = load i32, ptr %r54
-    call void @putint(i32 %r62)
-    %r63 = load i32, ptr %r12
-    %r64 = add i32 1,0
-    %r65 = add i32 %r63,%r64
-    store i32 %r65, ptr %r12
+    %r60 = load i32, ptr %r12
+    %r61 = getelementptr [6 x float], ptr %r9, i32 0, i32 %r60
+    %r62 = load float, ptr %r61
+    %r63 = fptosi float %r62 to i32
+    store i32 %r63, ptr %r55
+    %r64 = load i32, ptr %r55
+    call void @putint(i32 %r64)
+    %r65 = load i32, ptr %r12
+    %r66 = add i32 1,0
+    %r67 = add i32 %r65,%r66
+    store i32 %r67, ptr %r12
     br label %L5
 L7:
-    %r66 = add i32 10,0
-    store i32 %r66, ptr %r54
-    %r67 = load i32, ptr %r54
-    call void @putch(i32 %r67)
-    %r68 = add i32 0,0
-    store i32 %r68, ptr %r12
+    %r68 = add i32 10,0
+    store i32 %r68, ptr %r55
+    %r69 = load i32, ptr %r55
+    call void @putch(i32 %r69)
+    %r70 = add i32 0,0
+    store i32 %r70, ptr %r12
     br label %L8
 L8:
-    %r69 = load i32, ptr %r12
-    %r70 = load i32, ptr @N
-    %r71 = icmp slt i32 %r69,%r70
-    br i1 %r71, label %L9, label %L10
+    %r71 = load i32, ptr %r12
+    %r72 = load i32, ptr @N
+    %r73 = icmp slt i32 %r71,%r72
+    br i1 %r73, label %L9, label %L10
 L9:
-    %r72 = load i32, ptr %r12
-    %r73 = getelementptr [3 x float], ptr %r10, i32 0, i32 %r72
-    %r74 = load float, ptr %r73
-    %r75 = fptosi float %r74 to i32
-    store i32 %r75, ptr %r54
-    %r76 = load i32, ptr %r54
-    call void @putint(i32 %r76)
-    %r77 = load i32, ptr %r12
-    %r78 = add i32 1,0
-    %r79 = add i32 %r77,%r78
-    store i32 %r79, ptr %r12
+    %r74 = load i32, ptr %r12
+    %r75 = getelementptr [3 x float], ptr %r10, i32 0, i32 %r74
+    %r76 = load float, ptr %r75
+    %r77 = fptosi float %r76 to i32
+    store i32 %r77, ptr %r55
+    %r78 = load i32, ptr %r55
+    call void @putint(i32 %r78)
+    %r79 = load i32, ptr %r12
+    %r80 = add i32 1,0
+    %r81 = add i32 %r79,%r80
+    store i32 %r81, ptr %r12
     br label %L8
 L10:
-    %r80 = add i32 10,0
-    store i32 %r80, ptr %r54
-    %r81 = load i32, ptr %r54
-    call void @putch(i32 %r81)
-    %r82 = add i32 0,0
-    store i32 %r82, ptr %r12
+    %r82 = add i32 10,0
+    store i32 %r82, ptr %r55
+    %r83 = load i32, ptr %r55
+    call void @putch(i32 %r83)
+    %r84 = add i32 0,0
+    store i32 %r84, ptr %r12
     br label %L11
 L11:
-    %r83 = load i32, ptr %r12
-    %r84 = load i32, ptr @N
-    %r85 = icmp slt i32 %r83,%r84
-    br i1 %r85, label %L12, label %L13
+    %r85 = load i32, ptr %r12
+    %r86 = load i32, ptr @N
+    %r87 = icmp slt i32 %r85,%r86
+    br i1 %r87, label %L12, label %L13
 L12:
-    %r86 = load i32, ptr %r12
-    %r87 = getelementptr [3 x float], ptr %r11, i32 0, i32 %r86
-    %r88 = load float, ptr %r87
-    %r89 = fptosi float %r88 to i32
-    store i32 %r89, ptr %r54
-    %r90 = load i32, ptr %r54
-    call void @putint(i32 %r90)
-    %r91 = load i32, ptr %r12
-    %r92 = add i32 1,0
-    %r93 = add i32 %r91,%r92
-    store i32 %r93, ptr %r12
+    %r88 = load i32, ptr %r12
+    %r89 = getelementptr [3 x float], ptr %r11, i32 0, i32 %r88
+    %r90 = load float, ptr %r89
+    %r91 = fptosi float %r90 to i32
+    store i32 %r91, ptr %r55
+    %r92 = load i32, ptr %r55
+    call void @putint(i32 %r92)
+    %r93 = load i32, ptr %r12
+    %r94 = add i32 1,0
+    %r95 = add i32 %r93,%r94
+    store i32 %r95, ptr %r12
     br label %L11
 L13:
-    %r94 = add i32 10,0
-    store i32 %r94, ptr %r54
-    %r95 = load i32, ptr %r54
-    call void @putch(i32 %r95)
-    %r96 = add i32 0,0
-    ret i32 %r96
+    %r96 = add i32 10,0
+    store i32 %r96, ptr %r55
+    %r97 = load i32, ptr %r55
+    call void @putch(i32 %r97)
+    %r98 = add i32 0,0
+    ret i32 %r98
 }

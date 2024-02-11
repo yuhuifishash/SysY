@@ -12,26 +12,6 @@ declare void @putf(ptr)
 declare void @_sysy_starttime(i32)
 declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
-define i32 @main()
-{
-L0:
-    %r1 = alloca [4096 x i32]
-    %r0 = alloca [4096 x i32]
-    br label %L1
-L1:
-    %r2 = getelementptr [4096 x i32], ptr %r0, i32 0
-    %r3 = call i32 @read_str(ptr %r2)
-    %r4 = getelementptr [4096 x i32], ptr %r1, i32 0
-    %r5 = call i32 @read_str(ptr %r4)
-    %r6 = getelementptr [4096 x i32], ptr %r0, i32 0
-    %r7 = getelementptr [4096 x i32], ptr %r1, i32 0
-    %r8 = call i32 @KMP(ptr %r6,ptr %r7)
-    call void @putint(i32 %r8)
-    %r9 = add i32 10,0
-    call void @putch(i32 %r9)
-    %r10 = add i32 0,0
-    ret i32 %r10
-}
 define void @get_next(ptr %r0,ptr %r1)
 {
 L0:
@@ -214,4 +194,24 @@ L6:
     %r15 = add i32 %r13,%r14
     store i32 %r15, ptr %r1
     br label %L2
+}
+define i32 @main()
+{
+L0:
+    %r1 = alloca [4096 x i32]
+    %r0 = alloca [4096 x i32]
+    br label %L1
+L1:
+    %r2 = getelementptr [4096 x i32], ptr %r0, i32 0
+    %r3 = call i32 @read_str(ptr %r2)
+    %r4 = getelementptr [4096 x i32], ptr %r1, i32 0
+    %r5 = call i32 @read_str(ptr %r4)
+    %r6 = getelementptr [4096 x i32], ptr %r0, i32 0
+    %r7 = getelementptr [4096 x i32], ptr %r1, i32 0
+    %r8 = call i32 @KMP(ptr %r6,ptr %r7)
+    call void @putint(i32 %r8)
+    %r9 = add i32 10,0
+    call void @putch(i32 %r9)
+    %r10 = add i32 0,0
+    ret i32 %r10
 }

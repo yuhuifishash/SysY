@@ -22,29 +22,30 @@ L0:
     %r1 = alloca i32
     br label %L1
 L1:
-    store i32 0, ptr %r1
     %r2 = add i32 0,0
     store i32 %r2, ptr %r1
+    %r3 = add i32 0,0
+    store i32 %r3, ptr %r1
     br label %L2
 L2:
-    %r3 = load i32, ptr %r1
-    %r4 = getelementptr i32, ptr %r0, i32 %r3
-    %r5 = load i32, ptr %r4
-    %r6 = icmp ne i32 %r5,0
-    br i1 %r6, label %L3, label %L4
+    %r4 = load i32, ptr %r1
+    %r5 = getelementptr i32, ptr %r0, i32 %r4
+    %r6 = load i32, ptr %r5
+    %r7 = icmp ne i32 %r6,0
+    br i1 %r7, label %L3, label %L4
 L3:
-    %r7 = load i32, ptr %r1
-    %r8 = getelementptr i32, ptr %r0, i32 %r7
-    %r9 = load i32, ptr %r8
-    call void @putch(i32 %r9)
-    %r10 = load i32, ptr %r1
-    %r11 = add i32 1,0
-    %r12 = add i32 %r10,%r11
-    store i32 %r12, ptr %r1
+    %r8 = load i32, ptr %r1
+    %r9 = getelementptr i32, ptr %r0, i32 %r8
+    %r10 = load i32, ptr %r9
+    call void @putch(i32 %r10)
+    %r11 = load i32, ptr %r1
+    %r12 = add i32 1,0
+    %r13 = add i32 %r11,%r12
+    store i32 %r13, ptr %r1
     br label %L2
 L4:
-    %r13 = load i32, ptr %r1
-    ret i32 %r13
+    %r14 = load i32, ptr %r1
+    ret i32 %r14
 }
 define i32 @main()
 {

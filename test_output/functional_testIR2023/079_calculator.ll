@@ -44,87 +44,6 @@ L4:
     %r7 = icmp sle i32 %r5,%r6
     br i1 %r7, label %L2, label %L3
 }
-define void @chapush(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr @chat
-    %r3 = add i32 1,0
-    %r4 = add i32 %r2,%r3
-    store i32 %r4, ptr @chat
-    %r5 = load i32, ptr @chat
-    %r6 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r5
-    %r7 = load i32, ptr %r1
-    store i32 %r7, ptr %r6
-    ret void
-}
-define i32 @power(i32 %r0,i32 %r1)
-{
-L0:
-    %r4 = alloca i32
-    %r3 = alloca i32
-    %r2 = alloca i32
-    store i32 %r0, ptr %r2
-    store i32 %r1, ptr %r3
-    br label %L1
-L1:
-    %r5 = add i32 1,0
-    store i32 %r5, ptr %r4
-    br label %L2
-L2:
-    %r6 = load i32, ptr %r3
-    %r7 = add i32 0,0
-    %r8 = icmp ne i32 %r6,%r7
-    br i1 %r8, label %L3, label %L4
-L3:
-    %r9 = load i32, ptr %r4
-    %r10 = load i32, ptr %r2
-    %r11 = mul i32 %r9,%r10
-    store i32 %r11, ptr %r4
-    %r12 = load i32, ptr %r3
-    %r13 = add i32 1,0
-    %r14 = sub i32 %r12,%r13
-    store i32 %r14, ptr %r3
-    br label %L2
-L4:
-    %r15 = load i32, ptr %r4
-    ret i32 %r15
-}
-define i32 @chapop()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = load i32, ptr @chat
-    %r1 = add i32 1,0
-    %r2 = sub i32 %r0,%r1
-    store i32 %r2, ptr @chat
-    %r3 = load i32, ptr @chat
-    %r4 = add i32 1,0
-    %r5 = add i32 %r3,%r4
-    %r6 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r5
-    %r7 = load i32, ptr %r6
-    ret i32 %r7
-}
-define i32 @intpop()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = load i32, ptr @intt
-    %r1 = add i32 1,0
-    %r2 = sub i32 %r0,%r1
-    store i32 %r2, ptr @intt
-    %r3 = load i32, ptr @intt
-    %r4 = add i32 1,0
-    %r5 = add i32 %r3,%r4
-    %r6 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r5
-    %r7 = load i32, ptr %r6
-    ret i32 %r7
-}
 define i32 @getstr(ptr %r0)
 {
 L0:
@@ -163,6 +82,38 @@ L5:
     %r10 = icmp ne i32 %r8,%r9
     br i1 %r10, label %L3, label %L4
 }
+define i32 @power(i32 %r0,i32 %r1)
+{
+L0:
+    %r4 = alloca i32
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
+    br label %L1
+L1:
+    %r5 = add i32 1,0
+    store i32 %r5, ptr %r4
+    br label %L2
+L2:
+    %r6 = load i32, ptr %r3
+    %r7 = add i32 0,0
+    %r8 = icmp ne i32 %r6,%r7
+    br i1 %r8, label %L3, label %L4
+L3:
+    %r9 = load i32, ptr %r4
+    %r10 = load i32, ptr %r2
+    %r11 = mul i32 %r9,%r10
+    store i32 %r11, ptr %r4
+    %r12 = load i32, ptr %r3
+    %r13 = add i32 1,0
+    %r14 = sub i32 %r12,%r13
+    store i32 %r14, ptr %r3
+    br label %L2
+L4:
+    %r15 = load i32, ptr %r4
+    ret i32 %r15
+}
 define void @intpush(i32 %r0)
 {
 L0:
@@ -179,6 +130,55 @@ L1:
     %r7 = load i32, ptr %r1
     store i32 %r7, ptr %r6
     ret void
+}
+define void @chapush(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr @chat
+    %r3 = add i32 1,0
+    %r4 = add i32 %r2,%r3
+    store i32 %r4, ptr @chat
+    %r5 = load i32, ptr @chat
+    %r6 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r5
+    %r7 = load i32, ptr %r1
+    store i32 %r7, ptr %r6
+    ret void
+}
+define i32 @intpop()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = load i32, ptr @intt
+    %r1 = add i32 1,0
+    %r2 = sub i32 %r0,%r1
+    store i32 %r2, ptr @intt
+    %r3 = load i32, ptr @intt
+    %r4 = add i32 1,0
+    %r5 = add i32 %r3,%r4
+    %r6 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r5
+    %r7 = load i32, ptr %r6
+    ret i32 %r7
+}
+define i32 @chapop()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = load i32, ptr @chat
+    %r1 = add i32 1,0
+    %r2 = sub i32 %r0,%r1
+    store i32 %r2, ptr @chat
+    %r3 = load i32, ptr @chat
+    %r4 = add i32 1,0
+    %r5 = add i32 %r3,%r4
+    %r6 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r5
+    %r7 = load i32, ptr %r6
+    ret i32 %r7
 }
 define void @intadd(i32 %r0)
 {
@@ -204,6 +204,38 @@ L1:
     %r15 = add i32 %r13,%r14
     store i32 %r15, ptr %r10
     ret void
+}
+define i32 @find()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = call i32 @chapop()
+    store i32 %r0, ptr @c
+    %r1 = load i32, ptr @ii
+    %r2 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r1
+    %r3 = add i32 32,0
+    store i32 %r3, ptr %r2
+    %r4 = load i32, ptr @ii
+    %r5 = add i32 1,0
+    %r6 = add i32 %r4,%r5
+    %r7 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r6
+    %r8 = load i32, ptr @c
+    store i32 %r8, ptr %r7
+    %r9 = load i32, ptr @ii
+    %r10 = add i32 2,0
+    %r11 = add i32 %r9,%r10
+    store i32 %r11, ptr @ii
+    %r12 = load i32, ptr @chat
+    %r13 = add i32 0,0
+    %r14 = icmp eq i32 %r12,%r13
+    br i1 %r14, label %L2, label %L3
+L2:
+    %r15 = add i32 0,0
+    ret i32 %r15
+L3:
+    %r16 = add i32 1,0
+    ret i32 %r16
 }
 define i32 @main()
 {
@@ -648,36 +680,37 @@ L80:
     %r258 = icmp eq i32 %r256,%r257
     br i1 %r258, label %L82, label %L89
 L81:
-    %r374 = add i32 1,0
-    %r375 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r374
-    %r376 = load i32, ptr %r375
-    call void @putint(i32 %r376)
-    %r377 = add i32 0,0
-    ret i32 %r377
+    %r375 = add i32 1,0
+    %r376 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r375
+    %r377 = load i32, ptr %r376
+    call void @putint(i32 %r377)
+    %r378 = add i32 0,0
+    ret i32 %r378
 L82:
     %r285 = call i32 @intpop()
     store i32 %r285, ptr %r284
     %r287 = call i32 @intpop()
     store i32 %r287, ptr %r286
-    store i32 0, ptr %r288
-    %r289 = load i32, ptr @i
-    %r290 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r289
-    %r291 = load i32, ptr %r290
-    %r292 = add i32 43,0
-    %r293 = icmp eq i32 %r291,%r292
-    br i1 %r293, label %L90, label %L91
+    %r289 = add i32 0,0
+    store i32 %r289, ptr %r288
+    %r290 = load i32, ptr @i
+    %r291 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r290
+    %r292 = load i32, ptr %r291
+    %r293 = add i32 43,0
+    %r294 = icmp eq i32 %r292,%r293
+    br i1 %r294, label %L90, label %L91
 L83:
-    %r338 = load i32, ptr @i
-    %r339 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r338
-    %r340 = load i32, ptr %r339
-    %r341 = add i32 32,0
-    %r342 = icmp ne i32 %r340,%r341
-    br i1 %r342, label %L102, label %L103
+    %r339 = load i32, ptr @i
+    %r340 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r339
+    %r341 = load i32, ptr %r340
+    %r342 = add i32 32,0
+    %r343 = icmp ne i32 %r341,%r342
+    br i1 %r343, label %L102, label %L103
 L84:
-    %r371 = load i32, ptr @i
-    %r372 = add i32 1,0
-    %r373 = add i32 %r371,%r372
-    store i32 %r373, ptr @i
+    %r372 = load i32, ptr @i
+    %r373 = add i32 1,0
+    %r374 = add i32 %r372,%r373
+    store i32 %r374, ptr @i
     br label %L79
 L85:
     %r279 = load i32, ptr @i
@@ -715,153 +748,121 @@ L89:
     %r263 = icmp eq i32 %r261,%r262
     br i1 %r263, label %L82, label %L88
 L90:
-    %r294 = load i32, ptr %r284
-    %r295 = load i32, ptr %r286
-    %r296 = add i32 %r294,%r295
-    store i32 %r296, ptr %r288
+    %r295 = load i32, ptr %r284
+    %r296 = load i32, ptr %r286
+    %r297 = add i32 %r295,%r296
+    store i32 %r297, ptr %r288
     br label %L91
 L91:
-    %r297 = load i32, ptr @i
-    %r298 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r297
-    %r299 = load i32, ptr %r298
-    %r300 = add i32 45,0
-    %r301 = icmp eq i32 %r299,%r300
-    br i1 %r301, label %L92, label %L93
+    %r298 = load i32, ptr @i
+    %r299 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r298
+    %r300 = load i32, ptr %r299
+    %r301 = add i32 45,0
+    %r302 = icmp eq i32 %r300,%r301
+    br i1 %r302, label %L92, label %L93
 L92:
-    %r302 = load i32, ptr %r286
-    %r303 = load i32, ptr %r284
-    %r304 = sub i32 %r302,%r303
-    store i32 %r304, ptr %r288
+    %r303 = load i32, ptr %r286
+    %r304 = load i32, ptr %r284
+    %r305 = sub i32 %r303,%r304
+    store i32 %r305, ptr %r288
     br label %L93
 L93:
-    %r305 = load i32, ptr @i
-    %r306 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r305
-    %r307 = load i32, ptr %r306
-    %r308 = add i32 42,0
-    %r309 = icmp eq i32 %r307,%r308
-    br i1 %r309, label %L94, label %L95
+    %r306 = load i32, ptr @i
+    %r307 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r306
+    %r308 = load i32, ptr %r307
+    %r309 = add i32 42,0
+    %r310 = icmp eq i32 %r308,%r309
+    br i1 %r310, label %L94, label %L95
 L94:
-    %r310 = load i32, ptr %r284
-    %r311 = load i32, ptr %r286
-    %r312 = mul i32 %r310,%r311
-    store i32 %r312, ptr %r288
+    %r311 = load i32, ptr %r284
+    %r312 = load i32, ptr %r286
+    %r313 = mul i32 %r311,%r312
+    store i32 %r313, ptr %r288
     br label %L95
 L95:
-    %r313 = load i32, ptr @i
-    %r314 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r313
-    %r315 = load i32, ptr %r314
-    %r316 = add i32 47,0
-    %r317 = icmp eq i32 %r315,%r316
-    br i1 %r317, label %L96, label %L97
+    %r314 = load i32, ptr @i
+    %r315 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r314
+    %r316 = load i32, ptr %r315
+    %r317 = add i32 47,0
+    %r318 = icmp eq i32 %r316,%r317
+    br i1 %r318, label %L96, label %L97
 L96:
-    %r318 = load i32, ptr %r286
-    %r319 = load i32, ptr %r284
-    %r320 = sdiv i32 %r318,%r319
-    store i32 %r320, ptr %r288
+    %r319 = load i32, ptr %r286
+    %r320 = load i32, ptr %r284
+    %r321 = sdiv i32 %r319,%r320
+    store i32 %r321, ptr %r288
     br label %L97
 L97:
-    %r321 = load i32, ptr @i
-    %r322 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r321
-    %r323 = load i32, ptr %r322
-    %r324 = add i32 37,0
-    %r325 = icmp eq i32 %r323,%r324
-    br i1 %r325, label %L98, label %L99
+    %r322 = load i32, ptr @i
+    %r323 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r322
+    %r324 = load i32, ptr %r323
+    %r325 = add i32 37,0
+    %r326 = icmp eq i32 %r324,%r325
+    br i1 %r326, label %L98, label %L99
 L98:
-    %r326 = load i32, ptr %r286
-    %r327 = load i32, ptr %r284
-    %r328 = srem i32 %r326,%r327
-    store i32 %r328, ptr %r288
+    %r327 = load i32, ptr %r286
+    %r328 = load i32, ptr %r284
+    %r329 = srem i32 %r327,%r328
+    store i32 %r329, ptr %r288
     br label %L99
 L99:
-    %r329 = load i32, ptr @i
-    %r330 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r329
-    %r331 = load i32, ptr %r330
-    %r332 = add i32 94,0
-    %r333 = icmp eq i32 %r331,%r332
-    br i1 %r333, label %L100, label %L101
+    %r330 = load i32, ptr @i
+    %r331 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r330
+    %r332 = load i32, ptr %r331
+    %r333 = add i32 94,0
+    %r334 = icmp eq i32 %r332,%r333
+    br i1 %r334, label %L100, label %L101
 L100:
-    %r334 = load i32, ptr %r286
-    %r335 = load i32, ptr %r284
-    %r336 = call i32 @power(i32 %r334,i32 %r335)
-    store i32 %r336, ptr %r288
+    %r335 = load i32, ptr %r286
+    %r336 = load i32, ptr %r284
+    %r337 = call i32 @power(i32 %r335,i32 %r336)
+    store i32 %r337, ptr %r288
     br label %L101
 L101:
-    %r337 = load i32, ptr %r288
-    call void @intpush(i32 %r337)
+    %r338 = load i32, ptr %r288
+    call void @intpush(i32 %r338)
     br label %L84
 L102:
-    %r343 = load i32, ptr @i
-    %r344 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r343
-    %r345 = load i32, ptr %r344
-    %r346 = add i32 48,0
-    %r347 = sub i32 %r345,%r346
-    call void @intpush(i32 %r347)
-    %r348 = add i32 1,0
-    store i32 %r348, ptr @ii
+    %r344 = load i32, ptr @i
+    %r345 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r344
+    %r346 = load i32, ptr %r345
+    %r347 = add i32 48,0
+    %r348 = sub i32 %r346,%r347
+    call void @intpush(i32 %r348)
+    %r349 = add i32 1,0
+    store i32 %r349, ptr @ii
     br label %L104
 L103:
     br label %L84
 L104:
-    %r349 = load i32, ptr @i
-    %r350 = load i32, ptr @ii
-    %r351 = add i32 %r349,%r350
-    %r352 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r351
-    %r353 = load i32, ptr %r352
-    %r354 = add i32 32,0
-    %r355 = icmp ne i32 %r353,%r354
-    br i1 %r355, label %L105, label %L106
+    %r350 = load i32, ptr @i
+    %r351 = load i32, ptr @ii
+    %r352 = add i32 %r350,%r351
+    %r353 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r352
+    %r354 = load i32, ptr %r353
+    %r355 = add i32 32,0
+    %r356 = icmp ne i32 %r354,%r355
+    br i1 %r356, label %L105, label %L106
 L105:
-    %r356 = load i32, ptr @i
-    %r357 = load i32, ptr @ii
-    %r358 = add i32 %r356,%r357
-    %r359 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r358
-    %r360 = load i32, ptr %r359
-    %r361 = add i32 48,0
-    %r362 = sub i32 %r360,%r361
-    call void @intadd(i32 %r362)
-    %r363 = load i32, ptr @ii
-    %r364 = add i32 1,0
-    %r365 = add i32 %r363,%r364
-    store i32 %r365, ptr @ii
+    %r357 = load i32, ptr @i
+    %r358 = load i32, ptr @ii
+    %r359 = add i32 %r357,%r358
+    %r360 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r359
+    %r361 = load i32, ptr %r360
+    %r362 = add i32 48,0
+    %r363 = sub i32 %r361,%r362
+    call void @intadd(i32 %r363)
+    %r364 = load i32, ptr @ii
+    %r365 = add i32 1,0
+    %r366 = add i32 %r364,%r365
+    store i32 %r366, ptr @ii
     br label %L104
 L106:
-    %r366 = load i32, ptr @i
-    %r367 = load i32, ptr @ii
-    %r368 = add i32 %r366,%r367
-    %r369 = add i32 1,0
-    %r370 = sub i32 %r368,%r369
-    store i32 %r370, ptr @i
+    %r367 = load i32, ptr @i
+    %r368 = load i32, ptr @ii
+    %r369 = add i32 %r367,%r368
+    %r370 = add i32 1,0
+    %r371 = sub i32 %r369,%r370
+    store i32 %r371, ptr @i
     br label %L103
-}
-define i32 @find()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = call i32 @chapop()
-    store i32 %r0, ptr @c
-    %r1 = load i32, ptr @ii
-    %r2 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r1
-    %r3 = add i32 32,0
-    store i32 %r3, ptr %r2
-    %r4 = load i32, ptr @ii
-    %r5 = add i32 1,0
-    %r6 = add i32 %r4,%r5
-    %r7 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r6
-    %r8 = load i32, ptr @c
-    store i32 %r8, ptr %r7
-    %r9 = load i32, ptr @ii
-    %r10 = add i32 2,0
-    %r11 = add i32 %r9,%r10
-    store i32 %r11, ptr @ii
-    %r12 = load i32, ptr @chat
-    %r13 = add i32 0,0
-    %r14 = icmp eq i32 %r12,%r13
-    br i1 %r14, label %L2, label %L3
-L2:
-    %r15 = add i32 0,0
-    ret i32 %r15
-L3:
-    %r16 = add i32 1,0
-    ret i32 %r16
 }

@@ -53,6 +53,18 @@ L3:
 L4:
     ret void
 }
+define void @inc(ptr %r0)
+{
+L0:
+    br label %L1
+L1:
+    %r1 = getelementptr i32, ptr %r0
+    %r2 = add i32 0,0
+    %r3 = getelementptr [1 x i32], ptr @k, i32 0, i32 %r2
+    %r4 = load i32, ptr %r3
+    call void @inc_impl(ptr %r1,i32 %r4)
+    ret void
+}
 define void @add_impl(ptr %r0,ptr %r1,i32 %r2)
 {
 L0:
@@ -95,16 +107,17 @@ L3:
 L4:
     ret void
 }
-define void @inc(ptr %r0)
+define void @add(ptr %r0,ptr %r1)
 {
 L0:
     br label %L1
 L1:
-    %r1 = getelementptr i32, ptr %r0
-    %r2 = add i32 0,0
-    %r3 = getelementptr [1 x i32], ptr @k, i32 0, i32 %r2
-    %r4 = load i32, ptr %r3
-    call void @inc_impl(ptr %r1,i32 %r4)
+    %r2 = getelementptr i32, ptr %r0
+    %r3 = getelementptr i32, ptr %r1
+    %r4 = add i32 0,0
+    %r5 = getelementptr [1 x i32], ptr @k, i32 0, i32 %r4
+    %r6 = load i32, ptr %r5
+    call void @add_impl(ptr %r2,ptr %r3,i32 %r6)
     ret void
 }
 define void @sub_impl(ptr %r0,ptr %r1,i32 %r2)
@@ -149,7 +162,7 @@ L3:
 L4:
     ret void
 }
-define void @add(ptr %r0,ptr %r1)
+define void @sub(ptr %r0,ptr %r1)
 {
 L0:
     br label %L1
@@ -159,7 +172,7 @@ L1:
     %r4 = add i32 0,0
     %r5 = getelementptr [1 x i32], ptr @k, i32 0, i32 %r4
     %r6 = load i32, ptr %r5
-    call void @add_impl(ptr %r2,ptr %r3,i32 %r6)
+    call void @sub_impl(ptr %r2,ptr %r3,i32 %r6)
     ret void
 }
 define i32 @main()
@@ -264,17 +277,4 @@ L8:
     br label %L4
 L9:
     br label %L2
-}
-define void @sub(ptr %r0,ptr %r1)
-{
-L0:
-    br label %L1
-L1:
-    %r2 = getelementptr i32, ptr %r0
-    %r3 = getelementptr i32, ptr %r1
-    %r4 = add i32 0,0
-    %r5 = getelementptr [1 x i32], ptr @k, i32 0, i32 %r4
-    %r6 = load i32, ptr %r5
-    call void @sub_impl(ptr %r2,ptr %r3,i32 %r6)
-    ret void
 }

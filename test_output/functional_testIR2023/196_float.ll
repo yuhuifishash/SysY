@@ -27,6 +27,71 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @TWO = global i32 2
 @THREE = global i32 3
 @FIVE = global i32 5
+define float @float_abs(float %r0)
+{
+L0:
+    %r1 = alloca float
+    store float %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load float, ptr %r1
+    %r3 = add i32 0,0
+    %r4 = sitofp i32 %r3 to float
+    %r5 = fcmp olt float %r2,%r4
+    br i1 %r5, label %L2, label %L3
+L2:
+    %r6 = load float, ptr %r1
+    %r7 = fsub float 0x0,%r6
+    ret float %r7
+L3:
+    %r8 = load float, ptr %r1
+    ret float %r8
+}
+define void @error()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = add i32 101,0
+    call void @putch(i32 %r0)
+    %r1 = add i32 114,0
+    call void @putch(i32 %r1)
+    %r2 = add i32 114,0
+    call void @putch(i32 %r2)
+    %r3 = add i32 111,0
+    call void @putch(i32 %r3)
+    %r4 = add i32 114,0
+    call void @putch(i32 %r4)
+    %r5 = add i32 10,0
+    call void @putch(i32 %r5)
+    ret void
+}
+define float @circle_area(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load float, ptr @PI
+    %r3 = load i32, ptr %r1
+    %r4 = sitofp i32 %r3 to float
+    %r5 = fmul float %r2,%r4
+    %r6 = load i32, ptr %r1
+    %r7 = sitofp i32 %r6 to float
+    %r8 = fmul float %r5,%r7
+    %r9 = load i32, ptr %r1
+    %r10 = load i32, ptr %r1
+    %r11 = mul i32 %r9,%r10
+    %r12 = load float, ptr @PI
+    %r13 = sitofp i32 %r11 to float
+    %r14 = fmul float %r13,%r12
+    %r15 = fadd float %r8,%r14
+    %r16 = add i32 2,0
+    %r17 = sitofp i32 %r16 to float
+    %r18 = fdiv float %r15,%r17
+    ret float %r18
+}
 define i32 @float_eq(float %r0,float %r1)
 {
 L0:
@@ -56,6 +121,38 @@ L2:
 L3:
     %r18 = add i32 0,0
     ret i32 %r18
+}
+define void @ok()
+{
+L0:
+    br label %L1
+L1:
+    %r0 = add i32 111,0
+    call void @putch(i32 %r0)
+    %r1 = add i32 107,0
+    call void @putch(i32 %r1)
+    %r2 = add i32 10,0
+    call void @putch(i32 %r2)
+    ret void
+}
+define void @assert(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr %r1
+    %r3 = icmp eq i32 %r2,0
+    br i1 %r3, label %L2, label %L3
+L2:
+    call void @error()
+    br label %L4
+L3:
+    call void @ok()
+    br label %L4
+L4:
+    ret void
 }
 define i32 @main()
 {
@@ -206,101 +303,4 @@ L14:
     call void @putfarray(i32 %r88,ptr %r89)
     %r90 = add i32 0,0
     ret i32 %r90
-}
-define float @float_abs(float %r0)
-{
-L0:
-    %r1 = alloca float
-    store float %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load float, ptr %r1
-    %r3 = add i32 0,0
-    %r4 = sitofp i32 %r3 to float
-    %r5 = fcmp olt float %r2,%r4
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = load float, ptr %r1
-    %r7 = fsub float 0x0,%r6
-    ret float %r7
-L3:
-    %r8 = load float, ptr %r1
-    ret float %r8
-}
-define void @ok()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = add i32 111,0
-    call void @putch(i32 %r0)
-    %r1 = add i32 107,0
-    call void @putch(i32 %r1)
-    %r2 = add i32 10,0
-    call void @putch(i32 %r2)
-    ret void
-}
-define float @circle_area(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load float, ptr @PI
-    %r3 = load i32, ptr %r1
-    %r4 = sitofp i32 %r3 to float
-    %r5 = fmul float %r2,%r4
-    %r6 = load i32, ptr %r1
-    %r7 = sitofp i32 %r6 to float
-    %r8 = fmul float %r5,%r7
-    %r9 = load i32, ptr %r1
-    %r10 = load i32, ptr %r1
-    %r11 = mul i32 %r9,%r10
-    %r12 = load float, ptr @PI
-    %r13 = sitofp i32 %r11 to float
-    %r14 = fmul float %r13,%r12
-    %r15 = fadd float %r8,%r14
-    %r16 = add i32 2,0
-    %r17 = sitofp i32 %r16 to float
-    %r18 = fdiv float %r15,%r17
-    ret float %r18
-}
-define void @assert(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr %r1
-    %r3 = icmp eq i32 %r2,0
-    br i1 %r3, label %L2, label %L3
-L2:
-    call void @error()
-    br label %L4
-L3:
-    call void @ok()
-    br label %L4
-L4:
-    ret void
-}
-define void @error()
-{
-L0:
-    br label %L1
-L1:
-    %r0 = add i32 101,0
-    call void @putch(i32 %r0)
-    %r1 = add i32 114,0
-    call void @putch(i32 %r1)
-    %r2 = add i32 114,0
-    call void @putch(i32 %r2)
-    %r3 = add i32 111,0
-    call void @putch(i32 %r3)
-    %r4 = add i32 114,0
-    call void @putch(i32 %r4)
-    %r5 = add i32 10,0
-    call void @putch(i32 %r5)
-    ret void
 }

@@ -41,7 +41,7 @@ L3:
     %r17 = call i32 @func1(i32 %r12,i32 %r15,i32 %r16)
     ret i32 %r17
 }
-define i32 @func6(i32 %r0,i32 %r1)
+define i32 @func2(i32 %r0,i32 %r1)
 {
 L0:
     %r3 = alloca i32
@@ -50,19 +50,19 @@ L0:
     store i32 %r1, ptr %r3
     br label %L1
 L1:
-    %r4 = load i32, ptr %r2
+    %r4 = load i32, ptr %r3
     %r5 = icmp ne i32 %r4,0
-    br i1 %r5, label %L5, label %L3
+    br i1 %r5, label %L2, label %L3
 L2:
-    %r8 = add i32 1,0
-    ret i32 %r8
-L3:
+    %r6 = load i32, ptr %r2
+    %r7 = load i32, ptr %r3
+    %r8 = srem i32 %r6,%r7
     %r9 = add i32 0,0
-    ret i32 %r9
-L5:
-    %r6 = load i32, ptr %r3
-    %r7 = icmp ne i32 %r6,0
-    br i1 %r7, label %L2, label %L3
+    %r10 = call i32 @func2(i32 %r8,i32 %r9)
+    ret i32 %r10
+L3:
+    %r11 = load i32, ptr %r2
+    ret i32 %r11
 }
 define i32 @func3(i32 %r0,i32 %r1)
 {
@@ -90,29 +90,6 @@ L3:
     %r14 = call i32 @func3(i32 %r12,i32 %r13)
     ret i32 %r14
 }
-define i32 @func2(i32 %r0,i32 %r1)
-{
-L0:
-    %r3 = alloca i32
-    %r2 = alloca i32
-    store i32 %r0, ptr %r2
-    store i32 %r1, ptr %r3
-    br label %L1
-L1:
-    %r4 = load i32, ptr %r3
-    %r5 = icmp ne i32 %r4,0
-    br i1 %r5, label %L2, label %L3
-L2:
-    %r6 = load i32, ptr %r2
-    %r7 = load i32, ptr %r3
-    %r8 = srem i32 %r6,%r7
-    %r9 = add i32 0,0
-    %r10 = call i32 @func2(i32 %r8,i32 %r9)
-    ret i32 %r10
-L3:
-    %r11 = load i32, ptr %r2
-    ret i32 %r11
-}
 define i32 @func4(i32 %r0,i32 %r1,i32 %r2)
 {
 L0:
@@ -133,6 +110,57 @@ L2:
 L3:
     %r9 = load i32, ptr %r5
     ret i32 %r9
+}
+define i32 @func5(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr %r1
+    %r3 = sub i32 0,%r2
+    ret i32 %r3
+}
+define i32 @func6(i32 %r0,i32 %r1)
+{
+L0:
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
+    br label %L1
+L1:
+    %r4 = load i32, ptr %r2
+    %r5 = icmp ne i32 %r4,0
+    br i1 %r5, label %L5, label %L3
+L2:
+    %r8 = add i32 1,0
+    ret i32 %r8
+L3:
+    %r9 = add i32 0,0
+    ret i32 %r9
+L5:
+    %r6 = load i32, ptr %r3
+    %r7 = icmp ne i32 %r6,0
+    br i1 %r7, label %L2, label %L3
+}
+define i32 @func7(i32 %r0)
+{
+L0:
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
+    br label %L1
+L1:
+    %r2 = load i32, ptr %r1
+    %r3 = icmp eq i32 %r2,0
+    br i1 %r3, label %L2, label %L3
+L2:
+    %r4 = add i32 1,0
+    ret i32 %r4
+L3:
+    %r5 = add i32 0,0
+    ret i32 %r5
 }
 define i32 @main()
 {
@@ -279,32 +307,4 @@ L4:
     store i32 %r123, ptr %r20
     %r124 = load i32, ptr %r20
     ret i32 %r124
-}
-define i32 @func5(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr %r1
-    %r3 = sub i32 0,%r2
-    ret i32 %r3
-}
-define i32 @func7(i32 %r0)
-{
-L0:
-    %r1 = alloca i32
-    store i32 %r0, ptr %r1
-    br label %L1
-L1:
-    %r2 = load i32, ptr %r1
-    %r3 = icmp eq i32 %r2,0
-    br i1 %r3, label %L2, label %L3
-L2:
-    %r4 = add i32 1,0
-    ret i32 %r4
-L3:
-    %r5 = add i32 0,0
-    ret i32 %r5
 }

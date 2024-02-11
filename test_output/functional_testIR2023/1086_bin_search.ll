@@ -15,124 +15,131 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
 L0:
+    %r26 = alloca i32
+    %r24 = alloca i32
+    %r22 = alloca i32
     %r20 = alloca i32
-    %r19 = alloca i32
     %r18 = alloca i32
-    %r17 = alloca i32
-    %r16 = alloca i32
-    %r2 = alloca [10 x i32]
-    %r1 = alloca i32
+    %r4 = alloca [10 x i32]
+    %r2 = alloca i32
     %r0 = alloca i32
     br label %L1
 L1:
-    store i32 0, ptr %r0
-    store i32 0, ptr %r1
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
     %r3 = add i32 0,0
-    store i32 %r3, ptr %r1
-    %r4 = add i32 0,0
-    store i32 %r4, ptr %r0
+    store i32 %r3, ptr %r2
+    %r5 = add i32 0,0
+    store i32 %r5, ptr %r2
+    %r6 = add i32 0,0
+    store i32 %r6, ptr %r0
     br label %L2
 L2:
-    %r5 = load i32, ptr %r0
-    %r6 = add i32 10,0
-    %r7 = icmp slt i32 %r5,%r6
-    br i1 %r7, label %L3, label %L4
+    %r7 = load i32, ptr %r0
+    %r8 = add i32 10,0
+    %r9 = icmp slt i32 %r7,%r8
+    br i1 %r9, label %L3, label %L4
 L3:
-    %r8 = load i32, ptr %r0
-    %r9 = getelementptr [10 x i32], ptr %r2, i32 0, i32 %r8
     %r10 = load i32, ptr %r0
-    %r11 = add i32 1,0
-    %r12 = add i32 %r10,%r11
-    store i32 %r12, ptr %r9
-    %r13 = load i32, ptr %r0
-    %r14 = add i32 1,0
-    %r15 = add i32 %r13,%r14
-    store i32 %r15, ptr %r0
+    %r11 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r10
+    %r12 = load i32, ptr %r0
+    %r13 = add i32 1,0
+    %r14 = add i32 %r12,%r13
+    store i32 %r14, ptr %r11
+    %r15 = load i32, ptr %r0
+    %r16 = add i32 1,0
+    %r17 = add i32 %r15,%r16
+    store i32 %r17, ptr %r0
     br label %L2
 L4:
-    store i32 0, ptr %r16
-    store i32 0, ptr %r17
-    store i32 0, ptr %r18
-    store i32 0, ptr %r19
-    store i32 0, ptr %r20
-    %r21 = add i32 10,0
+    %r19 = add i32 0,0
+    store i32 %r19, ptr %r18
+    %r21 = add i32 0,0
     store i32 %r21, ptr %r20
-    %r22 = call i32 @getint()
-    store i32 %r22, ptr %r16
-    %r23 = load i32, ptr %r20
-    %r24 = add i32 1,0
-    %r25 = sub i32 %r23,%r24
-    store i32 %r25, ptr %r17
-    %r26 = add i32 0,0
-    store i32 %r26, ptr %r18
-    %r27 = load i32, ptr %r17
-    %r28 = load i32, ptr %r18
-    %r29 = add i32 %r27,%r28
-    %r30 = add i32 2,0
-    %r31 = sdiv i32 %r29,%r30
-    store i32 %r31, ptr %r19
+    %r23 = add i32 0,0
+    store i32 %r23, ptr %r22
+    %r25 = add i32 0,0
+    store i32 %r25, ptr %r24
+    %r27 = add i32 0,0
+    store i32 %r27, ptr %r26
+    %r28 = add i32 10,0
+    store i32 %r28, ptr %r26
+    %r29 = call i32 @getint()
+    store i32 %r29, ptr %r18
+    %r30 = load i32, ptr %r26
+    %r31 = add i32 1,0
+    %r32 = sub i32 %r30,%r31
+    store i32 %r32, ptr %r20
+    %r33 = add i32 0,0
+    store i32 %r33, ptr %r22
+    %r34 = load i32, ptr %r20
+    %r35 = load i32, ptr %r22
+    %r36 = add i32 %r34,%r35
+    %r37 = add i32 2,0
+    %r38 = sdiv i32 %r36,%r37
+    store i32 %r38, ptr %r24
     br label %L5
 L5:
-    %r32 = load i32, ptr %r19
-    %r33 = getelementptr [10 x i32], ptr %r2, i32 0, i32 %r32
-    %r34 = load i32, ptr %r33
-    %r35 = load i32, ptr %r16
-    %r36 = icmp ne i32 %r34,%r35
-    br i1 %r36, label %L8, label %L7
+    %r39 = load i32, ptr %r24
+    %r40 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r39
+    %r41 = load i32, ptr %r40
+    %r42 = load i32, ptr %r18
+    %r43 = icmp ne i32 %r41,%r42
+    br i1 %r43, label %L8, label %L7
 L6:
-    %r40 = load i32, ptr %r17
-    %r41 = load i32, ptr %r18
-    %r42 = add i32 %r40,%r41
-    %r43 = add i32 2,0
-    %r44 = sdiv i32 %r42,%r43
-    store i32 %r44, ptr %r19
-    %r45 = load i32, ptr %r16
-    %r46 = load i32, ptr %r19
-    %r47 = getelementptr [10 x i32], ptr %r2, i32 0, i32 %r46
-    %r48 = load i32, ptr %r47
-    %r49 = icmp slt i32 %r45,%r48
-    br i1 %r49, label %L9, label %L10
+    %r47 = load i32, ptr %r20
+    %r48 = load i32, ptr %r22
+    %r49 = add i32 %r47,%r48
+    %r50 = add i32 2,0
+    %r51 = sdiv i32 %r49,%r50
+    store i32 %r51, ptr %r24
+    %r52 = load i32, ptr %r18
+    %r53 = load i32, ptr %r24
+    %r54 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r53
+    %r55 = load i32, ptr %r54
+    %r56 = icmp slt i32 %r52,%r55
+    br i1 %r56, label %L9, label %L10
 L7:
-    %r56 = load i32, ptr %r16
-    %r57 = load i32, ptr %r19
-    %r58 = getelementptr [10 x i32], ptr %r2, i32 0, i32 %r57
-    %r59 = load i32, ptr %r58
-    %r60 = icmp eq i32 %r56,%r59
-    br i1 %r60, label %L12, label %L13
+    %r63 = load i32, ptr %r18
+    %r64 = load i32, ptr %r24
+    %r65 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r64
+    %r66 = load i32, ptr %r65
+    %r67 = icmp eq i32 %r63,%r66
+    br i1 %r67, label %L12, label %L13
 L8:
-    %r37 = load i32, ptr %r18
-    %r38 = load i32, ptr %r17
-    %r39 = icmp slt i32 %r37,%r38
-    br i1 %r39, label %L6, label %L7
+    %r44 = load i32, ptr %r22
+    %r45 = load i32, ptr %r20
+    %r46 = icmp slt i32 %r44,%r45
+    br i1 %r46, label %L6, label %L7
 L9:
-    %r50 = load i32, ptr %r19
-    %r51 = add i32 1,0
-    %r52 = sub i32 %r50,%r51
-    store i32 %r52, ptr %r17
+    %r57 = load i32, ptr %r24
+    %r58 = add i32 1,0
+    %r59 = sub i32 %r57,%r58
+    store i32 %r59, ptr %r20
     br label %L11
 L10:
-    %r53 = load i32, ptr %r19
-    %r54 = add i32 1,0
-    %r55 = add i32 %r53,%r54
-    store i32 %r55, ptr %r18
+    %r60 = load i32, ptr %r24
+    %r61 = add i32 1,0
+    %r62 = add i32 %r60,%r61
+    store i32 %r62, ptr %r22
     br label %L11
 L11:
     br label %L5
 L12:
-    %r61 = load i32, ptr %r16
-    call void @putint(i32 %r61)
+    %r68 = load i32, ptr %r18
+    call void @putint(i32 %r68)
     br label %L14
 L13:
-    %r62 = add i32 0,0
-    store i32 %r62, ptr %r16
-    %r63 = load i32, ptr %r16
-    call void @putint(i32 %r63)
+    %r69 = add i32 0,0
+    store i32 %r69, ptr %r18
+    %r70 = load i32, ptr %r18
+    call void @putint(i32 %r70)
     br label %L14
 L14:
-    %r64 = add i32 10,0
-    store i32 %r64, ptr %r16
-    %r65 = load i32, ptr %r16
-    call void @putch(i32 %r65)
-    %r66 = add i32 0,0
-    ret i32 %r66
+    %r71 = add i32 10,0
+    store i32 %r71, ptr %r18
+    %r72 = load i32, ptr %r18
+    call void @putch(i32 %r72)
+    %r73 = add i32 0,0
+    ret i32 %r73
 }

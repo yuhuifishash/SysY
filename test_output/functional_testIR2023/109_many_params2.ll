@@ -143,62 +143,63 @@ L1:
     %r36 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r34, i32 %r35
     %r37 = add i32 9,0
     store i32 %r37, ptr %r36
-    store i32 0, ptr %r38
-    %r39 = add i32 17,0
-    %r40 = add i32 1,0
-    %r41 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r39, i32 %r40
-    %r42 = load i32, ptr %r41
-    %r43 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0
-    %r44 = add i32 17,0
-    %r45 = add i32 3,0
-    %r46 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r44, i32 %r45
-    %r47 = load i32, ptr %r46
-    %r48 = add i32 17,0
-    %r49 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r48
-    %r50 = add i32 6,0
-    %r51 = add i32 3,0
-    %r52 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r50, i32 %r51
-    %r53 = load i32, ptr %r52
-    %r54 = add i32 6,0
-    %r55 = add i32 0,0
-    %r56 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r54, i32 %r55
-    %r57 = load i32, ptr %r56
-    %r58 = add i32 6,0
-    %r59 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r58
-    %r60 = add i32 34,0
-    %r61 = add i32 4,0
-    %r62 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r60, i32 %r61
-    %r63 = load i32, ptr %r62
-    %r64 = add i32 51,0
-    %r65 = add i32 18,0
-    %r66 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r64, i32 %r65
-    %r67 = load i32, ptr %r66
-    %r68 = call i32 @func(i32 %r42,ptr %r43,i32 %r47,ptr %r49,i32 %r53,i32 %r57,ptr %r59,i32 %r63,i32 %r67)
-    %r69 = add i32 3,0
-    %r70 = mul i32 %r68,%r69
-    store i32 %r70, ptr %r38
+    %r39 = add i32 0,0
+    store i32 %r39, ptr %r38
+    %r40 = add i32 17,0
+    %r41 = add i32 1,0
+    %r42 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r40, i32 %r41
+    %r43 = load i32, ptr %r42
+    %r44 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0
+    %r45 = add i32 17,0
+    %r46 = add i32 3,0
+    %r47 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r45, i32 %r46
+    %r48 = load i32, ptr %r47
+    %r49 = add i32 17,0
+    %r50 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r49
+    %r51 = add i32 6,0
+    %r52 = add i32 3,0
+    %r53 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r51, i32 %r52
+    %r54 = load i32, ptr %r53
+    %r55 = add i32 6,0
+    %r56 = add i32 0,0
+    %r57 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r55, i32 %r56
+    %r58 = load i32, ptr %r57
+    %r59 = add i32 6,0
+    %r60 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r59
+    %r61 = add i32 34,0
+    %r62 = add i32 4,0
+    %r63 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r61, i32 %r62
+    %r64 = load i32, ptr %r63
+    %r65 = add i32 51,0
+    %r66 = add i32 18,0
+    %r67 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r65, i32 %r66
+    %r68 = load i32, ptr %r67
+    %r69 = call i32 @func(i32 %r43,ptr %r44,i32 %r48,ptr %r50,i32 %r54,i32 %r58,ptr %r60,i32 %r64,i32 %r68)
+    %r70 = add i32 3,0
+    %r71 = mul i32 %r69,%r70
+    store i32 %r71, ptr %r38
     br label %L2
 L2:
-    %r71 = load i32, ptr %r38
-    %r72 = add i32 0,0
-    %r73 = icmp sge i32 %r71,%r72
-    br i1 %r73, label %L3, label %L4
+    %r72 = load i32, ptr %r38
+    %r73 = add i32 0,0
+    %r74 = icmp sge i32 %r72,%r73
+    br i1 %r74, label %L3, label %L4
 L3:
-    %r74 = add i32 6,0
-    %r75 = load i32, ptr %r38
-    %r76 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r74, i32 %r75
-    %r77 = load i32, ptr %r76
-    call void @putint(i32 %r77)
-    %r78 = add i32 32,0
-    call void @putch(i32 %r78)
-    %r79 = load i32, ptr %r38
-    %r80 = add i32 1,0
-    %r81 = sub i32 %r79,%r80
-    store i32 %r81, ptr %r38
+    %r75 = add i32 6,0
+    %r76 = load i32, ptr %r38
+    %r77 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r75, i32 %r76
+    %r78 = load i32, ptr %r77
+    call void @putint(i32 %r78)
+    %r79 = add i32 32,0
+    call void @putch(i32 %r79)
+    %r80 = load i32, ptr %r38
+    %r81 = add i32 1,0
+    %r82 = sub i32 %r80,%r81
+    store i32 %r82, ptr %r38
     br label %L2
 L4:
-    %r82 = add i32 10,0
-    call void @putch(i32 %r82)
-    %r83 = add i32 0,0
-    ret i32 %r83
+    %r83 = add i32 10,0
+    call void @putch(i32 %r83)
+    %r84 = add i32 0,0
+    ret i32 %r84
 }

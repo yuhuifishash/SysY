@@ -182,78 +182,6 @@ L6:
 L7:
     br label %L4
 }
-define i32 @main()
-{
-L0:
-    %r9 = alloca i32
-    %r6 = alloca i32
-    %r1 = alloca i32
-    br label %L1
-L1:
-    %r0 = add i32 0,0
-    store i32 %r0, ptr @now
-    %r2 = call i32 @getint()
-    store i32 %r2, ptr %r1
-    %r3 = load i32, ptr %r1
-    %r4 = icmp eq i32 %r3,0
-    br i1 %r4, label %L2, label %L3
-L2:
-    %r5 = add i32 0,0
-    ret i32 %r5
-L3:
-    %r7 = call i32 @getint()
-    %r8 = call i32 @new_node(i32 %r7)
-    store i32 %r8, ptr %r6
-    %r10 = add i32 1,0
-    store i32 %r10, ptr %r9
-    br label %L4
-L4:
-    %r11 = load i32, ptr %r9
-    %r12 = load i32, ptr %r1
-    %r13 = icmp slt i32 %r11,%r12
-    br i1 %r13, label %L5, label %L6
-L5:
-    %r14 = load i32, ptr %r6
-    %r15 = call i32 @getint()
-    %r16 = call i32 @insert(i32 %r14,i32 %r15)
-    %r17 = load i32, ptr %r9
-    %r18 = add i32 1,0
-    %r19 = add i32 %r17,%r18
-    store i32 %r19, ptr %r9
-    br label %L4
-L6:
-    %r20 = load i32, ptr %r6
-    call void @inorder(i32 %r20)
-    %r21 = load i32, ptr @LF
-    call void @putch(i32 %r21)
-    %r22 = call i32 @getint()
-    store i32 %r22, ptr %r1
-    %r23 = add i32 0,0
-    store i32 %r23, ptr %r9
-    br label %L7
-L7:
-    %r24 = load i32, ptr %r9
-    %r25 = load i32, ptr %r1
-    %r26 = icmp slt i32 %r24,%r25
-    br i1 %r26, label %L8, label %L9
-L8:
-    %r27 = load i32, ptr %r6
-    %r28 = call i32 @getint()
-    %r29 = call i32 @delete(i32 %r27,i32 %r28)
-    store i32 %r29, ptr %r6
-    %r30 = load i32, ptr %r9
-    %r31 = add i32 1,0
-    %r32 = add i32 %r30,%r31
-    store i32 %r32, ptr %r9
-    br label %L7
-L9:
-    %r33 = load i32, ptr %r6
-    call void @inorder(i32 %r33)
-    %r34 = load i32, ptr @LF
-    call void @putch(i32 %r34)
-    %r35 = add i32 0,0
-    ret i32 %r35
-}
 define i32 @delete(i32 %r0,i32 %r1)
 {
 L0:
@@ -424,4 +352,76 @@ L2:
     br label %L3
 L3:
     ret void
+}
+define i32 @main()
+{
+L0:
+    %r9 = alloca i32
+    %r6 = alloca i32
+    %r1 = alloca i32
+    br label %L1
+L1:
+    %r0 = add i32 0,0
+    store i32 %r0, ptr @now
+    %r2 = call i32 @getint()
+    store i32 %r2, ptr %r1
+    %r3 = load i32, ptr %r1
+    %r4 = icmp eq i32 %r3,0
+    br i1 %r4, label %L2, label %L3
+L2:
+    %r5 = add i32 0,0
+    ret i32 %r5
+L3:
+    %r7 = call i32 @getint()
+    %r8 = call i32 @new_node(i32 %r7)
+    store i32 %r8, ptr %r6
+    %r10 = add i32 1,0
+    store i32 %r10, ptr %r9
+    br label %L4
+L4:
+    %r11 = load i32, ptr %r9
+    %r12 = load i32, ptr %r1
+    %r13 = icmp slt i32 %r11,%r12
+    br i1 %r13, label %L5, label %L6
+L5:
+    %r14 = load i32, ptr %r6
+    %r15 = call i32 @getint()
+    %r16 = call i32 @insert(i32 %r14,i32 %r15)
+    %r17 = load i32, ptr %r9
+    %r18 = add i32 1,0
+    %r19 = add i32 %r17,%r18
+    store i32 %r19, ptr %r9
+    br label %L4
+L6:
+    %r20 = load i32, ptr %r6
+    call void @inorder(i32 %r20)
+    %r21 = load i32, ptr @LF
+    call void @putch(i32 %r21)
+    %r22 = call i32 @getint()
+    store i32 %r22, ptr %r1
+    %r23 = add i32 0,0
+    store i32 %r23, ptr %r9
+    br label %L7
+L7:
+    %r24 = load i32, ptr %r9
+    %r25 = load i32, ptr %r1
+    %r26 = icmp slt i32 %r24,%r25
+    br i1 %r26, label %L8, label %L9
+L8:
+    %r27 = load i32, ptr %r6
+    %r28 = call i32 @getint()
+    %r29 = call i32 @delete(i32 %r27,i32 %r28)
+    store i32 %r29, ptr %r6
+    %r30 = load i32, ptr %r9
+    %r31 = add i32 1,0
+    %r32 = add i32 %r30,%r31
+    store i32 %r32, ptr %r9
+    br label %L7
+L9:
+    %r33 = load i32, ptr %r6
+    call void @inorder(i32 %r33)
+    %r34 = load i32, ptr @LF
+    call void @putch(i32 %r34)
+    %r35 = add i32 0,0
+    ret i32 %r35
 }
