@@ -114,12 +114,22 @@ std::vector<LLVMBlock> CFG::GetPredecessor(LLVMBlock B)
     return invG[B->block_id];
 }
 
+std::vector<LLVMBlock> CFG::GetPredecessor(int bbid)
+{
+    return invG[bbid];
+}
+
 std::vector<LLVMBlock> CFG::GetSuccessor(LLVMBlock B)
 {
     return G[B->block_id];
 }
 
-LLVMBlock CFG::GetBlock(int id)
+std::vector<LLVMBlock> CFG::GetSuccessor(int bbid)
 {
-    return (*block_map)[id];
+    return G[bbid];
+}
+
+LLVMBlock CFG::GetBlock(int bbid)
+{
+    return (*block_map)[bbid];
 }

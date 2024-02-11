@@ -35,8 +35,10 @@ public:
     bool IfDominate(int id1,int id2){return DomTree.IfDominate(id1,id2);}
 
     std::vector<LLVMBlock> GetPredecessor(LLVMBlock B);
+    std::vector<LLVMBlock> GetPredecessor(int bbid);
     std::vector<LLVMBlock> GetSuccessor(LLVMBlock B);
-    LLVMBlock GetBlock(int id);
+    std::vector<LLVMBlock> GetSuccessor(int bbid);
+    LLVMBlock GetBlock(int bbid);
 };
 
 
