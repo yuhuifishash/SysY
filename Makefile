@@ -1,6 +1,7 @@
 SRCDIR += ./target
 SRCDIR += ./target/arm
 SRCDIR += ./target/arm/register_alloc
+SRCDIR += ./target/arm/instruction_select
 SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./IR
@@ -45,13 +46,3 @@ clean-obj:
 clean-all:
 	rm -r ${OBJDIR}/*
 	rm -r bin/*
-
-clean_example_test_output:
-	rm -r test/cgen_test_output/*
-	rm -r test/cgenalloc_test_output/*
-	rm -r test/cgenpre_test_output/*
-	rm -r test/IR_optimize_test_output/*
-	rm -r test/IR_test_output/*
-	rm -r test/lexer_test_output/*
-	rm -r test/parser_test_output/*
-	rm -r test/cgen_optimize_test_output/*
