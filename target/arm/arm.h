@@ -100,11 +100,12 @@ public:
 class Arm_movwt : Arm_baseins{
 public:
     enum {MOVW = 0,MOVT};
+    int opcode;
     Register R;
     int imm16;
     virtual void printArm(std::ostream& s);
-    Arm_movwt(Register R,int imm16,int cond,std::string comment = std::string())
-    :R(R),imm16(imm16){
+    Arm_movwt(int opcode,Register R,int imm16,int cond,std::string comment = std::string())
+    :opcode(opcode),R(R),imm16(imm16){
         ins_type = MOVWT;
         this->cond = cond;
         this->comment = comment;
@@ -254,10 +255,11 @@ public:
 
 class Arm_pushpop : Arm_baseins{
     enum {PUSH = 0,POP};
+    int opcode;
     std::vector<Register> reglist;
     virtual void printArm(std::ostream& s);
-    Arm_pushpop(std::vector<Register> reglist,int cond,std::string comment = std::string())
-    :reglist(reglist){
+    Arm_pushpop(int opcode,std::vector<Register> reglist,int cond,std::string comment = std::string())
+    :opcode(opcode),reglist(reglist){
         ins_type = LOADSTOREM;
         this->cond = cond;
         this->comment = comment;
@@ -266,11 +268,12 @@ class Arm_pushpop : Arm_baseins{
 
 class VFP_vbin : Arm_baseins{
     enum {VADD = 0,VSUM,VMUL,VDIV};
+    int opcode;
     int P;
     Register Fd,Fn,Fm;
     virtual void printArm(std::ostream& s);
-    VFP_vbin(int P,Register Fd,Register Fn,Register Fm,int cond,std::string comment = std::string())
-    :P(P),Fd(Fd),Fn(Fn),Fm(Fm){
+    VFP_vbin(int opcode,int P,Register Fd,Register Fn,Register Fm,int cond,std::string comment = std::string())
+    :opcode(opcode),P(P),Fd(Fd),Fn(Fn),Fm(Fm){
         ins_type = VBIN;
         this->cond = cond;
         this->comment = comment;
@@ -326,10 +329,11 @@ class VFP_vldst : Arm_baseins{
 };// VLDR VSTR
 class VFP_vpushpop : Arm_baseins {
     enum {VPUSH = 0,VPOP};
+    int opcode;
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vpushpop(std::vector<Register> VFPregs,int cond,std::string comment = std::string())
-    :VFPregs(VFPregs){
+    VFP_vpushpop(int opcode,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
+    :opcode(opcode),VFPregs(VFPregs){
         ins_type = VPUSHPOP;
         this->cond = cond;
         this->comment = comment;
@@ -337,11 +341,13 @@ class VFP_vpushpop : Arm_baseins {
 };// VPUSH VPOP
 class VFP_vstm : Arm_baseins {
     enum {VSTM = 0,VSTMDB,VLDM,VLDMDB};
+    int opcode;
     Register Rn;
+    bool dowriteback;
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vstm(Register Rn,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
-    :Rn(Rn),VFPregs(VFPregs){
+    VFP_vstm(int opcode,Register Rn,bool dowriteback,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
+    :opcode(opcode),Rn(Rn),dowriteback(dowriteback),VFPregs(VFPregs){
         ins_type = _VSTM;
         this->cond = cond;
         this->comment = comment;

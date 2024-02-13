@@ -1,30 +1,60 @@
 #ifndef ARM_BLOCK_H
 #define ARM_BLOCK_H
+#include "machine_block.h"
 #include "arm.h"
+#include "llvm_ir.h"
 #include <deque>
 #include <string>
 #include <iostream>
-class Arm_block{
+class ArmBlock : public MachineBlock<Arm_baseins*,ArmBlock*>{
 public:
-    int label_id;
-    std::deque<Arm_baseins*> instructions;
     void emit(std::ostream& s);
-    Arm_block(int id):label_id(id){}
+    ArmBlock(int id):MachineBlock(id){}
     template<class T>
     void ConvertAndAppend(T ins);
+
+    // void GetDef();
+    // void GetUse();
+
+    // void ArmSchedule();
+    // void IfConversion();
+    // void CopyPropagation();
+    // void LoopUnroll();
+    // void SIMD();
+    // void RegisterAlloc();
+    // void PeeholeOptimize();
 };
-class Arm_func{
+class ArmFunc : public MachineFunc<ArmBlock*,ArmFunc*>{
 public:
-    std::string func_name;
-    std::vector<Arm_block*> blocks{};
     void emit(std::ostream& s);
-    Arm_func(std::string name):func_name(name){}
+    ArmFunc(std::string name):MachineFunc(name){}
+
+    // void ArmSchedule();
+    // void IfConversion();
+    // void CopyPropagation();
+    // void LoopUnroll();
+    // void SIMD();
+    // void RegisterAlloc();
+    // void PeeholeOptimize();
 };
-class Arm_asm{
+class ArmUnit : public MachineUnit<ArmFunc*>{
 public:
-    std::vector<Instruction> global_def{};
-    std::vector<Arm_func*> functions;
     void emit(std::ostream& s);
-    Arm_asm(LLVM_IR& IR);
+    ArmUnit(LLVM_IR& IR);
+
+    // void ArmSchedule();
+    // void IfConversion();
+    // void CopyPropagation();
+    // void LoopUnroll();
+    // void SIMD();
+    // void RegisterAlloc();
+    // void PeeholeOptimize();
+};
+class ArmSelector{
+private:
+    LLVM_IR* IR;
+public:
+    ArmSelector(LLVM_IR* IR):IR(IR){}
+    ArmUnit* GetArmUnit();
 };
 #endif

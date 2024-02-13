@@ -677,7 +677,16 @@ void CFG::dead_block_elimate_sccp(std::map<std::pair<int,int>,int>& CFGedgeExec)
                     }
                     while(!phi_label_del.empty()){
                         auto label_to_del = phi_label_del.front();
-                        phi_list.erase(label_to_del);
+                        auto it = phi_list.begin();
+                        for(;it != phi_list.end();++it){
+                            if(it->first == label_to_del){
+                                break;
+                            }
+                        }
+                        if(it != phi_list.end()){
+                            phi_list.erase(it);
+                        }
+                        // phi_list.erase(label_to_del);
                         phi_label_del.pop();
                     }
                     auto DTType = target_phi->getDataType();
