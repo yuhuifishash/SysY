@@ -14,7 +14,7 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
-L0:
+L0:  ;
     %r114 = alloca [2 x [3 x [4 x i32]]]
     %r113 = alloca [3 x i32]
     %r96 = alloca [5 x [3 x i32]]
@@ -25,7 +25,7 @@ L0:
     %r1 = alloca [5 x [3 x i32]]
     %r0 = alloca [5 x [3 x i32]]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r1,i8 0,i32 60,i1 0)
     call void @llvm.memset.p0.i32(ptr %r2,i8 0,i32 60,i1 0)
     %r4 = getelementptr [5 x [3 x i32]], ptr %r2, i32 0, i32 0, i32 0

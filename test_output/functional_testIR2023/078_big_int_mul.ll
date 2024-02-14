@@ -15,14 +15,14 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @len = global i32 20
 define i32 @main()
 {
-L0:
+L0:  ;
     %r98 = alloca [40 x i32]
     %r97 = alloca [25 x i32]
     %r96 = alloca [25 x i32]
     %r51 = alloca [20 x i32]
     %r10 = alloca [20 x i32]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r10,i8 0,i32 80,i1 0)
     %r12 = getelementptr [20 x i32], ptr %r10, i32 0, i32 0
     store i32 1, ptr %r12
@@ -107,44 +107,44 @@ L1:
     store i32 2, ptr %r91
     call void @llvm.memset.p0.i32(ptr %r98,i8 0,i32 160,i1 0)
     br label %L2
-L2:
+L2:  ;
     %r231 = phi i32 [0,%L1],[%r110,%L3]
     %r102 = icmp slt i32 %r231,20
     br i1 %r102, label %L3, label %L4
-L3:
+L3:  ;
     %r104 = getelementptr [25 x i32], ptr %r96, i32 0, i32 %r231
     %r106 = getelementptr [20 x i32], ptr %r10, i32 0, i32 %r231
     %r107 = load i32, ptr %r106
     store i32 %r107, ptr %r104
     %r110 = add i32 %r231,1
     br label %L2
-L4:
+L4:  ;
     br label %L5
-L5:
+L5:  ;
     %r232 = phi i32 [0,%L4],[%r122,%L6]
     %r114 = icmp slt i32 %r232,20
     br i1 %r114, label %L6, label %L7
-L6:
+L6:  ;
     %r116 = getelementptr [25 x i32], ptr %r97, i32 0, i32 %r232
     %r118 = getelementptr [20 x i32], ptr %r51, i32 0, i32 %r232
     %r119 = load i32, ptr %r118
     store i32 %r119, ptr %r116
     %r122 = add i32 %r232,1
     br label %L5
-L7:
+L7:  ;
     br label %L8
-L8:
+L8:  ;
     %r233 = phi i32 [0,%L7],[%r137,%L9]
     %r131 = icmp sle i32 %r233,39
     br i1 %r131, label %L9, label %L10
-L9:
+L9:  ;
     %r133 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r233
     store i32 0, ptr %r133
     %r137 = add i32 %r233,1
     br label %L8
-L10:
+L10:  ;
     br label %L11
-L11:
+L11:  ;
     %r234 = phi i32 [19,%L10],[%r200,%L16]
     %r229 = phi i32 [0,%L10],[%r230,%L16]
     %r228 = phi i32 [0,%L10],[%r148,%L16]
@@ -152,22 +152,22 @@ L11:
     %r225 = phi i32 [0,%L10],[%r224,%L16]
     %r145 = icmp sgt i32 %r234,-1
     br i1 %r145, label %L12, label %L13
-L12:
+L12:  ;
     %r147 = getelementptr [25 x i32], ptr %r97, i32 0, i32 %r234
     %r148 = load i32, ptr %r147
     br label %L14
-L13:
+L13:  ;
     %r202 = getelementptr [40 x i32], ptr %r98, i32 0, i32 0
     %r203 = load i32, ptr %r202
     %r205 = icmp ne i32 %r203,0
     br i1 %r205, label %L20, label %L21
-L14:
+L14:  ;
     %r230 = phi i32 [19,%L12],[%r189,%L19]
     %r227 = phi i32 [%r226,%L12],[%r192,%L19]
     %r224 = phi i32 [%r225,%L12],[%r164,%L19]
     %r155 = icmp sgt i32 %r230,-1
     br i1 %r155, label %L15, label %L16
-L15:
+L15:  ;
     %r157 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r227
     %r158 = load i32, ptr %r157
     %r161 = getelementptr [25 x i32], ptr %r96, i32 0, i32 %r230
@@ -176,12 +176,12 @@ L15:
     %r164 = add i32 %r158,%r163
     %r167 = icmp sge i32 %r164,10
     br i1 %r167, label %L17, label %L18
-L16:
+L16:  ;
     %r195 = add i32 %r227,20
     %r197 = sub i32 %r195,1
     %r200 = sub i32 %r234,1
     br label %L11
-L17:
+L17:  ;
     %r169 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r227
     store i32 %r164, ptr %r169
     %r173 = sub i32 %r227,1
@@ -193,31 +193,31 @@ L17:
     %r183 = add i32 %r179,%r182
     store i32 %r183, ptr %r174
     br label %L19
-L18:
+L18:  ;
     %r185 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r227
     store i32 %r164, ptr %r185
     br label %L19
-L19:
+L19:  ;
     %r189 = sub i32 %r230,1
     %r192 = sub i32 %r227,1
     br label %L14
-L20:
+L20:  ;
     %r207 = getelementptr [40 x i32], ptr %r98, i32 0, i32 0
     %r208 = load i32, ptr %r207
     call void @putint(i32 %r208)
     br label %L21
-L21:
+L21:  ;
     br label %L22
-L22:
+L22:  ;
     %r235 = phi i32 [1,%L21],[%r222,%L23]
     %r216 = icmp sle i32 %r235,39
     br i1 %r216, label %L23, label %L24
-L23:
+L23:  ;
     %r218 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r235
     %r219 = load i32, ptr %r218
     call void @putint(i32 %r219)
     %r222 = add i32 %r235,1
     br label %L22
-L24:
+L24:  ;
     ret i32 0
 }

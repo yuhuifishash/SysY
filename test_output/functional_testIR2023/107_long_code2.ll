@@ -15,9 +15,9 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a = global [5x [20000x i32]] zeroinitializer
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r2 = getelementptr [5 x [20000 x i32]], ptr @a, i32 0, i32 4, i32 19999
     store i32 1, ptr %r2
     %r11 = getelementptr [5 x [20000 x i32]], ptr @a, i32 0, i32 4, i32 19999

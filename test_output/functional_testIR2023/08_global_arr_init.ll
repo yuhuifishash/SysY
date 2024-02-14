@@ -30,8 +30,8 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @i = global [2 x [3 x [4 x i32]]] [[3 x [4 x i32]] [[4 x i32] [i32 1,i32 2,i32 3,i32 4],[4 x i32] [i32 5,i32 0,i32 0,i32 0],[4 x i32] [i32 0,i32 0,i32 0,i32 0]],[3 x [4 x i32]] [[4 x i32] [i32 0,i32 0,i32 0,i32 0],[4 x i32] [i32 0,i32 0,i32 0,i32 0],[4 x i32] [i32 0,i32 0,i32 0,i32 0]]]
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     ret i32 5
 }

@@ -20,27 +20,27 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @used = global [10x i32] zeroinitializer
 define void @my_memset(ptr %r0,i32 %r1,i32 %r2)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     %r16 = phi i32 [0,%L1],[%r15,%L3]
     %r9 = icmp slt i32 %r16,%r2
     br i1 %r9, label %L3, label %L4
-L3:
+L3:  ;
     %r11 = getelementptr i32, ptr %r0, i32 %r16
     store i32 %r1, ptr %r11
     %r15 = add i32 %r16,1
     br label %L2
-L4:
+L4:  ;
     ret void
 }
 define void @add_node(i32 %r0,i32 %r1,i32 %r2)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r8 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r9 = load i32, ptr %r8
     %r10 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r9
@@ -83,62 +83,62 @@ L1:
 }
 define i32 @dfs(i32 %r0,i32 %r1,i32 %r2)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r8 = icmp eq i32 %r0,%r1
     br i1 %r8, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 %r2
-L3:
+L3:  ;
     %r11 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r0
     store i32 1, ptr %r11
     br label %L4
-L4:
+L4:  ;
     %r100 = phi i32 [0,%L3],[%r29,%L7],[%r38,%L10],[%r96,%L17]
     %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r18 = load i32, ptr %r17
     %r19 = icmp slt i32 %r100,%r18
     br i1 %r19, label %L5, label %L6
-L5:
+L5:  ;
     %r22 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
     %r23 = load i32, ptr %r22
     %r24 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r23
     %r25 = load i32, ptr %r24
     %r26 = icmp ne i32 %r25,0
     br i1 %r26, label %L7, label %L8
-L6:
+L6:  ;
     ret i32 0
-L7:
+L7:  ;
     %r29 = add i32 %r100,1
     br label %L4
-L8:
+L8:  ;
     %r32 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r33 = load i32, ptr %r32
     %r35 = icmp sle i32 %r33,0
     br i1 %r35, label %L10, label %L11
-L10:
+L10:  ;
     %r38 = add i32 %r100,1
     br label %L4
-L11:
+L11:  ;
     %r44 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r45 = load i32, ptr %r44
     %r46 = icmp slt i32 %r2,%r45
     br i1 %r46, label %L13, label %L14
-L13:
+L13:  ;
     br label %L15
-L14:
+L14:  ;
     %r50 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r51 = load i32, ptr %r50
     br label %L15
-L15:
+L15:  ;
     %r99 = phi i32 [%r2,%L13],[%r51,%L14]
     %r55 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
     %r56 = load i32, ptr %r55
     %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r99)
     %r62 = icmp sgt i32 %r59,0
     br i1 %r62, label %L16, label %L17
-L16:
+L16:  ;
     %r65 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r68 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r69 = load i32, ptr %r68
@@ -158,53 +158,53 @@ L16:
     %r92 = add i32 %r90,%r59
     store i32 %r92, ptr %r80
     ret i32 %r59
-L17:
+L17:  ;
     %r96 = add i32 %r100,1
     br label %L4
 }
 define i32 @max_flow(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     %r23 = phi i32 [0,%L1],[%r22,%L6]
     br label %L3
-L3:
+L3:  ;
     %r8 = getelementptr [10 x i32], ptr @used, i32 0
     call void @my_memset(ptr %r8,i32 0,i32 10)
     %r15 = call i32 @dfs(i32 %r0,i32 %r1,i32 1879048192)
     %r18 = icmp eq i32 %r15,0
     br i1 %r18, label %L5, label %L6
-L5:
+L5:  ;
     ret i32 %r23
-L6:
+L6:  ;
     %r22 = add i32 %r23,%r15
     br label %L2
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r4 = call i32 @getint()
     %r5 = call i32 @getint()
     %r6 = getelementptr [10 x i32], ptr @size, i32 0
     call void @my_memset(ptr %r6,i32 0,i32 10)
     br label %L2
-L2:
+L2:  ;
     %r31 = phi i32 [%r5,%L1],[%r25,%L3]
     %r11 = icmp sgt i32 %r31,0
     br i1 %r11, label %L3, label %L4
-L3:
+L3:  ;
     %r16 = call i32 @getint()
     %r17 = call i32 @getint()
     %r19 = call i32 @getint()
     call void @add_node(i32 %r16,i32 %r17,i32 %r19)
     %r25 = sub i32 %r31,1
     br label %L2
-L4:
+L4:  ;
     %r28 = call i32 @max_flow(i32 1,i32 %r4)
     call void @putint(i32 %r28)
     call void @putch(i32 10)

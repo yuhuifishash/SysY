@@ -14,30 +14,30 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L5
-L2:
+L2:  ;
     br label %L6
-L5:
+L5:  ;
     br label %L2
-L6:
+L6:  ;
     br label %L11
-L11:
+L11:  ;
     br label %L15
-L15:
+L15:  ;
     br label %L18
-L18:
+L18:  ;
     br label %L24
-L22:
+L22:  ;
     br label %L25
-L24:
+L24:  ;
     br label %L22
-L25:
+L25:  ;
     br label %L28
-L28:
+L28:  ;
     br label %L32
-L32:
+L32:  ;
     ret i32 10
 }

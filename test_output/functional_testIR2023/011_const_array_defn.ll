@@ -15,9 +15,9 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a = global [5 x i32] [i32 0,i32 1,i32 2,i32 3,i32 4]
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r1 = getelementptr [5 x i32], ptr @a, i32 0, i32 4
     %r2 = load i32, ptr %r1
     ret i32 %r2

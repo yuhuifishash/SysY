@@ -14,20 +14,20 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @ifElse()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     br label %L4
-L4:
+L4:  ;
     ret i32 25
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r0 = call i32 @ifElse()
     ret i32 %r0
 }

@@ -14,14 +14,14 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
-L0:
+L0:  ;
     %r47 = alloca [4 x [2 x [1 x i32]]]
     %r31 = alloca [4 x [2 x i32]]
     %r14 = alloca [4 x [2 x i32]]
     %r13 = alloca [4 x [2 x i32]]
     %r0 = alloca [4 x [2 x i32]]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 32,i1 0)
     %r2 = getelementptr [4 x [2 x i32]], ptr %r0, i32 0, i32 0, i32 0
     store i32 1, ptr %r2

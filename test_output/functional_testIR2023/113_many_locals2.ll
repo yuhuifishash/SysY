@@ -15,19 +15,19 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @n = global i32 zeroinitializer
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r62 = call i32 @getint()
     br label %L2
-L2:
+L2:  ;
     %r196 = phi i32 [%r62,%L1],[%r68,%L3]
     %r65 = icmp eq i32 %r196,5
     br i1 %r65, label %L3, label %L4
-L3:
+L3:  ;
     %r68 = add i32 %r196,1
     br label %L2
-L4:
+L4:  ;
     call void @putint(i32 0)
     call void @putint(i32 1)
     call void @putint(i32 2)

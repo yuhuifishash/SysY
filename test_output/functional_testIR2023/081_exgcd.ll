@@ -14,18 +14,18 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @exgcd(i32 %r0,i32 %r1,ptr %r2,ptr %r3)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r8 = icmp eq i32 %r1,0
     br i1 %r8, label %L2, label %L3
-L2:
+L2:  ;
     %r10 = getelementptr i32, ptr %r2, i32 0
     store i32 1, ptr %r10
     %r13 = getelementptr i32, ptr %r3, i32 0
     store i32 0, ptr %r13
     ret i32 %r0
-L3:
+L3:  ;
     %r20 = srem i32 %r0,%r1
     %r21 = getelementptr i32, ptr %r2
     %r22 = getelementptr i32, ptr %r3
@@ -47,11 +47,11 @@ L3:
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r7 = alloca [1 x i32]
     %r4 = alloca [1 x i32]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r4,i8 0,i32 4,i1 0)
     %r6 = getelementptr [1 x i32], ptr %r4, i32 0, i32 0
     store i32 1, ptr %r6

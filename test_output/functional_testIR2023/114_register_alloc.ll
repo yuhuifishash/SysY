@@ -46,9 +46,9 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a32 = global i32 16
 define i32 @func(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r8 = add i32 %r0,%r1
     %r81 = call i32 @getint()
     %r82 = call i32 @getint()
@@ -364,9 +364,9 @@ L1:
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r4 = call i32 @getint()
     %r9 = add i32 %r4,18
     %r12 = call i32 @func(i32 %r4,i32 %r9)

@@ -16,21 +16,21 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @c = global [4 x i32] [i32 6,i32 7,i32 8,i32 9]
 define i32 @main()
 {
-L0:
+L0:  ;
     %r41 = alloca [7 x [1 x [5 x i32]]]
     %r26 = alloca [2 x [8 x i32]]
     br label %L1
-L1:
+L1:  ;
     call void @putint(i32 3)
     call void @putint(i32 3)
     call void @putint(i32 1)
     call void @putch(i32 10)
     br label %L2
-L2:
+L2:  ;
     br label %L3
-L3:
+L3:  ;
     br label %L5
-L4:
+L4:  ;
     call void @putint(i32 1)
     call void @putch(i32 10)
     %r24 = getelementptr [4 x i32], ptr @c, i32 0, i32 2
@@ -48,9 +48,9 @@ L4:
     %r39 = load i32, ptr %r38
     %r40 = icmp ne i32 %r39,0
     br i1 %r40, label %L8, label %L9
-L5:
+L5:  ;
     br label %L4
-L8:
+L8:  ;
     call void @llvm.memset.p0.i32(ptr %r41,i8 0,i32 140,i1 0)
     %r43 = getelementptr [7 x [1 x [5 x i32]]], ptr %r41, i32 0, i32 2, i32 0, i32 0
     store i32 2, ptr %r43
@@ -68,7 +68,7 @@ L8:
     %r62 = load i32, ptr %r61
     call void @putint(i32 %r62)
     br label %L9
-L9:
+L9:  ;
     call void @putch(i32 10)
     %r64 = load i32, ptr @b
     call void @putint(i32 %r64)

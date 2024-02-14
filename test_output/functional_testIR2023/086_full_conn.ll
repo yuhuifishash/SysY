@@ -14,26 +14,26 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @relu_reg(i32 %r0)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r4 = icmp sgt i32 %r0,127
     br i1 %r4, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 127
-L3:
+L3:  ;
     %r8 = icmp slt i32 %r0,0
     br i1 %r8, label %L4, label %L5
-L4:
+L4:  ;
     ret i32 0
-L5:
+L5:  ;
     ret i32 %r0
 }
 define i32 @model(ptr %r0)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r3 = getelementptr [5 x i32], ptr %r0, i32 0, i32 0
     %r4 = load i32, ptr %r3
     %r6 = mul i32 %r4,85
@@ -1055,64 +1055,64 @@ L1:
     %r1906 = add i32 %r1718,%r1905
     %r1908 = icmp sgt i32 %r1906,0
     br i1 %r1908, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 1
-L3:
+L3:  ;
     ret i32 0
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r2 = alloca [5 x [5 x i32]]
     br label %L1
-L1:
+L1:  ;
     %r1 = call i32 @getint()
     br label %L2
-L2:
+L2:  ;
     %r46 = phi i32 [%r1,%L1],[%r39,%L13]
     %r5 = icmp sgt i32 %r46,0
     br i1 %r5, label %L3, label %L4
-L3:
+L3:  ;
     br label %L5
-L4:
+L4:  ;
     ret i32 0
-L5:
+L5:  ;
     %r45 = phi i32 [0,%L3],[%r25,%L10]
     %r10 = icmp slt i32 %r45,5
     br i1 %r10, label %L6, label %L7
-L6:
+L6:  ;
     br label %L8
-L7:
+L7:  ;
     %r26 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0
     %r27 = call i32 @model(ptr %r26)
     %r28 = icmp ne i32 %r27,0
     br i1 %r28, label %L11, label %L12
-L8:
+L8:  ;
     %r43 = phi i32 [0,%L6],[%r22,%L9]
     %r15 = icmp slt i32 %r43,5
     br i1 %r15, label %L9, label %L10
-L9:
+L9:  ;
     %r18 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0, i32 %r45, i32 %r43
     %r19 = call i32 @getint()
     store i32 %r19, ptr %r18
     %r22 = add i32 %r43,1
     br label %L8
-L10:
+L10:  ;
     %r25 = add i32 %r45,1
     br label %L5
-L11:
+L11:  ;
     call void @putch(i32 99)
     call void @putch(i32 97)
     call void @putch(i32 116)
     call void @putch(i32 10)
     br label %L13
-L12:
+L12:  ;
     call void @putch(i32 100)
     call void @putch(i32 111)
     call void @putch(i32 103)
     call void @putch(i32 10)
     br label %L13
-L13:
+L13:  ;
     %r39 = sub i32 %r46,1
     br label %L2
 }

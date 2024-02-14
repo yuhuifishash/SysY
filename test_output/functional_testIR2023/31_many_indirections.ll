@@ -17,17 +17,17 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @array = global [20x [100x i32]] zeroinitializer
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     %r149 = phi i32 [0,%L1],[%r21,%L7]
     %r6 = icmp slt i32 %r149,20
     br i1 %r6, label %L3, label %L4
-L3:
+L3:  ;
     br label %L5
-L4:
+L4:  ;
     %r43 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 19, i32 23
     %r44 = load i32, ptr %r43
     %r45 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 18, i32 %r44
@@ -111,16 +111,16 @@ L4:
     %r144 = add i32 %r82,%r143
     call void @putint(i32 %r144)
     ret i32 0
-L5:
+L5:  ;
     %r148 = phi i32 [0,%L3],[%r18,%L6]
     %r11 = icmp slt i32 %r148,100
     br i1 %r11, label %L6, label %L7
-L6:
+L6:  ;
     %r14 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 %r149, i32 %r148
     store i32 %r148, ptr %r14
     %r18 = add i32 %r148,1
     br label %L5
-L7:
+L7:  ;
     %r21 = add i32 %r149,1
     br label %L2
 }

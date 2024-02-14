@@ -14,35 +14,35 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define void @sort(ptr %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     %r44 = phi i32 [0,%L1],[%r41,%L7]
     %r8 = sub i32 %r1,1
     %r9 = icmp slt i32 %r44,%r8
     br i1 %r9, label %L3, label %L4
-L3:
+L3:  ;
     %r13 = add i32 %r44,1
     br label %L5
-L4:
+L4:  ;
     ret void
-L5:
+L5:  ;
     %r43 = phi i32 [%r13,%L3],[%r38,%L9]
     %r16 = icmp slt i32 %r43,%r1
     br i1 %r16, label %L6, label %L7
-L6:
+L6:  ;
     %r18 = getelementptr i32, ptr %r0, i32 %r44
     %r19 = load i32, ptr %r18
     %r21 = getelementptr i32, ptr %r0, i32 %r43
     %r22 = load i32, ptr %r21
     %r23 = icmp slt i32 %r19,%r22
     br i1 %r23, label %L8, label %L9
-L7:
+L7:  ;
     %r41 = add i32 %r44,1
     br label %L2
-L8:
+L8:  ;
     %r26 = getelementptr i32, ptr %r0, i32 %r44
     %r27 = load i32, ptr %r26
     %r29 = getelementptr i32, ptr %r0, i32 %r44
@@ -52,20 +52,20 @@ L8:
     %r34 = getelementptr i32, ptr %r0, i32 %r43
     store i32 %r27, ptr %r34
     br label %L9
-L9:
+L9:  ;
     %r38 = add i32 %r43,1
     br label %L5
 }
 define i32 @param32_rec(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15,i32 %r16,i32 %r17,i32 %r18,i32 %r19,i32 %r20,i32 %r21,i32 %r22,i32 %r23,i32 %r24,i32 %r25,i32 %r26,i32 %r27,i32 %r28,i32 %r29,i32 %r30,i32 %r31)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r66 = icmp eq i32 %r0,0
     br i1 %r66, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 %r1
-L3:
+L3:  ;
     %r70 = sub i32 %r0,1
     %r73 = add i32 %r1,%r2
     %r75 = srem i32 %r73,998244353
@@ -74,9 +74,9 @@ L3:
 }
 define i32 @param32_arr(ptr %r0,ptr %r1,ptr %r2,ptr %r3,ptr %r4,ptr %r5,ptr %r6,ptr %r7,ptr %r8,ptr %r9,ptr %r10,ptr %r11,ptr %r12,ptr %r13,ptr %r14,ptr %r15,ptr %r16,ptr %r17,ptr %r18,ptr %r19,ptr %r20,ptr %r21,ptr %r22,ptr %r23,ptr %r24,ptr %r25,ptr %r26,ptr %r27,ptr %r28,ptr %r29,ptr %r30,ptr %r31)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r34 = getelementptr i32, ptr %r0, i32 0
     %r35 = load i32, ptr %r34
     %r37 = getelementptr i32, ptr %r0, i32 1
@@ -272,10 +272,10 @@ L1:
 }
 define i32 @param16(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15)
 {
-L0:
+L0:  ;
     %r32 = alloca [16 x i32]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r32,i8 0,i32 64,i1 0)
     %r34 = getelementptr [16 x i32], ptr %r32, i32 0, i32 0
     store i32 %r0, ptr %r34
@@ -348,10 +348,10 @@ L1:
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r0 = alloca [32 x [2 x i32]]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 256,i1 0)
     %r1 = call i32 @getint()
     %r2 = call i32 @getint()
@@ -375,11 +375,11 @@ L1:
     %r20 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 0, i32 1
     store i32 8848, ptr %r20
     br label %L2
-L2:
+L2:  ;
     %r118 = phi i32 [1,%L1],[%r50,%L3]
     %r25 = icmp slt i32 %r118,32
     br i1 %r25, label %L3, label %L4
-L3:
+L3:  ;
     %r28 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r118, i32 0
     %r31 = sub i32 %r118,1
     %r33 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r31, i32 1
@@ -394,7 +394,7 @@ L3:
     store i32 %r47, ptr %r39
     %r50 = add i32 %r118,1
     br label %L2
-L4:
+L4:  ;
     %r52 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 0
     %r54 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 1
     %r56 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 2

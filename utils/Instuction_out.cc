@@ -295,7 +295,7 @@ void FunctionDeclareInstruction::PrintIR(std::ostream& s){
 
 void BasicBlock::printIR(std::ostream&s)
 {
-    s<<"L"<<block_id<<":\n";
+    s<<"L"<<block_id<<":  ;"<<comment<<"\n";
     for(Instruction ins:Instruction_list){
         s<<"    ";
         ins->PrintIR(s);//Auto "\n" In Instruction::printIR()

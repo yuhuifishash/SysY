@@ -14,25 +14,25 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @f(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r6 = mul i32 %r0,%r1
     ret i32 %r6
 }
 define i32 @g(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r6 = srem i32 %r0,%r1
     ret i32 %r6
 }
 define i32 @h(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r7 = call i32 @g(i32 %r0,i32 %r1)
     %r8 = call i32 @f(i32 2,i32 %r7)
     %r11 = call i32 @f(i32 %r0,i32 %r1)
@@ -42,9 +42,9 @@ L1:
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r2 = call i32 @h(i32 11,i32 3)
     call void @putint(i32 %r2)
     ret i32 0

@@ -14,64 +14,64 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @lengthOfLastWord(ptr %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r5 = icmp eq i32 %r1,0
     br i1 %r5, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 0
-L3:
+L3:  ;
     %r11 = sub i32 %r1,1
     br label %L4
-L4:
+L4:  ;
     %r59 = phi i32 [%r11,%L3],[%r23,%L5]
     %r15 = icmp sgt i32 %r59,-1
     br i1 %r15, label %L7, label %L6
-L5:
+L5:  ;
     %r23 = sub i32 %r59,1
     br label %L4
-L6:
+L6:  ;
     %r27 = icmp eq i32 %r59,-1
     br i1 %r27, label %L8, label %L9
-L7:
+L7:  ;
     %r17 = getelementptr i32, ptr %r0, i32 %r59
     %r18 = load i32, ptr %r17
     %r20 = icmp eq i32 %r18,0
     br i1 %r20, label %L5, label %L6
-L8:
+L8:  ;
     ret i32 0
-L9:
+L9:  ;
     br label %L10
-L10:
+L10:  ;
     %r58 = phi i32 [%r59,%L9],[%r54,%L14]
     %r35 = icmp sgt i32 %r58,-1
     br i1 %r35, label %L11, label %L12
-L11:
+L11:  ;
     %r37 = getelementptr i32, ptr %r0, i32 %r58
     %r38 = load i32, ptr %r37
     %r40 = icmp eq i32 %r38,0
     br i1 %r40, label %L13, label %L14
-L12:
+L12:  ;
     %r57 = sub i32 %r59,%r58
     ret i32 %r57
-L13:
+L13:  ;
     %r43 = sub i32 %r1,%r58
     %r45 = sub i32 %r43,1
     %r48 = sub i32 %r1,1
     %r50 = sub i32 %r48,%r59
     %r51 = sub i32 %r45,%r50
     ret i32 %r51
-L14:
+L14:  ;
     %r54 = sub i32 %r58,1
     br label %L10
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r2 = alloca [10 x i32]
     br label %L1
-L1:
+L1:  ;
     %r4 = getelementptr [10 x i32], ptr %r2, i32 0, i32 0
     store i32 -4, ptr %r4
     %r8 = getelementptr [10 x i32], ptr %r2, i32 0, i32 1

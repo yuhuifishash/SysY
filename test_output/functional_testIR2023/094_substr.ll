@@ -14,45 +14,45 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @MAX(i32 %r0,i32 %r1)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r6 = icmp eq i32 %r0,%r1
     br i1 %r6, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 %r0
-L3:
+L3:  ;
     %r10 = icmp sgt i32 %r0,%r1
     br i1 %r10, label %L5, label %L6
-L5:
+L5:  ;
     ret i32 %r0
-L6:
+L6:  ;
     ret i32 %r1
 }
 define i32 @longest_common_subseq(ptr %r0,i32 %r1,ptr %r2,i32 %r3)
 {
-L0:
+L0:  ;
     %r6 = alloca [16 x [16 x i32]]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r6,i8 0,i32 1024,i1 0)
     br label %L2
-L2:
+L2:  ;
     %r71 = phi i32 [1,%L1],[%r64,%L7]
     %r69 = phi i32 [0,%L1],[%r70,%L7]
     %r14 = icmp sle i32 %r71,%r1
     br i1 %r14, label %L3, label %L4
-L3:
+L3:  ;
     br label %L5
-L4:
+L4:  ;
     %r67 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r1, i32 %r3
     %r68 = load i32, ptr %r67
     ret i32 %r68
-L5:
+L5:  ;
     %r70 = phi i32 [1,%L3],[%r61,%L10]
     %r18 = icmp sle i32 %r70,%r3
     br i1 %r18, label %L6, label %L7
-L6:
+L6:  ;
     %r21 = sub i32 %r71,1
     %r22 = getelementptr i32, ptr %r0, i32 %r21
     %r23 = load i32, ptr %r22
@@ -61,10 +61,10 @@ L6:
     %r28 = load i32, ptr %r27
     %r29 = icmp eq i32 %r23,%r28
     br i1 %r29, label %L8, label %L9
-L7:
+L7:  ;
     %r64 = add i32 %r71,1
     br label %L2
-L8:
+L8:  ;
     %r32 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
     %r35 = sub i32 %r71,1
     %r38 = sub i32 %r70,1
@@ -73,7 +73,7 @@ L8:
     %r42 = add i32 %r40,1
     store i32 %r42, ptr %r32
     br label %L10
-L9:
+L9:  ;
     %r45 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
     %r48 = sub i32 %r71,1
     %r50 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r48, i32 %r70
@@ -84,16 +84,16 @@ L9:
     %r58 = call i32 @MAX(i32 %r51,i32 %r57)
     store i32 %r58, ptr %r45
     br label %L10
-L10:
+L10:  ;
     %r61 = add i32 %r70,1
     br label %L5
 }
 define i32 @max_sum_nonadjacent(ptr %r0,i32 %r1)
 {
-L0:
+L0:  ;
     %r3 = alloca [16 x i32]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r3,i8 0,i32 64,i1 0)
     %r5 = getelementptr [16 x i32], ptr %r3, i32 0, i32 0
     %r7 = getelementptr i32, ptr %r0, i32 0
@@ -107,11 +107,11 @@ L1:
     %r17 = call i32 @MAX(i32 %r13,i32 %r16)
     store i32 %r17, ptr %r10
     br label %L2
-L2:
+L2:  ;
     %r48 = phi i32 [2,%L1],[%r42,%L3]
     %r22 = icmp slt i32 %r48,%r1
     br i1 %r22, label %L3, label %L4
-L3:
+L3:  ;
     %r24 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r48
     %r27 = sub i32 %r48,2
     %r28 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r27
@@ -126,7 +126,7 @@ L3:
     store i32 %r39, ptr %r24
     %r42 = add i32 %r48,1
     br label %L2
-L4:
+L4:  ;
     %r45 = sub i32 %r1,1
     %r46 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r45
     %r47 = load i32, ptr %r46
@@ -134,11 +134,11 @@ L4:
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r31 = alloca [13 x i32]
     %r0 = alloca [15 x i32]
     br label %L1
-L1:
+L1:  ;
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 60,i1 0)
     %r2 = getelementptr [15 x i32], ptr %r0, i32 0, i32 0
     store i32 8, ptr %r2

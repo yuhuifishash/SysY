@@ -15,17 +15,17 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @a = global i32 zeroinitializer
 define i32 @func(i32 %r0)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r4 = sub i32 %r0,1
     ret i32 %r4
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     store i32 10, ptr @a
     %r3 = load i32, ptr @a
     %r4 = call i32 @func(i32 %r3)

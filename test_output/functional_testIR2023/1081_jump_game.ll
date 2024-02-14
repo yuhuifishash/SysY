@@ -14,93 +14,93 @@ declare void @_sysy_stoptime(i32)
 declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @canJump(ptr %r0,i32 %r1)
 {
-L0:
+L0:  ;
     %r15 = alloca [10 x i32]
     br label %L1
-L1:
+L1:  ;
     %r5 = icmp eq i32 %r1,1
     br i1 %r5, label %L2, label %L3
-L2:
+L2:  ;
     ret i32 1
-L3:
+L3:  ;
     %r8 = getelementptr i32, ptr %r0, i32 0
     %r9 = load i32, ptr %r8
     %r12 = sub i32 %r1,2
     %r13 = icmp sgt i32 %r9,%r12
     br i1 %r13, label %L4, label %L5
-L4:
+L4:  ;
     ret i32 1
-L5:
+L5:  ;
     br label %L6
-L6:
+L6:  ;
     %r87 = phi i32 [0,%L5],[%r29,%L7]
     %r22 = sub i32 %r1,1
     %r23 = icmp slt i32 %r87,%r22
     br i1 %r23, label %L7, label %L8
-L7:
+L7:  ;
     %r25 = getelementptr [10 x i32], ptr %r15, i32 0, i32 %r87
     store i32 0, ptr %r25
     %r29 = add i32 %r87,1
     br label %L6
-L8:
+L8:  ;
     %r32 = sub i32 %r1,1
     %r33 = getelementptr [10 x i32], ptr %r15, i32 0, i32 %r32
     store i32 1, ptr %r33
     %r37 = sub i32 %r1,2
     br label %L9
-L9:
+L9:  ;
     %r88 = phi i32 [%r37,%L8],[%r80,%L17]
     %r41 = icmp sgt i32 %r88,-1
     br i1 %r41, label %L10, label %L11
-L10:
+L10:  ;
     %r45 = getelementptr i32, ptr %r0, i32 %r88
     %r46 = load i32, ptr %r45
     %r49 = sub i32 %r1,1
     %r51 = sub i32 %r49,%r88
     %r52 = icmp slt i32 %r46,%r51
     br i1 %r52, label %L12, label %L13
-L11:
+L11:  ;
     %r82 = getelementptr [10 x i32], ptr %r15, i32 0, i32 0
     %r83 = load i32, ptr %r82
     ret i32 %r83
-L12:
+L12:  ;
     %r54 = getelementptr i32, ptr %r0, i32 %r88
     %r55 = load i32, ptr %r54
     br label %L14
-L13:
+L13:  ;
     %r58 = sub i32 %r1,1
     %r60 = sub i32 %r58,%r88
     br label %L14
-L14:
+L14:  ;
     %r85 = phi i32 [%r55,%L12],[%r60,%L13]
     br label %L15
-L15:
+L15:  ;
     %r86 = phi i32 [%r85,%L14],[%r77,%L19]
     %r64 = icmp sgt i32 %r86,-1
     br i1 %r64, label %L16, label %L17
-L16:
+L16:  ;
     %r67 = add i32 %r88,%r86
     %r68 = getelementptr [10 x i32], ptr %r15, i32 0, i32 %r67
     %r69 = load i32, ptr %r68
     %r71 = icmp ne i32 %r69,0
     br i1 %r71, label %L18, label %L19
-L17:
+L17:  ;
     %r80 = sub i32 %r88,1
     br label %L9
-L18:
+L18:  ;
     %r73 = getelementptr [10 x i32], ptr %r15, i32 0, i32 %r88
     store i32 1, ptr %r73
     br label %L19
-L19:
+L19:  ;
     %r77 = sub i32 %r86,1
     br label %L15
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r2 = alloca [10 x i32]
     br label %L1
-L1:
+L1:  ;
     %r4 = getelementptr [10 x i32], ptr %r2, i32 0, i32 0
     store i32 3, ptr %r4
     %r7 = getelementptr [10 x i32], ptr %r2, i32 0, i32 1

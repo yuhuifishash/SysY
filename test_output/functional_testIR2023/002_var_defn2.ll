@@ -16,9 +16,9 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @b = global i32 5
 define i32 @main()
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     %r3 = load i32, ptr @b
     %r4 = add i32 5,%r3
     ret i32 %r4

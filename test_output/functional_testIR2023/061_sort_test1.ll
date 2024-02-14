@@ -15,29 +15,29 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 @n = global i32 zeroinitializer
 define i32 @bubblesort(ptr %r0)
 {
-L0:
+L0:  ;
     br label %L1
-L1:
+L1:  ;
     br label %L2
-L2:
+L2:  ;
     %r54 = phi i32 [0,%L1],[%r50,%L7]
     %r52 = phi i32 [0,%L1],[%r53,%L7]
     %r7 = load i32, ptr @n
     %r9 = sub i32 %r7,1
     %r10 = icmp slt i32 %r54,%r9
     br i1 %r10, label %L3, label %L4
-L3:
+L3:  ;
     br label %L5
-L4:
+L4:  ;
     ret i32 0
-L5:
+L5:  ;
     %r53 = phi i32 [0,%L3],[%r47,%L9]
     %r13 = load i32, ptr @n
     %r15 = sub i32 %r13,%r54
     %r17 = sub i32 %r15,1
     %r18 = icmp slt i32 %r53,%r17
     br i1 %r18, label %L6, label %L7
-L6:
+L6:  ;
     %r20 = getelementptr i32, ptr %r0, i32 %r53
     %r21 = load i32, ptr %r20
     %r24 = add i32 %r53,1
@@ -45,10 +45,10 @@ L6:
     %r26 = load i32, ptr %r25
     %r27 = icmp sgt i32 %r21,%r26
     br i1 %r27, label %L8, label %L9
-L7:
+L7:  ;
     %r50 = add i32 %r54,1
     br label %L2
-L8:
+L8:  ;
     %r32 = add i32 %r53,1
     %r33 = getelementptr i32, ptr %r0, i32 %r32
     %r34 = load i32, ptr %r33
@@ -60,16 +60,16 @@ L8:
     %r43 = getelementptr i32, ptr %r0, i32 %r53
     store i32 %r34, ptr %r43
     br label %L9
-L9:
+L9:  ;
     %r47 = add i32 %r53,1
     br label %L5
 }
 define i32 @main()
 {
-L0:
+L0:  ;
     %r1 = alloca [10 x i32]
     br label %L1
-L1:
+L1:  ;
     store i32 10, ptr @n
     %r3 = getelementptr [10 x i32], ptr %r1, i32 0, i32 0
     store i32 4, ptr %r3
@@ -94,18 +94,18 @@ L1:
     %r34 = getelementptr [10 x i32], ptr %r1, i32 0
     %r35 = call i32 @bubblesort(ptr %r34)
     br label %L2
-L2:
+L2:  ;
     %r51 = phi i32 [%r35,%L1],[%r49,%L3]
     %r37 = load i32, ptr @n
     %r38 = icmp slt i32 %r51,%r37
     br i1 %r38, label %L3, label %L4
-L3:
+L3:  ;
     %r42 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r51
     %r43 = load i32, ptr %r42
     call void @putint(i32 %r43)
     call void @putch(i32 10)
     %r49 = add i32 %r51,1
     br label %L2
-L4:
+L4:  ;
     ret i32 0
 }
