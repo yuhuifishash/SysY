@@ -17,17 +17,13 @@ define i32 @defn()
 L0:
     br label %L1
 L1:
-    %r0 = add i32 4,0
-    ret i32 %r0
+    ret i32 4
 }
 define i32 @main()
 {
 L0:
-    %r0 = alloca i32
     br label %L1
 L1:
     %r1 = call i32 @defn()
-    store i32 %r1, ptr %r0
-    %r2 = load i32, ptr %r0
-    ret i32 %r2
+    ret i32 %r1
 }

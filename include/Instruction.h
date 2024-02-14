@@ -389,27 +389,30 @@ class PhiInstruction : public BasicInstruction
 private: 
     enum LLVMType type; 
     Operand result; 
-    // std::map<operand,operand>val_labels;
-    std::vector<std::pair<Operand,Operand> >val_labels;
+    std::vector<std::pair<Operand,Operand> > phi_list;
 public:
     enum LLVMType GetDataType(){return type;}
     Operand GetResultOp(){return result;}
-    decltype(val_labels)& getPhiList(){return val_labels;}
+    decltype(phi_list)& getPhiList(){return phi_list;}
     Operand GetResultReg(){return result;}
-    PhiInstruction(enum LLVMType type,Operand result,decltype(val_labels) val_labels){
+    PhiInstruction(enum LLVMType type,Operand result,decltype(phi_list) val_labels){
         this->opcode=LLVMIROpcode::PHI;
         this->type=type;
         this->result=result;
-        this->val_labels=val_labels;
+        this->phi_list=val_labels;
     }
     PhiInstruction(enum LLVMType type,Operand result){
         this->opcode=LLVMIROpcode::PHI;
         this->type=type;
         this->result=result;
     }
-    void Insert_phi(Operand val,Operand label){val_labels.push_back(std::make_pair(label,val));}
+
+    void InsertPhi(Operand val,Operand label){phi_list.push_back(std::make_pair(label,val));}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
+    
+    //erase the val from label_id
+    void ErasePhi(int label_id);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
@@ -459,9 +462,9 @@ class BrCondInstruction:public BasicInstruction{
     Operand trueLabel;
     Operand falseLabel;
 public:
-    Operand getCond(){return cond;}
-    Operand getTrueLabel(){return trueLabel;}
-    Operand getFalseLabel(){return falseLabel;}
+    Operand GetCond(){return cond;}
+    Operand GetTrueLabel(){return trueLabel;}
+    Operand GetFalseLabel(){return falseLabel;}
     Operand GetResultReg(){return NULL;}
     BrCondInstruction(Operand cond,Operand trueLabel,Operand falseLabel){
         this->opcode=BR_COND;

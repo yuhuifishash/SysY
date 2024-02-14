@@ -36,8 +36,8 @@ void LLVMIR::ElimateUnreachedInstructionAndBlocks(){
             }
             if(blocklast->GetOpcode() == BR_COND){
                 BrCondInstruction* brcond = (BrCondInstruction*)blocklast;
-                int target_trueblock_no = ((LabelOperand*)brcond->getTrueLabel())->GetLabelNo();
-                int target_falseblock_no = ((LabelOperand*)brcond->getFalseLabel())->GetLabelNo();
+                int target_trueblock_no = ((LabelOperand*)brcond->GetTrueLabel())->GetLabelNo();
+                int target_falseblock_no = ((LabelOperand*)brcond->GetFalseLabel())->GetLabelNo();
                 if(reachable[target_trueblock_no] == 0){
                     reachable[target_trueblock_no] = 1;
                     stk.push(target_trueblock_no);
@@ -99,8 +99,8 @@ void CFG::BuildCFG()
             invG[target_block_no].push_back(bb);
         }else if(lastIns->GetOpcode() == BR_COND){
             BrCondInstruction* brcond = (BrCondInstruction*)lastIns;
-            int target_trueblock_no = ((LabelOperand*)brcond->getTrueLabel())->GetLabelNo();
-            int target_falseblock_no = ((LabelOperand*)brcond->getFalseLabel())->GetLabelNo();
+            int target_trueblock_no = ((LabelOperand*)brcond->GetTrueLabel())->GetLabelNo();
+            int target_falseblock_no = ((LabelOperand*)brcond->GetFalseLabel())->GetLabelNo();
             G[id].push_back((*block_map)[target_trueblock_no]);
             G[id].push_back((*block_map)[target_falseblock_no]);
             invG[target_trueblock_no].push_back(bb);

@@ -29,7 +29,10 @@ public:
     DominatorTree DomTree;
 
     void BuildCFG();
-    void BuildDominatorTree(){DomTree.BuildDominatorTree(this);}
+    void BuildDominatorTree(){
+        DomTree.C = this;
+        DomTree.BuildDominatorTree();
+    }
 
     //if blockid1 dominate blockid2, return true, else return false
     bool IfDominate(int id1,int id2){return DomTree.IfDominate(id1,id2);}

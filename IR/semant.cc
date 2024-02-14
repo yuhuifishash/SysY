@@ -770,9 +770,6 @@ void CompUnit_Decl::TypeCheck()
         val.ConstTag = def->IsConst();
         val.type = (Type::ty)type_decl;
         def->scope = 0;
-        if(def->IsConst()){
-            GlobalConstMap[def->GetName()->get_string()] = val;
-        }
 
         if(def->GetDims() != nullptr){
             auto dim_vector = *def->GetDims();
@@ -798,8 +795,11 @@ void CompUnit_Decl::TypeCheck()
             }else if(type_decl == Type::FLOAT){
                 SolveFloatInitVal(init,val);
             }
-        }        
-
+        }
+                
+        if(def->IsConst()){
+            GlobalConstMap[def->GetName()->get_string()] = val;
+        }
         semant_table.GlobalTable[def->GetName()] = val;
 
         //add Global Decl llvm ins

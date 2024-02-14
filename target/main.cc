@@ -45,6 +45,7 @@ SysYc *.sy -S -o *.s (-O1)
 //compiler -S -o testcase.s testcase.sy
 
 void Mem2Reg(CFG*);
+void SparseConditionalConstantPropagation(CFG* C);
 
 int main(int argc,char** argv)
 {
@@ -104,6 +105,7 @@ int main(int argc,char** argv)
     if(optimize_flag){
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
+        llvmIR.PassExecutor( SparseConditionalConstantPropagation );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

@@ -4,12 +4,12 @@
 class ConstLattice
 {
 public:
-    enum lattice_status{
+    enum LatticeStatus{
         UNINIT = 0,
         CONST = 1,
         VAR = 2,
     }status;
-    enum lattice_type{
+    enum LatticeType{
         NONE = 0,
         I32 = 1,
         FLOAT = 2,
@@ -23,13 +23,13 @@ public:
         status = UNINIT;
         val_type = NONE;
     }
-    ConstLattice(lattice_status s,lattice_type type,int val)
+    ConstLattice(LatticeStatus s,LatticeType type,int val)
     {
         status = s;
         val_type = type;
         vals.I32Val = val;
     }
-    ConstLattice(lattice_status s,lattice_type type,float val)
+    ConstLattice(LatticeStatus s,LatticeType type,float val)
     {
         status = s;
         val_type = type;

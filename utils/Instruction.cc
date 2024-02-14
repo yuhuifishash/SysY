@@ -175,6 +175,16 @@ void IRgenAllocaArray(LLVMBlock B,LLVMType type,int reg,std::vector<int> dims)
 }
 
 
+void PhiInstruction::ErasePhi(int label_id){
+    for(auto it = phi_list.begin(); it != phi_list.end(); ++it){
+        auto [label,val] = *it;
+        if(((LabelOperand*)label)->GetLabelNo() == label_id){
+            phi_list.erase(it);
+            break;
+        }
+    }
+}
+
 std::vector<Operand> LoadInstruction::GetNonResultOperands(){
     std::vector<Operand> ret;
     ret.push_back(pointer);
@@ -237,14 +247,14 @@ void FcmpInstruction::SetNonResultOperands(std::vector<Operand> ops){
 
 std::vector<Operand> PhiInstruction::GetNonResultOperands(){
     std::vector<Operand> ret;
-    for(auto label_val_pair:val_labels){
+    for(auto label_val_pair:phi_list){
         ret.push_back(label_val_pair.second);
     }
     return ret;
 }
 void PhiInstruction::SetNonResultOperands(std::vector<Operand> ops){
     int i=0;
-    for(auto&label_val_pair:val_labels){
+    for(auto&label_val_pair:phi_list){
         label_val_pair.second = ops[i];
         i++;
     }
@@ -418,7 +428,7 @@ Instruction PhiInstruction::CopyInstruction()
     std::vector<std::pair<Operand,Operand> > nval_labels;
     // std::map<operand,operand> nval_labels;
 
-    for(auto Phiop:val_labels){
+    for(auto Phiop:phi_list){
         Operand nlabel = Phiop.first->CopyOperand();
         Operand nvalue = Phiop.second->CopyOperand();
         // nval_labels.push_back({nlabel,nvalue});
@@ -578,7 +588,7 @@ void FcmpInstruction::ReplaceByMap(const std::map<int,int>&Rule){
 }
 
 void PhiInstruction::ReplaceByMap(const std::map<int,int>&Rule){
-    for(auto label_pair : val_labels){
+    for(auto label_pair : phi_list){
         auto op1 = label_pair.first;
         if(op1->GetOperandType()==BasicOperand::REG){
             auto op1_reg = (RegOperand*)op1;

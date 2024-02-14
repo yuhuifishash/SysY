@@ -237,11 +237,11 @@ void FcmpInstruction::PrintIR(std::ostream&s){
 }
 void PhiInstruction::PrintIR(std::ostream&s){
     s<<result<<" = phi "<<type<<" ";
-    for(auto it=val_labels.begin();it!=val_labels.end();++it)
+    for(auto it=phi_list.begin();it!=phi_list.end();++it)
     {
         s<<"["<<it->second<<","<<it->first<<"]";
         auto jt=it;
-        if((++jt)!=val_labels.end())s<<",";
+        if((++jt)!=phi_list.end())s<<",";
     }
     s<<'\n';
 }
