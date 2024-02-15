@@ -27,6 +27,7 @@ public:
     std::vector<std::vector<LLVMBlock> > G{}; //control flow graph
     std::vector<std::vector<LLVMBlock> > invG{}; // inverse control flow graph
     DominatorTree DomTree;
+    FunctionBasicInfo FunctionInfo;
 
     void BuildCFG();
     void BuildDominatorTree(){

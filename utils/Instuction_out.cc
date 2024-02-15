@@ -31,6 +31,10 @@ std::ostream& operator<<(std::ostream&s,LLVMType type)
         break;
     case I1:
         s<<"i1";
+        break;
+    case I64:
+        s<<"i64";
+        break;
     } 
     return s;
 }

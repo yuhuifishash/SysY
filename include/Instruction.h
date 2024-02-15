@@ -39,7 +39,7 @@ enum LLVMIROpcode
 };
 
 // @Operand datatypes 
-enum LLVMType{I32 = 1,FLOAT32 = 2,PTR = 3,VOID = 4,I8 = 5, I1 = 6};
+enum LLVMType{I32 = 1,FLOAT32 = 2,PTR = 3,VOID = 4,I8 = 5, I1 = 6, I64 = 7};
 
 // @ <cond> in icmp Instruction 
 enum IcmpCond
