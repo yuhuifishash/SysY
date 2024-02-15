@@ -1,21 +1,49 @@
-int f(int a,int b,int c,int d)
+int f()
 {
-	int i = 1;
-	while(i <= b){
-		i = i + a;
-	}
-	return i + d;
+	putint(12);	
 }
 
-int A[1024]={},B[1024]={};
+int g()
+{
+	f();
+}
+
+int h()
+{
+	g();
+}
+
+int ff()
+{
+	f();
+	g();
+	h();
+}
+
+int gg()
+{
+	return 3;
+}
+
+int hh()
+{
+	gg();
+}
+
+int fff()
+{
+	hh();
+}
+
+int ggg()
+{
+	fff();
+	gg();
+	ff();
+}
 
 int main()
 {
-	int i = 0;
-	int S = 0;
-	while(i < 1024){
-		S = S + A[i]*B[i];
-		i = i + 1;
-	}
-	return S;
+	g();
+	ff();
 }
