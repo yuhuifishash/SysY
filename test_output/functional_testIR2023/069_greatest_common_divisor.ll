@@ -21,7 +21,6 @@ L1:  ;
 L2:  ;
     %r17 = phi i32 [%r0,%L1],[%r16,%L3]
     %r16 = phi i32 [%r1,%L1],[%r11,%L3]
-    %r15 = phi i32 [0,%L1],[%r11,%L3]
     %r8 = icmp sgt i32 %r16,0
     br i1 %r8, label %L3, label %L4
 L3:  ;

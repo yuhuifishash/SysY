@@ -84,7 +84,6 @@ L1:  ;
     %r40 = call i32 @insert(ptr %r38,i32 %r37)
     br label %L2
 L2:  ;
-    %r55 = phi i32 [%r40,%L1],[10,%L3]
     %r54 = phi i32 [0,%L1],[%r52,%L3]
     %r42 = load i32, ptr @N
     %r43 = icmp slt i32 %r54,%r42

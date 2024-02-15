@@ -58,7 +58,6 @@ L10:  ;
     br label %L11
 L11:  ;
     %r100 = phi i32 [%r50,%L10],[%r92,%L16]
-    %r96 = phi i32 [0,%L10],[%r97,%L16]
     %r54 = icmp sgt i32 %r100,-1
     br i1 %r54, label %L12, label %L13
 L12:  ;

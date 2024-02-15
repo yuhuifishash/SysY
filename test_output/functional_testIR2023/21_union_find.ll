@@ -72,8 +72,6 @@ L4:  ;
     br label %L5
 L5:  ;
     %r55 = phi i32 [0,%L4],[%r30,%L6]
-    %r53 = phi i32 [0,%L4],[%r24,%L6]
-    %r52 = phi i32 [0,%L4],[%r25,%L6]
     %r23 = icmp slt i32 %r55,%r3
     br i1 %r23, label %L6, label %L7
 L6:  ;

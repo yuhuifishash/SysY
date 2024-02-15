@@ -63,7 +63,6 @@ L12:  ;
     call void @putint(i32 0)
     br label %L13
 L13:  ;
-    %r75 = phi i32 [%r29,%L11],[0,%L12]
     call void @putch(i32 10)
     ret i32 0
 }

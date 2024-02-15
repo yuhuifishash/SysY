@@ -23,7 +23,6 @@ L1:  ;
     %r11 = call i32 @getint()
     br label %L2
 L2:  ;
-    %r152 = phi i32 [0,%L1],[%r16,%L3]
     %r150 = phi i32 [1,%L1],[%r39,%L3]
     %r15 = icmp sle i32 %r150,%r10
     br i1 %r15, label %L3, label %L4
@@ -46,7 +45,6 @@ L4:  ;
     br label %L5
 L5:  ;
     %r151 = phi i32 [1,%L4],[%r124,%L10]
-    %r147 = phi i32 [0,%L4],[%r148,%L10]
     %r43 = icmp sle i32 %r151,%r10
     br i1 %r43, label %L6, label %L7
 L6:  ;

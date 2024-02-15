@@ -21,7 +21,6 @@ L1:  ;
 L2:  ;
     %r34 = phi i32 [0,%L1],[%r23,%L3]
     %r33 = phi i32 [1,%L1],[%r26,%L3]
-    %r32 = phi i32 [0,%L1],[%r18,%L3]
     %r31 = phi i32 [%r0,%L1],[%r29,%L3]
     %r15 = icmp ne i32 %r31,0
     br i1 %r15, label %L3, label %L4

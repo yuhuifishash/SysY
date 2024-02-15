@@ -44,8 +44,13 @@ SysYc *.sy -S -o *.s (-O1)
 
 //compiler -S -o testcase.s testcase.sy
 
+void MakeFunctionOneExit(CFG* C);
 void Mem2Reg(CFG*);
 void SparseConditionalConstantPropagation(CFG* C);
+void SimplifyCFG(CFG* C);
+void SimpleDCE(CFG* C);
+void ElimateEmptyIndexGEP(CFG* C);
+void TailRecursiveElimate(CFG* C);
 
 int main(int argc,char** argv)
 {
@@ -103,9 +108,15 @@ int main(int argc,char** argv)
 
     bool optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0));
     if(optimize_flag){
+        llvmIR.PassExecutor( ElimateEmptyIndexGEP ); //to do
+        llvmIR.PassExecutor( TailRecursiveElimate ); //to do
+        llvmIR.PassExecutor( MakeFunctionOneExit ); //to do
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
         llvmIR.PassExecutor( SparseConditionalConstantPropagation );
+        llvmIR.PassExecutor( SimplifyCFG ); // to do
+        llvmIR.BuildFunctionInfo();
+        llvmIR.PassExecutor( SimpleDCE );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

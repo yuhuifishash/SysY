@@ -46,7 +46,6 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r110 = phi i32 [0,%L1],[%r118,%L7]
     %r106 = phi i32 [0,%L1],[%r105,%L7]
     %r90 = phi i32 [0,%L1],[%r89,%L7]
     %r8 = getelementptr i32, ptr %r0, i32 %r90
@@ -69,7 +68,6 @@ L6:  ;
     %r22 = icmp eq i32 %r13,60
     br i1 %r22, label %L8, label %L9
 L7:  ;
-    %r118 = phi i32 [%r13,%L5],[%r117,%L10]
     %r105 = phi i32 [%r106,%L5],[%r104,%L10]
     %r98 = phi i32 [%r90,%L5],[%r97,%L10]
     %r89 = add i32 %r98,1
@@ -83,7 +81,6 @@ L9:  ;
     %r28 = icmp eq i32 %r13,43
     br i1 %r28, label %L11, label %L12
 L10:  ;
-    %r117 = phi i32 [%r13,%L8],[%r116,%L13]
     %r104 = phi i32 [%r106,%L8],[%r103,%L13]
     %r97 = phi i32 [%r90,%L8],[%r96,%L13]
     br label %L7
@@ -100,7 +97,6 @@ L12:  ;
     %r38 = icmp eq i32 %r13,45
     br i1 %r38, label %L14, label %L15
 L13:  ;
-    %r116 = phi i32 [%r13,%L11],[%r115,%L16]
     %r103 = phi i32 [%r106,%L11],[%r102,%L16]
     %r96 = phi i32 [%r90,%L11],[%r95,%L16]
     br label %L10
@@ -117,7 +113,6 @@ L15:  ;
     %r48 = icmp eq i32 %r13,46
     br i1 %r48, label %L17, label %L18
 L16:  ;
-    %r115 = phi i32 [%r13,%L14],[%r114,%L19]
     %r102 = phi i32 [%r106,%L14],[%r101,%L19]
     %r95 = phi i32 [%r90,%L14],[%r94,%L19]
     br label %L13
@@ -131,7 +126,6 @@ L18:  ;
     %r54 = icmp eq i32 %r13,44
     br i1 %r54, label %L20, label %L21
 L19:  ;
-    %r114 = phi i32 [%r13,%L17],[%r113,%L22]
     %r101 = phi i32 [%r106,%L17],[%r100,%L22]
     %r94 = phi i32 [%r90,%L17],[%r93,%L22]
     br label %L16
@@ -145,14 +139,12 @@ L21:  ;
     %r60 = icmp eq i32 %r13,93
     br i1 %r60, label %L25, label %L24
 L22:  ;
-    %r113 = phi i32 [%r13,%L20],[%r112,%L24]
     %r100 = phi i32 [%r106,%L20],[%r99,%L24]
     %r93 = phi i32 [%r90,%L20],[%r92,%L24]
     br label %L19
 L23:  ;
     br label %L26
 L24:  ;
-    %r112 = phi i32 [%r13,%L21],[%r13,%L25],[%r111,%L28]
     %r99 = phi i32 [%r106,%L21],[%r106,%L25],[%r108,%L28]
     %r92 = phi i32 [%r90,%L21],[%r90,%L25],[%r91,%L28]
     br label %L22
@@ -163,7 +155,6 @@ L25:  ;
     %r64 = icmp ne i32 %r63,0
     br i1 %r64, label %L23, label %L24
 L26:  ;
-    %r111 = phi i32 [%r13,%L23],[%r74,%L31]
     %r108 = phi i32 [1,%L23],[%r107,%L31]
     %r91 = phi i32 [%r90,%L23],[%r71,%L31]
     %r68 = icmp sgt i32 %r108,0

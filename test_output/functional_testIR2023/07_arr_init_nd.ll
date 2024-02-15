@@ -16,14 +16,11 @@ define i32 @main()
 {
 L0:  ;
     %r114 = alloca [2 x [3 x [4 x i32]]]
-    %r113 = alloca [3 x i32]
     %r96 = alloca [5 x [3 x i32]]
-    %r95 = alloca [5 x i32]
     %r64 = alloca [5 x [3 x i32]]
     %r33 = alloca [5 x [3 x i32]]
     %r2 = alloca [5 x [3 x i32]]
     %r1 = alloca [5 x [3 x i32]]
-    %r0 = alloca [5 x [3 x i32]]
     br label %L1
 L1:  ;
     call void @llvm.memset.p0.i32(ptr %r1,i8 0,i32 60,i1 0)

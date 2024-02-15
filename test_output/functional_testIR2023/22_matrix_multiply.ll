@@ -79,7 +79,6 @@ L1:  ;
     br label %L2
 L2:  ;
     %r71 = phi i32 [0,%L1],[%r23,%L7]
-    %r65 = phi i32 [0,%L1],[%r66,%L7]
     %r8 = load i32, ptr @m1
     %r9 = icmp slt i32 %r71,%r8
     br i1 %r9, label %L3, label %L4
@@ -107,7 +106,6 @@ L7:  ;
     br label %L2
 L8:  ;
     %r72 = phi i32 [0,%L4],[%r43,%L13]
-    %r67 = phi i32 [%r65,%L4],[%r68,%L13]
     %r28 = load i32, ptr @m2
     %r29 = icmp slt i32 %r72,%r28
     br i1 %r29, label %L9, label %L10
@@ -132,7 +130,6 @@ L13:  ;
     br label %L8
 L14:  ;
     %r73 = phi i32 [0,%L10],[%r63,%L19]
-    %r69 = phi i32 [%r67,%L10],[%r70,%L19]
     %r46 = load i32, ptr @m1
     %r47 = icmp slt i32 %r73,%r46
     br i1 %r47, label %L15, label %L16

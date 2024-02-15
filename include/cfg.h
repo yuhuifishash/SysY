@@ -34,6 +34,7 @@ public:
         DomTree.C = this;
         DomTree.BuildDominatorTree();
     }
+    void BuildFunctionInfo();
 
     //if blockid1 dominate blockid2, return true, else return false
     bool IfDominate(int id1,int id2){return DomTree.IfDominate(id1,id2);}

@@ -34,6 +34,7 @@ public:
     void CFGInit();
     void BuildCFG();
     void BuildDominatorTree();
+    void BuildFunctionInfo();
 
     /*this function will execute the pass you write, you can use function pointer to 
       tell it to execute what, it will execute through all the CFG* in this LLVMIR*/

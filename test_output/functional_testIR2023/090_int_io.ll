@@ -20,7 +20,6 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r33 = phi i32 [0,%L1],[%r8,%L5]
     br label %L3
 L3:  ;
     %r6 = call i32 @getch()
@@ -39,7 +38,6 @@ L8:  ;
     br i1 %r14, label %L5, label %L6
 L11:  ;
     %r37 = phi i32 [%r34,%L4],[%r31,%L16]
-    %r35 = phi i32 [%r34,%L4],[%r20,%L16]
     br label %L12
 L12:  ;
     %r18 = call i32 @getch()
@@ -47,7 +45,6 @@ L12:  ;
     %r23 = icmp sge i32 %r20,0
     br i1 %r23, label %L17, label %L15
 L13:  ;
-    %r36 = phi i32 [%r20,%L15]
     ret i32 %r37
 L14:  ;
     %r29 = mul i32 %r37,10

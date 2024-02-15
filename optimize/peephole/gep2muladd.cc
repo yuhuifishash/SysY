@@ -9,7 +9,7 @@
     * @param C the control flow graph of the function */
 void ElimateEmptyIndexGEP(CFG* C)
 {
-    
+    std::cerr<<"ElimateEmptyIndexGEP is not implemented now\n";
 }
 
 
@@ -33,5 +33,5 @@ void ElimateEmptyIndexGEP(CFG* C)
     * @param C the control flow graph of the function */
 void GEP2MulAdd(CFG* C)
 {
-    
+
 }

@@ -310,7 +310,6 @@ L13:  ;
     br label %L14
 L14:  ;
     %r169 = phi i32 [1,%L13],[%r137,%L19]
-    %r164 = phi i32 [%r163,%L13],[%r165,%L19]
     %r83 = icmp slt i32 %r169,%r2
     br i1 %r83, label %L15, label %L16
 L15:  ;

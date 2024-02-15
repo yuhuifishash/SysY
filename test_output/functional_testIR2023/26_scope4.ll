@@ -134,7 +134,6 @@ L2:  ;
 L3:  ;
     br label %L5
 L4:  ;
-    %r60 = phi i32 [%r59,%L7]
     %r52 = load i32, ptr @sum
     call void @putint(i32 %r52)
     ret i32 0
@@ -143,7 +142,6 @@ L5:  ;
 L6:  ;
     br label %L8
 L7:  ;
-    %r59 = phi i32 [%r58,%L10]
     br label %L4
 L8:  ;
     %r58 = phi i32 [%r6,%L6],[%r57,%L17],[%r48,%L19]

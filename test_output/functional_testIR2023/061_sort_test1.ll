@@ -21,7 +21,6 @@ L1:  ;
     br label %L2
 L2:  ;
     %r54 = phi i32 [0,%L1],[%r50,%L7]
-    %r52 = phi i32 [0,%L1],[%r53,%L7]
     %r7 = load i32, ptr @n
     %r9 = sub i32 %r7,1
     %r10 = icmp slt i32 %r54,%r9

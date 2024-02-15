@@ -4,6 +4,8 @@
 #include "IRgen.h"
 #include <bitset>
 
+std::map<std::string,CFG*> CFGMap;
+
 void LLVMIR::ElimateUnreachedInstructionAndBlocks(){
     for(auto& [defI,blocks]:function_block_map){
         std::stack<int> stk;
@@ -71,6 +73,8 @@ void LLVMIR::CFGInit()
         cfg->function_def = defI;
         cfg->max_reg = max_reg_map[defI];
         cfg->max_label = max_label_map[defI];
+        
+        CFGMap[defI->GetFunctionName()] = cfg;
         llvm_cfg[defI] = cfg;
     }
 }

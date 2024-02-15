@@ -54,7 +54,6 @@ L3:  ;
     %r16 = icmp ne i32 %r9,%r13
     br i1 %r16, label %L5, label %L6
 L4:  ;
-    %r39 = phi i32 [%r33,%L7]
     ret i32 0
 L5:  ;
     %r18 = getelementptr [6 x [50 x i32]], ptr @N4__mE___, i32 0, i32 %r9

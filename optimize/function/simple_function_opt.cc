@@ -10,8 +10,20 @@
     * @param C the control flow graph of the function */
 void MakeFunctionOneExit(CFG* C)
 {
-
+    std::cerr<<"MakeFunctionOneExit is not implemented now\n";
 }
+
+
+/**
+    * this function will elimate tailrecursive
+    * you can use testcase 087_gcd.sy to check
+    * you should set CFG::max_reg and LLVMIR::max_reg_map correctly
+    * @param C the control flow graph of the function */
+void TailRecursiveElimate(CFG* C)
+{
+    std::cerr<<"TailRecursiveElimate is not implemented now\n";
+}
+
 
 
 void FunctionInline()
@@ -20,10 +32,6 @@ void FunctionInline()
 }
 
 
-void TailRecursiveElimate(CFG* C)
-{
-
-}
 
 
 

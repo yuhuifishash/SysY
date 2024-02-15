@@ -49,7 +49,6 @@ define i32 @func(i32 %r0,i32 %r1)
 L0:  ;
     br label %L1
 L1:  ;
-    %r8 = add i32 %r0,%r1
     %r81 = call i32 @getint()
     %r82 = call i32 @getint()
     %r83 = call i32 @getint()
@@ -138,18 +137,6 @@ L1:  ;
     %r222 = add i32 4,%r204
     %r223 = load i32, ptr @a28
     %r224 = add i32 %r222,%r223
-    %r227 = add i32 1,%r209
-    %r228 = load i32, ptr @a29
-    %r229 = add i32 %r227,%r228
-    %r232 = add i32 2,%r214
-    %r233 = load i32, ptr @a30
-    %r234 = add i32 %r232,%r233
-    %r237 = add i32 3,%r219
-    %r238 = load i32, ptr @a31
-    %r239 = add i32 %r237,%r238
-    %r242 = add i32 4,%r224
-    %r243 = load i32, ptr @a32
-    %r244 = add i32 %r242,%r243
     %r247 = sub i32 %r0,%r1
     %r249 = add i32 %r247,10
     %r252 = add i32 1,%r209
@@ -236,18 +223,6 @@ L1:  ;
     %r387 = add i32 4,%r104
     %r388 = load i32, ptr @a8
     %r389 = add i32 %r387,%r388
-    %r392 = add i32 1,%r81
-    %r393 = load i32, ptr @a1
-    %r394 = add i32 %r392,%r393
-    %r397 = add i32 2,%r82
-    %r398 = load i32, ptr @a2
-    %r399 = add i32 %r397,%r398
-    %r402 = add i32 3,%r83
-    %r403 = load i32, ptr @a3
-    %r404 = add i32 %r402,%r403
-    %r407 = add i32 4,%r84
-    %r408 = load i32, ptr @a4
-    %r409 = add i32 %r407,%r408
     %r412 = add i32 1,%r81
     %r413 = load i32, ptr @a1
     %r414 = add i32 %r412,%r413

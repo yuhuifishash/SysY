@@ -21,7 +21,6 @@ L1:  ;
 L3:  ;
     br label %L8
 L4:  ;
-    %r32 = phi i32 [%r31,%L10]
     %r29 = phi i32 [%r30,%L10]
     ret i32 %r29
 L8:  ;

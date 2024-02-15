@@ -21,7 +21,6 @@ L1:  ;
     br label %L2
 L2:  ;
     %r112 = phi i32 [1,%L1],[%r73,%L7]
-    %r108 = phi i32 [0,%L1],[%r109,%L7]
     %r14 = icmp sle i32 %r112,%r0
     br i1 %r14, label %L3, label %L4
 L3:  ;

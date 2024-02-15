@@ -39,7 +39,6 @@ L2:  ;
 L3:  ;
     br label %L4
 L4:  ;
-    %r47 = phi i32 [0,%L3],[1,%L2]
     %r11 = call i32 @getint()
     %r14 = icmp sgt i32 %r11,11
     br i1 %r14, label %L9, label %L7
@@ -52,7 +51,6 @@ L6:  ;
 L7:  ;
     br label %L8
 L8:  ;
-    %r48 = phi i32 [0,%L7],[1,%L6]
     %r20 = call i32 @getint()
     %r23 = icmp sle i32 %r20,99
     br i1 %r23, label %L10, label %L13
@@ -65,7 +63,6 @@ L10:  ;
 L11:  ;
     br label %L12
 L12:  ;
-    %r49 = phi i32 [1,%L10],[0,%L11]
     %r29 = call i32 @getint()
     %r32 = icmp sle i32 %r29,100
     br i1 %r32, label %L14, label %L17
@@ -78,7 +75,6 @@ L14:  ;
 L15:  ;
     br label %L16
 L16:  ;
-    %r50 = phi i32 [1,%L14],[0,%L15]
     %r39 = call i32 @func(i32 99)
     %r40 = icmp eq i32 %r39,0
     br i1 %r40, label %L21, label %L19
@@ -91,7 +87,6 @@ L18:  ;
 L19:  ;
     br label %L20
 L20:  ;
-    %r51 = phi i32 [0,%L19],[1,%L18]
     ret i32 0
 L21:  ;
     %r42 = call i32 @func(i32 100)

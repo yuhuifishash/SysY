@@ -149,9 +149,6 @@ L1:  ;
     %r0 = load i32, ptr @h
     %r2 = add i32 %r0,1
     store i32 %r2, ptr @h
-    %r4 = load i32, ptr @h
-    %r5 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r4
-    %r6 = load i32, ptr %r5
     %r7 = load i32, ptr @h
     %r8 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r7
     %r9 = load i32, ptr %r8

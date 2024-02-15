@@ -21,7 +21,6 @@ L1:  ;
     br label %L2
 L2:  ;
     %r54 = phi i32 [0,%L1],[%r50,%L7]
-    %r52 = phi i32 [0,%L1],[%r53,%L7]
     %r7 = load i32, ptr @n
     %r9 = sub i32 %r7,1
     %r10 = icmp slt i32 %r54,%r9
@@ -485,7 +484,6 @@ L1:  ;
     %r105 = call i32 @revert(ptr %r104)
     br label %L2
 L2:  ;
-    %r231 = phi i32 [%r105,%L1],[%r114,%L3]
     %r224 = phi i32 [0,%L1],[%r118,%L3]
     %r111 = icmp slt i32 %r224,32
     br i1 %r111, label %L3, label %L4
@@ -500,7 +498,6 @@ L4:  ;
     %r120 = call i32 @bubblesort(ptr %r119)
     br label %L5
 L5:  ;
-    %r232 = phi i32 [%r120,%L4],[%r127,%L6]
     %r225 = phi i32 [0,%L4],[%r131,%L6]
     %r124 = icmp slt i32 %r225,32
     br i1 %r124, label %L6, label %L7
@@ -524,7 +521,6 @@ L7:  ;
     %r142 = call i32 @bubblesort(ptr %r141)
     br label %L8
 L8:  ;
-    %r233 = phi i32 [%r142,%L7],[%r149,%L9]
     %r226 = phi i32 [0,%L7],[%r153,%L9]
     %r146 = icmp slt i32 %r226,32
     br i1 %r146, label %L9, label %L10
@@ -542,7 +538,6 @@ L10:  ;
     %r158 = call i32 @insertsort(ptr %r157)
     br label %L11
 L11:  ;
-    %r234 = phi i32 [%r158,%L10],[%r165,%L12]
     %r227 = phi i32 [0,%L10],[%r169,%L12]
     %r162 = icmp slt i32 %r227,32
     br i1 %r162, label %L12, label %L13
@@ -560,7 +555,6 @@ L13:  ;
     %r178 = call i32 @QuickSort(ptr %r175,i32 0,i32 31)
     br label %L14
 L14:  ;
-    %r235 = phi i32 [%r178,%L13],[%r184,%L15]
     %r228 = phi i32 [0,%L13],[%r188,%L15]
     %r181 = icmp slt i32 %r228,32
     br i1 %r181, label %L15, label %L16
@@ -578,7 +572,6 @@ L16:  ;
     %r194 = call i32 @calSum(ptr %r192,i32 4)
     br label %L17
 L17:  ;
-    %r236 = phi i32 [%r194,%L16],[%r201,%L18]
     %r229 = phi i32 [0,%L16],[%r205,%L18]
     %r198 = icmp slt i32 %r229,32
     br i1 %r198, label %L18, label %L19
@@ -596,7 +589,6 @@ L19:  ;
     %r211 = call i32 @avgPooling(ptr %r209,i32 3)
     br label %L20
 L20:  ;
-    %r237 = phi i32 [%r211,%L19],[%r218,%L21]
     %r230 = phi i32 [0,%L19],[%r222,%L21]
     %r215 = icmp slt i32 %r230,32
     br i1 %r215, label %L21, label %L22

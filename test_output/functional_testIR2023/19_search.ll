@@ -151,7 +151,6 @@ L4:  ;
     ret i32 0
 L5:  ;
     %r83 = phi i32 [0,%L3],[%r26,%L10]
-    %r78 = phi i32 [0,%L3],[%r79,%L10]
     %r12 = icmp slt i32 %r83,30
     br i1 %r12, label %L6, label %L7
 L6:  ;
@@ -172,7 +171,6 @@ L10:  ;
     br label %L5
 L11:  ;
     %r84 = phi i32 [1,%L7],[%r60,%L16]
-    %r80 = phi i32 [%r78,%L7],[%r81,%L16]
     %r29 = load i32, ptr @h
     %r30 = icmp sle i32 %r84,%r29
     br i1 %r30, label %L12, label %L13

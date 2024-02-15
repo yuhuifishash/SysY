@@ -20,8 +20,6 @@ L1:  ;
     %r6 = call i32 @getint()
     br label %L2
 L2:  ;
-    %r1015 = phi i32 [0,%L1],[%r13,%L7]
-    %r915 = phi i32 [0,%L1],[%r916,%L7]
     %r914 = phi i32 [0,%L1],[%r912,%L7]
     %r11 = icmp slt i32 %r914,%r6
     br i1 %r11, label %L3, label %L4

@@ -1,4 +1,5 @@
 #include "cfg.h"
+
 /**
     * this function will elimate the double br_uncond without any other instructions
     * 
@@ -25,5 +26,10 @@
     * @param C the control flow graph of the function */
 void ElimateDoubleBrUnCond(CFG* C)
 {
-    
+    std::cerr<<"ElimateDoubleBrUnCond in SimplifyCFG is not implemented now\n";
+}
+
+void SimplifyCFG(CFG* C)
+{
+    ElimateDoubleBrUnCond(C);
 }

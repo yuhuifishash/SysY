@@ -71,7 +71,6 @@ L1:  ;
     store i32 5, ptr %r50
     br label %L2
 L2:  ;
-    %r96 = phi i32 [0,%L1],[%r70,%L3]
     %r95 = phi i32 [0,%L1],[%r90,%L3]
     %r64 = icmp slt i32 %r95,5
     br i1 %r64, label %L3, label %L4

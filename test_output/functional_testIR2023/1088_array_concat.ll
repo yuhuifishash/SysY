@@ -50,8 +50,6 @@ L7:  ;
 define i32 @main()
 {
 L0:  ;
-    %r8 = alloca [3 x i32]
-    %r7 = alloca [3 x i32]
     %r6 = alloca [6 x i32]
     %r5 = alloca [3 x i32]
     %r4 = alloca [3 x i32]
@@ -89,7 +87,6 @@ L4:  ;
     br label %L5
 L5:  ;
     %r57 = phi i32 [%r39,%L4],[%r51,%L6]
-    %r55 = phi i32 [0,%L4],[%r47,%L6]
     %r44 = icmp slt i32 %r57,6
     br i1 %r44, label %L6, label %L7
 L6:  ;

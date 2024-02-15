@@ -301,9 +301,6 @@ L53:  ;
 L54:  ;
     br label %L55
 L55:  ;
-    %r283 = phi i32 [1,%L54],[0,%L56]
-    %r204 = load i32, ptr @sum
-    %r206 = add i32 %r204,%r283
     %r209 = call i32 @h(i32 4)
     %r210 = icmp eq i32 %r209,0
     br i1 %r210, label %L59, label %L62
@@ -322,9 +319,6 @@ L58:  ;
 L59:  ;
     br label %L60
 L60:  ;
-    %r284 = phi i32 [1,%L59],[0,%L61]
-    %r224 = load i32, ptr @sum
-    %r226 = mul i32 %r224,%r284
     %r229 = call i32 @h(i32 9)
     %r230 = icmp ne i32 %r229,0
     br i1 %r230, label %L71, label %L70
@@ -347,9 +341,6 @@ L64:  ;
 L65:  ;
     br label %L66
 L66:  ;
-    %r285 = phi i32 [1,%L65],[0,%L67],[0,%L72]
-    %r250 = load i32, ptr @sum
-    %r252 = sub i32 %r250,%r285
     %r255 = call i32 @h(i32 0)
     %r256 = icmp ne i32 %r255,0
     br i1 %r256, label %L80, label %L77
