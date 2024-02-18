@@ -1,6 +1,6 @@
 #ifndef MACHINE_BLOCK_H
 #define MACHINE_BLOCK_H
-#include "llvm_ir.h"
+#include "ir.h"
 
 template<class FUNCPTR>
 class MachineUnit{

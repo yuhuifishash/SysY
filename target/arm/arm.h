@@ -1,6 +1,8 @@
 #ifndef ARM_H
 #define ARM_H
 #include "arm_fields.h"
+#include "ir.h"
+#include "Instruction.h"
 #include <iostream>
 #include <vector>
 class Arm_baseins{

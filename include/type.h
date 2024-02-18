@@ -8,14 +8,14 @@
 class Type
 {
 public:
-    enum{
+    enum ty{
         VOID = 0,
         INT = 1,
         FLOAT = 2,
         BOOL = 3,
         PTR = 4
     }type;
-    int arraydims = 0;
+    std::string GetTypeInfo();
 };
 
 
@@ -30,10 +30,22 @@ public:
         int IntVal;
         float FloatVal;
     }val;
+    std::string GetConstValueInfo(Type ty);
+    ConstValue(){val.IntVal = 0; ConstTag = false;}
 };
 
+class VarAttribute
+{
+public:
+    Type::ty type;
+    bool ConstTag = 0;
+    std::vector<int> dims{};
+    std::vector<int> IntInitVals{};//used for array
+    std::vector<float> FloatInitVals{};
+    VarAttribute(){type = Type::VOID; ConstTag = false;}
+};
 
-class NodeAttr
+class NodeAttribute
 {
 public:
     enum opcode{
@@ -55,6 +67,7 @@ public:
     int line_number;
     Type T;
     ConstValue V;
+    std::string GetAttributeInfo();
 };
 
 

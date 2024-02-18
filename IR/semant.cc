@@ -1,24 +1,25 @@
 #include "semant.h"
 #include "SysY_tree.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include "type.h" 
 
-extern SymbolTable symbol_table;
-extern LLVM_IR llvm_IR;
+extern LLVMIR llvmIR;
 extern StringTable str_table;
 
-static int global_var_cnt = 0;
-std::map<std::string,ArrayVal> global_const_map;
-std::map<std::string,int> global_map;
+static int GlobalVarCnt = 0;
+std::map<std::string,VarAttribute> GlobalConstMap;
 
 SemantTable semant_table;
 std::vector<std::string> error_msgs{};
 
-static int main_flag = 0;
-static int in_while_flag = 0;
-static int func_returntype = 0;
-static int return_stmt_flag = 0;
+static bool MainTag = 0;
+static int InWhileCount = 0;
 
+//Type::VOID -> VOID    Type::Int -> I32    Type::FLOAT -> FLOAT32
+LLVMType Type2LLvm[5] = {LLVMType::VOID,LLVMType::I32,LLVMType::FLOAT32,LLVMType::I1,LLVMType::PTR};
+
+extern NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode);
+extern NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcode);
 /*
 Find Max Alignable Size
 For example, int a[3][4][5]
@@ -37,13 +38,13 @@ And now We need to find a minimal dim_step, s.t.
         i.e. relative pos % (val.dims[dimsIdx]*val.dims[dimsIdx+1]*...*val.dims[dimsIdx+dim_step-1]) == 0
         (the relative pos begin from 0)
 
-@const ArrayVal& val: just used for get dims
+@const VarAttribute& val: just used for get dims
 @int relativePos: relative pos in the block
 @int dimsIdx: current dim index
 @int& max_subBlock_sz: parameter for output,return max alignable size
 @return: min dim step
 */
-int find_min_dim_step(const ArrayVal& val,int relativePos,int dimsIdx, int& max_subBlock_sz)
+int FindMinDimStep(const VarAttribute& val,int relativePos,int dimsIdx, int& max_subBlock_sz)
 {
     int min_dim_step = 1;
     int blockSz = 1;
@@ -52,1308 +53,773 @@ int find_min_dim_step(const ArrayVal& val,int relativePos,int dimsIdx, int& max_
     }
     while(relativePos % blockSz != 0){
         min_dim_step++;
-        blockSz /= val.dims[dimsIdx+min_dim_step-1];
+        blockSz /= val.dims[dimsIdx + min_dim_step - 1];
     }
     max_subBlock_sz = blockSz;
     return min_dim_step;
 }
 
-void recursive_Array_Init(InitVal init,ArrayVal& val,int begPos,int endPos,int dimsIdx)
+void RecursiveArrayInit(InitVal init,VarAttribute& val,int begPos,int endPos,int dimsIdx)
 {
     //dimsIdx from 0
     int pos=begPos;
 
     //Old Policy: One { } for one dim
-    // int subBlockSz = 1;
-    // for(int i=dimsIdx+1;i<val.dims.size();i++){
-    //     subBlockSz *= val.dims[i];
-    // }
 
-    //For Debug
-    //std::cout<<std::string(dimsIdx*2,' ')<<"From:"<<begPos<<" To:"<<endPos<<"\n";
-    //std::cout<<std::string(dimsIdx*2,' ')<<"subBlockNum:"<<(init->get_List())->size()<<"\n";
-    for(InitVal iv:*(init->get_List())){
-        //std::cout<<std::string(dimsIdx*2,' ')<<"pos:"<<pos<<"\n";
-        if(iv->is_exp()){
-            if(iv->get_type() == 0){
-                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->get_line_number()) + "\n");
+    for(InitVal iv:*(init->GetList())){
+        if(iv->IsExp()){
+            if(iv->attribute.T.type == Type::VOID){
+                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
-            if(val.type == 1){
-                if(iv->get_type() == 1){
-                    val.IntInitVals[pos] = iv->get_Intval();
-                }
-                if(iv->get_type() == 2){
-                    val.IntInitVals[pos] = iv->get_Floatval();
+            if(val.type == Type::INT){
+                if(iv->attribute.T.type == Type::INT){
+                    val.IntInitVals[pos] = iv->attribute.V.val.IntVal;
+                }else if(iv->attribute.T.type == Type::FLOAT){
+                    val.IntInitVals[pos] = iv->attribute.V.val.FloatVal;
                 }
             }
-            if(val.type == 2){
-                if(iv->get_type() == 1){
-                    val.FloatInitVals[pos] = iv->get_Intval();
+            if(val.type == Type::FLOAT){
+                if(iv->attribute.T.type == Type::INT){
+                    val.FloatInitVals[pos] = iv->attribute.V.val.IntVal;
+                }else if(iv->attribute.T.type == Type::FLOAT){
+                    val.FloatInitVals[pos] = iv->attribute.V.val.FloatVal;
                 }
-                if(iv->get_type() == 2){
-                    val.FloatInitVals[pos] = iv->get_Floatval();
-                }
-                //std::cout<<std::string(dimsIdx*2,' ')<<"  val:"<<val.FloatInitVals[pos]<<"\n";
             }
             pos++;
         }else{
             // New Policy: One { } for the max align-able dim
-            // More informations see comments above find_min_dim_step
+            // More informations see comments above FindMinDimStep
             int max_subBlock_sz = 0;
-            int min_dim_step = find_min_dim_step(val,pos-begPos,dimsIdx,max_subBlock_sz);
-            recursive_Array_Init(iv,val,pos,pos+max_subBlock_sz-1,dimsIdx+min_dim_step);
+            int min_dim_step = FindMinDimStep(val,pos-begPos,dimsIdx,max_subBlock_sz);
+            RecursiveArrayInit(iv,val,pos,pos+max_subBlock_sz-1,dimsIdx+min_dim_step);
             pos += max_subBlock_sz;
        }
     }
 }
 
-void solve_Int_InitVal(InitVal init,ArrayVal& val)//used for global or const
+void SolveIntInitVal(InitVal init,VarAttribute& val)//used for global or const
 {
-    val.type = 1;
+    val.type = Type::INT;
     int arraySz = 1;
     for(auto d:val.dims){
         arraySz *= d;
     }
     val.IntInitVals.resize(arraySz,0);
-    if(init == NULL){
-        return;
-    }
     if(val.dims.empty()){
-        if(init->get_exp()!=nullptr){
-            if(init->get_exp()->get_type() == 0){
-                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->get_line_number()) + "\n");
+        if(init->GetExp() != nullptr){
+            if(init->GetExp()->attribute.T.type == Type::VOID){
+                error_msgs.push_back("Expression can not be void in initval in line " + std::to_string(init->GetLineNumber()) + "\n");
+            }else if(init->GetExp()->attribute.T.type == Type::INT){
+                val.IntInitVals[0] = init->GetExp()->attribute.V.val.IntVal;
+            }else if(init->GetExp()->attribute.T.type == Type::FLOAT){
+                val.IntInitVals[0] = init->GetExp()->attribute.V.val.FloatVal;
             }
-            if(init->get_exp()->get_type() == 1){
-                val.IntInitVals[0] = init->get_exp()->get_Intval();
-            }
-            if(init->get_exp()->get_type() == 2){
-                val.IntInitVals[0] = init->get_exp()->get_Floatval();
-            }
-            //std::cout<<val.IntInitVals[0]<<"\n";
         }
         return;
     }
     else{
-        if(init->is_exp()){
-            if((init)->get_exp()!=nullptr){
-                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->get_line_number()) + "\n");
+        if(init->IsExp()){
+            if((init)->GetExp() != nullptr){
+                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
             return;
-        }else{
-            //InitVal Vals = init->get_List();
-            recursive_Array_Init(init,val,0,arraySz-1,0);
+        }
+        else{
+            RecursiveArrayInit(init,val,0,arraySz-1,0);
         }
     }
 }
 
-void solve_Float_InitVal(InitVal init,ArrayVal& val)//used for global or const
+void SolveFloatInitVal(InitVal init,VarAttribute& val)//used for global or const
 {
-    val.type = 2;
+    val.type = Type::FLOAT;
     int arraySz = 1;
     for(auto d:val.dims){
         arraySz *= d;
     }
     val.FloatInitVals.resize(arraySz,0);
-    if(init == NULL){
-        return;
-    }
     if(val.dims.empty()){
-        if(init->get_exp()!=nullptr){
-            if(init->get_exp()->get_type() == 0){
-                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->get_line_number()) + "\n");
+        if(init->GetExp() != nullptr){
+            if(init->GetExp()->attribute.T.type == Type::VOID){
+                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
-            if(init->get_exp()->get_type() == 2){
-                val.FloatInitVals[0] = init->get_exp()->get_Floatval();
+            else if(init->GetExp()->attribute.T.type == Type::FLOAT){
+                val.FloatInitVals[0] = init->GetExp()->attribute.V.val.FloatVal;
             }
-            if(init->get_exp()->get_type() == 1){
-                val.FloatInitVals[0] = init->get_exp()->get_Intval();
+            else if(init->GetExp()->attribute.T.type == Type::INT){
+                val.FloatInitVals[0] = init->GetExp()->attribute.V.val.IntVal;
             }
-            //std::cout<<val.FloatInitVals[0]<<"\n";
         }
         return;
     }
     else{
-        if(init->is_exp()){
-            if((init)->get_exp()!=nullptr){
-                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->get_line_number()) + "\n");
+        if(init->IsExp()){
+            if((init)->GetExp() != nullptr){
+                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
             return;
-        }else{
-            //InitVal Vals = init->get_List();
-            recursive_Array_Init(init,val,0,arraySz-1,0);
+        }
+        else{
+            RecursiveArrayInit(init,val,0,arraySz-1,0);
         }
     }
 }
 
 // int b = a[3][4]
-int get_ArrayIntVal(ArrayVal val,std::vector<int> indexs)
+int GetArrayIntVal(VarAttribute& val,std::vector<int>& indexs)
 {
     //[i] + i
     //[i][j] + i*dim[1] + j
     //[i][j][k] + i*dim[1]*dim[2] + j*dim[2] + k
     //[i][j][k][w] + i*dim[1]*dim[2]*dim[3] + j*dim[2]*dim[3] + k*dim[3] + w
     int idx = 0;
-    for(int curIndex=0;curIndex<indexs.size();curIndex++){
-        // std::cout<<indexs[curIndex]<<" ";
+    for(int curIndex = 0;curIndex < indexs.size();curIndex++){
         idx *= val.dims[curIndex];
         idx += indexs[curIndex];
     }
     return val.IntInitVals[idx];
 }
 
-float get_ArrayFloatVal(ArrayVal val,std::vector<int> indexs)
+float GetArrayFloatVal(VarAttribute& val,std::vector<int>& indexs)
 {
     int idx = 0;
-    for(int curIndex=0;curIndex<indexs.size();curIndex++){
-        // std::cout<<indexs[curIndex]<<" ";
+    for(int curIndex = 0;curIndex < indexs.size();curIndex++){
         idx *= val.dims[curIndex];
         idx += indexs[curIndex];
     }
     return val.FloatInitVals[idx];
 }
 
-void __Program::type_check()
+void __Program::TypeCheck()
 {
-    symbol_table.enter_scope();
+    semant_table.symbol_table.enter_scope();
     auto comp_vector = *comp_list;
     for(auto comp:comp_vector){
-        comp->type_check();
+        comp->TypeCheck();
     }
-    if(!main_flag){
+    if(!MainTag){
         error_msgs.push_back("main function does not exist.\n");
     }
 }
 
-void Exp::type_check()
+void Exp::TypeCheck()
 {
-    addexp->type_check();
+    addexp->TypeCheck();
 
-    cal_flag = addexp->get_cal_flag();
-    type = addexp->get_type();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = addexp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = addexp->get_Floatval();
-        }
-    }
+    attribute = addexp->attribute;
 }
 
-void AddExp_plus::type_check()
+void AddExp_plus::TypeCheck()
 {
-    addexp->type_check();
-    mulexp->type_check();
+    addexp->TypeCheck();
+    mulexp->TypeCheck();
 
-    if(addexp->get_type() == 0 || mulexp->get_type() == 0){
-        error_msgs.push_back("plus on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(addexp->get_type() == 1 && mulexp->get_type() == 1){
-        type = 1;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = addexp->get_Intval() + mulexp->get_Intval();
-        }
-    }
-    else if(addexp->get_type() == 2 && mulexp->get_type() == 2){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Floatval() + mulexp->get_Floatval();
-        }
-    }
-    else if(addexp->get_type() == 1 && mulexp->get_type() == 2){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Intval() + mulexp->get_Floatval();
-        }
-    }
-    else if(addexp->get_type() == 2 && mulexp->get_type() == 1){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Floatval() + mulexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type]
+                (addexp->attribute,mulexp->attribute,NodeAttribute::ADD);
 }
 
-void AddExp_sub::type_check()
+void AddExp_sub::TypeCheck()
 {
-    addexp->type_check();
-    mulexp->type_check();
+    addexp->TypeCheck();
+    mulexp->TypeCheck();
     
-    if(addexp->get_type() == 0 || mulexp->get_type() == 0){
-        error_msgs.push_back("sub on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(addexp->get_type() == 1 && mulexp->get_type() == 1){
-        type = 1;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = addexp->get_Intval() - mulexp->get_Intval();
-        }
-    }
-    else if(addexp->get_type() == 2 && mulexp->get_type() == 2){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Floatval() - mulexp->get_Floatval();
-        }
-    }
-    else if(addexp->get_type() == 1 && mulexp->get_type() == 2){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Intval() - mulexp->get_Floatval();
-        }
-    }
-    else if(addexp->get_type() == 2 && mulexp->get_type() == 1){
-        type = 2;
-        cal_flag = addexp->get_cal_flag() & mulexp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = addexp->get_Floatval() - mulexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type]
+                (addexp->attribute,mulexp->attribute,NodeAttribute::SUB);
 }
 
-void MulExp_mul::type_check()
+void MulExp_mul::TypeCheck()
 {
-    mulexp->type_check();
-    unary_exp->type_check();
+    mulexp->TypeCheck();
+    unary_exp->TypeCheck();
     
-    if(mulexp->get_type() == 0 || unary_exp->get_type() == 0){
-        error_msgs.push_back("mul on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(mulexp->get_type() == 1 && unary_exp->get_type() == 1){
-        type = 1;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag){
-            IntVal = mulexp->get_Intval() * unary_exp->get_Intval();
-        }
-    }
-    else if(mulexp->get_type() == 2 && unary_exp->get_type() == 2){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = mulexp->get_Floatval() * unary_exp->get_Floatval();
-        }
-    }
-    else if(mulexp->get_type() == 1 && unary_exp->get_type() == 2){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = mulexp->get_Intval() * unary_exp->get_Floatval();
-        }
-    }
-    else if(mulexp->get_type() == 2 && unary_exp->get_type() == 1){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag){
-            FloatVal = mulexp->get_Floatval() * unary_exp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type]
+                (mulexp->attribute,unary_exp->attribute,NodeAttribute::MUL);
 }
 
-void MulExp_div::type_check()
+void MulExp_div::TypeCheck()
 {
-    mulexp->type_check();
-    unary_exp->type_check();
+    mulexp->TypeCheck();
+    unary_exp->TypeCheck();
     
-    if(mulexp->get_type() == 0 || unary_exp->get_type() == 0){
-        error_msgs.push_back("div on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(mulexp->get_type() == 1 && unary_exp->get_type() == 1){
-        type = 1;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag && unary_exp->get_Intval() != 0){
-            IntVal = mulexp->get_Intval() / unary_exp->get_Intval();
-        }
-    }
-    else if(mulexp->get_type() == 2 && unary_exp->get_type() == 2){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag && unary_exp->get_Floatval() != 0){
-            FloatVal = mulexp->get_Floatval() / unary_exp->get_Floatval();
-        }
-    }
-    else if(mulexp->get_type() == 1 && unary_exp->get_type() == 2){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag && unary_exp->get_Floatval() != 0){
-            FloatVal = mulexp->get_Intval() / unary_exp->get_Floatval();
-        }
-    }
-    else if(mulexp->get_type() == 2 && unary_exp->get_type() == 1){
-        type = 2;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag && unary_exp->get_Intval() != 0){
-            FloatVal = mulexp->get_Floatval() / unary_exp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type]
+                (mulexp->attribute,unary_exp->attribute,NodeAttribute::DIV);
 }
 
-void MulExp_mod::type_check()
+void MulExp_mod::TypeCheck()
 {
-    mulexp->type_check();
-    unary_exp->type_check();
+    mulexp->TypeCheck();
+    unary_exp->TypeCheck();
     
-    if(mulexp->get_type() == 0 || unary_exp->get_type() == 0){
-        error_msgs.push_back("mod on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(mulexp->get_type() == 1 && unary_exp->get_type() == 1){
-        type = 1;
-        cal_flag = mulexp->get_cal_flag() & unary_exp->get_cal_flag();
-        if(cal_flag && unary_exp->get_Intval() != 0){
-            IntVal = mulexp->get_Intval() % unary_exp->get_Intval();
-        }
-    }
-    else if(mulexp->get_type() == 2 || unary_exp->get_type() == 2){
-        error_msgs.push_back("mod on float type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
+    attribute = SemantBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type]
+                (mulexp->attribute,unary_exp->attribute,NodeAttribute::MOD);
+}
+
+void RelExp_leq::TypeCheck()
+{
+    relexp->TypeCheck();
+    addexp->TypeCheck();
     
+    attribute = SemantBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type]
+                (relexp->attribute,addexp->attribute,NodeAttribute::LEQ);
 }
 
-void RelExp_leq::type_check()
+void RelExp_lt::TypeCheck()
 {
-    relexp->type_check();
-    addexp->type_check();
+    relexp->TypeCheck();
+    addexp->TypeCheck();
     
-    if(relexp->get_type() == 0 || addexp->get_type() == 0){
-        error_msgs.push_back("leq on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() <= addexp->get_Intval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() <= addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() <= addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() <= addexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type]
+                (relexp->attribute,addexp->attribute,NodeAttribute::LT);
 }
 
-void RelExp_lt::type_check()
+void RelExp_geq::TypeCheck()
 {
-    relexp->type_check();
-    addexp->type_check();
+    relexp->TypeCheck();
+    addexp->TypeCheck();
     
-    if(relexp->get_type() == 0 || addexp->get_type() == 0){
-        error_msgs.push_back("lt on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() < addexp->get_Intval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() < addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() < addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() < addexp->get_Intval();
-        }
-    }
-
-
+    attribute = SemantBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type]
+                (relexp->attribute,addexp->attribute,NodeAttribute::GEQ);
 }
 
-void RelExp_geq::type_check()
+void RelExp_gt::TypeCheck()
 {
-    relexp->type_check();
-    addexp->type_check();
+    relexp->TypeCheck();
+    addexp->TypeCheck();
     
-    if(relexp->get_type() == 0 || addexp->get_type() == 0){
-        error_msgs.push_back("geq on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() >= addexp->get_Intval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() >= addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() >= addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() >= addexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type]
+                (relexp->attribute,addexp->attribute,NodeAttribute::GT);
 }
 
-void RelExp_gt::type_check()
+void EqExp_eq::TypeCheck()
 {
-    relexp->type_check();
-    addexp->type_check();
+    eqexp->TypeCheck();
+    relexp->TypeCheck();
     
-    if(relexp->get_type() == 0 || addexp->get_type() == 0){
-        error_msgs.push_back("gt on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() > addexp->get_Intval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() > addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 1 && addexp->get_type() == 2){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Intval() > addexp->get_Floatval();
-        }
-    }
-    else if(relexp->get_type() == 2 && addexp->get_type() == 1){
-        type = 1;
-        cal_flag = relexp->get_cal_flag() & addexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = relexp->get_Floatval() > addexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type]
+                (eqexp->attribute,relexp->attribute,NodeAttribute::EQ);
 }
 
-void EqExp_eq::type_check()
+void EqExp_neq::TypeCheck()
 {
-    eqexp->type_check();
-    relexp->type_check();
+    eqexp->TypeCheck();
+    relexp->TypeCheck();
     
-    if(eqexp->get_type() == 0 || relexp->get_type() == 0){
-        error_msgs.push_back("eq on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(eqexp->get_type() == 1 && relexp->get_type() == 1){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Intval() == relexp->get_Intval();
-        }
-    }
-    else if(eqexp->get_type() == 2 && relexp->get_type() == 2){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Floatval() == relexp->get_Floatval();
-        }
-    }
-    else if(eqexp->get_type() == 1 && relexp->get_type() == 2){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Intval() == relexp->get_Floatval();
-        }
-    }
-    else if(eqexp->get_type() == 2 && relexp->get_type() == 1){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Floatval() == relexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type]
+                (eqexp->attribute,relexp->attribute,NodeAttribute::NE);
 }
 
-void EqExp_neq::type_check()
+void LAndExp_and::TypeCheck()
 {
-    eqexp->type_check();
-    relexp->type_check();
+    landexp->TypeCheck();
+    eqexp->TypeCheck();
     
-    if(eqexp->get_type() == 0 || relexp->get_type() == 0){
-        error_msgs.push_back("neq on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(eqexp->get_type() == 1 && relexp->get_type() == 1){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Intval() != relexp->get_Intval();
-        }
-    }
-    else if(eqexp->get_type() == 2 && relexp->get_type() == 2){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Floatval() != relexp->get_Floatval();
-        }
-    }
-    else if(eqexp->get_type() == 1 && relexp->get_type() == 2){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Intval() != relexp->get_Floatval();
-        }
-    }
-    else if(eqexp->get_type() == 2 && relexp->get_type() == 1){
-        type = 1;
-        cal_flag = eqexp->get_cal_flag() & relexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = eqexp->get_Floatval() != relexp->get_Intval();
-        }
-    }
+    attribute = SemantBinaryNode[landexp->attribute.T.type][eqexp->attribute.T.type]
+                (landexp->attribute,eqexp->attribute,NodeAttribute::AND);
 }
 
-void LAndExp_and::type_check()
+void LOrExp_or::TypeCheck()
 {
-    landexp->type_check();
-    eqexp->type_check();
+    lorexp->TypeCheck();
+    landexp->TypeCheck();
     
-    if(landexp->get_type() == 0 || eqexp->get_type() == 0){
-        error_msgs.push_back("gt on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(landexp->get_type() == 1 && eqexp->get_type() == 1){
-        type = 1;
-        cal_flag = landexp->get_cal_flag() & eqexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = landexp->get_Intval() && eqexp->get_Intval();
-        }
-    }
-    else if(landexp->get_type() == 2 && eqexp->get_type() == 2){
-        type = 1;
-        cal_flag = landexp->get_cal_flag() & eqexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = landexp->get_Floatval() && eqexp->get_Floatval();
-        }
-    }
-    else if(landexp->get_type() == 1 && eqexp->get_type() == 2){
-        type = 1;
-        cal_flag = landexp->get_cal_flag() & eqexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = landexp->get_Intval() && eqexp->get_Floatval();
-        }
-    }
-    else if(landexp->get_type() == 2 && eqexp->get_type() == 1){
-        type = 1;
-        cal_flag = landexp->get_cal_flag() & eqexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = landexp->get_Floatval() && eqexp->get_Intval();
-        }
+    attribute = SemantBinaryNode[lorexp->attribute.T.type][landexp->attribute.T.type]
+                (lorexp->attribute,landexp->attribute,NodeAttribute::OR);
+}
+
+void ConstExp::TypeCheck()
+{
+    addexp->TypeCheck();
+    attribute = addexp->attribute;
+    if(!attribute.V.ConstTag){//addexp is not const
+        error_msgs.push_back("Expression is not const " + std::to_string(line_number) + "\n");
     }
 }
 
-void LOrExp_or::type_check()
+void Lval::TypeCheck()
 {
-    lorexp->type_check();
-    landexp->type_check();
-    
-    if(lorexp->get_type() == 0 || landexp->get_type() == 0){
-        error_msgs.push_back("neq on void type in line " + std::to_string(line_number) + "\n");
-        type = 0;
-        cal_flag = 0;
-    }
-    else if(lorexp->get_type() == 1 && landexp->get_type() == 1){
-        type = 1;
-        cal_flag = lorexp->get_cal_flag() & landexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = lorexp->get_Intval() || landexp->get_Intval();
-        }
-    }
-    else if(lorexp->get_type() == 2 && landexp->get_type() == 2){
-        type = 1;
-        cal_flag = lorexp->get_cal_flag() & landexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = lorexp->get_Floatval() || landexp->get_Floatval();
-        }
-    }
-    else if(lorexp->get_type() == 1 && landexp->get_type() == 2){
-        type = 1;
-        cal_flag = lorexp->get_cal_flag() & landexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = lorexp->get_Intval() || landexp->get_Floatval();
-        }
-    }
-    else if(lorexp->get_type() == 2 && landexp->get_type() == 1){
-        type = 1;
-        cal_flag = lorexp->get_cal_flag() & landexp->get_cal_flag();
-        if(cal_flag){
-            IntVal = lorexp->get_Floatval() || landexp->get_Intval();
-        }
-    }
-}
-
-void ConstExp::type_check()
-{
-    addexp->type_check();
-    cal_flag = addexp->get_cal_flag();
-    type = addexp->get_type();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = addexp->get_Intval();
-        }
-        else if(type == 2){
-            FloatVal = addexp->get_Floatval();
-        }
-    }
-}
-
-void Lval::type_check()
-{
+    is_left = false;
     std::vector<int> arrayindexs;
+    bool arrayindexConstTag = true;
     if(dims != nullptr){
         for(auto d:*dims){
-            d->type_check();
-            if(d->get_type() == 0){
+            d->TypeCheck();
+            if(d->attribute.T.type == Type::VOID){
                 error_msgs.push_back("Array Dim can not be void in line " + std::to_string(line_number) + "\n");
             }
-            if(d->get_type() == 2){
+            else if(d->attribute.T.type == Type::FLOAT){
                 error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
             }
-            arrayindexs.push_back(d->get_Intval());
+            arrayindexs.push_back(d->attribute.V.val.IntVal);
+            arrayindexConstTag &= d->attribute.V.ConstTag;
         }
-    }
-    if(symbol_table.lookup_type(name) == 1){
-        scope = symbol_table.lookup_scope(name);
-        ArrayVal val = symbol_table.lookup_val(name);
-        if(val.const_flag){
-            IntVal = get_ArrayIntVal(val,arrayindexs);
-            cal_flag = 1;
-        }
-        type = 1;
-    }
-    else if(symbol_table.lookup_type(name) == 2){
-        scope = symbol_table.lookup_scope(name);
-        ArrayVal val = symbol_table.lookup_val(name);
-        if(val.const_flag){
-            FloatVal = get_ArrayFloatVal(val,arrayindexs);
-            cal_flag = 1;
-        }
-        type = 2;
     }
 
-    else if(semant_table.global_table.find(name) != semant_table.global_table.end()){
-        ArrayVal val = semant_table.global_table[name];
-        //the val is only used for global initval
-        //if the lval is local, the code below is useless
+    VarAttribute val = semant_table.symbol_table.lookup_val(name);
+    if(val.type != Type::VOID){//local var
+        scope = semant_table.symbol_table.lookup_scope(name);
+    }
+    else if(semant_table.GlobalTable.find(name) != semant_table.GlobalTable.end()){//global var
+        val = semant_table.GlobalTable[name];
         scope = 0;
-        type = val.type;
-        cal_flag = 1;
-        if(type == 1){
-            IntVal = get_ArrayIntVal(val,arrayindexs);
-        }
-        if(type == 2){
-            FloatVal = get_ArrayFloatVal(val,arrayindexs);
-        }
     }
     else{
-        error_msgs.push_back("undefined var in line " + std::to_string(line_number) + "\n");
+        error_msgs.push_back("Undefined var in line " + std::to_string(line_number) + "\n");
+        return;
+    }
+
+    if(arrayindexs.size() == val.dims.size()){//lval is a number(not a array)
+        attribute.V.ConstTag = val.ConstTag & arrayindexConstTag;
+        attribute.T.type = val.type;
+        if(attribute.V.ConstTag){
+            if(attribute.T.type == Type::INT){
+                attribute.V.val.IntVal = GetArrayIntVal(val,arrayindexs);
+            }
+            else if(attribute.T.type == Type::FLOAT){
+                attribute.V.val.FloatVal = GetArrayFloatVal(val,arrayindexs);
+            }
+        }
+    }
+    else if(arrayindexs.size() < val.dims.size()){//lval is a array
+        attribute.V.ConstTag = false;
+        attribute.T.type = Type::PTR;
+    }
+    else{
+        error_msgs.push_back("Array is unmatched in line " + std::to_string(line_number) + "\n");
     }
 }
 
-void FuncRParams::type_check(){}
+void FuncRParams::TypeCheck(){}
 
-void Func_call::type_check()
+void Func_call::TypeCheck()
 {
     int funcr_params_len = 0;
     if(funcr_params != nullptr){
         auto params = ((FuncRParams*)funcr_params)->params;
         funcr_params_len = params->size();
         for(auto param:*params){
-            param->type_check();
-            if(param->get_type() == 0){
+            param->TypeCheck();
+            if(param->attribute.T.type == Type::VOID){
                 error_msgs.push_back("FuncRParam is void in line " + std::to_string(line_number) + "\n");
             }
         }
     }
     //check name exist
     //set type
-    auto it = semant_table.func_table.find(name);
-    if(it == semant_table.func_table.end()){
-        error_msgs.push_back("Function name is undefined in line " + std::to_string(line_number) + "\n");
+    auto it = semant_table.FunctionTable.find(name);
+    if(it == semant_table.FunctionTable.end()){
+        error_msgs.push_back("Function is undefined in line " + std::to_string(line_number) + "\n");
         return;
     }
     FuncDef funcdef = it->second;
-    if((funcdef->formals)->size() != funcr_params_len && funcdef->name->get_string() != "putf"){
+    if((funcdef->formals)->size() != funcr_params_len){
         error_msgs.push_back("Function FuncFParams and FuncRParams are not matched in line " + std::to_string(line_number) + "\n");
     }
 
-
-    type = semant_table.func_table[name]->return_type;
-    //std::cerr<<name->get_string()<<" "<<type<<"\n";
+    attribute.T.type = semant_table.FunctionTable[name]->return_type;
+    attribute.V.ConstTag = false;
 }
 
-void UnaryExp_plus::type_check()
+void UnaryExp_plus::TypeCheck()
 {
-    unary_exp->type_check();
-
-    if(unary_exp->get_type() == 0){
-        error_msgs.push_back("unaryplus on void type in line " + std::to_string(line_number) + "\n");
-    }
-    //type,Int/Float,cal_flag
-    type = unary_exp->get_type();
-    cal_flag = unary_exp->get_cal_flag();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = unary_exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = unary_exp->get_Floatval();
-        }
-    }
+    unary_exp->TypeCheck();
+    attribute = SemantSingleNode[unary_exp->attribute.T.type](unary_exp->attribute,NodeAttribute::ADD);
 }
 
-void UnaryExp_neg::type_check()
+void UnaryExp_neg::TypeCheck()
 {
-    unary_exp->type_check();
-    if(unary_exp->get_type() == 0){
-        error_msgs.push_back("neg on void type in line " + std::to_string(line_number) + "\n");
-    }
-    //type,Int/Float,cal_flag
-    type = unary_exp->get_type();
-    cal_flag = unary_exp->get_cal_flag();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = -unary_exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = -unary_exp->get_Floatval();
-        }
-    }
+    unary_exp->TypeCheck();
+    attribute = SemantSingleNode[unary_exp->attribute.T.type](unary_exp->attribute,NodeAttribute::SUB);
 }
 
-void UnaryExp_not::type_check()
+void UnaryExp_not::TypeCheck()
 {
-    unary_exp->type_check();
-    if(unary_exp->get_type() == 0){
-        error_msgs.push_back("not on void type in line " + std::to_string(line_number) + "\n");
-    }
-    //type,Int/Float,cal_flag
-    type = 1;
-    cal_flag = unary_exp->get_cal_flag();
-    if(cal_flag){
-        if(unary_exp->get_type() == 1){
-            IntVal = !unary_exp->get_Intval();
-        }
-        if(unary_exp->get_type() == 2){
-            IntVal = !unary_exp->get_Floatval();
-        }
-    }
+    unary_exp->TypeCheck();
+    attribute = SemantSingleNode[unary_exp->attribute.T.type](unary_exp->attribute,NodeAttribute::NOT);
 }
 
-void IntConst::type_check()
+void IntConst::TypeCheck()
 {
-    IntVal = val;
-    type = 1;
-    cal_flag = 1;
+    attribute.T.type = Type::INT;
+    attribute.V.ConstTag = true;
+    attribute.V.val.IntVal = val;
 }
 
-void FloatConst::type_check()
+void FloatConst::TypeCheck()
 {
-    FloatVal = val;
-    type = 2;
-    cal_flag = 1;
+    attribute.T.type = Type::FLOAT;
+    attribute.V.ConstTag = true;
+    attribute.V.val.FloatVal = val;
 }
 
-void StringConst::type_check()
+void StringConst::TypeCheck()
 {
-    // Value, Name
-    // Name: str%d, %d : index in map
-    llvm_IR.global_def.push_back(new global_str_const_Instruction(str->get_string(),std::string(".str")+std::to_string(str_table.string_no[str->get_string()])));
-    type = 3;
+    std::cerr<<"StringConst is not implement now\n";
 }
 
-void PrimaryExp_branch::type_check()
+void PrimaryExp_branch::TypeCheck()
 {
-    exp->type_check();
-
-    cal_flag = exp->get_cal_flag();
-    type = exp->get_type();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = exp->get_Floatval();
-        }
-    }
+    exp->TypeCheck();
+    attribute = SemantSingleNode[exp->attribute.T.type](exp->attribute,NodeAttribute::ADD);
 }
 
-void assign_stmt::type_check()
+void assign_stmt::TypeCheck()
 {
-    lval->type_check();
-    exp->type_check();
-    if(exp->get_type() == 0){
+    lval->TypeCheck();
+    exp->TypeCheck();
+    ((Lval*)lval)->is_left = true;//assign_stmt -> leftvalue
+    if(exp->attribute.T.type == Type::VOID){
         error_msgs.push_back("void type can not be assign_stmt's expression " + std::to_string(line_number) + "\n");
     }
 }
 
-void expr_stmt::type_check()
+void expr_stmt::TypeCheck()
 {
-    exp->type_check();
-    cal_flag = exp->get_cal_flag();
-    type = exp->get_type();
-    if(cal_flag){
-        if(type == 1){
-            IntVal = exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = exp->get_Floatval();
-        }
-    }
+    exp->TypeCheck();
+    attribute = exp->attribute;
 }
 
-void block_stmt::type_check()
+void block_stmt::TypeCheck()
 {
-    b->type_check();
+    b->TypeCheck();
 }
 
-void ifelse_stmt::type_check()
+void ifelse_stmt::TypeCheck()
 {
-    Cond->type_check();
-    if(Cond->get_type() == 0){
+    Cond->TypeCheck();
+    if(Cond->attribute.T.type == Type::VOID){
         error_msgs.push_back("if cond type is invalid " + std::to_string(line_number) + "\n");
     }
-    if_stmt->type_check();
-    else_stmt->type_check();
+    ifstmt->TypeCheck();
+    elsestmt->TypeCheck();
 }
 
-void if_stmt::type_check()
+void if_stmt::TypeCheck()
 {
-    Cond->type_check();
-    if(Cond->get_type() == 0){
+    Cond->TypeCheck();
+    if(Cond->attribute.T.type == Type::VOID){
         error_msgs.push_back("if cond type is invalid " + std::to_string(line_number) + "\n");
     }
-    ifstmt->type_check();
+    ifstmt->TypeCheck();
 }
 
-void while_stmt::type_check()
+void while_stmt::TypeCheck()
 {
-    Cond->type_check();
+    Cond->TypeCheck();
 
-    if(Cond->get_type() == 0){
+    if(Cond->attribute.T.type == Type::VOID){
         error_msgs.push_back("while cond type is invalid " + std::to_string(line_number) + "\n");
     }
 
-    in_while_flag ++;
-    body->type_check();
-    in_while_flag --;
+    InWhileCount ++;
+    body->TypeCheck();
+    InWhileCount --;
 }
 
-void continue_stmt::type_check()
+void continue_stmt::TypeCheck()
 {
-    if(!in_while_flag){
+    if(!InWhileCount){
         error_msgs.push_back("continue is not in while stmt in line " + std::to_string(line_number) + "\n");
     }
 }
 
-void break_stmt::type_check()
+void break_stmt::TypeCheck()
 {
-    if(!in_while_flag){
+    if(!InWhileCount){
         error_msgs.push_back("break is not in while stmt in line " + std::to_string(line_number) + "\n");
     }
 }
 
-void return_stmt::type_check()
+void return_stmt::TypeCheck()
 {   
-    return_exp->type_check();
+    return_exp->TypeCheck();
 
-    // Old if condition:
-    // if(return_exp->get_type() != func_returntype)
-    // New if condition, considering implicit type conversion
-    if(return_exp->get_type() == 0 || func_returntype == 0){
+    if(return_exp->attribute.T.type == Type::VOID){
         error_msgs.push_back("return type is invalid in line " + std::to_string(line_number) + "\n");
     }
-    ++return_stmt_flag;
 }
 
-void return_stmt_void::type_check()
-{
-    if(func_returntype != 0){
-        error_msgs.push_back("return type is not void in line " + std::to_string(line_number) + "\n");
-    }
-}
+void return_stmt_void::TypeCheck(){}
 
-void ConstInitVal::type_check()
+void ConstInitVal::TypeCheck()
 {
     for(auto init:*initval){
-        init->type_check();
+        init->TypeCheck();
     }
 }
 
-void ConstInitVal_exp::type_check()
+void ConstInitVal_exp::TypeCheck()
 {
     if(exp == nullptr){
         return;
     }
-    exp->type_check();
 
-    cal_flag = exp->get_cal_flag();
-    type = exp->get_type();
+    exp->TypeCheck();
+    attribute = exp->attribute;
 
-    if(type == 0){
-        error_msgs.push_back("initval exp can not be void in line " + std::to_string(line_number) + "\n");
+    if(attribute.T.type == Type::VOID){
+        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) + "\n");
     }
-    if(cal_flag){
-        if(type == 1){
-            IntVal = exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = exp->get_Floatval();
-        }
+    if(!attribute.V.ConstTag){//exp is not const
+        error_msgs.push_back("Expression is not const " + std::to_string(line_number) + "\n");
     }
 }
 
-void VarInitVal::type_check()
+void VarInitVal::TypeCheck()
 {
     for(auto init:*initval){
-        init->type_check();
+        init->TypeCheck();
     }
 }
 
-void VarInitVal_exp::type_check()
+void VarInitVal_exp::TypeCheck()
 {
     if(exp == nullptr){
         return;
     }
-    exp->type_check();
+    
+    exp->TypeCheck();
+    attribute = exp->attribute;
 
-    cal_flag = exp->get_cal_flag();
-    type = exp->get_type();
+    if(attribute.T.type == Type::VOID){
+        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) + "\n");
+    }
 
-    if(type == 0){
-        error_msgs.push_back("initval exp can not be void in line " + std::to_string(line_number) + "\n");
-    }
-    if(cal_flag){
-        if(type == 1){
-            IntVal = exp->get_Intval();
-        }
-        if(type == 2){
-            FloatVal = exp->get_Floatval();
-        }
-    }
 }
 
-void VarDef_no_init::type_check(){}
+void VarDef_no_init::TypeCheck(){}
 
-void VarDef::type_check(){}
+void VarDef::TypeCheck(){}
 
-void ConstDef::type_check(){}
+void ConstDef::TypeCheck(){}
 
-void VarDecl::type_check()
+void VarDecl::TypeCheck()
 {
     auto def_vector = *var_def_list;
     for(auto def:def_vector){
         //multiple def check
-        if(symbol_table.lookup_scope(def->get_name()) == symbol_table.get_current_scope()){
-            error_msgs.push_back("multiple definition of "+ def->get_name()->get_string() + " exists in line " + std::to_string(line_number) + "\n");
+        if(semant_table.symbol_table.lookup_scope(def->GetName()) == semant_table.symbol_table.get_current_scope()){
+            error_msgs.push_back("multiple definition of "+ def->GetName()->get_string() + " exists in line " + std::to_string(line_number) + "\n");
         }
 
-        ArrayVal val;
-        val.const_flag = 0;
-
-        def->scope = symbol_table.get_current_scope();
-
-        if(def->get_dims() != nullptr){
-            auto dim_vector = *def->get_dims();
-            for(auto d:dim_vector){
-                d->type_check();
-                if(d->get_type() == 2){
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
-                }
-                if(d->get_cal_flag() == 0){
-                    error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) + "\n");
-                }
-            }
-            for(auto d:dim_vector){
-                val.dims.push_back(d->get_Intval());
-            }
-        }
-        InitVal init = def->get_init();
-        if(init != NULL){
-            init->type_check();
-        }
-        
+        VarAttribute val;
+        val.ConstTag = false;
         val.type = type_decl;
 
-        symbol_table.add_Symbol(def->get_name(),val);
+        def->scope = semant_table.symbol_table.get_current_scope();
+        if(def->GetDims() != nullptr){
+            auto dim_vector = *def->GetDims();
+            for(auto d:dim_vector){
+                d->TypeCheck();
+                if(d->attribute.V.ConstTag == false){
+                    error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) + "\n");
+                }
+                if(d->attribute.T.type == Type::FLOAT){
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
+                }
+                val.dims.push_back(d->attribute.V.val.IntVal);
+            }
+        }
+        InitVal init = def->GetInit();
+        if(init != nullptr){
+            init->TypeCheck();
+        }
+        
+        semant_table.symbol_table.add_Symbol(def->GetName(),val);
     }
 }
 
-void ConstDecl::type_check()
+void ConstDecl::TypeCheck()
 {
     auto def_vector = *var_def_list;
     for(auto def:def_vector){
         //multiple def check
-        if(symbol_table.lookup_scope(def->get_name()) == symbol_table.get_current_scope()){
-            error_msgs.push_back("multiple definition of "+ def->get_name()->get_string() + " exists in line " + std::to_string(line_number) + "\n");
+        if(semant_table.symbol_table.lookup_scope(def->GetName()) == semant_table.symbol_table.get_current_scope()){
+            error_msgs.push_back("multiple definition of "+ def->GetName()->get_string() + " in line " + std::to_string(line_number) + "\n");
         }
 
-        ArrayVal val;
-        val.const_flag = 1;
+        VarAttribute val;
+        val.ConstTag = true;
+        val.type = type_decl;
 
-        def->scope = symbol_table.get_current_scope();
-
-        if(def->get_dims() != nullptr){
-            auto dim_vector = *def->get_dims();
+        def->scope = semant_table.symbol_table.get_current_scope();
+        if(def->GetDims() != nullptr){
+            auto dim_vector = *def->GetDims();
             for(auto d:dim_vector){
-                d->type_check();
-                if(d->get_type() == 2){
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
-                }
-                if(d->get_cal_flag() == 0){
+                d->TypeCheck();
+                if(d->attribute.V.ConstTag == false){
                     error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) + "\n");
                 }
-            }
-            for(auto d:dim_vector){
-                val.dims.push_back(d->get_Intval());
+                if(d->attribute.T.type == Type::FLOAT){
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
+                }
+                val.dims.push_back(d->attribute.V.val.IntVal);
             }
         }
-        InitVal init = def->get_init();
-        if(init != NULL){
-            init->type_check();
-        }
+        InitVal init = def->GetInit();
+        if(init != nullptr){
+            init->TypeCheck();
+            if(type_decl == Type::INT){
+                SolveIntInitVal(init,val);
+            }else if(type_decl == Type::FLOAT){
+                SolveFloatInitVal(init,val);
+            }
+        } 
 
-        val.type = type_decl;
-        
-        if(type_decl == 1){
-            solve_Int_InitVal(init,val);
-        }
-        else{
-            solve_Float_InitVal(init,val);
-        }
-        symbol_table.add_Symbol(def->get_name(),val);
+        semant_table.symbol_table.add_Symbol(def->GetName(),val);
     }
 }
 
-void BlockItem_Decl::type_check()
+void BlockItem_Decl::TypeCheck()
 {
-    decl->type_check();
+    decl->TypeCheck();
 }
 
-void BlockItem_Stmt::type_check()
+void BlockItem_Stmt::TypeCheck()
 {
-    stmt->type_check();
+    stmt->TypeCheck();
 }
 
-void __Block::type_check()
+void __Block::TypeCheck()
 {
-    symbol_table.enter_scope();
+    semant_table.symbol_table.enter_scope();
     auto item_vector = *item_list;
     for(auto item:item_vector){
-        item->type_check();
+        item->TypeCheck();
     }
-    symbol_table.exit_scope();
+    semant_table.symbol_table.exit_scope();
 }
 
-void __FuncFParam::type_check()
+void __FuncFParam::TypeCheck()
 {
-    
-    ArrayVal val;
-    val.const_flag  = 0;
+    VarAttribute val;
+    val.ConstTag = false;
     val.type = type_decl;
-    type = type_decl;
     scope = 1;
+
     if(dims != nullptr){
         auto dim_vector = *dims;
-        if(dim_vector.size() > 1){
-            val.dims.push_back(-1);
-        }
+        val.dims.push_back(-1);
         for(int i = 1;i < dim_vector.size();++i){
             auto d = dim_vector[i];
-            d->type_check();
-            if(d->get_type() == 2){
-                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
-            }
-            if(d->get_cal_flag() == 0){
+            d->TypeCheck();
+            if(d->attribute.V.ConstTag == false){
                 error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) + "\n");
             }
-            val.dims.push_back(d->get_Intval());
+            if(d->attribute.T.type == Type::FLOAT){
+                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
+            }
+            val.dims.push_back(d->attribute.V.val.IntVal);
         }
+        attribute.T.type = Type::PTR;
     }
-    if(symbol_table.lookup_scope(name) != -1){
-        error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() + " in line " + std::to_string(line_number) + "\n");
+    else{
+        attribute.T.type = type_decl;
     }
-    symbol_table.add_Symbol(name,val);
+
+    if(name != nullptr){
+        if(semant_table.symbol_table.lookup_scope(name) != -1){
+            error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() + " in line " + std::to_string(line_number) + "\n");
+        }
+        semant_table.symbol_table.add_Symbol(name,val);
+    }
 }
 
-void __FuncDef::type_check()
+void __FuncDef::TypeCheck()
 {
-    symbol_table.enter_scope();
-    func_returntype = return_type;
-    return_stmt_flag = 0;
+    semant_table.symbol_table.enter_scope();
     
-    if(semant_table.func_table.find(name) != semant_table.func_table.end()){
+    if(semant_table.FunctionTable.find(name) != semant_table.FunctionTable.end()){
         error_msgs.push_back("multilpe difinitions of functions " + name->get_string() + " in line " + std::to_string(line_number) + "\n");
     }
-    if(name -> get_string() == "main"){
-        main_flag = 1;
+    if(name->get_string() == "main"){
+        MainTag = true;
     }
-    semant_table.func_table[name] = this;
+    semant_table.FunctionTable[name] = this;
     auto formal_vector = *formals;
+
     for(auto formal:formal_vector){
-        formal->type_check();
+        formal->TypeCheck();
     }
     
-    //block type check
-    auto item_vector = *(block->item_list);
-    for(auto item:item_vector){
-        item->type_check();
+    //block TypeCheck
+    if(block != nullptr){
+        auto item_vector = *(block->item_list);
+        for(auto item:item_vector){
+            item->TypeCheck();
+        }
     }
 
-    if(!return_stmt_flag && return_type){
-        error_msgs.push_back("functions " + name->get_string() + " of type non-void has no return in line " + std::to_string(line_number) + "\n");
-    }
-    symbol_table.exit_scope();
-
+    semant_table.symbol_table.exit_scope();
 }
 
 /*
 in this function,solve all the global decl
 and in other decl function,we only solve the local
 */
-void CompUnit_Decl::type_check()
+void CompUnit_Decl::TypeCheck()
 {
-    int typedecl = decl->get_typedecl();
-    auto def_vector = *decl->get_defs();
+    Type::ty type_decl = decl->GetTypedecl();
+    auto def_vector = *decl->GetDefs();
     for(auto def:def_vector){
         
-        if(semant_table.global_table.find(def->get_name()) != semant_table.global_table.end()){
+        if(semant_table.GlobalTable.find(def->GetName()) != semant_table.GlobalTable.end()){
             error_msgs.push_back("multilpe difinitions of vars in line " + std::to_string(line_number) + "\n");
         }
 
-        ArrayVal val;
-        val.const_flag = 1;
-
+        VarAttribute val;
+        val.ConstTag = def->IsConst();
+        val.type = (Type::ty)type_decl;
         def->scope = 0;
 
-        if(def->get_dims() != nullptr){
-            auto dim_vector = *def->get_dims();
+        if(def->GetDims() != nullptr){
+            auto dim_vector = *def->GetDims();
             for(auto d:dim_vector){
-                d->type_check();
-                if(d->get_type() == 2){
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
-                }
-                if(d->get_cal_flag() == 0){
+                d->TypeCheck();
+                if(d->attribute.V.ConstTag == false){
                     error_msgs.push_back("Array Dim must be const expression " + std::to_string(line_number) + "\n");
                 }
+                if(d->attribute.T.type == Type::FLOAT){
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
+                }
             }
             for(auto d:dim_vector){
-                val.dims.push_back(d->get_Intval());
+                val.dims.push_back(d->attribute.V.val.IntVal);
             }
         }
         
-        InitVal init = def->get_init();
-        if(init != NULL){
-            init->type_check();
+        InitVal init = def->GetInit();
+        if(init != nullptr){
+            init->TypeCheck();
+            if(type_decl == Type::INT){
+                SolveIntInitVal(init,val);
+            }else if(type_decl == Type::FLOAT){
+                SolveFloatInitVal(init,val);
+            }
         }
-        
-        val.type = typedecl;
-        
-        if(typedecl == 1){
-            solve_Int_InitVal(init,val);
+                
+        if(def->IsConst()){
+            GlobalConstMap[def->GetName()->get_string()] = val;
         }
-        else if(typedecl == 2){
-            solve_Float_InitVal(init,val);
-        }
-        //for(auto d:val.dims){std::cerr<<d<<" ";}std::cerr<<"\n";
+        semant_table.GlobalTable[def->GetName()] = val;
 
-        semant_table.global_table[def->get_name()] = val;
-
-        //for(auto d:val.dims){std::cerr<<d<<" ";}std::cerr<<"\n";
         //add Global Decl llvm ins
-        llvm_type lltype;
-        if(typedecl == 1){
-            lltype = I32;
-        }
-        else if(typedecl == 2){
-            lltype = FLOAT32;
-        }
+        LLVMType lltype = Type2LLvm[type_decl];
         
         Instruction globalDecl;
-        if(def->get_dims()!= nullptr){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,val);
+        if(def->GetDims() != nullptr){
+            globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(),lltype,val);
         }else if(init == nullptr){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,nullptr);
+            globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(),lltype,nullptr);
         }else if(lltype == I32){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,new imm_i32_operand(val.IntInitVals[0]));
+            globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(),lltype,new ImmI32Operand(val.IntInitVals[0]));
         }else if(lltype == FLOAT32){
-            globalDecl = new global_id_define_Instruction(def->get_name()->get_string(),lltype,new imm_f32_operand(val.FloatInitVals[0]));
+            globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(),lltype,new ImmF32Operand(val.FloatInitVals[0]));
         }
-        llvm_IR.global_def.push_back(globalDecl);
-
-        if(def->is_const() && def->get_dims() == nullptr){
-            global_const_map[def->get_name()->get_string()] = val;
-        }
-        global_map[def->get_name()->get_string()] = ++global_var_cnt; 
+        llvmIR.global_def.push_back(globalDecl);
     }
 }
 
-void CompUnit_FuncDef::type_check()
+void CompUnit_FuncDef::TypeCheck()
 {
-    func_def->type_check();
+    func_def->TypeCheck();
 }

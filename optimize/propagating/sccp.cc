@@ -1,65 +1,67 @@
-#include "llvm_cfg.h"
-#include "llvm_ir.h"
+#include "cfg.h"
+#include "ir.h"
 #include "Instruction.h"
 #include "lattice.h"
 
-extern std::map<std::string,ArrayVal> global_const_map;
+extern std::map<std::string,VarAttribute> GlobalConstMap;
 
-static std::map<Instruction,ConstLattice> const_lattice_map;
+static std::map<Instruction,ConstLattice> ConstLatticeMap;
+static std::map<Instruction,std::vector<Instruction> > SSAG{};//SSA-Graph
+static std::map<int,Instruction> ResultMap;//<regno,the instruction that define regno>
 
-void CFG::global_const_replace()
+void GlobalConstReplace(CFG* C)
 {
-    for(auto b:*block){
-        auto BB = b.second;
-        for(auto &Ins:BB->Instruction_list){
-            if(Ins->get_opcode() != LOAD){continue;}
-            auto I = (load_Instruction*)Ins;
-            if(I->getPointer()->getOperandType() != basic_operand::GLOBAL){continue;}
-            auto pointer = (global_operand*)I->getPointer();
-            if(global_const_map.find(pointer->getName()) != global_const_map.end()){
-                ArrayVal val =  global_const_map[pointer->getName()];
-                if(val.type == 1){
-                    Ins = new alg_Instruction(ADD,I32,new imm_i32_operand(0),new imm_i32_operand(val.IntInitVals[0]),I->get_resultreg());
-                }
-                else if(val.type == 2){
-                    Ins = new alg_Instruction(FADD,FLOAT32,new imm_f32_operand(0),new imm_f32_operand(val.FloatInitVals[0]),I->get_resultreg());
+    for(auto [id,bb]:*C->block_map){
+        for(auto &I:bb->Instruction_list){
+            if(I->GetOpcode() != LOAD){continue;}
+            auto LoadI = (LoadInstruction*)I;
+            if(LoadI->GetPointer()->GetOperandType() != BasicOperand::GLOBAL){continue;}
+
+            auto pointer = (GlobalOperand*)LoadI->GetPointer();
+            if(GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()){
+                VarAttribute val =  GlobalConstMap[pointer->getName()];
+                if(val.type == Type::INT){
+                    I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(val.IntInitVals[0]),LoadI->GetResultReg());
+                }else if(val.type == Type::FLOAT){
+                    I = new ArithmeticInstruction(FADD,FLOAT32,new ImmF32Operand(0),new ImmF32Operand(val.FloatInitVals[0]),LoadI->GetResultReg());
                 }
             }
         }
     }
 }
 
-void CFG::build_SSA_Graph(){
-    regresult_ins_map.clear();
-    SSA_G.clear();
-    for(auto formal_reg:func_ins->formals_reg){
-        regresult_ins_map[((reg_operand*)formal_reg)->getRegNo()] = func_ins;
+void BuildSSAGraph(CFG* C){
+    ResultMap.clear();
+    SSAG.clear();
+
+    for(auto formal_reg:C->function_def->formals_reg){
+        ResultMap[((RegOperand*)formal_reg)->GetRegNo()] = C->function_def;
     }
 
     std::stack<int> unscanedBlockID;
-    std::map<int,int>block_visited;
+    std::map<int,int> block_visited;
     unscanedBlockID.push(0);
     while(!unscanedBlockID.empty()){
         int cur_BlockID = unscanedBlockID.top();
         block_visited[cur_BlockID] = 1;
         unscanedBlockID.pop();
-        for(auto instruction:(*block)[cur_BlockID]->Instruction_list){
-            if(instruction->get_resultregno() != -1){
-                regresult_ins_map[instruction->get_resultregno()] = instruction;
+        for(auto instruction:(*C->block_map)[cur_BlockID]->Instruction_list){
+            if(instruction->GetResultRegNo() != -1){
+                ResultMap[instruction->GetResultRegNo()] = instruction;
             }
-            if(instruction->get_opcode()==BR_UNCOND){
-                int destLabelNo = ((label_operand*)(((br_uncond_Instruction*)instruction)->getDestLabel()))->getLabelNo();
+            if(instruction->GetOpcode() == BR_UNCOND){
+                int destLabelNo = ((LabelOperand*)(((BrUncondInstruction*)instruction)->GetDestLabel()))->GetLabelNo();
                 
-                if(block_visited.find(destLabelNo)==block_visited.end()){
+                if(block_visited.find(destLabelNo) == block_visited.end()){
                     unscanedBlockID.push(destLabelNo);
                 }
-            }else if(instruction->get_opcode()==BR_COND){
-                int trueDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getTrueLabel()))->getLabelNo();
-                int falseDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getFalseLabel()))->getLabelNo();
-                if(block_visited.find(trueDestLabelNo)==block_visited.end()){
+            }else if(instruction->GetOpcode() == BR_COND){
+                int trueDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetTrueLabel()))->GetLabelNo();
+                int falseDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetFalseLabel()))->GetLabelNo();
+                if(block_visited.find(trueDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(trueDestLabelNo);
                 }
-                if(block_visited.find(falseDestLabelNo)==block_visited.end()){
+                if(block_visited.find(falseDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(falseDestLabelNo);
                 }
             }
@@ -72,36 +74,36 @@ void CFG::build_SSA_Graph(){
         int cur_BlockID = unscanedBlockID.top();
         block_visited[cur_BlockID] = 1;
         unscanedBlockID.pop();
-        for(auto instruction:(*block)[cur_BlockID]->Instruction_list){
-            for(auto op:instruction->get_nonresult_operands()){
-                if(op->getOperandType() == basic_operand::REG){
-                    auto reg_op = (reg_operand*)op;
-                    auto reg_no = reg_op->getRegNo();
-                    auto reg_ins = regresult_ins_map[reg_no];
-                    if(reg_ins != func_ins){
-                        SSA_G[reg_ins].push_back(instruction);
+        for(auto instruction:(*C->block_map)[cur_BlockID]->Instruction_list){
+            for(auto op:instruction->GetNonResultOperands()){
+                if(op->GetOperandType() == BasicOperand::REG){
+                    auto reg_op = (RegOperand*)op;
+                    auto reg_no = reg_op->GetRegNo();
+                    auto reg_ins = ResultMap[reg_no];
+                    if(reg_ins != C->function_def){
+                        SSAG[reg_ins].push_back(instruction);
                     }else{
                         if(used_formal[instruction] == 0){
                             used_formal[instruction] = 1;
-                            SSA_G[reg_ins].push_back(instruction);
+                            SSAG[reg_ins].push_back(instruction);
                         }
                     }
                 }
             }
-            if(instruction->get_opcode()==BR_UNCOND){
-                int destLabelNo = ((label_operand*)(((br_uncond_Instruction*)instruction)->getDestLabel()))->getLabelNo();
+            if(instruction->GetOpcode() == BR_UNCOND){
+                int destLabelNo = ((LabelOperand*)(((BrUncondInstruction*)instruction)->GetDestLabel()))->GetLabelNo();
                 
-                if(block_visited.find(destLabelNo)==block_visited.end()){
+                if(block_visited.find(destLabelNo) == block_visited.end()){
                     unscanedBlockID.push(destLabelNo);
                 }
             }
-            else if(instruction->get_opcode()==BR_COND){
-                int trueDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getTrueLabel()))->getLabelNo();
-                int falseDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getFalseLabel()))->getLabelNo();
-                if(block_visited.find(trueDestLabelNo)==block_visited.end()){
+            else if(instruction->GetOpcode() == BR_COND){
+                int trueDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetTrueLabel()))->GetLabelNo();
+                int falseDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetFalseLabel()))->GetLabelNo();
+                if(block_visited.find(trueDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(trueDestLabelNo);
                 }
-                if(block_visited.find(falseDestLabelNo)==block_visited.end()){
+                if(block_visited.find(falseDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(falseDestLabelNo);
                 }
             }
@@ -109,31 +111,31 @@ void CFG::build_SSA_Graph(){
     }
 }
 
-void CFG::set_ins_block_ID(){
-    func_ins->setBlockID(0);
+void SetInstructionBlockID(CFG* C){
+    C->function_def->SetBlockID(0);
     std::stack<int> unscanedBlockID;
-    std::map<int,int>block_visited;
+    std::map<int,int> block_visited;
     unscanedBlockID.push(0);
     while(!unscanedBlockID.empty()){
         int cur_BlockID = unscanedBlockID.top();
         block_visited[cur_BlockID] = 1;
         unscanedBlockID.pop();
-        for(auto instruction:(*block)[cur_BlockID]->Instruction_list){
-            instruction->setBlockID(cur_BlockID);
-            if(instruction->get_opcode()==BR_UNCOND){
-                int destLabelNo = ((label_operand*)(((br_uncond_Instruction*)instruction)->getDestLabel()))->getLabelNo();
+        for(auto instruction:(*C->block_map)[cur_BlockID]->Instruction_list){
+            instruction->SetBlockID(cur_BlockID);
+            if(instruction->GetOpcode() == BR_UNCOND){
+                int destLabelNo = ((LabelOperand*)(((BrUncondInstruction*)instruction)->GetDestLabel()))->GetLabelNo();
                 
-                if(block_visited.find(destLabelNo)==block_visited.end()){
+                if(block_visited.find(destLabelNo) == block_visited.end()){
                     unscanedBlockID.push(destLabelNo);
                 }
             }
-            else if(instruction->get_opcode()==BR_COND){
-                int trueDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getTrueLabel()))->getLabelNo();
-                int falseDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getFalseLabel()))->getLabelNo();
-                if(block_visited.find(trueDestLabelNo)==block_visited.end()){
+            else if(instruction->GetOpcode() == BR_COND){
+                int trueDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetTrueLabel()))->GetLabelNo();
+                int falseDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetFalseLabel()))->GetLabelNo();
+                if(block_visited.find(trueDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(trueDestLabelNo);
                 }
-                if(block_visited.find(falseDestLabelNo)==block_visited.end()){
+                if(block_visited.find(falseDestLabelNo) == block_visited.end()){
                     unscanedBlockID.push(falseDestLabelNo);
                 }
             }
@@ -141,54 +143,44 @@ void CFG::set_ins_block_ID(){
     }
 }
 
-void LLVM_IR::SCCP()
+ConstLattice GetOperandLattice(Operand val,std::map<int,Instruction>& regresult_map)
 {
-    for(auto node:llvm_cfg){
-        node.second->global_const_replace();
-        node.second->set_ins_block_ID();
-        node.second->build_SSA_Graph();
-        node.second->SCCP();
+    if(val->GetOperandType() == val->IMMI32){
+        return ConstLattice(ConstLattice::CONST,ConstLattice::I32,((ImmI32Operand*)val)->GetIntImmVal());
     }
-}
-
-ConstLattice get_operand_lattice(operand val,std::map<int,Instruction>& regresult_map)
-{
-    if(val->getOperandType() == val->IMMI32){
-        return ConstLattice(ConstLattice::CONST,ConstLattice::I32,((imm_i32_operand*)val)->getIntImmVal());
+    if(val->GetOperandType() == val->IMMF32){
+        return ConstLattice(ConstLattice::CONST,ConstLattice::FLOAT,((ImmF32Operand*)val)->GetFloatVal());;
     }
-    if(val->getOperandType() == val->IMMF32){
-        return ConstLattice(ConstLattice::CONST,ConstLattice::FLOAT,((imm_f32_operand*)val)->getFloatVal());;
-    }
-    if(val->getOperandType() == val->REG){
-        int regno = ((reg_operand*)val)->getRegNo();
+    if(val->GetOperandType() == val->REG){
+        int regno = ((RegOperand*)val)->GetRegNo();
         auto regno_defIns = regresult_map[regno];
-        if(regno_defIns->is_funcdef()){
+        if(regno_defIns->IsFuncDef()){
             return ConstLattice(ConstLattice::VAR,ConstLattice::NONE,0);
         }
-        return const_lattice_map[regno_defIns];
+        return ConstLatticeMap[regno_defIns];
     }
     return ConstLattice(ConstLattice::UNINIT,ConstLattice::NONE,0);
 }
 
-int load_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int LoadInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == lattice.VAR){return 0;}
     lattice.status = lattice.VAR;
     return 1;
 }
 
-int store_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int StoreInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
     return 0;
 }
 
-int alg_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int ArithmeticInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
 
-    auto op1_lattice = get_operand_lattice(op1,regresult_map);
-    auto op2_lattice = get_operand_lattice(op2,regresult_map);
+    auto op1_lattice = GetOperandLattice(op1,regresult_map);
+    auto op2_lattice = GetOperandLattice(op2,regresult_map);
 
     auto op1_lattice_status = op1_lattice.status;
     auto op2_lattice_status = op2_lattice.status;
@@ -262,12 +254,12 @@ int alg_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
     return 1;
 }
 
-int icmp_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int IcmpInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
 
-    auto op1_lattice = get_operand_lattice(op1,regresult_map);
-    auto op2_lattice = get_operand_lattice(op2,regresult_map);
+    auto op1_lattice = GetOperandLattice(op1,regresult_map);
+    auto op2_lattice = GetOperandLattice(op2,regresult_map);
 
     auto op1_lattice_status = op1_lattice.status;
     auto op2_lattice_status = op2_lattice.status;
@@ -317,51 +309,51 @@ int icmp_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
     return 1;
 }
 
-int fcmp_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int FcmpInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == ConstLattice::VAR){return 0;}
     lattice.status = ConstLattice::VAR;
     return 1;
 }
 
-int call_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int CallInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == ConstLattice::VAR){return 0;}
     lattice.status = ConstLattice::VAR;
     return 1;
 }
 
-int get_elementptr_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int GetElementprtInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == ConstLattice::VAR){return 0;}
     lattice.status = ConstLattice::VAR;
     return 1;
 }
 
-int fptosi_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int FptosiInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == ConstLattice::VAR){return 0;}
     lattice.status = ConstLattice::VAR;
     return 1;
 }
 
-int sitofp_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int SitofpInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
     if(lattice.status == ConstLattice::VAR){return 0;}
     lattice.status = ConstLattice::VAR;
     return 1;
 }
 
-int zext_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
+int ZextInstruction::ConstPropagate(std::map<int,Instruction>& regresult_map)
 {
-    auto& lattice = const_lattice_map[this];
+    auto& lattice = ConstLatticeMap[this];
 
-    auto op_lattice = get_operand_lattice(value,regresult_map);
+    auto op_lattice = GetOperandLattice(value,regresult_map);
     auto op_lattice_status = op_lattice.status;
     int op_lattice_i32val = op_lattice.vals.I32Val;
     
@@ -380,9 +372,10 @@ int zext_Instruction::const_propagate(std::map<int,Instruction>& regresult_map)
     return 1;
 }
 
-int update_lattice_status(Instruction I,ConstLattice pre_lattice)
+//true if statu changes, false if not
+bool UpdateLatticeStatus(Instruction I,ConstLattice pre_lattice)
 {
-    auto& lattice = const_lattice_map[I];
+    auto& lattice = ConstLatticeMap[I];
     if(lattice.status == ConstLattice::UNINIT){
         lattice = pre_lattice;
         return 1;
@@ -410,7 +403,7 @@ int update_lattice_status(Instruction I,ConstLattice pre_lattice)
 }
 
 
-void visit_operation
+void VisitOperation
 (Instruction I,
 std::set<Instruction>& SSAWorklist,
 std::map<std::pair<int,int>,int>& CFGedgeExec,
@@ -420,15 +413,15 @@ std::map<Instruction,std::vector<Instruction> >& SSA_G
 )
 {
     //Combine the data-flow information from the node’s operands where the corresponding control-flow edge is executable.
-    if(I->get_opcode() == PHI){
-        auto Ins = (phi_Instruction*)I;
-        int change = 0;
-        for(auto phi_node:Ins->getPhiList()){
-            int pre = ((label_operand*)phi_node.first)->getLabelNo();
-            operand val = phi_node.second;
-            auto pre_lattice = get_operand_lattice(val,regresult_map);
-            if(CFGedgeExec.find({pre,I->getBlockID()}) != CFGedgeExec.end()){//where the corresponding control-flow edge is executable.
-                change |= update_lattice_status(I,pre_lattice);
+    if(I->GetOpcode() == PHI){
+        auto PhiI = (PhiInstruction*)I;
+        bool change = 0;
+        for(auto phi_node:PhiI->getPhiList()){
+            int pre = ((LabelOperand*)phi_node.first)->GetLabelNo();
+            Operand val = phi_node.second;
+            auto pre_lattice = GetOperandLattice(val,regresult_map);
+            if(CFGedgeExec.find({pre,I->GetBlockID()}) != CFGedgeExec.end()){//where the corresponding control-flow edge is executable.
+                change |= UpdateLatticeStatus(I,pre_lattice);
             }
         }
         //Whenever the data-flow information of an operation changes, 
@@ -440,41 +433,40 @@ std::map<Instruction,std::vector<Instruction> >& SSA_G
         }
     }
     //Examine the branch’s condition(s) using the data-flow information of its operands;
-    else if(I->get_opcode() == BR_COND){
-        auto Ins = (br_cond_Instruction*)I;
-        auto op_lattice = get_operand_lattice(Ins->getCond(),regresult_map);
+    else if(I->GetOpcode() == BR_COND){
+        auto BrCondI = (BrCondInstruction*)I;
+        auto op_lattice = GetOperandLattice(BrCondI->GetCond(),regresult_map);
         //Determine all outgoing edges of the branch’s CFG node whose condition is potentially satisfied; 
         //Append the CFG edges that were non-executable to the CFGWorkList.
         if(op_lattice.status == ConstLattice::CONST){
             int target = 0;
             if(op_lattice.vals.I32Val == 0){
-                target = ((label_operand*)Ins->getFalseLabel())->getLabelNo();
-            }
-            else{
-                target = ((label_operand*)Ins->getTrueLabel())->getLabelNo();
+                target = ((LabelOperand*)BrCondI->GetFalseLabel())->GetLabelNo();
+            }else{
+                target = ((LabelOperand*)BrCondI->GetTrueLabel())->GetLabelNo();
             }
 
-            if(CFGedgeExec.find({I->getBlockID(),target}) == CFGedgeExec.end()){
-                CFGWorklist.insert({I->getBlockID(),target});
+            if(CFGedgeExec.find({I->GetBlockID(),target}) == CFGedgeExec.end()){
+                CFGWorklist.insert({I->GetBlockID(),target});
             }
         }
         if(op_lattice.status == ConstLattice::VAR){
-            int target1 = ((label_operand*)Ins->getFalseLabel())->getLabelNo();
-            int target2 = ((label_operand*)Ins->getTrueLabel())->getLabelNo();
+            int target1 = ((LabelOperand*)BrCondI->GetFalseLabel())->GetLabelNo();
+            int target2 = ((LabelOperand*)BrCondI->GetTrueLabel())->GetLabelNo();
 
-            if(CFGedgeExec.find({I->getBlockID(),target1}) == CFGedgeExec.end()){
-                CFGWorklist.insert({I->getBlockID(),target1});
+            if(CFGedgeExec.find({I->GetBlockID(),target1}) == CFGedgeExec.end()){
+                CFGWorklist.insert({I->GetBlockID(),target1});
             }
 
-            if(CFGedgeExec.find({I->getBlockID(),target2}) == CFGedgeExec.end()){
-                CFGWorklist.insert({I->getBlockID(),target2});
+            if(CFGedgeExec.find({I->GetBlockID(),target2}) == CFGedgeExec.end()){
+                CFGWorklist.insert({I->GetBlockID(),target2});
             }
         }
     }
     //other Instructions
     //Update the operation’s data-flow information by applying its transfer function.
     else{
-        int change = I->const_propagate(regresult_map);
+        int change = I->ConstPropagate(regresult_map);
         //Whenever the data-flow information of an operation changes, 
         //append all outgoing SSA graph edges of the operation to the SSAWorkList.
         if(change){
@@ -485,19 +477,138 @@ std::map<Instruction,std::vector<Instruction> >& SSA_G
     }
 }
 
+void ReplaceRegToConst(CFG* C){
+    // func_ins->setBlockID(0);
+    std::stack<int> unscanedBlockID;
+    std::map<int,int>block_visited;
+    unscanedBlockID.push(0);
+    while(!unscanedBlockID.empty()){
+        int cur_BlockID = unscanedBlockID.top();
+        block_visited[cur_BlockID] = 1;
+        unscanedBlockID.pop();
+        for(auto instruction:(*C->block_map)[cur_BlockID]->Instruction_list){
+            // instruction->setBlockID(cur_BlockID);
+            auto use_regs = instruction->GetNonResultOperands();
+            for(auto& op:use_regs){
+                if(op->GetOperandType() == BasicOperand::REG){
+                    auto op_produce_ins = ResultMap[((RegOperand*)op)->GetRegNo()];
+                    auto lattice = ConstLatticeMap[op_produce_ins];
 
-void CFG::SCCP()
+                    if(lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::I32){
+                        op = new ImmI32Operand(lattice.vals.I32Val);
+                    }
+                    else if(lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::FLOAT){
+                        op = new ImmF32Operand(lattice.vals.FloatVal);
+                    }
+                }
+            }
+            instruction->SetNonResultOperands(use_regs);
+            if(instruction->GetOpcode() == BR_UNCOND){
+                int destLabelNo = ((LabelOperand*)(((BrUncondInstruction*)instruction)->GetDestLabel()))->GetLabelNo();
+                
+                if(block_visited.find(destLabelNo) == block_visited.end()){
+                    unscanedBlockID.push(destLabelNo);
+                }
+            }else if(instruction->GetOpcode() == BR_COND){
+                int trueDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetTrueLabel()))->GetLabelNo();
+                int falseDestLabelNo = ((LabelOperand*)(((BrCondInstruction*)instruction)->GetFalseLabel()))->GetLabelNo();
+                if(block_visited.find(trueDestLabelNo) == block_visited.end()){
+                    unscanedBlockID.push(trueDestLabelNo);
+                }
+                if(block_visited.find(falseDestLabelNo) == block_visited.end()){
+                    unscanedBlockID.push(falseDestLabelNo);
+                }
+            }
+        }
+    }
+}
+
+void DeadBlockElimateAfterSCCP(CFG* C,std::map<std::pair<int,int>,int>& CFGedgeExec)
 {
-    for(auto b:*block){
+    std::map<int,int> block_ref_cnt;
+    block_ref_cnt[0] = 1;
+    for(auto [from_block_id,from_block]:*C->block_map){
+        for(auto dest_block:C->G[from_block_id]){
+
+            auto dest_block_id = dest_block->block_id;
+            auto execute = CFGedgeExec[std::make_pair(from_block_id,dest_block_id)];
+            if(execute == 0){
+
+                auto& from_block = (*C->block_map)[from_block_id];
+                auto& dest_block = (*C->block_map)[dest_block_id];
+                auto& from_block_instrlist = from_block->Instruction_list;
+                auto& last_br = from_block_instrlist[from_block_instrlist.size()-1];
+                // delete br_cond that can not execute
+                if(last_br->GetOpcode() == BR_COND){
+                    auto br_cond = (BrCondInstruction*)last_br;
+                    auto br_true = (LabelOperand*)br_cond->GetTrueLabel();
+                    auto br_false = (LabelOperand*)br_cond->GetFalseLabel();
+                    auto br_uncond_label = br_true;
+
+                    if(br_true->GetLabelNo() == dest_block_id){
+                        br_uncond_label = br_false;
+                    }else if(br_false->GetLabelNo() == dest_block_id){
+                        br_uncond_label = br_true;
+                    }
+
+                    last_br = new BrUncondInstruction(br_uncond_label);
+                    last_br->SetBlockID(from_block_id);
+                }
+                //update the phi instruction of dest_block (delete operand from from_block)
+                for(auto& I : dest_block->Instruction_list){
+                    if(I->GetOpcode() != PHI){break;}
+
+                    auto PhiI = (PhiInstruction*)I;
+                    PhiI->ErasePhi(from_block->block_id);
+                }
+            }
+            else{
+                block_ref_cnt[dest_block_id] = block_ref_cnt[dest_block_id] + 1;
+            }
+        }
+    }
+
+    std::queue<int> del_queue;
+    for(auto [id,bb]:*C->block_map){
+        if(block_ref_cnt[id] == 0){
+            del_queue.push(id);
+        }
+    }
+
+    while(!del_queue.empty()){
+        auto del_id = del_queue.front();
+        del_queue.pop();
+        delete (*C->block_map)[del_id];
+        C->block_map->erase(del_id);
+    }
+}
+
+void ConstInstructionElimate(CFG* C)
+{
+    for(auto [id,bb] : *C->block_map){
+        auto tmp_ins_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for(auto I:tmp_ins_list){
+            auto lattice = ConstLatticeMap[I];
+            if(lattice.status != ConstLattice::CONST){
+                bb->InsertInstruction(1,I);
+            }
+        }
+    }
+}
+
+void SCCP(CFG* C)
+{
+    for(auto b:*C->block_map){
         for(auto I:b.second->Instruction_list){
-            const_lattice_map[I] = ConstLattice();
+            ConstLatticeMap[I] = ConstLattice();
         }
     }
     std::map<std::pair<int,int>,int> CFGedgeExec;
-    std::set<std::pair<int,int> >CFGWorklist;
+    std::set<std::pair<int,int> > CFGWorklist;
     std::set<Instruction> SSAWorklist;
     std::vector<int> Bvis;
-    Bvis.resize(max_label + 1);
+    Bvis.resize(C->max_label + 1);
 
     CFGWorklist.insert({-1,0});
     while(!SSAWorklist.empty() || !CFGWorklist.empty()){
@@ -505,19 +616,19 @@ void CFG::SCCP()
             Instruction I = *SSAWorklist.begin();
             SSAWorklist.erase(I);
             //When the target operation is a phi-operation visit that phi-operation
-            if(I->get_opcode() == PHI){
-                visit_operation(I,SSAWorklist,CFGedgeExec,CFGWorklist,this->regresult_ins_map,this->SSA_G);
+            if(I->GetOpcode() == PHI){
+                VisitOperation(I,SSAWorklist,CFGedgeExec,CFGWorklist,ResultMap,SSAG);
                 continue;
             }
 
-            int I_Bid = I->getBlockID();
+            int I_Bid = I->GetBlockID();
             //For other operations, examine the executable flag of the incoming edges of the respective CFG node; 
             //Visit the operation if any of the edges is executable.
-            if(I_Bid == 0){visit_operation(I,SSAWorklist,CFGedgeExec,CFGWorklist,this->regresult_ins_map,this->SSA_G);}
+            if(I_Bid == 0){VisitOperation(I,SSAWorklist,CFGedgeExec,CFGWorklist,ResultMap,SSAG);}
             else{
-                for(auto B:invG[I_Bid]){
+                for(auto B:C->invG[I_Bid]){
                     if(CFGedgeExec.find({B->block_id,I_Bid}) != CFGedgeExec.end()){
-                        visit_operation(I,SSAWorklist,CFGedgeExec,CFGWorklist,this->regresult_ins_map,this->SSA_G);
+                        VisitOperation(I,SSAWorklist,CFGedgeExec,CFGWorklist,ResultMap,SSAG);
                         break;
                     }
                 }
@@ -529,7 +640,7 @@ void CFG::SCCP()
             CFGedgeExec[CFGEdge] = 1;//mark the edge as exectuable
 
             int target = CFGEdge.second;
-            auto B = (*block)[target];
+            auto B = (*C->block_map)[target];
 
             int firstvis_tag = 0;
             if(!Bvis[target]){
@@ -541,19 +652,19 @@ void CFG::SCCP()
     
             for(auto I:B->Instruction_list){
                 // Visit every φ-operation associated with the target node
-                if(I->get_opcode() == PHI){
-                    visit_operation(I,SSAWorklist,CFGedgeExec,CFGWorklist,this->regresult_ins_map,this->SSA_G);
+                if(I->GetOpcode() == PHI){
+                    VisitOperation(I,SSAWorklist,CFGedgeExec,CFGWorklist,ResultMap,SSAG);
                 }
                 else{
                     if(!firstvis_tag){break;}//If the target node was reached the first time via the CFGWorkList, visit all its operations
-                    else{visit_operation(I,SSAWorklist,CFGedgeExec,CFGWorklist,this->regresult_ins_map,this->SSA_G);}
+                    else{VisitOperation(I,SSAWorklist,CFGedgeExec,CFGWorklist,ResultMap,SSAG);}
                 }
             }
             // If the target node has a single, non-executable outgoing edge, append that edge to the CFGWorkList.
             auto endI = *(B->Instruction_list.end() - 1);
-            if(endI->get_opcode() == BR_UNCOND){
-                auto Ins = (br_uncond_Instruction*)endI;
-                auto Edge = std::pair<int,int>{target,Ins->get_target()};
+            if(endI->GetOpcode() == BR_UNCOND){
+                auto Ins = (BrUncondInstruction*)endI;
+                auto Edge = std::pair<int,int>{target,Ins->GetTarget()};
                 if(CFGedgeExec.find(Edge) == CFGedgeExec.end()){
                     CFGWorklist.insert(Edge);
                 }
@@ -567,170 +678,24 @@ void CFG::SCCP()
     // for(auto B:(*block)){
     //     for(auto I:B.second->Instruction_list){
     //         I->printIR(std::cout);
-    //         std::cout<<I->lattice_status<<" "<<I->lattice_val<<"\n";
+    //         std::cout<<I->LatticeStatus<<" "<<I->lattice_val<<"\n";
     //     }
     // }
     // std::cout<<"\n\n";
-    replace_reg_to_const();
-    ConstIns_elimate();
-    dead_block_elimate_sccp(CFGedgeExec);
+    
+    ReplaceRegToConst(C);
+    ConstInstructionElimate(C);
+    DeadBlockElimateAfterSCCP(C,CFGedgeExec);
+
+    ConstLatticeMap.clear();
+    ResultMap.clear();
+    SSAG.clear();
 }
 
-void CFG::replace_reg_to_const(){
-    // func_ins->setBlockID(0);
-    std::stack<int> unscanedBlockID;
-    std::map<int,int>block_visited;
-    unscanedBlockID.push(0);
-    while(!unscanedBlockID.empty()){
-        int cur_BlockID = unscanedBlockID.top();
-        block_visited[cur_BlockID] = 1;
-        unscanedBlockID.pop();
-        for(auto instruction:(*block)[cur_BlockID]->Instruction_list){
-            // instruction->setBlockID(cur_BlockID);
-            auto use_regs = instruction->get_nonresult_operands();
-            for(auto& op:use_regs){
-                if(op->getOperandType() == basic_operand::REG){
-                    auto op_produce_ins = regresult_ins_map[((reg_operand*)op)->getRegNo()];
-                    auto lattice = const_lattice_map[op_produce_ins];
-
-                    if(lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::I32){// 1 is CONST
-                        op = new imm_i32_operand(lattice.vals.I32Val);
-                    }
-                    else if(lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::FLOAT){
-                        op = new imm_f32_operand(lattice.vals.FloatVal);
-                    }
-                }
-            }
-            instruction->set_nonresult_operands(use_regs);
-            if(instruction->get_opcode()==BR_UNCOND){
-                int destLabelNo = ((label_operand*)(((br_uncond_Instruction*)instruction)->getDestLabel()))->getLabelNo();
-                
-                if(block_visited.find(destLabelNo)==block_visited.end()){
-                    unscanedBlockID.push(destLabelNo);
-                }
-            }else if(instruction->get_opcode()==BR_COND){
-                int trueDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getTrueLabel()))->getLabelNo();
-                int falseDestLabelNo = ((label_operand*)(((br_cond_Instruction*)instruction)->getFalseLabel()))->getLabelNo();
-                if(block_visited.find(trueDestLabelNo)==block_visited.end()){
-                    unscanedBlockID.push(trueDestLabelNo);
-                }
-                if(block_visited.find(falseDestLabelNo)==block_visited.end()){
-                    unscanedBlockID.push(falseDestLabelNo);
-                }
-            }
-        }
-    }
-}
-
-void CFG::dead_block_elimate_sccp(std::map<std::pair<int,int>,int>& CFGedgeExec)
+void SparseConditionalConstantPropagation(CFG* C)
 {
-    std::map<int,int> block_ref_cnt;
-    block_ref_cnt[0] = 1;
-    for(auto from_block_pair:*block){
-        auto from_block_id = from_block_pair.first;
-        auto from_block = from_block_pair.second;
-        for(auto arc:G[from_block_id]){
-            auto dest_block = arc;
-            auto dest_block_id = dest_block->block_id;
-            auto execute = CFGedgeExec[std::make_pair(from_block_id,dest_block_id)];
-            if(execute == 0){
-                // std::cerr<<"from:"<<from_block_id<<" to:"<<dest_block_id<<"\n";
-                auto& from_block = (*block)[from_block_id];
-                auto& dest_block = (*block)[dest_block_id];
-                auto& from_block_instrlist = from_block->Instruction_list;
-                auto& last_br = from_block_instrlist[from_block_instrlist.size()-1];
-                // delete br
-                if(last_br->get_opcode() == BR_COND){
-                    auto br_cond = (br_cond_Instruction*)last_br;
-                    auto br_true = (label_operand*)br_cond->getTrueLabel();
-                    auto br_false = (label_operand*)br_cond->getFalseLabel();
-                    auto br_uncond_label = br_true;
-                    if(br_true->getLabelNo() == dest_block_id){
-                        // std::cerr<<"bb\n";
-                        br_uncond_label = br_false;
-                    }else if(br_false->getLabelNo() == dest_block_id){
-                        br_uncond_label = br_true;
-                    }else{
-                        std::cerr<<"deleting from:br_cond (no expected dest)\n";
-                    }
-                    last_br = new br_uncond_Instruction(br_uncond_label);
-                    last_br->setBlockID(from_block_id);
-                }else if(last_br->get_opcode() == BR_UNCOND){
-                    // std::cerr<<"from:"<<from_block_id<<" to:"<<dest_block_id<<"\n";
-                    // std::cerr<<"deleting from:br_uncond\n";
-                }else if(last_br->get_opcode() == RET){
-                    std::cerr<<"deleting from:RET\n";
-                }
-
-                for(auto& target : dest_block->Instruction_list){
-                    if(target->get_opcode()!=PHI){
-                        break;
-                    }
-                    auto target_phi = (phi_Instruction*)target;
-                    auto phi_list = target_phi->getPhiList();
-                    std::queue<operand>phi_label_del;
-                    for(auto label_val_pair : phi_list){
-                        auto label = (label_operand*)label_val_pair.first;
-                        if(label->getLabelNo() == from_block_id){
-                            phi_label_del.push(label);
-                        }
-                    }
-                    while(!phi_label_del.empty()){
-                        auto label_to_del = phi_label_del.front();
-                        auto it = phi_list.begin();
-                        for(;it != phi_list.end();++it){
-                            if(it->first == label_to_del){
-                                break;
-                            }
-                        }
-                        if(it != phi_list.end()){
-                            phi_list.erase(it);
-                        }
-                        // phi_list.erase(label_to_del);
-                        phi_label_del.pop();
-                    }
-                    auto DTType = target_phi->getDataType();
-                    auto result_op = target_phi->getResultOp();
-                    target = new phi_Instruction(DTType,result_op,phi_list);
-                    target->setBlockID(dest_block_id);
-                }
-            }else{
-                // std::cerr<<"from:"<<from_block_id<<" to:"<<dest_block_id<<"( do )\n";
-                block_ref_cnt[dest_block_id] = block_ref_cnt[dest_block_id] + 1;
-            }
-        }
-    }
-    std::queue<int> del_queue;
-    for(auto block_pair:*block){
-        if(block_ref_cnt[block_pair.first] == 0){
-            del_queue.push(block_pair.first);
-        }
-    }
-    while(!del_queue.empty()){
-        auto del_id = del_queue.front();
-        del_queue.pop();
-        delete (*block)[del_id];
-        block->erase(del_id);
-    }
-    // Rebuild G invG domTree SSAG
-    build_CFG();
-    build_dominator_tree();
-    build_SSA_Graph();
-
-    const_lattice_map.clear();
-}
-
-void CFG::ConstIns_elimate()
-{
-    for(auto B : *block){
-        auto b = B.second;
-        auto tmp_ins_list = b->Instruction_list;
-        b->Instruction_list.clear();
-        for(auto I:tmp_ins_list){
-            auto lattice = const_lattice_map[I];
-            if(lattice.status != ConstLattice::CONST){
-                b->push_Ins(1,I);
-            }
-        }
-    }
+    GlobalConstReplace(C);
+    SetInstructionBlockID(C);
+    BuildSSAGraph(C);
+    SCCP(C);
 }

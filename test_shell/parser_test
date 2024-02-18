@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-for file in test/test/example/*.sy
-do
-    var=${file%.*}
-    bin/SysYc $file -parser -o test/parser_test_output/${var##*/}.out
-done
-

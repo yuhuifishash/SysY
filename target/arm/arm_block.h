@@ -2,7 +2,7 @@
 #define ARM_BLOCK_H
 #include "machine_block.h"
 #include "arm.h"
-#include "llvm_ir.h"
+#include "ir.h"
 #include <deque>
 #include <string>
 #include <iostream>
@@ -32,19 +32,19 @@ public:
 
 class ArmSelector : public MachineSelector<ArmUnit,ArmBlock>{
 private:
-    std::map<Func_Def_Instruction,int> alloca_offset_map{};
-    std::map<Func_Def_Instruction,int> cur_vregi{};
-    std::map<Func_Def_Instruction,int> cur_vregf{};
+    std::map<FuncDefInstruction,int> alloca_offset_map{};
+    std::map<FuncDefInstruction,int> cur_vregi{};
+    std::map<FuncDefInstruction,int> cur_vregf{};
     struct tagLastCond{
         enum condType{ICMP = 0,FCMP = 1}cond_type;
         union condContent{
-            enum cmp_cond cond_icmp;
-            enum fcmp_cond comd_fcmp;
+            enum IcmpCond cond_icmp;
+            enum FcmpCond comd_fcmp;
         }cond_content;
     }last_cond;
     
 public:
-    ArmSelector(ArmUnit* Dest,LLVM_IR* IR):MachineSelector<ArmUnit,ArmBlock>(Dest,IR){}
+    ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector<ArmUnit,ArmBlock>(Dest,IR){}
     void SelectInstruction();
 
     template<class INSPTR>
