@@ -21,7 +21,7 @@
     *   some instructions
     *   br label %L5
     * 
-    * this pass will execute after sccp
+    * this pass will be useful after sccp
     * you can use testcase 29_lone_line.sy to check 
     * @param C the control flow graph of the function */
 void ElimateDoubleBrUnCond(CFG* C)
