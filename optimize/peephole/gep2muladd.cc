@@ -17,11 +17,11 @@ void ElimateEmptyIndexGEP(CFG* C)
     * this function will transform getelementptr to add and mul
     * ************************************************
     * example: (get the value of A[x][y])
-    * %r7 = ptrtoint ptr %r2 to i64         ;(%r2 is the address of the array A)
     * %d2 = mul i32 %r5,5                   ;(the value of %r5 is x) x*5 
     * %d1 = add i32 %d2,%r6                 ;(the value of %r6 is y) x*5 + y 
     * %d = mul i32 %d1,4                    ;x*20 + y*4 (sizeof(int) is 4)
     * %D = sext i32 %d to i64 
+    * %r7 = ptrtoint ptr %r2 to i64         ;(%r2 is the address of the array A)
     * %address = add i64 %D, %r7
     * %p = inttoptr i64 %add to ptr         ;(the final address) 
     * %ans = load i32, ptr %p               ;(use load to get the value)

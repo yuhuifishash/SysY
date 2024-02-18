@@ -37,12 +37,9 @@ void PrintLexerResult(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int 
 -lexer
 -parser
 -llvm
--cgenpre
 -S
 SysYc *.sy -S -o *.s (-O1) 
 */
-
-//compiler -S -o testcase.s testcase.sy
 
 void MakeFunctionOneExit(CFG* C);
 void Mem2Reg(CFG*);
