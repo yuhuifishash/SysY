@@ -1,4 +1,27 @@
 #include "arm.h"
+#include "arm_block.h"
+void printCond(std::ostream& s,int cond){
+    switch(cond){
+        case Arm_baseins::EQ:
+        s<<"eq";
+        break;
+        case Arm_baseins::NE:
+        s<<"ne";
+        break;
+    }
+}
+
+void printRegList(std::ostream& s,const std::vector<Register>& reglist){
+    s<<"{";
+    for(auto it = reglist.begin();it!=reglist.end();++it){
+        s<<*it;
+        if(it+1 != reglist.end()){
+            s<<",";
+        }
+    }
+    s<<"}";
+}
+
 std::ostream& operator<<(std::ostream& s,ShiftType typ){
     switch (typ)
     {
@@ -42,11 +65,25 @@ std::ostream& operator<<(std::ostream& s,Label lbl){
 }
 //-----Arm Field Print-----
 void Register::printArm(std::ostream& s){
-    // s<<
+    if(Virtual){
+        s<<"%";
+    }
+    if(type == I32){
+        s<<"r";
+    }else if(type == FLOAT){
+        s<<"s";
+    }else if(type == DOUBLE){
+        s<<"d";
+    }
+    s<<reg_no;
 }
 
 void RmOpsh::printArm(std::ostream& s){
-
+    if(type == RRX){
+        s<<properties.RRX.Rm<<", RRX";
+    }else if(type == RSHIFTI){
+        s<<properties.regShiftImm.Rm<<", "<<properties.regShiftImm.shift_type<<" #"<<properties.regShiftImm.shift;
+    }
 }
 
 void Operand2::printArm(std::ostream& s){
@@ -68,11 +105,11 @@ void Operand2::printArm(std::ostream& s){
 }
 
 void Rssh::printArm(std::ostream& s){
-
+    s<<"Unused_struct_Rssh";
 }
 
 void Label::printArm(std::ostream& s){
-
+    s<<label_name;
 }
 //-------------------------
 
@@ -240,7 +277,7 @@ void Arm_movwt::printArm(std::ostream& s){
 
 
 void Arm_shift::printArm(std::ostream& s){
-    s<<"asr";
+    s<<"mov";
     if(S){
         s<<"s";
     }
@@ -263,7 +300,21 @@ void Arm_cmp::printArm(std::ostream& s){
 
 
 void Arm_it::printArm(std::ostream& s){
-    s<<"it "<<pattern;
+    unsigned pattern_len = pattern>>4;
+    s<<"it";//<<pattern;
+    if(pattern_len != 0){
+        int bitmask = 1<<(pattern_len-1);
+        for(int i=1;i<=pattern_len;i++){
+            if(pattern & bitmask){
+                s<<"t";
+            }else{
+                s<<"e";
+            }
+            bitmask >>= 1;
+        }
+    }
+    s<<" ";
+    printCond(s,cond);
     s<<" @"<<comment<<"\n";
 }
 
@@ -321,11 +372,64 @@ void Arm_LoadStore::printArm(std::ostream& s){
         s<<"str";
         break;
     }
-    s<<size;
+    switch (size)
+    {
+    case Arm_LoadStore::NONE:
+        break;
+    case Arm_LoadStore::B:
+        s<<"b";
+        break;
+    case Arm_LoadStore::SB:
+        s<<"sb";
+        break;
+    case Arm_LoadStore::H:
+        s<<"h";
+        break;
+    case Arm_LoadStore::SH:
+        s<<"sh";
+        break;
+    }
     if(T){
         s<<"t";
     }
-    s<<" "<<Rd;
+    s<<" "<<Rd<<", ";
+    if(offset_type == Arm_LoadStore::LABEL){
+        s<<addr_label;
+    }else if(offset_type == IMM){
+        if(ispreindex){
+            //<op>{size}{T} Rd, [Rn {, #<offset>}]{!}
+            s<<"["<<Rn<<",#"<<OFFSET.offset<<"]";
+            if(dowriteback){
+                s<<"!";
+            }
+        }else{
+            //<op>{size}{T} Rd, [Rn], #<offset>
+            s<<"["<<Rn<<"],#"<<OFFSET.offset;
+        }
+    }else if(offset_type == REG_ADD){
+        if(ispreindex){
+            //<op>{size} Rd, [Rn, +Rm {, <opsh>}]{!}
+            s<<"["<<Rn<<",+"<<OFFSET.Rmsh<<"]";
+            if(dowriteback){
+                s<<"!";
+            }
+        }else{
+            //<op>{size}{T} Rd, [Rn], +Rm {, <opsh>}
+            s<<"["<<Rn<<"],+"<<OFFSET.Rmsh;
+        }
+    }else if(offset_type == REG_SUB){
+        if(ispreindex){
+            //<op>{size} Rd, [Rn, -Rm {, <opsh>}]{!}
+            s<<"["<<Rn<<",-"<<OFFSET.Rmsh<<"]";
+            if(dowriteback){
+                s<<"!";
+            }
+        }else{
+            //<op>{size}{T} Rd, [Rn], -Rm {, <opsh>}
+            s<<"["<<Rn<<"],-"<<OFFSET.Rmsh;
+        }
+    }
+    
     s<<" @"<<comment<<"\n";
 
 }
@@ -338,14 +442,30 @@ void Arm_LoadStoreM::printArm(std::ostream& s){
         s<<"ldm";
         break;
     case Arm_LoadStoreM::STORE:
-        s<<"STM";
+        s<<"stm";
+        break;
+    }
+    switch (mode)
+    {
+    case IA:
+        s<<"ia";
+        break;
+    case IB:
+        s<<"ib";
+        break;
+    case DA:
+        s<<"da";
+        break;
+    case DB:
+        s<<"db";
         break;
     }
     s<<" "<<Rn;
     if(dowriteback){
         s<<"!";
     }
-    s<<", "<<reglist;
+    s<<", ";//<<reglist;
+    printRegList(s,reglist);
     if(hat){
         s<<"^";
     }
@@ -363,7 +483,9 @@ void Arm_pushpop::printArm(std::ostream& s){
         s<<"pop";
         break;
     }
-    s<<" "<<reglist<<" @"<<comment<<"\n";
+    s<<" ";
+    printRegList(s,reglist);
+    s<<" @"<<comment<<"\n";
 }
 
 
@@ -397,17 +519,57 @@ void VFP_vcmp::printArm(std::ostream& s){
 
 
 void VFP_vcvt::printArm(std::ostream& s){
-    // s<<
+    s<<"vcvt";
+    if(R){
+        s<<"r";
+    }
+    printCond(s,cond);
+    s<<".";
+    if(dstType == F64){
+        s<<"f64";
+    }else if(dstType == F32){
+        s<<"f32";
+    }else if(dstType == S32){
+        s<<"s32";
+    }
+    s<<".";
+    if(srcType == F64){
+        s<<"f64";
+    }else if(srcType == F32){
+        s<<"f32";
+    }else if(srcType == S32){
+        s<<"s32";
+    }
+    s<<" "<<Rd<<","<<Rs<<" @"<<comment<<"\n";
 }
 
 
 void VFP_vmov::printArm(std::ostream& s){
-    // s<<
+    s<<"vmov";
+    printCond(s,cond);
+    if(P == F32){
+        s<<".f32";
+    }else if(P == F64){
+        s<<".f64";
+    }
+    s<<" "<<Rd<<","<<Rs<<" @"<<comment<<"\n";
 }
 
 
 void VFP_vldst::printArm(std::ostream& s){
-    // s<<
+    if(op == VLDR){
+        s<<"vldr";
+    }else if(op == VSTR){
+        s<<"vstr";
+    }
+    printCond(s,cond);
+    s<<" "<<Fd<<",";
+    if(islabel){
+        s<<label;
+    }else{
+        s<<"["<<Rn<<",#"<<immed<<"]";
+    }
+    s<<" @"<<comment<<"\n";
 }
 
 
@@ -421,9 +583,16 @@ void VFP_vpushpop::printArm(std::ostream& s){
         s<<"vpop";
         break;
     }
-    s<<cond<<" "<<VFPregs<<" @"<<comment<<"\n";
+    s<<cond<<" ";
+    // s<<VFPregs;
+    printRegList(s,VFPregs);
+    s<<" @"<<comment<<"\n";
 }
 
+std::ostream& operator<<(std::ostream& s,std::vector<Register>reglist){
+    printRegList(s,reglist);
+    return s;
+}
 
 void VFP_vstm::printArm(std::ostream& s){
     switch (opcode)
@@ -450,4 +619,25 @@ void VFP_vstm::printArm(std::ostream& s){
         break;
     }
     s<<" @"<<comment<<"\n";
+}
+
+void ArmBlock::emit(std::ostream& s){
+    for(auto ins:instructions){
+        s<<"\t";
+        ((Arm_baseins*)ins)->printArm(s);
+    }
+}
+
+void ArmFunc::emit(std::ostream& s){
+    s<<func_name<<":\n";
+    for(auto block:blocks){
+        s<<func_name<<block->label_id<<":\n";
+        block->emit(s);
+    }
+}
+
+void ArmUnit::emit(std::ostream& s){// global def
+    for(auto func:functions){
+        func->emit(s);
+    }
 }
