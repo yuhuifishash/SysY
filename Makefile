@@ -1,7 +1,8 @@
 SRCDIR += ./target
 SRCDIR += ./target/arm
-SRCDIR += ./target/arm/register_alloc
-SRCDIR += ./target/arm/instruction_select
+SRCDIR += ./target/common
+SRCDIR += ./target/register_alloc
+SRCDIR += ./target/instruction_select
 SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./IR

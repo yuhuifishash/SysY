@@ -44,8 +44,8 @@ public:
         }
     }
     /*if your pass is global optimize, you can use this function, the pass will only be executed once*/
-    void PassExecutor(void (*Pass)(void)){
-        Pass();
+    void PassExecutor(void (*Pass)(LLVMIR*)){
+        Pass(this);
     }
 };
 

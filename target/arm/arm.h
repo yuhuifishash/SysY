@@ -5,7 +5,7 @@
 #include "Instruction.h"
 #include <iostream>
 #include <vector>
-class Arm_baseins{
+class ArmBaseInstruction{
 public:
     enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM}ins_type;
     std::string comment;
@@ -19,7 +19,7 @@ public:
 void printCond(std::ostream& s,int cond);
 void printRegList(std::ostream& s,const std::vector<Register>& reglist);
 
-class Arm_binary : Arm_baseins{
+class Arm_binary : ArmBaseInstruction{
 public:
     enum {ADD = 0,ADC,SUB,SBC,RSB,RSC,AND,EOR,ORR,ORN,BIC};
     int opcode;
@@ -35,7 +35,7 @@ public:
     }
 };
 
-class Arm_addsubImm : Arm_baseins{
+class Arm_addsubImm : ArmBaseInstruction{
 public:
     enum {ADD = 0,SUB};
     int opcode;
@@ -50,7 +50,7 @@ public:
     }
 };
 
-class Arm_parallelAddsub : Arm_baseins{
+class Arm_parallelAddsub : ArmBaseInstruction{
 public:
     enum {S = 0,Q,SH,U,UQ,UH};
     enum {ADD16 = 0,SUB16,ADD8,SUB8,ASX,SAX//,USAD8,USADA8
@@ -66,7 +66,7 @@ public:
     }
 };
 
-class Arm_mulas : Arm_baseins{
+class Arm_mulas : ArmBaseInstruction{
 public:
     enum {MUL = 0,MLA,MLS,SMULL,SMLAL,SMMUL};
     int opcode;
@@ -86,7 +86,7 @@ public:
     // printArm() Decl Here
 };
 
-class Arm_move : Arm_baseins{
+class Arm_move : ArmBaseInstruction{
 public:
     enum {MOV = 0,MVN};
     int opcode;
@@ -102,7 +102,7 @@ public:
     }
 };
 
-class Arm_movwt : Arm_baseins{
+class Arm_movwt : ArmBaseInstruction{
 public:
     enum {MOVW = 0,MOVT};
     int opcode;
@@ -117,7 +117,7 @@ public:
     }
 };
 
-class Arm_shift : Arm_baseins{
+class Arm_shift : ArmBaseInstruction{
 public:
     bool S;
     Register Rd;
@@ -131,7 +131,7 @@ public:
     }
 };
 
-class Arm_cmp : Arm_baseins{
+class Arm_cmp : ArmBaseInstruction{
 public:
     enum {CMP = 0,CMN}opcode;
     Register Rn;
@@ -145,7 +145,7 @@ public:
     }
 };
 
-class Arm_it : Arm_baseins{
+class Arm_it : ArmBaseInstruction{
 public:
     // high  |low
     // 0000  |0000
@@ -167,11 +167,11 @@ public:
         this->comment = comment;
     }
 
-    // cond field in Arm_baseins
+    // cond field in ArmBaseInstruction
 
 };
 
-class Arm_branch_label : Arm_baseins{
+class Arm_branch_label : ArmBaseInstruction{
 public:
     enum {B = 0,BL,BLX};
     int opcode;
@@ -185,7 +185,7 @@ public:
     }
 };
 
-class Arm_branch_reg : Arm_baseins{
+class Arm_branch_reg : ArmBaseInstruction{
 public:
     enum {BX = 0,BLX,BXJ};
     int opcode;
@@ -199,7 +199,7 @@ public:
     }
 };
 
-class Arm_branch_labelreg : Arm_baseins{
+class Arm_branch_labelreg : ArmBaseInstruction{
 public:
     bool N;
     Register Rn;
@@ -213,7 +213,7 @@ public:
     }
 };
 
-class Arm_LoadStore : Arm_baseins{
+class Arm_LoadStore : ArmBaseInstruction{
 public:
     enum {LOAD = 0,STORE};
     int op;
@@ -240,7 +240,7 @@ public:
     }
 };
 
-class Arm_LoadStoreM : Arm_baseins{
+class Arm_LoadStoreM : ArmBaseInstruction{
 public:
     enum {LOAD = 0,STORE};
     int op;
@@ -259,7 +259,7 @@ public:
     }
 };
 
-class Arm_pushpop : Arm_baseins{
+class Arm_pushpop : ArmBaseInstruction{
     enum {PUSH = 0,POP};
     int opcode;
     std::vector<Register> reglist;
@@ -272,7 +272,7 @@ class Arm_pushpop : Arm_baseins{
     }
 };// push pop
 
-class VFP_vbin : Arm_baseins{
+class VFP_vbin : ArmBaseInstruction{
     enum {VADD = 0,VSUM,VMUL,VDIV};
     int opcode;
     int P;
@@ -285,7 +285,7 @@ class VFP_vbin : Arm_baseins{
         this->comment = comment;
     }
 };// VADD VSUB VMUL VDIV
-class VFP_vcmp : Arm_baseins{
+class VFP_vcmp : ArmBaseInstruction{
 public:
     bool E;
     int P;
@@ -298,7 +298,7 @@ public:
         this->comment = comment;
     }
 };
-class VFP_vcvt : Arm_baseins{
+class VFP_vcvt : ArmBaseInstruction{
 public:
     enum{F64 = 0,F32,S32};
     int dstType,srcType;
@@ -312,7 +312,7 @@ public:
         this->comment = comment;
     }
 };
-class VFP_vmov : Arm_baseins{
+class VFP_vmov : ArmBaseInstruction{
 public:
     enum{NONE = 0,F32,F64};
     int P;
@@ -325,7 +325,7 @@ public:
         this->comment = comment;
     }
 };
-class VFP_vldst : Arm_baseins{
+class VFP_vldst : ArmBaseInstruction{
 public:
     enum {VLDR = 0,VSTR};
     int op;
@@ -347,7 +347,7 @@ public:
     VFP_vldst(int op,Register Fd,Register Rn,int immed)
     :VFP_vldst(op,Fd,Rn,std::string(),0,cond,comment){}
 };// VLDR VSTR
-class VFP_vpushpop : Arm_baseins {
+class VFP_vpushpop : ArmBaseInstruction {
     enum {VPUSH = 0,VPOP};
     int opcode;
     std::vector<Register> VFPregs;
@@ -359,7 +359,7 @@ class VFP_vpushpop : Arm_baseins {
         this->comment = comment;
     }
 };// VPUSH VPOP
-class VFP_vstm : Arm_baseins {
+class VFP_vstm : ArmBaseInstruction {
     enum {VSTM = 0,VSTMDB,VLDM,VLDMDB};
     int opcode;
     Register Rn;

@@ -1,31 +1,27 @@
 #ifndef ARM_BLOCK_H
 #define ARM_BLOCK_H
-#include "machine_block.h"
 #include "arm.h"
 #include "ir.h"
 #include <deque>
 #include <string>
 #include <iostream>
-// ArmSchedule();
-// IfConversion();
-// CopyPropagation();
-// LoopUnroll();
-// SIMD();
-// RegisterAlloc();
-// PeeholeOptimize();
-class ArmBlock : public MachineBlock<Arm_baseins*,ArmFunc*>{
+#include "machine_block.h"
+
+class ArmFunction;
+class ArmUnit;
+class ArmBlock : public MachineBlock<ArmBaseInstruction*,ArmFunction*>{
 public:
     void emit(std::ostream& s);
     ArmBlock(int id):MachineBlock(id){}
 };
 
-class ArmFunc : public MachineFunc<ArmBlock*,ArmUnit*>{
+class ArmFunction : public MachineFunction<ArmBlock*,ArmUnit*>{
 public:
     void emit(std::ostream& s);
-    ArmFunc(std::string name):MachineFunc(name){}
+    ArmFunction(std::string name):MachineFunction(name){}
 };
 
-class ArmUnit : public MachineUnit<ArmFunc*>{
+class ArmUnit : public MachineUnit<ArmFunction*>{
 public:
     void emit(std::ostream& s);
 };

@@ -6,26 +6,26 @@ template<class FUNCPTR>
 class MachineUnit{
 public:
     std::vector<Instruction> global_def{};
-    std::vector<FUNCPTR>functions;
+    std::vector<FUNCPTR> functions;
     virtual void emit(std::ostream& s) = 0;
     // MachineUnit(LLVM_IR& IR);
 };
 
 template<class BLKPTR,class UNITPTR>
-class MachineFunc{
+class MachineFunction{
 public:
     std::string func_name;
-    std::vector<BLKPTR>blocks{};
+    std::vector<BLKPTR> blocks{};
     UNITPTR parent;
     virtual void emit(std::ostream& s) = 0;
-    MachineFunc(std::string name):func_name(name){}
+    MachineFunction(std::string name):func_name(name){}
 };
 
 template<class INSPTR,class FUNCPTR>
 class MachineBlock{
 public:
     int label_id;
-    std::deque<INSPTR>instructions;
+    std::deque<INSPTR> instructions;
     FUNCPTR parent;
     virtual void emit(std::ostream& s) = 0;
     MachineBlock(int id):label_id(id){}
@@ -37,9 +37,9 @@ template<class MachineUnit,class MachineBlk>
 class MachineSelector{
 protected:
     MachineUnit* Dest;
-    LLVM_IR* IR;
+    LLVMIR* IR;
 public:
-    MachineSelector(MachineUnit* Dest,LLVM_IR* IR):Dest(Dest),IR(IR){}
+    MachineSelector(MachineUnit* Dest,LLVMIR* IR):Dest(Dest),IR(IR){}
     virtual void SelectInstruction() = 0;
     MachineUnit* GetMachineUnit(){return Dest;}
     // template<class INSPTR>

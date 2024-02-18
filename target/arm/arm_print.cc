@@ -2,10 +2,10 @@
 #include "arm_block.h"
 void printCond(std::ostream& s,int cond){
     switch(cond){
-        case Arm_baseins::EQ:
+        case ArmBaseInstruction::EQ:
         s<<"eq";
         break;
-        case Arm_baseins::NE:
+        case ArmBaseInstruction::NE:
         s<<"ne";
         break;
     }
@@ -624,11 +624,11 @@ void VFP_vstm::printArm(std::ostream& s){
 void ArmBlock::emit(std::ostream& s){
     for(auto ins:instructions){
         s<<"\t";
-        ((Arm_baseins*)ins)->printArm(s);
+        ((ArmBaseInstruction*)ins)->printArm(s);
     }
 }
 
-void ArmFunc::emit(std::ostream& s){
+void ArmFunction::emit(std::ostream& s){
     s<<func_name<<":\n";
     for(auto block:blocks){
         s<<func_name<<block->label_id<<":\n";
