@@ -1,30 +1,53 @@
 #ifndef ARM_BLOCK_H
 #define ARM_BLOCK_H
+#include "machine_block.h"
 #include "arm.h"
+#include "ir.h"
 #include <deque>
 #include <string>
 #include <iostream>
-class Arm_block{
+// ArmSchedule();
+// IfConversion();
+// CopyPropagation();
+// LoopUnroll();
+// SIMD();
+// RegisterAlloc();
+// PeeholeOptimize();
+class ArmBlock : public MachineBlock<Arm_baseins*,ArmFunc*>{
 public:
-    int label_id;
-    std::deque<Arm_baseins*> instructions;
     void emit(std::ostream& s);
-    Arm_block(int id):label_id(id){}
-    template<class T>
-    void ConvertAndAppend(T ins);
+    ArmBlock(int id):MachineBlock(id){}
 };
-class Arm_func{
+
+class ArmFunc : public MachineFunc<ArmBlock*,ArmUnit*>{
 public:
-    std::string func_name;
-    std::vector<Arm_block*> blocks{};
     void emit(std::ostream& s);
-    Arm_func(std::string name):func_name(name){}
+    ArmFunc(std::string name):MachineFunc(name){}
 };
-class Arm_asm{
+
+class ArmUnit : public MachineUnit<ArmFunc*>{
 public:
-    std::vector<Instruction> global_def{};
-    std::vector<Arm_func*> functions;
     void emit(std::ostream& s);
-    Arm_asm(LLVMIR& IR);
+};
+
+class ArmSelector : public MachineSelector<ArmUnit,ArmBlock>{
+private:
+    std::map<FuncDefInstruction,int> alloca_offset_map{};
+    std::map<FuncDefInstruction,int> cur_vregi{};
+    std::map<FuncDefInstruction,int> cur_vregf{};
+    struct tagLastCond{
+        enum condType{ICMP = 0,FCMP = 1}cond_type;
+        union condContent{
+            enum IcmpCond cond_icmp;
+            enum FcmpCond comd_fcmp;
+        }cond_content;
+    }last_cond;
+    
+public:
+    ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector<ArmUnit,ArmBlock>(Dest,IR){}
+    void SelectInstruction();
+
+    template<class INSPTR>
+    void ConvertAndAppend(INSPTR,ArmBlock*);
 };
 #endif

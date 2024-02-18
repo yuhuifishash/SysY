@@ -16,6 +16,9 @@ public:
     virtual void printArm(std::ostream& s) = 0;
 };
 
+void printCond(std::ostream& s,int cond);
+void printRegList(std::ostream& s,const std::vector<Register>& reglist);
+
 class Arm_binary : Arm_baseins{
 public:
     enum {ADD = 0,ADC,SUB,SBC,RSB,RSC,AND,EOR,ORR,ORN,BIC};
@@ -102,11 +105,12 @@ public:
 class Arm_movwt : Arm_baseins{
 public:
     enum {MOVW = 0,MOVT};
+    int opcode;
     Register R;
     int imm16;
     virtual void printArm(std::ostream& s);
-    Arm_movwt(Register R,int imm16,int cond,std::string comment = std::string())
-    :R(R),imm16(imm16){
+    Arm_movwt(int opcode,Register R,int imm16,int cond,std::string comment = std::string())
+    :opcode(opcode),R(R),imm16(imm16){
         ins_type = MOVWT;
         this->cond = cond;
         this->comment = comment;
@@ -153,10 +157,10 @@ public:
     // legnth == 2 , 0010 0010 ==> pattern = 'TE'
     // legnth == 2 , 0010 0001 ==> pattern = 'ET'
     // length == 3 , 0011 0101 ==> pattern = 'TET'
-    int pattern;
+    unsigned pattern;
     // assist functions like setlegnth(),setbit() may be helpful
     virtual void printArm(std::ostream& s);
-    Arm_it(int pattern,int cond,std::string comment = std::string())
+    Arm_it(unsigned pattern,int cond,std::string comment = std::string())
     :pattern(pattern){
         ins_type = IT;
         this->cond = cond;
@@ -241,6 +245,7 @@ public:
     enum {LOAD = 0,STORE};
     int op;
     enum {IA = 0,IB,DA,DB};
+    int mode;
     Register Rn;
     bool dowriteback;
     std::vector<Register> reglist;
@@ -256,10 +261,11 @@ public:
 
 class Arm_pushpop : Arm_baseins{
     enum {PUSH = 0,POP};
+    int opcode;
     std::vector<Register> reglist;
     virtual void printArm(std::ostream& s);
-    Arm_pushpop(std::vector<Register> reglist,int cond,std::string comment = std::string())
-    :reglist(reglist){
+    Arm_pushpop(int opcode,std::vector<Register> reglist,int cond,std::string comment = std::string())
+    :opcode(opcode),reglist(reglist){
         ins_type = LOADSTOREM;
         this->cond = cond;
         this->comment = comment;
@@ -268,17 +274,19 @@ class Arm_pushpop : Arm_baseins{
 
 class VFP_vbin : Arm_baseins{
     enum {VADD = 0,VSUM,VMUL,VDIV};
+    int opcode;
     int P;
     Register Fd,Fn,Fm;
     virtual void printArm(std::ostream& s);
-    VFP_vbin(int P,Register Fd,Register Fn,Register Fm,int cond,std::string comment = std::string())
-    :P(P),Fd(Fd),Fn(Fn),Fm(Fm){
+    VFP_vbin(int opcode,int P,Register Fd,Register Fn,Register Fm,int cond,std::string comment = std::string())
+    :opcode(opcode),P(P),Fd(Fd),Fn(Fn),Fm(Fm){
         ins_type = VBIN;
         this->cond = cond;
         this->comment = comment;
     }
 };// VADD VSUB VMUL VDIV
 class VFP_vcmp : Arm_baseins{
+public:
     bool E;
     int P;
     Register Fd,Fm;
@@ -291,47 +299,61 @@ class VFP_vcmp : Arm_baseins{
     }
 };
 class VFP_vcvt : Arm_baseins{
+public:
+    enum{F64 = 0,F32,S32};
+    int dstType,srcType;
     bool R;
-    int type;
-    Register Fd,Fm;
-    int fbits;
+    Register Rd,Rs;
     virtual void printArm(std::ostream& s);
-    VFP_vcvt(bool R,int type,Register Fd,Register Fm,int fbits,int cond,std::string comment = std::string())
-    :R(R),type(type),Fd(Fd),Fm(Fm),fbits(fbits){
+    VFP_vcvt(int dstType,int srcType,Register Rd,Register Rs,int cond,std::string comment,bool R=false):
+    dstType(dstType),srcType(srcType),Rd(Rd),Rs(Rs),R(R){
         ins_type = VCVT;
         this->cond = cond;
         this->comment = comment;
     }
 };
 class VFP_vmov : Arm_baseins{
+public:
+    enum{NONE = 0,F32,F64};
     int P;
-    Register Fd,Fm,Fn;
+    Register Rd,Rs;
     virtual void printArm(std::ostream& s);
-    VFP_vmov(int P,Register Fd,Register Fm,Register Fn,int cond,std::string comment = std::string())
-    :P(P),Fd(Fd),Fm(Fm),Fn(Fn){
+    VFP_vmov(int P,Register Rd,Register Rs,int cond,std::string comment = std::string())
+    :P(P),Rd(Rd),Rs(Rs){
         ins_type = VMOV;
         this->cond = cond;
         this->comment = comment;
     }
 };
 class VFP_vldst : Arm_baseins{
+public:
     enum {VLDR = 0,VSTR};
-    Register Fd;
-    int immed,label;
+    int op;
+    Register Fd,Rn;
+    int immed;
+    Label label;
+    int islabel;
     virtual void printArm(std::ostream& s);
-    VFP_vldst(Register Fd,int immed,int label,int cond,std::string comment = std::string())
-    :Fd(Fd),immed(immed),label(label){
+private:
+    VFP_vldst(int op,Register Fd,Register Rn,Label label,int islabel,int cond,std::string comment)
+    :op(op),Fd(Fd),Rn(Rn),label(label),islabel(islabel){
         ins_type = VLDST;
         this->cond = cond;
         this->comment = comment;
     }
+public:
+    VFP_vldst(int op,Register Fd,Label label,int cond,std::string comment)
+    :VFP_vldst(op,Fd,Register(0,Register::I32,0),label,1,cond,comment){}
+    VFP_vldst(int op,Register Fd,Register Rn,int immed)
+    :VFP_vldst(op,Fd,Rn,std::string(),0,cond,comment){}
 };// VLDR VSTR
 class VFP_vpushpop : Arm_baseins {
     enum {VPUSH = 0,VPOP};
+    int opcode;
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vpushpop(std::vector<Register> VFPregs,int cond,std::string comment = std::string())
-    :VFPregs(VFPregs){
+    VFP_vpushpop(int opcode,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
+    :opcode(opcode),VFPregs(VFPregs){
         ins_type = VPUSHPOP;
         this->cond = cond;
         this->comment = comment;
@@ -339,11 +361,13 @@ class VFP_vpushpop : Arm_baseins {
 };// VPUSH VPOP
 class VFP_vstm : Arm_baseins {
     enum {VSTM = 0,VSTMDB,VLDM,VLDMDB};
+    int opcode;
     Register Rn;
+    bool dowriteback;
     std::vector<Register> VFPregs;
     virtual void printArm(std::ostream& s);
-    VFP_vstm(Register Rn,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
-    :Rn(Rn),VFPregs(VFPregs){
+    VFP_vstm(int opcode,Register Rn,bool dowriteback,std::vector<Register> VFPregs,int cond,std::string comment = std::string())
+    :opcode(opcode),Rn(Rn),dowriteback(dowriteback),VFPregs(VFPregs){
         ins_type = _VSTM;
         this->cond = cond;
         this->comment = comment;
