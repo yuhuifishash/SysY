@@ -20,12 +20,10 @@ L0:  ;
 L1:  ;
     %r8 = getelementptr i32, ptr %r0, i32 %r1
     %r9 = load i32, ptr %r8
-    %r11 = getelementptr i32, ptr %r0, i32 %r1
     %r13 = getelementptr i32, ptr %r0, i32 %r2
     %r14 = load i32, ptr %r13
-    store i32 %r14, ptr %r11
-    %r16 = getelementptr i32, ptr %r0, i32 %r2
-    store i32 %r9, ptr %r16
+    store i32 %r14, ptr %r8
+    store i32 %r9, ptr %r13
     ret i32 0
 }
 define i32 @heap_sort(ptr %r0,i32 %r1)
@@ -50,16 +48,14 @@ L4:  ;
     %r28 = sub i32 %r1,1
     br label %L5
 L5:  ;
-    %r53 = phi i32 [%r28,%L4],[%r48,%L6]
+    %r53 = phi i32 [%r28,%L4],[%r41,%L6]
     %r31 = icmp sgt i32 %r53,0
     br i1 %r31, label %L6, label %L7
 L6:  ;
     %r35 = getelementptr i32, ptr %r0
     %r38 = call i32 @swap(ptr %r35,i32 0,i32 %r53)
     %r41 = sub i32 %r53,1
-    %r42 = getelementptr i32, ptr %r0
-    %r45 = call i32 @heap_ajust(ptr %r42,i32 0,i32 %r41)
-    %r48 = sub i32 %r53,1
+    %r45 = call i32 @heap_ajust(ptr %r35,i32 0,i32 %r41)
     br label %L5
 L7:  ;
     ret i32 0

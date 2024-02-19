@@ -133,9 +133,8 @@ L2:  ;
     %r11 = fadd float 0x0,0x401921fb60000000
     %r12 = fdiv float %r0,%r11
     %r13 = fptosi float %r12 to i32
-    %r16 = fadd float 0x0,0x401921fb60000000
     %r17 = sitofp i32 %r13 to float
-    %r18 = fmul float %r17,%r16
+    %r18 = fmul float %r17,%r11
     %r19 = fsub float %r0,%r18
     br label %L3
 L3:  ;
@@ -199,13 +198,11 @@ L0:  ;
     br label %L1
 L1:  ;
     %r8 = fadd float 0x3fd99999a0000000,0x0
-    %r9 = fadd float 0x3fd99999a0000000,0x0
     %r10 = fadd float 0x3fb99999a0000000,0x0
-    %r11 = call float @circle_sdf(float %r0,float %r1,float %r8,float %r9,float %r10)
+    %r11 = call float @circle_sdf(float %r0,float %r1,float %r8,float %r8,float %r10)
     %r15 = fadd float 0x3fe3333340000000,0x0
-    %r16 = fadd float 0x3fe3333340000000,0x0
     %r17 = fadd float 0x3fa99999a0000000,0x0
-    %r18 = call float @circle_sdf(float %r0,float %r1,float %r15,float %r16,float %r17)
+    %r18 = call float @circle_sdf(float %r0,float %r1,float %r15,float %r15,float %r17)
     %r21 = fcmp olt float %r11,%r18
     br i1 %r21, label %L2, label %L3
 L2:  ;
@@ -334,8 +331,7 @@ L6:  ;
     %r24 = sitofp i32 %r56 to float
     %r28 = sitofp i32 192 to float
     %r29 = fdiv float %r21,%r28
-    %r32 = sitofp i32 192 to float
-    %r33 = fdiv float %r24,%r32
+    %r33 = fdiv float %r24,%r28
     %r34 = call float @sample(float %r29,float %r33)
     %r35 = fadd float 0x406fe00000000000,0x0
     %r36 = fmul float %r34,%r35

@@ -27,12 +27,10 @@ L2:  ;
     ret i32 %r0
 L3:  ;
     %r9 = getelementptr [1005 x i32], ptr @parent, i32 0, i32 %r0
-    %r11 = getelementptr [1005 x i32], ptr @parent, i32 0, i32 %r0
-    %r12 = load i32, ptr %r11
+    %r12 = load i32, ptr %r9
     %r13 = call i32 @find(i32 %r12)
     store i32 %r13, ptr %r9
-    %r15 = getelementptr [1005 x i32], ptr @parent, i32 0, i32 %r0
-    %r16 = load i32, ptr %r15
+    %r16 = load i32, ptr %r9
     ret i32 %r16
 }
 define void @merge(i32 %r0,i32 %r1)

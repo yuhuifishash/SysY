@@ -87,9 +87,7 @@ L10:  ;
 L11:  ;
     %r29 = load i32, ptr @ptr
     %r30 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r29
-    %r31 = load i32, ptr @ptr
-    %r32 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r31
-    %r33 = load i32, ptr %r32
+    %r33 = load i32, ptr %r30
     %r35 = add i32 %r33,1
     store i32 %r35, ptr %r30
     br label %L13
@@ -103,9 +101,7 @@ L13:  ;
 L14:  ;
     %r39 = load i32, ptr @ptr
     %r40 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r39
-    %r41 = load i32, ptr @ptr
-    %r42 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r41
-    %r43 = load i32, ptr %r42
+    %r43 = load i32, ptr %r40
     %r45 = sub i32 %r43,1
     store i32 %r45, ptr %r40
     br label %L16

@@ -184,9 +184,7 @@ L17:  ;
     store i32 %r164, ptr %r169
     %r173 = sub i32 %r227,1
     %r174 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r173
-    %r177 = sub i32 %r227,1
-    %r178 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r177
-    %r179 = load i32, ptr %r178
+    %r179 = load i32, ptr %r174
     %r182 = sdiv i32 %r164,10
     %r183 = add i32 %r179,%r182
     store i32 %r183, ptr %r174

@@ -51,8 +51,7 @@ L1:  ;
     store i32 2, ptr %r30
     %r32 = getelementptr [16 x i32], ptr %r0, i32 0, i32 15
     store i32 3, ptr %r32
-    %r101 = getelementptr [16 x i32], ptr %r0, i32 0, i32 3
-    %r102 = load i32, ptr %r101
+    %r102 = load i32, ptr %r8
     %r103 = add i32 71,%r102
     ret i32 %r103
 }

@@ -1,49 +1,7 @@
-int f()
-{
-	putint(12);	
-}
-
-int g()
-{
-	f();
-}
-
-int h()
-{
-	g();
-}
-
-int ff()
-{
-	f();
-	g();
-	h();
-}
-
-int gg()
-{
-	return 3;
-}
-
-int hh()
-{
-	gg();
-}
-
-int fff()
-{
-	hh();
-}
-
-int ggg()
-{
-	fff();
-	gg();
-	ff();
-}
-
 int main()
 {
-	g();
-	ff();
+	int A[100]={};
+	int n = getint();
+	A[n] = 3*A[n]/A[n] + A[n];
+	return A[n];
 }

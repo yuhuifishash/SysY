@@ -60,8 +60,7 @@ L1:  ;
     store i32 3, ptr %r37
     %r39 = getelementptr [4 x [2 x i32]], ptr %r31, i32 0, i32 2, i32 0
     store i32 5, ptr %r39
-    %r42 = getelementptr [4 x [2 x i32]], ptr %r0, i32 0, i32 3, i32 0
-    %r43 = load i32, ptr %r42
+    %r43 = load i32, ptr %r10
     %r44 = getelementptr [4 x [2 x i32]], ptr %r31, i32 0, i32 3, i32 0
     store i32 %r43, ptr %r44
     %r46 = getelementptr [4 x [2 x i32]], ptr %r31, i32 0, i32 3, i32 1
@@ -71,8 +70,7 @@ L1:  ;
     %r51 = load i32, ptr %r50
     %r52 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 0, i32 0, i32 0
     store i32 %r51, ptr %r52
-    %r55 = getelementptr [4 x [2 x i32]], ptr %r14, i32 0, i32 2, i32 1
-    %r56 = load i32, ptr %r55
+    %r56 = load i32, ptr %r26
     %r57 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 0, i32 1, i32 0
     store i32 %r56, ptr %r57
     %r59 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 1, i32 0, i32 0
@@ -87,16 +85,12 @@ L1:  ;
     store i32 7, ptr %r67
     %r69 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 3, i32 1, i32 0
     store i32 8, ptr %r69
-    %r73 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 3, i32 1, i32 0
-    %r74 = load i32, ptr %r73
-    %r78 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 0, i32 0, i32 0
-    %r79 = load i32, ptr %r78
+    %r74 = load i32, ptr %r69
+    %r79 = load i32, ptr %r52
     %r80 = add i32 %r74,%r79
-    %r84 = getelementptr [4 x [2 x [1 x i32]]], ptr %r47, i32 0, i32 0, i32 1, i32 0
-    %r85 = load i32, ptr %r84
+    %r85 = load i32, ptr %r57
     %r86 = add i32 %r80,%r85
-    %r89 = getelementptr [4 x [2 x i32]], ptr %r31, i32 0, i32 3, i32 0
-    %r90 = load i32, ptr %r89
+    %r90 = load i32, ptr %r44
     %r91 = add i32 %r86,%r90
     ret i32 %r91
 }

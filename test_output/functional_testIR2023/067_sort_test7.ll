@@ -118,7 +118,6 @@ L1:  ;
     %r2 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0
     %r3 = call i32 @getarray(ptr %r2)
     call void @merge_sort(i32 0,i32 %r3)
-    %r8 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0
-    call void @putarray(i32 %r3,ptr %r8)
+    call void @putarray(i32 %r3,ptr %r2)
     ret i32 0
 }

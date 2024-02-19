@@ -47,12 +47,10 @@ L2:  ;
     ret i32 %r0
 L3:  ;
     %r9 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r0
-    %r11 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r0
-    %r12 = load i32, ptr %r11
+    %r12 = load i32, ptr %r9
     %r13 = call i32 @findfa(i32 %r12)
     store i32 %r13, ptr %r9
-    %r15 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r0
-    %r16 = load i32, ptr %r15
+    %r16 = load i32, ptr %r9
     ret i32 %r16
 }
 define void @mmerge(i32 %r0,i32 %r1)
@@ -88,9 +86,7 @@ L3:  ;
     store i32 4, ptr @n
     %r20 = load i32, ptr @n
     call void @init(i32 %r20)
-    %r22 = load i32, ptr @n
-    %r23 = load i32, ptr @n
-    %r24 = mul i32 %r22,%r23
+    %r24 = mul i32 %r20,%r20
     %r26 = add i32 %r24,1
     br label %L5
 L4:  ;

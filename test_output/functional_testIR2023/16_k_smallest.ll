@@ -22,12 +22,10 @@ L0:  ;
 L1:  ;
     %r6 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r0
     %r7 = load i32, ptr %r6
-    %r9 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r0
     %r11 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r1
     %r12 = load i32, ptr %r11
-    store i32 %r12, ptr %r9
-    %r14 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r1
-    store i32 %r7, ptr %r14
+    store i32 %r12, ptr %r6
+    store i32 %r7, ptr %r11
     ret void
 }
 define void @findSmallest(i32 %r0,i32 %r1,i32 %r2,i32 %r3)

@@ -43,9 +43,7 @@ L6:  ;
     %r25 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r171
     %r27 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r171
     %r28 = load i32, ptr %r27
-    %r30 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r171
-    %r31 = load i32, ptr %r30
-    %r32 = mul i32 %r28,%r31
+    %r32 = mul i32 %r28,%r28
     %r34 = srem i32 %r32,10
     store i32 %r34, ptr %r25
     %r37 = add i32 %r171,1
@@ -60,9 +58,7 @@ L9:  ;
     %r43 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r172
     %r45 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r172
     %r46 = load i32, ptr %r45
-    %r48 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r172
-    %r49 = load i32, ptr %r48
-    %r50 = mul i32 %r46,%r49
+    %r50 = mul i32 %r46,%r46
     %r52 = srem i32 %r50,100
     %r54 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r172
     %r55 = load i32, ptr %r54

@@ -79,14 +79,11 @@ L1:  ;
     store i32 3, ptr %r32
     %r36 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 9
     store i32 9, ptr %r36
-    %r42 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 1
-    %r43 = load i32, ptr %r42
+    %r43 = load i32, ptr %r4
     %r44 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0
-    %r47 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 3
-    %r48 = load i32, ptr %r47
+    %r48 = load i32, ptr %r8
     %r50 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17
-    %r53 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 3
-    %r54 = load i32, ptr %r53
+    %r54 = load i32, ptr %r32
     %r57 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 0
     %r58 = load i32, ptr %r57
     %r60 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6

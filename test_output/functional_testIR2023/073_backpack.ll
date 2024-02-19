@@ -51,11 +51,10 @@ L9:  ;
     %r38 = sub i32 %r112,1
     %r40 = getelementptr [200 x [200 x i32]], ptr @V, i32 0, i32 %r38, i32 %r109
     %r41 = load i32, ptr %r40
-    %r45 = sub i32 %r112,1
     %r48 = getelementptr i32, ptr %r1, i32 %r112
     %r49 = load i32, ptr %r48
     %r50 = sub i32 %r109,%r49
-    %r51 = getelementptr [200 x [200 x i32]], ptr @V, i32 0, i32 %r45, i32 %r50
+    %r51 = getelementptr [200 x [200 x i32]], ptr @V, i32 0, i32 %r38, i32 %r50
     %r52 = load i32, ptr %r51
     %r54 = getelementptr i32, ptr %r2, i32 %r112
     %r55 = load i32, ptr %r54

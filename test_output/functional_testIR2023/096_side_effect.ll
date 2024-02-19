@@ -46,8 +46,7 @@ L4:  ;
     %r37 = load i32, ptr @b
     call void @putint(i32 %r37)
     call void @putch(i32 10)
-    %r39 = load i32, ptr @a
-    ret i32 %r39
+    ret i32 %r35
 L5:  ;
     %r11 = load i32, ptr @a
     call void @putint(i32 %r11)

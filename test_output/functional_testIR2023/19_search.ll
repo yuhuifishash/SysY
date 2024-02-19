@@ -191,8 +191,7 @@ L15:  ;
     %r37 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r84, i32 %r81
     %r38 = call i32 @getint()
     store i32 %r38, ptr %r37
-    %r41 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r84, i32 %r81
-    %r42 = load i32, ptr %r41
+    %r42 = load i32, ptr %r37
     %r44 = icmp eq i32 %r42,2
     br i1 %r44, label %L17, label %L18
 L16:  ;

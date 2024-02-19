@@ -58,8 +58,7 @@ L3:  ;
     %r15 = sub i32 %r0,1
     call void @hanoi(i32 %r15,i32 %r1,i32 %r3,i32 %r2)
     call void @move(i32 %r1,i32 %r3)
-    %r23 = sub i32 %r0,1
-    call void @hanoi(i32 %r23,i32 %r2,i32 %r1,i32 %r3)
+    call void @hanoi(i32 %r15,i32 %r2,i32 %r1,i32 %r3)
     br label %L4
 L4:  ;
     ret void

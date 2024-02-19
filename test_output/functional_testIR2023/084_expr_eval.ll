@@ -154,12 +154,10 @@ L0:  ;
     br label %L1
 L1:  ;
     %r4 = getelementptr i32, ptr %r0, i32 0
-    %r6 = getelementptr i32, ptr %r0, i32 0
-    %r7 = load i32, ptr %r6
+    %r7 = load i32, ptr %r4
     %r9 = add i32 %r7,1
     store i32 %r9, ptr %r4
-    %r11 = getelementptr i32, ptr %r0, i32 0
-    %r12 = load i32, ptr %r11
+    %r12 = load i32, ptr %r4
     %r13 = getelementptr i32, ptr %r0, i32 %r12
     store i32 %r1, ptr %r13
     ret void
@@ -173,11 +171,8 @@ L1:  ;
     %r4 = load i32, ptr %r3
     %r5 = getelementptr i32, ptr %r0, i32 %r4
     %r6 = load i32, ptr %r5
-    %r8 = getelementptr i32, ptr %r0, i32 0
-    %r10 = getelementptr i32, ptr %r0, i32 0
-    %r11 = load i32, ptr %r10
-    %r13 = sub i32 %r11,1
-    store i32 %r13, ptr %r8
+    %r13 = sub i32 %r4,1
+    store i32 %r13, ptr %r3
     ret i32 %r6
 }
 define i32 @stack_peek(ptr %r0)
@@ -285,11 +280,9 @@ L11:  ;
     %r29 = call i32 @stack_pop(ptr %r28)
     %r31 = getelementptr [256 x i32], ptr %r0, i32 0
     %r32 = call i32 @stack_pop(ptr %r31)
-    %r34 = getelementptr [256 x i32], ptr %r0, i32 0
-    %r35 = call i32 @stack_pop(ptr %r34)
-    %r36 = getelementptr [256 x i32], ptr %r0, i32 0
+    %r35 = call i32 @stack_pop(ptr %r31)
     %r40 = call i32 @eval_op(i32 %r29,i32 %r35,i32 %r32)
-    call void @stack_push(ptr %r36,i32 %r40)
+    call void @stack_push(ptr %r31,i32 %r40)
     br label %L10
 L12:  ;
     %r41 = getelementptr [256 x i32], ptr %r1, i32 0
@@ -323,11 +316,9 @@ L17:  ;
     %r56 = call i32 @stack_pop(ptr %r55)
     %r58 = getelementptr [256 x i32], ptr %r0, i32 0
     %r59 = call i32 @stack_pop(ptr %r58)
-    %r61 = getelementptr [256 x i32], ptr %r0, i32 0
-    %r62 = call i32 @stack_pop(ptr %r61)
-    %r63 = getelementptr [256 x i32], ptr %r0, i32 0
+    %r62 = call i32 @stack_pop(ptr %r58)
     %r67 = call i32 @eval_op(i32 %r56,i32 %r62,i32 %r59)
-    call void @stack_push(ptr %r63,i32 %r67)
+    call void @stack_push(ptr %r58,i32 %r67)
     br label %L16
 L18:  ;
     %r68 = getelementptr [256 x i32], ptr %r0, i32 0

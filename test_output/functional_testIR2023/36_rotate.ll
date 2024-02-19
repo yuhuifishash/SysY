@@ -90,9 +90,8 @@ L2:  ;
     %r11 = fadd float 0x0,0x401921fb60000000
     %r12 = fdiv float %r0,%r11
     %r13 = fptosi float %r12 to i32
-    %r16 = fadd float 0x0,0x401921fb60000000
     %r17 = sitofp i32 %r13 to float
-    %r18 = fmul float %r17,%r16
+    %r18 = fmul float %r17,%r11
     %r19 = fsub float %r0,%r18
     br label %L3
 L3:  ;
@@ -206,10 +205,8 @@ L1:  ;
     %r39 = sitofp i32 %r15 to float
     %r40 = fadd float %r37,%r39
     %r41 = fptosi float %r40 to i32
-    %r45 = sitofp i32 %r23 to float
-    %r46 = fmul float %r45,%r8
-    %r49 = sitofp i32 %r27 to float
-    %r50 = fmul float %r49,%r11
+    %r46 = fmul float %r31,%r8
+    %r50 = fmul float %r35,%r11
     %r51 = fadd float %r46,%r50
     %r53 = sitofp i32 %r19 to float
     %r54 = fadd float %r51,%r53

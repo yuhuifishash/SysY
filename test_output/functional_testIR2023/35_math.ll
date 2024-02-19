@@ -124,8 +124,7 @@ L1:  ;
     %r7 = sitofp i32 1 to float
     %r8 = fsub float %r7,%r6
     %r9 = call float @my_sqrt(float %r8)
-    %r10 = sitofp i32 1 to float
-    %r11 = fdiv float %r10,%r9
+    %r11 = fdiv float %r7,%r9
     ret float %r11
 }
 define float @simpson(float %r0,float %r1,i32 %r2)
@@ -192,8 +191,7 @@ L1:  ;
     br i1 %r39, label %L2, label %L3
 L2:  ;
     %r42 = fadd float %r23,%r28
-    %r45 = fadd float %r23,%r28
-    %r47 = fsub float %r45,%r3
+    %r47 = fsub float %r42,%r3
     %r48 = fadd float 0x402e000000000000,0x0
     %r49 = fdiv float %r47,%r48
     %r50 = fadd float %r42,%r49
@@ -202,9 +200,7 @@ L3:  ;
     %r55 = sitofp i32 2 to float
     %r56 = fdiv float %r2,%r55
     %r59 = call float @asr5(float %r0,float %r18,float %r56,float %r23,i32 %r4)
-    %r64 = sitofp i32 2 to float
-    %r65 = fdiv float %r2,%r64
-    %r68 = call float @asr5(float %r18,float %r1,float %r65,float %r28,i32 %r4)
+    %r68 = call float @asr5(float %r18,float %r1,float %r56,float %r28,i32 %r4)
     %r69 = fadd float %r59,%r68
     ret float %r69
 }

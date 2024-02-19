@@ -23,15 +23,13 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     %r7 = getelementptr i32, ptr %r0, i32 0
-    %r9 = getelementptr i32, ptr %r0, i32 0
-    %r10 = load i32, ptr %r9
+    %r10 = load i32, ptr %r7
     %r12 = add i32 %r10,1
     store i32 %r12, ptr %r7
     br label %L4
 L3:  ;
     %r14 = getelementptr i32, ptr %r0, i32 0
-    %r16 = getelementptr i32, ptr %r0, i32 0
-    %r17 = load i32, ptr %r16
+    %r17 = load i32, ptr %r14
     %r19 = mul i32 %r17,2
     store i32 %r19, ptr %r14
     %r20 = getelementptr i32, ptr %r0
@@ -61,8 +59,7 @@ L1:  ;
     br i1 %r6, label %L2, label %L3
 L2:  ;
     %r8 = getelementptr i32, ptr %r0, i32 0
-    %r10 = getelementptr i32, ptr %r0, i32 0
-    %r11 = load i32, ptr %r10
+    %r11 = load i32, ptr %r8
     %r13 = getelementptr i32, ptr %r1, i32 0
     %r14 = load i32, ptr %r13
     %r15 = add i32 %r11,%r14
@@ -70,8 +67,7 @@ L2:  ;
     br label %L4
 L3:  ;
     %r17 = getelementptr i32, ptr %r0, i32 0
-    %r19 = getelementptr i32, ptr %r0, i32 0
-    %r20 = load i32, ptr %r19
+    %r20 = load i32, ptr %r17
     %r22 = mul i32 %r20,2
     store i32 %r22, ptr %r17
     %r23 = getelementptr i32, ptr %r0
@@ -103,8 +99,7 @@ L1:  ;
     br i1 %r6, label %L2, label %L3
 L2:  ;
     %r8 = getelementptr i32, ptr %r0, i32 0
-    %r10 = getelementptr i32, ptr %r0, i32 0
-    %r11 = load i32, ptr %r10
+    %r11 = load i32, ptr %r8
     %r13 = getelementptr i32, ptr %r1, i32 0
     %r14 = load i32, ptr %r13
     %r15 = sub i32 %r11,%r14
@@ -112,8 +107,7 @@ L2:  ;
     br label %L4
 L3:  ;
     %r17 = getelementptr i32, ptr %r0, i32 0
-    %r19 = getelementptr i32, ptr %r0, i32 0
-    %r20 = load i32, ptr %r19
+    %r20 = load i32, ptr %r17
     %r22 = mul i32 %r20,2
     store i32 %r22, ptr %r17
     %r23 = getelementptr i32, ptr %r0
@@ -192,18 +186,14 @@ L6:  ;
     %r45 = getelementptr [1 x i32], ptr %r1, i32 0
     call void @add(ptr %r44,ptr %r45)
     %r46 = getelementptr [1 x i32], ptr %r0, i32 0
-    %r47 = getelementptr [1 x i32], ptr %r1, i32 0
-    call void @add(ptr %r46,ptr %r47)
-    %r49 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0
-    %r50 = getelementptr [1 x i32], ptr %r1, i32 0
-    call void @sub(ptr %r49,ptr %r50)
+    call void @add(ptr %r46,ptr %r45)
+    call void @sub(ptr %r44,ptr %r45)
     br label %L5
 L7:  ;
     %r51 = getelementptr [1 x i32], ptr @i, i32 0
     call void @inc(ptr %r51)
-    %r52 = getelementptr [1 x i32], ptr @i, i32 0
     %r54 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0
-    call void @add(ptr %r52,ptr %r54)
+    call void @add(ptr %r51,ptr %r54)
     %r56 = getelementptr [1 x i32], ptr @i, i32 0, i32 0
     %r57 = load i32, ptr %r56
     %r60 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0, i32 1

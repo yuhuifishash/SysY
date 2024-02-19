@@ -122,8 +122,7 @@ L3:  ;
     %r6 = getelementptr i32, ptr %r0, i32 %r20
     %r7 = call i32 @getch()
     store i32 %r7, ptr %r6
-    %r9 = getelementptr i32, ptr %r0, i32 %r20
-    %r10 = load i32, ptr %r9
+    %r10 = load i32, ptr %r6
     %r12 = icmp eq i32 %r10,10
     br i1 %r12, label %L5, label %L6
 L4:  ;
@@ -147,9 +146,7 @@ L1:  ;
     %r3 = call i32 @read_str(ptr %r2)
     %r4 = getelementptr [4096 x i32], ptr %r1, i32 0
     %r5 = call i32 @read_str(ptr %r4)
-    %r6 = getelementptr [4096 x i32], ptr %r0, i32 0
-    %r7 = getelementptr [4096 x i32], ptr %r1, i32 0
-    %r8 = call i32 @KMP(ptr %r6,ptr %r7)
+    %r8 = call i32 @KMP(ptr %r2,ptr %r4)
     call void @putint(i32 %r8)
     call void @putch(i32 10)
     ret i32 0

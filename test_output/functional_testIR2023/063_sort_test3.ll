@@ -40,8 +40,7 @@ L6:  ;
     %r76 = getelementptr i32, ptr %r0
     %r79 = call i32 @QuickSort(ptr %r76,i32 %r1,i32 %r75)
     %r82 = add i32 %r95,1
-    %r83 = getelementptr i32, ptr %r0
-    %r86 = call i32 @QuickSort(ptr %r83,i32 %r82,i32 %r2)
+    %r86 = call i32 @QuickSort(ptr %r76,i32 %r82,i32 %r2)
     br label %L3
 L7:  ;
     %r90 = phi i32 [%r91,%L5],[%r34,%L8]

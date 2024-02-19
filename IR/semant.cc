@@ -8,6 +8,7 @@ extern StringTable str_table;
 
 static int GlobalVarCnt = 0;
 std::map<std::string,VarAttribute> GlobalConstMap;
+std::map<std::string,int> GlobalMap;
 
 SemantTable semant_table;
 std::vector<std::string> error_msgs{};
@@ -800,6 +801,7 @@ void CompUnit_Decl::TypeCheck()
         if(def->IsConst()){
             GlobalConstMap[def->GetName()->get_string()] = val;
         }
+        GlobalMap[def->GetName()->get_string()] = GlobalVarCnt++;
         semant_table.GlobalTable[def->GetName()] = val;
 
         //add Global Decl llvm ins

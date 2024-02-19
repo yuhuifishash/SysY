@@ -78,16 +78,12 @@ L1:  ;
     %r4 = load i32, ptr @cnt
     %r5 = getelementptr [10005 x i32], ptr @to, i32 0, i32 %r4
     store i32 %r1, ptr %r5
-    %r7 = load i32, ptr @cnt
-    %r8 = getelementptr [10005 x i32], ptr @next, i32 0, i32 %r7
+    %r8 = getelementptr [10005 x i32], ptr @next, i32 0, i32 %r4
     %r10 = getelementptr [10005 x i32], ptr @head, i32 0, i32 %r0
     %r11 = load i32, ptr %r10
     store i32 %r11, ptr %r8
-    %r13 = getelementptr [10005 x i32], ptr @head, i32 0, i32 %r0
-    %r14 = load i32, ptr @cnt
-    store i32 %r14, ptr %r13
-    %r15 = load i32, ptr @cnt
-    %r17 = add i32 %r15,1
+    store i32 %r4, ptr %r10
+    %r17 = add i32 %r4,1
     store i32 %r17, ptr @cnt
     %r20 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r1, i32 0
     store i32 %r0, ptr %r20
@@ -123,7 +119,7 @@ L1:  ;
     store i32 %r1, ptr %r5
     br label %L2
 L2:  ;
-    %r47 = phi i32 [0,%L1],[%r28,%L3]
+    %r47 = phi i32 [0,%L1],[%r17,%L3]
     %r11 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r0, i32 %r47
     %r12 = load i32, ptr %r11
     %r13 = icmp ne i32 %r12,0
@@ -136,7 +132,6 @@ L3:  ;
     %r24 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r22, i32 %r47
     %r25 = load i32, ptr %r24
     store i32 %r25, ptr %r18
-    %r28 = add i32 %r47,1
     br label %L2
 L4:  ;
     %r30 = getelementptr [10005 x i32], ptr @head, i32 0, i32 %r0

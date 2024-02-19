@@ -36,13 +36,12 @@ L5:  ;
     %r21 = getelementptr i32, ptr %r0, i32 %r20
     %r22 = load i32, ptr %r21
     store i32 %r22, ptr %r17
-    %r25 = sub i32 %r33,1
     br label %L7
 L6:  ;
     %r28 = add i32 %r31,1
     br label %L7
 L7:  ;
-    %r32 = phi i32 [%r25,%L5],[%r33,%L6]
+    %r32 = phi i32 [%r20,%L5],[%r33,%L6]
     %r30 = phi i32 [%r31,%L5],[%r28,%L6]
     br label %L2
 }

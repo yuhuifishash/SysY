@@ -67,8 +67,7 @@ L13:  ;
     br label %L2
 L14:  ;
     %r48 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r73
-    %r50 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r73
-    %r51 = load i32, ptr %r50
+    %r51 = load i32, ptr %r48
     %r53 = sub i32 %r51,1
     store i32 %r53, ptr %r48
     br label %L15
@@ -113,8 +112,7 @@ L6:  ;
     %r16 = getelementptr [10 x [10 x i32]], ptr @map, i32 0, i32 %r31, i32 %r33
     store i32 1, ptr %r16
     %r19 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r33
-    %r21 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r33
-    %r22 = load i32, ptr %r21
+    %r22 = load i32, ptr %r19
     %r24 = add i32 %r22,1
     store i32 %r24, ptr %r19
     %r25 = call i32 @getint()

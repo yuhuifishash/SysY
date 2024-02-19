@@ -62,12 +62,10 @@ L1:  ;
     %r2 = fadd float 0x0,0x400921fb60000000
     %r4 = sitofp i32 %r0 to float
     %r5 = fmul float %r2,%r4
-    %r7 = sitofp i32 %r0 to float
-    %r8 = fmul float %r5,%r7
+    %r8 = fmul float %r5,%r4
     %r11 = mul i32 %r0,%r0
-    %r12 = fadd float 0x0,0x400921fb60000000
     %r13 = sitofp i32 %r11 to float
-    %r14 = fmul float %r13,%r12
+    %r14 = fmul float %r13,%r2
     %r15 = fadd float %r8,%r14
     %r17 = sitofp i32 2 to float
     %r18 = fdiv float %r15,%r17
@@ -138,9 +136,7 @@ L1:  ;
     %r8 = icmp eq i32 %r7,0
     %r9 = zext i1 %r8 to i32
     call void @assert(i32 %r9)
-    %r10 = fadd float 0x0,0x4041475ce0000000
-    %r11 = fadd float 0x0,0x4041475ce0000000
-    %r12 = call i32 @float_eq(float %r10,float %r11)
+    %r12 = call i32 @float_eq(float %r6,float %r6)
     call void @assert(i32 %r12)
     %r13 = fadd float 0x0,0x4016000000000000
     %r14 = fptosi float %r13 to i32
@@ -211,8 +207,7 @@ L13:  ;
     %r64 = fptosi float %r55 to i32
     %r65 = call float @circle_area(i32 %r64)
     %r67 = getelementptr [10 x float], ptr %r42, i32 0, i32 %r91
-    %r69 = getelementptr [10 x float], ptr %r42, i32 0, i32 %r91
-    %r70 = load float, ptr %r69
+    %r70 = load float, ptr %r67
     %r72 = fadd float %r70,%r55
     store float %r72, ptr %r67
     call void @putfloat(float %r61)

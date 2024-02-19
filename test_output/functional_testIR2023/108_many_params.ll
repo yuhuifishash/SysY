@@ -45,12 +45,10 @@ L7:  ;
 L8:  ;
     %r26 = getelementptr i32, ptr %r0, i32 %r44
     %r27 = load i32, ptr %r26
-    %r29 = getelementptr i32, ptr %r0, i32 %r44
     %r31 = getelementptr i32, ptr %r0, i32 %r43
     %r32 = load i32, ptr %r31
-    store i32 %r32, ptr %r29
-    %r34 = getelementptr i32, ptr %r0, i32 %r43
-    store i32 %r27, ptr %r34
+    store i32 %r32, ptr %r26
+    store i32 %r27, ptr %r31
     br label %L9
 L9:  ;
     %r38 = add i32 %r43,1
@@ -311,38 +309,22 @@ L1:  ;
     store i32 %r15, ptr %r64
     %r65 = getelementptr [16 x i32], ptr %r32, i32 0
     call void @sort(ptr %r65,i32 16)
-    %r68 = getelementptr [16 x i32], ptr %r32, i32 0, i32 0
-    %r69 = load i32, ptr %r68
-    %r71 = getelementptr [16 x i32], ptr %r32, i32 0, i32 1
-    %r72 = load i32, ptr %r71
-    %r74 = getelementptr [16 x i32], ptr %r32, i32 0, i32 2
-    %r75 = load i32, ptr %r74
-    %r77 = getelementptr [16 x i32], ptr %r32, i32 0, i32 3
-    %r78 = load i32, ptr %r77
-    %r80 = getelementptr [16 x i32], ptr %r32, i32 0, i32 4
-    %r81 = load i32, ptr %r80
-    %r83 = getelementptr [16 x i32], ptr %r32, i32 0, i32 5
-    %r84 = load i32, ptr %r83
-    %r86 = getelementptr [16 x i32], ptr %r32, i32 0, i32 6
-    %r87 = load i32, ptr %r86
-    %r89 = getelementptr [16 x i32], ptr %r32, i32 0, i32 7
-    %r90 = load i32, ptr %r89
-    %r92 = getelementptr [16 x i32], ptr %r32, i32 0, i32 8
-    %r93 = load i32, ptr %r92
-    %r95 = getelementptr [16 x i32], ptr %r32, i32 0, i32 9
-    %r96 = load i32, ptr %r95
-    %r98 = getelementptr [16 x i32], ptr %r32, i32 0, i32 10
-    %r99 = load i32, ptr %r98
-    %r101 = getelementptr [16 x i32], ptr %r32, i32 0, i32 11
-    %r102 = load i32, ptr %r101
-    %r104 = getelementptr [16 x i32], ptr %r32, i32 0, i32 12
-    %r105 = load i32, ptr %r104
-    %r107 = getelementptr [16 x i32], ptr %r32, i32 0, i32 13
-    %r108 = load i32, ptr %r107
-    %r110 = getelementptr [16 x i32], ptr %r32, i32 0, i32 14
-    %r111 = load i32, ptr %r110
-    %r113 = getelementptr [16 x i32], ptr %r32, i32 0, i32 15
-    %r114 = load i32, ptr %r113
+    %r69 = load i32, ptr %r34
+    %r72 = load i32, ptr %r36
+    %r75 = load i32, ptr %r38
+    %r78 = load i32, ptr %r40
+    %r81 = load i32, ptr %r42
+    %r84 = load i32, ptr %r44
+    %r87 = load i32, ptr %r46
+    %r90 = load i32, ptr %r48
+    %r93 = load i32, ptr %r50
+    %r96 = load i32, ptr %r52
+    %r99 = load i32, ptr %r54
+    %r102 = load i32, ptr %r56
+    %r105 = load i32, ptr %r58
+    %r108 = load i32, ptr %r60
+    %r111 = load i32, ptr %r62
+    %r114 = load i32, ptr %r64
     %r131 = call i32 @param32_rec(i32 %r69,i32 %r72,i32 %r75,i32 %r78,i32 %r81,i32 %r84,i32 %r87,i32 %r90,i32 %r93,i32 %r96,i32 %r99,i32 %r102,i32 %r105,i32 %r108,i32 %r111,i32 %r114,i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15)
     ret i32 %r131
 }
@@ -387,8 +369,7 @@ L3:  ;
     %r36 = sub i32 %r34,1
     store i32 %r36, ptr %r28
     %r39 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r118, i32 1
-    %r42 = sub i32 %r118,1
-    %r44 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r42, i32 0
+    %r44 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r31, i32 0
     %r45 = load i32, ptr %r44
     %r47 = sub i32 %r45,2
     store i32 %r47, ptr %r39

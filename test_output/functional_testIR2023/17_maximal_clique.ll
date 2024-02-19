@@ -136,11 +136,7 @@ L6:  ;
     %r30 = load i32, ptr %r29
     %r31 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r26, i32 %r30
     store i32 1, ptr %r31
-    %r35 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 1
-    %r36 = load i32, ptr %r35
-    %r39 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 0
-    %r40 = load i32, ptr %r39
-    %r41 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r36, i32 %r40
+    %r41 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r30, i32 %r26
     store i32 1, ptr %r41
     %r45 = add i32 %r51,1
     br label %L5

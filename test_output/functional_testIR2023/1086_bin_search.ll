@@ -20,14 +20,13 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r80 = phi i32 [0,%L1],[%r17,%L3]
+    %r80 = phi i32 [0,%L1],[%r14,%L3]
     %r9 = icmp slt i32 %r80,10
     br i1 %r9, label %L3, label %L4
 L3:  ;
     %r11 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r80
     %r14 = add i32 %r80,1
     store i32 %r14, ptr %r11
-    %r17 = add i32 %r80,1
     br label %L2
 L4:  ;
     %r29 = call i32 @getint()

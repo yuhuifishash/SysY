@@ -53,12 +53,10 @@ L9:  ;
 L10:  ;
     %r39 = getelementptr i32, ptr %r0, i32 %r55
     %r40 = load i32, ptr %r39
-    %r42 = getelementptr i32, ptr %r0, i32 %r55
     %r44 = getelementptr i32, ptr %r0, i32 %r58
     %r45 = load i32, ptr %r44
-    store i32 %r45, ptr %r42
-    %r47 = getelementptr i32, ptr %r0, i32 %r58
-    store i32 %r40, ptr %r47
+    store i32 %r45, ptr %r39
+    store i32 %r40, ptr %r44
     br label %L11
 L11:  ;
     %r51 = add i32 %r58,1

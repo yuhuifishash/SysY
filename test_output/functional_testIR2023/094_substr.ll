@@ -99,11 +99,9 @@ L1:  ;
     %r8 = load i32, ptr %r7
     store i32 %r8, ptr %r5
     %r10 = getelementptr [16 x i32], ptr %r3, i32 0, i32 1
-    %r12 = getelementptr i32, ptr %r0, i32 0
-    %r13 = load i32, ptr %r12
     %r15 = getelementptr i32, ptr %r0, i32 1
     %r16 = load i32, ptr %r15
-    %r17 = call i32 @MAX(i32 %r13,i32 %r16)
+    %r17 = call i32 @MAX(i32 %r8,i32 %r16)
     store i32 %r17, ptr %r10
     br label %L2
 L2:  ;
@@ -200,9 +198,8 @@ L1:  ;
     %r64 = call i32 @max_sum_nonadjacent(ptr %r62,i32 15)
     call void @putint(i32 %r64)
     call void @putch(i32 10)
-    %r66 = getelementptr [15 x i32], ptr %r0, i32 0
     %r68 = getelementptr [13 x i32], ptr %r31, i32 0
-    %r70 = call i32 @longest_common_subseq(ptr %r66,i32 15,ptr %r68,i32 13)
+    %r70 = call i32 @longest_common_subseq(ptr %r62,i32 15,ptr %r68,i32 13)
     call void @putint(i32 %r70)
     call void @putch(i32 10)
     ret i32 0

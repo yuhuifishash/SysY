@@ -122,8 +122,7 @@ L15:  ;
     %r160 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r0, i32 %r1, i32 %r2, i32 %r3, i32 %r4, i32 %r5
     %r163 = srem i32 %r176,1000000007
     store i32 %r163, ptr %r160
-    %r170 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r0, i32 %r1, i32 %r2, i32 %r3, i32 %r4, i32 %r5
-    %r171 = load i32, ptr %r170
+    %r171 = load i32, ptr %r160
     ret i32 %r171
 }
 define i32 @main()
@@ -197,13 +196,9 @@ L21:  ;
     %r64 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r121
     %r65 = call i32 @getint()
     store i32 %r65, ptr %r64
-    %r67 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r121
-    %r68 = load i32, ptr %r67
+    %r68 = load i32, ptr %r64
     %r69 = getelementptr [20 x i32], ptr @cns, i32 0, i32 %r68
-    %r71 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r121
-    %r72 = load i32, ptr %r71
-    %r73 = getelementptr [20 x i32], ptr @cns, i32 0, i32 %r72
-    %r74 = load i32, ptr %r73
+    %r74 = load i32, ptr %r69
     %r76 = add i32 %r74,1
     store i32 %r76, ptr %r69
     %r79 = add i32 %r121,1

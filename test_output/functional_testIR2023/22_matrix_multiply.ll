@@ -52,8 +52,7 @@ L8:  ;
     br i1 %r14, label %L9, label %L10
 L9:  ;
     %r17 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r46, i32 %r45
-    %r20 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r46, i32 %r45
-    %r21 = load i32, ptr %r20
+    %r21 = load i32, ptr %r17
     %r24 = getelementptr [100 x [100 x i32]], ptr @a, i32 0, i32 %r46, i32 %r43
     %r25 = load i32, ptr %r24
     %r28 = getelementptr [100 x [100 x i32]], ptr @b, i32 0, i32 %r43, i32 %r45

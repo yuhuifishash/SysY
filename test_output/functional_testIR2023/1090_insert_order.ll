@@ -36,7 +36,7 @@ L5:  ;
     %r15 = icmp slt i32 %r38,%r14
     br i1 %r15, label %L3, label %L4
 L6:  ;
-    %r37 = phi i32 [%r19,%L4],[%r35,%L7]
+    %r37 = phi i32 [%r19,%L4],[%r27,%L7]
     %r22 = icmp sgt i32 %r37,%r38
     br i1 %r22, label %L7, label %L8
 L7:  ;
@@ -47,7 +47,6 @@ L7:  ;
     store i32 %r29, ptr %r24
     %r31 = getelementptr i32, ptr %r0, i32 %r38
     store i32 %r1, ptr %r31
-    %r35 = sub i32 %r37,1
     br label %L6
 L8:  ;
     ret i32 0

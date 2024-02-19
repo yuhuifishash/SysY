@@ -86,20 +86,15 @@ L3:  ;
     %r21 = sitofp i32 %r102 to float
     store float %r21, ptr %r19
     %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r102
-    %r25 = sitofp i32 %r102 to float
-    store float %r25, ptr %r23
+    store float %r21, ptr %r23
     %r27 = getelementptr [3 x float], ptr %r5, i32 0, i32 %r102
-    %r29 = sitofp i32 %r102 to float
-    store float %r29, ptr %r27
+    store float %r21, ptr %r27
     %r31 = getelementptr [3 x float], ptr %r6, i32 0, i32 %r102
-    %r33 = sitofp i32 %r102 to float
-    store float %r33, ptr %r31
+    store float %r21, ptr %r31
     %r35 = getelementptr [3 x float], ptr %r7, i32 0, i32 %r102
-    %r37 = sitofp i32 %r102 to float
-    store float %r37, ptr %r35
+    store float %r21, ptr %r35
     %r39 = getelementptr [3 x float], ptr %r8, i32 0, i32 %r102
-    %r41 = sitofp i32 %r102 to float
-    store float %r41, ptr %r39
+    store float %r21, ptr %r39
     %r44 = add i32 %r102,1
     br label %L2
 L4:  ;

@@ -80,9 +80,7 @@ L15:  ;
     %r74 = add i32 %r72,%r97
     %r75 = getelementptr [9 x i32], ptr %r11, i32 0, i32 %r74
     %r76 = load i32, ptr %r75
-    %r79 = mul i32 %r100,3
-    %r81 = add i32 %r79,%r97
-    %r83 = add i32 %r81,1
+    %r83 = add i32 %r66,1
     %r84 = getelementptr [9 x i32], ptr %r11, i32 0, i32 %r83
     %r85 = load i32, ptr %r84
     %r86 = add i32 %r76,%r85

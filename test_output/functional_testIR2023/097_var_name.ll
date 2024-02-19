@@ -31,8 +31,7 @@ L2:  ;
     br i1 %r13, label %L3, label %L4
 L3:  ;
     %r15 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
-    %r17 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
-    %r18 = load i32, ptr %r17
+    %r18 = load i32, ptr %r15
     %r21 = sub i32 %r45,1
     %r22 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r21
     %r23 = load i32, ptr %r22
@@ -42,12 +41,9 @@ L3:  ;
     %r29 = load i32, ptr %r28
     %r30 = add i32 %r24,%r29
     store i32 %r30, ptr %r15
-    %r33 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
-    %r34 = load i32, ptr %r33
+    %r34 = load i32, ptr %r15
     %r35 = add i32 %r44,%r34
-    %r37 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
-    %r38 = load i32, ptr %r37
-    call void @putint(i32 %r38)
+    call void @putint(i32 %r34)
     call void @putch(i32 10)
     %r42 = add i32 %r45,1
     br label %L2

@@ -139,18 +139,12 @@ L0:  ;
 L1:  ;
     %r2 = load i32, ptr @intt
     %r3 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r2
-    %r4 = load i32, ptr @intt
-    %r5 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r4
-    %r6 = load i32, ptr %r5
+    %r6 = load i32, ptr %r3
     %r8 = mul i32 %r6,10
     store i32 %r8, ptr %r3
-    %r9 = load i32, ptr @intt
-    %r10 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r9
-    %r11 = load i32, ptr @intt
-    %r12 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r11
-    %r13 = load i32, ptr %r12
+    %r13 = load i32, ptr %r3
     %r15 = add i32 %r13,%r0
-    store i32 %r15, ptr %r10
+    store i32 %r15, ptr %r3
     ret void
 }
 define i32 @find()
@@ -163,13 +157,11 @@ L1:  ;
     %r1 = load i32, ptr @ii
     %r2 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r1
     store i32 32, ptr %r2
-    %r4 = load i32, ptr @ii
-    %r6 = add i32 %r4,1
+    %r6 = add i32 %r1,1
     %r7 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r6
     %r8 = load i32, ptr @c
     store i32 %r8, ptr %r7
-    %r9 = load i32, ptr @ii
-    %r11 = add i32 %r9,2
+    %r11 = add i32 %r1,2
     store i32 %r11, ptr @ii
     %r12 = load i32, ptr @chat
     %r14 = icmp eq i32 %r12,0
@@ -209,8 +201,7 @@ L5:  ;
     %r17 = getelementptr [10000 x i32], ptr @get, i32 0, i32 %r16
     %r18 = load i32, ptr %r17
     store i32 %r18, ptr %r15
-    %r19 = load i32, ptr @ii
-    %r21 = add i32 %r19,1
+    %r21 = add i32 %r14,1
     store i32 %r21, ptr @ii
     br label %L7
 L6:  ;
@@ -260,13 +251,11 @@ L15:  ;
     %r43 = load i32, ptr @ii
     %r44 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r43
     store i32 32, ptr %r44
-    %r46 = load i32, ptr @ii
-    %r48 = add i32 %r46,1
+    %r48 = add i32 %r43,1
     %r49 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r48
     %r50 = load i32, ptr @c
     store i32 %r50, ptr %r49
-    %r51 = load i32, ptr @ii
-    %r53 = add i32 %r51,2
+    %r53 = add i32 %r43,2
     store i32 %r53, ptr @ii
     %r54 = call i32 @chapop()
     store i32 %r54, ptr @c
@@ -475,8 +464,7 @@ L66:  ;
     %r220 = load i32, ptr @ii
     %r221 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r220
     store i32 32, ptr %r221
-    %r223 = load i32, ptr @ii
-    %r225 = add i32 %r223,1
+    %r225 = add i32 %r220,1
     store i32 %r225, ptr @ii
     br label %L7
 L67:  ;
@@ -523,12 +511,10 @@ L77:  ;
     %r234 = load i32, ptr @ii
     %r235 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r234
     store i32 32, ptr %r235
-    %r237 = load i32, ptr @ii
-    %r239 = add i32 %r237,1
+    %r239 = add i32 %r234,1
     %r240 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r239
     store i32 %r233, ptr %r240
-    %r242 = load i32, ptr @ii
-    %r244 = add i32 %r242,2
+    %r244 = add i32 %r234,2
     store i32 %r244, ptr @ii
     br label %L76
 L78:  ;
@@ -686,8 +672,7 @@ L105:  ;
     %r361 = load i32, ptr %r360
     %r363 = sub i32 %r361,48
     call void @intadd(i32 %r363)
-    %r364 = load i32, ptr @ii
-    %r366 = add i32 %r364,1
+    %r366 = add i32 %r358,1
     store i32 %r366, ptr @ii
     br label %L104
 L106:  ;

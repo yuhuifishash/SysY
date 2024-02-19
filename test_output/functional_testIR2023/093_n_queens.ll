@@ -108,16 +108,9 @@ L10:  ;
     store i32 1, ptr %r46
     %r50 = add i32 %r0,1
     call void @f(i32 %r50)
-    %r52 = getelementptr [50 x i32], ptr @row, i32 0, i32 %r69
-    store i32 0, ptr %r52
-    %r56 = add i32 %r0,%r69
-    %r57 = getelementptr [50 x i32], ptr @line1, i32 0, i32 %r56
-    store i32 0, ptr %r57
-    %r59 = load i32, ptr @n
-    %r61 = add i32 %r59,%r0
-    %r63 = sub i32 %r61,%r69
-    %r64 = getelementptr [100 x i32], ptr @line2, i32 0, i32 %r63
-    store i32 0, ptr %r64
+    store i32 0, ptr %r34
+    store i32 0, ptr %r39
+    store i32 0, ptr %r46
     br label %L6
 }
 define i32 @main()

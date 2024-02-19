@@ -23,8 +23,7 @@ L1:  ;
     store i32 %r4, ptr @g
     %r5 = load i32, ptr @g
     call void @putint(i32 %r5)
-    %r6 = load i32, ptr @g
-    ret i32 %r6
+    ret i32 %r5
 }
 define i32 @main()
 {

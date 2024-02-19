@@ -45,40 +45,22 @@ L1:  ;
     %r9 = load i32, ptr %r8
     %r10 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r9
     store i32 %r1, ptr %r10
-    %r14 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
-    %r15 = load i32, ptr %r14
-    %r16 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r15
+    %r16 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r9
     store i32 %r2, ptr %r16
-    %r20 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
-    %r21 = load i32, ptr %r20
-    %r22 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r21
+    %r22 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r9
     %r24 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
     %r25 = load i32, ptr %r24
     store i32 %r25, ptr %r22
-    %r28 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
-    %r29 = load i32, ptr %r28
-    %r30 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r1, i32 %r29
+    %r30 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r1, i32 %r25
     store i32 %r0, ptr %r30
-    %r34 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
-    %r35 = load i32, ptr %r34
-    %r36 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r1, i32 %r35
+    %r36 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r1, i32 %r25
     store i32 0, ptr %r36
-    %r40 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
-    %r41 = load i32, ptr %r40
-    %r42 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r1, i32 %r41
-    %r44 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
-    %r45 = load i32, ptr %r44
-    store i32 %r45, ptr %r42
-    %r47 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
-    %r49 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
-    %r50 = load i32, ptr %r49
-    %r52 = add i32 %r50,1
-    store i32 %r52, ptr %r47
-    %r54 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
-    %r56 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
-    %r57 = load i32, ptr %r56
-    %r59 = add i32 %r57,1
-    store i32 %r59, ptr %r54
+    %r42 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r1, i32 %r25
+    store i32 %r9, ptr %r42
+    %r52 = add i32 %r9,1
+    store i32 %r52, ptr %r8
+    %r59 = add i32 %r25,1
+    store i32 %r59, ptr %r24
     ret void
 }
 define i32 @dfs(i32 %r0,i32 %r1,i32 %r2)
@@ -140,8 +122,7 @@ L15:  ;
     br i1 %r62, label %L16, label %L17
 L16:  ;
     %r65 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
-    %r68 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
-    %r69 = load i32, ptr %r68
+    %r69 = load i32, ptr %r65
     %r71 = sub i32 %r69,%r59
     store i32 %r71, ptr %r65
     %r74 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
@@ -149,12 +130,7 @@ L16:  ;
     %r78 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r100
     %r79 = load i32, ptr %r78
     %r80 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r75, i32 %r79
-    %r83 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
-    %r84 = load i32, ptr %r83
-    %r87 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r100
-    %r88 = load i32, ptr %r87
-    %r89 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r84, i32 %r88
-    %r90 = load i32, ptr %r89
+    %r90 = load i32, ptr %r80
     %r92 = add i32 %r90,%r59
     store i32 %r92, ptr %r80
     ret i32 %r59

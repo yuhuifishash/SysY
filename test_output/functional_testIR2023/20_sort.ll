@@ -102,12 +102,10 @@ L7:  ;
 L8:  ;
     %r23 = getelementptr i32, ptr %r0, i32 %r41
     %r24 = load i32, ptr %r23
-    %r26 = getelementptr i32, ptr %r0, i32 %r41
     %r28 = getelementptr i32, ptr %r0, i32 %r40
     %r29 = load i32, ptr %r28
-    store i32 %r29, ptr %r26
-    %r31 = getelementptr i32, ptr %r0, i32 %r40
-    store i32 %r24, ptr %r31
+    store i32 %r29, ptr %r23
+    store i32 %r24, ptr %r28
     br label %L9
 L9:  ;
     %r35 = add i32 %r40,1
@@ -129,15 +127,10 @@ L3:  ;
     %r10 = getelementptr i32, ptr %r0, i32 %r61
     %r11 = load i32, ptr %r10
     %r12 = getelementptr [400020 x i32], ptr @cnt, i32 0, i32 %r11
-    %r14 = getelementptr i32, ptr %r0, i32 %r61
-    %r15 = load i32, ptr %r14
-    %r16 = getelementptr [400020 x i32], ptr @cnt, i32 0, i32 %r15
-    %r17 = load i32, ptr %r16
+    %r17 = load i32, ptr %r12
     %r19 = add i32 %r17,1
     store i32 %r19, ptr %r12
-    %r21 = getelementptr i32, ptr %r0, i32 %r61
-    %r22 = load i32, ptr %r21
-    %r24 = icmp sgt i32 %r22,%r60
+    %r24 = icmp sgt i32 %r11,%r60
     br i1 %r24, label %L5, label %L6
 L4:  ;
     br label %L7
@@ -207,12 +200,10 @@ L6:  ;
 L7:  ;
     %r28 = getelementptr i32, ptr %r0, i32 %r46
     %r29 = load i32, ptr %r28
-    %r31 = getelementptr i32, ptr %r0, i32 %r46
     %r33 = getelementptr i32, ptr %r0, i32 %r45
     %r34 = load i32, ptr %r33
-    store i32 %r34, ptr %r31
-    %r36 = getelementptr i32, ptr %r0, i32 %r45
-    store i32 %r29, ptr %r36
+    store i32 %r34, ptr %r28
+    store i32 %r29, ptr %r33
     %r40 = add i32 %r46,1
     br label %L2
 L8:  ;
@@ -240,12 +231,10 @@ L3:  ;
     %r8 = call i32 @quick_read()
     store i32 %r8, ptr %r7
     %r10 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r75
-    %r12 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r75
-    %r13 = load i32, ptr %r12
+    %r13 = load i32, ptr %r7
     store i32 %r13, ptr %r10
     %r15 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r75
-    %r17 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r75
-    %r18 = load i32, ptr %r17
+    %r18 = load i32, ptr %r10
     store i32 %r18, ptr %r15
     %r21 = add i32 %r75,1
     br label %L2
@@ -265,21 +254,16 @@ L5:  ;
     br i1 %r29, label %L6, label %L7
 L6:  ;
     %r31 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r76
-    %r33 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r76
-    %r34 = load i32, ptr %r33
+    %r34 = load i32, ptr %r31
     %r36 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r76
     %r37 = load i32, ptr %r36
     %r38 = sub i32 %r34,%r37
     store i32 %r38, ptr %r31
     %r40 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r76
-    %r42 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r76
-    %r43 = load i32, ptr %r42
-    %r45 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r76
-    %r46 = load i32, ptr %r45
+    %r43 = load i32, ptr %r40
+    %r46 = load i32, ptr %r31
     %r47 = sub i32 %r43,%r46
-    %r49 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r76
-    %r50 = load i32, ptr %r49
-    %r51 = sub i32 %r47,%r50
+    %r51 = sub i32 %r47,%r37
     store i32 %r51, ptr %r40
     %r54 = add i32 %r76,1
     br label %L5

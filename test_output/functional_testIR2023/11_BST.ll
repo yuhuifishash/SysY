@@ -57,14 +57,11 @@ L1:  ;
     %r2 = load i32, ptr @now
     %r3 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r2
     store i32 %r0, ptr %r3
-    %r5 = load i32, ptr @now
-    %r6 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r5
+    %r6 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r2
     store i32 -1, ptr %r6
-    %r9 = load i32, ptr @now
-    %r10 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r9
+    %r10 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r2
     store i32 -1, ptr %r10
-    %r13 = load i32, ptr @now
-    %r15 = add i32 %r13,1
+    %r15 = add i32 %r2,1
     store i32 %r15, ptr @now
     %r16 = load i32, ptr @now
     %r18 = sub i32 %r16,1
@@ -113,15 +110,13 @@ L4:  ;
     ret i32 %r0
 L5:  ;
     %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r18 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r19 = load i32, ptr %r18
+    %r19 = load i32, ptr %r16
     %r21 = call i32 @insert(i32 %r19,i32 %r1)
     store i32 %r21, ptr %r16
     br label %L7
 L6:  ;
     %r23 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r25 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r26 = load i32, ptr %r25
+    %r26 = load i32, ptr %r23
     %r28 = call i32 @insert(i32 %r26,i32 %r1)
     store i32 %r28, ptr %r23
     br label %L7
@@ -144,8 +139,7 @@ L3:  ;
     br i1 %r14, label %L4, label %L5
 L4:  ;
     %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r18 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r19 = load i32, ptr %r18
+    %r19 = load i32, ptr %r16
     %r21 = call i32 @delete(i32 %r19,i32 %r1)
     store i32 %r21, ptr %r16
     br label %L6
@@ -158,8 +152,7 @@ L6:  ;
     ret i32 %r0
 L7:  ;
     %r28 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r30 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r31 = load i32, ptr %r30
+    %r31 = load i32, ptr %r28
     %r33 = call i32 @delete(i32 %r31,i32 %r1)
     store i32 %r33, ptr %r28
     br label %L9
@@ -197,13 +190,8 @@ L15:  ;
     %r80 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r76
     %r81 = load i32, ptr %r80
     store i32 %r81, ptr %r78
-    %r83 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r85 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r86 = load i32, ptr %r85
-    %r88 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r76
-    %r89 = load i32, ptr %r88
-    %r90 = call i32 @delete(i32 %r86,i32 %r89)
-    store i32 %r90, ptr %r83
+    %r90 = call i32 @delete(i32 %r75,i32 %r81)
+    store i32 %r90, ptr %r74
     br label %L16
 L16:  ;
     br label %L12

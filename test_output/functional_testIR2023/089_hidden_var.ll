@@ -44,8 +44,7 @@ L4:  ;
     store i32 8, ptr %r32
     %r34 = getelementptr [2 x [8 x i32]], ptr %r26, i32 0, i32 1, i32 1
     store i32 3, ptr %r34
-    %r38 = getelementptr [4 x i32], ptr @c, i32 0, i32 2
-    %r39 = load i32, ptr %r38
+    %r39 = load i32, ptr %r24
     %r40 = icmp ne i32 %r39,0
     br i1 %r40, label %L8, label %L9
 L5:  ;
@@ -58,14 +57,11 @@ L8:  ;
     store i32 1, ptr %r45
     %r47 = getelementptr [7 x [1 x [5 x i32]]], ptr %r41, i32 0, i32 2, i32 0, i32 2
     store i32 8, ptr %r47
-    %r51 = getelementptr [7 x [1 x [5 x i32]]], ptr %r41, i32 0, i32 2, i32 0, i32 0
-    %r52 = load i32, ptr %r51
+    %r52 = load i32, ptr %r43
     call void @putint(i32 %r52)
-    %r56 = getelementptr [7 x [1 x [5 x i32]]], ptr %r41, i32 0, i32 2, i32 0, i32 1
-    %r57 = load i32, ptr %r56
+    %r57 = load i32, ptr %r45
     call void @putint(i32 %r57)
-    %r61 = getelementptr [7 x [1 x [5 x i32]]], ptr %r41, i32 0, i32 2, i32 0, i32 2
-    %r62 = load i32, ptr %r61
+    %r62 = load i32, ptr %r47
     call void @putint(i32 %r62)
     br label %L9
 L9:  ;

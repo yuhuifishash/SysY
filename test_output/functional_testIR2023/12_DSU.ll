@@ -98,8 +98,7 @@ L3:  ;
     %r10 = getelementptr [100005 x i32], ptr @fa, i32 0, i32 %r0
     %r11 = load i32, ptr %r10
     %r12 = call i32 @find(i32 %r11)
-    %r14 = getelementptr [100005 x i32], ptr @fa, i32 0, i32 %r0
-    store i32 %r12, ptr %r14
+    store i32 %r12, ptr %r10
     ret i32 %r12
 }
 define i32 @same(i32 %r0,i32 %r1)

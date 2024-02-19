@@ -64,15 +64,10 @@ L9:  ;
     %r60 = getelementptr [1005 x [2 x i32]], ptr @t, i32 0, i32 %r151, i32 %r59
     %r61 = load i32, ptr %r60
     %r62 = add i32 %r53,%r61
-    %r65 = sub i32 %r151,1
     %r68 = sub i32 %r148,1
-    %r69 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r65, i32 %r68
+    %r69 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r50, i32 %r68
     %r70 = load i32, ptr %r69
-    %r74 = add i32 %r148,1
-    %r76 = srem i32 %r74,2
-    %r77 = getelementptr [1005 x [2 x i32]], ptr @t, i32 0, i32 %r151, i32 %r76
-    %r78 = load i32, ptr %r77
-    %r79 = add i32 %r70,%r78
+    %r79 = add i32 %r70,%r61
     %r80 = icmp sgt i32 %r62,%r79
     br i1 %r80, label %L11, label %L12
 L10:  ;

@@ -24,15 +24,13 @@ L1:  ;
     store i32 3, ptr %r5
     %r8 = getelementptr [4096 x i32], ptr @a, i32 0, i32 4095
     store i32 7, ptr %r8
-    %r11 = getelementptr [4096 x i32], ptr @a, i32 0, i32 4095
-    %r12 = load i32, ptr %r11
+    %r12 = load i32, ptr %r8
     %r13 = getelementptr i32, ptr %r0, i32 %r12
     %r15 = getelementptr [4096 x i32], ptr @a, i32 0, i32 2216
     %r16 = load i32, ptr %r15
     %r18 = add i32 %r16,9
     store i32 %r18, ptr %r13
-    %r20 = getelementptr [4096 x i32], ptr @a, i32 0, i32 5
-    %r21 = load i32, ptr %r20
+    %r21 = load i32, ptr %r2
     %r22 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r21
     %r23 = load i32, ptr %r22
     ret i32 %r23

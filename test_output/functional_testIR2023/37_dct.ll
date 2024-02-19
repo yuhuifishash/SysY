@@ -90,9 +90,8 @@ L2:  ;
     %r11 = fadd float 0x0,0x401921fb60000000
     %r12 = fdiv float %r0,%r11
     %r13 = fptosi float %r12 to i32
-    %r16 = fadd float 0x0,0x401921fb60000000
     %r17 = sitofp i32 %r13 to float
-    %r18 = fmul float %r17,%r16
+    %r18 = fmul float %r17,%r11
     %r19 = fsub float %r0,%r18
     br label %L3
 L3:  ;
@@ -199,8 +198,7 @@ L11:  ;
     br i1 %r30, label %L12, label %L13
 L12:  ;
     %r33 = getelementptr [8 x float], ptr %r0, i32 %r96, i32 %r95
-    %r36 = getelementptr [8 x float], ptr %r0, i32 %r96, i32 %r95
-    %r37 = load float, ptr %r36
+    %r37 = load float, ptr %r33
     %r40 = getelementptr [8 x float], ptr %r1, i32 %r93, i32 %r90
     %r41 = load float, ptr %r40
     %r42 = fadd float 0x0,0x400921fb60000000
@@ -216,14 +214,10 @@ L12:  ;
     %r55 = fmul float %r52,%r54
     %r56 = call float @my_cos(float %r55)
     %r57 = fmul float %r41,%r56
-    %r58 = fadd float 0x0,0x400921fb60000000
     %r60 = sitofp i32 %r3 to float
-    %r61 = fdiv float %r58,%r60
-    %r63 = fadd float 0x3ff0000000000000,0x0
-    %r64 = fadd float 0x4000000000000000,0x0
-    %r65 = fdiv float %r63,%r64
+    %r61 = fdiv float %r42,%r60
     %r66 = sitofp i32 %r90 to float
-    %r67 = fadd float %r66,%r65
+    %r67 = fadd float %r66,%r49
     %r68 = fmul float %r61,%r67
     %r70 = sitofp i32 %r95 to float
     %r71 = fmul float %r68,%r70
@@ -274,8 +268,7 @@ L8:  ;
     br i1 %r35, label %L9, label %L10
 L9:  ;
     %r38 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r41 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r42 = load float, ptr %r41
+    %r42 = load float, ptr %r38
     %r44 = fadd float 0x4000000000000000,0x0
     %r45 = sitofp i32 1 to float
     %r46 = fdiv float %r45,%r44
@@ -294,8 +287,7 @@ L11:  ;
     br i1 %r59, label %L12, label %L13
 L12:  ;
     %r62 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r65 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r66 = load float, ptr %r65
+    %r66 = load float, ptr %r62
     %r68 = fadd float 0x4000000000000000,0x0
     %r69 = sitofp i32 1 to float
     %r70 = fdiv float %r69,%r68
@@ -316,14 +308,12 @@ L15:  ;
     br label %L17
 L16:  ;
     %r140 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r143 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r144 = load float, ptr %r143
+    %r144 = load float, ptr %r140
     %r145 = fadd float 0x4000000000000000,0x0
     %r146 = fmul float %r144,%r145
     %r148 = sitofp i32 %r2 to float
     %r149 = fdiv float %r146,%r148
-    %r150 = fadd float 0x4000000000000000,0x0
-    %r151 = fmul float %r149,%r150
+    %r151 = fmul float %r149,%r145
     %r153 = sitofp i32 %r3 to float
     %r154 = fdiv float %r151,%r153
     store float %r154, ptr %r140
@@ -335,8 +325,7 @@ L17:  ;
     br i1 %r87, label %L18, label %L19
 L18:  ;
     %r90 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r93 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r94 = load float, ptr %r93
+    %r94 = load float, ptr %r90
     %r97 = getelementptr [8 x float], ptr %r1, i32 %r169, i32 %r165
     %r98 = load float, ptr %r97
     %r99 = fadd float 0x0,0x400921fb60000000
@@ -352,14 +341,10 @@ L18:  ;
     %r112 = fmul float %r109,%r111
     %r113 = call float @my_cos(float %r112)
     %r114 = fmul float %r98,%r113
-    %r115 = fadd float 0x0,0x400921fb60000000
     %r117 = sitofp i32 %r3 to float
-    %r118 = fdiv float %r115,%r117
-    %r120 = fadd float 0x3ff0000000000000,0x0
-    %r121 = fadd float 0x4000000000000000,0x0
-    %r122 = fdiv float %r120,%r121
+    %r118 = fdiv float %r99,%r117
     %r123 = sitofp i32 %r171 to float
-    %r124 = fadd float %r123,%r122
+    %r124 = fadd float %r123,%r106
     %r125 = fmul float %r118,%r124
     %r127 = sitofp i32 %r165 to float
     %r128 = fmul float %r125,%r127
@@ -391,13 +376,10 @@ L4:  ;
     %r24 = getelementptr [8 x [8 x float]], ptr @test_dct, i32 0
     %r25 = getelementptr [8 x [8 x float]], ptr @test_block, i32 0
     call void @dct(ptr %r24,ptr %r25,i32 %r1,i32 %r3)
-    %r28 = getelementptr [8 x [8 x float]], ptr @test_dct, i32 0
-    call void @write_mat(ptr %r28,i32 %r1,i32 %r3)
+    call void @write_mat(ptr %r24,i32 %r1,i32 %r3)
     %r31 = getelementptr [8 x [8 x float]], ptr @test_idct, i32 0
-    %r32 = getelementptr [8 x [8 x float]], ptr @test_dct, i32 0
-    call void @idct(ptr %r31,ptr %r32,i32 %r1,i32 %r3)
-    %r35 = getelementptr [8 x [8 x float]], ptr @test_idct, i32 0
-    call void @write_mat(ptr %r35,i32 %r1,i32 %r3)
+    call void @idct(ptr %r31,ptr %r24,i32 %r1,i32 %r3)
+    call void @write_mat(ptr %r31,i32 %r1,i32 %r3)
     ret i32 0
 L5:  ;
     %r40 = phi i32 [0,%L3],[%r20,%L6]

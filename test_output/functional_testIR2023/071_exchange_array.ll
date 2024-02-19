@@ -77,12 +77,10 @@ L2:  ;
 L3:  ;
     %r69 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 1, i32 %r95
     %r70 = load i32, ptr %r69
-    %r75 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 1, i32 %r95
     %r80 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 2, i32 %r95
     %r81 = load i32, ptr %r80
-    store i32 %r81, ptr %r75
-    %r86 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 2, i32 %r95
-    store i32 %r70, ptr %r86
+    store i32 %r81, ptr %r69
+    store i32 %r70, ptr %r80
     %r90 = add i32 %r95,1
     br label %L2
 L4:  ;

@@ -203,22 +203,6 @@ L1:  ;
     store i32 %r66, ptr @a0
     %r67 = load i32, ptr @a0
     call void @putint(i32 %r67)
-    %r68 = load i32, ptr @a0
-    %r69 = load i32, ptr @a1
-    %r70 = load i32, ptr @a2
-    %r71 = load i32, ptr @a3
-    %r72 = load i32, ptr @a4
-    %r73 = load i32, ptr @a5
-    %r74 = load i32, ptr @a6
-    %r75 = load i32, ptr @a7
-    %r76 = load i32, ptr @a8
-    %r77 = load i32, ptr @a9
-    %r78 = load i32, ptr @a10
-    %r79 = load i32, ptr @a11
-    %r80 = load i32, ptr @a12
-    %r81 = load i32, ptr @a13
-    %r82 = load i32, ptr @a14
-    %r83 = load i32, ptr @a15
     %r84 = load i32, ptr @a16
     %r85 = load i32, ptr @a17
     %r86 = load i32, ptr @a18
@@ -235,7 +219,7 @@ L1:  ;
     %r97 = load i32, ptr @a29
     %r98 = load i32, ptr @a30
     %r99 = load i32, ptr @a31
-    %r100 = call i32 @testParam32(i32 %r68,i32 %r69,i32 %r70,i32 %r71,i32 %r72,i32 %r73,i32 %r74,i32 %r75,i32 %r76,i32 %r77,i32 %r78,i32 %r79,i32 %r80,i32 %r81,i32 %r82,i32 %r83,i32 %r84,i32 %r85,i32 %r86,i32 %r87,i32 %r88,i32 %r89,i32 %r90,i32 %r91,i32 %r92,i32 %r93,i32 %r94,i32 %r95,i32 %r96,i32 %r97,i32 %r98,i32 %r99)
+    %r100 = call i32 @testParam32(i32 %r67,i32 %r41,i32 %r42,i32 %r43,i32 %r44,i32 %r45,i32 %r46,i32 %r47,i32 %r58,i32 %r59,i32 %r60,i32 %r61,i32 %r62,i32 %r63,i32 %r64,i32 %r65,i32 %r84,i32 %r85,i32 %r86,i32 %r87,i32 %r88,i32 %r89,i32 %r90,i32 %r91,i32 %r92,i32 %r93,i32 %r94,i32 %r95,i32 %r96,i32 %r97,i32 %r98,i32 %r99)
     store i32 %r100, ptr @a0
     %r101 = load i32, ptr @a0
     call void @putint(i32 %r101)
