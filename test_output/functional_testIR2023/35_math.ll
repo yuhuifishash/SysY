@@ -335,7 +335,8 @@ L6:  ;
     br label %L7
 L7:  ;
     call void @putch(i32 32)
-    br i1 %r24, label %L11, label %L9
+    %r32 = fcmp ogt float %r5,%r23
+    br i1 %r32, label %L11, label %L9
 L8:  ;
     %r39 = call float @my_log(float %r5,float %r7)
     call void @putfloat(float %r39)
@@ -345,7 +346,8 @@ L9:  ;
     br label %L10
 L10:  ;
     call void @putch(i32 32)
-    br i1 %r24, label %L12, label %L13
+    %r45 = fcmp ogt float %r5,%r23
+    br i1 %r45, label %L12, label %L13
 L11:  ;
     %r36 = fcmp ogt float %r7,%r23
     br i1 %r36, label %L8, label %L9

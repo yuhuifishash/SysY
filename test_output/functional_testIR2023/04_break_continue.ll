@@ -64,7 +64,8 @@ L14:  ;
 L15:  ;
     br label %L25
 L16:  ;
-    br i1 %r28, label %L18, label %L20
+    %r30 = icmp ne i32 %r81,0
+    br i1 %r30, label %L18, label %L20
 L17:  ;
     br label %L15
 L18:  ;

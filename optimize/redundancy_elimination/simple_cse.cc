@@ -41,12 +41,6 @@ InstCSEInfo GetCSEInfo(Instruction I)
     if(I->GetOpcode() == CALL){
         auto CallI = (CallInstruction*)I;
         ans.operand_list.push_back(new GlobalOperand(CallI->GetFunctionName()));
-    }else if(I->GetOpcode() == ICMP){
-        auto IcmpI = (IcmpInstruction*)I;
-        ans.operand_list.push_back(new RegOperand(IcmpI->GetCompareCondition()));
-    }else if(I->GetOpcode() == FCMP){
-        auto FcmpI = (FcmpInstruction*)I;
-        ans.operand_list.push_back(new RegOperand(FcmpI->GetCompareCondition()));
     }
 
     for(auto op:list){
@@ -59,7 +53,7 @@ bool CanCSE(Instruction I)
 {
     if(I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == STORE
     || I->GetOpcode() == BR_UNCOND || I->GetOpcode() == ALLOCA || I->GetOpcode() == LOAD
-    || I->GetOpcode() == RET){
+    || I->GetOpcode() == RET || I->GetOpcode() == ICMP || I->GetOpcode() == FCMP){
         return false;
     }
     if(I->GetOpcode() == CALL){
@@ -158,7 +152,7 @@ void DomTreeWalkCSE(CFG* C)
                 auto Info = GetCSEInfo(I);
                 auto CSEiter = InstCSEMap.find(Info);
                 if(CSEiter != InstCSEMap.end()){
-                    I->PrintIR(std::cerr);
+                    //I->PrintIR(std::cerr);
                     EraseSet.insert(I);
                     reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
                     changed |= true;
