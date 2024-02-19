@@ -2,6 +2,11 @@
 #include "ir.h"
 #include <functional>
 
+/*this pass will do some simple common subexpression elimination
+BasicBlockCSE only eliminate common subexpression in the single block
+DomTreeWalkCSE will do dfs on the dominator tree to search common subexpression and eliminate them
+*/
+
 extern std::map<std::string,CFG*> CFGMap;
 extern std::map<std::string,int> GlobalMap;
 
