@@ -59,7 +59,7 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r36 = phi i32 [0,%L1],[%r32,%L7]
+    %r36 = phi i32 [0,%L1],[%r10,%L7]
     %r6 = icmp slt i32 %r36,4
     br i1 %r6, label %L3, label %L4
 L3:  ;
@@ -77,7 +77,6 @@ L6:  ;
     %r18 = icmp ne i32 %r17,0
     br i1 %r18, label %L10, label %L9
 L7:  ;
-    %r32 = add i32 %r36,1
     br label %L2
 L8:  ;
     ret i32 0
@@ -108,8 +107,7 @@ L2:  ;
 L3:  ;
     br label %L6
 L4:  ;
-    %r13 = getelementptr i32, ptr %r3
-    call void @printSolution(ptr %r13)
+    call void @printSolution(ptr %r10)
     ret i32 1
 L5:  ;
     ret i32 0
@@ -131,8 +129,7 @@ L8:  ;
 L9:  ;
     ret i32 1
 L10:  ;
-    %r34 = getelementptr i32, ptr %r3, i32 %r2
-    store i32 0, ptr %r34
+    store i32 0, ptr %r22
     %r38 = add i32 %r40,1
     br label %L6
 }

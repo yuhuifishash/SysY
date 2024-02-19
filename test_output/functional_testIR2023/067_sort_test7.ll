@@ -49,15 +49,13 @@ L7:  ;
     br i1 %r30, label %L5, label %L6
 L8:  ;
     %r42 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r108
-    %r45 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r115
-    %r46 = load i32, ptr %r45
+    %r46 = load i32, ptr %r33
     store i32 %r46, ptr %r42
     %r49 = add i32 %r115,1
     br label %L10
 L9:  ;
     %r52 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r108
-    %r55 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r112
-    %r56 = load i32, ptr %r55
+    %r56 = load i32, ptr %r37
     store i32 %r56, ptr %r52
     %r59 = add i32 %r112,1
     br label %L10

@@ -84,7 +84,6 @@ L3:  ;
     %r90 = add i32 %r95,1
     br label %L2
 L4:  ;
-    %r93 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 2, i32 0
-    %r94 = load i32, ptr %r93
+    %r94 = load i32, ptr %r22
     ret i32 %r94
 }

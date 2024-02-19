@@ -188,8 +188,7 @@ L8:  ;
 L9:  ;
     br label %L2
 L10:  ;
-    %r33 = getelementptr [5005 x i32], ptr @to, i32 0, i32 %r54
-    %r34 = load i32, ptr %r33
+    %r34 = load i32, ptr %r27
     call void @inqueue(i32 %r34)
     br label %L11
 L11:  ;

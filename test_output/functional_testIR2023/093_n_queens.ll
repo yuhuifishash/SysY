@@ -96,11 +96,8 @@ L9:  ;
     call void @printans()
     br label %L10
 L10:  ;
-    %r34 = getelementptr [50 x i32], ptr @row, i32 0, i32 %r69
-    store i32 1, ptr %r34
-    %r38 = add i32 %r0,%r69
-    %r39 = getelementptr [50 x i32], ptr @line1, i32 0, i32 %r38
-    store i32 1, ptr %r39
+    store i32 1, ptr %r8
+    store i32 1, ptr %r15
     %r41 = load i32, ptr @n
     %r43 = add i32 %r41,%r0
     %r45 = sub i32 %r43,%r69
@@ -108,8 +105,8 @@ L10:  ;
     store i32 1, ptr %r46
     %r50 = add i32 %r0,1
     call void @f(i32 %r50)
-    store i32 0, ptr %r34
-    store i32 0, ptr %r39
+    store i32 0, ptr %r8
+    store i32 0, ptr %r15
     store i32 0, ptr %r46
     br label %L6
 }

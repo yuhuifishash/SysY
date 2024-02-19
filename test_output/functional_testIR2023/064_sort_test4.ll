@@ -20,7 +20,7 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r58 = phi i32 [0,%L1],[%r51,%L11]
+    %r58 = phi i32 [0,%L1],[%r18,%L11]
     %r13 = sub i32 %r1,1
     %r14 = icmp slt i32 %r58,%r13
     br i1 %r14, label %L3, label %L4
@@ -59,7 +59,6 @@ L10:  ;
     store i32 %r40, ptr %r44
     br label %L11
 L11:  ;
-    %r51 = add i32 %r58,1
     br label %L2
 }
 define i32 @main()

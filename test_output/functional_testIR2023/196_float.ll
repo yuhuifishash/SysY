@@ -224,7 +224,6 @@ L13:  ;
     %r87 = add i32 %r91,1
     br label %L12
 L14:  ;
-    %r89 = getelementptr [10 x float], ptr %r42, i32 0
-    call void @putfarray(i32 %r50,ptr %r89)
+    call void @putfarray(i32 %r50,ptr %r49)
     ret i32 0
 }

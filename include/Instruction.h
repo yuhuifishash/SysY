@@ -325,11 +325,11 @@ class IcmpInstruction : public BasicInstruction
     IcmpCond cond;
     Operand result;
 public:
-    enum LLVMType getDataType(){return type;}
-    Operand getOp1(){return op1;}
-    Operand getOp2(){return op2;}
-    IcmpCond getCompareCondition(){return cond;}
-    Operand getResult(){return result;}
+    enum LLVMType GetDataType(){return type;}
+    Operand GetOp1(){return op1;}
+    Operand GetOp2(){return op2;}
+    IcmpCond GetCompareCondition(){return cond;}
+    Operand GetResult(){return result;}
 
     IcmpInstruction(enum LLVMType type,Operand op1,Operand op2,IcmpCond cond,Operand result){
         this->opcode=LLVMIROpcode::ICMP;
@@ -358,11 +358,11 @@ class FcmpInstruction : public BasicInstruction
     FcmpCond cond;
     Operand result;
 public:
-    enum LLVMType getDataType(){return type;}
-    Operand getOp1(){return op1;}
-    Operand getOp2(){return op2;}
-    FcmpCond getCompareCondition(){return cond;}
-    Operand getResult(){return result;}
+    enum LLVMType GetDataType(){return type;}
+    Operand GetOp1(){return op1;}
+    Operand GetOp2(){return op2;}
+    FcmpCond GetCompareCondition(){return cond;}
+    Operand GetResult(){return result;}
 
     FcmpInstruction(enum LLVMType type,Operand op1,Operand op2,FcmpCond cond,Operand result){
         this->opcode=LLVMIROpcode::FCMP;

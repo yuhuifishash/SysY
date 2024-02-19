@@ -80,10 +80,9 @@ L3:  ;
 L4:  ;
     ret i32 0
 L5:  ;
-    %r34 = add i32 %r55,1
     br label %L6
 L6:  ;
-    %r54 = phi i32 [%r55,%L3],[%r55,%L7],[%r34,%L5]
+    %r54 = phi i32 [%r55,%L3],[%r55,%L7],[%r28,%L5]
     %r36 = getelementptr i32, ptr %r0, i32 %r56
     %r37 = load i32, ptr %r36
     %r39 = getelementptr i32, ptr %r0, i32 %r54

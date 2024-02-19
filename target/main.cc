@@ -49,6 +49,8 @@ void SimpleDCE(CFG* C);
 void ElimateEmptyIndexGEP(CFG* C);
 void TailRecursiveElimate(CFG* C);
 void BasicBlockCSE(CFG* C);
+void DomTreeWalkCSE(CFG* C);
+
 
 int main(int argc,char** argv)
 {
@@ -116,6 +118,8 @@ int main(int argc,char** argv)
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor( SimpleDCE );
         llvmIR.PassExecutor( BasicBlockCSE );
+        llvmIR.BuildDominatorTree();
+        llvmIR.PassExecutor( DomTreeWalkCSE );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

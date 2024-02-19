@@ -103,30 +103,25 @@ L10:  ;
     %r38 = add i32 %r100,1
     br label %L4
 L11:  ;
-    %r44 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
-    %r45 = load i32, ptr %r44
+    %r45 = load i32, ptr %r32
     %r46 = icmp slt i32 %r2,%r45
     br i1 %r46, label %L13, label %L14
 L13:  ;
     br label %L15
 L14:  ;
-    %r50 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
-    %r51 = load i32, ptr %r50
+    %r51 = load i32, ptr %r32
     br label %L15
 L15:  ;
     %r99 = phi i32 [%r2,%L13],[%r51,%L14]
-    %r55 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
-    %r56 = load i32, ptr %r55
+    %r56 = load i32, ptr %r22
     %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r99)
     %r62 = icmp sgt i32 %r59,0
     br i1 %r62, label %L16, label %L17
 L16:  ;
-    %r65 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
-    %r69 = load i32, ptr %r65
+    %r69 = load i32, ptr %r32
     %r71 = sub i32 %r69,%r59
-    store i32 %r71, ptr %r65
-    %r74 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
-    %r75 = load i32, ptr %r74
+    store i32 %r71, ptr %r32
+    %r75 = load i32, ptr %r22
     %r78 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r100
     %r79 = load i32, ptr %r78
     %r80 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r75, i32 %r79

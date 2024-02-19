@@ -180,8 +180,7 @@ L16:  ;
     %r200 = sub i32 %r234,1
     br label %L11
 L17:  ;
-    %r169 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r227
-    store i32 %r164, ptr %r169
+    store i32 %r164, ptr %r157
     %r173 = sub i32 %r227,1
     %r174 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r173
     %r179 = load i32, ptr %r174
@@ -190,16 +189,14 @@ L17:  ;
     store i32 %r183, ptr %r174
     br label %L19
 L18:  ;
-    %r185 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r227
-    store i32 %r164, ptr %r185
+    store i32 %r164, ptr %r157
     br label %L19
 L19:  ;
     %r189 = sub i32 %r230,1
     %r192 = sub i32 %r227,1
     br label %L14
 L20:  ;
-    %r207 = getelementptr [40 x i32], ptr %r98, i32 0, i32 0
-    %r208 = load i32, ptr %r207
+    %r208 = load i32, ptr %r202
     call void @putint(i32 %r208)
     br label %L21
 L21:  ;

@@ -45,8 +45,7 @@ L7:  ;
     %r28 = getelementptr i32, ptr %r0, i32 %r27
     %r29 = load i32, ptr %r28
     store i32 %r29, ptr %r24
-    %r31 = getelementptr i32, ptr %r0, i32 %r38
-    store i32 %r1, ptr %r31
+    store i32 %r1, ptr %r10
     br label %L6
 L8:  ;
     ret i32 0

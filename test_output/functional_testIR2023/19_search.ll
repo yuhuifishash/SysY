@@ -92,8 +92,7 @@ L20:  ;
     %r81 = add i32 %r127,1
     br label %L4
 L21:  ;
-    %r84 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r124, i32 %r122
-    store i32 0, ptr %r84
+    store i32 0, ptr %r25
     %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
     %r91 = load i32, ptr %r90
     %r92 = sub i32 %r124,%r91
@@ -122,8 +121,7 @@ L26:  ;
     br label %L27
 L27:  ;
     %r128 = phi i32 [%r129,%L21],[%r104,%L26]
-    %r111 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r124, i32 %r122
-    store i32 1, ptr %r111
+    store i32 1, ptr %r25
     %r115 = add i32 %r127,1
     br label %L4
 L28:  ;
@@ -202,8 +200,7 @@ L17:  ;
     store i32 %r81, ptr @y_0
     br label %L19
 L18:  ;
-    %r49 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r84, i32 %r81
-    %r50 = load i32, ptr %r49
+    %r50 = load i32, ptr %r37
     %r52 = icmp eq i32 %r50,3
     br i1 %r52, label %L20, label %L21
 L19:  ;

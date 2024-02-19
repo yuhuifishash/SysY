@@ -30,7 +30,7 @@ L3:  ;
 L4:  ;
     ret i32 0
 L5:  ;
-    %r53 = phi i32 [0,%L3],[%r47,%L9]
+    %r53 = phi i32 [0,%L3],[%r24,%L9]
     %r13 = load i32, ptr @n
     %r15 = sub i32 %r13,%r54
     %r17 = sub i32 %r15,1
@@ -48,16 +48,12 @@ L7:  ;
     %r50 = add i32 %r54,1
     br label %L2
 L8:  ;
-    %r32 = add i32 %r53,1
-    %r33 = getelementptr i32, ptr %r0, i32 %r32
-    %r34 = load i32, ptr %r33
-    %r40 = getelementptr i32, ptr %r0, i32 %r53
-    %r41 = load i32, ptr %r40
-    store i32 %r41, ptr %r33
-    store i32 %r34, ptr %r40
+    %r34 = load i32, ptr %r25
+    %r41 = load i32, ptr %r20
+    store i32 %r41, ptr %r25
+    store i32 %r34, ptr %r20
     br label %L9
 L9:  ;
-    %r47 = add i32 %r53,1
     br label %L5
 }
 define i32 @main()

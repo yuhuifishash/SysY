@@ -81,10 +81,9 @@ L1:  ;
 L2:  ;
     ret i32 %r0
 L3:  ;
-    %r10 = getelementptr [1005 x i32], ptr @fa, i32 0, i32 %r0
-    %r11 = load i32, ptr %r10
+    %r11 = load i32, ptr %r4
     %r12 = call i32 @find(i32 %r11)
-    store i32 %r12, ptr %r10
+    store i32 %r12, ptr %r4
     ret i32 %r12
 }
 define i32 @same(i32 %r0,i32 %r1)
@@ -108,7 +107,7 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r103 = phi i32 [0,%L1],[%r58,%L7]
+    %r103 = phi i32 [0,%L1],[%r8,%L7]
     %r3 = load i32, ptr @m
     %r4 = icmp slt i32 %r103,%r3
     br i1 %r4, label %L3, label %L4
@@ -130,7 +129,6 @@ L6:  ;
     %r18 = icmp sgt i32 %r14,%r17
     br i1 %r18, label %L8, label %L9
 L7:  ;
-    %r58 = add i32 %r103,1
     br label %L2
 L8:  ;
     %r21 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r103
@@ -145,12 +143,10 @@ L8:  ;
     %r38 = load i32, ptr %r37
     store i32 %r38, ptr %r32
     store i32 %r33, ptr %r37
-    %r43 = getelementptr [1005 x i32], ptr @c, i32 0, i32 %r103
-    %r44 = load i32, ptr %r43
-    %r48 = getelementptr [1005 x i32], ptr @c, i32 0, i32 %r102
-    %r49 = load i32, ptr %r48
-    store i32 %r49, ptr %r43
-    store i32 %r44, ptr %r48
+    %r44 = load i32, ptr %r13
+    %r49 = load i32, ptr %r16
+    store i32 %r49, ptr %r13
+    store i32 %r44, ptr %r16
     br label %L9
 L9:  ;
     %r55 = add i32 %r102,1
@@ -189,12 +185,10 @@ L17:  ;
     %r85 = getelementptr [1005 x i32], ptr @c, i32 0, i32 %r105
     %r86 = load i32, ptr %r85
     %r87 = add i32 %r100,%r86
-    %r89 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r105
-    %r90 = load i32, ptr %r89
+    %r90 = load i32, ptr %r76
     %r91 = call i32 @find(i32 %r90)
     %r92 = getelementptr [1005 x i32], ptr @fa, i32 0, i32 %r91
-    %r94 = getelementptr [1005 x i32], ptr @v, i32 0, i32 %r105
-    %r95 = load i32, ptr %r94
+    %r95 = load i32, ptr %r79
     store i32 %r95, ptr %r92
     %r98 = add i32 %r105,1
     br label %L13

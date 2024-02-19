@@ -29,8 +29,7 @@ L1:  ;
 L2:  ;
     ret i32 %r0
 L3:  ;
-    %r16 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r0
-    %r17 = load i32, ptr %r16
+    %r17 = load i32, ptr %r9
     %r18 = icmp sgt i32 %r1,%r17
     br i1 %r18, label %L6, label %L7
 L5:  ;
@@ -84,8 +83,7 @@ L3:  ;
 L4:  ;
     ret i32 %r0
 L5:  ;
-    %r15 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r16 = load i32, ptr %r15
+    %r16 = load i32, ptr %r9
     %r17 = call i32 @find_minimum(i32 %r16)
     ret i32 %r17
 L6:  ;
@@ -144,8 +142,7 @@ L4:  ;
     store i32 %r21, ptr %r16
     br label %L6
 L5:  ;
-    %r24 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r0
-    %r25 = load i32, ptr %r24
+    %r25 = load i32, ptr %r12
     %r26 = icmp slt i32 %r1,%r25
     br i1 %r26, label %L7, label %L8
 L6:  ;
@@ -166,8 +163,7 @@ L9:  ;
 L10:  ;
     ret i32 -1
 L11:  ;
-    %r49 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r50 = load i32, ptr %r49
+    %r50 = load i32, ptr %r35
     %r53 = icmp eq i32 %r50,-1
     br i1 %r53, label %L14, label %L17
 L12:  ;
@@ -178,20 +174,17 @@ L13:  ;
     %r45 = icmp eq i32 %r42,-1
     br i1 %r45, label %L10, label %L11
 L14:  ;
-    %r61 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r62 = load i32, ptr %r61
+    %r62 = load i32, ptr %r35
     %r65 = icmp eq i32 %r62,-1
     br i1 %r65, label %L18, label %L19
 L15:  ;
-    %r74 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
-    %r75 = load i32, ptr %r74
+    %r75 = load i32, ptr %r55
     %r76 = call i32 @find_minimum(i32 %r75)
-    %r78 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r0
     %r80 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r76
     %r81 = load i32, ptr %r80
-    store i32 %r81, ptr %r78
+    store i32 %r81, ptr %r12
     %r90 = call i32 @delete(i32 %r75,i32 %r81)
-    store i32 %r90, ptr %r74
+    store i32 %r90, ptr %r55
     br label %L16
 L16:  ;
     br label %L12
@@ -205,8 +198,7 @@ L18:  ;
     %r68 = load i32, ptr %r67
     ret i32 %r68
 L19:  ;
-    %r70 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
-    %r71 = load i32, ptr %r70
+    %r71 = load i32, ptr %r35
     ret i32 %r71
 }
 define void @inorder(i32 %r0)

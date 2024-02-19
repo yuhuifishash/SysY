@@ -39,8 +39,7 @@ L1:  ;
     %r22 = icmp ne i32 %r19,-1
     br i1 %r22, label %L2, label %L3
 L2:  ;
-    %r29 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r0, i32 %r1, i32 %r2, i32 %r3, i32 %r4, i32 %r5
-    %r30 = load i32, ptr %r29
+    %r30 = load i32, ptr %r18
     ret i32 %r30
 L3:  ;
     %r33 = add i32 %r0,%r1
@@ -119,10 +118,9 @@ L14:  ;
     br label %L15
 L15:  ;
     %r176 = phi i32 [%r175,%L13],[%r153,%L14]
-    %r160 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r0, i32 %r1, i32 %r2, i32 %r3, i32 %r4, i32 %r5
     %r163 = srem i32 %r176,1000000007
-    store i32 %r163, ptr %r160
-    %r171 = load i32, ptr %r160
+    store i32 %r163, ptr %r18
+    %r171 = load i32, ptr %r18
     ret i32 %r171
 }
 define i32 @main()

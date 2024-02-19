@@ -36,14 +36,12 @@ L4:  ;
     ret i32 %r62
 L5:  ;
     %r29 = sub i32 %r64,%r66
-    %r31 = getelementptr i32, ptr %r0, i32 %r66
-    %r32 = load i32, ptr %r31
+    %r32 = load i32, ptr %r21
     %r33 = mul i32 %r29,%r32
     br label %L7
 L6:  ;
     %r36 = sub i32 %r64,%r66
-    %r38 = getelementptr i32, ptr %r0, i32 %r64
-    %r39 = load i32, ptr %r38
+    %r39 = load i32, ptr %r24
     %r40 = mul i32 %r36,%r39
     br label %L7
 L7:  ;
@@ -54,10 +52,8 @@ L8:  ;
     br label %L9
 L9:  ;
     %r61 = phi i32 [%r62,%L7],[%r60,%L8]
-    %r46 = getelementptr i32, ptr %r0, i32 %r66
-    %r47 = load i32, ptr %r46
-    %r49 = getelementptr i32, ptr %r0, i32 %r64
-    %r50 = load i32, ptr %r49
+    %r47 = load i32, ptr %r21
+    %r50 = load i32, ptr %r24
     %r51 = icmp sgt i32 %r47,%r50
     br i1 %r51, label %L10, label %L11
 L10:  ;

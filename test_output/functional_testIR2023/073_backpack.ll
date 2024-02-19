@@ -51,8 +51,7 @@ L9:  ;
     %r38 = sub i32 %r112,1
     %r40 = getelementptr [200 x [200 x i32]], ptr @V, i32 0, i32 %r38, i32 %r109
     %r41 = load i32, ptr %r40
-    %r48 = getelementptr i32, ptr %r1, i32 %r112
-    %r49 = load i32, ptr %r48
+    %r49 = load i32, ptr %r23
     %r50 = sub i32 %r109,%r49
     %r51 = getelementptr [200 x [200 x i32]], ptr @V, i32 0, i32 %r38, i32 %r50
     %r52 = load i32, ptr %r51
@@ -75,7 +74,7 @@ L12:  ;
 L13:  ;
     br label %L10
 L14:  ;
-    %r113 = phi i32 [%r0,%L4],[%r103,%L19]
+    %r113 = phi i32 [%r0,%L4],[%r85,%L19]
     %r111 = phi i32 [%r4,%L4],[%r110,%L19]
     %r78 = icmp sge i32 %r113,1
     br i1 %r78, label %L15, label %L16
@@ -104,7 +103,6 @@ L18:  ;
     br label %L19
 L19:  ;
     %r110 = phi i32 [%r97,%L17],[%r111,%L18]
-    %r103 = sub i32 %r113,1
     br label %L14
 }
 define i32 @main()

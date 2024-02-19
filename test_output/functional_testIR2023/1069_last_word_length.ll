@@ -58,8 +58,7 @@ L12:  ;
 L13:  ;
     %r43 = sub i32 %r1,%r58
     %r45 = sub i32 %r43,1
-    %r48 = sub i32 %r1,1
-    %r50 = sub i32 %r48,%r59
+    %r50 = sub i32 %r11,%r59
     %r51 = sub i32 %r45,%r50
     ret i32 %r51
 L14:  ;

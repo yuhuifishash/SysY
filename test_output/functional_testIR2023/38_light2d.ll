@@ -96,8 +96,7 @@ L2:  ;
 L3:  ;
     %r26 = fdiv float %r0,%r36
     %r27 = fadd float %r36,%r26
-    %r29 = sitofp i32 2 to float
-    %r30 = fdiv float %r27,%r29
+    %r30 = fdiv float %r27,%r11
     %r33 = sub i32 %r35,1
     br label %L2
 L4:  ;
@@ -130,11 +129,10 @@ L1:  ;
     %r4 = fcmp ogt float %r0,%r3
     br i1 %r4, label %L2, label %L4
 L2:  ;
-    %r11 = fadd float 0x0,0x401921fb60000000
-    %r12 = fdiv float %r0,%r11
+    %r12 = fdiv float %r0,%r3
     %r13 = fptosi float %r12 to i32
     %r17 = sitofp i32 %r13 to float
-    %r18 = fmul float %r17,%r11
+    %r18 = fmul float %r17,%r3
     %r19 = fsub float %r0,%r18
     br label %L3
 L3:  ;
@@ -143,23 +141,19 @@ L3:  ;
     %r22 = fcmp ogt float %r35,%r21
     br i1 %r22, label %L5, label %L6
 L4:  ;
-    %r6 = fadd float 0x0,0x401921fb60000000
-    %r7 = fsub float 0x0,%r6
+    %r7 = fsub float 0x0,%r3
     %r8 = fcmp olt float %r0,%r7
     br i1 %r8, label %L2, label %L3
 L5:  ;
-    %r24 = fadd float 0x0,0x401921fb60000000
-    %r25 = fsub float %r35,%r24
+    %r25 = fsub float %r35,%r3
     br label %L6
 L6:  ;
     %r36 = phi float [%r35,%L3],[%r25,%L5]
-    %r27 = fadd float 0x0,0x400921fb60000000
-    %r28 = fsub float 0x0,%r27
+    %r28 = fsub float 0x0,%r21
     %r29 = fcmp olt float %r36,%r28
     br i1 %r29, label %L7, label %L8
 L7:  ;
-    %r31 = fadd float 0x0,0x401921fb60000000
-    %r32 = fadd float %r36,%r31
+    %r32 = fadd float %r36,%r3
     br label %L8
 L8:  ;
     %r37 = phi float [%r36,%L6],[%r32,%L7]
@@ -248,8 +242,7 @@ L3:  ;
     %r34 = fcmp olt float %r32,%r33
     br i1 %r34, label %L6, label %L7
 L4:  ;
-    %r46 = fadd float 0x0,0x0
-    ret float %r46
+    ret float %r9
 L5:  ;
     %r16 = fadd float 0x0,0x4000000000000000
     %r17 = fcmp olt float %r48,%r16
@@ -259,8 +252,7 @@ L6:  ;
     %r37 = load float, ptr %r36
     ret float %r37
 L7:  ;
-    %r40 = getelementptr [2 x float], ptr %r18, i32 0, i32 0
-    %r41 = load float, ptr %r40
+    %r41 = load float, ptr %r31
     %r42 = fadd float %r48,%r41
     %r45 = add i32 %r47,1
     br label %L2

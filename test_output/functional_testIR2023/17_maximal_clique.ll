@@ -25,7 +25,7 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r34 = phi i32 [1,%L1],[%r30,%L7]
+    %r34 = phi i32 [1,%L1],[%r10,%L7]
     %r6 = icmp slt i32 %r34,%r0
     br i1 %r6, label %L3, label %L4
 L3:  ;
@@ -47,7 +47,6 @@ L6:  ;
     %r23 = icmp eq i32 %r21,0
     br i1 %r23, label %L8, label %L9
 L7:  ;
-    %r30 = add i32 %r34,1
     br label %L2
 L8:  ;
     ret i32 0
@@ -87,8 +86,7 @@ L7:  ;
     br label %L8
 L8:  ;
     %r39 = phi i32 [%r41,%L5],[%r1,%L7]
-    %r28 = add i32 %r1,1
-    %r29 = call i32 @maxCliques(i32 %r38,i32 %r28)
+    %r29 = call i32 @maxCliques(i32 %r38,i32 %r17)
     %r32 = icmp sgt i32 %r29,%r39
     br i1 %r32, label %L9, label %L10
 L9:  ;

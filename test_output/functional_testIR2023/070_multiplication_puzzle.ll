@@ -35,7 +35,7 @@ L4:  ;
     call void @putint(i32 %r86)
     ret i32 0
 L5:  ;
-    %r97 = phi i32 [0,%L3],[%r77,%L10]
+    %r97 = phi i32 [0,%L3],[%r32,%L10]
     %r93 = phi i32 [%r94,%L3],[%r95,%L10]
     %r91 = phi i32 [%r92,%L3],[%r29,%L10]
     %r89 = phi i32 [%r90,%L3],[%r88,%L10]
@@ -76,18 +76,15 @@ L9:  ;
     %r61 = icmp eq i32 %r60,0
     br i1 %r61, label %L11, label %L13
 L10:  ;
-    %r77 = add i32 %r97,1
     br label %L5
 L11:  ;
-    %r70 = getelementptr [10 x [10 x i32]], ptr @dp, i32 0, i32 %r97, i32 %r29
-    store i32 %r56, ptr %r70
+    store i32 %r56, ptr %r59
     br label %L12
 L12:  ;
     %r74 = add i32 %r95,1
     br label %L8
 L13:  ;
-    %r65 = getelementptr [10 x [10 x i32]], ptr @dp, i32 0, i32 %r97, i32 %r29
-    %r66 = load i32, ptr %r65
+    %r66 = load i32, ptr %r59
     %r67 = icmp slt i32 %r56,%r66
     br i1 %r67, label %L11, label %L12
 }

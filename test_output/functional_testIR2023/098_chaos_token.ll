@@ -29,8 +29,7 @@ L2:  ;
     %r7 = icmp ne i32 %r6,0
     br i1 %r7, label %L3, label %L4
 L3:  ;
-    %r9 = getelementptr i32, ptr %r0, i32 %r15
-    %r10 = load i32, ptr %r9
+    %r10 = load i32, ptr %r5
     call void @putch(i32 %r10)
     %r13 = add i32 %r15,1
     br label %L2

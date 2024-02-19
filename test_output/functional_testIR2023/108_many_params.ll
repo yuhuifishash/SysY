@@ -19,7 +19,7 @@ L0:  ;
 L1:  ;
     br label %L2
 L2:  ;
-    %r44 = phi i32 [0,%L1],[%r41,%L7]
+    %r44 = phi i32 [0,%L1],[%r13,%L7]
     %r8 = sub i32 %r1,1
     %r9 = icmp slt i32 %r44,%r8
     br i1 %r9, label %L3, label %L4
@@ -40,15 +40,12 @@ L6:  ;
     %r23 = icmp slt i32 %r19,%r22
     br i1 %r23, label %L8, label %L9
 L7:  ;
-    %r41 = add i32 %r44,1
     br label %L2
 L8:  ;
-    %r26 = getelementptr i32, ptr %r0, i32 %r44
-    %r27 = load i32, ptr %r26
-    %r31 = getelementptr i32, ptr %r0, i32 %r43
-    %r32 = load i32, ptr %r31
-    store i32 %r32, ptr %r26
-    store i32 %r27, ptr %r31
+    %r27 = load i32, ptr %r18
+    %r32 = load i32, ptr %r21
+    store i32 %r32, ptr %r18
+    store i32 %r27, ptr %r21
     br label %L9
 L9:  ;
     %r38 = add i32 %r43,1

@@ -47,8 +47,7 @@ L7:  ;
     %r38 = phi i32 [%r28,%L5],[%r37,%L6]
     br label %L2
 L8:  ;
-    %r20 = getelementptr i32, ptr %r0, i32 %r41
-    %r21 = load i32, ptr %r20
+    %r21 = load i32, ptr %r12
     %r23 = getelementptr i32, ptr %r0, i32 %r39
     %r24 = load i32, ptr %r23
     %r25 = icmp eq i32 %r21,%r24
@@ -74,8 +73,7 @@ L2:  ;
 L3:  ;
     %r14 = getelementptr i32, ptr %r0, i32 %r50
     %r15 = load i32, ptr %r14
-    %r17 = getelementptr i32, ptr %r1, i32 %r47
-    %r18 = load i32, ptr %r17
+    %r18 = load i32, ptr %r10
     %r19 = icmp eq i32 %r15,%r18
     br i1 %r19, label %L5, label %L6
 L4:  ;

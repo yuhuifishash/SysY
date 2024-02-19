@@ -75,8 +75,7 @@ L9:  ;
     %r70 = getelementptr [4 x i32], ptr @c, i32 0, i32 1
     %r71 = load i32, ptr %r70
     call void @putint(i32 %r71)
-    %r73 = getelementptr [4 x i32], ptr @c, i32 0, i32 2
-    %r74 = load i32, ptr %r73
+    %r74 = load i32, ptr %r24
     call void @putint(i32 %r74)
     %r76 = getelementptr [4 x i32], ptr @c, i32 0, i32 3
     %r77 = load i32, ptr %r76

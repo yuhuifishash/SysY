@@ -49,7 +49,7 @@ L10:  ;
     br label %L5
 L11:  ;
     %r88 = phi i32 [%r89,%L9],[%r55,%L27]
-    %r81 = phi i32 [0,%L9],[%r52,%L27]
+    %r81 = phi i32 [0,%L9],[%r24,%L27]
     %r21 = icmp slt i32 %r81,3
     br i1 %r21, label %L12, label %L13
 L12:  ;
@@ -64,8 +64,7 @@ L14:  ;
 L15:  ;
     br label %L25
 L16:  ;
-    %r30 = icmp ne i32 %r81,0
-    br i1 %r30, label %L18, label %L20
+    br i1 %r28, label %L18, label %L20
 L17:  ;
     br label %L15
 L18:  ;
@@ -89,7 +88,6 @@ L26:  ;
     %r46 = add i32 %r77,1
     br label %L25
 L27:  ;
-    %r52 = add i32 %r81,1
     %r55 = add i32 %r88,1
     br label %L11
 L30:  ;

@@ -47,8 +47,7 @@ L6:  ;
     %r56 = icmp slt i32 %r29,%r55
     br i1 %r56, label %L9, label %L10
 L7:  ;
-    %r65 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r74
-    %r66 = load i32, ptr %r65
+    %r66 = load i32, ptr %r40
     %r67 = icmp eq i32 %r29,%r66
     br i1 %r67, label %L12, label %L13
 L8:  ;

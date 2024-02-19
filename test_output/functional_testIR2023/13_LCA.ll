@@ -127,8 +127,7 @@ L2:  ;
 L3:  ;
     %r17 = add i32 %r47,1
     %r18 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r0, i32 %r17
-    %r21 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r0, i32 %r47
-    %r22 = load i32, ptr %r21
+    %r22 = load i32, ptr %r11
     %r24 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r22, i32 %r47
     %r25 = load i32, ptr %r24
     store i32 %r25, ptr %r18
@@ -187,20 +186,17 @@ L6:  ;
     %r48 = icmp eq i32 %r85,%r80
     br i1 %r48, label %L10, label %L11
 L7:  ;
-    %r41 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r85, i32 %r78
-    %r42 = load i32, ptr %r41
+    %r42 = load i32, ptr %r26
     br label %L8
 L8:  ;
     %r84 = phi i32 [%r85,%L5],[%r85,%L9],[%r42,%L7]
     %r45 = sub i32 %r78,1
     br label %L4
 L9:  ;
-    %r31 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r85, i32 %r78
-    %r32 = load i32, ptr %r31
+    %r32 = load i32, ptr %r26
     %r33 = getelementptr [10005 x i32], ptr @dep, i32 0, i32 %r32
     %r34 = load i32, ptr %r33
-    %r36 = getelementptr [10005 x i32], ptr @dep, i32 0, i32 %r80
-    %r37 = load i32, ptr %r36
+    %r37 = load i32, ptr %r21
     %r38 = icmp sge i32 %r34,%r37
     br i1 %r38, label %L7, label %L8
 L10:  ;
@@ -225,10 +221,8 @@ L14:  ;
     %r77 = load i32, ptr %r76
     ret i32 %r77
 L15:  ;
-    %r65 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r87, i32 %r79
-    %r66 = load i32, ptr %r65
-    %r69 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r82, i32 %r79
-    %r70 = load i32, ptr %r69
+    %r66 = load i32, ptr %r56
+    %r70 = load i32, ptr %r60
     br label %L16
 L16:  ;
     %r86 = phi i32 [%r87,%L13],[%r66,%L15]

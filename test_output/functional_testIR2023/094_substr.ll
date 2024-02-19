@@ -65,20 +65,16 @@ L7:  ;
     br label %L2
 L8:  ;
     %r32 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
-    %r35 = sub i32 %r71,1
-    %r38 = sub i32 %r70,1
-    %r39 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r35, i32 %r38
+    %r39 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r21, i32 %r26
     %r40 = load i32, ptr %r39
     %r42 = add i32 %r40,1
     store i32 %r42, ptr %r32
     br label %L10
 L9:  ;
     %r45 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
-    %r48 = sub i32 %r71,1
-    %r50 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r48, i32 %r70
+    %r50 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r21, i32 %r70
     %r51 = load i32, ptr %r50
-    %r55 = sub i32 %r70,1
-    %r56 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r55
+    %r56 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r26
     %r57 = load i32, ptr %r56
     %r58 = call i32 @MAX(i32 %r51,i32 %r57)
     store i32 %r58, ptr %r45

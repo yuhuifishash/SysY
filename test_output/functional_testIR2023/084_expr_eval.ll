@@ -276,34 +276,28 @@ L10:  ;
     %r20 = icmp ne i32 %r19,0
     br i1 %r20, label %L13, label %L12
 L11:  ;
-    %r28 = getelementptr [256 x i32], ptr %r1, i32 0
-    %r29 = call i32 @stack_pop(ptr %r28)
-    %r31 = getelementptr [256 x i32], ptr %r0, i32 0
-    %r32 = call i32 @stack_pop(ptr %r31)
-    %r35 = call i32 @stack_pop(ptr %r31)
+    %r29 = call i32 @stack_pop(ptr %r18)
+    %r32 = call i32 @stack_pop(ptr %r6)
+    %r35 = call i32 @stack_pop(ptr %r6)
     %r40 = call i32 @eval_op(i32 %r29,i32 %r35,i32 %r32)
-    call void @stack_push(ptr %r31,i32 %r40)
+    call void @stack_push(ptr %r6,i32 %r40)
     br label %L10
 L12:  ;
-    %r41 = getelementptr [256 x i32], ptr %r1, i32 0
-    call void @stack_push(ptr %r41,i32 %r13)
+    call void @stack_push(ptr %r18,i32 %r13)
     %r43 = load i32, ptr @cur_token
     %r45 = icmp ne i32 %r43,0
     br i1 %r45, label %L14, label %L15
 L13:  ;
-    %r21 = getelementptr [256 x i32], ptr %r1, i32 0
-    %r22 = call i32 @stack_peek(ptr %r21)
+    %r22 = call i32 @stack_peek(ptr %r18)
     %r23 = call i32 @get_op_prec(i32 %r22)
-    %r25 = call i32 @get_op_prec(i32 %r13)
-    %r26 = icmp sge i32 %r23,%r25
+    %r26 = icmp sge i32 %r23,%r15
     br i1 %r26, label %L11, label %L12
 L14:  ;
     %r46 = call i32 @panic()
     ret i32 %r46
 L15:  ;
-    %r47 = getelementptr [256 x i32], ptr %r0, i32 0
     %r48 = load i32, ptr @num
-    call void @stack_push(ptr %r47,i32 %r48)
+    call void @stack_push(ptr %r6,i32 %r48)
     %r49 = call i32 @next_token()
     br label %L4
 L16:  ;
@@ -312,17 +306,14 @@ L16:  ;
     %r53 = icmp ne i32 %r52,0
     br i1 %r53, label %L17, label %L18
 L17:  ;
-    %r55 = getelementptr [256 x i32], ptr %r1, i32 0
-    %r56 = call i32 @stack_pop(ptr %r55)
-    %r58 = getelementptr [256 x i32], ptr %r0, i32 0
-    %r59 = call i32 @stack_pop(ptr %r58)
-    %r62 = call i32 @stack_pop(ptr %r58)
+    %r56 = call i32 @stack_pop(ptr %r51)
+    %r59 = call i32 @stack_pop(ptr %r6)
+    %r62 = call i32 @stack_pop(ptr %r6)
     %r67 = call i32 @eval_op(i32 %r56,i32 %r62,i32 %r59)
-    call void @stack_push(ptr %r58,i32 %r67)
+    call void @stack_push(ptr %r6,i32 %r67)
     br label %L16
 L18:  ;
-    %r68 = getelementptr [256 x i32], ptr %r0, i32 0
-    %r69 = call i32 @stack_peek(ptr %r68)
+    %r69 = call i32 @stack_peek(ptr %r6)
     ret i32 %r69
 }
 define i32 @main()

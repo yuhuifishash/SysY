@@ -52,7 +52,7 @@ L6:  ;
 L7:  ;
     br label %L14
 L8:  ;
-    %r148 = phi i32 [1,%L6],[%r121,%L13]
+    %r148 = phi i32 [1,%L6],[%r57,%L13]
     %r47 = icmp sle i32 %r148,%r11
     br i1 %r47, label %L9, label %L10
 L9:  ;
@@ -75,31 +75,19 @@ L10:  ;
     br label %L5
 L11:  ;
     %r83 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r151, i32 %r148
-    %r86 = sub i32 %r151,1
-    %r88 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r86, i32 %r148
-    %r89 = load i32, ptr %r88
-    %r93 = add i32 %r148,1
-    %r95 = srem i32 %r93,2
-    %r96 = getelementptr [1005 x [2 x i32]], ptr @t, i32 0, i32 %r151, i32 %r95
-    %r97 = load i32, ptr %r96
+    %r89 = load i32, ptr %r52
+    %r97 = load i32, ptr %r60
     %r98 = add i32 %r89,%r97
     store i32 %r98, ptr %r83
     br label %L13
 L12:  ;
     %r101 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r151, i32 %r148
-    %r104 = sub i32 %r151,1
-    %r107 = sub i32 %r148,1
-    %r108 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r104, i32 %r107
-    %r109 = load i32, ptr %r108
-    %r113 = add i32 %r148,1
-    %r115 = srem i32 %r113,2
-    %r116 = getelementptr [1005 x [2 x i32]], ptr @t, i32 0, i32 %r151, i32 %r115
-    %r117 = load i32, ptr %r116
+    %r109 = load i32, ptr %r69
+    %r117 = load i32, ptr %r60
     %r118 = add i32 %r109,%r117
     store i32 %r118, ptr %r101
     br label %L13
 L13:  ;
-    %r121 = add i32 %r148,1
     br label %L8
 L14:  ;
     %r149 = phi i32 [0,%L7],[%r143,%L18]
@@ -114,8 +102,7 @@ L15:  ;
 L16:  ;
     ret i32 %r146
 L17:  ;
-    %r139 = getelementptr [1005 x [35 x i32]], ptr @dp, i32 0, i32 %r10, i32 %r149
-    %r140 = load i32, ptr %r139
+    %r140 = load i32, ptr %r134
     br label %L18
 L18:  ;
     %r145 = phi i32 [%r146,%L15],[%r140,%L17]

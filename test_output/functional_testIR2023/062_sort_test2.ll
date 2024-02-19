@@ -38,8 +38,7 @@ L5:  ;
 L6:  ;
     %r28 = add i32 %r46,1
     %r29 = getelementptr i32, ptr %r0, i32 %r28
-    %r31 = getelementptr i32, ptr %r0, i32 %r46
-    %r32 = load i32, ptr %r31
+    %r32 = load i32, ptr %r23
     store i32 %r32, ptr %r29
     %r35 = sub i32 %r46,1
     br label %L5

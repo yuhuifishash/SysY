@@ -37,8 +37,7 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     %r6 = fadd float 0x4024000000000000,0x0
-    %r9 = sitofp i32 100 to float
-    %r10 = fdiv float %r0,%r9
+    %r10 = fdiv float %r0,%r4
     %r11 = call float @my_sqrt(float %r10)
     %r12 = fmul float %r6,%r11
     ret float %r12
@@ -62,8 +61,7 @@ L4:  ;
 L5:  ;
     %r37 = fdiv float %r0,%r47
     %r38 = fadd float %r47,%r37
-    %r40 = sitofp i32 2 to float
-    %r41 = fdiv float %r38,%r40
+    %r41 = fdiv float %r38,%r22
     %r44 = sub i32 %r46,1
     br label %L4
 L6:  ;
@@ -146,8 +144,7 @@ L2:  ;
     %r25 = fadd float %r19,%r24
     %r27 = call float @F1(float %r1)
     %r28 = fadd float %r25,%r27
-    %r31 = fsub float %r1,%r0
-    %r32 = fmul float %r28,%r31
+    %r32 = fmul float %r28,%r10
     %r34 = sitofp i32 6 to float
     %r35 = fdiv float %r32,%r34
     ret float %r35
@@ -162,8 +159,7 @@ L4:  ;
     %r46 = fadd float %r40,%r45
     %r48 = call float @F2(float %r1)
     %r49 = fadd float %r46,%r48
-    %r52 = fsub float %r1,%r0
-    %r53 = fmul float %r49,%r52
+    %r53 = fmul float %r49,%r10
     %r55 = sitofp i32 6 to float
     %r56 = fdiv float %r53,%r55
     ret float %r56
@@ -190,15 +186,12 @@ L1:  ;
     %r39 = fcmp ole float %r34,%r38
     br i1 %r39, label %L2, label %L3
 L2:  ;
-    %r42 = fadd float %r23,%r28
-    %r47 = fsub float %r42,%r3
     %r48 = fadd float 0x402e000000000000,0x0
-    %r49 = fdiv float %r47,%r48
-    %r50 = fadd float %r42,%r49
+    %r49 = fdiv float %r33,%r48
+    %r50 = fadd float %r31,%r49
     ret float %r50
 L3:  ;
-    %r55 = sitofp i32 2 to float
-    %r56 = fdiv float %r2,%r55
+    %r56 = fdiv float %r2,%r16
     %r59 = call float @asr5(float %r0,float %r18,float %r56,float %r23,i32 %r4)
     %r68 = call float @asr5(float %r18,float %r1,float %r56,float %r28,i32 %r4)
     %r69 = fadd float %r59,%r68
@@ -342,9 +335,7 @@ L6:  ;
     br label %L7
 L7:  ;
     call void @putch(i32 32)
-    %r31 = sitofp i32 0 to float
-    %r32 = fcmp ogt float %r5,%r31
-    br i1 %r32, label %L11, label %L9
+    br i1 %r24, label %L11, label %L9
 L8:  ;
     %r39 = call float @my_log(float %r5,float %r7)
     call void @putfloat(float %r39)
@@ -354,12 +345,9 @@ L9:  ;
     br label %L10
 L10:  ;
     call void @putch(i32 32)
-    %r44 = sitofp i32 0 to float
-    %r45 = fcmp ogt float %r5,%r44
-    br i1 %r45, label %L12, label %L13
+    br i1 %r24, label %L12, label %L13
 L11:  ;
-    %r35 = sitofp i32 0 to float
-    %r36 = fcmp ogt float %r7,%r35
+    %r36 = fcmp ogt float %r7,%r23
     br i1 %r36, label %L8, label %L9
 L12:  ;
     %r48 = call float @my_powf(float %r5,float %r7)

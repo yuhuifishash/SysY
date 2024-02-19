@@ -622,8 +622,7 @@ L7:  ;
     %r313 = load i32, ptr @k
     %r314 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r313
     %r315 = load i32, ptr %r314
-    %r317 = getelementptr [10 x float], ptr %r99, i32 0, i32 8
-    %r318 = load float, ptr %r317
+    %r318 = load float, ptr %r201
     %r319 = sitofp i32 %r315 to float
     %r320 = fmul float %r319,%r318
     %r321 = fptosi float %r320 to i32

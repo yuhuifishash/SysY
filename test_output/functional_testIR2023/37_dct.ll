@@ -87,11 +87,10 @@ L1:  ;
     %r4 = fcmp ogt float %r0,%r3
     br i1 %r4, label %L2, label %L4
 L2:  ;
-    %r11 = fadd float 0x0,0x401921fb60000000
-    %r12 = fdiv float %r0,%r11
+    %r12 = fdiv float %r0,%r3
     %r13 = fptosi float %r12 to i32
     %r17 = sitofp i32 %r13 to float
-    %r18 = fmul float %r17,%r11
+    %r18 = fmul float %r17,%r3
     %r19 = fsub float %r0,%r18
     br label %L3
 L3:  ;
@@ -100,23 +99,19 @@ L3:  ;
     %r22 = fcmp ogt float %r35,%r21
     br i1 %r22, label %L5, label %L6
 L4:  ;
-    %r6 = fadd float 0x0,0x401921fb60000000
-    %r7 = fsub float 0x0,%r6
+    %r7 = fsub float 0x0,%r3
     %r8 = fcmp olt float %r0,%r7
     br i1 %r8, label %L2, label %L3
 L5:  ;
-    %r24 = fadd float 0x0,0x401921fb60000000
-    %r25 = fsub float %r35,%r24
+    %r25 = fsub float %r35,%r3
     br label %L6
 L6:  ;
     %r36 = phi float [%r35,%L3],[%r25,%L5]
-    %r27 = fadd float 0x0,0x400921fb60000000
-    %r28 = fsub float 0x0,%r27
+    %r28 = fsub float 0x0,%r21
     %r29 = fcmp olt float %r36,%r28
     br i1 %r29, label %L7, label %L8
 L7:  ;
-    %r31 = fadd float 0x0,0x401921fb60000000
-    %r32 = fadd float %r36,%r31
+    %r32 = fadd float %r36,%r3
     br label %L8
 L8:  ;
     %r37 = phi float [%r36,%L6],[%r32,%L7]
@@ -197,8 +192,7 @@ L11:  ;
     %r30 = icmp slt i32 %r90,%r3
     br i1 %r30, label %L12, label %L13
 L12:  ;
-    %r33 = getelementptr [8 x float], ptr %r0, i32 %r96, i32 %r95
-    %r37 = load float, ptr %r33
+    %r37 = load float, ptr %r18
     %r40 = getelementptr [8 x float], ptr %r1, i32 %r93, i32 %r90
     %r41 = load float, ptr %r40
     %r42 = fadd float 0x0,0x400921fb60000000
@@ -224,7 +218,7 @@ L12:  ;
     %r72 = call float @my_cos(float %r71)
     %r73 = fmul float %r57,%r72
     %r74 = fadd float %r37,%r73
-    store float %r74, ptr %r33
+    store float %r74, ptr %r18
     %r77 = add i32 %r90,1
     br label %L11
 L13:  ;
@@ -267,16 +261,14 @@ L8:  ;
     %r35 = icmp slt i32 %r168,%r2
     br i1 %r35, label %L9, label %L10
 L9:  ;
-    %r38 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r42 = load float, ptr %r38
+    %r42 = load float, ptr %r18
     %r44 = fadd float 0x4000000000000000,0x0
-    %r45 = sitofp i32 1 to float
-    %r46 = fdiv float %r45,%r44
+    %r46 = fdiv float %r21,%r44
     %r49 = getelementptr [8 x float], ptr %r1, i32 %r168, i32 0
     %r50 = load float, ptr %r49
     %r51 = fmul float %r46,%r50
     %r52 = fadd float %r42,%r51
-    store float %r52, ptr %r38
+    store float %r52, ptr %r18
     %r55 = add i32 %r168,1
     br label %L8
 L10:  ;
@@ -286,16 +278,14 @@ L11:  ;
     %r59 = icmp slt i32 %r163,%r3
     br i1 %r59, label %L12, label %L13
 L12:  ;
-    %r62 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r66 = load float, ptr %r62
+    %r66 = load float, ptr %r18
     %r68 = fadd float 0x4000000000000000,0x0
-    %r69 = sitofp i32 1 to float
-    %r70 = fdiv float %r69,%r68
+    %r70 = fdiv float %r21,%r68
     %r73 = getelementptr [8 x float], ptr %r1, i32 0, i32 %r163
     %r74 = load float, ptr %r73
     %r75 = fmul float %r70,%r74
     %r76 = fadd float %r66,%r75
-    store float %r76, ptr %r62
+    store float %r76, ptr %r18
     %r79 = add i32 %r163,1
     br label %L11
 L13:  ;
@@ -307,8 +297,7 @@ L14:  ;
 L15:  ;
     br label %L17
 L16:  ;
-    %r140 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r144 = load float, ptr %r140
+    %r144 = load float, ptr %r18
     %r145 = fadd float 0x4000000000000000,0x0
     %r146 = fmul float %r144,%r145
     %r148 = sitofp i32 %r2 to float
@@ -316,7 +305,7 @@ L16:  ;
     %r151 = fmul float %r149,%r145
     %r153 = sitofp i32 %r3 to float
     %r154 = fdiv float %r151,%r153
-    store float %r154, ptr %r140
+    store float %r154, ptr %r18
     %r157 = add i32 %r171,1
     br label %L5
 L17:  ;
@@ -324,8 +313,7 @@ L17:  ;
     %r87 = icmp slt i32 %r165,%r3
     br i1 %r87, label %L18, label %L19
 L18:  ;
-    %r90 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
-    %r94 = load float, ptr %r90
+    %r94 = load float, ptr %r18
     %r97 = getelementptr [8 x float], ptr %r1, i32 %r169, i32 %r165
     %r98 = load float, ptr %r97
     %r99 = fadd float 0x0,0x400921fb60000000
@@ -351,7 +339,7 @@ L18:  ;
     %r129 = call float @my_cos(float %r128)
     %r130 = fmul float %r114,%r129
     %r131 = fadd float %r94,%r130
-    store float %r131, ptr %r90
+    store float %r131, ptr %r18
     %r134 = add i32 %r165,1
     br label %L17
 L19:  ;

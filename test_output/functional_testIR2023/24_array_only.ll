@@ -151,49 +151,41 @@ L1:  ;
     %r14 = call i32 @getarray(ptr %r13)
     br label %L2
 L2:  ;
-    %r16 = getelementptr [1 x i32], ptr %r1, i32 0, i32 0
-    %r17 = load i32, ptr %r16
+    %r17 = load i32, ptr %r10
     %r18 = icmp ne i32 %r17,0
     br i1 %r18, label %L3, label %L4
 L3:  ;
     %r20 = getelementptr [1 x i32], ptr %r0, i32 0, i32 0
-    %r23 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0, i32 0
-    %r24 = load i32, ptr %r23
+    %r24 = load i32, ptr %r5
     store i32 %r24, ptr %r20
     br label %L5
 L4:  ;
     call void @putch(i32 10)
     ret i32 0
 L5:  ;
-    %r26 = getelementptr [1 x i32], ptr %r0, i32 0, i32 0
-    %r27 = load i32, ptr %r26
+    %r27 = load i32, ptr %r20
     %r29 = icmp slt i32 %r27,5
     br i1 %r29, label %L6, label %L7
 L6:  ;
     %r31 = getelementptr [1 x i32], ptr @i, i32 0, i32 0
     %r32 = load i32, ptr %r31
     call void @putint(i32 %r32)
-    %r34 = getelementptr [1 x i32], ptr %r0, i32 0, i32 0
-    %r35 = load i32, ptr %r34
+    %r35 = load i32, ptr %r20
     call void @putint(i32 %r35)
-    %r37 = getelementptr [1 x i32], ptr %r1, i32 0, i32 0
-    %r38 = load i32, ptr %r37
+    %r38 = load i32, ptr %r10
     call void @putint(i32 %r38)
-    %r41 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0, i32 0
-    %r42 = load i32, ptr %r41
+    %r42 = load i32, ptr %r5
     call void @putint(i32 %r42)
-    %r44 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0
     %r45 = getelementptr [1 x i32], ptr %r1, i32 0
-    call void @add(ptr %r44,ptr %r45)
+    call void @add(ptr %r13,ptr %r45)
     %r46 = getelementptr [1 x i32], ptr %r0, i32 0
     call void @add(ptr %r46,ptr %r45)
-    call void @sub(ptr %r44,ptr %r45)
+    call void @sub(ptr %r13,ptr %r45)
     br label %L5
 L7:  ;
     %r51 = getelementptr [1 x i32], ptr @i, i32 0
     call void @inc(ptr %r51)
-    %r54 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0
-    call void @add(ptr %r51,ptr %r54)
+    call void @add(ptr %r51,ptr %r13)
     %r56 = getelementptr [1 x i32], ptr @i, i32 0, i32 0
     %r57 = load i32, ptr %r56
     %r60 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0, i32 1

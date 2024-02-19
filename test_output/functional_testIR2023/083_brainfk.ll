@@ -53,8 +53,7 @@ L2:  ;
     %r10 = icmp ne i32 %r9,0
     br i1 %r10, label %L3, label %L4
 L3:  ;
-    %r12 = getelementptr i32, ptr %r0, i32 %r90
-    %r13 = load i32, ptr %r12
+    %r13 = load i32, ptr %r8
     %r16 = icmp eq i32 %r13,62
     br i1 %r16, label %L5, label %L6
 L4:  ;

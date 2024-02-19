@@ -72,8 +72,7 @@ L10:  ;
     store i32 1, ptr %r56
     br label %L14
 L11:  ;
-    %r49 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r100
-    %r50 = load i32, ptr %r49
+    %r50 = load i32, ptr %r40
     br label %L12
 L12:  ;
     %r105 = phi i32 [%r106,%L9],[%r106,%L13],[%r50,%L11]
@@ -103,8 +102,7 @@ L17:  ;
     %r71 = load i32, ptr %r70
     %r73 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r103
     %r74 = load i32, ptr %r73
-    %r77 = getelementptr [16 x [16 x i32]], ptr @e, i32 0, i32 %r103, i32 %r98
-    %r78 = load i32, ptr %r77
+    %r78 = load i32, ptr %r65
     %r79 = add i32 %r74,%r78
     %r80 = icmp sgt i32 %r71,%r79
     br i1 %r80, label %L19, label %L20
@@ -112,13 +110,10 @@ L18:  ;
     %r93 = add i32 %r98,1
     br label %L14
 L19:  ;
-    %r82 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r98
-    %r84 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r103
-    %r85 = load i32, ptr %r84
-    %r88 = getelementptr [16 x [16 x i32]], ptr @e, i32 0, i32 %r103, i32 %r98
-    %r89 = load i32, ptr %r88
+    %r85 = load i32, ptr %r73
+    %r89 = load i32, ptr %r65
     %r90 = add i32 %r85,%r89
-    store i32 %r90, ptr %r82
+    store i32 %r90, ptr %r70
     br label %L20
 L20:  ;
     br label %L18

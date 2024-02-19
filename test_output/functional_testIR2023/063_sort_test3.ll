@@ -50,8 +50,7 @@ L8:  ;
     %r34 = sub i32 %r90,1
     br label %L7
 L9:  ;
-    %r37 = icmp slt i32 %r95,%r90
-    br i1 %r37, label %L11, label %L12
+    br i1 %r24, label %L11, label %L12
 L10:  ;
     %r26 = getelementptr i32, ptr %r0, i32 %r90
     %r27 = load i32, ptr %r26
@@ -76,8 +75,7 @@ L14:  ;
     %r56 = add i32 %r96,1
     br label %L13
 L15:  ;
-    %r59 = icmp slt i32 %r96,%r90
-    br i1 %r59, label %L17, label %L18
+    br i1 %r48, label %L17, label %L18
 L16:  ;
     %r50 = getelementptr i32, ptr %r0, i32 %r96
     %r51 = load i32, ptr %r50
