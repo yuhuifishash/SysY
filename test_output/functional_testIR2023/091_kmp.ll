@@ -124,8 +124,7 @@ L3:  ;
     %r12 = icmp eq i32 %r10,10
     br i1 %r12, label %L5, label %L6
 L4:  ;
-    %r17 = getelementptr i32, ptr %r0, i32 %r20
-    store i32 0, ptr %r17
+    store i32 0, ptr %r6
     ret i32 %r20
 L5:  ;
     br label %L4

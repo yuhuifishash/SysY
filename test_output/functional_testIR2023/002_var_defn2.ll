@@ -20,6 +20,6 @@ L0:  ;
     br label %L1
 L1:  ;
     %r3 = load i32, ptr @b
-    %r4 = add i32 5,%r3
+    %r4 = add i32 %r3,5
     ret i32 %r4
 }

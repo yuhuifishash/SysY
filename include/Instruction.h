@@ -221,7 +221,7 @@ public:
     virtual void SetNonResultOperands(std::vector<Operand> ops) = 0;
     virtual Instruction CopyInstruction() = 0;
     virtual int IsFuncDef(){return 0;}
-
+    virtual int isArithmetic(){return 0;}
     
     virtual int ConstPropagate(std::map<int,Instruction>& regresult_map) = 0;
 };
@@ -300,6 +300,9 @@ public:
     Operand GetOperand2(){return op2;}
     Operand GetResultOperand(){return result;}
     Operand GetResultReg(){return result;}
+    void SetOperand1(Operand op){op1 = op;}
+    void SetOperand2(Operand op){op2 = op;}
+    void SwapOperand(){std::swap(op1,op2);}
     ArithmeticInstruction(LLVMIROpcode opcode,enum LLVMType type,Operand op1,Operand op2,Operand result){
         this->opcode=opcode;
         this->op1=op1;
@@ -308,6 +311,7 @@ public:
         this->type=type;
     }
     virtual void PrintIR(std::ostream& s);
+    virtual int isArithmetic(){return 1;}
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();

@@ -59,7 +59,7 @@ L6:  ;
     %r55 = sub i32 %r0,1
     %r61 = call i32 @dfs(i32 %r55,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 1)
     %r62 = mul i32 %r52,%r61
-    %r63 = add i32 0,%r62
+    %r63 = add i32 %r62,0
     %r65 = srem i32 %r63,1000000007
     br label %L7
 L7:  ;

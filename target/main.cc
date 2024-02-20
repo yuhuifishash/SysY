@@ -50,6 +50,8 @@ void ElimateEmptyIndexGEP(CFG* C);
 void TailRecursiveElimate(CFG* C);
 void BasicBlockCSE(CFG* C);
 void DomTreeWalkCSE(CFG* C);
+void InstSimplify(CFG* C);
+void InstCombine(CFG* C);
 
 
 int main(int argc,char** argv)
@@ -114,11 +116,14 @@ int main(int argc,char** argv)
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
         llvmIR.PassExecutor( SparseConditionalConstantPropagation );
+
+        llvmIR.PassExecutor( InstSimplify );
+        llvmIR.PassExecutor( InstCombine );
         //llvmIR.PassExecutor( SimplifyCFG ); // to do
+
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor( SimpleDCE );
         llvmIR.PassExecutor( BasicBlockCSE );
-        llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( DomTreeWalkCSE );
     }
     

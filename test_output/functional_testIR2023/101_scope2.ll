@@ -43,8 +43,7 @@ L6:  ;
     br label %L3
 L7:  ;
     %r25 = sub i32 %r14,10
-    %r30 = add i32 %r25,11
-    %r32 = add i32 %r30,11
+    %r32 = add i32 %r25,22
     br label %L8
 L8:  ;
     %r37 = phi i32 [%r14,%L5],[%r32,%L7]

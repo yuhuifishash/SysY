@@ -698,4 +698,6 @@ void SparseConditionalConstantPropagation(CFG* C)
     SetInstructionBlockID(C);
     BuildSSAGraph(C);
     SCCP(C);
+    C->BuildCFG();
+    C->BuildDominatorTree();
 }

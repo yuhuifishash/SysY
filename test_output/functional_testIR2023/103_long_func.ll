@@ -57,7 +57,7 @@ L188:  ;
 L189:  ;
     %r793 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3675
     %r794 = load i32, ptr %r793
-    %r795 = mul i32 1,%r794
+    %r795 = mul i32 %r794,1
     %r796 = add i32 %r3829,%r795
     br label %L190
 L190:  ;
@@ -104,7 +104,7 @@ L199:  ;
 L200:  ;
     %r834 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3678
     %r835 = load i32, ptr %r834
-    %r836 = mul i32 1,%r835
+    %r836 = mul i32 %r835,1
     %r837 = add i32 %r3833,%r836
     br label %L201
 L201:  ;
@@ -163,7 +163,7 @@ L213:  ;
 L214:  ;
     %r876 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3681
     %r877 = load i32, ptr %r876
-    %r878 = mul i32 1,%r877
+    %r878 = mul i32 %r877,1
     %r879 = add i32 %r3838,%r878
     br label %L215
 L215:  ;
@@ -172,7 +172,7 @@ L215:  ;
 L216:  ;
     %r887 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3681
     %r888 = load i32, ptr %r887
-    %r889 = mul i32 1,%r888
+    %r889 = mul i32 %r888,1
     %r890 = add i32 %r3838,%r889
     br label %L217
 L217:  ;
@@ -194,7 +194,7 @@ L220:  ;
 L221:  ;
     %r919 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3682
     %r920 = load i32, ptr %r919
-    %r921 = mul i32 1,%r920
+    %r921 = mul i32 %r920,1
     %r922 = add i32 %r3841,%r921
     br label %L222
 L222:  ;
@@ -232,7 +232,7 @@ L229:  ;
 L230:  ;
     %r959 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3684
     %r960 = load i32, ptr %r959
-    %r961 = mul i32 1,%r960
+    %r961 = mul i32 %r960,1
     %r962 = add i32 %r3844,%r961
     br label %L231
 L231:  ;
@@ -285,7 +285,7 @@ L241:  ;
 L242:  ;
     %r1003 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3686
     %r1004 = load i32, ptr %r1003
-    %r1005 = mul i32 1,%r1004
+    %r1005 = mul i32 %r1004,1
     %r1006 = add i32 %r3848,%r1005
     br label %L243
 L243:  ;
@@ -294,7 +294,7 @@ L243:  ;
 L244:  ;
     %r1014 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3686
     %r1015 = load i32, ptr %r1014
-    %r1016 = mul i32 1,%r1015
+    %r1016 = mul i32 %r1015,1
     %r1017 = add i32 %r3848,%r1016
     br label %L245
 L245:  ;
@@ -316,7 +316,7 @@ L248:  ;
 L249:  ;
     %r1046 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3687
     %r1047 = load i32, ptr %r1046
-    %r1048 = mul i32 1,%r1047
+    %r1048 = mul i32 %r1047,1
     %r1049 = add i32 %r3851,%r1048
     br label %L250
 L250:  ;
@@ -354,7 +354,7 @@ L257:  ;
 L258:  ;
     %r1086 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3689
     %r1087 = load i32, ptr %r1086
-    %r1088 = mul i32 1,%r1087
+    %r1088 = mul i32 %r1087,1
     %r1089 = add i32 %r3854,%r1088
     br label %L259
 L259:  ;
@@ -423,7 +423,7 @@ L278:  ;
 L279:  ;
     %r1170 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3691
     %r1171 = load i32, ptr %r1170
-    %r1172 = mul i32 1,%r1171
+    %r1172 = mul i32 %r1171,1
     %r1173 = add i32 %r3861,%r1172
     br label %L280
 L280:  ;
@@ -482,7 +482,7 @@ L292:  ;
 L293:  ;
     %r1212 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3694
     %r1213 = load i32, ptr %r1212
-    %r1214 = mul i32 1,%r1213
+    %r1214 = mul i32 %r1213,1
     %r1215 = add i32 %r3866,%r1214
     br label %L294
 L294:  ;
@@ -491,7 +491,7 @@ L294:  ;
 L295:  ;
     %r1223 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3694
     %r1224 = load i32, ptr %r1223
-    %r1225 = mul i32 1,%r1224
+    %r1225 = mul i32 %r1224,1
     %r1226 = add i32 %r3866,%r1225
     br label %L296
 L296:  ;
@@ -513,7 +513,7 @@ L299:  ;
 L300:  ;
     %r1255 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3695
     %r1256 = load i32, ptr %r1255
-    %r1257 = mul i32 1,%r1256
+    %r1257 = mul i32 %r1256,1
     %r1258 = add i32 %r3869,%r1257
     br label %L301
 L301:  ;
@@ -551,7 +551,7 @@ L308:  ;
 L309:  ;
     %r1295 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3697
     %r1296 = load i32, ptr %r1295
-    %r1297 = mul i32 1,%r1296
+    %r1297 = mul i32 %r1296,1
     %r1298 = add i32 %r3872,%r1297
     br label %L310
 L310:  ;
@@ -604,7 +604,7 @@ L320:  ;
 L321:  ;
     %r1339 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3699
     %r1340 = load i32, ptr %r1339
-    %r1341 = mul i32 1,%r1340
+    %r1341 = mul i32 %r1340,1
     %r1342 = add i32 %r3876,%r1341
     br label %L322
 L322:  ;
@@ -613,7 +613,7 @@ L322:  ;
 L323:  ;
     %r1350 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3699
     %r1351 = load i32, ptr %r1350
-    %r1352 = mul i32 1,%r1351
+    %r1352 = mul i32 %r1351,1
     %r1353 = add i32 %r3876,%r1352
     br label %L324
 L324:  ;
@@ -635,7 +635,7 @@ L327:  ;
 L328:  ;
     %r1382 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3700
     %r1383 = load i32, ptr %r1382
-    %r1384 = mul i32 1,%r1383
+    %r1384 = mul i32 %r1383,1
     %r1385 = add i32 %r3879,%r1384
     br label %L329
 L329:  ;
@@ -673,7 +673,7 @@ L336:  ;
 L337:  ;
     %r1422 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3702
     %r1423 = load i32, ptr %r1422
-    %r1424 = mul i32 1,%r1423
+    %r1424 = mul i32 %r1423,1
     %r1425 = add i32 %r3882,%r1424
     br label %L338
 L338:  ;
@@ -789,7 +789,7 @@ L372:  ;
 L373:  ;
     %r1553 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3705
     %r1554 = load i32, ptr %r1553
-    %r1555 = mul i32 1,%r1554
+    %r1555 = mul i32 %r1554,1
     %r1556 = add i32 %r3894,%r1555
     br label %L374
 L374:  ;
@@ -836,7 +836,7 @@ L383:  ;
 L384:  ;
     %r1594 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3708
     %r1595 = load i32, ptr %r1594
-    %r1596 = mul i32 1,%r1595
+    %r1596 = mul i32 %r1595,1
     %r1597 = add i32 %r3898,%r1596
     br label %L385
 L385:  ;
@@ -895,7 +895,7 @@ L397:  ;
 L398:  ;
     %r1636 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3711
     %r1637 = load i32, ptr %r1636
-    %r1638 = mul i32 1,%r1637
+    %r1638 = mul i32 %r1637,1
     %r1639 = add i32 %r3903,%r1638
     br label %L399
 L399:  ;
@@ -904,7 +904,7 @@ L399:  ;
 L400:  ;
     %r1647 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3711
     %r1648 = load i32, ptr %r1647
-    %r1649 = mul i32 1,%r1648
+    %r1649 = mul i32 %r1648,1
     %r1650 = add i32 %r3903,%r1649
     br label %L401
 L401:  ;
@@ -926,7 +926,7 @@ L404:  ;
 L405:  ;
     %r1679 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3712
     %r1680 = load i32, ptr %r1679
-    %r1681 = mul i32 1,%r1680
+    %r1681 = mul i32 %r1680,1
     %r1682 = add i32 %r3906,%r1681
     br label %L406
 L406:  ;
@@ -964,7 +964,7 @@ L413:  ;
 L414:  ;
     %r1719 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3714
     %r1720 = load i32, ptr %r1719
-    %r1721 = mul i32 1,%r1720
+    %r1721 = mul i32 %r1720,1
     %r1722 = add i32 %r3909,%r1721
     br label %L415
 L415:  ;
@@ -1017,7 +1017,7 @@ L425:  ;
 L426:  ;
     %r1763 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3716
     %r1764 = load i32, ptr %r1763
-    %r1765 = mul i32 1,%r1764
+    %r1765 = mul i32 %r1764,1
     %r1766 = add i32 %r3913,%r1765
     br label %L427
 L427:  ;
@@ -1026,7 +1026,7 @@ L427:  ;
 L428:  ;
     %r1774 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3716
     %r1775 = load i32, ptr %r1774
-    %r1776 = mul i32 1,%r1775
+    %r1776 = mul i32 %r1775,1
     %r1777 = add i32 %r3913,%r1776
     br label %L429
 L429:  ;
@@ -1048,7 +1048,7 @@ L432:  ;
 L433:  ;
     %r1806 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3717
     %r1807 = load i32, ptr %r1806
-    %r1808 = mul i32 1,%r1807
+    %r1808 = mul i32 %r1807,1
     %r1809 = add i32 %r3916,%r1808
     br label %L434
 L434:  ;
@@ -1086,7 +1086,7 @@ L441:  ;
 L442:  ;
     %r1846 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3719
     %r1847 = load i32, ptr %r1846
-    %r1848 = mul i32 1,%r1847
+    %r1848 = mul i32 %r1847,1
     %r1849 = add i32 %r3919,%r1848
     br label %L443
 L443:  ;
@@ -1155,7 +1155,7 @@ L462:  ;
 L463:  ;
     %r1930 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3721
     %r1931 = load i32, ptr %r1930
-    %r1932 = mul i32 1,%r1931
+    %r1932 = mul i32 %r1931,1
     %r1933 = add i32 %r3926,%r1932
     br label %L464
 L464:  ;
@@ -1214,7 +1214,7 @@ L476:  ;
 L477:  ;
     %r1972 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3724
     %r1973 = load i32, ptr %r1972
-    %r1974 = mul i32 1,%r1973
+    %r1974 = mul i32 %r1973,1
     %r1975 = add i32 %r3931,%r1974
     br label %L478
 L478:  ;
@@ -1223,7 +1223,7 @@ L478:  ;
 L479:  ;
     %r1983 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3724
     %r1984 = load i32, ptr %r1983
-    %r1985 = mul i32 1,%r1984
+    %r1985 = mul i32 %r1984,1
     %r1986 = add i32 %r3931,%r1985
     br label %L480
 L480:  ;
@@ -1245,7 +1245,7 @@ L483:  ;
 L484:  ;
     %r2015 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3725
     %r2016 = load i32, ptr %r2015
-    %r2017 = mul i32 1,%r2016
+    %r2017 = mul i32 %r2016,1
     %r2018 = add i32 %r3934,%r2017
     br label %L485
 L485:  ;
@@ -1283,7 +1283,7 @@ L492:  ;
 L493:  ;
     %r2055 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3727
     %r2056 = load i32, ptr %r2055
-    %r2057 = mul i32 1,%r2056
+    %r2057 = mul i32 %r2056,1
     %r2058 = add i32 %r3937,%r2057
     br label %L494
 L494:  ;
@@ -1336,7 +1336,7 @@ L504:  ;
 L505:  ;
     %r2099 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3729
     %r2100 = load i32, ptr %r2099
-    %r2101 = mul i32 1,%r2100
+    %r2101 = mul i32 %r2100,1
     %r2102 = add i32 %r3941,%r2101
     br label %L506
 L506:  ;
@@ -1345,7 +1345,7 @@ L506:  ;
 L507:  ;
     %r2110 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3729
     %r2111 = load i32, ptr %r2110
-    %r2112 = mul i32 1,%r2111
+    %r2112 = mul i32 %r2111,1
     %r2113 = add i32 %r3941,%r2112
     br label %L508
 L508:  ;
@@ -1367,7 +1367,7 @@ L511:  ;
 L512:  ;
     %r2142 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3730
     %r2143 = load i32, ptr %r2142
-    %r2144 = mul i32 1,%r2143
+    %r2144 = mul i32 %r2143,1
     %r2145 = add i32 %r3944,%r2144
     br label %L513
 L513:  ;
@@ -1405,7 +1405,7 @@ L520:  ;
 L521:  ;
     %r2182 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3732
     %r2183 = load i32, ptr %r2182
-    %r2184 = mul i32 1,%r2183
+    %r2184 = mul i32 %r2183,1
     %r2185 = add i32 %r3947,%r2184
     br label %L522
 L522:  ;
@@ -1521,7 +1521,7 @@ L556:  ;
 L557:  ;
     %r2316 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3735
     %r2317 = load i32, ptr %r2316
-    %r2318 = mul i32 1,%r2317
+    %r2318 = mul i32 %r2317,1
     %r2319 = add i32 %r3959,%r2318
     br label %L558
 L558:  ;
@@ -1568,7 +1568,7 @@ L567:  ;
 L568:  ;
     %r2357 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3738
     %r2358 = load i32, ptr %r2357
-    %r2359 = mul i32 1,%r2358
+    %r2359 = mul i32 %r2358,1
     %r2360 = add i32 %r3963,%r2359
     br label %L569
 L569:  ;
@@ -1627,7 +1627,7 @@ L581:  ;
 L582:  ;
     %r2399 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3741
     %r2400 = load i32, ptr %r2399
-    %r2401 = mul i32 1,%r2400
+    %r2401 = mul i32 %r2400,1
     %r2402 = add i32 %r3968,%r2401
     br label %L583
 L583:  ;
@@ -1636,7 +1636,7 @@ L583:  ;
 L584:  ;
     %r2410 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3741
     %r2411 = load i32, ptr %r2410
-    %r2412 = mul i32 1,%r2411
+    %r2412 = mul i32 %r2411,1
     %r2413 = add i32 %r3968,%r2412
     br label %L585
 L585:  ;
@@ -1658,7 +1658,7 @@ L588:  ;
 L589:  ;
     %r2442 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3742
     %r2443 = load i32, ptr %r2442
-    %r2444 = mul i32 1,%r2443
+    %r2444 = mul i32 %r2443,1
     %r2445 = add i32 %r3971,%r2444
     br label %L590
 L590:  ;
@@ -1696,7 +1696,7 @@ L597:  ;
 L598:  ;
     %r2482 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3744
     %r2483 = load i32, ptr %r2482
-    %r2484 = mul i32 1,%r2483
+    %r2484 = mul i32 %r2483,1
     %r2485 = add i32 %r3974,%r2484
     br label %L599
 L599:  ;
@@ -1749,7 +1749,7 @@ L609:  ;
 L610:  ;
     %r2526 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3746
     %r2527 = load i32, ptr %r2526
-    %r2528 = mul i32 1,%r2527
+    %r2528 = mul i32 %r2527,1
     %r2529 = add i32 %r3978,%r2528
     br label %L611
 L611:  ;
@@ -1758,7 +1758,7 @@ L611:  ;
 L612:  ;
     %r2537 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3746
     %r2538 = load i32, ptr %r2537
-    %r2539 = mul i32 1,%r2538
+    %r2539 = mul i32 %r2538,1
     %r2540 = add i32 %r3978,%r2539
     br label %L613
 L613:  ;
@@ -1780,7 +1780,7 @@ L616:  ;
 L617:  ;
     %r2569 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3747
     %r2570 = load i32, ptr %r2569
-    %r2571 = mul i32 1,%r2570
+    %r2571 = mul i32 %r2570,1
     %r2572 = add i32 %r3981,%r2571
     br label %L618
 L618:  ;
@@ -1818,7 +1818,7 @@ L625:  ;
 L626:  ;
     %r2609 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3749
     %r2610 = load i32, ptr %r2609
-    %r2611 = mul i32 1,%r2610
+    %r2611 = mul i32 %r2610,1
     %r2612 = add i32 %r3984,%r2611
     br label %L627
 L627:  ;
@@ -1887,7 +1887,7 @@ L646:  ;
 L647:  ;
     %r2693 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3751
     %r2694 = load i32, ptr %r2693
-    %r2695 = mul i32 1,%r2694
+    %r2695 = mul i32 %r2694,1
     %r2696 = add i32 %r3991,%r2695
     br label %L648
 L648:  ;
@@ -1946,7 +1946,7 @@ L660:  ;
 L661:  ;
     %r2735 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3754
     %r2736 = load i32, ptr %r2735
-    %r2737 = mul i32 1,%r2736
+    %r2737 = mul i32 %r2736,1
     %r2738 = add i32 %r3996,%r2737
     br label %L662
 L662:  ;
@@ -1955,7 +1955,7 @@ L662:  ;
 L663:  ;
     %r2746 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3754
     %r2747 = load i32, ptr %r2746
-    %r2748 = mul i32 1,%r2747
+    %r2748 = mul i32 %r2747,1
     %r2749 = add i32 %r3996,%r2748
     br label %L664
 L664:  ;
@@ -1977,7 +1977,7 @@ L667:  ;
 L668:  ;
     %r2778 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3755
     %r2779 = load i32, ptr %r2778
-    %r2780 = mul i32 1,%r2779
+    %r2780 = mul i32 %r2779,1
     %r2781 = add i32 %r3999,%r2780
     br label %L669
 L669:  ;
@@ -2015,7 +2015,7 @@ L676:  ;
 L677:  ;
     %r2818 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3757
     %r2819 = load i32, ptr %r2818
-    %r2820 = mul i32 1,%r2819
+    %r2820 = mul i32 %r2819,1
     %r2821 = add i32 %r4002,%r2820
     br label %L678
 L678:  ;
@@ -2068,7 +2068,7 @@ L688:  ;
 L689:  ;
     %r2862 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3759
     %r2863 = load i32, ptr %r2862
-    %r2864 = mul i32 1,%r2863
+    %r2864 = mul i32 %r2863,1
     %r2865 = add i32 %r4006,%r2864
     br label %L690
 L690:  ;
@@ -2077,7 +2077,7 @@ L690:  ;
 L691:  ;
     %r2873 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3759
     %r2874 = load i32, ptr %r2873
-    %r2875 = mul i32 1,%r2874
+    %r2875 = mul i32 %r2874,1
     %r2876 = add i32 %r4006,%r2875
     br label %L692
 L692:  ;
@@ -2099,7 +2099,7 @@ L695:  ;
 L696:  ;
     %r2905 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3760
     %r2906 = load i32, ptr %r2905
-    %r2907 = mul i32 1,%r2906
+    %r2907 = mul i32 %r2906,1
     %r2908 = add i32 %r4009,%r2907
     br label %L697
 L697:  ;
@@ -2137,7 +2137,7 @@ L704:  ;
 L705:  ;
     %r2945 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r3762
     %r2946 = load i32, ptr %r2945
-    %r2947 = mul i32 1,%r2946
+    %r2947 = mul i32 %r2946,1
     %r2948 = add i32 %r4012,%r2947
     br label %L706
 L706:  ;
