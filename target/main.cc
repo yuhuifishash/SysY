@@ -125,6 +125,8 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( SimpleDCE );
         llvmIR.PassExecutor( BasicBlockCSE );
         llvmIR.PassExecutor( DomTreeWalkCSE );
+
+        llvmIR.BuildLoopInfo();
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

@@ -7,7 +7,13 @@ int main()
 {
 	int a = getint(), b = getint();
 	while( a <= 100){
+		if(a < 3){continue;}
+		if(a > 100){continue;}
 		a = a + 1;
+		while( b <= 300 ){
+			b = b + 1;
+			if(b < 340){continue;}
+		}
 	}
 	return a + b;
 }

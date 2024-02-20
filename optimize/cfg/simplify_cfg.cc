@@ -53,4 +53,6 @@ void SimplifyCFG(CFG* C)
 {
     EliminateDoubleBrUnCond(C);
     EliminateSimpleShortCircult(C);
+    C->BuildCFG();
+    C->BuildDominatorTree();
 }

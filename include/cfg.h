@@ -28,6 +28,7 @@ public:
     std::vector<std::vector<LLVMBlock> > invG{}; // inverse control flow graph
     DominatorTree DomTree;
     FunctionBasicInfo FunctionInfo;
+    NaturalLoopForest LoopForest;
 
     void BuildCFG();
     void BuildDominatorTree(){
@@ -35,6 +36,7 @@ public:
         DomTree.BuildDominatorTree();
     }
     void BuildFunctionInfo();
+    void BuildLoopInfo();
 
     //if blockid1 dominate blockid2, return true, else return false
     bool IfDominate(int id1,int id2){return DomTree.IfDominate(id1,id2);}
