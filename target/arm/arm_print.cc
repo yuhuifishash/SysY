@@ -63,6 +63,10 @@ std::ostream& operator<<(std::ostream& s,Label lbl){
     lbl.printArm(s);
     return s;
 }
+std::ostream& operator<<(std::ostream& s,RegisterOrImm roi){
+    roi.printArm(s);
+    return s;
+}
 //-----Arm Field Print-----
 void Register::printArm(std::ostream& s){
     if(Virtual){
@@ -630,7 +634,11 @@ void VFPVstm::printArm(std::ostream& s){
 }
 
 void ArmPhiInstruction::printArm(std::ostream& s){
-
+    s<<result<<" = phi ";
+    for(auto [label,roi] : phi_list){
+        s<<"["<<label<<","<<roi<<"],";
+    }
+    s<<" @"<<comment<<"\n";
 }
 
 void ArmBlock::emit(std::ostream& s){

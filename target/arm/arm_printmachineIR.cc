@@ -145,5 +145,9 @@ void VFPVstm::printMachineIR(std::ostream& s){
 
 }
 void ArmPhiInstruction::printMachineIR(std::ostream& s){
-    
+    s<<result<<" = phi ";
+    for(auto [label,roi] : phi_list){
+        s<<"["<<label<<","<<roi<<"],";
+    }
+    s<<" @"<<comment<<"\n";
 }
