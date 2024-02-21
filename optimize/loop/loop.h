@@ -10,6 +10,7 @@ public:
     std::set<LLVMBlock> loop_nodes;
 
     std::set<LLVMBlock> exit_nodes;
+    std::set<LLVMBlock> exiting_nodes;
     std::set<LLVMBlock> latch;
     LLVMBlock header;
     LLVMBlock preheader;

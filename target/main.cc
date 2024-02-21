@@ -41,6 +41,7 @@ void PrintLexerResult(std::ostream& s,char* yytext,YYSTYPE yylval,int token,int 
 SysYc *.sy -S -o *.s (-O1) 
 */
 
+void EliminateSimpleConstInstructions(CFG* C);
 void MakeFunctionOneExit(CFG* C);
 void Mem2Reg(CFG*);
 void SparseConditionalConstantPropagation(CFG* C);
@@ -110,9 +111,11 @@ int main(int argc,char** argv)
 
     bool optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0));
     if(optimize_flag){
+        llvmIR.PassExecutor( EliminateSimpleConstInstructions );
         //llvmIR.PassExecutor( ElimateEmptyIndexGEP ); //to do
         //llvmIR.PassExecutor( TailRecursiveElimate ); //to do
         //llvmIR.PassExecutor( MakeFunctionOneExit ); //to do
+        //llvmIR.PassExecutor( SimplifyCFG ); //to do
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
         llvmIR.PassExecutor( SparseConditionalConstantPropagation );

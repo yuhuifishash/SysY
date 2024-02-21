@@ -35,18 +35,20 @@ void NaturalLoop::FindExitNodes(CFG* C)
             auto I = (BrUncondInstruction*)Ins;
             auto nextBB = (*(C->block_map))[I->GetTarget()];
             if(loop_nodes.find(nextBB) == loop_nodes.end()){
-                exit_nodes.insert(node);
+                exiting_nodes.insert(node);
+                exit_nodes.insert(nextBB);
             }
-        }
-        if(Ins->GetOpcode() == RET){
-            exit_nodes.insert(node);
-        }
-        if(Ins->GetOpcode() == BR_COND){
+        }else if(Ins->GetOpcode() == RET){
+            exiting_nodes.insert(node);
+            
+        }else if(Ins->GetOpcode() == BR_COND){
             auto I = (BrCondInstruction*)Ins;
             auto nextBB1 = (*(C->block_map))[((LabelOperand*)I->GetFalseLabel())->GetLabelNo()];
             auto nextBB2 = (*(C->block_map))[((LabelOperand*)I->GetTrueLabel())->GetLabelNo()];
             if(loop_nodes.find(nextBB1) == loop_nodes.end() || loop_nodes.find(nextBB2) == loop_nodes.end()){
-                exit_nodes.insert(node);
+                exiting_nodes.insert(node);
+                exit_nodes.insert(nextBB1);
+                exit_nodes.insert(nextBB2);
             }
         }
     }

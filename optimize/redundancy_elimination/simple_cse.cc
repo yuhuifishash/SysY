@@ -74,69 +74,72 @@ bool CanCSE(Instruction I)
     return true;
 }
 
+bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<Instruction>& EraseSet)
+{
+    bool changed = false;
+    std::map<std::string,int> LoadMap;//<operand_string, result_reg>
+    std::map<InstCSEInfo,int> InstCSEMap;//<inst_info, result_reg>
+
+    //CSE load/store instructions
+    for(auto I:bb->Instruction_list){
+        if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
+            auto ptr = ((StoreInstruction*)I)->GetPointer();
+            LoadMap.erase(ptr->GetFullName());
+
+        }else if(I->GetOpcode() == LOAD){
+            auto ptr = ((StoreInstruction*)I)->GetPointer();
+            auto it = LoadMap.find(ptr->GetFullName());
+            if(it != LoadMap.end()){
+                //I->PrintIR(std::cerr);
+                EraseSet.insert(I);
+                reg_replace_map[I->GetResultRegNo()] = it->second;
+                changed |= true;
+            }else{
+                LoadMap.insert({ptr->GetFullName(),I->GetResultRegNo()});
+            }
+        }
+    }
+
+    //CSE other instructions
+    for(auto I:bb->Instruction_list){
+        if(CanCSE(I) == false){continue;}
+
+        auto Info = GetCSEInfo(I);
+        auto CSEiter = InstCSEMap.find(Info);
+        if(CSEiter != InstCSEMap.end()){
+            EraseSet.insert(I);
+            reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
+            changed |= true;
+        }else{
+            InstCSEMap.insert({Info,I->GetResultRegNo()});
+        }
+    }
+    return changed;
+}
+
 void BasicBlockCSE(CFG* C)
 {
-    for(auto [id,bb]:*C->block_map){
+    bool changed = true;
+    while(changed){
+        changed = false;
         std::map<int,int> reg_replace_map;
-        bool changed = true;
-        
-        while(changed){
-            changed = false;
-            reg_replace_map.clear();
-            std::set<Instruction> EraseSet;
-
-            std::map<std::string,int> LoadMap;//<operand_string, result_reg>
-            std::map<InstCSEInfo,int> InstCSEMap;//<inst_info, result_reg>
-
-            //CSE load/store instructions
+        std::set<Instruction> EraseSet;
+        for(auto [id,bb]:*C->block_map){
+            changed |= BasicBlockCSE(bb,reg_replace_map,EraseSet); 
+        }
+        //erase useless instructions and replace new RegOperand
+        for(auto [id,bb]:*C->block_map){
+            auto tmp_Instruction_list = bb->Instruction_list;
+            bb->Instruction_list.clear();
+            for(auto I:tmp_Instruction_list){
+                if(EraseSet.find(I) != EraseSet.end()){continue;}
+                bb->InsertInstruction(1,I);
+            }
+        }
+        for(auto [id,bb]:*C->block_map){
             for(auto I:bb->Instruction_list){
-                if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
-                    auto ptr = ((StoreInstruction*)I)->GetPointer();
-                    LoadMap.erase(ptr->GetFullName());
-
-                }else if(I->GetOpcode() == LOAD){
-                    auto ptr = ((StoreInstruction*)I)->GetPointer();
-                    auto it = LoadMap.find(ptr->GetFullName());
-                    if(it != LoadMap.end()){
-                        //I->PrintIR(std::cerr);
-                        EraseSet.insert(I);
-                        reg_replace_map[I->GetResultRegNo()] = it->second;
-                        changed |= true;
-                    }else{
-                        LoadMap.insert({ptr->GetFullName(),I->GetResultRegNo()});
-                    }
-                }
+                I->ReplaceByMap(reg_replace_map);
             }
-
-            //CSE other instructions
-            for(auto I:bb->Instruction_list){
-                if(CanCSE(I) == false){continue;}
-
-                auto Info = GetCSEInfo(I);
-                auto CSEiter = InstCSEMap.find(Info);
-                if(CSEiter != InstCSEMap.end()){
-                    EraseSet.insert(I);
-                    reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
-                    changed |= true;
-                }else{
-                    InstCSEMap.insert({Info,I->GetResultRegNo()});
-                }
-            }
-
-            //erase useless instructions and replace new RegOperand
-            for(auto [id,bb]:*C->block_map){
-                auto tmp_Instruction_list = bb->Instruction_list;
-                bb->Instruction_list.clear();
-                for(auto I:tmp_Instruction_list){
-                    if(EraseSet.find(I) != EraseSet.end()){continue;}
-                    bb->InsertInstruction(1,I);
-                }
-            }
-            for(auto [id,bb]:*C->block_map){
-                for(auto I:bb->Instruction_list){
-                    I->ReplaceByMap(reg_replace_map);
-                }
-            } 
         }
     }
 }

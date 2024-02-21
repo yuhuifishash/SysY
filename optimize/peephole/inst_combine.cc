@@ -1,5 +1,10 @@
 #include "inst_combine.h"
 
+void EliminateSimpleConstInstructions(CFG* C)
+{
+    
+}
+
 void InstCombine(CFG* C)
 {
     for(auto [id,bb]:*C->block_map){
