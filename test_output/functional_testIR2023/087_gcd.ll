@@ -15,36 +15,60 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @gcd(i32 %r0,i32 %r1)
 {
 L0:  ;
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
     br label %L1
 L1:  ;
-    %r6 = icmp eq i32 %r1,0
+    %r4 = load i32, ptr %r3
+    %r5 = add i32 0,0
+    %r6 = icmp eq i32 %r4,%r5
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 %r0
+    %r7 = load i32, ptr %r2
+    ret i32 %r7
 L3:  ;
-    %r11 = srem i32 %r0,%r1
-    %r12 = call i32 @gcd(i32 %r1,i32 %r11)
+    %r8 = load i32, ptr %r3
+    %r9 = load i32, ptr %r2
+    %r10 = load i32, ptr %r3
+    %r11 = srem i32 %r9,%r10
+    %r12 = call i32 @gcd(i32 %r8,i32 %r11)
     ret i32 %r12
 }
 define i32 @main()
 {
 L0:  ;
+    %r7 = alloca i32
+    %r5 = alloca i32
+    %r0 = alloca i32
     br label %L1
 L1:  ;
     %r1 = call i32 @getint()
+    store i32 %r1, ptr %r0
     br label %L2
 L2:  ;
-    %r17 = phi i32 [%r1,%L1],[%r15,%L3]
-    %r4 = icmp sgt i32 %r17,0
+    %r2 = load i32, ptr %r0
+    %r3 = add i32 0,0
+    %r4 = icmp sgt i32 %r2,%r3
     br i1 %r4, label %L3, label %L4
 L3:  ;
     %r6 = call i32 @getint()
+    store i32 %r6, ptr %r5
     %r8 = call i32 @getint()
-    %r11 = call i32 @gcd(i32 %r6,i32 %r8)
+    store i32 %r8, ptr %r7
+    %r9 = load i32, ptr %r5
+    %r10 = load i32, ptr %r7
+    %r11 = call i32 @gcd(i32 %r9,i32 %r10)
     call void @putint(i32 %r11)
-    call void @putch(i32 10)
-    %r15 = sub i32 %r17,1
+    %r12 = add i32 10,0
+    call void @putch(i32 %r12)
+    %r13 = load i32, ptr %r0
+    %r14 = add i32 1,0
+    %r15 = sub i32 %r13,%r14
+    store i32 %r15, ptr %r0
     br label %L2
 L4:  ;
-    ret i32 0
+    %r16 = add i32 0,0
+    ret i32 %r16
 }
