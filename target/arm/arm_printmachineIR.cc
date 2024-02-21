@@ -32,6 +32,13 @@ void Rssh::printMachineIR(std::ostream& s){
 void Label::printMachineIR(std::ostream& s){
     s<<label_name;
 }
+void RegisterOrImm::printMachineIR(std::ostream& s){
+    if(type == RegisterOrImm::REG){
+        s<<properties.reg;
+    }else if(type == RegisterOrImm::IMM){
+        s<<properties.imm32;
+    }
+}
 void ArmBinary::printMachineIR(std::ostream& s){
     Rd.printMachineIR(s);
     s<<" = ";

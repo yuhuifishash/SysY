@@ -123,6 +123,18 @@ public:
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
 };
+
+struct RegisterOrImm{
+public:
+    enum{REG = 0,IMM}type;
+    union prop{
+        Register reg;
+        int imm32;
+        prop(){}
+    }properties;
+    void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
+};
 std::ostream& operator<<(std::ostream& s,ShiftType typ);
 std::ostream& operator<<(std::ostream& s,Register reg);
 std::ostream& operator<<(std::ostream& s,RmOpsh rmo);

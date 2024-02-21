@@ -357,12 +357,22 @@ public:
 };// VSTM VSTMDB VLDM VLDMDB
 class ArmPhiInstruction : public ArmBaseInstruction {
 public:
-    // Register result;
-    // std::vector<std::pair<Label,???> >phi_list;
+    Register result;
+    std::vector<std::pair<Label,RegisterOrImm> >phi_list;
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
-    ArmPhiInstruction(int cond,std::string comment = std::string()):ArmBaseInstruction(cond,comment){
-
+    ArmPhiInstruction(Register result,int cond,std::string comment = std::string()):result(result),ArmBaseInstruction(cond,comment){}
+    void pushPhiList(Label label,Register reg){
+        RegisterOrImm re;
+        re.type = RegisterOrImm::REG;
+        re.properties.reg = reg;
+        phi_list.push_back(std::make_pair(label,re));
+    }
+    void pushPhiList(Label label,int imm32){
+        RegisterOrImm im;
+        im.type = RegisterOrImm::IMM;
+        im.properties.imm32 = imm32;
+        phi_list.push_back(std::make_pair(label,im));
     }
 };
 #endif

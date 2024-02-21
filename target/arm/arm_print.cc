@@ -111,6 +111,14 @@ void Rssh::printArm(std::ostream& s){
 void Label::printArm(std::ostream& s){
     s<<label_name;
 }
+
+void RegisterOrImm::printArm(std::ostream& s){
+    if(type == RegisterOrImm::REG){
+        s<<properties.reg;
+    }else if(type == RegisterOrImm::IMM){
+        s<<properties.imm32;
+    }
+}
 //-------------------------
 
 //-----Arm Instruction Print-----
