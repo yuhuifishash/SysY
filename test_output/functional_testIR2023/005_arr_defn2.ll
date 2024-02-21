@@ -18,6 +18,5 @@ define i32 @main()
 L0:  ;
     br label %L1
 L1:  ;
-    %r0 = add i32 0,0
-    ret i32 %r0
+    ret i32 0
 }

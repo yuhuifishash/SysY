@@ -18,8 +18,7 @@ define i32 @main()
 L0:  ;
     br label %L1
 L1:  ;
-    %r0 = add i32 4,0
-    %r1 = getelementptr [5 x i32], ptr @a, i32 0, i32 %r0
+    %r1 = getelementptr [5 x i32], ptr @a, i32 0, i32 4
     %r2 = load i32, ptr %r1
     ret i32 %r2
 }

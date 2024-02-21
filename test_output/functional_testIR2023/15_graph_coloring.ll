@@ -18,32 +18,22 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define void @printSolution(ptr %r0)
 {
 L0:  ;
-    %r1 = alloca i32
     br label %L1
 L1:  ;
-    %r2 = add i32 0,0
-    store i32 %r2, ptr %r1
     br label %L2
 L2:  ;
-    %r3 = load i32, ptr %r1
-    %r4 = load i32, ptr @V
-    %r5 = icmp slt i32 %r3,%r4
+    %r14 = phi i32 [0,%L1],[%r12,%L3]
+    %r5 = icmp slt i32 %r14,4
     br i1 %r5, label %L3, label %L4
 L3:  ;
-    %r6 = load i32, ptr %r1
-    %r7 = getelementptr i32, ptr %r0, i32 %r6
+    %r7 = getelementptr i32, ptr %r0, i32 %r14
     %r8 = load i32, ptr %r7
     call void @putint(i32 %r8)
-    %r9 = load i32, ptr @space
-    call void @putch(i32 %r9)
-    %r10 = load i32, ptr %r1
-    %r11 = add i32 1,0
-    %r12 = add i32 %r10,%r11
-    store i32 %r12, ptr %r1
+    call void @putch(i32 32)
+    %r12 = add i32 %r14,1
     br label %L2
 L4:  ;
-    %r13 = load i32, ptr @LF
-    call void @putch(i32 %r13)
+    call void @putch(i32 10)
     ret void
 }
 define void @printMessage()
@@ -51,91 +41,52 @@ define void @printMessage()
 L0:  ;
     br label %L1
 L1:  ;
-    %r0 = add i32 78,0
-    call void @putch(i32 %r0)
-    %r1 = add i32 111,0
-    call void @putch(i32 %r1)
-    %r2 = add i32 116,0
-    call void @putch(i32 %r2)
-    %r3 = load i32, ptr @space
-    call void @putch(i32 %r3)
-    %r4 = add i32 101,0
-    call void @putch(i32 %r4)
-    %r5 = add i32 120,0
-    call void @putch(i32 %r5)
-    %r6 = add i32 105,0
-    call void @putch(i32 %r6)
-    %r7 = add i32 115,0
-    call void @putch(i32 %r7)
-    %r8 = add i32 116,0
-    call void @putch(i32 %r8)
+    call void @putch(i32 78)
+    call void @putch(i32 111)
+    call void @putch(i32 116)
+    call void @putch(i32 32)
+    call void @putch(i32 101)
+    call void @putch(i32 120)
+    call void @putch(i32 105)
+    call void @putch(i32 115)
+    call void @putch(i32 116)
     ret void
 }
 define i32 @isSafe(ptr %r0,ptr %r1)
 {
 L0:  ;
-    %r7 = alloca i32
-    %r2 = alloca i32
     br label %L1
 L1:  ;
-    %r3 = add i32 0,0
-    store i32 %r3, ptr %r2
     br label %L2
 L2:  ;
-<<<<<<< HEAD
-    %r4 = load i32, ptr %r2
-    %r5 = load i32, ptr @V
-    %r6 = icmp slt i32 %r4,%r5
-=======
     %r36 = phi i32 [0,%L1],[%r10,%L7]
     %r6 = icmp slt i32 %r36,4
->>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r6, label %L3, label %L4
 L3:  ;
-    %r8 = load i32, ptr %r2
-    %r9 = add i32 1,0
-    %r10 = add i32 %r8,%r9
-    store i32 %r10, ptr %r7
+    %r10 = add i32 %r36,1
     br label %L5
 L4:  ;
-    %r33 = add i32 1,0
-    ret i32 %r33
+    ret i32 1
 L5:  ;
-    %r11 = load i32, ptr %r7
-    %r12 = load i32, ptr @V
-    %r13 = icmp slt i32 %r11,%r12
+    %r35 = phi i32 [%r10,%L3],[%r29,%L9]
+    %r13 = icmp slt i32 %r35,4
     br i1 %r13, label %L6, label %L7
 L6:  ;
-    %r14 = load i32, ptr %r2
-    %r15 = load i32, ptr %r7
-    %r16 = getelementptr [4 x i32], ptr %r0, i32 %r14, i32 %r15
+    %r16 = getelementptr [4 x i32], ptr %r0, i32 %r36, i32 %r35
     %r17 = load i32, ptr %r16
     %r18 = icmp ne i32 %r17,0
     br i1 %r18, label %L10, label %L9
 L7:  ;
-<<<<<<< HEAD
-    %r30 = load i32, ptr %r2
-    %r31 = add i32 1,0
-    %r32 = add i32 %r30,%r31
-    store i32 %r32, ptr %r2
-=======
->>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L8:  ;
-    %r26 = add i32 0,0
-    ret i32 %r26
+    ret i32 0
 L9:  ;
-    %r27 = load i32, ptr %r7
-    %r28 = add i32 1,0
-    %r29 = add i32 %r27,%r28
-    store i32 %r29, ptr %r7
+    %r29 = add i32 %r35,1
     br label %L5
 L10:  ;
-    %r19 = load i32, ptr %r7
-    %r20 = getelementptr i32, ptr %r1, i32 %r19
+    %r20 = getelementptr i32, ptr %r1, i32 %r35
     %r21 = load i32, ptr %r20
-    %r22 = load i32, ptr %r2
-    %r23 = getelementptr i32, ptr %r1, i32 %r22
+    %r23 = getelementptr i32, ptr %r1, i32 %r36
     %r24 = load i32, ptr %r23
     %r25 = icmp eq i32 %r21,%r24
     br i1 %r25, label %L8, label %L9
@@ -143,16 +94,9 @@ L10:  ;
 define i32 @graphColoring(ptr %r0,i32 %r1,i32 %r2,ptr %r3)
 {
 L0:  ;
-    %r16 = alloca i32
-    %r5 = alloca i32
-    %r4 = alloca i32
-    store i32 %r1, ptr %r4
-    store i32 %r2, ptr %r5
     br label %L1
 L1:  ;
-    %r6 = load i32, ptr %r5
-    %r7 = load i32, ptr @V
-    %r8 = icmp eq i32 %r6,%r7
+    %r8 = icmp eq i32 %r2,4
     br i1 %r8, label %L2, label %L3
 L2:  ;
     %r9 = getelementptr [4 x i32], ptr %r0
@@ -161,153 +105,93 @@ L2:  ;
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L4, label %L5
 L3:  ;
-    %r17 = add i32 1,0
-    store i32 %r17, ptr %r16
     br label %L6
 L4:  ;
-<<<<<<< HEAD
-    %r13 = getelementptr i32, ptr %r3
-    call void @printSolution(ptr %r13)
-    %r14 = add i32 1,0
-    ret i32 %r14
-=======
     call void @printSolution(ptr %r10)
     ret i32 1
->>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 L5:  ;
-    %r15 = add i32 0,0
-    ret i32 %r15
+    ret i32 0
 L6:  ;
-    %r18 = load i32, ptr %r16
-    %r19 = load i32, ptr %r4
-    %r20 = icmp sle i32 %r18,%r19
+    %r40 = phi i32 [1,%L3],[%r38,%L10]
+    %r20 = icmp sle i32 %r40,%r1
     br i1 %r20, label %L7, label %L8
 L7:  ;
-    %r21 = load i32, ptr %r5
-    %r22 = getelementptr i32, ptr %r3, i32 %r21
-    %r23 = load i32, ptr %r16
-    store i32 %r23, ptr %r22
+    %r22 = getelementptr i32, ptr %r3, i32 %r2
+    store i32 %r40, ptr %r22
     %r24 = getelementptr [4 x i32], ptr %r0
-    %r25 = load i32, ptr %r4
-    %r26 = load i32, ptr %r5
-    %r27 = add i32 1,0
-    %r28 = add i32 %r26,%r27
+    %r28 = add i32 %r2,1
     %r29 = getelementptr i32, ptr %r3
-    %r30 = call i32 @graphColoring(ptr %r24,i32 %r25,i32 %r28,ptr %r29)
+    %r30 = call i32 @graphColoring(ptr %r24,i32 %r1,i32 %r28,ptr %r29)
     %r31 = icmp ne i32 %r30,0
     br i1 %r31, label %L9, label %L10
 L8:  ;
-    %r39 = add i32 0,0
-    ret i32 %r39
+    ret i32 0
 L9:  ;
-    %r32 = add i32 1,0
-    ret i32 %r32
+    ret i32 1
 L10:  ;
-<<<<<<< HEAD
-    %r33 = load i32, ptr %r5
-    %r34 = getelementptr i32, ptr %r3, i32 %r33
-    %r35 = add i32 0,0
-    store i32 %r35, ptr %r34
-    %r36 = load i32, ptr %r16
-    %r37 = add i32 1,0
-    %r38 = add i32 %r36,%r37
-    store i32 %r38, ptr %r16
-=======
     store i32 0, ptr %r22
     %r38 = add i32 %r40,1
->>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L6
 }
 define i32 @main()
 {
 L0:  ;
-    %r36 = alloca i32
     %r35 = alloca [4 x i32]
-    %r33 = alloca i32
     %r0 = alloca [4 x [4 x i32]]
     br label %L1
 L1:  ;
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 64,i1 0)
-    %r1 = add i32 0,0
     %r2 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 0, i32 0
-    store i32 %r1, ptr %r2
-    %r3 = add i32 1,0
+    store i32 0, ptr %r2
     %r4 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 0, i32 1
-    store i32 %r3, ptr %r4
-    %r5 = add i32 1,0
+    store i32 1, ptr %r4
     %r6 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 0, i32 2
-    store i32 %r5, ptr %r6
-    %r7 = add i32 1,0
+    store i32 1, ptr %r6
     %r8 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 0, i32 3
-    store i32 %r7, ptr %r8
-    %r9 = add i32 1,0
+    store i32 1, ptr %r8
     %r10 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 1, i32 0
-    store i32 %r9, ptr %r10
-    %r11 = add i32 0,0
+    store i32 1, ptr %r10
     %r12 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 1, i32 1
-    store i32 %r11, ptr %r12
-    %r13 = add i32 1,0
+    store i32 0, ptr %r12
     %r14 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 1, i32 2
-    store i32 %r13, ptr %r14
-    %r15 = add i32 0,0
+    store i32 1, ptr %r14
     %r16 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 1, i32 3
-    store i32 %r15, ptr %r16
-    %r17 = add i32 1,0
+    store i32 0, ptr %r16
     %r18 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 2, i32 0
-    store i32 %r17, ptr %r18
-    %r19 = add i32 1,0
+    store i32 1, ptr %r18
     %r20 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 2, i32 1
-    store i32 %r19, ptr %r20
-    %r21 = add i32 0,0
+    store i32 1, ptr %r20
     %r22 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 2, i32 2
-    store i32 %r21, ptr %r22
-    %r23 = add i32 1,0
+    store i32 0, ptr %r22
     %r24 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 2, i32 3
-    store i32 %r23, ptr %r24
-    %r25 = add i32 1,0
+    store i32 1, ptr %r24
     %r26 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 3, i32 0
-    store i32 %r25, ptr %r26
-    %r27 = add i32 0,0
+    store i32 1, ptr %r26
     %r28 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 3, i32 1
-    store i32 %r27, ptr %r28
-    %r29 = add i32 1,0
+    store i32 0, ptr %r28
     %r30 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 3, i32 2
-    store i32 %r29, ptr %r30
-    %r31 = add i32 0,0
+    store i32 1, ptr %r30
     %r32 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0, i32 3, i32 3
-    store i32 %r31, ptr %r32
-    %r34 = add i32 3,0
-    store i32 %r34, ptr %r33
-    %r37 = add i32 0,0
-    store i32 %r37, ptr %r36
+    store i32 0, ptr %r32
     br label %L2
 L2:  ;
-    %r38 = load i32, ptr %r36
-    %r39 = load i32, ptr @V
-    %r40 = icmp slt i32 %r38,%r39
+    %r54 = phi i32 [0,%L1],[%r46,%L3]
+    %r40 = icmp slt i32 %r54,4
     br i1 %r40, label %L3, label %L4
 L3:  ;
-    %r41 = load i32, ptr %r36
-    %r42 = getelementptr [4 x i32], ptr %r35, i32 0, i32 %r41
-    %r43 = add i32 0,0
-    store i32 %r43, ptr %r42
-    %r44 = load i32, ptr %r36
-    %r45 = add i32 1,0
-    %r46 = add i32 %r44,%r45
-    store i32 %r46, ptr %r36
+    %r42 = getelementptr [4 x i32], ptr %r35, i32 0, i32 %r54
+    store i32 0, ptr %r42
+    %r46 = add i32 %r54,1
     br label %L2
 L4:  ;
     %r47 = getelementptr [4 x [4 x i32]], ptr %r0, i32 0
-    %r48 = load i32, ptr %r33
-    %r49 = add i32 0,0
     %r50 = getelementptr [4 x i32], ptr %r35, i32 0
-    %r51 = call i32 @graphColoring(ptr %r47,i32 %r48,i32 %r49,ptr %r50)
+    %r51 = call i32 @graphColoring(ptr %r47,i32 3,i32 0,ptr %r50)
     %r52 = icmp eq i32 %r51,0
     br i1 %r52, label %L5, label %L6
 L5:  ;
     call void @printMessage()
     br label %L6
 L6:  ;
-    %r53 = add i32 0,0
-    ret i32 %r53
+    ret i32 0
 }
