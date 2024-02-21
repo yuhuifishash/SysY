@@ -1474,9 +1474,14 @@ L189:  ;
     %r792 = load i32, ptr %r2
     %r793 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r792
     %r794 = load i32, ptr %r793
+<<<<<<< HEAD
     %r795 = mul i32 %r791,%r794
     %r796 = add i32 %r790,%r795
     store i32 %r796, ptr %r0
+=======
+    %r795 = mul i32 %r794,1
+    %r796 = add i32 %r3829,%r795
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L190
 L190:  ;
     %r797 = load i32, ptr %r4
@@ -1555,9 +1560,14 @@ L200:  ;
     %r833 = load i32, ptr %r2
     %r834 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r833
     %r835 = load i32, ptr %r834
+<<<<<<< HEAD
     %r836 = mul i32 %r832,%r835
     %r837 = add i32 %r831,%r836
     store i32 %r837, ptr %r0
+=======
+    %r836 = mul i32 %r835,1
+    %r837 = add i32 %r3833,%r836
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L201
 L201:  ;
     %r838 = load i32, ptr %r4
@@ -1671,9 +1681,14 @@ L214:  ;
     %r875 = load i32, ptr %r2
     %r876 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r875
     %r877 = load i32, ptr %r876
+<<<<<<< HEAD
     %r878 = mul i32 %r874,%r877
     %r879 = add i32 %r873,%r878
     store i32 %r879, ptr %r0
+=======
+    %r878 = mul i32 %r877,1
+    %r879 = add i32 %r3838,%r878
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L215
 L215:  ;
     br label %L213
@@ -1683,9 +1698,14 @@ L216:  ;
     %r886 = load i32, ptr %r2
     %r887 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r886
     %r888 = load i32, ptr %r887
+<<<<<<< HEAD
     %r889 = mul i32 %r885,%r888
     %r890 = add i32 %r884,%r889
     store i32 %r890, ptr %r0
+=======
+    %r889 = mul i32 %r888,1
+    %r890 = add i32 %r3838,%r889
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L217
 L217:  ;
     br label %L213
@@ -1713,9 +1733,14 @@ L221:  ;
     %r918 = load i32, ptr %r2
     %r919 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r918
     %r920 = load i32, ptr %r919
+<<<<<<< HEAD
     %r921 = mul i32 %r917,%r920
     %r922 = add i32 %r916,%r921
     store i32 %r922, ptr %r0
+=======
+    %r921 = mul i32 %r920,1
+    %r922 = add i32 %r3841,%r921
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L222
 L222:  ;
     %r923 = load i32, ptr %r4
@@ -1780,9 +1805,14 @@ L230:  ;
     %r958 = load i32, ptr %r2
     %r959 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r958
     %r960 = load i32, ptr %r959
+<<<<<<< HEAD
     %r961 = mul i32 %r957,%r960
     %r962 = add i32 %r956,%r961
     store i32 %r962, ptr %r0
+=======
+    %r961 = mul i32 %r960,1
+    %r962 = add i32 %r3844,%r961
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L231
 L231:  ;
     %r963 = load i32, ptr %r4
@@ -1887,9 +1917,14 @@ L242:  ;
     %r1002 = load i32, ptr %r2
     %r1003 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1002
     %r1004 = load i32, ptr %r1003
+<<<<<<< HEAD
     %r1005 = mul i32 %r1001,%r1004
     %r1006 = add i32 %r1000,%r1005
     store i32 %r1006, ptr %r0
+=======
+    %r1005 = mul i32 %r1004,1
+    %r1006 = add i32 %r3848,%r1005
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L243
 L243:  ;
     br label %L241
@@ -1899,9 +1934,14 @@ L244:  ;
     %r1013 = load i32, ptr %r2
     %r1014 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1013
     %r1015 = load i32, ptr %r1014
+<<<<<<< HEAD
     %r1016 = mul i32 %r1012,%r1015
     %r1017 = add i32 %r1011,%r1016
     store i32 %r1017, ptr %r0
+=======
+    %r1016 = mul i32 %r1015,1
+    %r1017 = add i32 %r3848,%r1016
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L245
 L245:  ;
     br label %L241
@@ -1929,9 +1969,14 @@ L249:  ;
     %r1045 = load i32, ptr %r2
     %r1046 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1045
     %r1047 = load i32, ptr %r1046
+<<<<<<< HEAD
     %r1048 = mul i32 %r1044,%r1047
     %r1049 = add i32 %r1043,%r1048
     store i32 %r1049, ptr %r0
+=======
+    %r1048 = mul i32 %r1047,1
+    %r1049 = add i32 %r3851,%r1048
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L250
 L250:  ;
     %r1050 = load i32, ptr %r4
@@ -1996,9 +2041,14 @@ L258:  ;
     %r1085 = load i32, ptr %r2
     %r1086 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1085
     %r1087 = load i32, ptr %r1086
+<<<<<<< HEAD
     %r1088 = mul i32 %r1084,%r1087
     %r1089 = add i32 %r1083,%r1088
     store i32 %r1089, ptr %r0
+=======
+    %r1088 = mul i32 %r1087,1
+    %r1089 = add i32 %r3854,%r1088
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L259
 L259:  ;
     %r1090 = load i32, ptr %r4
@@ -2133,9 +2183,14 @@ L279:  ;
     %r1169 = load i32, ptr %r2
     %r1170 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1169
     %r1171 = load i32, ptr %r1170
+<<<<<<< HEAD
     %r1172 = mul i32 %r1168,%r1171
     %r1173 = add i32 %r1167,%r1172
     store i32 %r1173, ptr %r0
+=======
+    %r1172 = mul i32 %r1171,1
+    %r1173 = add i32 %r3861,%r1172
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L280
 L280:  ;
     %r1174 = load i32, ptr %r4
@@ -2249,9 +2304,14 @@ L293:  ;
     %r1211 = load i32, ptr %r2
     %r1212 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1211
     %r1213 = load i32, ptr %r1212
+<<<<<<< HEAD
     %r1214 = mul i32 %r1210,%r1213
     %r1215 = add i32 %r1209,%r1214
     store i32 %r1215, ptr %r0
+=======
+    %r1214 = mul i32 %r1213,1
+    %r1215 = add i32 %r3866,%r1214
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L294
 L294:  ;
     br label %L292
@@ -2261,9 +2321,14 @@ L295:  ;
     %r1222 = load i32, ptr %r2
     %r1223 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1222
     %r1224 = load i32, ptr %r1223
+<<<<<<< HEAD
     %r1225 = mul i32 %r1221,%r1224
     %r1226 = add i32 %r1220,%r1225
     store i32 %r1226, ptr %r0
+=======
+    %r1225 = mul i32 %r1224,1
+    %r1226 = add i32 %r3866,%r1225
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L296
 L296:  ;
     br label %L292
@@ -2291,9 +2356,14 @@ L300:  ;
     %r1254 = load i32, ptr %r2
     %r1255 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1254
     %r1256 = load i32, ptr %r1255
+<<<<<<< HEAD
     %r1257 = mul i32 %r1253,%r1256
     %r1258 = add i32 %r1252,%r1257
     store i32 %r1258, ptr %r0
+=======
+    %r1257 = mul i32 %r1256,1
+    %r1258 = add i32 %r3869,%r1257
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L301
 L301:  ;
     %r1259 = load i32, ptr %r4
@@ -2358,9 +2428,14 @@ L309:  ;
     %r1294 = load i32, ptr %r2
     %r1295 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1294
     %r1296 = load i32, ptr %r1295
+<<<<<<< HEAD
     %r1297 = mul i32 %r1293,%r1296
     %r1298 = add i32 %r1292,%r1297
     store i32 %r1298, ptr %r0
+=======
+    %r1297 = mul i32 %r1296,1
+    %r1298 = add i32 %r3872,%r1297
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L310
 L310:  ;
     %r1299 = load i32, ptr %r4
@@ -2465,9 +2540,14 @@ L321:  ;
     %r1338 = load i32, ptr %r2
     %r1339 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1338
     %r1340 = load i32, ptr %r1339
+<<<<<<< HEAD
     %r1341 = mul i32 %r1337,%r1340
     %r1342 = add i32 %r1336,%r1341
     store i32 %r1342, ptr %r0
+=======
+    %r1341 = mul i32 %r1340,1
+    %r1342 = add i32 %r3876,%r1341
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L322
 L322:  ;
     br label %L320
@@ -2477,9 +2557,14 @@ L323:  ;
     %r1349 = load i32, ptr %r2
     %r1350 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1349
     %r1351 = load i32, ptr %r1350
+<<<<<<< HEAD
     %r1352 = mul i32 %r1348,%r1351
     %r1353 = add i32 %r1347,%r1352
     store i32 %r1353, ptr %r0
+=======
+    %r1352 = mul i32 %r1351,1
+    %r1353 = add i32 %r3876,%r1352
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L324
 L324:  ;
     br label %L320
@@ -2507,9 +2592,14 @@ L328:  ;
     %r1381 = load i32, ptr %r2
     %r1382 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1381
     %r1383 = load i32, ptr %r1382
+<<<<<<< HEAD
     %r1384 = mul i32 %r1380,%r1383
     %r1385 = add i32 %r1379,%r1384
     store i32 %r1385, ptr %r0
+=======
+    %r1384 = mul i32 %r1383,1
+    %r1385 = add i32 %r3879,%r1384
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L329
 L329:  ;
     %r1386 = load i32, ptr %r4
@@ -2574,9 +2664,14 @@ L337:  ;
     %r1421 = load i32, ptr %r2
     %r1422 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1421
     %r1423 = load i32, ptr %r1422
+<<<<<<< HEAD
     %r1424 = mul i32 %r1420,%r1423
     %r1425 = add i32 %r1419,%r1424
     store i32 %r1425, ptr %r0
+=======
+    %r1424 = mul i32 %r1423,1
+    %r1425 = add i32 %r3882,%r1424
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L338
 L338:  ;
     %r1426 = load i32, ptr %r4
@@ -2793,9 +2888,14 @@ L373:  ;
     %r1552 = load i32, ptr %r2
     %r1553 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1552
     %r1554 = load i32, ptr %r1553
+<<<<<<< HEAD
     %r1555 = mul i32 %r1551,%r1554
     %r1556 = add i32 %r1550,%r1555
     store i32 %r1556, ptr %r0
+=======
+    %r1555 = mul i32 %r1554,1
+    %r1556 = add i32 %r3894,%r1555
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L374
 L374:  ;
     %r1557 = load i32, ptr %r4
@@ -2874,9 +2974,14 @@ L384:  ;
     %r1593 = load i32, ptr %r2
     %r1594 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1593
     %r1595 = load i32, ptr %r1594
+<<<<<<< HEAD
     %r1596 = mul i32 %r1592,%r1595
     %r1597 = add i32 %r1591,%r1596
     store i32 %r1597, ptr %r0
+=======
+    %r1596 = mul i32 %r1595,1
+    %r1597 = add i32 %r3898,%r1596
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L385
 L385:  ;
     %r1598 = load i32, ptr %r4
@@ -2990,9 +3095,14 @@ L398:  ;
     %r1635 = load i32, ptr %r2
     %r1636 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1635
     %r1637 = load i32, ptr %r1636
+<<<<<<< HEAD
     %r1638 = mul i32 %r1634,%r1637
     %r1639 = add i32 %r1633,%r1638
     store i32 %r1639, ptr %r0
+=======
+    %r1638 = mul i32 %r1637,1
+    %r1639 = add i32 %r3903,%r1638
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L399
 L399:  ;
     br label %L397
@@ -3002,9 +3112,14 @@ L400:  ;
     %r1646 = load i32, ptr %r2
     %r1647 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1646
     %r1648 = load i32, ptr %r1647
+<<<<<<< HEAD
     %r1649 = mul i32 %r1645,%r1648
     %r1650 = add i32 %r1644,%r1649
     store i32 %r1650, ptr %r0
+=======
+    %r1649 = mul i32 %r1648,1
+    %r1650 = add i32 %r3903,%r1649
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L401
 L401:  ;
     br label %L397
@@ -3032,9 +3147,14 @@ L405:  ;
     %r1678 = load i32, ptr %r2
     %r1679 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1678
     %r1680 = load i32, ptr %r1679
+<<<<<<< HEAD
     %r1681 = mul i32 %r1677,%r1680
     %r1682 = add i32 %r1676,%r1681
     store i32 %r1682, ptr %r0
+=======
+    %r1681 = mul i32 %r1680,1
+    %r1682 = add i32 %r3906,%r1681
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L406
 L406:  ;
     %r1683 = load i32, ptr %r4
@@ -3099,9 +3219,14 @@ L414:  ;
     %r1718 = load i32, ptr %r2
     %r1719 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1718
     %r1720 = load i32, ptr %r1719
+<<<<<<< HEAD
     %r1721 = mul i32 %r1717,%r1720
     %r1722 = add i32 %r1716,%r1721
     store i32 %r1722, ptr %r0
+=======
+    %r1721 = mul i32 %r1720,1
+    %r1722 = add i32 %r3909,%r1721
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L415
 L415:  ;
     %r1723 = load i32, ptr %r4
@@ -3206,9 +3331,14 @@ L426:  ;
     %r1762 = load i32, ptr %r2
     %r1763 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1762
     %r1764 = load i32, ptr %r1763
+<<<<<<< HEAD
     %r1765 = mul i32 %r1761,%r1764
     %r1766 = add i32 %r1760,%r1765
     store i32 %r1766, ptr %r0
+=======
+    %r1765 = mul i32 %r1764,1
+    %r1766 = add i32 %r3913,%r1765
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L427
 L427:  ;
     br label %L425
@@ -3218,9 +3348,14 @@ L428:  ;
     %r1773 = load i32, ptr %r2
     %r1774 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1773
     %r1775 = load i32, ptr %r1774
+<<<<<<< HEAD
     %r1776 = mul i32 %r1772,%r1775
     %r1777 = add i32 %r1771,%r1776
     store i32 %r1777, ptr %r0
+=======
+    %r1776 = mul i32 %r1775,1
+    %r1777 = add i32 %r3913,%r1776
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L429
 L429:  ;
     br label %L425
@@ -3248,9 +3383,14 @@ L433:  ;
     %r1805 = load i32, ptr %r2
     %r1806 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1805
     %r1807 = load i32, ptr %r1806
+<<<<<<< HEAD
     %r1808 = mul i32 %r1804,%r1807
     %r1809 = add i32 %r1803,%r1808
     store i32 %r1809, ptr %r0
+=======
+    %r1808 = mul i32 %r1807,1
+    %r1809 = add i32 %r3916,%r1808
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L434
 L434:  ;
     %r1810 = load i32, ptr %r4
@@ -3315,9 +3455,14 @@ L442:  ;
     %r1845 = load i32, ptr %r2
     %r1846 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1845
     %r1847 = load i32, ptr %r1846
+<<<<<<< HEAD
     %r1848 = mul i32 %r1844,%r1847
     %r1849 = add i32 %r1843,%r1848
     store i32 %r1849, ptr %r0
+=======
+    %r1848 = mul i32 %r1847,1
+    %r1849 = add i32 %r3919,%r1848
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L443
 L443:  ;
     %r1850 = load i32, ptr %r4
@@ -3452,9 +3597,14 @@ L463:  ;
     %r1929 = load i32, ptr %r2
     %r1930 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1929
     %r1931 = load i32, ptr %r1930
+<<<<<<< HEAD
     %r1932 = mul i32 %r1928,%r1931
     %r1933 = add i32 %r1927,%r1932
     store i32 %r1933, ptr %r0
+=======
+    %r1932 = mul i32 %r1931,1
+    %r1933 = add i32 %r3926,%r1932
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L464
 L464:  ;
     %r1934 = load i32, ptr %r4
@@ -3568,9 +3718,14 @@ L477:  ;
     %r1971 = load i32, ptr %r2
     %r1972 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1971
     %r1973 = load i32, ptr %r1972
+<<<<<<< HEAD
     %r1974 = mul i32 %r1970,%r1973
     %r1975 = add i32 %r1969,%r1974
     store i32 %r1975, ptr %r0
+=======
+    %r1974 = mul i32 %r1973,1
+    %r1975 = add i32 %r3931,%r1974
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L478
 L478:  ;
     br label %L476
@@ -3580,9 +3735,14 @@ L479:  ;
     %r1982 = load i32, ptr %r2
     %r1983 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r1982
     %r1984 = load i32, ptr %r1983
+<<<<<<< HEAD
     %r1985 = mul i32 %r1981,%r1984
     %r1986 = add i32 %r1980,%r1985
     store i32 %r1986, ptr %r0
+=======
+    %r1985 = mul i32 %r1984,1
+    %r1986 = add i32 %r3931,%r1985
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L480
 L480:  ;
     br label %L476
@@ -3610,9 +3770,14 @@ L484:  ;
     %r2014 = load i32, ptr %r2
     %r2015 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2014
     %r2016 = load i32, ptr %r2015
+<<<<<<< HEAD
     %r2017 = mul i32 %r2013,%r2016
     %r2018 = add i32 %r2012,%r2017
     store i32 %r2018, ptr %r0
+=======
+    %r2017 = mul i32 %r2016,1
+    %r2018 = add i32 %r3934,%r2017
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L485
 L485:  ;
     %r2019 = load i32, ptr %r4
@@ -3677,9 +3842,14 @@ L493:  ;
     %r2054 = load i32, ptr %r2
     %r2055 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2054
     %r2056 = load i32, ptr %r2055
+<<<<<<< HEAD
     %r2057 = mul i32 %r2053,%r2056
     %r2058 = add i32 %r2052,%r2057
     store i32 %r2058, ptr %r0
+=======
+    %r2057 = mul i32 %r2056,1
+    %r2058 = add i32 %r3937,%r2057
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L494
 L494:  ;
     %r2059 = load i32, ptr %r4
@@ -3784,9 +3954,14 @@ L505:  ;
     %r2098 = load i32, ptr %r2
     %r2099 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2098
     %r2100 = load i32, ptr %r2099
+<<<<<<< HEAD
     %r2101 = mul i32 %r2097,%r2100
     %r2102 = add i32 %r2096,%r2101
     store i32 %r2102, ptr %r0
+=======
+    %r2101 = mul i32 %r2100,1
+    %r2102 = add i32 %r3941,%r2101
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L506
 L506:  ;
     br label %L504
@@ -3796,9 +3971,14 @@ L507:  ;
     %r2109 = load i32, ptr %r2
     %r2110 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2109
     %r2111 = load i32, ptr %r2110
+<<<<<<< HEAD
     %r2112 = mul i32 %r2108,%r2111
     %r2113 = add i32 %r2107,%r2112
     store i32 %r2113, ptr %r0
+=======
+    %r2112 = mul i32 %r2111,1
+    %r2113 = add i32 %r3941,%r2112
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L508
 L508:  ;
     br label %L504
@@ -3826,9 +4006,14 @@ L512:  ;
     %r2141 = load i32, ptr %r2
     %r2142 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2141
     %r2143 = load i32, ptr %r2142
+<<<<<<< HEAD
     %r2144 = mul i32 %r2140,%r2143
     %r2145 = add i32 %r2139,%r2144
     store i32 %r2145, ptr %r0
+=======
+    %r2144 = mul i32 %r2143,1
+    %r2145 = add i32 %r3944,%r2144
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L513
 L513:  ;
     %r2146 = load i32, ptr %r4
@@ -3893,9 +4078,14 @@ L521:  ;
     %r2181 = load i32, ptr %r2
     %r2182 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2181
     %r2183 = load i32, ptr %r2182
+<<<<<<< HEAD
     %r2184 = mul i32 %r2180,%r2183
     %r2185 = add i32 %r2179,%r2184
     store i32 %r2185, ptr %r0
+=======
+    %r2184 = mul i32 %r2183,1
+    %r2185 = add i32 %r3947,%r2184
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L522
 L522:  ;
     %r2186 = load i32, ptr %r4
@@ -4108,9 +4298,14 @@ L557:  ;
     %r2315 = load i32, ptr %r2
     %r2316 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2315
     %r2317 = load i32, ptr %r2316
+<<<<<<< HEAD
     %r2318 = mul i32 %r2314,%r2317
     %r2319 = add i32 %r2313,%r2318
     store i32 %r2319, ptr %r0
+=======
+    %r2318 = mul i32 %r2317,1
+    %r2319 = add i32 %r3959,%r2318
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L558
 L558:  ;
     %r2320 = load i32, ptr %r4
@@ -4189,9 +4384,14 @@ L568:  ;
     %r2356 = load i32, ptr %r2
     %r2357 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2356
     %r2358 = load i32, ptr %r2357
+<<<<<<< HEAD
     %r2359 = mul i32 %r2355,%r2358
     %r2360 = add i32 %r2354,%r2359
     store i32 %r2360, ptr %r0
+=======
+    %r2359 = mul i32 %r2358,1
+    %r2360 = add i32 %r3963,%r2359
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L569
 L569:  ;
     %r2361 = load i32, ptr %r4
@@ -4305,9 +4505,14 @@ L582:  ;
     %r2398 = load i32, ptr %r2
     %r2399 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2398
     %r2400 = load i32, ptr %r2399
+<<<<<<< HEAD
     %r2401 = mul i32 %r2397,%r2400
     %r2402 = add i32 %r2396,%r2401
     store i32 %r2402, ptr %r0
+=======
+    %r2401 = mul i32 %r2400,1
+    %r2402 = add i32 %r3968,%r2401
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L583
 L583:  ;
     br label %L581
@@ -4317,9 +4522,14 @@ L584:  ;
     %r2409 = load i32, ptr %r2
     %r2410 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2409
     %r2411 = load i32, ptr %r2410
+<<<<<<< HEAD
     %r2412 = mul i32 %r2408,%r2411
     %r2413 = add i32 %r2407,%r2412
     store i32 %r2413, ptr %r0
+=======
+    %r2412 = mul i32 %r2411,1
+    %r2413 = add i32 %r3968,%r2412
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L585
 L585:  ;
     br label %L581
@@ -4347,9 +4557,14 @@ L589:  ;
     %r2441 = load i32, ptr %r2
     %r2442 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2441
     %r2443 = load i32, ptr %r2442
+<<<<<<< HEAD
     %r2444 = mul i32 %r2440,%r2443
     %r2445 = add i32 %r2439,%r2444
     store i32 %r2445, ptr %r0
+=======
+    %r2444 = mul i32 %r2443,1
+    %r2445 = add i32 %r3971,%r2444
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L590
 L590:  ;
     %r2446 = load i32, ptr %r4
@@ -4414,9 +4629,14 @@ L598:  ;
     %r2481 = load i32, ptr %r2
     %r2482 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2481
     %r2483 = load i32, ptr %r2482
+<<<<<<< HEAD
     %r2484 = mul i32 %r2480,%r2483
     %r2485 = add i32 %r2479,%r2484
     store i32 %r2485, ptr %r0
+=======
+    %r2484 = mul i32 %r2483,1
+    %r2485 = add i32 %r3974,%r2484
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L599
 L599:  ;
     %r2486 = load i32, ptr %r4
@@ -4521,9 +4741,14 @@ L610:  ;
     %r2525 = load i32, ptr %r2
     %r2526 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2525
     %r2527 = load i32, ptr %r2526
+<<<<<<< HEAD
     %r2528 = mul i32 %r2524,%r2527
     %r2529 = add i32 %r2523,%r2528
     store i32 %r2529, ptr %r0
+=======
+    %r2528 = mul i32 %r2527,1
+    %r2529 = add i32 %r3978,%r2528
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L611
 L611:  ;
     br label %L609
@@ -4533,9 +4758,14 @@ L612:  ;
     %r2536 = load i32, ptr %r2
     %r2537 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2536
     %r2538 = load i32, ptr %r2537
+<<<<<<< HEAD
     %r2539 = mul i32 %r2535,%r2538
     %r2540 = add i32 %r2534,%r2539
     store i32 %r2540, ptr %r0
+=======
+    %r2539 = mul i32 %r2538,1
+    %r2540 = add i32 %r3978,%r2539
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L613
 L613:  ;
     br label %L609
@@ -4563,9 +4793,14 @@ L617:  ;
     %r2568 = load i32, ptr %r2
     %r2569 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2568
     %r2570 = load i32, ptr %r2569
+<<<<<<< HEAD
     %r2571 = mul i32 %r2567,%r2570
     %r2572 = add i32 %r2566,%r2571
     store i32 %r2572, ptr %r0
+=======
+    %r2571 = mul i32 %r2570,1
+    %r2572 = add i32 %r3981,%r2571
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L618
 L618:  ;
     %r2573 = load i32, ptr %r4
@@ -4630,9 +4865,14 @@ L626:  ;
     %r2608 = load i32, ptr %r2
     %r2609 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2608
     %r2610 = load i32, ptr %r2609
+<<<<<<< HEAD
     %r2611 = mul i32 %r2607,%r2610
     %r2612 = add i32 %r2606,%r2611
     store i32 %r2612, ptr %r0
+=======
+    %r2611 = mul i32 %r2610,1
+    %r2612 = add i32 %r3984,%r2611
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L627
 L627:  ;
     %r2613 = load i32, ptr %r4
@@ -4767,9 +5007,14 @@ L647:  ;
     %r2692 = load i32, ptr %r2
     %r2693 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2692
     %r2694 = load i32, ptr %r2693
+<<<<<<< HEAD
     %r2695 = mul i32 %r2691,%r2694
     %r2696 = add i32 %r2690,%r2695
     store i32 %r2696, ptr %r0
+=======
+    %r2695 = mul i32 %r2694,1
+    %r2696 = add i32 %r3991,%r2695
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L648
 L648:  ;
     %r2697 = load i32, ptr %r4
@@ -4883,9 +5128,14 @@ L661:  ;
     %r2734 = load i32, ptr %r2
     %r2735 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2734
     %r2736 = load i32, ptr %r2735
+<<<<<<< HEAD
     %r2737 = mul i32 %r2733,%r2736
     %r2738 = add i32 %r2732,%r2737
     store i32 %r2738, ptr %r0
+=======
+    %r2737 = mul i32 %r2736,1
+    %r2738 = add i32 %r3996,%r2737
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L662
 L662:  ;
     br label %L660
@@ -4895,9 +5145,14 @@ L663:  ;
     %r2745 = load i32, ptr %r2
     %r2746 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2745
     %r2747 = load i32, ptr %r2746
+<<<<<<< HEAD
     %r2748 = mul i32 %r2744,%r2747
     %r2749 = add i32 %r2743,%r2748
     store i32 %r2749, ptr %r0
+=======
+    %r2748 = mul i32 %r2747,1
+    %r2749 = add i32 %r3996,%r2748
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L664
 L664:  ;
     br label %L660
@@ -4925,9 +5180,14 @@ L668:  ;
     %r2777 = load i32, ptr %r2
     %r2778 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2777
     %r2779 = load i32, ptr %r2778
+<<<<<<< HEAD
     %r2780 = mul i32 %r2776,%r2779
     %r2781 = add i32 %r2775,%r2780
     store i32 %r2781, ptr %r0
+=======
+    %r2780 = mul i32 %r2779,1
+    %r2781 = add i32 %r3999,%r2780
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L669
 L669:  ;
     %r2782 = load i32, ptr %r4
@@ -4992,9 +5252,14 @@ L677:  ;
     %r2817 = load i32, ptr %r2
     %r2818 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2817
     %r2819 = load i32, ptr %r2818
+<<<<<<< HEAD
     %r2820 = mul i32 %r2816,%r2819
     %r2821 = add i32 %r2815,%r2820
     store i32 %r2821, ptr %r0
+=======
+    %r2820 = mul i32 %r2819,1
+    %r2821 = add i32 %r4002,%r2820
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L678
 L678:  ;
     %r2822 = load i32, ptr %r4
@@ -5099,9 +5364,14 @@ L689:  ;
     %r2861 = load i32, ptr %r2
     %r2862 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2861
     %r2863 = load i32, ptr %r2862
+<<<<<<< HEAD
     %r2864 = mul i32 %r2860,%r2863
     %r2865 = add i32 %r2859,%r2864
     store i32 %r2865, ptr %r0
+=======
+    %r2864 = mul i32 %r2863,1
+    %r2865 = add i32 %r4006,%r2864
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L690
 L690:  ;
     br label %L688
@@ -5111,9 +5381,14 @@ L691:  ;
     %r2872 = load i32, ptr %r2
     %r2873 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2872
     %r2874 = load i32, ptr %r2873
+<<<<<<< HEAD
     %r2875 = mul i32 %r2871,%r2874
     %r2876 = add i32 %r2870,%r2875
     store i32 %r2876, ptr %r0
+=======
+    %r2875 = mul i32 %r2874,1
+    %r2876 = add i32 %r4006,%r2875
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L692
 L692:  ;
     br label %L688
@@ -5141,9 +5416,14 @@ L696:  ;
     %r2904 = load i32, ptr %r2
     %r2905 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2904
     %r2906 = load i32, ptr %r2905
+<<<<<<< HEAD
     %r2907 = mul i32 %r2903,%r2906
     %r2908 = add i32 %r2902,%r2907
     store i32 %r2908, ptr %r0
+=======
+    %r2907 = mul i32 %r2906,1
+    %r2908 = add i32 %r4009,%r2907
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L697
 L697:  ;
     %r2909 = load i32, ptr %r4
@@ -5208,9 +5488,14 @@ L705:  ;
     %r2944 = load i32, ptr %r2
     %r2945 = getelementptr [16 x i32], ptr @SHIFT_TABLE, i32 0, i32 %r2944
     %r2946 = load i32, ptr %r2945
+<<<<<<< HEAD
     %r2947 = mul i32 %r2943,%r2946
     %r2948 = add i32 %r2942,%r2947
     store i32 %r2948, ptr %r0
+=======
+    %r2947 = mul i32 %r2946,1
+    %r2948 = add i32 %r4012,%r2947
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L706
 L706:  ;
     %r2949 = load i32, ptr %r4

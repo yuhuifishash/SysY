@@ -89,6 +89,7 @@ L12:  ;
     %r57 = sub i32 %r55,%r56
     ret i32 %r57
 L13:  ;
+<<<<<<< HEAD
     %r41 = load i32, ptr %r2
     %r42 = load i32, ptr %r29
     %r43 = sub i32 %r41,%r42
@@ -99,6 +100,11 @@ L13:  ;
     %r48 = sub i32 %r46,%r47
     %r49 = load i32, ptr %r7
     %r50 = sub i32 %r48,%r49
+=======
+    %r43 = sub i32 %r1,%r58
+    %r45 = sub i32 %r43,1
+    %r50 = sub i32 %r11,%r59
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r51 = sub i32 %r45,%r50
     ret i32 %r51
 L14:  ;

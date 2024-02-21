@@ -107,12 +107,16 @@ L10:  ;
     store i32 %r59, ptr %r58
     br label %L14
 L11:  ;
+<<<<<<< HEAD
     %r48 = load i32, ptr %r33
     %r49 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r48
     %r50 = load i32, ptr %r49
     store i32 %r50, ptr %r29
     %r51 = load i32, ptr %r33
     store i32 %r51, ptr %r31
+=======
+    %r50 = load i32, ptr %r40
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L12
 L12:  ;
     %r52 = load i32, ptr %r33
@@ -153,10 +157,14 @@ L17:  ;
     %r72 = load i32, ptr %r31
     %r73 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r72
     %r74 = load i32, ptr %r73
+<<<<<<< HEAD
     %r75 = load i32, ptr %r31
     %r76 = load i32, ptr %r58
     %r77 = getelementptr [16 x [16 x i32]], ptr @e, i32 0, i32 %r75, i32 %r76
     %r78 = load i32, ptr %r77
+=======
+    %r78 = load i32, ptr %r65
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r79 = add i32 %r74,%r78
     %r80 = icmp sgt i32 %r71,%r79
     br i1 %r80, label %L19, label %L20
@@ -167,6 +175,7 @@ L18:  ;
     store i32 %r93, ptr %r58
     br label %L14
 L19:  ;
+<<<<<<< HEAD
     %r81 = load i32, ptr %r58
     %r82 = getelementptr [16 x i32], ptr @dis, i32 0, i32 %r81
     %r83 = load i32, ptr %r31
@@ -176,8 +185,12 @@ L19:  ;
     %r87 = load i32, ptr %r58
     %r88 = getelementptr [16 x [16 x i32]], ptr @e, i32 0, i32 %r86, i32 %r87
     %r89 = load i32, ptr %r88
+=======
+    %r85 = load i32, ptr %r73
+    %r89 = load i32, ptr %r65
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r90 = add i32 %r85,%r89
-    store i32 %r90, ptr %r82
+    store i32 %r90, ptr %r70
     br label %L20
 L20:  ;
     br label %L18

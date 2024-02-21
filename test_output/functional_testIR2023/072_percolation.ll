@@ -65,6 +65,7 @@ L2:  ;
     %r7 = load i32, ptr %r1
     ret i32 %r7
 L3:  ;
+<<<<<<< HEAD
     %r8 = load i32, ptr %r1
     %r9 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r8
     %r10 = load i32, ptr %r1
@@ -75,6 +76,12 @@ L3:  ;
     %r14 = load i32, ptr %r1
     %r15 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r14
     %r16 = load i32, ptr %r15
+=======
+    %r12 = load i32, ptr %r3
+    %r13 = call i32 @findfa(i32 %r12)
+    store i32 %r13, ptr %r3
+    %r16 = load i32, ptr %r3
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r16
 }
 define void @mmerge(i32 %r0,i32 %r1)
@@ -151,12 +158,17 @@ L3:  ;
     store i32 %r19, ptr %r18
     %r20 = load i32, ptr @n
     call void @init(i32 %r20)
+<<<<<<< HEAD
     %r22 = load i32, ptr @n
     %r23 = load i32, ptr @n
     %r24 = mul i32 %r22,%r23
     %r25 = add i32 1,0
     %r26 = add i32 %r24,%r25
     store i32 %r26, ptr %r21
+=======
+    %r24 = mul i32 %r20,%r20
+    %r26 = add i32 %r24,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 L4:  ;
     %r153 = add i32 0,0
@@ -230,11 +242,15 @@ L13:  ;
     %r63 = icmp slt i32 %r61,%r62
     br i1 %r63, label %L16, label %L15
 L14:  ;
+<<<<<<< HEAD
     %r72 = load i32, ptr %r34
     %r73 = load i32, ptr %r34
     %r74 = add i32 1,0
     %r75 = add i32 %r73,%r74
     call void @mmerge(i32 %r72,i32 %r75)
+=======
+    call void @mmerge(i32 %r41,i32 %r66)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L15
 L15:  ;
     %r76 = load i32, ptr %r6
@@ -252,11 +268,15 @@ L16:  ;
     %r71 = icmp ne i32 %r68,%r70
     br i1 %r71, label %L14, label %L15
 L17:  ;
+<<<<<<< HEAD
     %r87 = load i32, ptr %r34
     %r88 = load i32, ptr %r34
     %r89 = add i32 1,0
     %r90 = sub i32 %r88,%r89
     call void @mmerge(i32 %r87,i32 %r90)
+=======
+    call void @mmerge(i32 %r41,i32 %r81)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L18
 L18:  ;
     %r91 = load i32, ptr %r4

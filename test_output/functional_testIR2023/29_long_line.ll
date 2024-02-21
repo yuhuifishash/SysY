@@ -9264,6 +9264,7 @@ L1553:  ;
     store i32 %r4007, ptr %r2244
     br label %L1554
 L1554:  ;
+<<<<<<< HEAD
     %r4008 = add i32 0,0
     store i32 %r4008, ptr %r6
     %r4009 = load i32, ptr %r6
@@ -9413,6 +9414,41 @@ L1554:  ;
     %r4136 = add i32 0,0
     %r4137 = icmp slt i32 %r4135,%r4136
     br i1 %r4137, label %L1556, label %L1557
+=======
+    %r4013 = add i32 %r10823,0
+    %r4016 = mul i32 %r4013,2
+    %r4018 = add i32 %r4016,%r10824
+    %r4021 = mul i32 %r4018,2
+    %r4023 = add i32 %r4021,%r10825
+    %r4026 = mul i32 %r4023,2
+    %r4028 = add i32 %r4026,%r10826
+    %r4031 = mul i32 %r4028,2
+    %r4033 = add i32 %r4031,%r10827
+    %r4036 = mul i32 %r4033,2
+    %r4038 = add i32 %r4036,%r10828
+    %r4041 = mul i32 %r4038,2
+    %r4043 = add i32 %r4041,%r10829
+    %r4046 = mul i32 %r4043,2
+    %r4048 = add i32 %r4046,%r10830
+    %r4051 = mul i32 %r4048,2
+    %r4053 = add i32 %r4051,%r10831
+    %r4056 = mul i32 %r4053,2
+    %r4058 = add i32 %r4056,%r10832
+    %r4061 = mul i32 %r4058,2
+    %r4063 = add i32 %r4061,%r10833
+    %r4066 = mul i32 %r4063,2
+    %r4068 = add i32 %r4066,%r10834
+    %r4071 = mul i32 %r4068,2
+    %r4073 = add i32 %r4071,%r10835
+    %r4076 = mul i32 %r4073,2
+    %r4078 = add i32 %r4076,%r10836
+    %r4081 = mul i32 %r4078,2
+    %r4083 = add i32 %r4081,%r10837
+    %r4086 = mul i32 %r4083,2
+    %r4088 = add i32 %r4086,%r10838
+    %r4091 = call i32 @fib(i32 %r4088)
+    br label %L1557
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 L1555:  ;
     %r4004 = load i32, ptr %r3994
     %r4005 = icmp ne i32 %r4004,0
@@ -13699,6 +13735,7 @@ L2369:  ;
     store i32 %r6248, ptr %r4485
     br label %L2370
 L2370:  ;
+<<<<<<< HEAD
     %r6249 = add i32 0,0
     store i32 %r6249, ptr %r4094
     %r6250 = load i32, ptr %r4094
@@ -13840,12 +13877,16 @@ L2370:  ;
     %r6369 = load i32, ptr %r6332
     %r6370 = add i32 0,0
     %r6371 = icmp slt i32 %r6369,%r6370
+=======
+    %r6371 = icmp slt i32 %r2282,0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r6371, label %L2372, label %L2373
 L2371:  ;
     %r6245 = load i32, ptr %r6235
     %r6246 = icmp ne i32 %r6245,0
     br i1 %r6246, label %L2368, label %L2369
 L2372:  ;
+<<<<<<< HEAD
     %r6372 = load i32, ptr %r6332
     %r6373 = sub i32 0,%r6372
     store i32 %r6373, ptr %r6332
@@ -14171,6 +14212,117 @@ L2404:  ;
     %r6582 = load i32, ptr %r6542
     %r6583 = sub i32 0,%r6582
     store i32 %r6583, ptr %r6542
+=======
+    %r6373 = sub i32 0,%r2282
+    br label %L2373
+L2373:  ;
+    %r10439 = phi i32 [%r2282,%L2370],[%r6373,%L2372]
+    %r6382 = icmp slt i32 %r2293,0
+    br i1 %r6382, label %L2374, label %L2375
+L2374:  ;
+    %r6384 = sub i32 0,%r2293
+    br label %L2375
+L2375:  ;
+    %r10438 = phi i32 [%r2293,%L2373],[%r6384,%L2374]
+    %r6393 = icmp slt i32 %r2304,0
+    br i1 %r6393, label %L2376, label %L2377
+L2376:  ;
+    %r6395 = sub i32 0,%r2304
+    br label %L2377
+L2377:  ;
+    %r10437 = phi i32 [%r2304,%L2375],[%r6395,%L2376]
+    %r6404 = icmp slt i32 %r2315,0
+    br i1 %r6404, label %L2378, label %L2379
+L2378:  ;
+    %r6406 = sub i32 0,%r2315
+    br label %L2379
+L2379:  ;
+    %r10436 = phi i32 [%r2315,%L2377],[%r6406,%L2378]
+    %r6415 = icmp slt i32 %r2326,0
+    br i1 %r6415, label %L2380, label %L2381
+L2380:  ;
+    %r6417 = sub i32 0,%r2326
+    br label %L2381
+L2381:  ;
+    %r10435 = phi i32 [%r2326,%L2379],[%r6417,%L2380]
+    %r6426 = icmp slt i32 %r2337,0
+    br i1 %r6426, label %L2382, label %L2383
+L2382:  ;
+    %r6428 = sub i32 0,%r2337
+    br label %L2383
+L2383:  ;
+    %r10434 = phi i32 [%r2337,%L2381],[%r6428,%L2382]
+    %r6437 = icmp slt i32 %r2348,0
+    br i1 %r6437, label %L2384, label %L2385
+L2384:  ;
+    %r6439 = sub i32 0,%r2348
+    br label %L2385
+L2385:  ;
+    %r10433 = phi i32 [%r2348,%L2383],[%r6439,%L2384]
+    %r6448 = icmp slt i32 %r2359,0
+    br i1 %r6448, label %L2386, label %L2387
+L2386:  ;
+    %r6450 = sub i32 0,%r2359
+    br label %L2387
+L2387:  ;
+    %r10432 = phi i32 [%r2359,%L2385],[%r6450,%L2386]
+    %r6459 = icmp slt i32 %r2370,0
+    br i1 %r6459, label %L2388, label %L2389
+L2388:  ;
+    %r6461 = sub i32 0,%r2370
+    br label %L2389
+L2389:  ;
+    %r10431 = phi i32 [%r2370,%L2387],[%r6461,%L2388]
+    %r6470 = icmp slt i32 %r2381,0
+    br i1 %r6470, label %L2390, label %L2391
+L2390:  ;
+    %r6472 = sub i32 0,%r2381
+    br label %L2391
+L2391:  ;
+    %r10430 = phi i32 [%r2381,%L2389],[%r6472,%L2390]
+    %r6481 = icmp slt i32 %r2392,0
+    br i1 %r6481, label %L2392, label %L2393
+L2392:  ;
+    %r6483 = sub i32 0,%r2392
+    br label %L2393
+L2393:  ;
+    %r10429 = phi i32 [%r2392,%L2391],[%r6483,%L2392]
+    %r6492 = icmp slt i32 %r2403,0
+    br i1 %r6492, label %L2394, label %L2395
+L2394:  ;
+    %r6494 = sub i32 0,%r2403
+    br label %L2395
+L2395:  ;
+    %r10428 = phi i32 [%r2403,%L2393],[%r6494,%L2394]
+    %r6503 = icmp slt i32 %r2414,0
+    br i1 %r6503, label %L2396, label %L2397
+L2396:  ;
+    %r6505 = sub i32 0,%r2414
+    br label %L2397
+L2397:  ;
+    %r10427 = phi i32 [%r2414,%L2395],[%r6505,%L2396]
+    %r6514 = icmp slt i32 %r2425,0
+    br i1 %r6514, label %L2398, label %L2399
+L2398:  ;
+    %r6516 = sub i32 0,%r2425
+    br label %L2399
+L2399:  ;
+    %r10426 = phi i32 [%r2425,%L2397],[%r6516,%L2398]
+    %r6525 = icmp slt i32 %r2436,0
+    br i1 %r6525, label %L2400, label %L2401
+L2400:  ;
+    %r6527 = sub i32 0,%r2436
+    br label %L2401
+L2401:  ;
+    %r10425 = phi i32 [%r2436,%L2399],[%r6527,%L2400]
+    %r6536 = icmp slt i32 %r2447,0
+    br i1 %r6536, label %L2402, label %L2403
+L2402:  ;
+    %r6538 = sub i32 0,%r2447
+    br label %L2403
+L2403:  ;
+    %r10424 = phi i32 [%r2447,%L2401],[%r6538,%L2402]
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2405
 L2405:  ;
     %r6584 = load i32, ptr %r6574
@@ -17481,6 +17633,7 @@ L3105:  ;
     store i32 %r8093, ptr %r6330
     br label %L3106
 L3106:  ;
+<<<<<<< HEAD
     %r8094 = add i32 0,0
     store i32 %r8094, ptr %r4092
     %r8095 = load i32, ptr %r4092
@@ -17627,6 +17780,42 @@ L3106:  ;
     %r8219 = load i32, ptr %r8182
     %r8220 = add i32 0,0
     %r8221 = icmp slt i32 %r8219,%r8220
+=======
+    %r8099 = add i32 %r10377,0
+    %r8102 = mul i32 %r8099,2
+    %r8104 = add i32 %r8102,%r10378
+    %r8107 = mul i32 %r8104,2
+    %r8109 = add i32 %r8107,%r10379
+    %r8112 = mul i32 %r8109,2
+    %r8114 = add i32 %r8112,%r10380
+    %r8117 = mul i32 %r8114,2
+    %r8119 = add i32 %r8117,%r10381
+    %r8122 = mul i32 %r8119,2
+    %r8124 = add i32 %r8122,%r10382
+    %r8127 = mul i32 %r8124,2
+    %r8129 = add i32 %r8127,%r10383
+    %r8132 = mul i32 %r8129,2
+    %r8134 = add i32 %r8132,%r10384
+    %r8137 = mul i32 %r8134,2
+    %r8139 = add i32 %r8137,%r10385
+    %r8142 = mul i32 %r8139,2
+    %r8144 = add i32 %r8142,%r10386
+    %r8147 = mul i32 %r8144,2
+    %r8149 = add i32 %r8147,%r10387
+    %r8152 = mul i32 %r8149,2
+    %r8154 = add i32 %r8152,%r10388
+    %r8157 = mul i32 %r8154,2
+    %r8159 = add i32 %r8157,%r10389
+    %r8162 = mul i32 %r8159,2
+    %r8164 = add i32 %r8162,%r10390
+    %r8167 = mul i32 %r8164,2
+    %r8169 = add i32 %r8167,%r10391
+    %r8172 = mul i32 %r8169,2
+    %r8174 = add i32 %r8172,%r10392
+    %r8177 = call i32 @fib(i32 %r8174)
+    %r8218 = srem i32 %r4091,2
+    %r8221 = icmp slt i32 %r8218,0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r8221, label %L3108, label %L3109
 L3107:  ;
     %r8090 = load i32, ptr %r8080
@@ -21268,6 +21457,7 @@ L3841:  ;
     store i32 %r9943, ptr %r8180
     br label %L3842
 L3842:  ;
+<<<<<<< HEAD
     %r9944 = add i32 0,0
     store i32 %r9944, ptr %r8178
     %r9945 = load i32, ptr %r8178
@@ -21368,6 +21558,40 @@ L3842:  ;
     store i32 %r10024, ptr %r8178
     %r10025 = load i32, ptr %r8178
     ret i32 %r10025
+=======
+    %r9949 = add i32 %r10170,0
+    %r9952 = mul i32 %r9949,2
+    %r9954 = add i32 %r9952,%r10171
+    %r9957 = mul i32 %r9954,2
+    %r9959 = add i32 %r9957,%r10172
+    %r9962 = mul i32 %r9959,2
+    %r9964 = add i32 %r9962,%r10173
+    %r9967 = mul i32 %r9964,2
+    %r9969 = add i32 %r9967,%r10174
+    %r9972 = mul i32 %r9969,2
+    %r9974 = add i32 %r9972,%r10175
+    %r9977 = mul i32 %r9974,2
+    %r9979 = add i32 %r9977,%r10176
+    %r9982 = mul i32 %r9979,2
+    %r9984 = add i32 %r9982,%r10177
+    %r9987 = mul i32 %r9984,2
+    %r9989 = add i32 %r9987,%r10178
+    %r9992 = mul i32 %r9989,2
+    %r9994 = add i32 %r9992,%r10179
+    %r9997 = mul i32 %r9994,2
+    %r9999 = add i32 %r9997,%r10180
+    %r10002 = mul i32 %r9999,2
+    %r10004 = add i32 %r10002,%r10181
+    %r10007 = mul i32 %r10004,2
+    %r10009 = add i32 %r10007,%r10182
+    %r10012 = mul i32 %r10009,2
+    %r10014 = add i32 %r10012,%r10183
+    %r10017 = mul i32 %r10014,2
+    %r10019 = add i32 %r10017,%r10184
+    %r10022 = mul i32 %r10019,2
+    %r10024 = add i32 %r10022,%r10185
+    ret i32 %r10024
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 L3843:  ;
     %r9940 = load i32, ptr %r9930
     %r9941 = icmp ne i32 %r9940,0

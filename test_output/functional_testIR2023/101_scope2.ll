@@ -58,6 +58,7 @@ L6:  ;
     call void @putint(i32 %r33)
     br label %L3
 L7:  ;
+<<<<<<< HEAD
     %r19 = add i32 9,0
     store i32 %r19, ptr %r18
     %r21 = add i32 11,0
@@ -76,6 +77,10 @@ L7:  ;
     %r31 = load i32, ptr %r20
     %r32 = add i32 %r30,%r31
     store i32 %r32, ptr %r7
+=======
+    %r25 = sub i32 %r14,10
+    %r32 = add i32 %r25,22
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L8
 L8:  ;
     br label %L4

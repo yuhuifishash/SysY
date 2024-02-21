@@ -56,10 +56,15 @@ L4:  ;
     call void @putch(i32 %r36)
     %r37 = load i32, ptr @b
     call void @putint(i32 %r37)
+<<<<<<< HEAD
     %r38 = add i32 10,0
     call void @putch(i32 %r38)
     %r39 = load i32, ptr @a
     ret i32 %r39
+=======
+    call void @putch(i32 10)
+    ret i32 %r35
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 L5:  ;
     %r11 = load i32, ptr @a
     call void @putint(i32 %r11)

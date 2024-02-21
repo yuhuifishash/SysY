@@ -77,6 +77,7 @@ L1:  ;
     %r3 = load i32, ptr %r1
     %r4 = sitofp i32 %r3 to float
     %r5 = fmul float %r2,%r4
+<<<<<<< HEAD
     %r6 = load i32, ptr %r1
     %r7 = sitofp i32 %r6 to float
     %r8 = fmul float %r5,%r7
@@ -84,8 +85,12 @@ L1:  ;
     %r10 = load i32, ptr %r1
     %r11 = mul i32 %r9,%r10
     %r12 = load float, ptr @PI
+=======
+    %r8 = fmul float %r5,%r4
+    %r11 = mul i32 %r0,%r0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r13 = sitofp i32 %r11 to float
-    %r14 = fmul float %r13,%r12
+    %r14 = fmul float %r13,%r2
     %r15 = fadd float %r8,%r14
     %r16 = add i32 2,0
     %r17 = sitofp i32 %r16 to float
@@ -178,9 +183,13 @@ L1:  ;
     %r8 = icmp eq i32 %r7,0
     %r9 = zext i1 %r8 to i32
     call void @assert(i32 %r9)
+<<<<<<< HEAD
     %r10 = load float, ptr @EVAL2
     %r11 = load float, ptr @EVAL3
     %r12 = call i32 @float_eq(float %r10,float %r11)
+=======
+    %r12 = call i32 @float_eq(float %r6,float %r6)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     call void @assert(i32 %r12)
     %r13 = load float, ptr @RADIUS
     %r14 = fptosi float %r13 to i32
@@ -266,6 +275,7 @@ L13:  ;
     %r63 = load float, ptr %r54
     %r64 = fptosi float %r63 to i32
     %r65 = call float @circle_area(i32 %r64)
+<<<<<<< HEAD
     store float %r65, ptr %r62
     %r66 = load i32, ptr %r40
     %r67 = getelementptr [10 x float], ptr %r42, i32 0, i32 %r66
@@ -274,6 +284,11 @@ L13:  ;
     %r70 = load float, ptr %r69
     %r71 = load float, ptr %r54
     %r72 = fadd float %r70,%r71
+=======
+    %r67 = getelementptr [10 x float], ptr %r42, i32 0, i32 %r91
+    %r70 = load float, ptr %r67
+    %r72 = fadd float %r70,%r55
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store float %r72, ptr %r67
     %r73 = load float, ptr %r56
     call void @putfloat(float %r73)
@@ -298,9 +313,14 @@ L13:  ;
     store i32 %r87, ptr %r40
     br label %L12
 L14:  ;
+<<<<<<< HEAD
     %r88 = load i32, ptr %r48
     %r89 = getelementptr [10 x float], ptr %r42, i32 0
     call void @putfarray(i32 %r88,ptr %r89)
     %r90 = add i32 0,0
     ret i32 %r90
+=======
+    call void @putfarray(i32 %r50,ptr %r49)
+    ret i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }

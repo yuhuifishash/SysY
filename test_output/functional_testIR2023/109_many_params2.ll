@@ -98,6 +98,7 @@ L0:  ;
 L1:  ;
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 16348,i1 0)
     call void @llvm.memset.p0.i32(ptr %r1,i8 0,i32 12508,i1 0)
+<<<<<<< HEAD
     %r2 = add i32 17,0
     %r3 = add i32 1,0
     %r4 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 %r2, i32 %r3
@@ -163,6 +164,32 @@ L1:  ;
     %r55 = add i32 6,0
     %r56 = add i32 0,0
     %r57 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r55, i32 %r56
+=======
+    %r4 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 1
+    store i32 6, ptr %r4
+    %r8 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 3
+    store i32 7, ptr %r8
+    %r12 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 4
+    store i32 4, ptr %r12
+    %r16 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 7
+    store i32 9, ptr %r16
+    %r20 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17, i32 11
+    store i32 11, ptr %r20
+    %r24 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 1
+    store i32 1, ptr %r24
+    %r28 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 2
+    store i32 2, ptr %r28
+    %r32 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 3
+    store i32 3, ptr %r32
+    %r36 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 9
+    store i32 9, ptr %r36
+    %r43 = load i32, ptr %r4
+    %r44 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0
+    %r48 = load i32, ptr %r8
+    %r50 = getelementptr [61 x [67 x i32]], ptr %r0, i32 0, i32 17
+    %r54 = load i32, ptr %r32
+    %r57 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 6, i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r58 = load i32, ptr %r57
     %r59 = add i32 6,0
     %r60 = getelementptr [53 x [59 x i32]], ptr %r1, i32 0, i32 %r59

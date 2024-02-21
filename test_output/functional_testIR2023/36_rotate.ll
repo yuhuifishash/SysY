@@ -114,6 +114,7 @@ L1:  ;
     %r4 = fcmp ogt float %r2,%r3
     br i1 %r4, label %L2, label %L4
 L2:  ;
+<<<<<<< HEAD
     %r10 = load float, ptr %r1
     %r11 = load float, ptr @TWO_PI
     %r12 = fdiv float %r10,%r11
@@ -126,6 +127,13 @@ L2:  ;
     %r18 = fmul float %r17,%r16
     %r19 = fsub float %r14,%r18
     store float %r19, ptr %r1
+=======
+    %r12 = fdiv float %r0,%r3
+    %r13 = fptosi float %r12 to i32
+    %r17 = sitofp i32 %r13 to float
+    %r18 = fmul float %r17,%r3
+    %r19 = fsub float %r0,%r18
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L3
 L3:  ;
     %r20 = load float, ptr %r1
@@ -133,6 +141,7 @@ L3:  ;
     %r22 = fcmp ogt float %r20,%r21
     br i1 %r22, label %L5, label %L6
 L4:  ;
+<<<<<<< HEAD
     %r5 = load float, ptr %r1
     %r6 = load float, ptr @TWO_PI
     %r7 = fsub float 0x0,%r6
@@ -155,6 +164,21 @@ L7:  ;
     %r31 = load float, ptr @TWO_PI
     %r32 = fadd float %r30,%r31
     store float %r32, ptr %r1
+=======
+    %r7 = fsub float 0x0,%r3
+    %r8 = fcmp olt float %r0,%r7
+    br i1 %r8, label %L2, label %L3
+L5:  ;
+    %r25 = fsub float %r35,%r3
+    br label %L6
+L6:  ;
+    %r36 = phi float [%r35,%L3],[%r25,%L5]
+    %r28 = fsub float 0x0,%r21
+    %r29 = fcmp olt float %r36,%r28
+    br i1 %r29, label %L7, label %L8
+L7:  ;
+    %r32 = fadd float %r36,%r3
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L8
 L8:  ;
     %r33 = load float, ptr %r1
@@ -300,6 +324,7 @@ L1:  ;
     %r39 = sitofp i32 %r38 to float
     %r40 = fadd float %r37,%r39
     %r41 = fptosi float %r40 to i32
+<<<<<<< HEAD
     store i32 %r41, ptr %r28
     %r43 = load i32, ptr %r20
     %r44 = load float, ptr %r6
@@ -309,6 +334,10 @@ L1:  ;
     %r48 = load float, ptr %r9
     %r49 = sitofp i32 %r47 to float
     %r50 = fmul float %r49,%r48
+=======
+    %r46 = fmul float %r31,%r8
+    %r50 = fmul float %r35,%r11
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r51 = fadd float %r46,%r50
     %r52 = load i32, ptr %r16
     %r53 = sitofp i32 %r52 to float

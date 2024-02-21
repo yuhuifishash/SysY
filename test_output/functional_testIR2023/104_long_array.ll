@@ -64,12 +64,17 @@ L6:  ;
     %r26 = load i32, ptr %r5
     %r27 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r26
     %r28 = load i32, ptr %r27
+<<<<<<< HEAD
     %r29 = load i32, ptr %r5
     %r30 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r29
     %r31 = load i32, ptr %r30
     %r32 = mul i32 %r28,%r31
     %r33 = add i32 10,0
     %r34 = srem i32 %r32,%r33
+=======
+    %r32 = mul i32 %r28,%r28
+    %r34 = srem i32 %r32,10
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r34, ptr %r25
     %r35 = load i32, ptr %r5
     %r36 = add i32 1,0
@@ -91,6 +96,7 @@ L9:  ;
     %r44 = load i32, ptr %r5
     %r45 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r44
     %r46 = load i32, ptr %r45
+<<<<<<< HEAD
     %r47 = load i32, ptr %r5
     %r48 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r47
     %r49 = load i32, ptr %r48
@@ -99,6 +105,11 @@ L9:  ;
     %r52 = srem i32 %r50,%r51
     %r53 = load i32, ptr %r5
     %r54 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r53
+=======
+    %r50 = mul i32 %r46,%r46
+    %r52 = srem i32 %r50,100
+    %r54 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r172
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r55 = load i32, ptr %r54
     %r56 = add i32 %r52,%r55
     store i32 %r56, ptr %r43

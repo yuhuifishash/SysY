@@ -28,6 +28,7 @@ L1:  ;
     %r7 = load i32, ptr %r3
     %r8 = getelementptr i32, ptr %r0, i32 %r7
     %r9 = load i32, ptr %r8
+<<<<<<< HEAD
     store i32 %r9, ptr %r5
     %r10 = load i32, ptr %r3
     %r11 = getelementptr i32, ptr %r0, i32 %r10
@@ -41,6 +42,13 @@ L1:  ;
     store i32 %r17, ptr %r16
     %r18 = add i32 0,0
     ret i32 %r18
+=======
+    %r13 = getelementptr i32, ptr %r0, i32 %r2
+    %r14 = load i32, ptr %r13
+    store i32 %r14, ptr %r8
+    store i32 %r9, ptr %r13
+    ret i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }
 define i32 @heap_sort(ptr %r0,i32 %r1)
 {
@@ -91,9 +99,14 @@ L4:  ;
     store i32 %r28, ptr %r3
     br label %L5
 L5:  ;
+<<<<<<< HEAD
     %r29 = load i32, ptr %r3
     %r30 = add i32 0,0
     %r31 = icmp sgt i32 %r29,%r30
+=======
+    %r53 = phi i32 [%r28,%L4],[%r41,%L6]
+    %r31 = icmp sgt i32 %r53,0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r31, label %L6, label %L7
 L6:  ;
     %r33 = add i32 0,0
@@ -101,6 +114,7 @@ L6:  ;
     %r34 = add i32 0,0
     store i32 %r34, ptr %r32
     %r35 = getelementptr i32, ptr %r0
+<<<<<<< HEAD
     %r36 = load i32, ptr %r32
     %r37 = load i32, ptr %r3
     %r38 = call i32 @swap(ptr %r35,i32 %r36,i32 %r37)
@@ -118,6 +132,11 @@ L6:  ;
     %r47 = add i32 1,0
     %r48 = sub i32 %r46,%r47
     store i32 %r48, ptr %r3
+=======
+    %r38 = call i32 @swap(ptr %r35,i32 0,i32 %r53)
+    %r41 = sub i32 %r53,1
+    %r45 = call i32 @heap_ajust(ptr %r35,i32 0,i32 %r41)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 L7:  ;
     %r49 = add i32 0,0
@@ -163,6 +182,7 @@ L4:  ;
     %r53 = add i32 0,0
     ret i32 %r53
 L5:  ;
+<<<<<<< HEAD
     %r32 = load i32, ptr %r8
     %r33 = add i32 1,0
     %r34 = add i32 %r32,%r33
@@ -171,6 +191,12 @@ L5:  ;
 L6:  ;
     %r35 = load i32, ptr %r5
     %r36 = getelementptr i32, ptr %r0, i32 %r35
+=======
+    br label %L6
+L6:  ;
+    %r54 = phi i32 [%r55,%L3],[%r55,%L7],[%r28,%L5]
+    %r36 = getelementptr i32, ptr %r0, i32 %r56
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r37 = load i32, ptr %r36
     %r38 = load i32, ptr %r8
     %r39 = getelementptr i32, ptr %r0, i32 %r38

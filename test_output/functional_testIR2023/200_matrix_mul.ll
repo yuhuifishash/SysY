@@ -51,6 +51,7 @@ L1:  ;
     %r35 = fmul float %r31,%r34
     %r36 = fadd float %r28,%r35
     store float %r36, ptr %r13
+<<<<<<< HEAD
     %r37 = add i32 1,0
     %r38 = getelementptr float, ptr %r6, i32 %r37
     %r39 = add i32 0,0
@@ -65,18 +66,30 @@ L1:  ;
     %r48 = load float, ptr %r47
     %r49 = add i32 1,0
     %r50 = getelementptr float, ptr %r4, i32 %r49
+=======
+    %r38 = getelementptr float, ptr %r6, i32 1
+    %r43 = getelementptr float, ptr %r3, i32 1
+    %r44 = load float, ptr %r43
+    %r45 = fmul float %r16,%r44
+    %r50 = getelementptr float, ptr %r4, i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r51 = load float, ptr %r50
-    %r52 = fmul float %r48,%r51
+    %r52 = fmul float %r23,%r51
     %r53 = fadd float %r45,%r52
+<<<<<<< HEAD
     %r54 = add i32 2,0
     %r55 = getelementptr float, ptr %r0, i32 %r54
     %r56 = load float, ptr %r55
     %r57 = add i32 1,0
     %r58 = getelementptr float, ptr %r5, i32 %r57
+=======
+    %r58 = getelementptr float, ptr %r5, i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r59 = load float, ptr %r58
-    %r60 = fmul float %r56,%r59
+    %r60 = fmul float %r31,%r59
     %r61 = fadd float %r53,%r60
     store float %r61, ptr %r38
+<<<<<<< HEAD
     %r62 = add i32 2,0
     %r63 = getelementptr float, ptr %r6, i32 %r62
     %r64 = add i32 0,0
@@ -91,16 +104,27 @@ L1:  ;
     %r73 = load float, ptr %r72
     %r74 = add i32 2,0
     %r75 = getelementptr float, ptr %r4, i32 %r74
+=======
+    %r63 = getelementptr float, ptr %r6, i32 2
+    %r68 = getelementptr float, ptr %r3, i32 2
+    %r69 = load float, ptr %r68
+    %r70 = fmul float %r16,%r69
+    %r75 = getelementptr float, ptr %r4, i32 2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r76 = load float, ptr %r75
-    %r77 = fmul float %r73,%r76
+    %r77 = fmul float %r23,%r76
     %r78 = fadd float %r70,%r77
+<<<<<<< HEAD
     %r79 = add i32 2,0
     %r80 = getelementptr float, ptr %r0, i32 %r79
     %r81 = load float, ptr %r80
     %r82 = add i32 2,0
     %r83 = getelementptr float, ptr %r5, i32 %r82
+=======
+    %r83 = getelementptr float, ptr %r5, i32 2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r84 = load float, ptr %r83
-    %r85 = fmul float %r81,%r84
+    %r85 = fmul float %r31,%r84
     %r86 = fadd float %r78,%r85
     store float %r86, ptr %r63
     %r87 = add i32 0,0
@@ -108,6 +132,7 @@ L1:  ;
     %r89 = add i32 0,0
     %r90 = getelementptr float, ptr %r1, i32 %r89
     %r91 = load float, ptr %r90
+<<<<<<< HEAD
     %r92 = add i32 0,0
     %r93 = getelementptr float, ptr %r3, i32 %r92
     %r94 = load float, ptr %r93
@@ -119,10 +144,17 @@ L1:  ;
     %r100 = getelementptr float, ptr %r4, i32 %r99
     %r101 = load float, ptr %r100
     %r102 = fmul float %r98,%r101
+=======
+    %r95 = fmul float %r91,%r19
+    %r97 = getelementptr float, ptr %r1, i32 1
+    %r98 = load float, ptr %r97
+    %r102 = fmul float %r98,%r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r103 = fadd float %r95,%r102
     %r104 = add i32 2,0
     %r105 = getelementptr float, ptr %r1, i32 %r104
     %r106 = load float, ptr %r105
+<<<<<<< HEAD
     %r107 = add i32 0,0
     %r108 = getelementptr float, ptr %r5, i32 %r107
     %r109 = load float, ptr %r108
@@ -179,6 +211,23 @@ L1:  ;
     %r158 = getelementptr float, ptr %r5, i32 %r157
     %r159 = load float, ptr %r158
     %r160 = fmul float %r156,%r159
+=======
+    %r110 = fmul float %r106,%r34
+    %r111 = fadd float %r103,%r110
+    store float %r111, ptr %r88
+    %r113 = getelementptr float, ptr %r7, i32 1
+    %r120 = fmul float %r91,%r44
+    %r127 = fmul float %r98,%r51
+    %r128 = fadd float %r120,%r127
+    %r135 = fmul float %r106,%r59
+    %r136 = fadd float %r128,%r135
+    store float %r136, ptr %r113
+    %r138 = getelementptr float, ptr %r7, i32 2
+    %r145 = fmul float %r91,%r69
+    %r152 = fmul float %r98,%r76
+    %r153 = fadd float %r145,%r152
+    %r160 = fmul float %r106,%r84
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r161 = fadd float %r153,%r160
     store float %r161, ptr %r138
     %r162 = add i32 0,0
@@ -186,6 +235,7 @@ L1:  ;
     %r164 = add i32 0,0
     %r165 = getelementptr float, ptr %r2, i32 %r164
     %r166 = load float, ptr %r165
+<<<<<<< HEAD
     %r167 = add i32 0,0
     %r168 = getelementptr float, ptr %r3, i32 %r167
     %r169 = load float, ptr %r168
@@ -197,10 +247,17 @@ L1:  ;
     %r175 = getelementptr float, ptr %r4, i32 %r174
     %r176 = load float, ptr %r175
     %r177 = fmul float %r173,%r176
+=======
+    %r170 = fmul float %r166,%r19
+    %r172 = getelementptr float, ptr %r2, i32 1
+    %r173 = load float, ptr %r172
+    %r177 = fmul float %r173,%r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r178 = fadd float %r170,%r177
     %r179 = add i32 2,0
     %r180 = getelementptr float, ptr %r2, i32 %r179
     %r181 = load float, ptr %r180
+<<<<<<< HEAD
     %r182 = add i32 0,0
     %r183 = getelementptr float, ptr %r5, i32 %r182
     %r184 = load float, ptr %r183
@@ -257,6 +314,23 @@ L1:  ;
     %r233 = getelementptr float, ptr %r5, i32 %r232
     %r234 = load float, ptr %r233
     %r235 = fmul float %r231,%r234
+=======
+    %r185 = fmul float %r181,%r34
+    %r186 = fadd float %r178,%r185
+    store float %r186, ptr %r163
+    %r188 = getelementptr float, ptr %r8, i32 1
+    %r195 = fmul float %r166,%r44
+    %r202 = fmul float %r173,%r51
+    %r203 = fadd float %r195,%r202
+    %r210 = fmul float %r181,%r59
+    %r211 = fadd float %r203,%r210
+    store float %r211, ptr %r188
+    %r213 = getelementptr float, ptr %r8, i32 2
+    %r220 = fmul float %r166,%r69
+    %r227 = fmul float %r173,%r76
+    %r228 = fadd float %r220,%r227
+    %r235 = fmul float %r181,%r84
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r236 = fadd float %r228,%r235
     store float %r236, ptr %r213
     %r237 = add i32 0,0
@@ -300,6 +374,7 @@ L3:  ;
     %r20 = load i32, ptr %r12
     %r21 = sitofp i32 %r20 to float
     store float %r21, ptr %r19
+<<<<<<< HEAD
     %r22 = load i32, ptr %r12
     %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r22
     %r24 = load i32, ptr %r12
@@ -329,6 +404,19 @@ L3:  ;
     %r43 = add i32 1,0
     %r44 = add i32 %r42,%r43
     store i32 %r44, ptr %r12
+=======
+    %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r102
+    store float %r21, ptr %r23
+    %r27 = getelementptr [3 x float], ptr %r5, i32 0, i32 %r102
+    store float %r21, ptr %r27
+    %r31 = getelementptr [3 x float], ptr %r6, i32 0, i32 %r102
+    store float %r21, ptr %r31
+    %r35 = getelementptr [3 x float], ptr %r7, i32 0, i32 %r102
+    store float %r21, ptr %r35
+    %r39 = getelementptr [3 x float], ptr %r8, i32 0, i32 %r102
+    store float %r21, ptr %r39
+    %r44 = add i32 %r102,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L4:  ;
     %r45 = getelementptr [3 x float], ptr %r3, i32 0

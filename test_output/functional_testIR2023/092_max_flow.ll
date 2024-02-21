@@ -64,6 +64,7 @@ L1:  ;
     %r7 = load i32, ptr %r3
     %r8 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r7
     %r9 = load i32, ptr %r8
+<<<<<<< HEAD
     %r10 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r6, i32 %r9
     %r11 = load i32, ptr %r4
     store i32 %r11, ptr %r10
@@ -122,6 +123,26 @@ L1:  ;
     %r58 = add i32 1,0
     %r59 = add i32 %r57,%r58
     store i32 %r59, ptr %r54
+=======
+    %r10 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r9
+    store i32 %r1, ptr %r10
+    %r16 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r9
+    store i32 %r2, ptr %r16
+    %r22 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r9
+    %r24 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r1
+    %r25 = load i32, ptr %r24
+    store i32 %r25, ptr %r22
+    %r30 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r1, i32 %r25
+    store i32 %r0, ptr %r30
+    %r36 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r1, i32 %r25
+    store i32 0, ptr %r36
+    %r42 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r1, i32 %r25
+    store i32 %r9, ptr %r42
+    %r52 = add i32 %r9,1
+    store i32 %r52, ptr %r8
+    %r59 = add i32 %r25,1
+    store i32 %r59, ptr %r24
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret void
 }
 define i32 @dfs(i32 %r0,i32 %r1,i32 %r2)
@@ -193,6 +214,7 @@ L10:  ;
     store i32 %r38, ptr %r13
     br label %L4
 L11:  ;
+<<<<<<< HEAD
     %r40 = add i32 0,0
     store i32 %r40, ptr %r39
     %r41 = load i32, ptr %r5
@@ -201,12 +223,17 @@ L11:  ;
     %r44 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r42, i32 %r43
     %r45 = load i32, ptr %r44
     %r46 = icmp slt i32 %r41,%r45
+=======
+    %r45 = load i32, ptr %r32
+    %r46 = icmp slt i32 %r2,%r45
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r46, label %L13, label %L14
 L13:  ;
     %r47 = load i32, ptr %r5
     store i32 %r47, ptr %r39
     br label %L15
 L14:  ;
+<<<<<<< HEAD
     %r48 = load i32, ptr %r3
     %r49 = load i32, ptr %r13
     %r50 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r48, i32 %r49
@@ -258,6 +285,26 @@ L16:  ;
     %r90 = load i32, ptr %r89
     %r91 = load i32, ptr %r52
     %r92 = add i32 %r90,%r91
+=======
+    %r51 = load i32, ptr %r32
+    br label %L15
+L15:  ;
+    %r99 = phi i32 [%r2,%L13],[%r51,%L14]
+    %r56 = load i32, ptr %r22
+    %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r99)
+    %r62 = icmp sgt i32 %r59,0
+    br i1 %r62, label %L16, label %L17
+L16:  ;
+    %r69 = load i32, ptr %r32
+    %r71 = sub i32 %r69,%r59
+    store i32 %r71, ptr %r32
+    %r75 = load i32, ptr %r22
+    %r78 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r100
+    %r79 = load i32, ptr %r78
+    %r80 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r75, i32 %r79
+    %r90 = load i32, ptr %r80
+    %r92 = add i32 %r90,%r59
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r92, ptr %r80
     %r93 = load i32, ptr %r52
     ret i32 %r93

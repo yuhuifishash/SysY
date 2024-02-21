@@ -37,9 +37,14 @@ L1:  ;
     store i32 %r6, ptr %r0
     br label %L2
 L2:  ;
+<<<<<<< HEAD
     %r7 = load i32, ptr %r0
     %r8 = add i32 10,0
     %r9 = icmp slt i32 %r7,%r8
+=======
+    %r76 = phi i32 [0,%L1],[%r14,%L3]
+    %r9 = icmp slt i32 %r76,10
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r9, label %L3, label %L4
 L3:  ;
     %r10 = load i32, ptr %r0
@@ -48,10 +53,13 @@ L3:  ;
     %r13 = add i32 1,0
     %r14 = add i32 %r12,%r13
     store i32 %r14, ptr %r11
+<<<<<<< HEAD
     %r15 = load i32, ptr %r0
     %r16 = add i32 1,0
     %r17 = add i32 %r15,%r16
     store i32 %r17, ptr %r0
+=======
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L4:  ;
     %r19 = add i32 0,0

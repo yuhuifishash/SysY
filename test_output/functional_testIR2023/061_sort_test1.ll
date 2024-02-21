@@ -43,7 +43,11 @@ L4:  ;
     %r51 = add i32 0,0
     ret i32 %r51
 L5:  ;
+<<<<<<< HEAD
     %r12 = load i32, ptr %r3
+=======
+    %r53 = phi i32 [0,%L3],[%r24,%L9]
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r13 = load i32, ptr @n
     %r14 = load i32, ptr %r1
     %r15 = sub i32 %r13,%r14
@@ -69,6 +73,7 @@ L7:  ;
     store i32 %r50, ptr %r1
     br label %L2
 L8:  ;
+<<<<<<< HEAD
     %r29 = add i32 0,0
     store i32 %r29, ptr %r28
     %r30 = load i32, ptr %r3
@@ -95,6 +100,14 @@ L9:  ;
     %r46 = add i32 1,0
     %r47 = add i32 %r45,%r46
     store i32 %r47, ptr %r3
+=======
+    %r34 = load i32, ptr %r25
+    %r41 = load i32, ptr %r20
+    store i32 %r41, ptr %r25
+    store i32 %r34, ptr %r20
+    br label %L9
+L9:  ;
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 }
 define i32 @main()

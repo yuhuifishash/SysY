@@ -24,6 +24,10 @@ L1:  ;
     store i32 %r1, ptr %r0
     %r2 = load i32, ptr %r0
     %r3 = load i32, ptr @b
+<<<<<<< HEAD
     %r4 = add i32 %r2,%r3
+=======
+    %r4 = add i32 %r3,5
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r4
 }

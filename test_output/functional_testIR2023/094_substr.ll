@@ -100,6 +100,7 @@ L7:  ;
     store i32 %r64, ptr %r7
     br label %L2
 L8:  ;
+<<<<<<< HEAD
     %r30 = load i32, ptr %r7
     %r31 = load i32, ptr %r9
     %r32 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r30, i32 %r31
@@ -110,12 +111,17 @@ L8:  ;
     %r37 = add i32 1,0
     %r38 = sub i32 %r36,%r37
     %r39 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r35, i32 %r38
+=======
+    %r32 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
+    %r39 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r21, i32 %r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r40 = load i32, ptr %r39
     %r41 = add i32 1,0
     %r42 = add i32 %r40,%r41
     store i32 %r42, ptr %r32
     br label %L10
 L9:  ;
+<<<<<<< HEAD
     %r43 = load i32, ptr %r7
     %r44 = load i32, ptr %r9
     %r45 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r43, i32 %r44
@@ -130,6 +136,12 @@ L9:  ;
     %r54 = add i32 1,0
     %r55 = sub i32 %r53,%r54
     %r56 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r52, i32 %r55
+=======
+    %r45 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r70
+    %r50 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r21, i32 %r70
+    %r51 = load i32, ptr %r50
+    %r56 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r71, i32 %r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r57 = load i32, ptr %r56
     %r58 = call i32 @MAX(i32 %r51,i32 %r57)
     store i32 %r58, ptr %r45
@@ -157,6 +169,7 @@ L1:  ;
     %r7 = getelementptr i32, ptr %r0, i32 %r6
     %r8 = load i32, ptr %r7
     store i32 %r8, ptr %r5
+<<<<<<< HEAD
     %r9 = add i32 1,0
     %r10 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r9
     %r11 = add i32 0,0
@@ -164,8 +177,12 @@ L1:  ;
     %r13 = load i32, ptr %r12
     %r14 = add i32 1,0
     %r15 = getelementptr i32, ptr %r0, i32 %r14
+=======
+    %r10 = getelementptr [16 x i32], ptr %r3, i32 0, i32 1
+    %r15 = getelementptr i32, ptr %r0, i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r16 = load i32, ptr %r15
-    %r17 = call i32 @MAX(i32 %r13,i32 %r16)
+    %r17 = call i32 @MAX(i32 %r8,i32 %r16)
     store i32 %r17, ptr %r10
     %r19 = add i32 2,0
     store i32 %r19, ptr %r18
@@ -310,6 +327,7 @@ L1:  ;
     %r63 = add i32 15,0
     %r64 = call i32 @max_sum_nonadjacent(ptr %r62,i32 %r63)
     call void @putint(i32 %r64)
+<<<<<<< HEAD
     %r65 = add i32 10,0
     call void @putch(i32 %r65)
     %r66 = getelementptr [15 x i32], ptr %r0, i32 0
@@ -317,6 +335,11 @@ L1:  ;
     %r68 = getelementptr [13 x i32], ptr %r31, i32 0
     %r69 = add i32 13,0
     %r70 = call i32 @longest_common_subseq(ptr %r66,i32 %r67,ptr %r68,i32 %r69)
+=======
+    call void @putch(i32 10)
+    %r68 = getelementptr [13 x i32], ptr %r31, i32 0
+    %r70 = call i32 @longest_common_subseq(ptr %r62,i32 15,ptr %r68,i32 13)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     call void @putint(i32 %r70)
     %r71 = add i32 10,0
     call void @putch(i32 %r71)

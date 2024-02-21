@@ -125,6 +125,7 @@ L3:  ;
     %r68 = load i32, ptr %r57
     %r69 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 %r67, i32 %r68
     %r70 = load i32, ptr %r69
+<<<<<<< HEAD
     store i32 %r70, ptr %r55
     %r71 = load i32, ptr %r51
     %r72 = add i32 1,0
@@ -155,5 +156,15 @@ L4:  ;
     %r92 = add i32 0,0
     %r93 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 %r91, i32 %r92
     %r94 = load i32, ptr %r93
+=======
+    %r80 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 2, i32 %r95
+    %r81 = load i32, ptr %r80
+    store i32 %r81, ptr %r69
+    store i32 %r70, ptr %r80
+    %r90 = add i32 %r95,1
+    br label %L2
+L4:  ;
+    %r94 = load i32, ptr %r22
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r94
 }

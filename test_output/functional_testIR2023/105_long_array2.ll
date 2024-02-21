@@ -18,6 +18,7 @@ define i32 @f1(ptr %r0)
 L0:  ;
     br label %L1
 L1:  ;
+<<<<<<< HEAD
     %r1 = add i32 5,0
     %r2 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r1
     %r3 = add i32 4000,0
@@ -33,6 +34,15 @@ L1:  ;
     %r10 = add i32 4095,0
     %r11 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r10
     %r12 = load i32, ptr %r11
+=======
+    %r2 = getelementptr [4096 x i32], ptr @a, i32 0, i32 5
+    store i32 4000, ptr %r2
+    %r5 = getelementptr [4096 x i32], ptr @a, i32 0, i32 4000
+    store i32 3, ptr %r5
+    %r8 = getelementptr [4096 x i32], ptr @a, i32 0, i32 4095
+    store i32 7, ptr %r8
+    %r12 = load i32, ptr %r8
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r13 = getelementptr i32, ptr %r0, i32 %r12
     %r14 = add i32 2216,0
     %r15 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r14
@@ -40,9 +50,13 @@ L1:  ;
     %r17 = add i32 9,0
     %r18 = add i32 %r16,%r17
     store i32 %r18, ptr %r13
+<<<<<<< HEAD
     %r19 = add i32 5,0
     %r20 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r19
     %r21 = load i32, ptr %r20
+=======
+    %r21 = load i32, ptr %r2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r22 = getelementptr [4096 x i32], ptr @a, i32 0, i32 %r21
     %r23 = load i32, ptr %r22
     ret i32 %r23

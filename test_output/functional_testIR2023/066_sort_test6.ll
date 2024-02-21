@@ -64,6 +64,7 @@ L6:  ;
     %r27 = getelementptr i32, ptr %r0, i32 %r26
     %r28 = load i32, ptr %r27
     %r29 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r28
+<<<<<<< HEAD
     %r30 = load i32, ptr %r5
     %r31 = getelementptr i32, ptr %r0, i32 %r30
     %r32 = load i32, ptr %r31
@@ -71,6 +72,10 @@ L6:  ;
     %r34 = load i32, ptr %r33
     %r35 = add i32 1,0
     %r36 = add i32 %r34,%r35
+=======
+    %r34 = load i32, ptr %r29
+    %r36 = add i32 %r34,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r36, ptr %r29
     %r37 = load i32, ptr %r5
     %r38 = add i32 1,0
@@ -87,6 +92,7 @@ L8:  ;
     %r43 = icmp slt i32 %r41,%r42
     br i1 %r43, label %L9, label %L10
 L9:  ;
+<<<<<<< HEAD
     %r44 = load i32, ptr %r9
     %r45 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r44
     %r46 = load i32, ptr %r9
@@ -95,6 +101,11 @@ L9:  ;
     %r49 = load i32, ptr %r9
     %r50 = add i32 1,0
     %r51 = sub i32 %r49,%r50
+=======
+    %r45 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r95
+    %r48 = load i32, ptr %r45
+    %r51 = sub i32 %r95,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r52 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r51
     %r53 = load i32, ptr %r52
     %r54 = add i32 %r48,%r53
@@ -109,9 +120,14 @@ L10:  ;
     store i32 %r58, ptr %r7
     br label %L11
 L11:  ;
+<<<<<<< HEAD
     %r59 = load i32, ptr %r7
     %r60 = add i32 0,0
     %r61 = icmp sgt i32 %r59,%r60
+=======
+    %r96 = phi i32 [%r2,%L10],[%r64,%L12]
+    %r61 = icmp sgt i32 %r96,0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r61, label %L12, label %L13
 L12:  ;
     %r62 = load i32, ptr %r7
@@ -120,6 +136,7 @@ L12:  ;
     %r65 = getelementptr i32, ptr %r0, i32 %r64
     %r66 = load i32, ptr %r65
     %r67 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r66
+<<<<<<< HEAD
     %r68 = load i32, ptr %r7
     %r69 = add i32 1,0
     %r70 = sub i32 %r68,%r69
@@ -148,6 +165,14 @@ L12:  ;
     %r91 = add i32 1,0
     %r92 = sub i32 %r90,%r91
     store i32 %r92, ptr %r7
+=======
+    %r74 = load i32, ptr %r67
+    %r76 = sub i32 %r74,1
+    store i32 %r76, ptr %r67
+    %r83 = load i32, ptr %r67
+    %r84 = getelementptr i32, ptr %r1, i32 %r83
+    store i32 %r66, ptr %r84
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L11
 L13:  ;
     %r93 = add i32 0,0

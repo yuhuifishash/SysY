@@ -298,6 +298,7 @@ L16:  ;
     store i32 %r200, ptr %r0
     br label %L11
 L17:  ;
+<<<<<<< HEAD
     %r168 = load i32, ptr %r6
     %r169 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r168
     %r170 = load i32, ptr %r8
@@ -314,14 +315,25 @@ L17:  ;
     %r180 = load i32, ptr %r8
     %r181 = add i32 10,0
     %r182 = sdiv i32 %r180,%r181
+=======
+    store i32 %r164, ptr %r157
+    %r173 = sub i32 %r227,1
+    %r174 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r173
+    %r179 = load i32, ptr %r174
+    %r182 = sdiv i32 %r164,10
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r183 = add i32 %r179,%r182
     store i32 %r183, ptr %r174
     br label %L19
 L18:  ;
+<<<<<<< HEAD
     %r184 = load i32, ptr %r6
     %r185 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r184
     %r186 = load i32, ptr %r8
     store i32 %r186, ptr %r185
+=======
+    store i32 %r164, ptr %r157
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L19
 L19:  ;
     %r187 = load i32, ptr %r2
@@ -334,9 +346,13 @@ L19:  ;
     store i32 %r192, ptr %r6
     br label %L14
 L20:  ;
+<<<<<<< HEAD
     %r206 = add i32 0,0
     %r207 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r206
     %r208 = load i32, ptr %r207
+=======
+    %r208 = load i32, ptr %r202
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     call void @putint(i32 %r208)
     br label %L21
 L21:  ;

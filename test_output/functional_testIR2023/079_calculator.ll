@@ -189,6 +189,7 @@ L0:  ;
 L1:  ;
     %r2 = load i32, ptr @intt
     %r3 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r2
+<<<<<<< HEAD
     %r4 = load i32, ptr @intt
     %r5 = getelementptr [10000 x i32], ptr @ints, i32 0, i32 %r4
     %r6 = load i32, ptr %r5
@@ -203,6 +204,14 @@ L1:  ;
     %r14 = load i32, ptr %r1
     %r15 = add i32 %r13,%r14
     store i32 %r15, ptr %r10
+=======
+    %r6 = load i32, ptr %r3
+    %r8 = mul i32 %r6,10
+    store i32 %r8, ptr %r3
+    %r13 = load i32, ptr %r3
+    %r15 = add i32 %r13,%r0
+    store i32 %r15, ptr %r3
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret void
 }
 define i32 @find()
@@ -214,6 +223,7 @@ L1:  ;
     store i32 %r0, ptr @c
     %r1 = load i32, ptr @ii
     %r2 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r1
+<<<<<<< HEAD
     %r3 = add i32 32,0
     store i32 %r3, ptr %r2
     %r4 = load i32, ptr @ii
@@ -225,6 +235,14 @@ L1:  ;
     %r9 = load i32, ptr @ii
     %r10 = add i32 2,0
     %r11 = add i32 %r9,%r10
+=======
+    store i32 32, ptr %r2
+    %r6 = add i32 %r1,1
+    %r7 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r6
+    %r8 = load i32, ptr @c
+    store i32 %r8, ptr %r7
+    %r11 = add i32 %r1,2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r11, ptr @ii
     %r12 = load i32, ptr @chat
     %r13 = add i32 0,0
@@ -277,9 +295,13 @@ L5:  ;
     %r17 = getelementptr [10000 x i32], ptr @get, i32 0, i32 %r16
     %r18 = load i32, ptr %r17
     store i32 %r18, ptr %r15
+<<<<<<< HEAD
     %r19 = load i32, ptr @ii
     %r20 = add i32 1,0
     %r21 = add i32 %r19,%r20
+=======
+    %r21 = add i32 %r14,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r21, ptr @ii
     br label %L7
 L6:  ;
@@ -336,6 +358,7 @@ L14:  ;
 L15:  ;
     %r43 = load i32, ptr @ii
     %r44 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r43
+<<<<<<< HEAD
     %r45 = add i32 32,0
     store i32 %r45, ptr %r44
     %r46 = load i32, ptr @ii
@@ -347,6 +370,14 @@ L15:  ;
     %r51 = load i32, ptr @ii
     %r52 = add i32 2,0
     %r53 = add i32 %r51,%r52
+=======
+    store i32 32, ptr %r44
+    %r48 = add i32 %r43,1
+    %r49 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r48
+    %r50 = load i32, ptr @c
+    store i32 %r50, ptr %r49
+    %r53 = add i32 %r43,2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r53, ptr @ii
     %r54 = call i32 @chapop()
     store i32 %r54, ptr @c
@@ -586,11 +617,16 @@ L65:  ;
 L66:  ;
     %r220 = load i32, ptr @ii
     %r221 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r220
+<<<<<<< HEAD
     %r222 = add i32 32,0
     store i32 %r222, ptr %r221
     %r223 = load i32, ptr @ii
     %r224 = add i32 1,0
     %r225 = add i32 %r223,%r224
+=======
+    store i32 32, ptr %r221
+    %r225 = add i32 %r220,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r225, ptr @ii
     br label %L7
 L67:  ;
@@ -644,6 +680,7 @@ L77:  ;
     store i32 %r233, ptr %r232
     %r234 = load i32, ptr @ii
     %r235 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r234
+<<<<<<< HEAD
     %r236 = add i32 32,0
     store i32 %r236, ptr %r235
     %r237 = load i32, ptr @ii
@@ -655,6 +692,13 @@ L77:  ;
     %r242 = load i32, ptr @ii
     %r243 = add i32 2,0
     %r244 = add i32 %r242,%r243
+=======
+    store i32 32, ptr %r235
+    %r239 = add i32 %r234,1
+    %r240 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r239
+    store i32 %r233, ptr %r240
+    %r244 = add i32 %r234,2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r244, ptr @ii
     br label %L76
 L78:  ;
@@ -852,9 +896,13 @@ L105:  ;
     %r362 = add i32 48,0
     %r363 = sub i32 %r361,%r362
     call void @intadd(i32 %r363)
+<<<<<<< HEAD
     %r364 = load i32, ptr @ii
     %r365 = add i32 1,0
     %r366 = add i32 %r364,%r365
+=======
+    %r366 = add i32 %r358,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r366, ptr @ii
     br label %L104
 L106:  ;

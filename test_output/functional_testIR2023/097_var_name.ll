@@ -41,6 +41,7 @@ L2:  ;
     %r13 = icmp slt i32 %r11,%r12
     br i1 %r13, label %L3, label %L4
 L3:  ;
+<<<<<<< HEAD
     %r14 = load i32, ptr %r0
     %r15 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r14
     %r16 = load i32, ptr %r0
@@ -49,6 +50,11 @@ L3:  ;
     %r19 = load i32, ptr %r0
     %r20 = add i32 1,0
     %r21 = sub i32 %r19,%r20
+=======
+    %r15 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
+    %r18 = load i32, ptr %r15
+    %r21 = sub i32 %r45,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r22 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r21
     %r23 = load i32, ptr %r22
     %r24 = add i32 %r18,%r23
@@ -59,6 +65,7 @@ L3:  ;
     %r29 = load i32, ptr %r28
     %r30 = add i32 %r24,%r29
     store i32 %r30, ptr %r15
+<<<<<<< HEAD
     %r31 = load i32, ptr %r9
     %r32 = load i32, ptr %r0
     %r33 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r32
@@ -75,6 +82,13 @@ L3:  ;
     %r41 = add i32 1,0
     %r42 = add i32 %r40,%r41
     store i32 %r42, ptr %r0
+=======
+    %r34 = load i32, ptr %r15
+    %r35 = add i32 %r44,%r34
+    call void @putint(i32 %r34)
+    call void @putch(i32 10)
+    %r42 = add i32 %r45,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L4:  ;
     %r43 = load i32, ptr %r9

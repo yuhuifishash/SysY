@@ -50,6 +50,7 @@ L3:  ;
     %r25 = add i32 0,0
     %r26 = getelementptr i32, ptr %r2, i32 %r25
     %r27 = load i32, ptr %r26
+<<<<<<< HEAD
     store i32 %r27, ptr %r24
     %r28 = add i32 0,0
     %r29 = getelementptr i32, ptr %r2, i32 %r28
@@ -71,6 +72,16 @@ L3:  ;
     store i32 %r43, ptr %r34
     %r44 = load i32, ptr %r16
     ret i32 %r44
+=======
+    %r31 = getelementptr i32, ptr %r3, i32 0
+    %r32 = load i32, ptr %r31
+    store i32 %r32, ptr %r26
+    %r38 = sdiv i32 %r0,%r1
+    %r42 = mul i32 %r38,%r32
+    %r43 = sub i32 %r27,%r42
+    store i32 %r43, ptr %r31
+    ret i32 %r23
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }
 define i32 @main()
 {
@@ -97,6 +108,7 @@ L1:  ;
     %r11 = load i32, ptr %r2
     %r12 = getelementptr [1 x i32], ptr %r4, i32 0
     %r13 = getelementptr [1 x i32], ptr %r7, i32 0
+<<<<<<< HEAD
     %r14 = call i32 @exgcd(i32 %r10,i32 %r11,ptr %r12,ptr %r13)
     %r15 = add i32 0,0
     %r16 = getelementptr [1 x i32], ptr %r4, i32 0, i32 %r15
@@ -113,6 +125,15 @@ L1:  ;
     %r26 = add i32 0,0
     %r27 = getelementptr [1 x i32], ptr %r4, i32 0, i32 %r26
     %r28 = load i32, ptr %r27
+=======
+    %r14 = call i32 @exgcd(i32 7,i32 15,ptr %r12,ptr %r13)
+    %r19 = load i32, ptr %r6
+    %r21 = srem i32 %r19,15
+    %r23 = add i32 %r21,15
+    %r25 = srem i32 %r23,15
+    store i32 %r25, ptr %r6
+    %r28 = load i32, ptr %r6
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     call void @putint(i32 %r28)
     %r29 = add i32 0,0
     ret i32 %r29

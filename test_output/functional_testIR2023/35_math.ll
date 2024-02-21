@@ -49,10 +49,14 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     %r6 = fadd float 0x4024000000000000,0x0
+<<<<<<< HEAD
     %r7 = load float, ptr %r1
     %r8 = add i32 100,0
     %r9 = sitofp i32 %r8 to float
     %r10 = fdiv float %r7,%r9
+=======
+    %r10 = fdiv float %r0,%r4
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r11 = call float @my_sqrt(float %r10)
     %r12 = fmul float %r6,%r11
     ret float %r12
@@ -82,6 +86,7 @@ L4:  ;
     %r33 = icmp ne i32 %r32,0
     br i1 %r33, label %L5, label %L6
 L5:  ;
+<<<<<<< HEAD
     %r34 = load float, ptr %r13
     %r35 = load float, ptr %r1
     %r36 = load float, ptr %r13
@@ -95,6 +100,12 @@ L5:  ;
     %r43 = add i32 1,0
     %r44 = sub i32 %r42,%r43
     store i32 %r44, ptr %r30
+=======
+    %r37 = fdiv float %r0,%r47
+    %r38 = fadd float %r47,%r37
+    %r41 = fdiv float %r38,%r22
+    %r44 = sub i32 %r46,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L4
 L6:  ;
     %r45 = load float, ptr %r13
@@ -185,8 +196,12 @@ L1:  ;
     %r7 = sitofp i32 %r3 to float
     %r8 = fsub float %r7,%r6
     %r9 = call float @my_sqrt(float %r8)
+<<<<<<< HEAD
     %r10 = sitofp i32 %r2 to float
     %r11 = fdiv float %r10,%r9
+=======
+    %r11 = fdiv float %r7,%r9
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret float %r11
 }
 define float @simpson(float %r0,float %r1,i32 %r2)
@@ -226,12 +241,17 @@ L2:  ;
     %r26 = load float, ptr %r4
     %r27 = call float @F1(float %r26)
     %r28 = fadd float %r25,%r27
+<<<<<<< HEAD
     %r29 = load float, ptr %r4
     %r30 = load float, ptr %r3
     %r31 = fsub float %r29,%r30
     %r32 = fmul float %r28,%r31
     %r33 = add i32 6,0
     %r34 = sitofp i32 %r33 to float
+=======
+    %r32 = fmul float %r28,%r10
+    %r34 = sitofp i32 6 to float
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r35 = fdiv float %r32,%r34
     ret float %r35
 L3:  ;
@@ -251,12 +271,17 @@ L4:  ;
     %r47 = load float, ptr %r4
     %r48 = call float @F2(float %r47)
     %r49 = fadd float %r46,%r48
+<<<<<<< HEAD
     %r50 = load float, ptr %r4
     %r51 = load float, ptr %r3
     %r52 = fsub float %r50,%r51
     %r53 = fmul float %r49,%r52
     %r54 = add i32 6,0
     %r55 = sitofp i32 %r54 to float
+=======
+    %r53 = fmul float %r49,%r10
+    %r55 = sitofp i32 6 to float
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r56 = fdiv float %r53,%r55
     ret float %r56
 L5:  ;
@@ -314,6 +339,7 @@ L1:  ;
     %r39 = fcmp ole float %r34,%r38
     br i1 %r39, label %L2, label %L3
 L2:  ;
+<<<<<<< HEAD
     %r40 = load float, ptr %r19
     %r41 = load float, ptr %r24
     %r42 = fadd float %r40,%r41
@@ -322,11 +348,14 @@ L2:  ;
     %r45 = fadd float %r43,%r44
     %r46 = load float, ptr %r8
     %r47 = fsub float %r45,%r46
+=======
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r48 = fadd float 0x402e000000000000,0x0
-    %r49 = fdiv float %r47,%r48
-    %r50 = fadd float %r42,%r49
+    %r49 = fdiv float %r33,%r48
+    %r50 = fadd float %r31,%r49
     ret float %r50
 L3:  ;
+<<<<<<< HEAD
     %r51 = load float, ptr %r5
     %r52 = load float, ptr %r10
     %r53 = load float, ptr %r7
@@ -345,6 +374,11 @@ L3:  ;
     %r66 = load float, ptr %r24
     %r67 = load i32, ptr %r9
     %r68 = call float @asr5(float %r60,float %r61,float %r65,float %r66,i32 %r67)
+=======
+    %r56 = fdiv float %r2,%r16
+    %r59 = call float @asr5(float %r0,float %r18,float %r56,float %r23,i32 %r4)
+    %r68 = call float @asr5(float %r18,float %r1,float %r56,float %r28,i32 %r4)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r69 = fadd float %r59,%r68
     ret float %r69
 }
@@ -580,12 +614,17 @@ L6:  ;
     call void @putch(i32 %r27)
     br label %L7
 L7:  ;
+<<<<<<< HEAD
     %r28 = add i32 32,0
     call void @putch(i32 %r28)
     %r29 = load float, ptr %r4
     %r30 = add i32 0,0
     %r31 = sitofp i32 %r30 to float
     %r32 = fcmp ogt float %r29,%r31
+=======
+    call void @putch(i32 32)
+    %r32 = fcmp ogt float %r5,%r23
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r32, label %L11, label %L9
 L8:  ;
     %r37 = load float, ptr %r4
@@ -598,6 +637,7 @@ L9:  ;
     call void @putch(i32 %r40)
     br label %L10
 L10:  ;
+<<<<<<< HEAD
     %r41 = add i32 32,0
     call void @putch(i32 %r41)
     %r42 = load float, ptr %r4
@@ -610,6 +650,13 @@ L11:  ;
     %r34 = add i32 0,0
     %r35 = sitofp i32 %r34 to float
     %r36 = fcmp ogt float %r33,%r35
+=======
+    call void @putch(i32 32)
+    %r45 = fcmp ogt float %r5,%r23
+    br i1 %r45, label %L12, label %L13
+L11:  ;
+    %r36 = fcmp ogt float %r7,%r23
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r36, label %L8, label %L9
 L12:  ;
     %r46 = load float, ptr %r4

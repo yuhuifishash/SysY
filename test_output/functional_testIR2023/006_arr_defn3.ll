@@ -99,10 +99,14 @@ L1:  ;
     %r52 = load i32, ptr %r51
     %r53 = getelementptr [4 x [2 x i32]], ptr %r48, i32 0, i32 0, i32 0
     store i32 %r52, ptr %r53
+<<<<<<< HEAD
     %r54 = add i32 2,0
     %r55 = add i32 1,0
     %r56 = getelementptr [4 x [2 x i32]], ptr %r18, i32 0, i32 %r54, i32 %r55
     %r57 = load i32, ptr %r56
+=======
+    %r57 = load i32, ptr %r30
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r58 = getelementptr [4 x [2 x i32]], ptr %r48, i32 0, i32 0, i32 1
     store i32 %r57, ptr %r58
     %r59 = add i32 3,0
@@ -122,6 +126,7 @@ L1:  ;
     store i32 %r67, ptr %r68
     %r69 = add i32 8,0
     %r70 = getelementptr [4 x [2 x i32]], ptr %r48, i32 0, i32 3, i32 1
+<<<<<<< HEAD
     store i32 %r69, ptr %r70
     %r71 = add i32 3,0
     %r72 = add i32 1,0
@@ -136,6 +141,13 @@ L1:  ;
     %r81 = add i32 1,0
     %r82 = getelementptr [4 x [2 x i32]], ptr %r48, i32 0, i32 %r80, i32 %r81
     %r83 = load i32, ptr %r82
+=======
+    store i32 8, ptr %r70
+    %r74 = load i32, ptr %r70
+    %r78 = load i32, ptr %r53
+    %r79 = add i32 %r74,%r78
+    %r83 = load i32, ptr %r58
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r84 = add i32 %r79,%r83
     %r85 = add i32 2,0
     %r86 = add i32 0,0

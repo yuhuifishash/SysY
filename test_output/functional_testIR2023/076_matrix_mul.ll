@@ -51,6 +51,7 @@ L1:  ;
     %r35 = mul i32 %r31,%r34
     %r36 = add i32 %r28,%r35
     store i32 %r36, ptr %r13
+<<<<<<< HEAD
     %r37 = add i32 1,0
     %r38 = getelementptr i32, ptr %r6, i32 %r37
     %r39 = add i32 0,0
@@ -65,18 +66,30 @@ L1:  ;
     %r48 = load i32, ptr %r47
     %r49 = add i32 1,0
     %r50 = getelementptr i32, ptr %r4, i32 %r49
+=======
+    %r38 = getelementptr i32, ptr %r6, i32 1
+    %r43 = getelementptr i32, ptr %r3, i32 1
+    %r44 = load i32, ptr %r43
+    %r45 = mul i32 %r16,%r44
+    %r50 = getelementptr i32, ptr %r4, i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r51 = load i32, ptr %r50
-    %r52 = mul i32 %r48,%r51
+    %r52 = mul i32 %r23,%r51
     %r53 = add i32 %r45,%r52
+<<<<<<< HEAD
     %r54 = add i32 2,0
     %r55 = getelementptr i32, ptr %r0, i32 %r54
     %r56 = load i32, ptr %r55
     %r57 = add i32 1,0
     %r58 = getelementptr i32, ptr %r5, i32 %r57
+=======
+    %r58 = getelementptr i32, ptr %r5, i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r59 = load i32, ptr %r58
-    %r60 = mul i32 %r56,%r59
+    %r60 = mul i32 %r31,%r59
     %r61 = add i32 %r53,%r60
     store i32 %r61, ptr %r38
+<<<<<<< HEAD
     %r62 = add i32 2,0
     %r63 = getelementptr i32, ptr %r6, i32 %r62
     %r64 = add i32 0,0
@@ -91,16 +104,27 @@ L1:  ;
     %r73 = load i32, ptr %r72
     %r74 = add i32 2,0
     %r75 = getelementptr i32, ptr %r4, i32 %r74
+=======
+    %r63 = getelementptr i32, ptr %r6, i32 2
+    %r68 = getelementptr i32, ptr %r3, i32 2
+    %r69 = load i32, ptr %r68
+    %r70 = mul i32 %r16,%r69
+    %r75 = getelementptr i32, ptr %r4, i32 2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r76 = load i32, ptr %r75
-    %r77 = mul i32 %r73,%r76
+    %r77 = mul i32 %r23,%r76
     %r78 = add i32 %r70,%r77
+<<<<<<< HEAD
     %r79 = add i32 2,0
     %r80 = getelementptr i32, ptr %r0, i32 %r79
     %r81 = load i32, ptr %r80
     %r82 = add i32 2,0
     %r83 = getelementptr i32, ptr %r5, i32 %r82
+=======
+    %r83 = getelementptr i32, ptr %r5, i32 2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r84 = load i32, ptr %r83
-    %r85 = mul i32 %r81,%r84
+    %r85 = mul i32 %r31,%r84
     %r86 = add i32 %r78,%r85
     store i32 %r86, ptr %r63
     %r87 = add i32 0,0
@@ -108,6 +132,7 @@ L1:  ;
     %r89 = add i32 0,0
     %r90 = getelementptr i32, ptr %r1, i32 %r89
     %r91 = load i32, ptr %r90
+<<<<<<< HEAD
     %r92 = add i32 0,0
     %r93 = getelementptr i32, ptr %r3, i32 %r92
     %r94 = load i32, ptr %r93
@@ -119,10 +144,17 @@ L1:  ;
     %r100 = getelementptr i32, ptr %r4, i32 %r99
     %r101 = load i32, ptr %r100
     %r102 = mul i32 %r98,%r101
+=======
+    %r95 = mul i32 %r91,%r19
+    %r97 = getelementptr i32, ptr %r1, i32 1
+    %r98 = load i32, ptr %r97
+    %r102 = mul i32 %r98,%r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r103 = add i32 %r95,%r102
     %r104 = add i32 2,0
     %r105 = getelementptr i32, ptr %r1, i32 %r104
     %r106 = load i32, ptr %r105
+<<<<<<< HEAD
     %r107 = add i32 0,0
     %r108 = getelementptr i32, ptr %r5, i32 %r107
     %r109 = load i32, ptr %r108
@@ -179,6 +211,23 @@ L1:  ;
     %r158 = getelementptr i32, ptr %r5, i32 %r157
     %r159 = load i32, ptr %r158
     %r160 = mul i32 %r156,%r159
+=======
+    %r110 = mul i32 %r106,%r34
+    %r111 = add i32 %r103,%r110
+    store i32 %r111, ptr %r88
+    %r113 = getelementptr i32, ptr %r7, i32 1
+    %r120 = mul i32 %r91,%r44
+    %r127 = mul i32 %r98,%r51
+    %r128 = add i32 %r120,%r127
+    %r135 = mul i32 %r106,%r59
+    %r136 = add i32 %r128,%r135
+    store i32 %r136, ptr %r113
+    %r138 = getelementptr i32, ptr %r7, i32 2
+    %r145 = mul i32 %r91,%r69
+    %r152 = mul i32 %r98,%r76
+    %r153 = add i32 %r145,%r152
+    %r160 = mul i32 %r106,%r84
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r161 = add i32 %r153,%r160
     store i32 %r161, ptr %r138
     %r162 = add i32 0,0
@@ -186,6 +235,7 @@ L1:  ;
     %r164 = add i32 0,0
     %r165 = getelementptr i32, ptr %r2, i32 %r164
     %r166 = load i32, ptr %r165
+<<<<<<< HEAD
     %r167 = add i32 0,0
     %r168 = getelementptr i32, ptr %r3, i32 %r167
     %r169 = load i32, ptr %r168
@@ -197,10 +247,17 @@ L1:  ;
     %r175 = getelementptr i32, ptr %r4, i32 %r174
     %r176 = load i32, ptr %r175
     %r177 = mul i32 %r173,%r176
+=======
+    %r170 = mul i32 %r166,%r19
+    %r172 = getelementptr i32, ptr %r2, i32 1
+    %r173 = load i32, ptr %r172
+    %r177 = mul i32 %r173,%r26
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r178 = add i32 %r170,%r177
     %r179 = add i32 2,0
     %r180 = getelementptr i32, ptr %r2, i32 %r179
     %r181 = load i32, ptr %r180
+<<<<<<< HEAD
     %r182 = add i32 0,0
     %r183 = getelementptr i32, ptr %r5, i32 %r182
     %r184 = load i32, ptr %r183
@@ -257,6 +314,23 @@ L1:  ;
     %r233 = getelementptr i32, ptr %r5, i32 %r232
     %r234 = load i32, ptr %r233
     %r235 = mul i32 %r231,%r234
+=======
+    %r185 = mul i32 %r181,%r34
+    %r186 = add i32 %r178,%r185
+    store i32 %r186, ptr %r163
+    %r188 = getelementptr i32, ptr %r8, i32 1
+    %r195 = mul i32 %r166,%r44
+    %r202 = mul i32 %r173,%r51
+    %r203 = add i32 %r195,%r202
+    %r210 = mul i32 %r181,%r59
+    %r211 = add i32 %r203,%r210
+    store i32 %r211, ptr %r188
+    %r213 = getelementptr i32, ptr %r8, i32 2
+    %r220 = mul i32 %r166,%r69
+    %r227 = mul i32 %r173,%r76
+    %r228 = add i32 %r220,%r227
+    %r235 = mul i32 %r181,%r84
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r236 = add i32 %r228,%r235
     store i32 %r236, ptr %r213
     %r237 = add i32 0,0

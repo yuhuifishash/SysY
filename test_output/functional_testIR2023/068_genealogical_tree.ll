@@ -110,6 +110,7 @@ L13:  ;
     store i32 %r59, ptr %r6
     br label %L2
 L14:  ;
+<<<<<<< HEAD
     %r47 = load i32, ptr %r8
     %r48 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r47
     %r49 = load i32, ptr %r8
@@ -117,6 +118,11 @@ L14:  ;
     %r51 = load i32, ptr %r50
     %r52 = add i32 1,0
     %r53 = sub i32 %r51,%r52
+=======
+    %r48 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r73
+    %r51 = load i32, ptr %r48
+    %r53 = sub i32 %r51,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r53, ptr %r48
     br label %L15
 L15:  ;
@@ -182,6 +188,7 @@ L5:  ;
     %r13 = icmp ne i32 %r11,%r12
     br i1 %r13, label %L6, label %L7
 L6:  ;
+<<<<<<< HEAD
     %r14 = load i32, ptr %r4
     %r15 = load i32, ptr %r2
     %r16 = getelementptr [10 x [10 x i32]], ptr @map, i32 0, i32 %r14, i32 %r15
@@ -194,6 +201,13 @@ L6:  ;
     %r22 = load i32, ptr %r21
     %r23 = add i32 1,0
     %r24 = add i32 %r22,%r23
+=======
+    %r16 = getelementptr [10 x [10 x i32]], ptr @map, i32 0, i32 %r31, i32 %r33
+    store i32 1, ptr %r16
+    %r19 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r33
+    %r22 = load i32, ptr %r19
+    %r24 = add i32 %r22,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r24, ptr %r19
     %r25 = call i32 @getint()
     store i32 %r25, ptr %r2

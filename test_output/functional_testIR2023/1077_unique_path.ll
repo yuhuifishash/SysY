@@ -135,6 +135,7 @@ L15:  ;
     %r74 = add i32 %r72,%r73
     %r75 = getelementptr [9 x i32], ptr %r11, i32 0, i32 %r74
     %r76 = load i32, ptr %r75
+<<<<<<< HEAD
     %r77 = load i32, ptr %r12
     %r78 = add i32 3,0
     %r79 = mul i32 %r77,%r78
@@ -142,6 +143,9 @@ L15:  ;
     %r81 = add i32 %r79,%r80
     %r82 = add i32 1,0
     %r83 = add i32 %r81,%r82
+=======
+    %r83 = add i32 %r66,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r84 = getelementptr [9 x i32], ptr %r11, i32 0, i32 %r83
     %r85 = load i32, ptr %r84
     %r86 = add i32 %r76,%r85

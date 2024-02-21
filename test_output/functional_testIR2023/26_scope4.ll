@@ -40,8 +40,7 @@ L1:  ;
     %r4 = call i32 @getA()
     store i32 %r4, ptr %r3
     %r5 = load i32, ptr @sum
-    %r6 = load i32, ptr @a
-    %r7 = add i32 %r5,%r6
+    %r7 = add i32 %r5,%r1
     store i32 %r7, ptr @sum
     ret void
 }

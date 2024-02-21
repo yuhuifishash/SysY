@@ -145,6 +145,7 @@ L20:  ;
     store i32 %r81, ptr %r12
     br label %L4
 L21:  ;
+<<<<<<< HEAD
     %r82 = load i32, ptr %r19
     %r83 = load i32, ptr %r21
     %r84 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r82, i32 %r83
@@ -154,6 +155,10 @@ L21:  ;
     %r88 = load i32, ptr %r12
     %r89 = add i32 0,0
     %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r88, i32 %r89
+=======
+    store i32 0, ptr %r25
+    %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r91 = load i32, ptr %r90
     %r92 = sub i32 %r87,%r91
     %r93 = load i32, ptr %r21
@@ -197,6 +202,7 @@ L26:  ;
     store i32 %r108, ptr %r10
     br label %L27
 L27:  ;
+<<<<<<< HEAD
     %r109 = load i32, ptr %r19
     %r110 = load i32, ptr %r21
     %r111 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r109, i32 %r110
@@ -206,6 +212,11 @@ L27:  ;
     %r114 = add i32 1,0
     %r115 = add i32 %r113,%r114
     store i32 %r115, ptr %r12
+=======
+    %r128 = phi i32 [%r129,%L21],[%r104,%L26]
+    store i32 1, ptr %r25
+    %r115 = add i32 %r127,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L4
 L28:  ;
     %r119 = load i32, ptr @INF
@@ -308,12 +319,17 @@ L15:  ;
     %r37 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r35, i32 %r36
     %r38 = call i32 @getint()
     store i32 %r38, ptr %r37
+<<<<<<< HEAD
     %r39 = load i32, ptr %r5
     %r40 = load i32, ptr %r7
     %r41 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r39, i32 %r40
     %r42 = load i32, ptr %r41
     %r43 = add i32 2,0
     %r44 = icmp eq i32 %r42,%r43
+=======
+    %r42 = load i32, ptr %r37
+    %r44 = icmp eq i32 %r42,2
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r44, label %L17, label %L18
 L16:  ;
     %r58 = load i32, ptr %r5
@@ -328,12 +344,17 @@ L17:  ;
     store i32 %r46, ptr @y_0
     br label %L19
 L18:  ;
+<<<<<<< HEAD
     %r47 = load i32, ptr %r5
     %r48 = load i32, ptr %r7
     %r49 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r47, i32 %r48
     %r50 = load i32, ptr %r49
     %r51 = add i32 3,0
     %r52 = icmp eq i32 %r50,%r51
+=======
+    %r50 = load i32, ptr %r37
+    %r52 = icmp eq i32 %r50,3
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r52, label %L20, label %L21
 L19:  ;
     %r55 = load i32, ptr %r7

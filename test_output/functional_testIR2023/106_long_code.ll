@@ -43,7 +43,11 @@ L4:  ;
     %r51 = add i32 0,0
     ret i32 %r51
 L5:  ;
+<<<<<<< HEAD
     %r12 = load i32, ptr %r3
+=======
+    %r53 = phi i32 [0,%L3],[%r24,%L9]
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r13 = load i32, ptr @n
     %r14 = load i32, ptr %r1
     %r15 = sub i32 %r13,%r14
@@ -69,6 +73,7 @@ L7:  ;
     store i32 %r50, ptr %r1
     br label %L2
 L8:  ;
+<<<<<<< HEAD
     %r29 = add i32 0,0
     store i32 %r29, ptr %r28
     %r30 = load i32, ptr %r3
@@ -95,6 +100,14 @@ L9:  ;
     %r46 = add i32 1,0
     %r47 = add i32 %r45,%r46
     store i32 %r47, ptr %r3
+=======
+    %r34 = load i32, ptr %r25
+    %r41 = load i32, ptr %r20
+    store i32 %r41, ptr %r25
+    store i32 %r34, ptr %r20
+    br label %L9
+L9:  ;
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 }
 define i32 @insertsort(ptr %r0)
@@ -143,9 +156,13 @@ L6:  ;
     %r27 = add i32 1,0
     %r28 = add i32 %r26,%r27
     %r29 = getelementptr i32, ptr %r0, i32 %r28
+<<<<<<< HEAD
     %r30 = load i32, ptr %r12
     %r31 = getelementptr i32, ptr %r0, i32 %r30
     %r32 = load i32, ptr %r31
+=======
+    %r32 = load i32, ptr %r23
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r32, ptr %r29
     %r33 = load i32, ptr %r12
     %r34 = add i32 1,0
@@ -227,6 +244,7 @@ L6:  ;
     %r75 = sub i32 %r73,%r74
     store i32 %r75, ptr %r71
     %r76 = getelementptr i32, ptr %r0
+<<<<<<< HEAD
     %r77 = load i32, ptr %r3
     %r78 = load i32, ptr %r71
     %r79 = call i32 @QuickSort(ptr %r76,i32 %r77,i32 %r78)
@@ -240,6 +258,11 @@ L6:  ;
     %r85 = load i32, ptr %r4
     %r86 = call i32 @QuickSort(ptr %r83,i32 %r84,i32 %r85)
     store i32 %r86, ptr %r71
+=======
+    %r79 = call i32 @QuickSort(ptr %r76,i32 %r1,i32 %r75)
+    %r82 = add i32 %r95,1
+    %r86 = call i32 @QuickSort(ptr %r76,i32 %r82,i32 %r2)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L3
 L7:  ;
     %r22 = load i32, ptr %r8
@@ -410,6 +433,7 @@ L6:  ;
     %r25 = load i32, ptr %r2
     %r26 = getelementptr i32, ptr %r0, i32 %r25
     %r27 = load i32, ptr %r26
+<<<<<<< HEAD
     store i32 %r27, ptr %r23
     %r28 = load i32, ptr %r23
     %r29 = getelementptr [1000 x i32], ptr %r1, i32 0, i32 %r28
@@ -424,17 +448,29 @@ L6:  ;
     %r37 = load i32, ptr %r36
     %r38 = load i32, ptr %r15
     %r39 = icmp sgt i32 %r37,%r38
+=======
+    %r29 = getelementptr [1000 x i32], ptr %r1, i32 0, i32 %r27
+    %r32 = load i32, ptr %r29
+    %r34 = add i32 %r32,1
+    store i32 %r34, ptr %r29
+    %r37 = load i32, ptr %r29
+    %r39 = icmp sgt i32 %r37,%r52
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r39, label %L8, label %L9
 L7:  ;
     %r47 = load i32, ptr %r17
     ret i32 %r47
 L8:  ;
+<<<<<<< HEAD
     %r40 = load i32, ptr %r23
     %r41 = getelementptr [1000 x i32], ptr %r1, i32 0, i32 %r40
     %r42 = load i32, ptr %r41
     store i32 %r42, ptr %r15
     %r43 = load i32, ptr %r23
     store i32 %r43, ptr %r17
+=======
+    %r42 = load i32, ptr %r29
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L9
 L9:  ;
     %r44 = load i32, ptr %r2
@@ -569,6 +605,7 @@ L4:  ;
     %r34 = add i32 0,0
     ret i32 %r34
 L5:  ;
+<<<<<<< HEAD
     %r24 = load i32, ptr %r6
     %r25 = getelementptr i32, ptr %r0, i32 %r24
     %r26 = add i32 0,0
@@ -581,6 +618,12 @@ L6:  ;
     store i32 %r29, ptr %r28
     %r30 = add i32 0,0
     store i32 %r30, ptr %r3
+=======
+    store i32 0, ptr %r14
+    br label %L7
+L6:  ;
+    store i32 %r16, ptr %r14
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L7
 L7:  ;
     %r31 = load i32, ptr %r6
@@ -639,11 +682,15 @@ L5:  ;
     store i32 %r23, ptr %r3
     br label %L7
 L6:  ;
+<<<<<<< HEAD
     %r24 = load i32, ptr %r5
     %r25 = load i32, ptr %r2
     %r26 = add i32 1,0
     %r27 = sub i32 %r25,%r26
     %r28 = icmp eq i32 %r24,%r27
+=======
+    %r28 = icmp eq i32 %r81,%r17
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r28, label %L8, label %L9
 L7:  ;
     %r60 = load i32, ptr %r5
@@ -655,6 +702,7 @@ L8:  ;
     %r29 = add i32 0,0
     %r30 = getelementptr i32, ptr %r0, i32 %r29
     %r31 = load i32, ptr %r30
+<<<<<<< HEAD
     store i32 %r31, ptr %r9
     %r32 = add i32 0,0
     %r33 = getelementptr i32, ptr %r0, i32 %r32
@@ -662,6 +710,10 @@ L8:  ;
     %r35 = load i32, ptr %r2
     %r36 = sdiv i32 %r34,%r35
     store i32 %r36, ptr %r33
+=======
+    %r36 = sdiv i32 %r84,%r1
+    store i32 %r36, ptr %r30
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L10
 L9:  ;
     %r37 = load i32, ptr %r3
@@ -679,6 +731,7 @@ L9:  ;
     %r48 = add i32 %r46,%r47
     %r49 = getelementptr i32, ptr %r0, i32 %r48
     %r50 = load i32, ptr %r49
+<<<<<<< HEAD
     store i32 %r50, ptr %r9
     %r51 = load i32, ptr %r5
     %r52 = load i32, ptr %r2
@@ -690,6 +743,10 @@ L9:  ;
     %r58 = load i32, ptr %r2
     %r59 = sdiv i32 %r57,%r58
     store i32 %r59, ptr %r56
+=======
+    %r59 = sdiv i32 %r43,%r1
+    store i32 %r59, ptr %r49
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L10
 L10:  ;
     br label %L7
@@ -856,6 +913,7 @@ L1:  ;
     %r101 = getelementptr [32 x i32], ptr %r1, i32 0
     %r102 = getelementptr [32 x i32], ptr %r2, i32 0
     %r103 = call i32 @arrCopy(ptr %r101,ptr %r102)
+<<<<<<< HEAD
     store i32 %r103, ptr %r99
     %r104 = getelementptr [32 x i32], ptr %r2, i32 0
     %r105 = call i32 @revert(ptr %r104)
@@ -864,6 +922,9 @@ L1:  ;
     store i32 %r107, ptr %r106
     %r108 = add i32 0,0
     store i32 %r108, ptr %r106
+=======
+    %r105 = call i32 @revert(ptr %r102)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L2:  ;
     %r109 = load i32, ptr %r106
@@ -883,11 +944,15 @@ L3:  ;
     store i32 %r118, ptr %r106
     br label %L2
 L4:  ;
+<<<<<<< HEAD
     %r119 = getelementptr [32 x i32], ptr %r2, i32 0
     %r120 = call i32 @bubblesort(ptr %r119)
     store i32 %r120, ptr %r99
     %r121 = add i32 0,0
     store i32 %r121, ptr %r106
+=======
+    %r120 = call i32 @bubblesort(ptr %r102)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 L5:  ;
     %r122 = load i32, ptr %r106
@@ -907,6 +972,7 @@ L6:  ;
     store i32 %r131, ptr %r106
     br label %L5
 L7:  ;
+<<<<<<< HEAD
     %r132 = getelementptr [32 x i32], ptr %r2, i32 0
     %r133 = call i32 @getMid(ptr %r132)
     store i32 %r133, ptr %r99
@@ -926,6 +992,14 @@ L7:  ;
     store i32 %r142, ptr %r99
     %r143 = add i32 0,0
     store i32 %r143, ptr %r106
+=======
+    %r133 = call i32 @getMid(ptr %r102)
+    call void @putint(i32 %r133)
+    %r136 = call i32 @getMost(ptr %r102)
+    call void @putint(i32 %r136)
+    %r140 = call i32 @arrCopy(ptr %r101,ptr %r102)
+    %r142 = call i32 @bubblesort(ptr %r102)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L8
 L8:  ;
     %r144 = load i32, ptr %r106
@@ -945,6 +1019,7 @@ L9:  ;
     store i32 %r153, ptr %r106
     br label %L8
 L10:  ;
+<<<<<<< HEAD
     %r154 = getelementptr [32 x i32], ptr %r1, i32 0
     %r155 = getelementptr [32 x i32], ptr %r2, i32 0
     %r156 = call i32 @arrCopy(ptr %r154,ptr %r155)
@@ -954,6 +1029,10 @@ L10:  ;
     store i32 %r158, ptr %r99
     %r159 = add i32 0,0
     store i32 %r159, ptr %r106
+=======
+    %r156 = call i32 @arrCopy(ptr %r101,ptr %r102)
+    %r158 = call i32 @insertsort(ptr %r102)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L11
 L11:  ;
     %r160 = load i32, ptr %r106
@@ -973,6 +1052,7 @@ L12:  ;
     store i32 %r169, ptr %r106
     br label %L11
 L13:  ;
+<<<<<<< HEAD
     %r170 = getelementptr [32 x i32], ptr %r1, i32 0
     %r171 = getelementptr [32 x i32], ptr %r2, i32 0
     %r172 = call i32 @arrCopy(ptr %r170,ptr %r171)
@@ -986,6 +1066,10 @@ L13:  ;
     %r177 = load i32, ptr %r99
     %r178 = call i32 @QuickSort(ptr %r175,i32 %r176,i32 %r177)
     store i32 %r178, ptr %r99
+=======
+    %r172 = call i32 @arrCopy(ptr %r101,ptr %r102)
+    %r178 = call i32 @QuickSort(ptr %r102,i32 0,i32 31)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L14
 L14:  ;
     %r179 = load i32, ptr %r106
@@ -1005,6 +1089,7 @@ L15:  ;
     store i32 %r188, ptr %r106
     br label %L14
 L16:  ;
+<<<<<<< HEAD
     %r189 = getelementptr [32 x i32], ptr %r1, i32 0
     %r190 = getelementptr [32 x i32], ptr %r2, i32 0
     %r191 = call i32 @arrCopy(ptr %r189,ptr %r190)
@@ -1015,6 +1100,10 @@ L16:  ;
     store i32 %r194, ptr %r99
     %r195 = add i32 0,0
     store i32 %r195, ptr %r106
+=======
+    %r191 = call i32 @arrCopy(ptr %r101,ptr %r102)
+    %r194 = call i32 @calSum(ptr %r102,i32 4)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L17
 L17:  ;
     %r196 = load i32, ptr %r106
@@ -1034,6 +1123,7 @@ L18:  ;
     store i32 %r205, ptr %r106
     br label %L17
 L19:  ;
+<<<<<<< HEAD
     %r206 = getelementptr [32 x i32], ptr %r1, i32 0
     %r207 = getelementptr [32 x i32], ptr %r2, i32 0
     %r208 = call i32 @arrCopy(ptr %r206,ptr %r207)
@@ -1044,6 +1134,10 @@ L19:  ;
     store i32 %r211, ptr %r99
     %r212 = add i32 0,0
     store i32 %r212, ptr %r106
+=======
+    %r208 = call i32 @arrCopy(ptr %r101,ptr %r102)
+    %r211 = call i32 @avgPooling(ptr %r102,i32 3)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L20
 L20:  ;
     %r213 = load i32, ptr %r106

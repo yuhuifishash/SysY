@@ -78,6 +78,7 @@ L7:  ;
     %r30 = icmp slt i32 %r28,%r29
     br i1 %r30, label %L5, label %L6
 L8:  ;
+<<<<<<< HEAD
     %r40 = add i32 1,0
     %r41 = load i32, ptr %r23
     %r42 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 %r40, i32 %r41
@@ -85,6 +86,10 @@ L8:  ;
     %r44 = load i32, ptr %r19
     %r45 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 %r43, i32 %r44
     %r46 = load i32, ptr %r45
+=======
+    %r42 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r108
+    %r46 = load i32, ptr %r33
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r46, ptr %r42
     %r47 = load i32, ptr %r19
     %r48 = add i32 1,0
@@ -92,6 +97,7 @@ L8:  ;
     store i32 %r49, ptr %r19
     br label %L10
 L9:  ;
+<<<<<<< HEAD
     %r50 = add i32 1,0
     %r51 = load i32, ptr %r23
     %r52 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 %r50, i32 %r51
@@ -99,6 +105,10 @@ L9:  ;
     %r54 = load i32, ptr %r21
     %r55 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 %r53, i32 %r54
     %r56 = load i32, ptr %r55
+=======
+    %r52 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r108
+    %r56 = load i32, ptr %r37
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r56, ptr %r52
     %r57 = load i32, ptr %r21
     %r58 = add i32 1,0
@@ -192,6 +202,7 @@ L1:  ;
     %r1 = add i32 0,0
     %r2 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 %r1
     %r3 = call i32 @getarray(ptr %r2)
+<<<<<<< HEAD
     store i32 %r3, ptr %r0
     %r4 = add i32 0,0
     %r5 = load i32, ptr %r0
@@ -202,4 +213,9 @@ L1:  ;
     call void @putarray(i32 %r6,ptr %r8)
     %r9 = add i32 0,0
     ret i32 %r9
+=======
+    call void @merge_sort(i32 0,i32 %r3)
+    call void @putarray(i32 %r3,ptr %r2)
+    ret i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }

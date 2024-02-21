@@ -68,6 +68,7 @@ L1:  ;
     %r22 = icmp ne i32 %r19,%r21
     br i1 %r22, label %L2, label %L3
 L2:  ;
+<<<<<<< HEAD
     %r23 = load i32, ptr %r6
     %r24 = load i32, ptr %r7
     %r25 = load i32, ptr %r8
@@ -76,6 +77,9 @@ L2:  ;
     %r28 = load i32, ptr %r11
     %r29 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r23, i32 %r24, i32 %r25, i32 %r26, i32 %r27, i32 %r28
     %r30 = load i32, ptr %r29
+=======
+    %r30 = load i32, ptr %r18
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r30
 L3:  ;
     %r31 = load i32, ptr %r6
@@ -116,10 +120,15 @@ L6:  ;
     %r60 = add i32 1,0
     %r61 = call i32 @dfs(i32 %r55,i32 %r56,i32 %r57,i32 %r58,i32 %r59,i32 %r60)
     %r62 = mul i32 %r52,%r61
+<<<<<<< HEAD
     %r63 = add i32 %r47,%r62
     %r64 = load i32, ptr @mod
     %r65 = srem i32 %r63,%r64
     store i32 %r65, ptr %r43
+=======
+    %r63 = add i32 %r62,0
+    %r65 = srem i32 %r63,1000000007
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L7
 L7:  ;
     %r66 = load i32, ptr %r7
@@ -230,6 +239,7 @@ L14:  ;
     store i32 %r153, ptr %r43
     br label %L15
 L15:  ;
+<<<<<<< HEAD
     %r154 = load i32, ptr %r6
     %r155 = load i32, ptr %r7
     %r156 = load i32, ptr %r8
@@ -249,6 +259,12 @@ L15:  ;
     %r169 = load i32, ptr %r11
     %r170 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r164, i32 %r165, i32 %r166, i32 %r167, i32 %r168, i32 %r169
     %r171 = load i32, ptr %r170
+=======
+    %r176 = phi i32 [%r175,%L13],[%r153,%L14]
+    %r163 = srem i32 %r176,1000000007
+    store i32 %r163, ptr %r18
+    %r171 = load i32, ptr %r18
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r171
 }
 define i32 @main()
@@ -379,6 +395,7 @@ L21:  ;
     %r64 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r63
     %r65 = call i32 @getint()
     store i32 %r65, ptr %r64
+<<<<<<< HEAD
     %r66 = load i32, ptr %r2
     %r67 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r66
     %r68 = load i32, ptr %r67
@@ -390,6 +407,12 @@ L21:  ;
     %r74 = load i32, ptr %r73
     %r75 = add i32 1,0
     %r76 = add i32 %r74,%r75
+=======
+    %r68 = load i32, ptr %r64
+    %r69 = getelementptr [20 x i32], ptr @cns, i32 0, i32 %r68
+    %r74 = load i32, ptr %r69
+    %r76 = add i32 %r74,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r76, ptr %r69
     %r77 = load i32, ptr %r2
     %r78 = add i32 1,0

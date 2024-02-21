@@ -125,6 +125,7 @@ L9:  ;
     call void @printans()
     br label %L10
 L10:  ;
+<<<<<<< HEAD
     %r33 = load i32, ptr %r2
     %r34 = getelementptr [50 x i32], ptr @row, i32 0, i32 %r33
     %r35 = add i32 1,0
@@ -135,6 +136,10 @@ L10:  ;
     %r39 = getelementptr [50 x i32], ptr @line1, i32 0, i32 %r38
     %r40 = add i32 1,0
     store i32 %r40, ptr %r39
+=======
+    store i32 1, ptr %r8
+    store i32 1, ptr %r15
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r41 = load i32, ptr @n
     %r42 = load i32, ptr %r1
     %r43 = add i32 %r41,%r42
@@ -147,6 +152,7 @@ L10:  ;
     %r49 = add i32 1,0
     %r50 = add i32 %r48,%r49
     call void @f(i32 %r50)
+<<<<<<< HEAD
     %r51 = load i32, ptr %r2
     %r52 = getelementptr [50 x i32], ptr @row, i32 0, i32 %r51
     %r53 = add i32 0,0
@@ -165,6 +171,11 @@ L10:  ;
     %r64 = getelementptr [100 x i32], ptr @line2, i32 0, i32 %r63
     %r65 = add i32 0,0
     store i32 %r65, ptr %r64
+=======
+    store i32 0, ptr %r8
+    store i32 0, ptr %r15
+    store i32 0, ptr %r46
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L6
 }
 define i32 @main()

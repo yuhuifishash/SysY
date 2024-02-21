@@ -63,6 +63,7 @@ L8:  ;
     %r14 = icmp slt i32 %r12,%r13
     br i1 %r14, label %L9, label %L10
 L9:  ;
+<<<<<<< HEAD
     %r15 = load i32, ptr %r0
     %r16 = load i32, ptr %r5
     %r17 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r15, i32 %r16
@@ -73,6 +74,11 @@ L9:  ;
     %r22 = load i32, ptr %r0
     %r23 = load i32, ptr %r10
     %r24 = getelementptr [100 x [100 x i32]], ptr @a, i32 0, i32 %r22, i32 %r23
+=======
+    %r17 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r46, i32 %r45
+    %r21 = load i32, ptr %r17
+    %r24 = getelementptr [100 x [100 x i32]], ptr @a, i32 0, i32 %r46, i32 %r43
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r25 = load i32, ptr %r24
     %r26 = load i32, ptr %r10
     %r27 = load i32, ptr %r5

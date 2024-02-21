@@ -37,11 +37,16 @@ L2:  ;
     %r13 = load i32, ptr %r2
     ret i32 %r13
 L3:  ;
+<<<<<<< HEAD
     %r14 = load i32, ptr %r3
     %r15 = load i32, ptr %r2
     %r16 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r15
     %r17 = load i32, ptr %r16
     %r18 = icmp sgt i32 %r14,%r17
+=======
+    %r17 = load i32, ptr %r9
+    %r18 = icmp sgt i32 %r1,%r17
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r18, label %L6, label %L7
 L5:  ;
     %r8 = load i32, ptr %r2
@@ -74,6 +79,7 @@ L0:  ;
 L1:  ;
     %r2 = load i32, ptr @now
     %r3 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r2
+<<<<<<< HEAD
     %r4 = load i32, ptr %r1
     store i32 %r4, ptr %r3
     %r5 = load i32, ptr @now
@@ -89,6 +95,14 @@ L1:  ;
     %r13 = load i32, ptr @now
     %r14 = add i32 1,0
     %r15 = add i32 %r13,%r14
+=======
+    store i32 %r0, ptr %r3
+    %r6 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r2
+    store i32 -1, ptr %r6
+    %r10 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r2
+    store i32 -1, ptr %r10
+    %r15 = add i32 %r2,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r15, ptr @now
     %r16 = load i32, ptr @now
     %r17 = add i32 1,0
@@ -123,9 +137,13 @@ L4:  ;
     %r18 = load i32, ptr %r1
     ret i32 %r18
 L5:  ;
+<<<<<<< HEAD
     %r14 = load i32, ptr %r1
     %r15 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r14
     %r16 = load i32, ptr %r15
+=======
+    %r16 = load i32, ptr %r9
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r17 = call i32 @find_minimum(i32 %r16)
     ret i32 %r17
 L6:  ;
@@ -160,6 +178,7 @@ L4:  ;
     %r29 = load i32, ptr %r2
     ret i32 %r29
 L5:  ;
+<<<<<<< HEAD
     %r15 = load i32, ptr %r2
     %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r15
     %r17 = load i32, ptr %r2
@@ -177,6 +196,17 @@ L6:  ;
     %r26 = load i32, ptr %r25
     %r27 = load i32, ptr %r3
     %r28 = call i32 @insert(i32 %r26,i32 %r27)
+=======
+    %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
+    %r19 = load i32, ptr %r16
+    %r21 = call i32 @insert(i32 %r19,i32 %r1)
+    store i32 %r21, ptr %r16
+    br label %L7
+L6:  ;
+    %r23 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
+    %r26 = load i32, ptr %r23
+    %r28 = call i32 @insert(i32 %r26,i32 %r1)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r28, ptr %r23
     br label %L7
 L7:  ;
@@ -209,6 +239,7 @@ L3:  ;
     %r14 = icmp sgt i32 %r10,%r13
     br i1 %r14, label %L4, label %L5
 L4:  ;
+<<<<<<< HEAD
     %r15 = load i32, ptr %r2
     %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r15
     %r17 = load i32, ptr %r2
@@ -224,11 +255,22 @@ L5:  ;
     %r24 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r23
     %r25 = load i32, ptr %r24
     %r26 = icmp slt i32 %r22,%r25
+=======
+    %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
+    %r19 = load i32, ptr %r16
+    %r21 = call i32 @delete(i32 %r19,i32 %r1)
+    store i32 %r21, ptr %r16
+    br label %L6
+L5:  ;
+    %r25 = load i32, ptr %r12
+    %r26 = icmp slt i32 %r1,%r25
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r26, label %L7, label %L8
 L6:  ;
     %r91 = load i32, ptr %r2
     ret i32 %r91
 L7:  ;
+<<<<<<< HEAD
     %r27 = load i32, ptr %r2
     %r28 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r27
     %r29 = load i32, ptr %r2
@@ -236,6 +278,11 @@ L7:  ;
     %r31 = load i32, ptr %r30
     %r32 = load i32, ptr %r3
     %r33 = call i32 @delete(i32 %r31,i32 %r32)
+=======
+    %r28 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
+    %r31 = load i32, ptr %r28
+    %r33 = call i32 @delete(i32 %r31,i32 %r1)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r33, ptr %r28
     br label %L9
 L8:  ;
@@ -253,12 +300,17 @@ L10:  ;
     %r47 = sub i32 0,%r46
     ret i32 %r47
 L11:  ;
+<<<<<<< HEAD
     %r48 = load i32, ptr %r2
     %r49 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r48
     %r50 = load i32, ptr %r49
     %r51 = add i32 1,0
     %r52 = sub i32 0,%r51
     %r53 = icmp eq i32 %r50,%r52
+=======
+    %r50 = load i32, ptr %r35
+    %r53 = icmp eq i32 %r50,-1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r53, label %L14, label %L17
 L12:  ;
     br label %L9
@@ -271,6 +323,7 @@ L13:  ;
     %r45 = icmp eq i32 %r42,%r44
     br i1 %r45, label %L10, label %L11
 L14:  ;
+<<<<<<< HEAD
     %r60 = load i32, ptr %r2
     %r61 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r60
     %r62 = load i32, ptr %r61
@@ -300,6 +353,19 @@ L15:  ;
     %r89 = load i32, ptr %r88
     %r90 = call i32 @delete(i32 %r86,i32 %r89)
     store i32 %r90, ptr %r83
+=======
+    %r62 = load i32, ptr %r35
+    %r65 = icmp eq i32 %r62,-1
+    br i1 %r65, label %L18, label %L19
+L15:  ;
+    %r75 = load i32, ptr %r55
+    %r76 = call i32 @find_minimum(i32 %r75)
+    %r80 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r76
+    %r81 = load i32, ptr %r80
+    store i32 %r81, ptr %r12
+    %r90 = call i32 @delete(i32 %r75,i32 %r81)
+    store i32 %r90, ptr %r55
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L16
 L16:  ;
     br label %L12
@@ -317,9 +383,13 @@ L18:  ;
     %r68 = load i32, ptr %r67
     ret i32 %r68
 L19:  ;
+<<<<<<< HEAD
     %r69 = load i32, ptr %r2
     %r70 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r69
     %r71 = load i32, ptr %r70
+=======
+    %r71 = load i32, ptr %r35
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r71
 }
 define void @inorder(i32 %r0)

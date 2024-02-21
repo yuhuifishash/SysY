@@ -261,6 +261,7 @@ L4:  ;
     %r78 = call i32 @func3(i32 %r76,i32 %r77)
     %r79 = call i32 @func2(i32 %r74,i32 %r78)
     %r80 = call i32 @func3(i32 %r73,i32 %r79)
+<<<<<<< HEAD
     %r81 = add i32 0,0
     %r82 = getelementptr [10 x i32], ptr %r8, i32 0, i32 %r81
     %r83 = load i32, ptr %r82
@@ -307,4 +308,19 @@ L4:  ;
     store i32 %r123, ptr %r20
     %r124 = load i32, ptr %r20
     ret i32 %r124
+=======
+    %r87 = call i32 @func1(i32 %r80,i32 %r33,i32 %r36)
+    %r91 = call i32 @func2(i32 %r87,i32 %r40)
+    %r101 = call i32 @func5(i32 %r51)
+    %r102 = call i32 @func3(i32 %r48,i32 %r101)
+    %r106 = call i32 @func5(i32 %r57)
+    %r107 = call i32 @func2(i32 %r102,i32 %r106)
+    %r114 = call i32 @func7(i32 %r65)
+    %r115 = call i32 @func1(i32 %r107,i32 %r61,i32 %r114)
+    %r119 = call i32 @func5(i32 %r68)
+    %r120 = call i32 @func2(i32 %r115,i32 %r119)
+    %r122 = call i32 @func3(i32 %r120,i32 %r1)
+    %r123 = call i32 @func1(i32 %r91,i32 %r43,i32 %r122)
+    ret i32 %r123
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }

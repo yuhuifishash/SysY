@@ -282,9 +282,10 @@ std::vector<Operand> CallInstruction::GetNonResultOperands(){
     }
     return ret;
 }
+
 void CallInstruction::SetNonResultOperands(std::vector<Operand> ops){
     int i = 0;
-    for(auto&arg_pair:args){
+    for(auto &arg_pair:args){
         arg_pair.second = ops[i];
         i++;
     }

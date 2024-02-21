@@ -31,9 +31,14 @@ L1:  ;
     store i32 %r3, ptr %r2
     br label %L2
 L2:  ;
+<<<<<<< HEAD
     %r4 = load i32, ptr %r2
     %r5 = load i32, ptr %r1
     %r6 = icmp slt i32 %r4,%r5
+=======
+    %r34 = phi i32 [1,%L1],[%r10,%L7]
+    %r6 = icmp slt i32 %r34,%r0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r6, label %L3, label %L4
 L3:  ;
     %r8 = load i32, ptr %r2
@@ -62,10 +67,13 @@ L6:  ;
     %r23 = icmp eq i32 %r21,%r22
     br i1 %r23, label %L8, label %L9
 L7:  ;
+<<<<<<< HEAD
     %r28 = load i32, ptr %r2
     %r29 = add i32 1,0
     %r30 = add i32 %r28,%r29
     store i32 %r30, ptr %r2
+=======
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L8:  ;
     %r24 = add i32 0,0
@@ -131,6 +139,7 @@ L7:  ;
     store i32 %r23, ptr %r4
     br label %L8
 L8:  ;
+<<<<<<< HEAD
     %r25 = load i32, ptr %r6
     %r26 = load i32, ptr %r3
     %r27 = add i32 1,0
@@ -140,6 +149,11 @@ L8:  ;
     %r30 = load i32, ptr %r24
     %r31 = load i32, ptr %r4
     %r32 = icmp sgt i32 %r30,%r31
+=======
+    %r39 = phi i32 [%r41,%L5],[%r1,%L7]
+    %r29 = call i32 @maxCliques(i32 %r38,i32 %r17)
+    %r32 = icmp sgt i32 %r29,%r39
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r32, label %L9, label %L10
 L9:  ;
     %r33 = load i32, ptr %r24
@@ -202,6 +216,7 @@ L6:  ;
     %r29 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r27, i32 %r28
     %r30 = load i32, ptr %r29
     %r31 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r26, i32 %r30
+<<<<<<< HEAD
     %r32 = add i32 1,0
     store i32 %r32, ptr %r31
     %r33 = load i32, ptr %r3
@@ -219,6 +234,12 @@ L6:  ;
     %r44 = add i32 1,0
     %r45 = add i32 %r43,%r44
     store i32 %r45, ptr %r3
+=======
+    store i32 1, ptr %r31
+    %r41 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r30, i32 %r26
+    store i32 1, ptr %r41
+    %r45 = add i32 %r51,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L5
 L7:  ;
     %r46 = add i32 0,0

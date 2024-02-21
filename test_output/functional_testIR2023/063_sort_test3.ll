@@ -68,6 +68,7 @@ L6:  ;
     %r75 = sub i32 %r73,%r74
     store i32 %r75, ptr %r71
     %r76 = getelementptr i32, ptr %r0
+<<<<<<< HEAD
     %r77 = load i32, ptr %r3
     %r78 = load i32, ptr %r71
     %r79 = call i32 @QuickSort(ptr %r76,i32 %r77,i32 %r78)
@@ -81,6 +82,11 @@ L6:  ;
     %r85 = load i32, ptr %r4
     %r86 = call i32 @QuickSort(ptr %r83,i32 %r84,i32 %r85)
     store i32 %r86, ptr %r71
+=======
+    %r79 = call i32 @QuickSort(ptr %r76,i32 %r1,i32 %r75)
+    %r82 = add i32 %r95,1
+    %r86 = call i32 @QuickSort(ptr %r76,i32 %r82,i32 %r2)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L3
 L7:  ;
     %r22 = load i32, ptr %r8

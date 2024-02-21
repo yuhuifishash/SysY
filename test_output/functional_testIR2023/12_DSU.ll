@@ -134,6 +134,7 @@ L2:  ;
     %r7 = load i32, ptr %r1
     ret i32 %r7
 L3:  ;
+<<<<<<< HEAD
     %r9 = load i32, ptr %r1
     %r10 = getelementptr [100005 x i32], ptr @fa, i32 0, i32 %r9
     %r11 = load i32, ptr %r10
@@ -145,6 +146,12 @@ L3:  ;
     store i32 %r15, ptr %r14
     %r16 = load i32, ptr %r8
     ret i32 %r16
+=======
+    %r11 = load i32, ptr %r3
+    %r12 = call i32 @find(i32 %r11)
+    store i32 %r12, ptr %r3
+    ret i32 %r12
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }
 define i32 @same(i32 %r0,i32 %r1)
 {

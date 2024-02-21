@@ -87,6 +87,7 @@ L2:  ;
     call void @move(i32 %r11,i32 %r12)
     br label %L4
 L3:  ;
+<<<<<<< HEAD
     %r13 = load i32, ptr %r4
     %r14 = add i32 1,0
     %r15 = sub i32 %r13,%r14
@@ -104,6 +105,12 @@ L3:  ;
     %r25 = load i32, ptr %r5
     %r26 = load i32, ptr %r7
     call void @hanoi(i32 %r23,i32 %r24,i32 %r25,i32 %r26)
+=======
+    %r15 = sub i32 %r0,1
+    call void @hanoi(i32 %r15,i32 %r1,i32 %r3,i32 %r2)
+    call void @move(i32 %r1,i32 %r3)
+    call void @hanoi(i32 %r15,i32 %r2,i32 %r1,i32 %r3)
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L4
 L4:  ;
     ret void

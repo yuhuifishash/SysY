@@ -82,9 +82,14 @@ L1:  ;
     store i32 %r3, ptr %r2
     br label %L2
 L2:  ;
+<<<<<<< HEAD
     %r4 = load i32, ptr %r2
     %r5 = load i32, ptr @V
     %r6 = icmp slt i32 %r4,%r5
+=======
+    %r36 = phi i32 [0,%L1],[%r10,%L7]
+    %r6 = icmp slt i32 %r36,4
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r6, label %L3, label %L4
 L3:  ;
     %r8 = load i32, ptr %r2
@@ -108,10 +113,13 @@ L6:  ;
     %r18 = icmp ne i32 %r17,0
     br i1 %r18, label %L10, label %L9
 L7:  ;
+<<<<<<< HEAD
     %r30 = load i32, ptr %r2
     %r31 = add i32 1,0
     %r32 = add i32 %r30,%r31
     store i32 %r32, ptr %r2
+=======
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L8:  ;
     %r26 = add i32 0,0
@@ -157,10 +165,15 @@ L3:  ;
     store i32 %r17, ptr %r16
     br label %L6
 L4:  ;
+<<<<<<< HEAD
     %r13 = getelementptr i32, ptr %r3
     call void @printSolution(ptr %r13)
     %r14 = add i32 1,0
     ret i32 %r14
+=======
+    call void @printSolution(ptr %r10)
+    ret i32 1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 L5:  ;
     %r15 = add i32 0,0
     ret i32 %r15
@@ -190,6 +203,7 @@ L9:  ;
     %r32 = add i32 1,0
     ret i32 %r32
 L10:  ;
+<<<<<<< HEAD
     %r33 = load i32, ptr %r5
     %r34 = getelementptr i32, ptr %r3, i32 %r33
     %r35 = add i32 0,0
@@ -198,6 +212,10 @@ L10:  ;
     %r37 = add i32 1,0
     %r38 = add i32 %r36,%r37
     store i32 %r38, ptr %r16
+=======
+    store i32 0, ptr %r22
+    %r38 = add i32 %r40,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L6
 }
 define i32 @main()

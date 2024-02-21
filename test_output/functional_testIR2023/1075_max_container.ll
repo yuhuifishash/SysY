@@ -59,22 +59,32 @@ L4:  ;
     %r58 = load i32, ptr %r11
     ret i32 %r58
 L5:  ;
+<<<<<<< HEAD
     %r27 = load i32, ptr %r5
     %r28 = load i32, ptr %r3
     %r29 = sub i32 %r27,%r28
     %r30 = load i32, ptr %r3
     %r31 = getelementptr i32, ptr %r0, i32 %r30
     %r32 = load i32, ptr %r31
+=======
+    %r29 = sub i32 %r64,%r66
+    %r32 = load i32, ptr %r21
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r33 = mul i32 %r29,%r32
     store i32 %r33, ptr %r18
     br label %L7
 L6:  ;
+<<<<<<< HEAD
     %r34 = load i32, ptr %r5
     %r35 = load i32, ptr %r3
     %r36 = sub i32 %r34,%r35
     %r37 = load i32, ptr %r5
     %r38 = getelementptr i32, ptr %r0, i32 %r37
     %r39 = load i32, ptr %r38
+=======
+    %r36 = sub i32 %r64,%r66
+    %r39 = load i32, ptr %r24
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r40 = mul i32 %r36,%r39
     store i32 %r40, ptr %r18
     br label %L7
@@ -88,12 +98,18 @@ L8:  ;
     store i32 %r44, ptr %r11
     br label %L9
 L9:  ;
+<<<<<<< HEAD
     %r45 = load i32, ptr %r3
     %r46 = getelementptr i32, ptr %r0, i32 %r45
     %r47 = load i32, ptr %r46
     %r48 = load i32, ptr %r5
     %r49 = getelementptr i32, ptr %r0, i32 %r48
     %r50 = load i32, ptr %r49
+=======
+    %r61 = phi i32 [%r62,%L7],[%r60,%L8]
+    %r47 = load i32, ptr %r21
+    %r50 = load i32, ptr %r24
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     %r51 = icmp sgt i32 %r47,%r50
     br i1 %r51, label %L10, label %L11
 L10:  ;

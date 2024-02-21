@@ -73,6 +73,7 @@ L2:  ;
     %r10 = icmp ne i32 %r9,0
     br i1 %r10, label %L3, label %L4
 L3:  ;
+<<<<<<< HEAD
     %r11 = load i32, ptr %r5
     %r12 = getelementptr i32, ptr %r0, i32 %r11
     %r13 = load i32, ptr %r12
@@ -80,6 +81,10 @@ L3:  ;
     %r14 = load i32, ptr %r1
     %r15 = add i32 62,0
     %r16 = icmp eq i32 %r14,%r15
+=======
+    %r13 = load i32, ptr %r8
+    %r16 = icmp eq i32 %r13,62
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br i1 %r16, label %L5, label %L6
 L4:  ;
     ret void
@@ -116,11 +121,16 @@ L10:  ;
 L11:  ;
     %r29 = load i32, ptr @ptr
     %r30 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r29
+<<<<<<< HEAD
     %r31 = load i32, ptr @ptr
     %r32 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r31
     %r33 = load i32, ptr %r32
     %r34 = add i32 1,0
     %r35 = add i32 %r33,%r34
+=======
+    %r33 = load i32, ptr %r30
+    %r35 = add i32 %r33,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r35, ptr %r30
     br label %L13
 L12:  ;
@@ -133,11 +143,16 @@ L13:  ;
 L14:  ;
     %r39 = load i32, ptr @ptr
     %r40 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r39
+<<<<<<< HEAD
     %r41 = load i32, ptr @ptr
     %r42 = getelementptr [65536 x i32], ptr @tape, i32 0, i32 %r41
     %r43 = load i32, ptr %r42
     %r44 = add i32 1,0
     %r45 = sub i32 %r43,%r44
+=======
+    %r43 = load i32, ptr %r40
+    %r45 = sub i32 %r43,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r45, ptr %r40
     br label %L16
 L15:  ;

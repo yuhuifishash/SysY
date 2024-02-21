@@ -120,6 +120,7 @@ L3:  ;
     %r20 = load i32, ptr %r12
     %r21 = sitofp i32 %r20 to float
     store float %r21, ptr %r19
+<<<<<<< HEAD
     %r22 = load i32, ptr %r12
     %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r22
     %r24 = load i32, ptr %r12
@@ -149,6 +150,19 @@ L3:  ;
     %r43 = add i32 1,0
     %r44 = add i32 %r42,%r43
     store i32 %r44, ptr %r12
+=======
+    %r23 = getelementptr [3 x float], ptr %r4, i32 0, i32 %r102
+    store float %r21, ptr %r23
+    %r27 = getelementptr [3 x float], ptr %r5, i32 0, i32 %r102
+    store float %r21, ptr %r27
+    %r31 = getelementptr [3 x float], ptr %r6, i32 0, i32 %r102
+    store float %r21, ptr %r31
+    %r35 = getelementptr [3 x float], ptr %r7, i32 0, i32 %r102
+    store float %r21, ptr %r35
+    %r39 = getelementptr [3 x float], ptr %r8, i32 0, i32 %r102
+    store float %r21, ptr %r39
+    %r44 = add i32 %r102,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     br label %L2
 L4:  ;
     %r45 = getelementptr [3 x float], ptr %r3, i32 0

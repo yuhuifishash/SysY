@@ -28,6 +28,8 @@ void DominatorTree::BuildDominatorTree()
     dom_tree.clear();
     dom_tree.resize(C->max_label + 1);
     idom.clear();
+    df.clear();
+    atdom.clear();
     
     for(int i = 0;i <= C->max_label;i++){
         vsd.push_back(0);
@@ -36,8 +38,8 @@ void DominatorTree::BuildDominatorTree()
     dfs_postorder(0,C->G,PostOrder_id,vsd);
     // dom(u) = {u} | {& dom(v)}
         // Pseudo code
-    std::bitset<65536>* indom;
-    indom = new std::bitset<65536>[C->max_label+1];
+    std::vector<std::bitset<65536> > indom;
+    indom.resize(C->max_label + 1);
     // dom[u][v] = 1 <==> v dom u <==> v is in set dom(u)
     indom[0][0] = 1;
     for(int i = 1;i <= C->max_label;i++){
@@ -96,7 +98,8 @@ void DominatorTree::BuildDominatorTree()
     atdom = indom;
     // Dom Frontier DF
     // DF[x][y]: x dom prev(y), but (x==y or x not dom y)
-    df = new std::bitset<65536>[C->max_label+1];
+    df.resize(C->max_label + 1);
+
     for(int i = 0;i < C->G.size();i++){
         for(auto edg_end:C->G[i]){
             // foreach every edge a->b

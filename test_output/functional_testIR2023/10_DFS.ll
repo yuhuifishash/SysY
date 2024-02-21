@@ -106,6 +106,7 @@ L0:  ;
 L1:  ;
     %r4 = load i32, ptr @cnt
     %r5 = getelementptr [5005 x i32], ptr @to, i32 0, i32 %r4
+<<<<<<< HEAD
     %r6 = load i32, ptr %r3
     store i32 %r6, ptr %r5
     %r7 = load i32, ptr @cnt
@@ -139,6 +140,25 @@ L1:  ;
     %r29 = load i32, ptr @cnt
     %r30 = add i32 1,0
     %r31 = add i32 %r29,%r30
+=======
+    store i32 %r1, ptr %r5
+    %r8 = getelementptr [5005 x i32], ptr @next, i32 0, i32 %r4
+    %r10 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r0
+    %r11 = load i32, ptr %r10
+    store i32 %r11, ptr %r8
+    store i32 %r4, ptr %r10
+    %r17 = add i32 %r4,1
+    store i32 %r17, ptr @cnt
+    %r18 = load i32, ptr @cnt
+    %r19 = getelementptr [5005 x i32], ptr @to, i32 0, i32 %r18
+    store i32 %r0, ptr %r19
+    %r22 = getelementptr [5005 x i32], ptr @next, i32 0, i32 %r18
+    %r24 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r1
+    %r25 = load i32, ptr %r24
+    store i32 %r25, ptr %r22
+    store i32 %r18, ptr %r24
+    %r31 = add i32 %r18,1
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     store i32 %r31, ptr @cnt
     ret void
 }

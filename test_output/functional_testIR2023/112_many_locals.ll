@@ -84,6 +84,7 @@ L1:  ;
     store i32 %r29, ptr %r30
     %r31 = add i32 3,0
     %r32 = getelementptr [16 x i32], ptr %r0, i32 0, i32 15
+<<<<<<< HEAD
     store i32 %r31, ptr %r32
     %r34 = add i32 3,0
     store i32 %r34, ptr %r33
@@ -156,6 +157,11 @@ L1:  ;
     %r101 = getelementptr [16 x i32], ptr %r0, i32 0, i32 %r100
     %r102 = load i32, ptr %r101
     %r103 = add i32 %r99,%r102
+=======
+    store i32 3, ptr %r32
+    %r102 = load i32, ptr %r8
+    %r103 = add i32 %r102,71
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
     ret i32 %r103
 }
 define i32 @main()
@@ -257,6 +263,7 @@ L1:  ;
     store i32 %r63, ptr %r48
     %r64 = load i32, ptr %r32
     %r65 = call i32 @foo()
+<<<<<<< HEAD
     %r66 = add i32 %r64,%r65
     store i32 %r66, ptr %r32
     %r68 = add i32 4,0
@@ -323,4 +330,14 @@ L1:  ;
     call void @putch(i32 %r117)
     %r118 = add i32 0,0
     ret i32 %r118
+=======
+    %r66 = add i32 %r65,30
+    %r84 = call i32 @foo()
+    %r85 = add i32 %r84,41
+    %r113 = add i32 %r66,%r85
+    %r115 = add i32 %r113,35
+    call void @putint(i32 %r115)
+    call void @putch(i32 10)
+    ret i32 0
+>>>>>>> 73cadbb30437dbe3cdfcf07cfc5f0444623fbeca
 }
