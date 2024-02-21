@@ -170,4 +170,47 @@ void ArmSelector::SelectInstruction(){
     }
 }
 
+MachineCFG<ArmBlock>* ArmSelector::SelectInstructionAndBuildCFG(){
+    Dest->global_def = IR->global_def;
+    MachineCFG<ArmBlock>* mcfg = new MachineCFG<ArmBlock>;
+    for(auto func_pair:IR->llvm_cfg){
+        auto cfg = func_pair.second;
+        std::string name = cfg->function_def->GetFunctionName();
+        auto cur_armfunc = new ArmFunction(name);
+        cur_armfunc->parent = Dest;
+        Dest->functions.push_back(cur_armfunc);
+        for(auto [id,block]:*(cfg->block_map)){
+            // We assume IR blocks have already been concated
+            auto cur_armblk = new ArmBlock(id);
+
+            mcfg->AssignEmptyNode(id,cur_armblk);
+
+            cur_armblk->parent = cur_armfunc;
+            cur_armfunc->blocks.push_back(cur_armblk);
+            // Expand
+            for(auto instruction : block->Instruction_list){
+                ConvertAndAppend<Instruction>(instruction,cur_armblk);
+                // cur_armblk->ConvertAndAppend<Instruction>(instruction);
+            }
+            // Simplify&Match : peehole
+        }
+        // Machine Block ID == LLVM Block ID
+        for(int i = 0;i < cfg->G.size();i++){
+            const auto& arcs = cfg->G[i];
+            for(auto arc : arcs){
+                auto arc_m = mcfg->block_map[arc->block_id];
+                mcfg->G[i].push_back(arc_m);
+            }
+        }
+        for(int i = 0;i < cfg->invG.size();i++){
+            const auto& arcs = cfg->invG[i];
+            for(auto arc : arcs){
+                auto arc_m = mcfg->block_map[arc->block_id];
+                mcfg->invG[i].push_back(arc_m);
+            }
+        }
+    }
+    return mcfg;
+}
+
 #endif
