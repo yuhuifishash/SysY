@@ -9,6 +9,7 @@ public:
     int reg_no;
     Register(bool Virtual,decltype(type) reg_type,int no):Virtual(Virtual),type(reg_type),reg_no(no){}
     void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
 };
 enum ShiftType{LSL = 0,LSR,ASR,ROR,RRX};
 struct RmOpsh{
@@ -42,6 +43,7 @@ struct RmOpsh{
         }
     }
     void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
 };
 
 struct Operand2{
@@ -91,6 +93,7 @@ public:
         }
     }
     void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
 };
 
 struct Rssh{
@@ -110,6 +113,7 @@ public:
         properties.shift = shift;
     }
     void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
 };
 
 struct Label{
@@ -117,6 +121,19 @@ public:
     std::string label_name;
     Label(std::string name):label_name(name){}
     void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
+};
+
+struct RegisterOrImm{
+public:
+    enum{REG = 0,IMM}type;
+    union prop{
+        Register reg;
+        int imm32;
+        prop(){}
+    }properties;
+    void printArm(std::ostream& s);
+    void printMachineIR(std::ostream& s);
 };
 std::ostream& operator<<(std::ostream& s,ShiftType typ);
 std::ostream& operator<<(std::ostream& s,Register reg);
@@ -124,4 +141,5 @@ std::ostream& operator<<(std::ostream& s,RmOpsh rmo);
 std::ostream& operator<<(std::ostream& s,Operand2 op2);
 std::ostream& operator<<(std::ostream& s,Rssh rsh);
 std::ostream& operator<<(std::ostream& s,Label lbl);
+std::ostream& operator<<(std::ostream& s,RegisterOrImm roi);
 #endif

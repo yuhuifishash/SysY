@@ -42,6 +42,7 @@ private:
 public:
     ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector<ArmUnit,ArmBlock>(Dest,IR){}
     void SelectInstruction();
+    MachineCFG<ArmBlock>* SelectInstructionAndBuildCFG();
 
     template<class INSPTR>
     void ConvertAndAppend(INSPTR,ArmBlock*);

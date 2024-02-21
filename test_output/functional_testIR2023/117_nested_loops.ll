@@ -17,337 +17,514 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define void @loop1(i32 %r0,i32 %r1)
 {
 L0:  ;
+    %r16 = alloca i32
+    %r14 = alloca i32
+    %r12 = alloca i32
+    %r10 = alloca i32
+    %r8 = alloca i32
+    %r6 = alloca i32
+    %r4 = alloca i32
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
     br label %L1
 L1:  ;
+    %r5 = add i32 0,0
+    store i32 %r5, ptr %r4
+    %r7 = add i32 0,0
+    store i32 %r7, ptr %r6
+    %r9 = add i32 0,0
+    store i32 %r9, ptr %r8
+    %r11 = add i32 0,0
+    store i32 %r11, ptr %r10
+    %r13 = add i32 0,0
+    store i32 %r13, ptr %r12
+    %r15 = add i32 0,0
+    store i32 %r15, ptr %r14
+    %r17 = add i32 0,0
+    store i32 %r17, ptr %r16
+    %r18 = add i32 0,0
+    store i32 %r18, ptr %r4
     br label %L2
 L2:  ;
-    %r122 = phi i32 [0,%L1],[%r94,%L8]
-    %r118 = phi i32 [0,%L1],[%r117,%L8]
-    %r115 = phi i32 [0,%L1],[%r114,%L8]
-    %r111 = phi i32 [0,%L1],[%r110,%L8]
-    %r106 = phi i32 [0,%L1],[%r105,%L8]
-    %r100 = phi i32 [0,%L1],[%r99,%L8]
-    %r21 = icmp slt i32 %r122,%r0
+    %r19 = load i32, ptr %r4
+    %r20 = load i32, ptr %r2
+    %r21 = icmp slt i32 %r19,%r20
     br i1 %r21, label %L5, label %L4
 L3:  ;
+    %r25 = add i32 0,0
+    store i32 %r25, ptr %r6
     br label %L6
 L4:  ;
     ret void
 L5:  ;
-    %r24 = icmp slt i32 %r122,%r1
+    %r22 = load i32, ptr %r4
+    %r23 = load i32, ptr %r3
+    %r24 = icmp slt i32 %r22,%r23
     br i1 %r24, label %L3, label %L4
 L6:  ;
-    %r121 = phi i32 [0,%L3],[%r91,%L11]
-    %r117 = phi i32 [%r118,%L3],[%r119,%L11]
-    %r114 = phi i32 [%r115,%L3],[%r113,%L11]
-    %r110 = phi i32 [%r111,%L3],[%r109,%L11]
-    %r105 = phi i32 [%r106,%L3],[%r104,%L11]
-    %r99 = phi i32 [%r100,%L3],[%r98,%L11]
-    %r28 = icmp slt i32 %r121,2
+    %r26 = load i32, ptr %r6
+    %r27 = add i32 2,0
+    %r28 = icmp slt i32 %r26,%r27
     br i1 %r28, label %L7, label %L8
 L7:  ;
+    %r29 = add i32 0,0
+    store i32 %r29, ptr %r8
     br label %L9
 L8:  ;
-    %r94 = add i32 %r122,1
+    %r92 = load i32, ptr %r4
+    %r93 = add i32 1,0
+    %r94 = add i32 %r92,%r93
+    store i32 %r94, ptr %r4
     br label %L2
 L9:  ;
-    %r119 = phi i32 [0,%L7],[%r88,%L14]
-    %r113 = phi i32 [%r114,%L7],[%r116,%L14]
-    %r109 = phi i32 [%r110,%L7],[%r108,%L14]
-    %r104 = phi i32 [%r105,%L7],[%r103,%L14]
-    %r98 = phi i32 [%r99,%L7],[%r97,%L14]
-    %r32 = icmp slt i32 %r119,3
+    %r30 = load i32, ptr %r8
+    %r31 = add i32 3,0
+    %r32 = icmp slt i32 %r30,%r31
     br i1 %r32, label %L10, label %L11
 L10:  ;
+    %r33 = add i32 0,0
+    store i32 %r33, ptr %r10
     br label %L12
 L11:  ;
-    %r91 = add i32 %r121,1
+    %r89 = load i32, ptr %r6
+    %r90 = add i32 1,0
+    %r91 = add i32 %r89,%r90
+    store i32 %r91, ptr %r6
     br label %L6
 L12:  ;
-    %r116 = phi i32 [0,%L10],[%r85,%L17]
-    %r108 = phi i32 [%r109,%L10],[%r112,%L17]
-    %r103 = phi i32 [%r104,%L10],[%r102,%L17]
-    %r97 = phi i32 [%r98,%L10],[%r96,%L17]
-    %r36 = icmp slt i32 %r116,4
+    %r34 = load i32, ptr %r10
+    %r35 = add i32 4,0
+    %r36 = icmp slt i32 %r34,%r35
     br i1 %r36, label %L13, label %L14
 L13:  ;
+    %r37 = add i32 0,0
+    store i32 %r37, ptr %r12
     br label %L15
 L14:  ;
-    %r88 = add i32 %r119,1
+    %r86 = load i32, ptr %r8
+    %r87 = add i32 1,0
+    %r88 = add i32 %r86,%r87
+    store i32 %r88, ptr %r8
     br label %L9
 L15:  ;
-    %r112 = phi i32 [0,%L13],[%r82,%L20]
-    %r102 = phi i32 [%r103,%L13],[%r107,%L20]
-    %r96 = phi i32 [%r97,%L13],[%r95,%L20]
-    %r40 = icmp slt i32 %r112,5
+    %r38 = load i32, ptr %r12
+    %r39 = add i32 5,0
+    %r40 = icmp slt i32 %r38,%r39
     br i1 %r40, label %L16, label %L17
 L16:  ;
+    %r41 = add i32 0,0
+    store i32 %r41, ptr %r14
     br label %L18
 L17:  ;
-    %r85 = add i32 %r116,1
+    %r83 = load i32, ptr %r10
+    %r84 = add i32 1,0
+    %r85 = add i32 %r83,%r84
+    store i32 %r85, ptr %r10
     br label %L12
 L18:  ;
-    %r107 = phi i32 [0,%L16],[%r79,%L23]
-    %r95 = phi i32 [%r96,%L16],[%r101,%L23]
-    %r44 = icmp slt i32 %r107,6
+    %r42 = load i32, ptr %r14
+    %r43 = add i32 6,0
+    %r44 = icmp slt i32 %r42,%r43
     br i1 %r44, label %L19, label %L20
 L19:  ;
+    %r45 = add i32 0,0
+    store i32 %r45, ptr %r16
     br label %L21
 L20:  ;
-    %r82 = add i32 %r112,1
+    %r80 = load i32, ptr %r12
+    %r81 = add i32 1,0
+    %r82 = add i32 %r80,%r81
+    store i32 %r82, ptr %r12
     br label %L15
 L21:  ;
-    %r101 = phi i32 [0,%L19],[%r76,%L22]
-    %r48 = icmp slt i32 %r101,2
+    %r46 = load i32, ptr %r16
+    %r47 = add i32 2,0
+    %r48 = icmp slt i32 %r46,%r47
     br i1 %r48, label %L22, label %L23
 L22:  ;
-    %r56 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r122, i32 %r121, i32 %r119, i32 %r116, i32 %r112, i32 %r107, i32 %r101
-    %r59 = add i32 %r122,%r121
-    %r61 = add i32 %r59,%r119
-    %r63 = add i32 %r61,%r116
-    %r65 = add i32 %r63,%r112
-    %r67 = add i32 %r65,%r107
-    %r69 = add i32 %r67,%r101
-    %r71 = add i32 %r69,%r0
-    %r73 = add i32 %r71,%r1
+    %r49 = load i32, ptr %r4
+    %r50 = load i32, ptr %r6
+    %r51 = load i32, ptr %r8
+    %r52 = load i32, ptr %r10
+    %r53 = load i32, ptr %r12
+    %r54 = load i32, ptr %r14
+    %r55 = load i32, ptr %r16
+    %r56 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r49, i32 %r50, i32 %r51, i32 %r52, i32 %r53, i32 %r54, i32 %r55
+    %r57 = load i32, ptr %r4
+    %r58 = load i32, ptr %r6
+    %r59 = add i32 %r57,%r58
+    %r60 = load i32, ptr %r8
+    %r61 = add i32 %r59,%r60
+    %r62 = load i32, ptr %r10
+    %r63 = add i32 %r61,%r62
+    %r64 = load i32, ptr %r12
+    %r65 = add i32 %r63,%r64
+    %r66 = load i32, ptr %r14
+    %r67 = add i32 %r65,%r66
+    %r68 = load i32, ptr %r16
+    %r69 = add i32 %r67,%r68
+    %r70 = load i32, ptr %r2
+    %r71 = add i32 %r69,%r70
+    %r72 = load i32, ptr %r3
+    %r73 = add i32 %r71,%r72
     store i32 %r73, ptr %r56
-    %r76 = add i32 %r101,1
+    %r74 = load i32, ptr %r16
+    %r75 = add i32 1,0
+    %r76 = add i32 %r74,%r75
+    store i32 %r76, ptr %r16
     br label %L21
 L23:  ;
-    %r79 = add i32 %r107,1
+    %r77 = load i32, ptr %r14
+    %r78 = add i32 1,0
+    %r79 = add i32 %r77,%r78
+    store i32 %r79, ptr %r14
     br label %L18
 }
 define void @loop2()
 {
 L0:  ;
+    %r12 = alloca i32
+    %r10 = alloca i32
+    %r8 = alloca i32
+    %r6 = alloca i32
+    %r4 = alloca i32
+    %r2 = alloca i32
+    %r0 = alloca i32
     br label %L1
 L1:  ;
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
+    %r3 = add i32 0,0
+    store i32 %r3, ptr %r2
+    %r5 = add i32 0,0
+    store i32 %r5, ptr %r4
+    %r7 = add i32 0,0
+    store i32 %r7, ptr %r6
+    %r9 = add i32 0,0
+    store i32 %r9, ptr %r8
+    %r11 = add i32 0,0
+    store i32 %r11, ptr %r10
+    %r13 = add i32 0,0
+    store i32 %r13, ptr %r12
+    %r14 = add i32 0,0
+    store i32 %r14, ptr %r0
     br label %L2
 L2:  ;
-    %r105 = phi i32 [0,%L1],[%r77,%L7]
-    %r101 = phi i32 [0,%L1],[%r100,%L7]
-    %r98 = phi i32 [0,%L1],[%r97,%L7]
-    %r94 = phi i32 [0,%L1],[%r93,%L7]
-    %r89 = phi i32 [0,%L1],[%r88,%L7]
-    %r83 = phi i32 [0,%L1],[%r82,%L7]
-    %r17 = icmp slt i32 %r105,10
+    %r15 = load i32, ptr %r0
+    %r16 = add i32 10,0
+    %r17 = icmp slt i32 %r15,%r16
     br i1 %r17, label %L3, label %L4
 L3:  ;
+    %r18 = add i32 0,0
+    store i32 %r18, ptr %r2
     br label %L5
 L4:  ;
     ret void
 L5:  ;
-    %r104 = phi i32 [0,%L3],[%r74,%L10]
-    %r100 = phi i32 [%r101,%L3],[%r102,%L10]
-    %r97 = phi i32 [%r98,%L3],[%r96,%L10]
-    %r93 = phi i32 [%r94,%L3],[%r92,%L10]
-    %r88 = phi i32 [%r89,%L3],[%r87,%L10]
-    %r82 = phi i32 [%r83,%L3],[%r81,%L10]
-    %r21 = icmp slt i32 %r104,2
+    %r19 = load i32, ptr %r2
+    %r20 = add i32 2,0
+    %r21 = icmp slt i32 %r19,%r20
     br i1 %r21, label %L6, label %L7
 L6:  ;
+    %r22 = add i32 0,0
+    store i32 %r22, ptr %r4
     br label %L8
 L7:  ;
-    %r77 = add i32 %r105,1
+    %r75 = load i32, ptr %r0
+    %r76 = add i32 1,0
+    %r77 = add i32 %r75,%r76
+    store i32 %r77, ptr %r0
     br label %L2
 L8:  ;
-    %r102 = phi i32 [0,%L6],[%r71,%L13]
-    %r96 = phi i32 [%r97,%L6],[%r99,%L13]
-    %r92 = phi i32 [%r93,%L6],[%r91,%L13]
-    %r87 = phi i32 [%r88,%L6],[%r86,%L13]
-    %r81 = phi i32 [%r82,%L6],[%r80,%L13]
-    %r25 = icmp slt i32 %r102,3
+    %r23 = load i32, ptr %r4
+    %r24 = add i32 3,0
+    %r25 = icmp slt i32 %r23,%r24
     br i1 %r25, label %L9, label %L10
 L9:  ;
+    %r26 = add i32 0,0
+    store i32 %r26, ptr %r6
     br label %L11
 L10:  ;
-    %r74 = add i32 %r104,1
+    %r72 = load i32, ptr %r2
+    %r73 = add i32 1,0
+    %r74 = add i32 %r72,%r73
+    store i32 %r74, ptr %r2
     br label %L5
 L11:  ;
-    %r99 = phi i32 [0,%L9],[%r68,%L16]
-    %r91 = phi i32 [%r92,%L9],[%r95,%L16]
-    %r86 = phi i32 [%r87,%L9],[%r85,%L16]
-    %r80 = phi i32 [%r81,%L9],[%r79,%L16]
-    %r29 = icmp slt i32 %r99,2
+    %r27 = load i32, ptr %r6
+    %r28 = add i32 2,0
+    %r29 = icmp slt i32 %r27,%r28
     br i1 %r29, label %L12, label %L13
 L12:  ;
+    %r30 = add i32 0,0
+    store i32 %r30, ptr %r8
     br label %L14
 L13:  ;
-    %r71 = add i32 %r102,1
+    %r69 = load i32, ptr %r4
+    %r70 = add i32 1,0
+    %r71 = add i32 %r69,%r70
+    store i32 %r71, ptr %r4
     br label %L8
 L14:  ;
-    %r95 = phi i32 [0,%L12],[%r65,%L19]
-    %r85 = phi i32 [%r86,%L12],[%r90,%L19]
-    %r79 = phi i32 [%r80,%L12],[%r78,%L19]
-    %r33 = icmp slt i32 %r95,4
+    %r31 = load i32, ptr %r8
+    %r32 = add i32 4,0
+    %r33 = icmp slt i32 %r31,%r32
     br i1 %r33, label %L15, label %L16
 L15:  ;
+    %r34 = add i32 0,0
+    store i32 %r34, ptr %r10
     br label %L17
 L16:  ;
-    %r68 = add i32 %r99,1
+    %r66 = load i32, ptr %r6
+    %r67 = add i32 1,0
+    %r68 = add i32 %r66,%r67
+    store i32 %r68, ptr %r6
     br label %L11
 L17:  ;
-    %r90 = phi i32 [0,%L15],[%r62,%L22]
-    %r78 = phi i32 [%r79,%L15],[%r84,%L22]
-    %r37 = icmp slt i32 %r90,8
+    %r35 = load i32, ptr %r10
+    %r36 = add i32 8,0
+    %r37 = icmp slt i32 %r35,%r36
     br i1 %r37, label %L18, label %L19
 L18:  ;
+    %r38 = add i32 0,0
+    store i32 %r38, ptr %r12
     br label %L20
 L19:  ;
-    %r65 = add i32 %r95,1
+    %r63 = load i32, ptr %r8
+    %r64 = add i32 1,0
+    %r65 = add i32 %r63,%r64
+    store i32 %r65, ptr %r8
     br label %L14
 L20:  ;
-    %r84 = phi i32 [0,%L18],[%r59,%L21]
-    %r41 = icmp slt i32 %r84,7
+    %r39 = load i32, ptr %r12
+    %r40 = add i32 7,0
+    %r41 = icmp slt i32 %r39,%r40
     br i1 %r41, label %L21, label %L22
 L21:  ;
-    %r49 = getelementptr [10 x [2 x [3 x [2 x [4 x [8 x [7 x i32]]]]]]], ptr @arr2, i32 0, i32 %r105, i32 %r104, i32 %r102, i32 %r99, i32 %r95, i32 %r90, i32 %r84
-    %r52 = add i32 %r105,%r104
-    %r54 = add i32 %r52,%r99
-    %r56 = add i32 %r54,%r84
+    %r42 = load i32, ptr %r0
+    %r43 = load i32, ptr %r2
+    %r44 = load i32, ptr %r4
+    %r45 = load i32, ptr %r6
+    %r46 = load i32, ptr %r8
+    %r47 = load i32, ptr %r10
+    %r48 = load i32, ptr %r12
+    %r49 = getelementptr [10 x [2 x [3 x [2 x [4 x [8 x [7 x i32]]]]]]], ptr @arr2, i32 0, i32 %r42, i32 %r43, i32 %r44, i32 %r45, i32 %r46, i32 %r47, i32 %r48
+    %r50 = load i32, ptr %r0
+    %r51 = load i32, ptr %r2
+    %r52 = add i32 %r50,%r51
+    %r53 = load i32, ptr %r6
+    %r54 = add i32 %r52,%r53
+    %r55 = load i32, ptr %r12
+    %r56 = add i32 %r54,%r55
     store i32 %r56, ptr %r49
-    %r59 = add i32 %r84,1
+    %r57 = load i32, ptr %r12
+    %r58 = add i32 1,0
+    %r59 = add i32 %r57,%r58
+    store i32 %r59, ptr %r12
     br label %L20
 L22:  ;
-    %r62 = add i32 %r90,1
+    %r60 = load i32, ptr %r10
+    %r61 = add i32 1,0
+    %r62 = add i32 %r60,%r61
+    store i32 %r62, ptr %r10
     br label %L17
 }
 define i32 @loop3(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5,i32 %r6)
 {
 L0:  ;
+    %r28 = alloca i32
+    %r26 = alloca i32
+    %r24 = alloca i32
+    %r22 = alloca i32
+    %r20 = alloca i32
+    %r18 = alloca i32
+    %r16 = alloca i32
+    %r14 = alloca i32
+    %r13 = alloca i32
+    %r12 = alloca i32
+    %r11 = alloca i32
+    %r10 = alloca i32
+    %r9 = alloca i32
+    %r8 = alloca i32
+    %r7 = alloca i32
+    store i32 %r0, ptr %r7
+    store i32 %r1, ptr %r8
+    store i32 %r2, ptr %r9
+    store i32 %r3, ptr %r10
+    store i32 %r4, ptr %r11
+    store i32 %r5, ptr %r12
+    store i32 %r6, ptr %r13
     br label %L1
 L1:  ;
+    %r15 = add i32 0,0
+    store i32 %r15, ptr %r14
+    %r17 = add i32 0,0
+    store i32 %r17, ptr %r16
+    %r19 = add i32 0,0
+    store i32 %r19, ptr %r18
+    %r21 = add i32 0,0
+    store i32 %r21, ptr %r20
+    %r23 = add i32 0,0
+    store i32 %r23, ptr %r22
+    %r25 = add i32 0,0
+    store i32 %r25, ptr %r24
+    %r27 = add i32 0,0
+    store i32 %r27, ptr %r26
+    %r29 = add i32 0,0
+    store i32 %r29, ptr %r28
+    %r30 = add i32 0,0
+    store i32 %r30, ptr %r14
     br label %L2
 L2:  ;
-    %r192 = phi i32 [0,%L1],[%r119,%L42]
-    %r184 = phi i32 [0,%L1],[%r183,%L42]
-    %r178 = phi i32 [0,%L1],[%r177,%L42]
-    %r170 = phi i32 [0,%L1],[%r169,%L42]
-    %r160 = phi i32 [0,%L1],[%r159,%L42]
-    %r148 = phi i32 [0,%L1],[%r147,%L42]
-    %r136 = phi i32 [0,%L1],[%r135,%L42]
-    %r33 = icmp slt i32 %r192,10
+    %r31 = load i32, ptr %r14
+    %r32 = add i32 10,0
+    %r33 = icmp slt i32 %r31,%r32
     br i1 %r33, label %L3, label %L4
 L3:  ;
+    %r34 = add i32 0,0
+    store i32 %r34, ptr %r16
     br label %L5
 L4:  ;
-    %r137 = phi i32 [%r136,%L2],[%r135,%L41]
-    ret i32 %r137
+    %r123 = load i32, ptr %r28
+    ret i32 %r123
 L5:  ;
-    %r190 = phi i32 [0,%L3],[%r113,%L39]
-    %r182 = phi i32 [%r184,%L3],[%r187,%L39]
-    %r176 = phi i32 [%r178,%L3],[%r175,%L39]
-    %r168 = phi i32 [%r170,%L3],[%r167,%L39]
-    %r158 = phi i32 [%r160,%L3],[%r157,%L39]
-    %r146 = phi i32 [%r148,%L3],[%r145,%L39]
-    %r134 = phi i32 [%r136,%L3],[%r133,%L39]
-    %r37 = icmp slt i32 %r190,100
+    %r35 = load i32, ptr %r16
+    %r36 = add i32 100,0
+    %r37 = icmp slt i32 %r35,%r36
     br i1 %r37, label %L6, label %L7
 L6:  ;
+    %r38 = add i32 0,0
+    store i32 %r38, ptr %r18
     br label %L8
 L7:  ;
-    %r183 = phi i32 [%r182,%L5],[%r187,%L38]
-    %r177 = phi i32 [%r176,%L5],[%r175,%L38]
-    %r169 = phi i32 [%r168,%L5],[%r167,%L38]
-    %r159 = phi i32 [%r158,%L5],[%r157,%L38]
-    %r147 = phi i32 [%r146,%L5],[%r145,%L38]
-    %r135 = phi i32 [%r134,%L5],[%r133,%L38]
-    %r119 = add i32 %r192,1
-    %r122 = icmp sge i32 %r119,%r0
+    %r117 = load i32, ptr %r14
+    %r118 = add i32 1,0
+    %r119 = add i32 %r117,%r118
+    store i32 %r119, ptr %r14
+    %r120 = load i32, ptr %r14
+    %r121 = load i32, ptr %r7
+    %r122 = icmp sge i32 %r120,%r121
     br i1 %r122, label %L41, label %L42
 L8:  ;
-    %r186 = phi i32 [0,%L6],[%r107,%L36]
-    %r174 = phi i32 [%r176,%L6],[%r181,%L36]
-    %r166 = phi i32 [%r168,%L6],[%r165,%L36]
-    %r156 = phi i32 [%r158,%L6],[%r155,%L36]
-    %r144 = phi i32 [%r146,%L6],[%r143,%L36]
-    %r132 = phi i32 [%r134,%L6],[%r131,%L36]
-    %r41 = icmp slt i32 %r186,1000
+    %r39 = load i32, ptr %r18
+    %r40 = add i32 1000,0
+    %r41 = icmp slt i32 %r39,%r40
     br i1 %r41, label %L9, label %L10
 L9:  ;
+    %r42 = add i32 0,0
+    store i32 %r42, ptr %r20
     br label %L11
 L10:  ;
-    %r187 = phi i32 [%r186,%L8],[%r107,%L35]
-    %r175 = phi i32 [%r174,%L8],[%r181,%L35]
-    %r167 = phi i32 [%r166,%L8],[%r165,%L35]
-    %r157 = phi i32 [%r156,%L8],[%r155,%L35]
-    %r145 = phi i32 [%r144,%L8],[%r143,%L35]
-    %r133 = phi i32 [%r132,%L8],[%r131,%L35]
-    %r113 = add i32 %r190,1
-    %r116 = icmp sge i32 %r113,%r1
+    %r111 = load i32, ptr %r16
+    %r112 = add i32 1,0
+    %r113 = add i32 %r111,%r112
+    store i32 %r113, ptr %r16
+    %r114 = load i32, ptr %r16
+    %r115 = load i32, ptr %r8
+    %r116 = icmp sge i32 %r114,%r115
     br i1 %r116, label %L38, label %L39
 L11:  ;
-    %r180 = phi i32 [0,%L9],[%r101,%L33]
-    %r164 = phi i32 [%r166,%L9],[%r173,%L33]
-    %r154 = phi i32 [%r156,%L9],[%r153,%L33]
-    %r142 = phi i32 [%r144,%L9],[%r141,%L33]
-    %r130 = phi i32 [%r132,%L9],[%r129,%L33]
-    %r45 = icmp slt i32 %r180,10000
+    %r43 = load i32, ptr %r20
+    %r44 = add i32 10000,0
+    %r45 = icmp slt i32 %r43,%r44
     br i1 %r45, label %L12, label %L13
 L12:  ;
+    %r46 = add i32 0,0
+    store i32 %r46, ptr %r22
     br label %L14
 L13:  ;
-    %r181 = phi i32 [%r180,%L11],[%r101,%L32]
-    %r165 = phi i32 [%r164,%L11],[%r173,%L32]
-    %r155 = phi i32 [%r154,%L11],[%r153,%L32]
-    %r143 = phi i32 [%r142,%L11],[%r141,%L32]
-    %r131 = phi i32 [%r130,%L11],[%r129,%L32]
-    %r107 = add i32 %r186,1
-    %r110 = icmp sge i32 %r107,%r2
+    %r105 = load i32, ptr %r18
+    %r106 = add i32 1,0
+    %r107 = add i32 %r105,%r106
+    store i32 %r107, ptr %r18
+    %r108 = load i32, ptr %r18
+    %r109 = load i32, ptr %r9
+    %r110 = icmp sge i32 %r108,%r109
     br i1 %r110, label %L35, label %L36
 L14:  ;
-    %r172 = phi i32 [0,%L12],[%r95,%L30]
-    %r152 = phi i32 [%r154,%L12],[%r163,%L30]
-    %r140 = phi i32 [%r142,%L12],[%r139,%L30]
-    %r128 = phi i32 [%r130,%L12],[%r127,%L30]
-    %r49 = icmp slt i32 %r172,100000
+    %r47 = load i32, ptr %r22
+    %r48 = add i32 100000,0
+    %r49 = icmp slt i32 %r47,%r48
     br i1 %r49, label %L15, label %L16
 L15:  ;
+    %r50 = add i32 0,0
+    store i32 %r50, ptr %r24
     br label %L17
 L16:  ;
-    %r173 = phi i32 [%r172,%L14],[%r95,%L29]
-    %r153 = phi i32 [%r152,%L14],[%r163,%L29]
-    %r141 = phi i32 [%r140,%L14],[%r139,%L29]
-    %r129 = phi i32 [%r128,%L14],[%r127,%L29]
-    %r101 = add i32 %r180,1
-    %r104 = icmp sge i32 %r101,%r3
+    %r99 = load i32, ptr %r20
+    %r100 = add i32 1,0
+    %r101 = add i32 %r99,%r100
+    store i32 %r101, ptr %r20
+    %r102 = load i32, ptr %r20
+    %r103 = load i32, ptr %r10
+    %r104 = icmp sge i32 %r102,%r103
     br i1 %r104, label %L32, label %L33
 L17:  ;
-    %r162 = phi i32 [0,%L15],[%r89,%L27]
-    %r138 = phi i32 [%r140,%L15],[%r151,%L27]
-    %r126 = phi i32 [%r128,%L15],[%r125,%L27]
-    %r53 = icmp slt i32 %r162,1000000
+    %r51 = load i32, ptr %r24
+    %r52 = add i32 1000000,0
+    %r53 = icmp slt i32 %r51,%r52
     br i1 %r53, label %L18, label %L19
 L18:  ;
+    %r54 = add i32 0,0
+    store i32 %r54, ptr %r26
     br label %L20
 L19:  ;
-    %r163 = phi i32 [%r162,%L17],[%r89,%L26]
-    %r139 = phi i32 [%r138,%L17],[%r151,%L26]
-    %r127 = phi i32 [%r126,%L17],[%r125,%L26]
-    %r95 = add i32 %r172,1
-    %r98 = icmp sge i32 %r95,%r4
+    %r93 = load i32, ptr %r22
+    %r94 = add i32 1,0
+    %r95 = add i32 %r93,%r94
+    store i32 %r95, ptr %r22
+    %r96 = load i32, ptr %r22
+    %r97 = load i32, ptr %r11
+    %r98 = icmp sge i32 %r96,%r97
     br i1 %r98, label %L29, label %L30
 L20:  ;
-    %r150 = phi i32 [0,%L18],[%r83,%L24]
-    %r124 = phi i32 [%r126,%L18],[%r80,%L24]
-    %r57 = icmp slt i32 %r150,10000000
+    %r55 = load i32, ptr %r26
+    %r56 = add i32 10000000,0
+    %r57 = icmp slt i32 %r55,%r56
     br i1 %r57, label %L21, label %L22
 L21:  ;
-    %r60 = srem i32 %r124,817
-    %r68 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r192, i32 %r190, i32 %r186, i32 %r180, i32 %r172, i32 %r162, i32 %r150
+    %r58 = load i32, ptr %r28
+    %r59 = add i32 817,0
+    %r60 = srem i32 %r58,%r59
+    %r61 = load i32, ptr %r14
+    %r62 = load i32, ptr %r16
+    %r63 = load i32, ptr %r18
+    %r64 = load i32, ptr %r20
+    %r65 = load i32, ptr %r22
+    %r66 = load i32, ptr %r24
+    %r67 = load i32, ptr %r26
+    %r68 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r61, i32 %r62, i32 %r63, i32 %r64, i32 %r65, i32 %r66, i32 %r67
     %r69 = load i32, ptr %r68
     %r70 = add i32 %r60,%r69
-    %r78 = getelementptr [10 x [2 x [3 x [2 x [4 x [8 x [7 x i32]]]]]]], ptr @arr2, i32 0, i32 %r192, i32 %r190, i32 %r186, i32 %r180, i32 %r172, i32 %r162, i32 %r150
+    %r71 = load i32, ptr %r14
+    %r72 = load i32, ptr %r16
+    %r73 = load i32, ptr %r18
+    %r74 = load i32, ptr %r20
+    %r75 = load i32, ptr %r22
+    %r76 = load i32, ptr %r24
+    %r77 = load i32, ptr %r26
+    %r78 = getelementptr [10 x [2 x [3 x [2 x [4 x [8 x [7 x i32]]]]]]], ptr @arr2, i32 0, i32 %r71, i32 %r72, i32 %r73, i32 %r74, i32 %r75, i32 %r76, i32 %r77
     %r79 = load i32, ptr %r78
     %r80 = add i32 %r70,%r79
-    %r83 = add i32 %r150,1
-    %r86 = icmp sge i32 %r83,%r6
+    store i32 %r80, ptr %r28
+    %r81 = load i32, ptr %r26
+    %r82 = add i32 1,0
+    %r83 = add i32 %r81,%r82
+    store i32 %r83, ptr %r26
+    %r84 = load i32, ptr %r26
+    %r85 = load i32, ptr %r13
+    %r86 = icmp sge i32 %r84,%r85
     br i1 %r86, label %L23, label %L24
 L22:  ;
-    %r151 = phi i32 [%r150,%L20],[%r83,%L23]
-    %r125 = phi i32 [%r124,%L20],[%r80,%L23]
-    %r89 = add i32 %r162,1
-    %r92 = icmp sge i32 %r89,%r5
+    %r87 = load i32, ptr %r24
+    %r88 = add i32 1,0
+    %r89 = add i32 %r87,%r88
+    store i32 %r89, ptr %r24
+    %r90 = load i32, ptr %r24
+    %r91 = load i32, ptr %r12
+    %r92 = icmp sge i32 %r90,%r91
     br i1 %r92, label %L26, label %L27
 L23:  ;
     br label %L22
@@ -381,19 +558,46 @@ L42:  ;
 define i32 @main()
 {
 L0:  ;
+    %r16 = alloca i32
+    %r14 = alloca i32
+    %r12 = alloca i32
+    %r10 = alloca i32
+    %r8 = alloca i32
+    %r6 = alloca i32
+    %r4 = alloca i32
+    %r2 = alloca i32
+    %r0 = alloca i32
     br label %L1
 L1:  ;
     %r1 = call i32 @getint()
+    store i32 %r1, ptr %r0
     %r3 = call i32 @getint()
+    store i32 %r3, ptr %r2
     %r5 = call i32 @getint()
+    store i32 %r5, ptr %r4
     %r7 = call i32 @getint()
+    store i32 %r7, ptr %r6
     %r9 = call i32 @getint()
+    store i32 %r9, ptr %r8
     %r11 = call i32 @getint()
+    store i32 %r11, ptr %r10
     %r13 = call i32 @getint()
+    store i32 %r13, ptr %r12
     %r15 = call i32 @getint()
+    store i32 %r15, ptr %r14
     %r17 = call i32 @getint()
-    call void @loop1(i32 %r1,i32 %r3)
+    store i32 %r17, ptr %r16
+    %r18 = load i32, ptr %r0
+    %r19 = load i32, ptr %r2
+    call void @loop1(i32 %r18,i32 %r19)
     call void @loop2()
-    %r27 = call i32 @loop3(i32 %r5,i32 %r7,i32 %r9,i32 %r11,i32 %r13,i32 %r15,i32 %r17)
+    %r20 = load i32, ptr %r4
+    %r21 = load i32, ptr %r6
+    %r22 = load i32, ptr %r8
+    %r23 = load i32, ptr %r10
+    %r24 = load i32, ptr %r12
+    %r25 = load i32, ptr %r14
+    %r26 = load i32, ptr %r16
+    %r27 = call i32 @loop3(i32 %r20,i32 %r21,i32 %r22,i32 %r23,i32 %r24,i32 %r25,i32 %r26)
     ret i32 %r27
 }

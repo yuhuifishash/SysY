@@ -33,6 +33,37 @@ public:
     // virtual void ConvertAndAppend(T ins) = 0;
 };
 
+template<class MachineBlk>
+class MachineCFG{
+private:
+    class MachineCFGNode{
+    public:
+        MachineBlk* Mblock;
+    public:
+        std::set<int>IN{},OUT{},DEF{},USE{};
+        void UpdateDefUse();
+    };
+    void UpdateDefUse();
+public:
+    std::map<int,MachineCFGNode*> block_map{};
+    std::vector<std::vector<MachineCFGNode*> > G{},invG{};
+    void AssignEmptyNode(int id,MachineBlk* Mblk){
+        MachineCFGNode* node = new MachineCFGNode;
+        node->Mblock = Mblk;
+        block_map[id] = node;
+    }
+    void UpdateLiveness();
+    std::set<int> GetIN(int bid){return block_map[bid]->IN;}
+    std::set<int> GetOUT(int bid){return block_map[bid]->OUT;}
+    std::set<int> GetDef(int bid){return block_map[bid]->DEF;}
+    std::set<int> GetUse(int bid){return block_map[bid]->USE;}
+    // std::vector<MachineCFGNode*> GetPredecessorNode(MachineBlk* B);
+    // std::vector<MachineCFGNode*> GetPredecessorNode(int bbid);
+    // std::vector<MachineCFGNode*> GetSuccessorNode(MachineBlk* B);
+    // std::vector<MachineCFGNode*> GetSuccessorNode(int bbid);
+    // MachineCFGNode* GetNode(int bbid);
+};
+
 template<class MachineUnit,class MachineBlk>
 class MachineSelector{
 protected:
@@ -41,19 +72,11 @@ protected:
 public:
     MachineSelector(MachineUnit* Dest,LLVMIR* IR):Dest(Dest),IR(IR){}
     virtual void SelectInstruction() = 0;
+    virtual MachineCFG<MachineBlk>* SelectInstructionAndBuildCFG() = 0;
     MachineUnit* GetMachineUnit(){return Dest;}
     // template<class INSPTR>
     // virtual void ConvertAndAppend(INSPTR,MachineBlk*) = 0;
 };
 
 
-template<class MachineBlk>
-class MachineCFGNode{
-private:
-    MachineBlk* Mblock;
-public:
-    std::set<int>IN,OUT,DEF,USE;
-    std::vector<MachineCFGNode<MachineBlk>*> edges_out;
-    std::vector<MachineCFGNode<MachineBlk>*> edges_in;
-};
 #endif

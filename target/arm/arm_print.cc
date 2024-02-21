@@ -63,6 +63,10 @@ std::ostream& operator<<(std::ostream& s,Label lbl){
     lbl.printArm(s);
     return s;
 }
+std::ostream& operator<<(std::ostream& s,RegisterOrImm roi){
+    roi.printArm(s);
+    return s;
+}
 //-----Arm Field Print-----
 void Register::printArm(std::ostream& s){
     if(Virtual){
@@ -111,43 +115,51 @@ void Rssh::printArm(std::ostream& s){
 void Label::printArm(std::ostream& s){
     s<<label_name;
 }
+
+void RegisterOrImm::printArm(std::ostream& s){
+    if(type == RegisterOrImm::REG){
+        s<<properties.reg;
+    }else if(type == RegisterOrImm::IMM){
+        s<<properties.imm32;
+    }
+}
 //-------------------------
 
 //-----Arm Instruction Print-----
-void Arm_binary::printArm(std::ostream& s){
+void ArmBinary::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_binary::ADD:
+    case ArmBinary::ADD:
         s<<"add";
         break;
-    case Arm_binary::ADC:
+    case ArmBinary::ADC:
         s<<"adc";
         break;
-    case Arm_binary::SUB:
+    case ArmBinary::SUB:
         s<<"sub";
         break;
-    case Arm_binary::SBC:
+    case ArmBinary::SBC:
         s<<"sbc";
         break;
-    case Arm_binary::RSB:
+    case ArmBinary::RSB:
         s<<"rsb";
         break;
-    case Arm_binary::RSC:
+    case ArmBinary::RSC:
         s<<"rsc";
         break;
-    case Arm_binary::AND:
-        s<<"add";
+    case ArmBinary::AND:
+        s<<"and";
         break;
-    case Arm_binary::EOR:
+    case ArmBinary::EOR:
         s<<"eor";
         break;
-    case Arm_binary::ORR:
+    case ArmBinary::ORR:
         s<<"orr";
         break;
-    case Arm_binary::ORN:
+    case ArmBinary::ORN:
         s<<"orn";
         break;
-    case Arm_binary::BIC:
+    case ArmBinary::BIC:
         s<<"bic";
         break;
     }
@@ -158,13 +170,13 @@ void Arm_binary::printArm(std::ostream& s){
 }
 
 
-void Arm_addsubImm::printArm(std::ostream& s){
+void ArmAddsubImm::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_addsubImm::ADD:
+    case ArmAddsubImm::ADD:
         s<<"addw";
         break;
-    case Arm_addsubImm::SUB:
+    case ArmAddsubImm::SUB:
         s<<"subw";
         break;
     }
@@ -172,26 +184,26 @@ void Arm_addsubImm::printArm(std::ostream& s){
 }
 
 
-void Arm_parallelAddsub::printArm(std::ostream& s){
+void ArmParallelAddsub::printArm(std::ostream& s){
     s<<prefix;
     switch (opcode)
     {
-    case Arm_parallelAddsub::ADD16:
+    case ArmParallelAddsub::ADD16:
         s<<"add16";
         break;
-    case Arm_parallelAddsub::SUB16:
+    case ArmParallelAddsub::SUB16:
         s<<"sub16";
         break;
-    case Arm_parallelAddsub::ADD8:
+    case ArmParallelAddsub::ADD8:
         s<<"add8";
         break;
-    case Arm_parallelAddsub::SUB8:
+    case ArmParallelAddsub::SUB8:
         s<<"sub8";
         break;
-    case Arm_parallelAddsub::ASX:
+    case ArmParallelAddsub::ASX:
         s<<"asx";
         break;
-    case Arm_parallelAddsub::SAX:
+    case ArmParallelAddsub::SAX:
         s<<"sax";
         break;
     }
@@ -199,41 +211,41 @@ void Arm_parallelAddsub::printArm(std::ostream& s){
 }
 
 
-void Arm_mulas::printArm(std::ostream& s){
+void ArmMulas::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_mulas::MUL:
+    case ArmMulas::MUL:
         s<<"mul";
         if(SR){
             s<<"s";
         }
         s<<" "<<Rd<<", "<<Rm<<", "<<Rs;
         break;
-    case Arm_mulas::MLA:
+    case ArmMulas::MLA:
         s<<"mla";
         if(SR){
             s<<"s";
         }
         s<<" "<<Rd<<", "<<Rm<<", "<<Rs<<", "<<Rn;
         break;
-    case Arm_mulas::MLS:
+    case ArmMulas::MLS:
         s<<"mls"<<" "<<Rd<<", "<<Rm<<", "<<Rs<<", "<<Rn;
         break;
-    case Arm_mulas::SMULL:
+    case ArmMulas::SMULL:
         s<<"smull";
         if(SR){
             s<<"s";
         }
         s<<" "<<Rd<<", "<<Rn<<", "<<Rm<<", "<<Rs;
         break;
-    case Arm_mulas::SMLAL:
+    case ArmMulas::SMLAL:
         s<<"smlal";
         if(SR){
             s<<"s";
         }
         s<<" "<<Rd<<", "<<Rn<<", "<<Rm<<", "<<Rs;
         break;
-    case Arm_mulas::SMMUL:
+    case ArmMulas::SMMUL:
         s<<"smmul";
         if(SR){
             s<<"r";
@@ -245,13 +257,13 @@ void Arm_mulas::printArm(std::ostream& s){
 }
 
 
-void Arm_move::printArm(std::ostream& s){
+void ArmMove::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_move::MOV:
+    case ArmMove::MOV:
         s<<"mov";
         break;
-    case Arm_move::MVN:
+    case ArmMove::MVN:
         s<<"mvn";
         break;
     }
@@ -262,13 +274,13 @@ void Arm_move::printArm(std::ostream& s){
 }
 
 
-void Arm_movwt::printArm(std::ostream& s){
+void ArmMovwt::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_movwt::MOVW:
+    case ArmMovwt::MOVW:
         s<<"movw";
         break;
-    case Arm_movwt::MOVT:
+    case ArmMovwt::MOVT:
         s<<"movt";
         break;
     }
@@ -276,7 +288,7 @@ void Arm_movwt::printArm(std::ostream& s){
 }
 
 
-void Arm_shift::printArm(std::ostream& s){
+void ArmShift::printArm(std::ostream& s){
     s<<"mov";
     if(S){
         s<<"s";
@@ -285,13 +297,13 @@ void Arm_shift::printArm(std::ostream& s){
 }
 
 
-void Arm_cmp::printArm(std::ostream& s){
+void ArmCmp::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_cmp::CMP:
+    case ArmCmp::CMP:
         s<<"cmp";
         break;
-    case Arm_cmp::CMN:
+    case ArmCmp::CMN:
         s<<"cmn";
         break;
     }
@@ -299,7 +311,7 @@ void Arm_cmp::printArm(std::ostream& s){
 }
 
 
-void Arm_it::printArm(std::ostream& s){
+void ArmIt::printArm(std::ostream& s){
     unsigned pattern_len = pattern>>4;
     s<<"it";//<<pattern;
     if(pattern_len != 0){
@@ -319,16 +331,16 @@ void Arm_it::printArm(std::ostream& s){
 }
 
 
-void Arm_branch_label::printArm(std::ostream& s){
+void ArmBranchLabel::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_branch_label::B:
+    case ArmBranchLabel::B:
         s<<"b";
         break;
-    case Arm_branch_label::BL:
+    case ArmBranchLabel::BL:
         s<<"bl";
         break;
-    case Arm_branch_label::BLX:
+    case ArmBranchLabel::BLX:
         s<<"blx";
         break;
     }
@@ -336,16 +348,16 @@ void Arm_branch_label::printArm(std::ostream& s){
 }
 
 
-void Arm_branch_reg::printArm(std::ostream& s){
+void ArmBranchReg::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_branch_reg::BX:
+    case ArmBranchReg::BX:
         s<<"bx";
         break;
-    case Arm_branch_reg::BLX:
+    case ArmBranchReg::BLX:
         s<<"blx";
         break;
-    case Arm_branch_reg::BXJ:
+    case ArmBranchReg::BXJ:
         s<<"bxj";
         break;
     }
@@ -353,7 +365,7 @@ void Arm_branch_reg::printArm(std::ostream& s){
 }
 
 
-void Arm_branch_labelreg::printArm(std::ostream& s){
+void ArmBranchLabelreg::printArm(std::ostream& s){
     s<<"cb";
     if(N){
         s<<"n";
@@ -362,30 +374,30 @@ void Arm_branch_labelreg::printArm(std::ostream& s){
 }
 
 
-void Arm_LoadStore::printArm(std::ostream& s){
+void ArmLoadStore::printArm(std::ostream& s){
     switch (op)
     {
-    case Arm_LoadStore::LOAD:
+    case ArmLoadStore::LOAD:
         s<<"ldr";
         break;
-    case Arm_LoadStore::STORE:
+    case ArmLoadStore::STORE:
         s<<"str";
         break;
     }
     switch (size)
     {
-    case Arm_LoadStore::NONE:
+    case ArmLoadStore::NONE:
         break;
-    case Arm_LoadStore::B:
+    case ArmLoadStore::B:
         s<<"b";
         break;
-    case Arm_LoadStore::SB:
+    case ArmLoadStore::SB:
         s<<"sb";
         break;
-    case Arm_LoadStore::H:
+    case ArmLoadStore::H:
         s<<"h";
         break;
-    case Arm_LoadStore::SH:
+    case ArmLoadStore::SH:
         s<<"sh";
         break;
     }
@@ -393,7 +405,7 @@ void Arm_LoadStore::printArm(std::ostream& s){
         s<<"t";
     }
     s<<" "<<Rd<<", ";
-    if(offset_type == Arm_LoadStore::LABEL){
+    if(offset_type == ArmLoadStore::LABEL){
         s<<addr_label;
     }else if(offset_type == IMM){
         if(ispreindex){
@@ -435,13 +447,13 @@ void Arm_LoadStore::printArm(std::ostream& s){
 }
 
 
-void Arm_LoadStoreM::printArm(std::ostream& s){
+void ArmLoadStoreM::printArm(std::ostream& s){
     switch (op)
     {
-    case Arm_LoadStoreM::LOAD:
+    case ArmLoadStoreM::LOAD:
         s<<"ldm";
         break;
-    case Arm_LoadStoreM::STORE:
+    case ArmLoadStoreM::STORE:
         s<<"stm";
         break;
     }
@@ -473,13 +485,13 @@ void Arm_LoadStoreM::printArm(std::ostream& s){
 }
 
 
-void Arm_pushpop::printArm(std::ostream& s){
+void ArmPushpop::printArm(std::ostream& s){
     switch (opcode)
     {
-    case Arm_pushpop::PUSH:
+    case ArmPushpop::PUSH:
         s<<"push";
         break;
-    case Arm_pushpop::POP:
+    case ArmPushpop::POP:
         s<<"pop";
         break;
     }
@@ -489,19 +501,19 @@ void Arm_pushpop::printArm(std::ostream& s){
 }
 
 
-void VFP_vbin::printArm(std::ostream& s){
+void VFPVbin::printArm(std::ostream& s){
     switch (opcode)
     {
-    case VFP_vbin::VADD:
+    case VFPVbin::VADD:
         s<<"vadd";
         break;
-    case VFP_vbin::VSUM:
+    case VFPVbin::VSUM:
         s<<"vsum";
         break;
-    case VFP_vbin::VMUL:
+    case VFPVbin::VMUL:
         s<<"vmul";
         break;
-    case VFP_vbin::VDIV:
+    case VFPVbin::VDIV:
         s<<"vdiv";
         break;
     }
@@ -509,7 +521,7 @@ void VFP_vbin::printArm(std::ostream& s){
 }
 
 
-void VFP_vcmp::printArm(std::ostream& s){
+void VFPVcmp::printArm(std::ostream& s){
     s<<"vcmp";
     if(E){
         s<<"e";
@@ -518,7 +530,7 @@ void VFP_vcmp::printArm(std::ostream& s){
 }
 
 
-void VFP_vcvt::printArm(std::ostream& s){
+void VFPVcvt::printArm(std::ostream& s){
     s<<"vcvt";
     if(R){
         s<<"r";
@@ -544,7 +556,7 @@ void VFP_vcvt::printArm(std::ostream& s){
 }
 
 
-void VFP_vmov::printArm(std::ostream& s){
+void VFPVmov::printArm(std::ostream& s){
     s<<"vmov";
     printCond(s,cond);
     if(P == F32){
@@ -556,7 +568,7 @@ void VFP_vmov::printArm(std::ostream& s){
 }
 
 
-void VFP_vldst::printArm(std::ostream& s){
+void VFPVldst::printArm(std::ostream& s){
     if(op == VLDR){
         s<<"vldr";
     }else if(op == VSTR){
@@ -573,13 +585,13 @@ void VFP_vldst::printArm(std::ostream& s){
 }
 
 
-void VFP_vpushpop::printArm(std::ostream& s){
+void VFPVpushpop::printArm(std::ostream& s){
     switch (opcode)
     {
-    case VFP_vpushpop::VPUSH:
+    case VFPVpushpop::VPUSH:
         s<<"vpush";
         break;
-    case VFP_vpushpop::VPOP:
+    case VFPVpushpop::VPOP:
         s<<"vpop";
         break;
     }
@@ -594,29 +606,37 @@ std::ostream& operator<<(std::ostream& s,std::vector<Register>reglist){
     return s;
 }
 
-void VFP_vstm::printArm(std::ostream& s){
+void VFPVstm::printArm(std::ostream& s){
     switch (opcode)
     {
-    case VFP_vstm::VSTM:
+    case VFPVstm::VSTM:
         s<<"vstm"<<cond<<" "<<Rn;
         if(dowriteback){
             s<<"!";
         }
         s<<", "<<VFPregs;
         break;
-    case VFP_vstm::VSTMDB:
+    case VFPVstm::VSTMDB:
         s<<"vstmdb"<<cond<<" "<<Rn<<"!"<<", "<<VFPregs;
         break;
-    case VFP_vstm::VLDM:
+    case VFPVstm::VLDM:
         s<<"vldm"<<cond<<" "<<Rn;
         if(dowriteback){
             s<<"!";
         }
         s<<", "<<VFPregs;
         break;
-    case VFP_vstm::VLDMDB:
+    case VFPVstm::VLDMDB:
         s<<"vldmdb"<<cond<<" "<<Rn<<"!"<<", "<<VFPregs;
         break;
+    }
+    s<<" @"<<comment<<"\n";
+}
+
+void ArmPhiInstruction::printArm(std::ostream& s){
+    s<<result<<" = phi ";
+    for(auto [label,roi] : phi_list){
+        s<<"["<<label<<","<<roi<<"],";
     }
     s<<" @"<<comment<<"\n";
 }
