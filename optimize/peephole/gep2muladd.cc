@@ -29,7 +29,7 @@ void EliminateEmptyIndexGEP(CFG* C)
     * you must calculate the bias fisrt and then use sext to transform the bias to i64
     * after this function, the program will not contain any getelementptr
     * you may add inttoptr,ptrtoint,sext class in Instruction.h, Instruction.cc, Instruction_out.cc
-    * you should set CFG::max_reg and LLVMIR::max_reg_map correctly
+    * you should set CFG::max_reg correctly
     * @param C the control flow graph of the function */
 void GEP2MulAdd(CFG* C)
 {

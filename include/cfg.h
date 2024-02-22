@@ -46,6 +46,15 @@ public:
     std::vector<LLVMBlock> GetSuccessor(LLVMBlock B);
     std::vector<LLVMBlock> GetSuccessor(int bbid);
     LLVMBlock GetBlock(int bbid);
+    LLVMBlock NewBlock();
+
+    /*B1  \                                   B1  \
+      B2  -> B4   will be transformed to      B2  -> Bnew -> B5
+      B3  /                                   B3  /
+      
+      this function will split the phi instructions 
+    */
+    void InsertTransferBlock(std::vector<LLVMBlock>& from, LLVMBlock to);
 };
 
 

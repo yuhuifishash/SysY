@@ -397,7 +397,7 @@ private:
 public:
     enum LLVMType GetDataType(){return type;}
     Operand GetResultOp(){return result;}
-    decltype(phi_list)& getPhiList(){return phi_list;}
+    decltype(phi_list)& GetPhiList(){return phi_list;}
     Operand GetResultReg(){return result;}
     PhiInstruction(enum LLVMType type,Operand result,decltype(phi_list) val_labels){
         this->opcode=LLVMIROpcode::PHI;

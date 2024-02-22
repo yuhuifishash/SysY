@@ -81,8 +81,17 @@ void NaturalLoopForest::CombineSameHeadLoop()
     }
 }
 
+void NaturalLoopForest::BuildLoopForest()
+{
+
+}
+
 void CFG::BuildLoopInfo()
 {
+    LoopForest.header_loop_map.clear();
+    LoopForest.loop_set.clear();
+    LoopForest.loopG.clear();
+
     int loop_cnt = 0;
     for(auto [id,bb]:*block_map){
         for(auto head_bb:G[id]){//bb->head_bb   backedge
@@ -99,6 +108,7 @@ void CFG::BuildLoopInfo()
     }
     LoopForest.loop_cnt = loop_cnt - 1;
     LoopForest.CombineSameHeadLoop();
+    LoopForest.BuildLoopForest();
 }
 
 void LLVMIR::BuildLoopInfo()

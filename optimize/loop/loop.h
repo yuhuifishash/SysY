@@ -14,9 +14,23 @@ public:
     std::set<LLVMBlock> latch;
     LLVMBlock header;
     LLVMBlock preheader;
+
+
     int loop_id;
-    NaturalLoop* loop_fa;
     void FindExitNodes(CFG* C);
+
+
+    /*the only predecessor of header node*/
+    void AddPreheader(CFG* C);
+
+    /*A single backedge (which implies that there is a single latch).*/
+    void SingleLatchInsert(CFG* C);
+    
+    /*Dedicated exits. That is, no exit block for the loop has a predecessor that is outside the loop. 
+    This implies that all exit blocks are dominated by the loop header.*/
+    void ExitInsert(CFG* C);
+
+    void LoopSimplify(CFG* C);
 };
 
 class NaturalLoopForest
@@ -28,6 +42,7 @@ public:
 
     std::vector<std::vector<NaturalLoop*> > loopG;
     void CombineSameHeadLoop();
+    void BuildLoopForest();
 };
 
 #endif

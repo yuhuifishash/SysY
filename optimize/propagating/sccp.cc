@@ -3,32 +3,9 @@
 #include "Instruction.h"
 #include "lattice.h"
 
-extern std::map<std::string,VarAttribute> GlobalConstMap;
-
 static std::map<Instruction,ConstLattice> ConstLatticeMap;
 static std::map<Instruction,std::vector<Instruction> > SSAG{};//SSA-Graph
 static std::map<int,Instruction> ResultMap;//<regno,the instruction that define regno>
-
-void GlobalConstReplace(CFG* C)
-{
-    for(auto [id,bb]:*C->block_map){
-        for(auto &I:bb->Instruction_list){
-            if(I->GetOpcode() != LOAD){continue;}
-            auto LoadI = (LoadInstruction*)I;
-            if(LoadI->GetPointer()->GetOperandType() != BasicOperand::GLOBAL){continue;}
-
-            auto pointer = (GlobalOperand*)LoadI->GetPointer();
-            if(GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()){
-                VarAttribute val =  GlobalConstMap[pointer->getName()];
-                if(val.type == Type::INT){
-                    I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(val.IntInitVals[0]),LoadI->GetResultReg());
-                }else if(val.type == Type::FLOAT){
-                    I = new ArithmeticInstruction(FADD,FLOAT32,new ImmF32Operand(0),new ImmF32Operand(val.FloatInitVals[0]),LoadI->GetResultReg());
-                }
-            }
-        }
-    }
-}
 
 void BuildSSAGraph(CFG* C){
     ResultMap.clear();
@@ -416,7 +393,7 @@ std::map<Instruction,std::vector<Instruction> >& SSA_G
     if(I->GetOpcode() == PHI){
         auto PhiI = (PhiInstruction*)I;
         bool change = 0;
-        for(auto phi_node:PhiI->getPhiList()){
+        for(auto phi_node:PhiI->GetPhiList()){
             int pre = ((LabelOperand*)phi_node.first)->GetLabelNo();
             Operand val = phi_node.second;
             auto pre_lattice = GetOperandLattice(val,regresult_map);
@@ -694,7 +671,6 @@ void SCCP(CFG* C)
 
 void SparseConditionalConstantPropagation(CFG* C)
 {
-    GlobalConstReplace(C);
     SetInstructionBlockID(C);
     BuildSSAGraph(C);
     SCCP(C);

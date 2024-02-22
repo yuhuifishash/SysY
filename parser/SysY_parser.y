@@ -344,7 +344,7 @@ PrimaryExp
     $$ = new PrimaryExp_branch($2);
     $$->set_line_number(line_number);
 }
-|Lval {$$ = $1; $$->set_line_number(line_number);}
+|Lval{$$ = $1; $$->set_line_number(line_number);}
 |IntConst{$$ = $1; $$->set_line_number(line_number);}
 |FloatConst{$$ = $1; $$->set_line_number(line_number);}
 |StringConst{$$ = $1; $$->set_line_number(line_number);}

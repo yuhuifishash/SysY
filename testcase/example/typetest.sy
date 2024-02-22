@@ -1,19 +1,14 @@
-int f(int i1,int i2)
-{
-	return f(i1,i2-1);
-}
-
 int main()
 {
-	int a = getint(), b = getint();
-	while( a <= 100){
-		if(a < 3){continue;}
-		if(a > 100){continue;}
-		a = a + 1;
-		while( b <= 300 ){
-			b = b + 1;
-			if(b < 340){continue;}
-		}
-	}
-	return a + b;
+    int S = getint();
+    int i = 0;
+    while(i <= 100){
+        if(S < i){
+            S = S + i;
+            i = i + 1;
+            continue;
+        }
+        i = i + 1;
+    }
+    return S;
 }

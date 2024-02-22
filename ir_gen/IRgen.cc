@@ -11,9 +11,12 @@ static int now_label = 0;
 static int loop_start_label = -1;// continue;
 static int loop_end_label = -1;  // break;
 
+std::map<FuncDefInstruction, int> max_label_map{};
+std::map<FuncDefInstruction, int> max_reg_map{}; 
 
 int max_reg = -1; 
 int max_label = -1;
+
 IRgenTable irgen_table;
 LLVMIR llvmIR;
 
@@ -773,8 +776,8 @@ void __FuncDef::codeIR()
     block->codeIR();
 
     AddNoReturnBlock();
-    llvmIR.max_reg_map[FuncDefIns] = max_reg;
-    llvmIR.max_label_map[FuncDefIns] = max_label;
+    max_reg_map[FuncDefIns] = max_reg;
+    max_label_map[FuncDefIns] = max_label;
 
     irgen_table.symbol_table.exit_scope();
 }

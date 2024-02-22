@@ -1,8 +1,32 @@
 #include "inst_combine.h"
 
+extern std::map<std::string,VarAttribute> GlobalConstMap;
+
+void GlobalConstReplace(CFG* C)
+{
+    for(auto [id,bb]:*C->block_map){
+        for(auto &I:bb->Instruction_list){
+            if(I->GetOpcode() != LOAD){continue;}
+            auto LoadI = (LoadInstruction*)I;
+            if(LoadI->GetPointer()->GetOperandType() != BasicOperand::GLOBAL){continue;}
+
+            auto pointer = (GlobalOperand*)LoadI->GetPointer();
+            if(GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()){
+                VarAttribute val =  GlobalConstMap[pointer->getName()];
+                if(val.type == Type::INT){
+                    I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(val.IntInitVals[0]),LoadI->GetResultReg());
+                }else if(val.type == Type::FLOAT){
+                    I = new ArithmeticInstruction(FADD,FLOAT32,new ImmF32Operand(0),new ImmF32Operand(val.FloatInitVals[0]),LoadI->GetResultReg());
+                }
+            }
+        }
+    }
+}
+
+
 void EliminateSimpleConstInstructions(CFG* C)
 {
-    
+    GlobalConstReplace(C);
 }
 
 void InstCombine(CFG* C)

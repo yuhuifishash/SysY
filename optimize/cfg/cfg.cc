@@ -4,6 +4,9 @@
 #include "IRgen.h"
 #include <bitset>
 
+extern std::map<FuncDefInstruction, int> max_label_map;
+extern std::map<FuncDefInstruction, int> max_reg_map; 
+
 std::map<std::string,CFG*> CFGMap;
 
 void LLVMIR::ElimateUnreachedInstructionAndBlocks(){
@@ -137,3 +140,16 @@ LLVMBlock CFG::GetBlock(int bbid)
 {
     return (*block_map)[bbid];
 }
+
+LLVMBlock CFG::NewBlock()
+{
+    ++max_label;
+    (*block_map)[max_label] = new BasicBlock(max_label);
+    return GetBlock(max_label);
+}
+
+void CFG::InsertTransferBlock(std::vector<LLVMBlock>& from, LLVMBlock to)
+{
+
+}
+

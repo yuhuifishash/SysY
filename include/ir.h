@@ -12,9 +12,6 @@ public:
     std::map<FuncDefInstruction, CFG*> llvm_cfg{}; //<function,cfg>
     std::map<FuncDefInstruction, std::map<int, LLVMBlock> > function_block_map; //<function,<id,block> >
 
-    std::map<FuncDefInstruction, int> max_label_map{};
-    std::map<FuncDefInstruction, int> max_reg_map{}; 
-
     void NewFunction(FuncDefInstruction I){
         function_block_map[I] = {};
     }

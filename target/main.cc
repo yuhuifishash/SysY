@@ -45,7 +45,7 @@ void EliminateSimpleConstInstructions(CFG* C);
 void MakeFunctionOneExit(CFG* C);
 void Mem2Reg(CFG*);
 void SparseConditionalConstantPropagation(CFG* C);
-void SimplifyCFG(CFG* C);
+void SimplifyCFGBeforeMem2Reg(CFG* C);
 void SimpleDCE(CFG* C);
 void ElimateEmptyIndexGEP(CFG* C);
 void TailRecursiveElimate(CFG* C);
@@ -53,6 +53,8 @@ void BasicBlockCSE(CFG* C);
 void DomTreeWalkCSE(CFG* C);
 void InstSimplify(CFG* C);
 void InstCombine(CFG* C);
+void EliminateDoubleBrUnCond(CFG* C);
+void LoopSimplify(CFG* C);
 
 
 int main(int argc,char** argv)
@@ -115,14 +117,16 @@ int main(int argc,char** argv)
         //llvmIR.PassExecutor( ElimateEmptyIndexGEP ); //to do
         //llvmIR.PassExecutor( TailRecursiveElimate ); //to do
         //llvmIR.PassExecutor( MakeFunctionOneExit ); //to do
-        //llvmIR.PassExecutor( SimplifyCFG ); //to do
+        //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
+
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
         llvmIR.PassExecutor( SparseConditionalConstantPropagation );
+        //llvmIR.PassExecutor( EliminateDoubleBrUnCond ); // to do
 
         llvmIR.PassExecutor( InstSimplify );
         llvmIR.PassExecutor( InstCombine );
-        //llvmIR.PassExecutor( SimplifyCFG ); // to do
+
 
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor( SimpleDCE );
@@ -130,6 +134,7 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( DomTreeWalkCSE );
 
         llvmIR.BuildLoopInfo();
+        //llvmIR.PassExecutor( LoopSimplify );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
