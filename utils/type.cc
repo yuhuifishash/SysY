@@ -420,7 +420,7 @@ NodeAttribute SemantError(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode 
     return result;
 }
 
-NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)={
+NodeAttribute (*SemantBinaryNode[6][6])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode)={
     [Type::INT][Type::INT] = SemantIntInt,
     [Type::INT][Type::FLOAT] = SemantIntFloat,
     [Type::INT][Type::BOOL] = SemantIntBool,
@@ -561,7 +561,7 @@ NodeAttribute SemantError(NodeAttribute a,NodeAttribute::opcode opcode)
     return result;
 }
 
-NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcode)={
+NodeAttribute (*SemantSingleNode[6])(NodeAttribute a,NodeAttribute::opcode opcode)={
     [Type::INT] = SemantInt,
     [Type::FLOAT] = SemantFloat,
     [Type::BOOL] = SemantBool,
@@ -875,7 +875,7 @@ void IRgenError(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock
 }
 
 
-void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)={
+void (*IRgenBinaryNode[6][6])(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B)={
     [Type::INT][Type::INT] = IRgenIntInt,
     [Type::INT][Type::FLOAT] = IRgenIntFloat,
     [Type::INT][Type::BOOL] = IRgenIntBool,
@@ -975,7 +975,7 @@ void IRgenError(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)
     assert(false);
 }
 
-void (*IRgenSingleNode[5])(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)={
+void (*IRgenSingleNode[6])(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B)={
     [Type::INT] = IRgenInt,
     [Type::FLOAT] = IRgenFloat,
     [Type::BOOL] = IRgenBool,

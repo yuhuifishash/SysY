@@ -1,0 +1,7 @@
+obj/
+bin/
+.vscode/
+testcase/performance/*.in
+testcase/performance/*.out
+test_output/performance_testAsm/*.out
+test_output/performance_testIR/*.out

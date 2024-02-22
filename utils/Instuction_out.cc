@@ -35,6 +35,9 @@ std::ostream& operator<<(std::ostream&s,LLVMType type)
     case I64:
         s<<"i64";
         break;
+    case DOUBLE:
+        s<<"double";
+        break;
     } 
     return s;
 }

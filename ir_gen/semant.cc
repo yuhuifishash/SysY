@@ -17,10 +17,11 @@ static bool MainTag = 0;
 static int InWhileCount = 0;
 
 //Type::VOID -> VOID    Type::Int -> I32    Type::FLOAT -> FLOAT32
-LLVMType Type2LLvm[5] = {LLVMType::VOID,LLVMType::I32,LLVMType::FLOAT32,LLVMType::I1,LLVMType::PTR};
+LLVMType Type2LLvm[6] = 
+{LLVMType::VOID,LLVMType::I32,LLVMType::FLOAT32,LLVMType::I1,LLVMType::PTR,LLVMType::DOUBLE};
 
-extern NodeAttribute (*SemantBinaryNode[5][5])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode);
-extern NodeAttribute (*SemantSingleNode[5])(NodeAttribute a,NodeAttribute::opcode opcode);
+extern NodeAttribute (*SemantBinaryNode[6][6])(NodeAttribute a,NodeAttribute b,NodeAttribute::opcode opcode);
+extern NodeAttribute (*SemantSingleNode[6])(NodeAttribute a,NodeAttribute::opcode opcode);
 /*
 Find Max Alignable Size
 For example, int a[3][4][5]

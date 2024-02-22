@@ -20,10 +20,10 @@ int max_label = -1;
 IRgenTable irgen_table;
 LLVMIR llvmIR;
 
-extern void (*IRgenSingleNode[5])(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B);
-extern void (*IRgenBinaryNode[5][5])(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B);
+extern void (*IRgenSingleNode[6])(tree_node* a,NodeAttribute::opcode opcode,LLVMBlock B);
+extern void (*IRgenBinaryNode[6][6])(tree_node* a,tree_node* b,NodeAttribute::opcode opcode,LLVMBlock B);
 
-extern LLVMType Type2LLvm[5];
+extern LLVMType Type2LLvm[6];
 
 void AddLibFunctionDeclare();
 

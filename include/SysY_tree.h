@@ -705,10 +705,6 @@ public:
 };
 typedef __Decl* Decl;
 
-//VOID = 0
-//INT = 1
-//FLOAT = 2
-
 //var definition
 class VarDecl:public __Decl
 {

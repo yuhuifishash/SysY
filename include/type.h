@@ -13,7 +13,8 @@ public:
         INT = 1,
         FLOAT = 2,
         BOOL = 3,
-        PTR = 4
+        PTR = 4,
+        DOUBLE = 5
     }type;
     std::string GetTypeInfo();
 };
@@ -29,6 +30,7 @@ public:
         bool BoolVal;
         int IntVal;
         float FloatVal;
+        double DoubleVal;
     }val;
     std::string GetConstValueInfo(Type ty);
     ConstValue(){val.IntVal = 0; ConstTag = false;}

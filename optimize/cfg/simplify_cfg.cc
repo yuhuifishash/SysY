@@ -7,7 +7,7 @@
         %r3 = and i1 %r1, %r2
         br i1 %r3, label %true, label %false
     *
-    * the short circult CFG will be  like:
+    * the short circult CFG will be like:
     * B1 ->  B2  ->  B3    this will be transformed to  B1 -> B3         
     * |      |--> B4  |                                 |--> B4
     * |_______________|
@@ -19,6 +19,20 @@ void EliminateSimpleShortCircult(CFG* C)
 }
 
 
+/*
+  /B1\
+B0    B3  may be transformed to B0(B1 B2 use select)->B3
+  \B2/
+
+B0--->B2  may be transformed to B0(B1 use select)->B2
+  \B1/
+*/
+void SimpleIfConversion(CFG* C)
+{
+
+}
+
+
 void SimplifyCFGBeforeMem2Reg(CFG* C)
 {
     EliminateSimpleShortCircult(C);
@@ -27,7 +41,7 @@ void SimplifyCFGBeforeMem2Reg(CFG* C)
 
 
 /**
-    * this function will elimate the double br_uncond without any other instructions
+    * this function will eliminate the double br_uncond without any other instructions
     * 
     * example:
     * L1:
