@@ -2,7 +2,7 @@
 #define ARM_INSTRSELECT_CC
 #include "cfg.h"
 #include "ir.h"
-#include "arm_block.h"
+#include "../arm_block.h"
 
 template<>
 void ArmSelector::ConvertAndAppend<LoadInstruction*>(LoadInstruction* ins,ArmBlock* blk){

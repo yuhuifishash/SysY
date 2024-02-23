@@ -56,9 +56,12 @@ void InstCombine(CFG* C);
 void EliminateDoubleBrUnCond(CFG* C);
 void LoopSimplify(CFG* C);
 
+enum Target{ARMV7 = 1,RV64GC = 2}target;
 
 int main(int argc,char** argv)
 {
+    target = ARMV7;
+
     FILE* fin = fopen(argv[file_in],"r");
     if(fin == NULL){
         std::cerr << "Could not open input file " << argv[file_in] << std::endl;
