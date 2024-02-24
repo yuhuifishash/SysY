@@ -1,7 +1,8 @@
-#ifndef LINEAR_SCAN_H
-#define LINEAR_SCAN_H
+#ifndef GREEDY_LINEAR_SCAN_H
+#define GREEDY_LINEAR_SCAN_H
 
-#include<vector>
+#include "basic_register_allocation.h"
+#include <vector>
 class ActiveInterval{
     class Segment{
         int begin,end;

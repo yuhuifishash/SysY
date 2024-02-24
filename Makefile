@@ -1,7 +1,7 @@
 SRCDIR += ./target
 SRCDIR += ./target/armv7
 SRCDIR += ./target/common
-SRCDIR += ./target/armv7/register_alloc
+SRCDIR += ./target/common/register_alloc
 SRCDIR += ./target/armv7/instruction_select
 SRCDIR += ./target/riscv64gc
 SRCDIR += ./parser

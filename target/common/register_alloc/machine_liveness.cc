@@ -1,7 +1,7 @@
 #include "machine_block.h"
 
 template<class T>
-std::set<T> set_intersect(const std::set<T>&a,const std::set<T>&b){
+std::set<T> SetIntersect(const std::set<T>&a,const std::set<T>&b){
     std::set<T> ret;
     for(auto x:b){
         if(a.count(x)!=0){
@@ -12,7 +12,7 @@ std::set<T> set_intersect(const std::set<T>&a,const std::set<T>&b){
 }
 
 template<class T>
-std::set<T> set_union(const std::set<T>&a,const std::set<T>&b){
+std::set<T> SetUnion(const std::set<T>&a,const std::set<T>&b){
     std::set<T> ret(a);
     for(auto x:b){
         ret.insert(x);
@@ -22,7 +22,7 @@ std::set<T> set_union(const std::set<T>&a,const std::set<T>&b){
 
 // a-b
 template<class T>
-std::set<T> set_diff(const std::set<T>&a,const std::set<T>&b){
+std::set<T> SetDiff(const std::set<T>&a,const std::set<T>&b){
     std::set<T> ret(a);
     for(auto x:b){
         // if(ret.count(x) != 0){
@@ -49,13 +49,13 @@ void MachineCFG<MachineBlk>::UpdateLiveness(){
         for(auto [id,node] : block_map){
             std::set<int> out;
             for(auto succ : G[id]){
-                out = set_union(out,succ->IN);
+                out = SetUnion(out,succ->IN);
             }
             if(out != node->OUT){
                 // changed = 1;
                 node->OUT = out;
             }
-            std::set<int> in = set_union(node->USE,set_diff(node->OUT,node->DEF));
+            std::set<int> in = SetUnion(node->USE,set_diff(node->OUT,node->DEF));
             if(in != node->IN){
                 changed = 1;
                 node->IN = in;
