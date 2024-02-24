@@ -55,7 +55,7 @@ void MachineCFG<MachineBlk>::UpdateLiveness(){
                 // changed = 1;
                 node->OUT = out;
             }
-            std::set<int> in = SetUnion(node->USE,set_diff(node->OUT,node->DEF));
+            std::set<int> in = SetUnion(node->USE,SetDiff(node->OUT,node->DEF));
             if(in != node->IN){
                 changed = 1;
                 node->IN = in;
