@@ -41,26 +41,26 @@ void SimplifyCFGBeforeMem2Reg(CFG* C)
 
 
 /**
-    * this function will eliminate the double br_uncond without any other instructions
+    * this function will eliminate the double br_uncond 
     * 
     * example:
     * L1:
+        LIST1
         br label %L2
       L2:
+        LIST2
         br label %L3    
       L3:
+        LIST3
         br label %L4
-      L4:
-        some instructions
-        br label %L5
 
     * the example after this function will be:
     * L1:
+        LIST1
+        LIST2
+        LIST3
         br label %L4
-      L4:
-        some instructions
-        br label %L5
-    * 
+     
     * this pass will be useful after sccp
     * you can use testcase 29_lone_line.sy to check 
     * @param C the control flow graph of the function */
