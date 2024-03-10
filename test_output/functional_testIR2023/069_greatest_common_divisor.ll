@@ -23,7 +23,7 @@ L2:  ;
     %r16 = phi i32 [%r1,%L1],[%r11,%L3]
     %r8 = icmp sgt i32 %r16,0
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r11 = srem i32 %r17,%r16
     br label %L2
 L4:  ;

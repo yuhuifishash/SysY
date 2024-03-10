@@ -44,7 +44,7 @@ L6:  ;
     %r26 = load i32, ptr %r25
     %r27 = icmp sgt i32 %r21,%r26
     br i1 %r27, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     %r50 = add i32 %r54,1
     br label %L2
 L8:  ;
@@ -53,7 +53,7 @@ L8:  ;
     store i32 %r41, ptr %r25
     store i32 %r34, ptr %r20
     br label %L9
-L9:  ;
+L9:  ;latch
     br label %L5
 }
 define i32 @main()
@@ -91,7 +91,7 @@ L2:  ;
     %r37 = load i32, ptr @n
     %r38 = icmp slt i32 %r51,%r37
     br i1 %r38, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r42 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r51
     %r43 = load i32, ptr %r42
     call void @putint(i32 %r43)

@@ -81,7 +81,7 @@ L2:  ;
     %r16 = load i32, ptr @M
     %r17 = icmp slt i32 %r93,%r16
     br i1 %r17, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r19 = getelementptr [3 x i32], ptr %r3, i32 0, i32 %r93
     store i32 %r93, ptr %r19
     %r22 = getelementptr [3 x i32], ptr %r4, i32 0, i32 %r93
@@ -113,7 +113,7 @@ L5:  ;
     %r52 = load i32, ptr @N
     %r53 = icmp slt i32 %r94,%r52
     br i1 %r53, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r55 = getelementptr [6 x i32], ptr %r9, i32 0, i32 %r94
     %r56 = load i32, ptr %r55
     call void @putint(i32 %r56)
@@ -127,7 +127,7 @@ L8:  ;
     %r65 = load i32, ptr @N
     %r66 = icmp slt i32 %r95,%r65
     br i1 %r66, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r68 = getelementptr [3 x i32], ptr %r10, i32 0, i32 %r95
     %r69 = load i32, ptr %r68
     call void @putint(i32 %r69)
@@ -141,7 +141,7 @@ L11:  ;
     %r78 = load i32, ptr @N
     %r79 = icmp slt i32 %r96,%r78
     br i1 %r79, label %L12, label %L13
-L12:  ;
+L12:  ;latch
     %r81 = getelementptr [3 x i32], ptr %r11, i32 0, i32 %r96
     %r82 = load i32, ptr %r81
     call void @putint(i32 %r82)

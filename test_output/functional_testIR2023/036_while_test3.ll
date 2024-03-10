@@ -54,7 +54,7 @@ L5:  ;
 L6:  ;
     %r23 = add i32 %r103,1
     br label %L8
-L7:  ;
+L7:  ;latch
     %r80 = sub i32 %r103,2
     br label %L2
 L8:  ;
@@ -66,7 +66,7 @@ L8:  ;
 L9:  ;
     %r29 = sub i32 %r100,1
     br label %L11
-L10:  ;
+L10:  ;latch
     %r77 = add i32 %r100,1
     br label %L5
 L11:  ;
@@ -77,7 +77,7 @@ L11:  ;
 L12:  ;
     %r35 = add i32 %r96,3
     br label %L14
-L13:  ;
+L13:  ;latch
     %r74 = sub i32 %r96,1
     br label %L8
 L14:  ;
@@ -90,7 +90,7 @@ L15:  ;
     %r41 = sub i32 %r39,1
     store i32 %r41, ptr @e
     br label %L17
-L16:  ;
+L16:  ;latch
     %r69 = load i32, ptr @e
     %r71 = add i32 %r69,1
     store i32 %r71, ptr @e
@@ -105,7 +105,7 @@ L18:  ;
     %r47 = sub i32 %r45,2
     store i32 %r47, ptr @f
     br label %L20
-L19:  ;
+L19:  ;latch
     %r66 = load i32, ptr @f
     %r68 = add i32 %r66,1
     store i32 %r68, ptr @f
@@ -120,7 +120,7 @@ L21:  ;
     %r53 = add i32 %r51,10
     store i32 %r53, ptr @g
     br label %L23
-L22:  ;
+L22:  ;latch
     %r63 = load i32, ptr @g
     %r65 = sub i32 %r63,8
     store i32 %r65, ptr @g
@@ -130,12 +130,12 @@ L23:  ;
     %r54 = load i32, ptr @h
     %r56 = icmp slt i32 %r54,10
     br i1 %r56, label %L24, label %L25
-L24:  ;
+L24:  ;latch
     %r57 = load i32, ptr @h
     %r59 = add i32 %r57,8
     store i32 %r59, ptr @h
     br label %L23
-L25:  ;
+L25:  ;latch
     %r60 = load i32, ptr @h
     %r62 = sub i32 %r60,1
     store i32 %r62, ptr @h

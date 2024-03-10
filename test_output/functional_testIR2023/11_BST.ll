@@ -242,7 +242,7 @@ L4:  ;
     %r36 = phi i32 [1,%L3],[%r19,%L5]
     %r13 = icmp slt i32 %r36,%r2
     br i1 %r13, label %L5, label %L6
-L5:  ;
+L5:  ;latch
     %r15 = call i32 @getint()
     %r16 = call i32 @insert(i32 %r8,i32 %r15)
     %r19 = add i32 %r36,1
@@ -257,7 +257,7 @@ L7:  ;
     %r37 = phi i32 [0,%L6],[%r32,%L8]
     %r26 = icmp slt i32 %r37,%r22
     br i1 %r26, label %L8, label %L9
-L8:  ;
+L8:  ;latch
     %r28 = call i32 @getint()
     %r29 = call i32 @delete(i32 %r38,i32 %r28)
     %r32 = add i32 %r37,1

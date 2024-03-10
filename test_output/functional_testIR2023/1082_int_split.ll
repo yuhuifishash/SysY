@@ -27,7 +27,7 @@ L2:  ;
     %r24 = phi i32 [%r7,%L1],[%r22,%L3]
     %r11 = icmp ne i32 %r24,-1
     br i1 %r11, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r13 = getelementptr i32, ptr %r1, i32 %r24
     %r16 = srem i32 %r25,10
     store i32 %r16, ptr %r13
@@ -52,7 +52,7 @@ L2:  ;
     %r27 = phi i32 [0,%L1],[%r24,%L3]
     %r16 = icmp slt i32 %r27,4
     br i1 %r16, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r18 = getelementptr [4 x i32], ptr %r6, i32 0, i32 %r27
     %r19 = load i32, ptr %r18
     call void @putint(i32 %r19)

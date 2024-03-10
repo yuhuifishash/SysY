@@ -115,12 +115,12 @@ L5:  ;
     %r148 = phi i32 [0,%L3],[%r18,%L6]
     %r11 = icmp slt i32 %r148,100
     br i1 %r11, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r14 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 %r149, i32 %r148
     store i32 %r148, ptr %r14
     %r18 = add i32 %r148,1
     br label %L5
-L7:  ;
+L7:  ;latch
     %r21 = add i32 %r149,1
     br label %L2
 }

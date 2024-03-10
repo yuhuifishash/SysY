@@ -137,7 +137,7 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( DomTreeWalkCSE );
 
         llvmIR.BuildLoopInfo();
-        //llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopSimplify );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

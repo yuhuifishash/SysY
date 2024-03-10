@@ -93,7 +93,7 @@ L2:  ;
     %r35 = phi i32 [10,%L1],[%r33,%L3]
     %r22 = icmp ne i32 %r35,0
     br i1 %r22, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r26 = fdiv float %r0,%r36
     %r27 = fadd float %r36,%r26
     %r30 = fdiv float %r27,%r11
@@ -251,7 +251,7 @@ L6:  ;
     %r36 = getelementptr [2 x float], ptr %r18, i32 0, i32 1
     %r37 = load float, ptr %r36
     ret float %r37
-L7:  ;
+L7:  ;latch
     %r41 = load float, ptr %r31
     %r42 = fadd float %r48,%r41
     %r45 = add i32 %r47,1
@@ -269,7 +269,7 @@ L2:  ;
     %r43 = phi i32 [0,%L1],[%r38,%L3]
     %r10 = icmp slt i32 %r43,24
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r12 = call i32 @rand()
     %r13 = sitofp i32 %r12 to float
     %r15 = fadd float 0x0,0x401921fb60000000
@@ -330,13 +330,13 @@ L6:  ;
     %r37 = fptosi float %r36 to i32
     %r40 = icmp sgt i32 %r37,255
     br i1 %r40, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     call void @putch(i32 10)
     %r50 = add i32 %r56,1
     br label %L2
 L8:  ;
     br label %L9
-L9:  ;
+L9:  ;latch
     %r53 = phi i32 [%r37,%L6],[255,%L8]
     call void @putint(i32 %r53)
     call void @putch(i32 32)

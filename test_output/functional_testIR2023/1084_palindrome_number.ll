@@ -24,7 +24,7 @@ L2:  ;
     %r40 = phi i32 [0,%L1],[%r21,%L3]
     %r10 = icmp slt i32 %r40,4
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r12 = getelementptr [4 x i32], ptr %r2, i32 0, i32 %r40
     %r15 = srem i32 %r41,10
     store i32 %r15, ptr %r12

@@ -59,7 +59,7 @@ L9:  ;
     store i32 %r56, ptr %r52
     %r59 = add i32 %r112,1
     br label %L10
-L10:  ;
+L10:  ;latch
     %r114 = phi i32 [%r49,%L8],[%r115,%L9]
     %r111 = phi i32 [%r112,%L8],[%r59,%L9]
     %r62 = add i32 %r108,1
@@ -69,7 +69,7 @@ L11:  ;
     %r109 = phi i32 [%r108,%L6],[%r78,%L12]
     %r65 = icmp slt i32 %r116,%r14
     br i1 %r65, label %L12, label %L13
-L12:  ;
+L12:  ;latch
     %r68 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r109
     %r71 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r116
     %r72 = load i32, ptr %r71
@@ -84,7 +84,7 @@ L14:  ;
     %r110 = phi i32 [%r109,%L13],[%r94,%L15]
     %r81 = icmp slt i32 %r113,%r1
     br i1 %r81, label %L15, label %L16
-L15:  ;
+L15:  ;latch
     %r84 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r110
     %r87 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r113
     %r88 = load i32, ptr %r87
@@ -98,7 +98,7 @@ L17:  ;
     %r117 = phi i32 [%r0,%L16],[%r107,%L18]
     %r97 = icmp slt i32 %r117,%r1
     br i1 %r97, label %L18, label %L19
-L18:  ;
+L18:  ;latch
     %r100 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 0, i32 %r117
     %r103 = getelementptr [2 x [100 x i32]], ptr @buf, i32 0, i32 1, i32 %r117
     %r104 = load i32, ptr %r103

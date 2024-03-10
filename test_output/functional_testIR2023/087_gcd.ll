@@ -37,7 +37,7 @@ L2:  ;
     %r17 = phi i32 [%r1,%L1],[%r15,%L3]
     %r4 = icmp sgt i32 %r17,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r6 = call i32 @getint()
     %r8 = call i32 @getint()
     %r11 = call i32 @gcd(i32 %r6,i32 %r8)

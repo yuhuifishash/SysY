@@ -32,7 +32,7 @@ L4:  ;
     %r36 = phi i32 [%r22,%L3],[%r30,%L5]
     %r25 = icmp ne i32 %r36,0
     br i1 %r25, label %L5, label %L6
-L5:  ;
+L5:  ;latch
     %r30 = srem i32 %r39,%r36
     br label %L4
 L6:  ;

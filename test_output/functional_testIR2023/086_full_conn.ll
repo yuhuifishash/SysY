@@ -633,13 +633,13 @@ L8:  ;
     %r43 = phi i32 [0,%L6],[%r22,%L9]
     %r15 = icmp slt i32 %r43,5
     br i1 %r15, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r18 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0, i32 %r45, i32 %r43
     %r19 = call i32 @getint()
     store i32 %r19, ptr %r18
     %r22 = add i32 %r43,1
     br label %L8
-L10:  ;
+L10:  ;latch
     %r25 = add i32 %r45,1
     br label %L5
 L11:  ;
@@ -654,7 +654,7 @@ L12:  ;
     call void @putch(i32 103)
     call void @putch(i32 10)
     br label %L13
-L13:  ;
+L13:  ;latch
     %r39 = sub i32 %r46,1
     br label %L2
 }

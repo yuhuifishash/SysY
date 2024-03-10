@@ -46,11 +46,11 @@ L6:  ;
     %r21 = load i32, ptr %r20
     %r23 = icmp eq i32 %r21,0
     br i1 %r23, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     br label %L2
 L8:  ;
     ret i32 0
-L9:  ;
+L9:  ;latch
     %r27 = add i32 %r33,1
     br label %L5
 }
@@ -78,7 +78,7 @@ L4:  ;
 L5:  ;
     %r22 = icmp sgt i32 %r1,%r41
     br i1 %r22, label %L7, label %L8
-L6:  ;
+L6:  ;latch
     %r40 = phi i32 [%r41,%L3],[%r42,%L10]
     %r36 = add i32 %r38,1
     br label %L2
@@ -111,7 +111,7 @@ L2:  ;
     %r6 = load i32, ptr @m
     %r7 = icmp slt i32 %r50,%r6
     br i1 %r7, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r10 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r50, i32 0
     %r11 = call i32 @getint()
     store i32 %r11, ptr %r10
@@ -127,7 +127,7 @@ L5:  ;
     %r21 = load i32, ptr @m
     %r22 = icmp slt i32 %r51,%r21
     br i1 %r22, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r25 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 0
     %r26 = load i32, ptr %r25
     %r29 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 1

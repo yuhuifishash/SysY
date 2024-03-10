@@ -39,7 +39,7 @@ L6:  ;
     %r22 = load i32, ptr %r21
     %r23 = icmp slt i32 %r19,%r22
     br i1 %r23, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     br label %L2
 L8:  ;
     %r27 = load i32, ptr %r18
@@ -47,7 +47,7 @@ L8:  ;
     store i32 %r32, ptr %r18
     store i32 %r27, ptr %r21
     br label %L9
-L9:  ;
+L9:  ;latch
     %r38 = add i32 %r43,1
     br label %L5
 }
@@ -358,7 +358,7 @@ L2:  ;
     %r118 = phi i32 [1,%L1],[%r50,%L3]
     %r25 = icmp slt i32 %r118,32
     br i1 %r25, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r28 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r118, i32 0
     %r31 = sub i32 %r118,1
     %r33 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r31, i32 1

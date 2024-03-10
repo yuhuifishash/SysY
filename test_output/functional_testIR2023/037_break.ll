@@ -30,7 +30,7 @@ L4:  ;
     ret i32 %r19
 L5:  ;
     br label %L4
-L6:  ;
+L6:  ;latch
     %r14 = add i32 %r19,%r20
     %r17 = add i32 %r20,1
     br label %L2

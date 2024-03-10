@@ -46,7 +46,7 @@ L5:  ;
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
-L7:  ;
+L7:  ;latch
     %r36 = phi i32 [%r37,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
@@ -55,7 +55,7 @@ L8:  ;
     %r38 = phi i32 [0,%L4],[%r29,%L9]
     %r19 = icmp sge i32 %r40,48
     br i1 %r19, label %L11, label %L10
-L9:  ;
+L9:  ;latch
     %r25 = mul i32 %r38,10
     %r27 = add i32 %r25,%r40
     %r29 = sub i32 %r27,48
@@ -110,7 +110,7 @@ L2:  ;
     %r12 = phi i32 [0,%L1],[%r11,%L3]
     %r4 = icmp slt i32 %r12,1005
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r12
     store i32 -1, ptr %r6
     %r11 = add i32 %r12,1
@@ -185,13 +185,13 @@ L8:  ;
     %r30 = load i32, ptr %r29
     %r31 = icmp eq i32 %r30,0
     br i1 %r31, label %L10, label %L11
-L9:  ;
+L9:  ;latch
     br label %L2
 L10:  ;
     %r34 = load i32, ptr %r27
     call void @inqueue(i32 %r34)
     br label %L11
-L11:  ;
+L11:  ;latch
     %r36 = getelementptr [5005 x i32], ptr @next, i32 0, i32 %r54
     %r37 = load i32, ptr %r36
     br label %L7
@@ -200,7 +200,7 @@ L12:  ;
     %r41 = load i32, ptr @tail
     %r42 = icmp sle i32 %r52,%r41
     br i1 %r42, label %L13, label %L14
-L13:  ;
+L13:  ;latch
     %r44 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r52
     %r45 = load i32, ptr %r44
     %r46 = getelementptr [1005 x i32], ptr @inq, i32 0, i32 %r45
@@ -234,7 +234,7 @@ L5:  ;
     %r35 = phi i32 [%r5,%L3],[%r12,%L6]
     %r8 = icmp ne i32 %r35,81
     br i1 %r8, label %L8, label %L7
-L6:  ;
+L6:  ;latch
     %r12 = call i32 @getch()
     br label %L5
 L7:  ;
@@ -255,7 +255,7 @@ L10:  ;
     %r27 = call i32 @quick_read()
     call void @add_edge(i32 %r25,i32 %r27)
     br label %L11
-L11:  ;
+L11:  ;latch
     %r30 = load i32, ptr @m
     %r32 = sub i32 %r30,1
     store i32 %r32, ptr @m

@@ -45,11 +45,17 @@ void NaturalLoop::FindExitNodes(CFG* C)
             auto I = (BrCondInstruction*)Ins;
             auto nextBB1 = (*(C->block_map))[((LabelOperand*)I->GetFalseLabel())->GetLabelNo()];
             auto nextBB2 = (*(C->block_map))[((LabelOperand*)I->GetTrueLabel())->GetLabelNo()];
-            if(loop_nodes.find(nextBB1) == loop_nodes.end() || loop_nodes.find(nextBB2) == loop_nodes.end()){
-                exiting_nodes.insert(node);
+            bool is_exit = false;
+            if(loop_nodes.find(nextBB1) == loop_nodes.end()){
                 exit_nodes.insert(nextBB1);
-                exit_nodes.insert(nextBB2);
+                is_exit |= true;
             }
+            if(loop_nodes.find(nextBB2) == loop_nodes.end()){
+                exit_nodes.insert(nextBB2);
+                is_exit |= true;
+            }
+
+            if(is_exit){exiting_nodes.insert(node);}
         }
     }
 }
@@ -101,13 +107,17 @@ void CFG::BuildLoopInfo()
                 l->latch.insert(bb);
                 l->loop_id = loop_cnt++;
                 l->loop_nodes = FindNodesInLoop(this,bb,head_bb);
-                l->FindExitNodes(this);
                 LoopForest.loop_set.insert(l);
             }
         }
     }
     LoopForest.loop_cnt = loop_cnt - 1;
     LoopForest.CombineSameHeadLoop();
+
+    for(auto l:LoopForest.loop_set){
+        l->FindExitNodes(this);
+    }
+
     LoopForest.BuildLoopForest();
 }
 
@@ -118,17 +128,30 @@ void LLVMIR::BuildLoopInfo()
 
         // std::cerr<<defI->GetFunctionName()<<"  LoopInfo:\n";
         // for(auto loop:cfg->LoopForest.loop_set){
-        //     std::cerr<<"------------------------------------\n";
-        //     std::cerr<<"loop nodes: ";
-        //     for(auto nodes:loop->loop_nodes){
-        //         std::cerr<<nodes->block_id<<" ";
-        //     }std::cerr<<"\n";
-        //     std::cerr<<"header: "<<loop->header->block_id<<"\n";
-        //     std::cerr<<"latch: ";
-        //     for(auto nodes:loop->latch){
-        //         std::cerr<<nodes->block_id<<" ";
-        //     }std::cerr<<"\n";
+        //     loop->PrintLoopDebugInfo();
         // }
     }
+}
+
+void NaturalLoop::PrintLoopDebugInfo()
+{
+    std::cerr<<"------------------------------------\n";
+    std::cerr<<"loop nodes: ";
+    for(auto nodes:loop_nodes){
+        std::cerr<<nodes->block_id<<" ";
+    }std::cerr<<"\n";
+    std::cerr<<"header: "<<header->block_id<<"\n";
+    std::cerr<<"latch: ";
+    for(auto nodes:latch){
+        std::cerr<<nodes->block_id<<" ";
+    }std::cerr<<"\n";
+    std::cerr<<"exitings: ";
+    for(auto nodes:exiting_nodes){
+        std::cerr<<nodes->block_id<<" ";
+    }std::cerr<<"\n";
+    std::cerr<<"exits: ";
+    for(auto nodes:exit_nodes){
+        std::cerr<<nodes->block_id<<" ";
+    }std::cerr<<"\n";
 }
 

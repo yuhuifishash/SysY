@@ -47,7 +47,7 @@ L5:  ;
 L6:  ;
     call void @putch(i32 32)
     br label %L7
-L7:  ;
+L7:  ;latch
     %r18 = add i32 %r19,1
     br label %L2
 }
@@ -75,7 +75,7 @@ L5:  ;
     %r31 = load i32, ptr @n
     %r32 = icmp eq i32 %r0,%r31
     br i1 %r32, label %L9, label %L10
-L6:  ;
+L6:  ;latch
     %r68 = add i32 %r69,1
     br label %L2
 L7:  ;
@@ -121,7 +121,7 @@ L2:  ;
     %r11 = phi i32 [%r1,%L1],[%r9,%L3]
     %r4 = icmp sgt i32 %r11,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r5 = call i32 @getint()
     store i32 %r5, ptr @n
     call void @f(i32 1)

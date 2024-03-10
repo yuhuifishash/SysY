@@ -34,7 +34,7 @@ L5:  ;
     br i1 %r11, label %L6, label %L7
 L6:  ;
     br label %L8
-L7:  ;
+L7:  ;latch
     %r126 = add i32 %r247,1
     br label %L2
 L8:  ;
@@ -44,7 +44,7 @@ L8:  ;
     br i1 %r16, label %L9, label %L10
 L9:  ;
     br label %L11
-L10:  ;
+L10:  ;latch
     %r123 = add i32 %r246,1
     br label %L5
 L11:  ;
@@ -54,7 +54,7 @@ L11:  ;
     br i1 %r21, label %L12, label %L13
 L12:  ;
     br label %L14
-L13:  ;
+L13:  ;latch
     %r120 = add i32 %r244,1
     br label %L8
 L14:  ;
@@ -64,7 +64,7 @@ L14:  ;
     br i1 %r26, label %L15, label %L16
 L15:  ;
     br label %L17
-L16:  ;
+L16:  ;latch
     %r117 = add i32 %r241,1
     br label %L11
 L17:  ;
@@ -74,7 +74,7 @@ L17:  ;
     br i1 %r31, label %L18, label %L19
 L18:  ;
     br label %L20
-L19:  ;
+L19:  ;latch
     %r114 = add i32 %r237,1
     br label %L14
 L20:  ;
@@ -84,7 +84,7 @@ L20:  ;
     br i1 %r36, label %L21, label %L22
 L21:  ;
     br label %L23
-L22:  ;
+L22:  ;latch
     %r111 = add i32 %r232,1
     br label %L17
 L23:  ;
@@ -94,7 +94,7 @@ L23:  ;
     br i1 %r41, label %L24, label %L25
 L24:  ;
     br label %L26
-L25:  ;
+L25:  ;latch
     %r108 = add i32 %r226,1
     br label %L20
 L26:  ;
@@ -104,7 +104,7 @@ L26:  ;
     br i1 %r46, label %L27, label %L28
 L27:  ;
     br label %L29
-L28:  ;
+L28:  ;latch
     %r105 = add i32 %r219,1
     br label %L23
 L29:  ;
@@ -114,7 +114,7 @@ L29:  ;
     br i1 %r51, label %L30, label %L31
 L30:  ;
     br label %L32
-L31:  ;
+L31:  ;latch
     %r102 = add i32 %r211,1
     br label %L26
 L32:  ;
@@ -124,7 +124,7 @@ L32:  ;
     br i1 %r56, label %L33, label %L34
 L33:  ;
     br label %L35
-L34:  ;
+L34:  ;latch
     %r99 = add i32 %r202,1
     br label %L29
 L35:  ;
@@ -134,7 +134,7 @@ L35:  ;
     br i1 %r61, label %L36, label %L37
 L36:  ;
     br label %L38
-L37:  ;
+L37:  ;latch
     %r96 = add i32 %r192,2
     br label %L32
 L38:  ;
@@ -144,7 +144,7 @@ L38:  ;
     br i1 %r66, label %L39, label %L40
 L39:  ;
     br label %L41
-L40:  ;
+L40:  ;latch
     %r93 = add i32 %r181,2
     br label %L35
 L41:  ;
@@ -154,7 +154,7 @@ L41:  ;
     br i1 %r71, label %L42, label %L43
 L42:  ;
     br label %L44
-L43:  ;
+L43:  ;latch
     %r90 = add i32 %r169,2
     br label %L38
 L44:  ;
@@ -162,12 +162,12 @@ L44:  ;
     %r142 = phi i32 [0,%L42],[%r84,%L45]
     %r76 = icmp slt i32 %r142,6
     br i1 %r76, label %L45, label %L46
-L45:  ;
+L45:  ;latch
     %r79 = add i32 %r248,3
     %r81 = srem i32 %r79,999
     %r84 = add i32 %r142,3
     br label %L44
-L46:  ;
+L46:  ;latch
     %r87 = add i32 %r156,1
     br label %L41
 }

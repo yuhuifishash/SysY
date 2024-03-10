@@ -199,7 +199,7 @@ L12:  ;
     %r91 = phi i32 [0,%L10],[%r87,%L13]
     %r53 = icmp slt i32 %r92,1000000000
     br i1 %r53, label %L13, label %L14
-L13:  ;
+L13:  ;latch
     %r55 = call float @getfloat()
     %r57 = fadd float 0x0,0x400921fb60000000
     %r59 = fmul float %r57,%r55

@@ -42,7 +42,7 @@ L6:  ;
     %r36 = getelementptr i32, ptr %r1, i32 %r39
     %r37 = load i32, ptr %r36
     br label %L7
-L7:  ;
+L7:  ;latch
     %r40 = phi i32 [%r31,%L5],[%r41,%L6]
     %r38 = phi i32 [%r28,%L5],[%r37,%L6]
     br label %L2
@@ -90,7 +90,7 @@ L6:  ;
     %r33 = load i32, ptr %r32
     %r37 = icmp eq i32 %r33,-1
     br i1 %r37, label %L10, label %L11
-L7:  ;
+L7:  ;latch
     %r49 = phi i32 [%r22,%L9],[%r51,%L11]
     %r46 = phi i32 [%r25,%L9],[%r48,%L11]
     br label %L2
@@ -128,7 +128,7 @@ L4:  ;
     ret i32 %r20
 L5:  ;
     br label %L4
-L6:  ;
+L6:  ;latch
     %r15 = add i32 %r20,1
     br label %L2
 }

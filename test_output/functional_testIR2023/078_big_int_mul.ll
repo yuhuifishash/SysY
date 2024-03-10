@@ -111,7 +111,7 @@ L2:  ;
     %r231 = phi i32 [0,%L1],[%r110,%L3]
     %r102 = icmp slt i32 %r231,20
     br i1 %r102, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r104 = getelementptr [25 x i32], ptr %r96, i32 0, i32 %r231
     %r106 = getelementptr [20 x i32], ptr %r10, i32 0, i32 %r231
     %r107 = load i32, ptr %r106
@@ -124,7 +124,7 @@ L5:  ;
     %r232 = phi i32 [0,%L4],[%r122,%L6]
     %r114 = icmp slt i32 %r232,20
     br i1 %r114, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r116 = getelementptr [25 x i32], ptr %r97, i32 0, i32 %r232
     %r118 = getelementptr [20 x i32], ptr %r51, i32 0, i32 %r232
     %r119 = load i32, ptr %r118
@@ -137,7 +137,7 @@ L8:  ;
     %r233 = phi i32 [0,%L7],[%r137,%L9]
     %r131 = icmp sle i32 %r233,39
     br i1 %r131, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r133 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r233
     store i32 0, ptr %r133
     %r137 = add i32 %r233,1
@@ -174,7 +174,7 @@ L15:  ;
     %r164 = add i32 %r158,%r163
     %r167 = icmp sge i32 %r164,10
     br i1 %r167, label %L17, label %L18
-L16:  ;
+L16:  ;latch
     %r195 = add i32 %r227,20
     %r197 = sub i32 %r195,1
     %r200 = sub i32 %r234,1
@@ -191,7 +191,7 @@ L17:  ;
 L18:  ;
     store i32 %r164, ptr %r157
     br label %L19
-L19:  ;
+L19:  ;latch
     %r189 = sub i32 %r230,1
     %r192 = sub i32 %r227,1
     br label %L14
@@ -205,7 +205,7 @@ L22:  ;
     %r235 = phi i32 [1,%L21],[%r222,%L23]
     %r216 = icmp sle i32 %r235,39
     br i1 %r216, label %L23, label %L24
-L23:  ;
+L23:  ;latch
     %r218 = getelementptr [40 x i32], ptr %r98, i32 0, i32 %r235
     %r219 = load i32, ptr %r218
     call void @putint(i32 %r219)

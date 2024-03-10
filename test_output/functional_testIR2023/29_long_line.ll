@@ -8118,7 +8118,7 @@ L2:  ;
     %r21 = phi i32 [1,%L1],[%r19,%L3]
     %r4 = icmp sle i32 %r21,20
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     call void @putch(i32 102)
     call void @putch(i32 105)
     call void @putch(i32 98)

@@ -32,7 +32,7 @@ L5:  ;
     %r20 = add i32 %r41,42
     %r23 = icmp sgt i32 %r20,99
     br i1 %r23, label %L7, label %L8
-L6:  ;
+L6:  ;latch
     %r40 = phi i32 [%r41,%L3],[%r43,%L8]
     br label %L2
 L7:  ;

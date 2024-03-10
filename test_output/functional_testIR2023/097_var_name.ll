@@ -29,7 +29,7 @@ L2:  ;
     %r44 = phi i32 [0,%L1],[%r35,%L3]
     %r13 = icmp slt i32 %r45,20
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r15 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
     %r18 = load i32, ptr %r15
     %r21 = sub i32 %r45,1

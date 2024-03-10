@@ -60,7 +60,7 @@ L2:  ;
     %r54 = phi i32 [0,%L1],[%r19,%L3]
     %r13 = icmp slt i32 %r54,%r1
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r15 = getelementptr [1005 x i32], ptr @parent, i32 0, i32 %r54
     store i32 %r54, ptr %r15
     %r19 = add i32 %r54,1
@@ -71,7 +71,7 @@ L5:  ;
     %r55 = phi i32 [0,%L4],[%r30,%L6]
     %r23 = icmp slt i32 %r55,%r3
     br i1 %r23, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r24 = call i32 @getint()
     %r25 = call i32 @getint()
     call void @merge(i32 %r24,i32 %r25)
@@ -95,7 +95,7 @@ L10:  ;
 L11:  ;
     %r44 = add i32 %r51,1
     br label %L12
-L12:  ;
+L12:  ;latch
     %r50 = phi i32 [%r51,%L9],[%r44,%L11]
     %r47 = add i32 %r56,1
     br label %L8

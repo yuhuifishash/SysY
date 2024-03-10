@@ -112,7 +112,7 @@ L4:  ;
     br label %L26
 L5:  ;
     br label %L6
-L6:  ;
+L6:  ;latch
     %r87 = add i32 %r287,1
     br label %L2
 L7:  ;
@@ -203,7 +203,7 @@ L28:  ;
     br label %L50
 L29:  ;
     br label %L30
-L30:  ;
+L30:  ;latch
     %r174 = add i32 %r288,1
     br label %L26
 L31:  ;
@@ -286,7 +286,7 @@ L50:  ;
     %r289 = phi i32 [1,%L28],[%r187,%L51]
     %r178 = icmp slt i32 %r289,20
     br i1 %r178, label %L53, label %L52
-L51:  ;
+L51:  ;latch
     %r187 = add i32 %r289,1
     br label %L50
 L52:  ;

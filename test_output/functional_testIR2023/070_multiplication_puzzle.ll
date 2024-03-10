@@ -48,7 +48,7 @@ L6:  ;
     %r29 = sub i32 %r27,1
     %r32 = add i32 %r97,1
     br label %L8
-L7:  ;
+L7:  ;latch
     %r80 = add i32 %r98,1
     br label %L2
 L8:  ;
@@ -75,12 +75,12 @@ L9:  ;
     %r60 = load i32, ptr %r59
     %r61 = icmp eq i32 %r60,0
     br i1 %r61, label %L11, label %L13
-L10:  ;
+L10:  ;latch
     br label %L5
 L11:  ;
     store i32 %r56, ptr %r59
     br label %L12
-L12:  ;
+L12:  ;latch
     %r74 = add i32 %r95,1
     br label %L8
 L13:  ;

@@ -185,6 +185,26 @@ void PhiInstruction::ErasePhi(int label_id){
     }
 }
 
+Operand PhiInstruction::GetValOperand(int label_id){
+    for(auto [label,val]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == label_id){
+            return val;
+        }
+    }
+}
+
+void BrCondInstruction::SetNewTarget(int oldlabel,int newlabel){
+    auto t_target = (LabelOperand*)GetTrueLabel();
+    auto f_target = (LabelOperand*)GetFalseLabel();
+    if(t_target->GetLabelNo() == oldlabel){
+        t_target->SetLabelNo(newlabel);
+    }else if(f_target->GetLabelNo() == oldlabel){
+        f_target->SetLabelNo(newlabel);
+    }else{
+        std::cerr<<"oldlabel is not existed\n";
+    }
+}
+
 std::vector<Operand> LoadInstruction::GetNonResultOperands(){
     std::vector<Operand> ret;
     ret.push_back(pointer);

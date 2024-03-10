@@ -28,7 +28,7 @@ L8:  ;
     %r30 = phi i32 [3,%L3],[%r23,%L9]
     %r20 = icmp slt i32 %r31,5
     br i1 %r20, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r23 = mul i32 %r30,2
     %r26 = add i32 %r31,1
     br label %L8

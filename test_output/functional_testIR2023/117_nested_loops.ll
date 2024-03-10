@@ -47,7 +47,7 @@ L6:  ;
     br i1 %r28, label %L7, label %L8
 L7:  ;
     br label %L9
-L8:  ;
+L8:  ;latch
     %r94 = add i32 %r122,1
     br label %L2
 L9:  ;
@@ -60,7 +60,7 @@ L9:  ;
     br i1 %r32, label %L10, label %L11
 L10:  ;
     br label %L12
-L11:  ;
+L11:  ;latch
     %r91 = add i32 %r121,1
     br label %L6
 L12:  ;
@@ -72,7 +72,7 @@ L12:  ;
     br i1 %r36, label %L13, label %L14
 L13:  ;
     br label %L15
-L14:  ;
+L14:  ;latch
     %r88 = add i32 %r119,1
     br label %L9
 L15:  ;
@@ -83,7 +83,7 @@ L15:  ;
     br i1 %r40, label %L16, label %L17
 L16:  ;
     br label %L18
-L17:  ;
+L17:  ;latch
     %r85 = add i32 %r116,1
     br label %L12
 L18:  ;
@@ -93,14 +93,14 @@ L18:  ;
     br i1 %r44, label %L19, label %L20
 L19:  ;
     br label %L21
-L20:  ;
+L20:  ;latch
     %r82 = add i32 %r112,1
     br label %L15
 L21:  ;
     %r101 = phi i32 [0,%L19],[%r76,%L22]
     %r48 = icmp slt i32 %r101,2
     br i1 %r48, label %L22, label %L23
-L22:  ;
+L22:  ;latch
     %r56 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r122, i32 %r121, i32 %r119, i32 %r116, i32 %r112, i32 %r107, i32 %r101
     %r59 = add i32 %r122,%r121
     %r61 = add i32 %r59,%r119
@@ -113,7 +113,7 @@ L22:  ;
     store i32 %r73, ptr %r56
     %r76 = add i32 %r101,1
     br label %L21
-L23:  ;
+L23:  ;latch
     %r79 = add i32 %r107,1
     br label %L18
 }
@@ -147,7 +147,7 @@ L5:  ;
     br i1 %r21, label %L6, label %L7
 L6:  ;
     br label %L8
-L7:  ;
+L7:  ;latch
     %r77 = add i32 %r105,1
     br label %L2
 L8:  ;
@@ -160,7 +160,7 @@ L8:  ;
     br i1 %r25, label %L9, label %L10
 L9:  ;
     br label %L11
-L10:  ;
+L10:  ;latch
     %r74 = add i32 %r104,1
     br label %L5
 L11:  ;
@@ -172,7 +172,7 @@ L11:  ;
     br i1 %r29, label %L12, label %L13
 L12:  ;
     br label %L14
-L13:  ;
+L13:  ;latch
     %r71 = add i32 %r102,1
     br label %L8
 L14:  ;
@@ -183,7 +183,7 @@ L14:  ;
     br i1 %r33, label %L15, label %L16
 L15:  ;
     br label %L17
-L16:  ;
+L16:  ;latch
     %r68 = add i32 %r99,1
     br label %L11
 L17:  ;
@@ -193,14 +193,14 @@ L17:  ;
     br i1 %r37, label %L18, label %L19
 L18:  ;
     br label %L20
-L19:  ;
+L19:  ;latch
     %r65 = add i32 %r95,1
     br label %L14
 L20:  ;
     %r84 = phi i32 [0,%L18],[%r59,%L21]
     %r41 = icmp slt i32 %r84,7
     br i1 %r41, label %L21, label %L22
-L21:  ;
+L21:  ;latch
     %r49 = getelementptr [10 x [2 x [3 x [2 x [4 x [8 x [7 x i32]]]]]]], ptr @arr2, i32 0, i32 %r105, i32 %r104, i32 %r102, i32 %r99, i32 %r95, i32 %r90, i32 %r84
     %r52 = add i32 %r105,%r104
     %r54 = add i32 %r52,%r99
@@ -208,7 +208,7 @@ L21:  ;
     store i32 %r56, ptr %r49
     %r59 = add i32 %r84,1
     br label %L20
-L22:  ;
+L22:  ;latch
     %r62 = add i32 %r90,1
     br label %L17
 }
@@ -351,31 +351,31 @@ L22:  ;
     br i1 %r92, label %L26, label %L27
 L23:  ;
     br label %L22
-L24:  ;
+L24:  ;latch
     br label %L20
 L26:  ;
     br label %L19
-L27:  ;
+L27:  ;latch
     br label %L17
 L29:  ;
     br label %L16
-L30:  ;
+L30:  ;latch
     br label %L14
 L32:  ;
     br label %L13
-L33:  ;
+L33:  ;latch
     br label %L11
 L35:  ;
     br label %L10
-L36:  ;
+L36:  ;latch
     br label %L8
 L38:  ;
     br label %L7
-L39:  ;
+L39:  ;latch
     br label %L5
 L41:  ;
     br label %L4
-L42:  ;
+L42:  ;latch
     br label %L2
 }
 define i32 @main()

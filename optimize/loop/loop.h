@@ -15,10 +15,10 @@ public:
     LLVMBlock header;
     LLVMBlock preheader;
 
+    NaturalLoop* fa_loop = nullptr;
 
     int loop_id;
     void FindExitNodes(CFG* C);
-
 
     /*the only predecessor of header node*/
     void AddPreheader(CFG* C);
@@ -31,6 +31,8 @@ public:
     void ExitInsert(CFG* C);
 
     void LoopSimplify(CFG* C);
+
+    void PrintLoopDebugInfo();
 };
 
 class NaturalLoopForest

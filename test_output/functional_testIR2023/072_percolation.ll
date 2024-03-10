@@ -26,7 +26,7 @@ L2:  ;
     %r9 = add i32 %r7,1
     %r10 = icmp sle i32 %r18,%r9
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r12 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r18
     store i32 -1, ptr %r12
     %r17 = add i32 %r18,1
@@ -114,7 +114,7 @@ L8:  ;
     store i32 %r41, ptr %r43
     %r47 = icmp eq i32 %r30,1
     br i1 %r47, label %L10, label %L11
-L9:  ;
+L9:  ;latch
     %r156 = phi i32 [%r157,%L6],[%r155,%L27]
     %r147 = add i32 %r159,1
     br label %L5
@@ -215,6 +215,6 @@ L30:  ;
     call void @putint(i32 -1)
     call void @putch(i32 10)
     br label %L31
-L31:  ;
+L31:  ;latch
     br label %L2
 }

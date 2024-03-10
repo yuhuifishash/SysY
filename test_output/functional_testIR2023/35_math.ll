@@ -58,7 +58,7 @@ L4:  ;
     %r46 = phi i32 [10,%L3],[%r44,%L5]
     %r33 = icmp ne i32 %r46,0
     br i1 %r33, label %L5, label %L6
-L5:  ;
+L5:  ;latch
     %r37 = fdiv float %r0,%r47
     %r38 = fadd float %r47,%r37
     %r41 = fdiv float %r38,%r22
@@ -98,7 +98,7 @@ L6:  ;
 L7:  ;
     %r24 = fmul float %r33,%r35
     br label %L8
-L8:  ;
+L8:  ;latch
     %r32 = phi float [%r33,%L5],[%r24,%L7]
     %r27 = fmul float %r35,%r35
     %r30 = sdiv i32 %r34,2
@@ -358,7 +358,7 @@ L12:  ;
 L13:  ;
     call void @putch(i32 45)
     br label %L14
-L14:  ;
+L14:  ;latch
     call void @putch(i32 10)
     %r53 = sub i32 %r55,1
     br label %L2

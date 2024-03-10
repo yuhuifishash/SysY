@@ -144,7 +144,7 @@ L5:  ;
     br i1 %r11, label %L6, label %L7
 L6:  ;
     br label %L8
-L7:  ;
+L7:  ;latch
     %r58 = add i32 %r120,1
     br label %L2
 L8:  ;
@@ -153,7 +153,7 @@ L8:  ;
     br i1 %r16, label %L9, label %L10
 L9:  ;
     br label %L11
-L10:  ;
+L10:  ;latch
     %r55 = add i32 %r119,1
     br label %L5
 L11:  ;
@@ -162,7 +162,7 @@ L11:  ;
     br i1 %r21, label %L12, label %L13
 L12:  ;
     br label %L14
-L13:  ;
+L13:  ;latch
     %r52 = add i32 %r117,1
     br label %L8
 L14:  ;
@@ -171,26 +171,26 @@ L14:  ;
     br i1 %r26, label %L15, label %L16
 L15:  ;
     br label %L17
-L16:  ;
+L16:  ;latch
     %r49 = add i32 %r114,1
     br label %L11
 L17:  ;
     %r105 = phi i32 [0,%L15],[%r43,%L18]
     %r31 = icmp slt i32 %r105,7
     br i1 %r31, label %L18, label %L19
-L18:  ;
+L18:  ;latch
     %r38 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r120, i32 %r119, i32 %r117, i32 %r114, i32 %r110, i32 %r105
     store i32 -1, ptr %r38
     %r43 = add i32 %r105,1
     br label %L17
-L19:  ;
+L19:  ;latch
     %r46 = add i32 %r110,1
     br label %L14
 L20:  ;
     %r121 = phi i32 [0,%L4],[%r79,%L21]
     %r62 = icmp slt i32 %r121,%r1
     br i1 %r62, label %L21, label %L22
-L21:  ;
+L21:  ;latch
     %r64 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r121
     %r65 = call i32 @getint()
     store i32 %r65, ptr %r64

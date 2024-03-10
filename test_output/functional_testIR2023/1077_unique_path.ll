@@ -31,7 +31,7 @@ L5:  ;
     %r98 = phi i32 [0,%L3],[%r31,%L6]
     %r19 = icmp slt i32 %r98,%r0
     br i1 %r19, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r22 = mul i32 %r98,3
     %r24 = add i32 %r22,%r1
     %r26 = sub i32 %r24,1
@@ -45,7 +45,7 @@ L8:  ;
     %r99 = phi i32 [0,%L7],[%r47,%L9]
     %r35 = icmp slt i32 %r99,%r1
     br i1 %r35, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r38 = sub i32 %r0,1
     %r40 = mul i32 %r38,3
     %r42 = add i32 %r40,%r99
@@ -71,7 +71,7 @@ L14:  ;
     %r97 = phi i32 [%r57,%L12],[%r89,%L15]
     %r61 = icmp sgt i32 %r97,-1
     br i1 %r61, label %L15, label %L16
-L15:  ;
+L15:  ;latch
     %r64 = mul i32 %r100,3
     %r66 = add i32 %r64,%r97
     %r67 = getelementptr [9 x i32], ptr %r11, i32 0, i32 %r66
@@ -87,7 +87,7 @@ L15:  ;
     store i32 %r86, ptr %r67
     %r89 = sub i32 %r97,1
     br label %L14
-L16:  ;
+L16:  ;latch
     %r92 = sub i32 %r100,1
     br label %L11
 }

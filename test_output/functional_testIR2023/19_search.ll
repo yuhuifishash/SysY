@@ -33,8 +33,8 @@ L2:  ;
 L3:  ;
     br label %L4
 L4:  ;
-    %r129 = phi i32 [1073741824,%L3],[%r129,%L17],[%r129,%L20],[%r128,%L27]
-    %r127 = phi i32 [0,%L3],[%r62,%L17],[%r81,%L20],[%r115,%L27]
+    %r129 = phi i32 [1073741824,%L3],[%r130,%L30]
+    %r127 = phi i32 [0,%L3],[%r131,%L30]
     %r16 = icmp slt i32 %r127,4
     br i1 %r16, label %L5, label %L6
 L5:  ;
@@ -60,7 +60,7 @@ L9:  ;
     br i1 %r52, label %L16, label %L15
 L10:  ;
     br label %L9
-L11:  ;
+L11:  ;latch
     %r38 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
     %r39 = load i32, ptr %r38
     %r40 = add i32 %r124,%r39
@@ -84,13 +84,13 @@ L16:  ;
     br i1 %r55, label %L14, label %L15
 L17:  ;
     %r62 = add i32 %r127,1
-    br label %L4
+    br label %L30
 L18:  ;
     %r65 = icmp eq i32 %r124,0
     br i1 %r65, label %L20, label %L24
 L20:  ;
     %r81 = add i32 %r127,1
-    br label %L4
+    br label %L30
 L21:  ;
     store i32 0, ptr %r25
     %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
@@ -123,11 +123,15 @@ L27:  ;
     %r128 = phi i32 [%r129,%L21],[%r104,%L26]
     store i32 1, ptr %r25
     %r115 = add i32 %r127,1
-    br label %L4
+    br label %L30
 L28:  ;
     ret i32 1073741824
 L29:  ;
     ret i32 %r129
+L30:  ;latch
+    %r130 = phi i32 [%r129,%L17],[%r129,%L20],[%r128,%L27]
+    %r131 = phi i32 [%r62,%L17],[%r81,%L20],[%r115,%L27]
+    br label %L4
 }
 define i32 @main()
 {
@@ -159,12 +163,12 @@ L8:  ;
     %r79 = phi i32 [0,%L6],[%r23,%L9]
     %r16 = icmp slt i32 %r79,30
     br i1 %r16, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r19 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r83, i32 %r79
     store i32 1, ptr %r19
     %r23 = add i32 %r79,1
     br label %L8
-L10:  ;
+L10:  ;latch
     %r26 = add i32 %r83,1
     br label %L5
 L11:  ;
@@ -192,7 +196,7 @@ L15:  ;
     %r42 = load i32, ptr %r37
     %r44 = icmp eq i32 %r42,2
     br i1 %r44, label %L17, label %L18
-L16:  ;
+L16:  ;latch
     %r60 = add i32 %r84,1
     br label %L11
 L17:  ;
@@ -203,7 +207,7 @@ L18:  ;
     %r50 = load i32, ptr %r37
     %r52 = icmp eq i32 %r50,3
     br i1 %r52, label %L20, label %L21
-L19:  ;
+L19:  ;latch
     %r57 = add i32 %r81,1
     br label %L14
 L20:  ;
@@ -220,7 +224,7 @@ L23:  ;
     call void @putint(i32 -1)
     call void @putch(i32 10)
     br label %L24
-L24:  ;
+L24:  ;latch
     %r74 = call i32 @getint()
     store i32 %r74, ptr @w
     %r75 = call i32 @getint()

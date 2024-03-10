@@ -26,7 +26,7 @@ L2:  ;
     %r13 = load i32, ptr @M
     %r14 = icmp slt i32 %r46,%r13
     br i1 %r14, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r16 = getelementptr float, ptr %r6, i32 %r46
     %r18 = getelementptr float, ptr %r0, i32 %r46
     %r19 = load float, ptr %r18
@@ -76,7 +76,7 @@ L2:  ;
     %r16 = load i32, ptr @M
     %r17 = icmp slt i32 %r102,%r16
     br i1 %r17, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r19 = getelementptr [3 x float], ptr %r3, i32 0, i32 %r102
     %r21 = sitofp i32 %r102 to float
     store float %r21, ptr %r19
@@ -109,7 +109,7 @@ L5:  ;
     %r58 = load i32, ptr @N
     %r59 = icmp slt i32 %r103,%r58
     br i1 %r59, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r61 = getelementptr [6 x float], ptr %r9, i32 0, i32 %r103
     %r62 = load float, ptr %r61
     %r63 = fptosi float %r62 to i32
@@ -124,7 +124,7 @@ L8:  ;
     %r72 = load i32, ptr @N
     %r73 = icmp slt i32 %r104,%r72
     br i1 %r73, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r75 = getelementptr [3 x float], ptr %r10, i32 0, i32 %r104
     %r76 = load float, ptr %r75
     %r77 = fptosi float %r76 to i32
@@ -139,7 +139,7 @@ L11:  ;
     %r86 = load i32, ptr @N
     %r87 = icmp slt i32 %r105,%r86
     br i1 %r87, label %L12, label %L13
-L12:  ;
+L12:  ;latch
     %r89 = getelementptr [3 x float], ptr %r11, i32 0, i32 %r105
     %r90 = load float, ptr %r89
     %r91 = fptosi float %r90 to i32

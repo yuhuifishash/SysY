@@ -166,7 +166,7 @@ L12:  ;
     %r29 = load i32, ptr @width
     %r30 = icmp slt i32 %r46,%r29
     br i1 %r30, label %L13, label %L14
-L13:  ;
+L13:  ;latch
     %r32 = load i32, ptr @width
     %r33 = mul i32 %r47,%r32
     %r35 = add i32 %r33,%r46
@@ -175,7 +175,7 @@ L13:  ;
     store i32 %r37, ptr %r36
     %r40 = add i32 %r46,1
     br label %L12
-L14:  ;
+L14:  ;latch
     %r43 = add i32 %r47,1
     br label %L9
 }
@@ -260,13 +260,13 @@ L5:  ;
     %r19 = load i32, ptr @width
     %r20 = icmp slt i32 %r34,%r19
     br i1 %r20, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r24 = call i32 @rotate(i32 %r34,i32 %r35,float %r0)
     call void @putint(i32 %r24)
     call void @putch(i32 32)
     %r28 = add i32 %r34,1
     br label %L5
-L7:  ;
+L7:  ;latch
     call void @putch(i32 10)
     %r32 = add i32 %r35,1
     br label %L2

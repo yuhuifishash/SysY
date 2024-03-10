@@ -78,7 +78,7 @@ L9:  ;
 L10:  ;
     %r31 = call i32 @inc_a()
     br label %L11
-L11:  ;
+L11:  ;latch
     %r40 = phi i32 [%r41,%L9],[%r41,%L10]
     %r34 = sub i32 %r40,1
     br label %L2

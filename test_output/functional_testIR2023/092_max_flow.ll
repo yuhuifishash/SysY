@@ -28,7 +28,7 @@ L2:  ;
     %r16 = phi i32 [0,%L1],[%r15,%L3]
     %r9 = icmp slt i32 %r16,%r2
     br i1 %r9, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r11 = getelementptr i32, ptr %r0, i32 %r16
     store i32 %r1, ptr %r11
     %r15 = add i32 %r16,1
@@ -77,7 +77,7 @@ L3:  ;
     store i32 1, ptr %r11
     br label %L4
 L4:  ;
-    %r100 = phi i32 [0,%L3],[%r29,%L7],[%r38,%L10],[%r96,%L17]
+    %r100 = phi i32 [0,%L3],[%r101,%L18]
     %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r18 = load i32, ptr %r17
     %r19 = icmp slt i32 %r100,%r18
@@ -93,7 +93,7 @@ L6:  ;
     ret i32 0
 L7:  ;
     %r29 = add i32 %r100,1
-    br label %L4
+    br label %L18
 L8:  ;
     %r32 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
     %r33 = load i32, ptr %r32
@@ -101,7 +101,7 @@ L8:  ;
     br i1 %r35, label %L10, label %L11
 L10:  ;
     %r38 = add i32 %r100,1
-    br label %L4
+    br label %L18
 L11:  ;
     %r45 = load i32, ptr %r32
     %r46 = icmp slt i32 %r2,%r45
@@ -131,6 +131,9 @@ L16:  ;
     ret i32 %r59
 L17:  ;
     %r96 = add i32 %r100,1
+    br label %L18
+L18:  ;latch
+    %r101 = phi i32 [%r29,%L7],[%r38,%L10],[%r96,%L17]
     br label %L4
 }
 define i32 @max_flow(i32 %r0,i32 %r1)
@@ -150,7 +153,7 @@ L3:  ;
     br i1 %r18, label %L5, label %L6
 L5:  ;
     ret i32 %r23
-L6:  ;
+L6:  ;latch
     %r22 = add i32 %r23,%r15
     br label %L2
 }
@@ -168,7 +171,7 @@ L2:  ;
     %r31 = phi i32 [%r5,%L1],[%r25,%L3]
     %r11 = icmp sgt i32 %r31,0
     br i1 %r11, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r16 = call i32 @getint()
     %r17 = call i32 @getint()
     %r19 = call i32 @getint()

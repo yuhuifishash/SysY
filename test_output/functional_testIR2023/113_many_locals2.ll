@@ -24,7 +24,7 @@ L2:  ;
     %r196 = phi i32 [%r62,%L1],[%r68,%L3]
     %r65 = icmp eq i32 %r196,5
     br i1 %r65, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r68 = add i32 %r196,1
     br label %L2
 L4:  ;

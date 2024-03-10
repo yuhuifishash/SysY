@@ -122,7 +122,7 @@ L5:  ;
     br i1 %r14, label %L6, label %L7
 L6:  ;
     br label %L8
-L7:  ;
+L7:  ;latch
     %r180 = add i32 %r562,1
     br label %L2
 L8:  ;
@@ -132,7 +132,7 @@ L8:  ;
     br i1 %r19, label %L9, label %L10
 L9:  ;
     br label %L11
-L10:  ;
+L10:  ;latch
     %r177 = add i32 %r561,1
     br label %L5
 L11:  ;
@@ -142,7 +142,7 @@ L11:  ;
     br i1 %r24, label %L12, label %L13
 L12:  ;
     br label %L14
-L13:  ;
+L13:  ;latch
     %r174 = add i32 %r559,1
     br label %L8
 L14:  ;
@@ -152,7 +152,7 @@ L14:  ;
     br i1 %r29, label %L15, label %L16
 L15:  ;
     br label %L17
-L16:  ;
+L16:  ;latch
     %r171 = add i32 %r556,1
     br label %L11
 L17:  ;
@@ -162,7 +162,7 @@ L17:  ;
     br i1 %r34, label %L18, label %L19
 L18:  ;
     br label %L20
-L19:  ;
+L19:  ;latch
     %r168 = add i32 %r552,1
     br label %L14
 L20:  ;
@@ -172,7 +172,7 @@ L20:  ;
     br i1 %r39, label %L21, label %L22
 L21:  ;
     br label %L23
-L22:  ;
+L22:  ;latch
     %r165 = add i32 %r547,1
     br label %L17
 L23:  ;
@@ -182,7 +182,7 @@ L23:  ;
     br i1 %r44, label %L24, label %L25
 L24:  ;
     br label %L26
-L25:  ;
+L25:  ;latch
     %r162 = add i32 %r541,1
     br label %L20
 L26:  ;
@@ -192,7 +192,7 @@ L26:  ;
     br i1 %r49, label %L27, label %L28
 L27:  ;
     br label %L29
-L28:  ;
+L28:  ;latch
     %r159 = add i32 %r534,1
     br label %L23
 L29:  ;
@@ -202,7 +202,7 @@ L29:  ;
     br i1 %r54, label %L30, label %L31
 L30:  ;
     br label %L32
-L31:  ;
+L31:  ;latch
     %r156 = add i32 %r526,1
     br label %L26
 L32:  ;
@@ -212,7 +212,7 @@ L32:  ;
     br i1 %r59, label %L33, label %L34
 L33:  ;
     br label %L35
-L34:  ;
+L34:  ;latch
     %r153 = add i32 %r517,1
     br label %L29
 L35:  ;
@@ -222,7 +222,7 @@ L35:  ;
     br i1 %r64, label %L36, label %L37
 L36:  ;
     br label %L38
-L37:  ;
+L37:  ;latch
     %r150 = add i32 %r507,1
     br label %L32
 L38:  ;
@@ -232,7 +232,7 @@ L38:  ;
     br i1 %r69, label %L39, label %L40
 L39:  ;
     br label %L41
-L40:  ;
+L40:  ;latch
     %r147 = add i32 %r496,1
     br label %L35
 L41:  ;
@@ -242,7 +242,7 @@ L41:  ;
     br i1 %r74, label %L42, label %L43
 L42:  ;
     br label %L44
-L43:  ;
+L43:  ;latch
     %r144 = add i32 %r484,1
     br label %L38
 L44:  ;
@@ -252,7 +252,7 @@ L44:  ;
     br i1 %r79, label %L45, label %L46
 L45:  ;
     br label %L47
-L46:  ;
+L46:  ;latch
     %r141 = add i32 %r471,1
     br label %L41
 L47:  ;
@@ -262,7 +262,7 @@ L47:  ;
     br i1 %r84, label %L48, label %L49
 L48:  ;
     br label %L50
-L49:  ;
+L49:  ;latch
     %r138 = add i32 %r457,1
     br label %L44
 L50:  ;
@@ -272,7 +272,7 @@ L50:  ;
     br i1 %r89, label %L51, label %L52
 L51:  ;
     br label %L53
-L52:  ;
+L52:  ;latch
     %r135 = add i32 %r442,1
     br label %L47
 L53:  ;
@@ -282,7 +282,7 @@ L53:  ;
     br i1 %r94, label %L54, label %L55
 L54:  ;
     br label %L56
-L55:  ;
+L55:  ;latch
     %r132 = add i32 %r426,1
     br label %L50
 L56:  ;
@@ -290,13 +290,13 @@ L56:  ;
     %r391 = phi i32 [0,%L54],[%r126,%L57]
     %r99 = icmp slt i32 %r391,2
     br i1 %r99, label %L57, label %L58
-L57:  ;
+L57:  ;latch
     %r119 = getelementptr [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x i32]]]]]]]]]]]]]]]]]]], ptr %r0, i32 0, i32 %r562, i32 %r561, i32 %r559, i32 %r556, i32 %r552, i32 %r547, i32 %r541, i32 %r534, i32 %r526, i32 %r517, i32 %r507, i32 %r496, i32 %r484, i32 %r471, i32 %r457, i32 %r442, i32 %r426, i32 %r409, i32 %r391
     store i32 %r563, ptr %r119
     %r123 = add i32 %r563,1
     %r126 = add i32 %r391,1
     br label %L56
-L58:  ;
+L58:  ;latch
     %r129 = add i32 %r409,1
     br label %L53
 }

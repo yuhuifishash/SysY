@@ -118,7 +118,7 @@ L2:  ;
     %r125 = phi i32 [0,%L1],[%r19,%L3]
     %r13 = icmp slt i32 %r125,10
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r15 = getelementptr [10 x i32], ptr %r8, i32 0, i32 %r125
     %r16 = call i32 @getint()
     store i32 %r16, ptr %r15

@@ -148,8 +148,35 @@ LLVMBlock CFG::NewBlock()
     return GetBlock(max_label);
 }
 
-void CFG::InsertTransferBlock(std::vector<LLVMBlock>& from, LLVMBlock to)
+LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to)
 {
+    auto midBB = NewBlock();
+        
+    for(auto I:to->Instruction_list){
+        if(I->GetOpcode() != PHI){break;}
+        auto PhiI = (PhiInstruction*)I;
+        auto midI = new PhiInstruction(PhiI->GetDataType(),new RegOperand(++max_reg));
+        for(auto from:froms){
+            midI->InsertPhi(PhiI->GetValOperand(from->block_id),new LabelOperand(from->block_id));
+            PhiI->ErasePhi(from->block_id);
+        }
+        PhiI->InsertPhi(new RegOperand(max_reg), new LabelOperand(midBB->block_id));
+        midBB->InsertInstruction(1,midI);  
+    }
+    midBB->InsertInstruction(1,new BrUncondInstruction(new LabelOperand(to->block_id)));
 
+    for(auto from:froms){
+        assert(from->Instruction_list.size() >= 1);
+        auto I = *(from->Instruction_list.end() - 1);
+        if(I->GetOpcode() == BR_UNCOND){
+            auto BrUnCondI = (BrUncondInstruction*)I;
+            BrUnCondI->SetTarget(new LabelOperand(midBB->block_id));
+        }else if(I->GetOpcode() == BR_COND){
+            auto BrCondI = (BrCondInstruction*)I;
+            BrCondI->SetNewTarget(from->block_id, midBB->block_id);
+        }
+    }
+
+    return midBB;
 }
 

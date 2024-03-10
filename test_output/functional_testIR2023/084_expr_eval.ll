@@ -69,7 +69,7 @@ L2:  ;
     %r1 = call i32 @is_space(i32 %r0)
     %r2 = icmp ne i32 %r1,0
     br i1 %r2, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r3 = call i32 @next_char()
     br label %L2
 L4:  ;
@@ -96,7 +96,7 @@ L8:  ;
     %r11 = call i32 @is_num(i32 %r10)
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r13 = load i32, ptr @num
     %r15 = mul i32 %r13,10
     %r16 = load i32, ptr @last_char
@@ -275,7 +275,7 @@ L10:  ;
     %r19 = call i32 @stack_size(ptr %r18)
     %r20 = icmp ne i32 %r19,0
     br i1 %r20, label %L13, label %L12
-L11:  ;
+L11:  ;latch
     %r29 = call i32 @stack_pop(ptr %r18)
     %r32 = call i32 @stack_pop(ptr %r6)
     %r35 = call i32 @stack_pop(ptr %r6)
@@ -295,7 +295,7 @@ L13:  ;
 L14:  ;
     %r46 = call i32 @panic()
     ret i32 %r46
-L15:  ;
+L15:  ;latch
     %r48 = load i32, ptr @num
     call void @stack_push(ptr %r6,i32 %r48)
     %r49 = call i32 @next_token()
@@ -305,7 +305,7 @@ L16:  ;
     %r52 = call i32 @stack_size(ptr %r51)
     %r53 = icmp ne i32 %r52,0
     br i1 %r53, label %L17, label %L18
-L17:  ;
+L17:  ;latch
     %r56 = call i32 @stack_pop(ptr %r51)
     %r59 = call i32 @stack_pop(ptr %r6)
     %r62 = call i32 @stack_pop(ptr %r6)
@@ -329,7 +329,7 @@ L2:  ;
     %r12 = phi i32 [%r1,%L1],[%r10,%L3]
     %r5 = icmp ne i32 %r12,0
     br i1 %r5, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r6 = call i32 @eval()
     call void @putint(i32 %r6)
     call void @putch(i32 10)

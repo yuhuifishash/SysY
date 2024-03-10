@@ -28,7 +28,7 @@ L2:  ;
     %r16 = phi i32 [0,%L1],[%r12,%L3]
     %r6 = icmp slt i32 %r16,%r3
     br i1 %r6, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r8 = getelementptr [32768 x i32], ptr @program, i32 0, i32 %r16
     %r9 = call i32 @getch()
     store i32 %r9, ptr %r8
@@ -66,7 +66,7 @@ L5:  ;
 L6:  ;
     %r22 = icmp eq i32 %r13,60
     br i1 %r22, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     %r105 = phi i32 [%r106,%L5],[%r104,%L10]
     %r98 = phi i32 [%r90,%L5],[%r97,%L10]
     %r89 = add i32 %r98,1
@@ -168,7 +168,7 @@ L29:  ;
 L30:  ;
     %r83 = icmp eq i32 %r74,93
     br i1 %r83, label %L32, label %L33
-L31:  ;
+L31:  ;latch
     %r107 = phi i32 [%r80,%L29],[%r109,%L33]
     br label %L26
 L32:  ;

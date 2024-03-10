@@ -417,6 +417,7 @@ public:
     
     //erase the val from label_id
     void ErasePhi(int label_id);
+    Operand GetValOperand(int label_id);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
@@ -482,6 +483,7 @@ public:
     void SetCond(Operand r1){cond = r1;}
     void SetTrueLabel(Operand l1){trueLabel = l1;}
     void SetFalseLabel(Operand l1){falseLabel = l1;}
+    void SetNewTarget(int oldlabel,int newlabel);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();

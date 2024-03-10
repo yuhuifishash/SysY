@@ -33,7 +33,7 @@ L5:  ;
 L6:  ;
     %r15 = icmp eq i32 %r27,10
     br i1 %r15, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     %r24 = phi i32 [25,%L5],[%r26,%L10]
     %r22 = add i32 %r27,1
     br label %L2

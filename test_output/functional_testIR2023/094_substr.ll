@@ -60,7 +60,7 @@ L6:  ;
     %r28 = load i32, ptr %r27
     %r29 = icmp eq i32 %r23,%r28
     br i1 %r29, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     %r64 = add i32 %r71,1
     br label %L2
 L8:  ;
@@ -79,7 +79,7 @@ L9:  ;
     %r58 = call i32 @MAX(i32 %r51,i32 %r57)
     store i32 %r58, ptr %r45
     br label %L10
-L10:  ;
+L10:  ;latch
     %r61 = add i32 %r70,1
     br label %L5
 }
@@ -104,7 +104,7 @@ L2:  ;
     %r48 = phi i32 [2,%L1],[%r42,%L3]
     %r22 = icmp slt i32 %r48,%r1
     br i1 %r22, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r24 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r48
     %r27 = sub i32 %r48,2
     %r28 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r27

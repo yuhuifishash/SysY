@@ -29,7 +29,7 @@ L3:  ;
 L4:  ;
     %r34 = phi i32 [%r8,%L6]
     br label %L11
-L5:  ;
+L5:  ;latch
     br label %L2
 L6:  ;
     br label %L4
@@ -52,7 +52,7 @@ L14:  ;
     br label %L16
 L15:  ;
     br label %L13
-L16:  ;
+L16:  ;latch
     br label %L11
 L17:  ;
     %r26 = icmp sle i32 %r20,9
@@ -70,7 +70,7 @@ L2:  ;
     %r30 = phi i32 [0,%L1],[%r20,%L3]
     %r7 = icmp sgt i32 %r32,0
     br i1 %r7, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r9 = getelementptr [16 x i32], ptr %r2, i32 0, i32 %r30
     %r12 = srem i32 %r32,10
     %r14 = add i32 %r12,48
@@ -84,7 +84,7 @@ L5:  ;
     %r31 = phi i32 [%r30,%L4],[%r26,%L6]
     %r23 = icmp sgt i32 %r31,0
     br i1 %r23, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r26 = sub i32 %r31,1
     %r28 = getelementptr [16 x i32], ptr %r2, i32 0, i32 %r26
     %r29 = load i32, ptr %r28
@@ -104,7 +104,7 @@ L2:  ;
     %r13 = phi i32 [%r1,%L1],[%r11,%L3]
     %r4 = icmp sgt i32 %r13,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r6 = call i32 @my_getint()
     call void @my_putint(i32 %r6)
     call void @putch(i32 10)

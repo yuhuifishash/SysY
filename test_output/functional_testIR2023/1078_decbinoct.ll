@@ -24,7 +24,7 @@ L2:  ;
     %r31 = phi i32 [%r0,%L1],[%r29,%L3]
     %r15 = icmp ne i32 %r31,0
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r18 = srem i32 %r31,2
     %r21 = mul i32 %r33,%r18
     %r23 = add i32 %r21,%r34

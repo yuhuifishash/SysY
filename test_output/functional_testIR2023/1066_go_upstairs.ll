@@ -35,7 +35,7 @@ L4:  ;
     %r22 = add i32 %r0,1
     %r23 = icmp slt i32 %r43,%r22
     br i1 %r23, label %L5, label %L6
-L5:  ;
+L5:  ;latch
     %r25 = getelementptr [10 x i32], ptr %r6, i32 0, i32 %r43
     %r28 = sub i32 %r43,1
     %r29 = getelementptr [10 x i32], ptr %r6, i32 0, i32 %r28

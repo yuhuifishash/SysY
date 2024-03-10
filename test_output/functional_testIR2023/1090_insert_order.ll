@@ -25,7 +25,7 @@ L2:  ;
     %r11 = load i32, ptr %r10
     %r12 = icmp sgt i32 %r1,%r11
     br i1 %r12, label %L5, label %L4
-L3:  ;
+L3:  ;latch
     %r18 = add i32 %r38,1
     br label %L2
 L4:  ;
@@ -39,7 +39,7 @@ L6:  ;
     %r37 = phi i32 [%r19,%L4],[%r27,%L7]
     %r22 = icmp sgt i32 %r37,%r38
     br i1 %r22, label %L7, label %L8
-L7:  ;
+L7:  ;latch
     %r24 = getelementptr i32, ptr %r0, i32 %r37
     %r27 = sub i32 %r37,1
     %r28 = getelementptr i32, ptr %r0, i32 %r27
@@ -86,7 +86,7 @@ L2:  ;
     %r42 = load i32, ptr @N
     %r43 = icmp slt i32 %r54,%r42
     br i1 %r43, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r45 = getelementptr [11 x i32], ptr %r1, i32 0, i32 %r54
     %r46 = load i32, ptr %r45
     call void @putint(i32 %r46)

@@ -25,7 +25,7 @@ L2:  ;
     %r11 = sub i32 %r25,%r24
     %r13 = icmp ne i32 %r11,0
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r18 = sdiv i32 %r0,%r24
     %r19 = add i32 %r24,%r18
     %r22 = sdiv i32 %r19,2

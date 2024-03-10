@@ -38,7 +38,7 @@ L2:  ;
     %r52 = phi i32 [%r11,%L1],[%r25,%L3]
     %r15 = icmp sgt i32 %r52,-1
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r18 = sub i32 %r1,1
     %r19 = getelementptr i32, ptr %r0
     %r22 = call i32 @heap_ajust(ptr %r19,i32 %r52,i32 %r18)
@@ -51,7 +51,7 @@ L5:  ;
     %r53 = phi i32 [%r28,%L4],[%r41,%L6]
     %r31 = icmp sgt i32 %r53,0
     br i1 %r31, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r35 = getelementptr i32, ptr %r0
     %r38 = call i32 @swap(ptr %r35,i32 0,i32 %r53)
     %r41 = sub i32 %r53,1
@@ -105,7 +105,7 @@ L9:  ;
     %r50 = mul i32 %r54,2
     %r52 = add i32 %r50,1
     br label %L10
-L10:  ;
+L10:  ;latch
     br label %L2
 }
 define i32 @main()
@@ -144,7 +144,7 @@ L2:  ;
     %r39 = load i32, ptr @n
     %r40 = icmp slt i32 %r53,%r39
     br i1 %r40, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r44 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r53
     %r45 = load i32, ptr %r44
     call void @putint(i32 %r45)

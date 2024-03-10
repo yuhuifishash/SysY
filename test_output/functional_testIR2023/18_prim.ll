@@ -42,7 +42,7 @@ L5:  ;
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
-L7:  ;
+L7:  ;latch
     %r36 = phi i32 [%r37,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
@@ -51,7 +51,7 @@ L8:  ;
     %r38 = phi i32 [0,%L4],[%r29,%L9]
     %r19 = icmp sge i32 %r40,48
     br i1 %r19, label %L11, label %L10
-L9:  ;
+L9:  ;latch
     %r25 = mul i32 %r38,10
     %r27 = add i32 %r25,%r40
     %r29 = sub i32 %r27,48
@@ -128,7 +128,7 @@ L6:  ;
     %r17 = load i32, ptr %r16
     %r18 = icmp sgt i32 %r14,%r17
     br i1 %r18, label %L8, label %L9
-L7:  ;
+L7:  ;latch
     br label %L2
 L8:  ;
     %r21 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r103
@@ -148,7 +148,7 @@ L8:  ;
     store i32 %r49, ptr %r13
     store i32 %r44, ptr %r16
     br label %L9
-L9:  ;
+L9:  ;latch
     %r55 = add i32 %r102,1
     br label %L5
 L10:  ;
@@ -156,7 +156,7 @@ L10:  ;
     %r61 = load i32, ptr @n
     %r62 = icmp sle i32 %r104,%r61
     br i1 %r62, label %L11, label %L12
-L11:  ;
+L11:  ;latch
     %r64 = getelementptr [1005 x i32], ptr @fa, i32 0, i32 %r104
     store i32 %r104, ptr %r64
     %r68 = add i32 %r104,1
@@ -164,8 +164,8 @@ L11:  ;
 L12:  ;
     br label %L13
 L13:  ;
-    %r105 = phi i32 [0,%L12],[%r105,%L16],[%r98,%L17]
-    %r100 = phi i32 [0,%L12],[%r100,%L16],[%r87,%L17]
+    %r105 = phi i32 [0,%L12],[%r106,%L19]
+    %r100 = phi i32 [0,%L12],[%r107,%L19]
     %r73 = load i32, ptr @m
     %r74 = icmp slt i32 %r105,%r73
     br i1 %r74, label %L14, label %L15
@@ -180,7 +180,7 @@ L14:  ;
 L15:  ;
     ret i32 %r100
 L16:  ;
-    br label %L13
+    br label %L19
 L17:  ;
     %r85 = getelementptr [1005 x i32], ptr @c, i32 0, i32 %r105
     %r86 = load i32, ptr %r85
@@ -191,6 +191,10 @@ L17:  ;
     %r95 = load i32, ptr %r79
     store i32 %r95, ptr %r92
     %r98 = add i32 %r105,1
+    br label %L19
+L19:  ;latch
+    %r106 = phi i32 [%r105,%L16],[%r98,%L17]
+    %r107 = phi i32 [%r100,%L16],[%r87,%L17]
     br label %L13
 }
 define i32 @main()
@@ -205,7 +209,7 @@ L2:  ;
     %r22 = phi i32 [0,%L1],[%r20,%L3]
     %r8 = icmp slt i32 %r22,%r3
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r10 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r22
     %r11 = call i32 @quick_read()
     store i32 %r11, ptr %r10

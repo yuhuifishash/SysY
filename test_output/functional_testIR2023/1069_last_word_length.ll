@@ -28,7 +28,7 @@ L4:  ;
     %r59 = phi i32 [%r11,%L3],[%r23,%L5]
     %r15 = icmp sgt i32 %r59,-1
     br i1 %r15, label %L7, label %L6
-L5:  ;
+L5:  ;latch
     %r23 = sub i32 %r59,1
     br label %L4
 L6:  ;
@@ -61,7 +61,7 @@ L13:  ;
     %r50 = sub i32 %r11,%r59
     %r51 = sub i32 %r45,%r50
     ret i32 %r51
-L14:  ;
+L14:  ;latch
     %r54 = sub i32 %r58,1
     br label %L10
 }

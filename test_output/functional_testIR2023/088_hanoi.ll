@@ -35,7 +35,7 @@ L2:  ;
     %r14 = phi i32 [%r1,%L1],[%r12,%L3]
     %r4 = icmp sgt i32 %r14,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r5 = call i32 @getint()
     call void @hanoi(i32 %r5,i32 1,i32 2,i32 3)
     call void @putch(i32 10)

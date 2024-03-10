@@ -166,7 +166,7 @@ L5:  ;
     %r27 = load i32, ptr %r20
     %r29 = icmp slt i32 %r27,5
     br i1 %r29, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r31 = getelementptr [1 x i32], ptr @i, i32 0, i32 0
     %r32 = load i32, ptr %r31
     call void @putint(i32 %r32)
@@ -194,6 +194,6 @@ L7:  ;
     br i1 %r62, label %L8, label %L9
 L8:  ;
     br label %L4
-L9:  ;
+L9:  ;latch
     br label %L2
 }

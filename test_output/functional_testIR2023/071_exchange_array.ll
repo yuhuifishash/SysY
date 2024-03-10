@@ -74,7 +74,7 @@ L2:  ;
     %r95 = phi i32 [0,%L1],[%r90,%L3]
     %r64 = icmp slt i32 %r95,5
     br i1 %r64, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r69 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 1, i32 %r95
     %r70 = load i32, ptr %r69
     %r80 = getelementptr [5 x [5 x i32]], ptr %r0, i32 0, i32 2, i32 %r95

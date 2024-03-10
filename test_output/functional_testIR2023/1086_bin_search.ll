@@ -23,7 +23,7 @@ L2:  ;
     %r80 = phi i32 [0,%L1],[%r14,%L3]
     %r9 = icmp slt i32 %r80,10
     br i1 %r9, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r11 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r80
     %r14 = add i32 %r80,1
     store i32 %r14, ptr %r11
@@ -59,7 +59,7 @@ L9:  ;
 L10:  ;
     %r62 = add i32 %r51,1
     br label %L11
-L11:  ;
+L11:  ;latch
     %r77 = phi i32 [%r59,%L9],[%r78,%L10]
     %r75 = phi i32 [%r76,%L9],[%r62,%L10]
     br label %L5

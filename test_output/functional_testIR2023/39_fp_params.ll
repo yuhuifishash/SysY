@@ -192,7 +192,7 @@ L5:  ;
     %r353 = phi i32 [0,%L2],[%r283,%L6]
     %r269 = icmp slt i32 %r353,8
     br i1 %r269, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r271 = getelementptr [8 x i32], ptr %r212, i32 0, i32 %r353
     %r274 = load i32, ptr %r271
     %r276 = getelementptr [10 x float], ptr %r131, i32 0, i32 %r353
@@ -607,7 +607,7 @@ L5:  ;
     %r389 = phi i32 [0,%L2],[%r312,%L6]
     %r298 = icmp slt i32 %r389,10
     br i1 %r298, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r300 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r389
     %r303 = load i32, ptr %r300
     %r305 = getelementptr [10 x float], ptr %r99, i32 0, i32 %r389
@@ -642,7 +642,7 @@ L2:  ;
     %r736 = phi i32 [0,%L1],[%r14,%L3]
     %r8 = icmp slt i32 %r736,40
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r10 = getelementptr [40 x [3 x float]], ptr %r0, i32 0, i32 %r736
     %r11 = call i32 @getfarray(ptr %r10)
     %r14 = add i32 %r736,1
@@ -653,7 +653,7 @@ L5:  ;
     %r737 = phi i32 [0,%L4],[%r24,%L6]
     %r18 = icmp slt i32 %r737,24
     br i1 %r18, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r20 = getelementptr [24 x [3 x i32]], ptr %r1, i32 0, i32 %r737
     %r21 = call i32 @getarray(ptr %r20)
     %r24 = add i32 %r737,1

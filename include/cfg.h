@@ -49,12 +49,17 @@ public:
     LLVMBlock NewBlock();
 
     /*B1  \                                   B1  \
-      B2  -> B4   will be transformed to      B2  -> Bnew -> B5
+      B2  -> B4   will be transformed to      B2  -> midB -> B5
       B3  /                                   B3  /
       
-      this function will split the phi instructions 
+      this function will split the phi instructions and return midB
+
+      %3 = phi [%0,L1],[%1,L2],[%2,L3]
+      
+      midB = L4 : %4 = phi [%0,L1],[%1,L2]
+      %3 = phi [%4,L4],[%2,L3]
     */
-    void InsertTransferBlock(std::vector<LLVMBlock>& from, LLVMBlock to);
+    LLVMBlock InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to);
 };
 
 

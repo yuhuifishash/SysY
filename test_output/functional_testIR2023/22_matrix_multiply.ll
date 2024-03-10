@@ -42,7 +42,7 @@ L5:  ;
     br i1 %r9, label %L6, label %L7
 L6:  ;
     br label %L8
-L7:  ;
+L7:  ;latch
     %r40 = add i32 %r46,1
     br label %L2
 L8:  ;
@@ -50,7 +50,7 @@ L8:  ;
     %r13 = load i32, ptr @n1
     %r14 = icmp slt i32 %r43,%r13
     br i1 %r14, label %L9, label %L10
-L9:  ;
+L9:  ;latch
     %r17 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r46, i32 %r45
     %r21 = load i32, ptr %r17
     %r24 = getelementptr [100 x [100 x i32]], ptr @a, i32 0, i32 %r46, i32 %r43
@@ -62,7 +62,7 @@ L9:  ;
     store i32 %r31, ptr %r17
     %r34 = add i32 %r43,1
     br label %L8
-L10:  ;
+L10:  ;latch
     %r37 = add i32 %r45,1
     br label %L5
 }
@@ -94,13 +94,13 @@ L5:  ;
     %r12 = load i32, ptr @n1
     %r13 = icmp slt i32 %r66,%r12
     br i1 %r13, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r16 = getelementptr [100 x [100 x i32]], ptr @a, i32 0, i32 %r71, i32 %r66
     %r17 = call i32 @getint()
     store i32 %r17, ptr %r16
     %r20 = add i32 %r66,1
     br label %L5
-L7:  ;
+L7:  ;latch
     %r23 = add i32 %r71,1
     br label %L2
 L8:  ;
@@ -118,13 +118,13 @@ L11:  ;
     %r32 = load i32, ptr @n2
     %r33 = icmp slt i32 %r68,%r32
     br i1 %r33, label %L12, label %L13
-L12:  ;
+L12:  ;latch
     %r36 = getelementptr [100 x [100 x i32]], ptr @b, i32 0, i32 %r72, i32 %r68
     %r37 = call i32 @getint()
     store i32 %r37, ptr %r36
     %r40 = add i32 %r68,1
     br label %L11
-L13:  ;
+L13:  ;latch
     %r43 = add i32 %r72,1
     br label %L8
 L14:  ;
@@ -141,14 +141,14 @@ L17:  ;
     %r50 = load i32, ptr @n2
     %r51 = icmp slt i32 %r70,%r50
     br i1 %r51, label %L18, label %L19
-L18:  ;
+L18:  ;latch
     %r54 = getelementptr [100 x [100 x i32]], ptr @res, i32 0, i32 %r73, i32 %r70
     %r55 = load i32, ptr %r54
     call void @putint(i32 %r55)
     call void @putch(i32 32)
     %r59 = add i32 %r70,1
     br label %L17
-L19:  ;
+L19:  ;latch
     call void @putch(i32 10)
     %r63 = add i32 %r73,1
     br label %L14

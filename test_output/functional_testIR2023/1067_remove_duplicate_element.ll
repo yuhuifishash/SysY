@@ -39,7 +39,7 @@ L5:  ;
 L6:  ;
     %r28 = add i32 %r31,1
     br label %L7
-L7:  ;
+L7:  ;latch
     %r32 = phi i32 [%r20,%L5],[%r33,%L6]
     %r30 = phi i32 [%r31,%L5],[%r28,%L6]
     br label %L2

@@ -50,7 +50,7 @@ L7:  ;
     br label %L11
 L8:  ;
     br label %L7
-L9:  ;
+L9:  ;latch
     %r27 = add i32 %r72,1
     br label %L5
 L11:  ;
@@ -62,7 +62,7 @@ L12:  ;
     %r45 = load i32, ptr %r44
     %r46 = icmp ne i32 %r45,0
     br i1 %r46, label %L14, label %L15
-L13:  ;
+L13:  ;latch
     %r59 = add i32 %r74,1
     br label %L2
 L14:  ;
@@ -71,14 +71,14 @@ L14:  ;
     %r53 = sub i32 %r51,1
     store i32 %r53, ptr %r48
     br label %L15
-L15:  ;
+L15:  ;latch
     %r56 = add i32 %r73,1
     br label %L11
 L16:  ;
     %r75 = phi i32 [0,%L4],[%r70,%L17]
     %r63 = icmp slt i32 %r75,%r0
     br i1 %r63, label %L17, label %L18
-L17:  ;
+L17:  ;latch
     %r65 = getelementptr [10 x i32], ptr @queue, i32 0, i32 %r75
     %r66 = load i32, ptr %r65
     call void @putint(i32 %r66)
@@ -108,7 +108,7 @@ L5:  ;
     %r33 = phi i32 [%r10,%L3],[%r25,%L6]
     %r13 = icmp ne i32 %r33,0
     br i1 %r13, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r16 = getelementptr [10 x [10 x i32]], ptr @map, i32 0, i32 %r31, i32 %r33
     store i32 1, ptr %r16
     %r19 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r33
@@ -117,7 +117,7 @@ L6:  ;
     store i32 %r24, ptr %r19
     %r25 = call i32 @getint()
     br label %L5
-L7:  ;
+L7:  ;latch
     %r28 = add i32 %r31,1
     br label %L2
 }

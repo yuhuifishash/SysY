@@ -28,7 +28,7 @@ L2:  ;
     %r6 = load i32, ptr %r5
     %r7 = icmp ne i32 %r6,0
     br i1 %r7, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r10 = load i32, ptr %r5
     call void @putch(i32 %r10)
     %r13 = add i32 %r15,1
@@ -72,6 +72,6 @@ L6:  ;
     br i1 %r36, label %L7, label %L8
 L7:  ;
     br label %L4
-L8:  ;
+L8:  ;latch
     br label %L2
 }

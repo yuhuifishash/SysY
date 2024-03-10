@@ -26,7 +26,7 @@ L2:  ;
     %r150 = phi i32 [1,%L1],[%r39,%L3]
     %r15 = icmp sle i32 %r150,%r10
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r16 = call i32 @getint()
     %r20 = srem i32 %r16,2
     %r21 = getelementptr [1005 x [2 x i32]], ptr @t, i32 0, i32 %r150, i32 %r20
@@ -70,7 +70,7 @@ L9:  ;
     %r79 = add i32 %r70,%r61
     %r80 = icmp sgt i32 %r62,%r79
     br i1 %r80, label %L11, label %L12
-L10:  ;
+L10:  ;latch
     %r124 = add i32 %r151,1
     br label %L5
 L11:  ;
@@ -87,7 +87,7 @@ L12:  ;
     %r118 = add i32 %r109,%r117
     store i32 %r118, ptr %r101
     br label %L13
-L13:  ;
+L13:  ;latch
     br label %L8
 L14:  ;
     %r149 = phi i32 [0,%L7],[%r143,%L18]
@@ -104,7 +104,7 @@ L16:  ;
 L17:  ;
     %r140 = load i32, ptr %r134
     br label %L18
-L18:  ;
+L18:  ;latch
     %r145 = phi i32 [%r146,%L15],[%r140,%L17]
     %r143 = add i32 %r149,1
     br label %L14

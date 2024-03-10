@@ -43,7 +43,7 @@ L5:  ;
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
-L7:  ;
+L7:  ;latch
     %r36 = phi i32 [%r37,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
@@ -52,7 +52,7 @@ L8:  ;
     %r38 = phi i32 [0,%L4],[%r29,%L9]
     %r19 = icmp sge i32 %r40,48
     br i1 %r19, label %L11, label %L10
-L9:  ;
+L9:  ;latch
     %r25 = mul i32 %r38,10
     %r27 = add i32 %r25,%r40
     %r29 = sub i32 %r27,48
@@ -102,7 +102,7 @@ L2:  ;
     %r6 = load i32, ptr @n
     %r7 = icmp sle i32 %r15,%r6
     br i1 %r7, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r9 = getelementptr [10005 x i32], ptr @head, i32 0, i32 %r15
     store i32 -1, ptr %r9
     %r14 = add i32 %r15,1
@@ -124,7 +124,7 @@ L2:  ;
     %r12 = load i32, ptr %r11
     %r13 = icmp ne i32 %r12,0
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r17 = add i32 %r47,1
     %r18 = getelementptr [10005 x [20 x i32]], ptr @f, i32 0, i32 %r0, i32 %r17
     %r22 = load i32, ptr %r11
@@ -140,7 +140,7 @@ L5:  ;
     %r48 = phi i32 [%r31,%L4],[%r46,%L6]
     %r35 = icmp ne i32 %r48,-1
     br i1 %r35, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r38 = getelementptr [10005 x i32], ptr @to, i32 0, i32 %r48
     %r39 = load i32, ptr %r38
     %r43 = add i32 %r1,1
@@ -188,7 +188,7 @@ L6:  ;
 L7:  ;
     %r42 = load i32, ptr %r26
     br label %L8
-L8:  ;
+L8:  ;latch
     %r84 = phi i32 [%r85,%L5],[%r85,%L9],[%r42,%L7]
     %r45 = sub i32 %r78,1
     br label %L4
@@ -224,7 +224,7 @@ L15:  ;
     %r66 = load i32, ptr %r56
     %r70 = load i32, ptr %r60
     br label %L16
-L16:  ;
+L16:  ;latch
     %r86 = phi i32 [%r87,%L13],[%r66,%L15]
     %r81 = phi i32 [%r82,%L13],[%r70,%L15]
     %r73 = sub i32 %r79,1
@@ -246,7 +246,7 @@ L2:  ;
     %r5 = load i32, ptr @n
     %r6 = icmp ne i32 %r32,%r5
     br i1 %r6, label %L3, label %L4
-L3:  ;
+L3:  ;latch
     %r8 = call i32 @quick_read()
     %r10 = call i32 @quick_read()
     call void @add_edge(i32 %r8,i32 %r10)
@@ -259,7 +259,7 @@ L5:  ;
     %r18 = load i32, ptr @m
     %r19 = icmp ne i32 %r18,0
     br i1 %r19, label %L6, label %L7
-L6:  ;
+L6:  ;latch
     %r21 = call i32 @quick_read()
     %r23 = call i32 @quick_read()
     %r26 = call i32 @LCA(i32 %r21,i32 %r23)
