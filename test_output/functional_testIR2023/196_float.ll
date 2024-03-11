@@ -179,7 +179,7 @@ L8:  ;
 L9:  ;
     call void @ok()
     br label %L10
-L10:  ;
+L10:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r42,i8 0,i32 40,i1 0)
     %r43 = fadd float 0x3ff0000000000000,0x0
     %r44 = getelementptr [10 x float], ptr %r42, i32 0, i32 0
@@ -194,12 +194,12 @@ L11:  ;
     %r36 = fadd float 0x3fd3333340000000,0x0
     %r37 = fcmp one float %r36,0x0
     br i1 %r37, label %L9, label %L10
-L12:  ;
+L12:  ;  exiting0  header0
     %r92 = phi i32 [1,%L10],[%r84,%L13]
     %r91 = phi i32 [0,%L10],[%r87,%L13]
     %r53 = icmp slt i32 %r92,1000000000
     br i1 %r53, label %L13, label %L14
-L13:  ;latch
+L13:  ;  latch0
     %r55 = call float @getfloat()
     %r57 = fadd float 0x0,0x400921fb60000000
     %r59 = fmul float %r57,%r55

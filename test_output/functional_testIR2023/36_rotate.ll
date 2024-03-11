@@ -142,7 +142,7 @@ L4:  ;
     br i1 %r5, label %L2, label %L3
 L5:  ;
     ret i32 -1
-L6:  ;
+L6:  ;  preheader1
     br label %L9
 L7:  ;
     %r16 = call i32 @getint()
@@ -152,21 +152,21 @@ L8:  ;
     %r13 = load i32, ptr @height
     %r15 = icmp sgt i32 %r13,1024
     br i1 %r15, label %L5, label %L7
-L9:  ;
+L9:  ;  exiting1  header1
     %r47 = phi i32 [0,%L6],[%r43,%L14]
     %r24 = load i32, ptr @height
     %r25 = icmp slt i32 %r47,%r24
     br i1 %r25, label %L10, label %L11
-L10:  ;
+L10:  ;  preheader0
     br label %L12
 L11:  ;
     ret i32 0
-L12:  ;
+L12:  ;  exiting0  header0
     %r46 = phi i32 [0,%L10],[%r40,%L13]
     %r29 = load i32, ptr @width
     %r30 = icmp slt i32 %r46,%r29
     br i1 %r30, label %L13, label %L14
-L13:  ;latch
+L13:  ;  latch0
     %r32 = load i32, ptr @width
     %r33 = mul i32 %r47,%r32
     %r35 = add i32 %r33,%r46
@@ -175,7 +175,7 @@ L13:  ;latch
     store i32 %r37, ptr %r36
     %r40 = add i32 %r46,1
     br label %L12
-L14:  ;latch
+L14:  ;  latch1
     %r43 = add i32 %r47,1
     br label %L9
 }
@@ -233,7 +233,7 @@ define void @write_pgm(float %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     call void @putch(i32 80)
     call void @putch(i32 50)
     call void @putch(i32 10)
@@ -246,27 +246,27 @@ L1:  ;
     call void @putint(i32 255)
     call void @putch(i32 10)
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r35 = phi i32 [0,%L1],[%r32,%L7]
     %r14 = load i32, ptr @height
     %r15 = icmp slt i32 %r35,%r14
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting0  header0
     %r34 = phi i32 [0,%L3],[%r28,%L6]
     %r19 = load i32, ptr @width
     %r20 = icmp slt i32 %r34,%r19
     br i1 %r20, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch0
     %r24 = call i32 @rotate(i32 %r34,i32 %r35,float %r0)
     call void @putint(i32 %r24)
     call void @putch(i32 32)
     %r28 = add i32 %r34,1
     br label %L5
-L7:  ;latch
+L7:  ;  latch1
     call void @putch(i32 10)
     %r32 = add i32 %r35,1
     br label %L2

@@ -43,18 +43,18 @@ L3:  ;
     br i1 %r17, label %L5, label %L6
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  preheader0
     br label %L8
 L6:  ;
     %r32 = icmp slt i32 %r2,%r14
     br i1 %r32, label %L11, label %L12
 L7:  ;
     br label %L4
-L8:  ;
+L8:  ;  exiting0  header0
     %r46 = phi i32 [0,%L5],[%r29,%L9]
     %r22 = icmp slt i32 %r46,%r14
     br i1 %r22, label %L9, label %L10
-L9:  ;latch
+L9:  ;  latch0
     %r24 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r46
     %r25 = load i32, ptr %r24
     call void @putint(i32 %r25)
@@ -78,11 +78,11 @@ define i32 @findPivot(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r6 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r1
     %r7 = load i32, ptr %r6
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r33 = phi i32 [%r0,%L1],[%r32,%L6]
     %r31 = phi i32 [%r0,%L1],[%r27,%L6]
     %r14 = icmp slt i32 %r31,%r1
@@ -99,7 +99,7 @@ L5:  ;
     call void @swap(i32 %r31,i32 %r33)
     %r24 = add i32 %r33,1
     br label %L6
-L6:  ;latch
+L6:  ;  latch0
     %r32 = phi i32 [%r33,%L3],[%r24,%L5]
     %r27 = add i32 %r31,1
     br label %L2
@@ -108,15 +108,15 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     %r3 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r26 = phi i32 [0,%L1],[%r14,%L3]
     %r8 = icmp slt i32 %r26,%r1
     br i1 %r8, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r10 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r26
     %r11 = call i32 @getint()
     store i32 %r11, ptr %r10

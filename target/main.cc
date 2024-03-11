@@ -55,6 +55,7 @@ void InstSimplify(CFG* C);
 void InstCombine(CFG* C);
 void EliminateDoubleBrUnCond(CFG* C);
 void LoopSimplify(CFG* C);
+void LoopRotate(CFG* C);
 
 enum Target{ARMV7 = 1,RV64GC = 2}target;
 
@@ -138,6 +139,7 @@ int main(int argc,char** argv)
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopRotate );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

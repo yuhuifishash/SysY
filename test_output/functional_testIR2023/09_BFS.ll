@@ -28,10 +28,10 @@ define i32 @quick_read()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getch()
     br label %L2
-L2:  ;
+L2:  ;  header0
     %r39 = phi i32 [%r1,%L1],[%r16,%L7]
     %r37 = phi i32 [0,%L1],[%r36,%L7]
     %r8 = icmp slt i32 %r39,48
@@ -39,23 +39,23 @@ L2:  ;
 L3:  ;
     %r14 = icmp eq i32 %r39,45
     br i1 %r14, label %L6, label %L7
-L4:  ;
+L4:  ;  preheader1
     br label %L8
-L5:  ;
+L5:  ;  exiting0
     %r11 = icmp sgt i32 %r39,57
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
-L7:  ;latch
+L7:  ;  latch0
     %r36 = phi i32 [%r37,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
-L8:  ;
+L8:  ;  exiting1  header1
     %r40 = phi i32 [%r39,%L4],[%r30,%L9]
     %r38 = phi i32 [0,%L4],[%r29,%L9]
     %r19 = icmp sge i32 %r40,48
     br i1 %r19, label %L11, label %L10
-L9:  ;latch
+L9:  ;  latch1
     %r25 = mul i32 %r38,10
     %r27 = add i32 %r25,%r40
     %r29 = sub i32 %r27,48
@@ -64,7 +64,7 @@ L9:  ;latch
 L10:  ;
     %r32 = icmp ne i32 %r37,0
     br i1 %r32, label %L12, label %L13
-L11:  ;
+L11:  ;  exiting1
     %r22 = icmp sle i32 %r40,57
     br i1 %r22, label %L9, label %L10
 L12:  ;
@@ -104,13 +104,13 @@ define void @init()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r12 = phi i32 [0,%L1],[%r11,%L3]
     %r4 = icmp slt i32 %r12,1005
     br i1 %r4, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r6 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r12
     store i32 -1, ptr %r6
     %r11 = add i32 %r12,1
@@ -150,12 +150,12 @@ define i32 @same(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 0, ptr @h
     store i32 0, ptr @tail
     call void @inqueue(i32 %r0)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r56 = phi i32 [0,%L1],[%r55,%L9]
     %r9 = load i32, ptr @h
     %r10 = load i32, ptr @tail
@@ -165,16 +165,16 @@ L3:  ;
     %r13 = call i32 @pop_queue()
     %r16 = icmp eq i32 %r13,%r1
     br i1 %r16, label %L5, label %L6
-L4:  ;
+L4:  ;  preheader2
     br label %L12
 L5:  ;
     br label %L6
-L6:  ;
+L6:  ;  preheader1
     %r55 = phi i32 [%r56,%L3],[1,%L5]
     %r20 = getelementptr [1005 x i32], ptr @head, i32 0, i32 %r13
     %r21 = load i32, ptr %r20
     br label %L7
-L7:  ;
+L7:  ;  exiting1  header1
     %r54 = phi i32 [%r21,%L6],[%r37,%L11]
     %r25 = icmp ne i32 %r54,-1
     br i1 %r25, label %L8, label %L9
@@ -185,22 +185,22 @@ L8:  ;
     %r30 = load i32, ptr %r29
     %r31 = icmp eq i32 %r30,0
     br i1 %r31, label %L10, label %L11
-L9:  ;latch
+L9:  ;  latch0
     br label %L2
 L10:  ;
     %r34 = load i32, ptr %r27
     call void @inqueue(i32 %r34)
     br label %L11
-L11:  ;latch
+L11:  ;  latch1
     %r36 = getelementptr [5005 x i32], ptr @next, i32 0, i32 %r54
     %r37 = load i32, ptr %r36
     br label %L7
-L12:  ;
+L12:  ;  exiting2  header2
     %r52 = phi i32 [0,%L4],[%r50,%L13]
     %r41 = load i32, ptr @tail
     %r42 = icmp sle i32 %r52,%r41
     br i1 %r42, label %L13, label %L14
-L13:  ;latch
+L13:  ;  latch2
     %r44 = getelementptr [1005 x i32], ptr @que, i32 0, i32 %r52
     %r45 = load i32, ptr %r44
     %r46 = getelementptr [1005 x i32], ptr @inq, i32 0, i32 %r45
@@ -214,33 +214,33 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     %r0 = call i32 @quick_read()
     store i32 %r0, ptr @n
     %r1 = call i32 @quick_read()
     store i32 %r1, ptr @m
     call void @init()
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r2 = load i32, ptr @m
     %r3 = icmp ne i32 %r2,0
     br i1 %r3, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     %r5 = call i32 @getch()
     br label %L5
 L4:  ;
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r35 = phi i32 [%r5,%L3],[%r12,%L6]
     %r8 = icmp ne i32 %r35,81
     br i1 %r8, label %L8, label %L7
-L6:  ;latch
+L6:  ;  latch0
     %r12 = call i32 @getch()
     br label %L5
 L7:  ;
     %r15 = icmp eq i32 %r35,81
     br i1 %r15, label %L9, label %L10
-L8:  ;
+L8:  ;  exiting0
     %r11 = icmp ne i32 %r35,85
     br i1 %r11, label %L6, label %L7
 L9:  ;
@@ -255,7 +255,7 @@ L10:  ;
     %r27 = call i32 @quick_read()
     call void @add_edge(i32 %r25,i32 %r27)
     br label %L11
-L11:  ;latch
+L11:  ;  latch1
     %r30 = load i32, ptr @m
     %r32 = sub i32 %r30,1
     store i32 %r32, ptr @m

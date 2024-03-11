@@ -6,6 +6,14 @@ int func()
             i = i + 1;
             continue;
         }
+        int j = 0;
+        while(j <= 100){
+            if(S){
+                continue;
+            }
+            j = j + 1;
+            S = S + j;
+        }
         S = S + i;
         i = i + 1;
     }

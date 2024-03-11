@@ -20,7 +20,7 @@ public:
     int loop_id;
     void FindExitNodes(CFG* C);
 
-    /*the only predecessor of header node*/
+    /*the only predecessor of header node(out of loop)*/
     void AddPreheader(CFG* C);
 
     /*A single backedge (which implies that there is a single latch).*/
@@ -31,6 +31,8 @@ public:
     void ExitInsert(CFG* C);
 
     void LoopSimplify(CFG* C);
+
+    void LoopRotate(CFG* C);
 
     void PrintLoopDebugInfo();
 };

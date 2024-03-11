@@ -30,14 +30,14 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r17 = phi i32 [%r1,%L1],[%r15,%L3]
     %r4 = icmp sgt i32 %r17,0
     br i1 %r4, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r6 = call i32 @getint()
     %r8 = call i32 @getint()
     %r11 = call i32 @gcd(i32 %r6,i32 %r8)

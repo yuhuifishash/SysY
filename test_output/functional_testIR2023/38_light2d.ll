@@ -76,7 +76,7 @@ define float @my_sqrt(float %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r5 = sitofp i32 8 to float
     %r6 = fdiv float %r0,%r5
     %r7 = fadd float 0x3fe0000000000000,0x0
@@ -88,12 +88,12 @@ L1:  ;
     %r17 = fdiv float %r12,%r16
     %r18 = fadd float %r8,%r17
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r36 = phi float [%r18,%L1],[%r30,%L3]
     %r35 = phi i32 [10,%L1],[%r33,%L3]
     %r22 = icmp ne i32 %r35,0
     br i1 %r22, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r26 = fdiv float %r0,%r36
     %r27 = fadd float %r36,%r26
     %r30 = fdiv float %r27,%r11
@@ -221,15 +221,15 @@ define float @trace(float %r0,float %r1,float %r2,float %r3)
 L0:  ;
     %r18 = alloca [2 x float]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r9 = fadd float 0x0,0x0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r48 = phi float [%r9,%L1],[%r42,%L7]
     %r47 = phi i32 [0,%L1],[%r45,%L7]
     %r14 = icmp slt i32 %r47,10
     br i1 %r14, label %L5, label %L4
-L3:  ;
+L3:  ;  exiting0
     %r22 = fmul float %r2,%r48
     %r23 = fadd float %r0,%r22
     %r27 = fmul float %r3,%r48
@@ -243,7 +243,7 @@ L3:  ;
     br i1 %r34, label %L6, label %L7
 L4:  ;
     ret float %r9
-L5:  ;
+L5:  ;  exiting0
     %r16 = fadd float 0x0,0x4000000000000000
     %r17 = fcmp olt float %r48,%r16
     br i1 %r17, label %L3, label %L4
@@ -251,7 +251,7 @@ L6:  ;
     %r36 = getelementptr [2 x float], ptr %r18, i32 0, i32 1
     %r37 = load float, ptr %r36
     ret float %r37
-L7:  ;latch
+L7:  ;  latch0
     %r41 = load float, ptr %r31
     %r42 = fadd float %r48,%r41
     %r45 = add i32 %r47,1
@@ -261,15 +261,15 @@ define float @sample(float %r0,float %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r5 = fadd float 0x0,0x0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r44 = phi float [%r5,%L1],[%r35,%L3]
     %r43 = phi i32 [0,%L1],[%r38,%L3]
     %r10 = icmp slt i32 %r43,24
     br i1 %r10, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r12 = call i32 @rand()
     %r13 = sitofp i32 %r12 to float
     %r15 = fadd float 0x0,0x401921fb60000000
@@ -295,7 +295,7 @@ define void @write_pgm()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @putch(i32 80)
     call void @putch(i32 50)
     call void @putch(i32 10)
@@ -306,15 +306,15 @@ L1:  ;
     call void @putint(i32 255)
     call void @putch(i32 10)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r56 = phi i32 [0,%L1],[%r50,%L7]
     %r13 = icmp slt i32 %r56,192
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting1  header1
     %r55 = phi i32 [0,%L3],[%r46,%L9]
     %r18 = icmp slt i32 %r55,192
     br i1 %r18, label %L6, label %L7
@@ -330,13 +330,13 @@ L6:  ;
     %r37 = fptosi float %r36 to i32
     %r40 = icmp sgt i32 %r37,255
     br i1 %r40, label %L8, label %L9
-L7:  ;latch
+L7:  ;  latch0
     call void @putch(i32 10)
     %r50 = add i32 %r56,1
     br label %L2
 L8:  ;
     br label %L9
-L9:  ;latch
+L9:  ;  latch1
     %r53 = phi i32 [%r37,%L6],[255,%L8]
     call void @putint(i32 %r53)
     call void @putch(i32 32)

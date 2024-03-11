@@ -28,11 +28,11 @@ L4:  ;
     %r11 = getelementptr i32, ptr %r0, i32 0
     %r12 = load i32, ptr %r11
     ret i32 %r12
-L5:  ;
+L5:  ;  preheader0
     %r16 = getelementptr i32, ptr %r0, i32 0
     %r17 = load i32, ptr %r16
     br label %L6
-L6:  ;
+L6:  ;  exiting0  header0
     %r48 = phi i32 [%r17,%L5],[%r35,%L12]
     %r46 = phi i32 [%r17,%L5],[%r45,%L12]
     %r44 = phi i32 [1,%L5],[%r42,%L12]
@@ -54,7 +54,7 @@ L10:  ;
     br i1 %r38, label %L11, label %L12
 L11:  ;
     br label %L12
-L12:  ;latch
+L12:  ;  latch0
     %r45 = phi i32 [%r46,%L10],[%r35,%L11]
     %r42 = add i32 %r44,1
     br label %L6

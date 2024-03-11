@@ -80,17 +80,17 @@ define i32 @main()
 L0:  ;
     %r0 = alloca [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x i32]]]]]]]]]]]]]]]]]]]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 2097152,i1 0)
     %r2 = getelementptr [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x i32]]]]]]]]]]]]]]]]]]], ptr %r0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0
     store i32 0, ptr %r2
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r581 = phi i32 [0,%L1],[%r580,%L7]
     %r562 = phi i32 [0,%L1],[%r180,%L7]
     %r9 = icmp slt i32 %r562,2
     br i1 %r9, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     %r199 = getelementptr [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x i32]]]]]]]]]]]]]]]]]]], ptr %r0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0
@@ -115,188 +115,188 @@ L4:  ;
     %r371 = call i32 @sum(ptr %r199,ptr %r217,ptr %r234,ptr %r250,ptr %r265,ptr %r279,ptr %r292,ptr %r304,ptr %r315,ptr %r325,ptr %r334,ptr %r342,ptr %r349,ptr %r355,ptr %r360,ptr %r364,ptr %r367,ptr %r369,ptr %r370)
     call void @putint(i32 %r371)
     ret i32 0
-L5:  ;
+L5:  ;  exiting1  header1
     %r580 = phi i32 [%r581,%L3],[%r579,%L10]
     %r561 = phi i32 [0,%L3],[%r177,%L10]
     %r14 = icmp slt i32 %r561,2
     br i1 %r14, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader2
     br label %L8
-L7:  ;latch
+L7:  ;  latch0
     %r180 = add i32 %r562,1
     br label %L2
-L8:  ;
+L8:  ;  exiting2  header2
     %r579 = phi i32 [%r580,%L6],[%r578,%L13]
     %r559 = phi i32 [0,%L6],[%r174,%L13]
     %r19 = icmp slt i32 %r559,2
     br i1 %r19, label %L9, label %L10
-L9:  ;
+L9:  ;  preheader3
     br label %L11
-L10:  ;latch
+L10:  ;  latch1
     %r177 = add i32 %r561,1
     br label %L5
-L11:  ;
+L11:  ;  exiting3  header3
     %r578 = phi i32 [%r579,%L9],[%r577,%L16]
     %r556 = phi i32 [0,%L9],[%r171,%L16]
     %r24 = icmp slt i32 %r556,2
     br i1 %r24, label %L12, label %L13
-L12:  ;
+L12:  ;  preheader4
     br label %L14
-L13:  ;latch
+L13:  ;  latch2
     %r174 = add i32 %r559,1
     br label %L8
-L14:  ;
+L14:  ;  exiting4  header4
     %r577 = phi i32 [%r578,%L12],[%r576,%L19]
     %r552 = phi i32 [0,%L12],[%r168,%L19]
     %r29 = icmp slt i32 %r552,2
     br i1 %r29, label %L15, label %L16
-L15:  ;
+L15:  ;  preheader5
     br label %L17
-L16:  ;latch
+L16:  ;  latch3
     %r171 = add i32 %r556,1
     br label %L11
-L17:  ;
+L17:  ;  exiting5  header5
     %r576 = phi i32 [%r577,%L15],[%r575,%L22]
     %r547 = phi i32 [0,%L15],[%r165,%L22]
     %r34 = icmp slt i32 %r547,2
     br i1 %r34, label %L18, label %L19
-L18:  ;
+L18:  ;  preheader6
     br label %L20
-L19:  ;latch
+L19:  ;  latch4
     %r168 = add i32 %r552,1
     br label %L14
-L20:  ;
+L20:  ;  exiting6  header6
     %r575 = phi i32 [%r576,%L18],[%r574,%L25]
     %r541 = phi i32 [0,%L18],[%r162,%L25]
     %r39 = icmp slt i32 %r541,2
     br i1 %r39, label %L21, label %L22
-L21:  ;
+L21:  ;  preheader7
     br label %L23
-L22:  ;latch
+L22:  ;  latch5
     %r165 = add i32 %r547,1
     br label %L17
-L23:  ;
+L23:  ;  exiting7  header7
     %r574 = phi i32 [%r575,%L21],[%r573,%L28]
     %r534 = phi i32 [0,%L21],[%r159,%L28]
     %r44 = icmp slt i32 %r534,2
     br i1 %r44, label %L24, label %L25
-L24:  ;
+L24:  ;  preheader8
     br label %L26
-L25:  ;latch
+L25:  ;  latch6
     %r162 = add i32 %r541,1
     br label %L20
-L26:  ;
+L26:  ;  exiting8  header8
     %r573 = phi i32 [%r574,%L24],[%r572,%L31]
     %r526 = phi i32 [0,%L24],[%r156,%L31]
     %r49 = icmp slt i32 %r526,2
     br i1 %r49, label %L27, label %L28
-L27:  ;
+L27:  ;  preheader9
     br label %L29
-L28:  ;latch
+L28:  ;  latch7
     %r159 = add i32 %r534,1
     br label %L23
-L29:  ;
+L29:  ;  exiting9  header9
     %r572 = phi i32 [%r573,%L27],[%r571,%L34]
     %r517 = phi i32 [0,%L27],[%r153,%L34]
     %r54 = icmp slt i32 %r517,2
     br i1 %r54, label %L30, label %L31
-L30:  ;
+L30:  ;  preheader10
     br label %L32
-L31:  ;latch
+L31:  ;  latch8
     %r156 = add i32 %r526,1
     br label %L26
-L32:  ;
+L32:  ;  exiting10  header10
     %r571 = phi i32 [%r572,%L30],[%r570,%L37]
     %r507 = phi i32 [0,%L30],[%r150,%L37]
     %r59 = icmp slt i32 %r507,2
     br i1 %r59, label %L33, label %L34
-L33:  ;
+L33:  ;  preheader11
     br label %L35
-L34:  ;latch
+L34:  ;  latch9
     %r153 = add i32 %r517,1
     br label %L29
-L35:  ;
+L35:  ;  exiting11  header11
     %r570 = phi i32 [%r571,%L33],[%r569,%L40]
     %r496 = phi i32 [0,%L33],[%r147,%L40]
     %r64 = icmp slt i32 %r496,2
     br i1 %r64, label %L36, label %L37
-L36:  ;
+L36:  ;  preheader12
     br label %L38
-L37:  ;latch
+L37:  ;  latch10
     %r150 = add i32 %r507,1
     br label %L32
-L38:  ;
+L38:  ;  exiting12  header12
     %r569 = phi i32 [%r570,%L36],[%r568,%L43]
     %r484 = phi i32 [0,%L36],[%r144,%L43]
     %r69 = icmp slt i32 %r484,2
     br i1 %r69, label %L39, label %L40
-L39:  ;
+L39:  ;  preheader13
     br label %L41
-L40:  ;latch
+L40:  ;  latch11
     %r147 = add i32 %r496,1
     br label %L35
-L41:  ;
+L41:  ;  exiting13  header13
     %r568 = phi i32 [%r569,%L39],[%r567,%L46]
     %r471 = phi i32 [0,%L39],[%r141,%L46]
     %r74 = icmp slt i32 %r471,2
     br i1 %r74, label %L42, label %L43
-L42:  ;
+L42:  ;  preheader14
     br label %L44
-L43:  ;latch
+L43:  ;  latch12
     %r144 = add i32 %r484,1
     br label %L38
-L44:  ;
+L44:  ;  exiting14  header14
     %r567 = phi i32 [%r568,%L42],[%r566,%L49]
     %r457 = phi i32 [0,%L42],[%r138,%L49]
     %r79 = icmp slt i32 %r457,2
     br i1 %r79, label %L45, label %L46
-L45:  ;
+L45:  ;  preheader15
     br label %L47
-L46:  ;latch
+L46:  ;  latch13
     %r141 = add i32 %r471,1
     br label %L41
-L47:  ;
+L47:  ;  exiting15  header15
     %r566 = phi i32 [%r567,%L45],[%r565,%L52]
     %r442 = phi i32 [0,%L45],[%r135,%L52]
     %r84 = icmp slt i32 %r442,2
     br i1 %r84, label %L48, label %L49
-L48:  ;
+L48:  ;  preheader16
     br label %L50
-L49:  ;latch
+L49:  ;  latch14
     %r138 = add i32 %r457,1
     br label %L44
-L50:  ;
+L50:  ;  exiting16  header16
     %r565 = phi i32 [%r566,%L48],[%r564,%L55]
     %r426 = phi i32 [0,%L48],[%r132,%L55]
     %r89 = icmp slt i32 %r426,2
     br i1 %r89, label %L51, label %L52
-L51:  ;
+L51:  ;  preheader18
     br label %L53
-L52:  ;latch
+L52:  ;  latch15
     %r135 = add i32 %r442,1
     br label %L47
-L53:  ;
+L53:  ;  exiting18  header18
     %r564 = phi i32 [%r565,%L51],[%r563,%L58]
     %r409 = phi i32 [0,%L51],[%r129,%L58]
     %r94 = icmp slt i32 %r409,2
     br i1 %r94, label %L54, label %L55
-L54:  ;
+L54:  ;  preheader17
     br label %L56
-L55:  ;latch
+L55:  ;  latch16
     %r132 = add i32 %r426,1
     br label %L50
-L56:  ;
+L56:  ;  exiting17  header17
     %r563 = phi i32 [%r564,%L54],[%r123,%L57]
     %r391 = phi i32 [0,%L54],[%r126,%L57]
     %r99 = icmp slt i32 %r391,2
     br i1 %r99, label %L57, label %L58
-L57:  ;latch
+L57:  ;  latch17
     %r119 = getelementptr [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x [2 x i32]]]]]]]]]]]]]]]]]]], ptr %r0, i32 0, i32 %r562, i32 %r561, i32 %r559, i32 %r556, i32 %r552, i32 %r547, i32 %r541, i32 %r534, i32 %r526, i32 %r517, i32 %r507, i32 %r496, i32 %r484, i32 %r471, i32 %r457, i32 %r442, i32 %r426, i32 %r409, i32 %r391
     store i32 %r563, ptr %r119
     %r123 = add i32 %r563,1
     %r126 = add i32 %r391,1
     br label %L56
-L58:  ;latch
+L58:  ;  latch18
     %r129 = add i32 %r409,1
     br label %L53
 }

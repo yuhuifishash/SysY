@@ -19,13 +19,13 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r149 = phi i32 [0,%L1],[%r21,%L7]
     %r6 = icmp slt i32 %r149,20
     br i1 %r6, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     br label %L5
 L4:  ;
     %r43 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 19, i32 23
@@ -111,16 +111,16 @@ L4:  ;
     %r144 = add i32 %r82,%r143
     call void @putint(i32 %r144)
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r148 = phi i32 [0,%L3],[%r18,%L6]
     %r11 = icmp slt i32 %r148,100
     br i1 %r11, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch0
     %r14 = getelementptr [20 x [100 x i32]], ptr @array, i32 0, i32 %r149, i32 %r148
     store i32 %r148, ptr %r14
     %r18 = add i32 %r148,1
     br label %L5
-L7:  ;latch
+L7:  ;  latch1
     %r21 = add i32 %r149,1
     br label %L2
 }

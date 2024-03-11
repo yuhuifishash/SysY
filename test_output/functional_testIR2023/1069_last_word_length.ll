@@ -21,33 +21,33 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     ret i32 0
-L3:  ;
+L3:  ;  preheader0
     %r11 = sub i32 %r1,1
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r59 = phi i32 [%r11,%L3],[%r23,%L5]
     %r15 = icmp sgt i32 %r59,-1
     br i1 %r15, label %L7, label %L6
-L5:  ;latch
+L5:  ;  latch0
     %r23 = sub i32 %r59,1
     br label %L4
 L6:  ;
     %r27 = icmp eq i32 %r59,-1
     br i1 %r27, label %L8, label %L9
-L7:  ;
+L7:  ;  exiting0
     %r17 = getelementptr i32, ptr %r0, i32 %r59
     %r18 = load i32, ptr %r17
     %r20 = icmp eq i32 %r18,0
     br i1 %r20, label %L5, label %L6
 L8:  ;
     ret i32 0
-L9:  ;
+L9:  ;  preheader1
     br label %L10
-L10:  ;
+L10:  ;  exiting1  header1
     %r58 = phi i32 [%r59,%L9],[%r54,%L14]
     %r35 = icmp sgt i32 %r58,-1
     br i1 %r35, label %L11, label %L12
-L11:  ;
+L11:  ;  exiting1
     %r37 = getelementptr i32, ptr %r0, i32 %r58
     %r38 = load i32, ptr %r37
     %r40 = icmp eq i32 %r38,0
@@ -61,7 +61,7 @@ L13:  ;
     %r50 = sub i32 %r11,%r59
     %r51 = sub i32 %r45,%r50
     ret i32 %r51
-L14:  ;latch
+L14:  ;  latch1
     %r54 = sub i32 %r58,1
     br label %L10
 }

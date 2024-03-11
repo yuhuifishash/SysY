@@ -22,13 +22,13 @@ define void @my_memset(ptr %r0,i32 %r1,i32 %r2)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r16 = phi i32 [0,%L1],[%r15,%L3]
     %r9 = icmp slt i32 %r16,%r2
     br i1 %r9, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r11 = getelementptr i32, ptr %r0, i32 %r16
     store i32 %r1, ptr %r11
     %r15 = add i32 %r16,1
@@ -72,11 +72,11 @@ L1:  ;
     br i1 %r8, label %L2, label %L3
 L2:  ;
     ret i32 %r2
-L3:  ;
+L3:  ;  preheader0
     %r11 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r0
     store i32 1, ptr %r11
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r100 = phi i32 [0,%L3],[%r101,%L18]
     %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r18 = load i32, ptr %r17
@@ -111,7 +111,7 @@ L13:  ;
 L14:  ;
     %r51 = load i32, ptr %r32
     br label %L15
-L15:  ;
+L15:  ;  exiting0
     %r99 = phi i32 [%r2,%L13],[%r51,%L14]
     %r56 = load i32, ptr %r22
     %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r99)
@@ -132,7 +132,7 @@ L16:  ;
 L17:  ;
     %r96 = add i32 %r100,1
     br label %L18
-L18:  ;latch
+L18:  ;latch0
     %r101 = phi i32 [%r29,%L7],[%r38,%L10],[%r96,%L17]
     br label %L4
 }
@@ -140,12 +140,12 @@ define i32 @max_flow(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  header0
     %r23 = phi i32 [0,%L1],[%r22,%L6]
     br label %L3
-L3:  ;
+L3:  ;  exiting0
     %r8 = getelementptr [10 x i32], ptr @used, i32 0
     call void @my_memset(ptr %r8,i32 0,i32 10)
     %r15 = call i32 @dfs(i32 %r0,i32 %r1,i32 1879048192)
@@ -153,7 +153,7 @@ L3:  ;
     br i1 %r18, label %L5, label %L6
 L5:  ;
     ret i32 %r23
-L6:  ;latch
+L6:  ;  latch0
     %r22 = add i32 %r23,%r15
     br label %L2
 }
@@ -161,17 +161,17 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r4 = call i32 @getint()
     %r5 = call i32 @getint()
     %r6 = getelementptr [10 x i32], ptr @size, i32 0
     call void @my_memset(ptr %r6,i32 0,i32 10)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r31 = phi i32 [%r5,%L1],[%r25,%L3]
     %r11 = icmp sgt i32 %r31,0
     br i1 %r11, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r16 = call i32 @getint()
     %r17 = call i32 @getint()
     %r19 = call i32 @getint()

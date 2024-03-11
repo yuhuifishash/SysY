@@ -95,7 +95,7 @@ L0:  ;
 L1:  ;
     %r130 = icmp ne i32 %r0,0
     br i1 %r130, label %L2, label %L3
-L2:  ;
+L2:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r131,i8 0,i32 40,i1 0)
     %r134 = fadd float %r42,%r18
     %r136 = fadd float %r134,%r61
@@ -188,11 +188,11 @@ L2:  ;
 L3:  ;
     %r352 = call float @params_f40_i24(i32 %r4,i32 %r1,i32 %r2,float %r3,i32 %r4,i32 %r5,i32 %r6,float %r7,float %r8,float %r9,i32 %r10,float %r11,float %r12,i32 %r13,float %r14,i32 %r15,float %r16,float %r17,float %r18,float %r19,float %r20,float %r21,i32 %r22,float %r23,i32 %r24,i32 %r25,float %r26,float %r27,float %r28,float %r29,float %r30,i32 %r31,float %r32,i32 %r33,float %r34,float %r35,float %r36,float %r37,i32 %r38,i32 %r39,float %r40,float %r41,float %r42,i32 %r43,float %r44,i32 %r45,i32 %r46,float %r47,float %r48,float %r49,float %r50,i32 %r51,i32 %r52,i32 %r53,float %r54,float %r55,float %r56,float %r57,float %r58,float %r59,i32 %r60,float %r61,i32 %r62,float %r63)
     ret float %r352
-L5:  ;
+L5:  ;  exiting0  header0
     %r353 = phi i32 [0,%L2],[%r283,%L6]
     %r269 = icmp slt i32 %r353,8
     br i1 %r269, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch0
     %r271 = getelementptr [8 x i32], ptr %r212, i32 0, i32 %r353
     %r274 = load i32, ptr %r271
     %r276 = getelementptr [10 x float], ptr %r131, i32 0, i32 %r353
@@ -563,7 +563,7 @@ L1:  ;
     store i32 %r285, ptr %r286
     %r289 = icmp ne i32 %r63,0
     br i1 %r289, label %L2, label %L3
-L2:  ;
+L2:  ;  preheader0
     %r291 = getelementptr [10 x float], ptr %r99, i32 0
     call void @putfarray(i32 10,ptr %r291)
     %r293 = getelementptr [10 x i32], ptr %r202, i32 0
@@ -603,11 +603,11 @@ L3:  ;
     %r387 = fptosi float %r62 to i32
     %r388 = call i32 @params_mix(float %r0,ptr %r323,i32 %r2,ptr %r325,float %r4,i32 %r5,float %r6,float %r7,ptr %r330,ptr %r331,i32 %r10,i32 %r11,ptr %r334,ptr %r335,ptr %r336,i32 %r15,ptr %r338,ptr %r339,float %r18,float %r19,float %r20,ptr %r343,i32 %r22,float %r23,float %r24,float %r25,ptr %r348,ptr %r349,ptr %r350,ptr %r351,ptr %r352,float %r31,float %r32,ptr %r355,i32 %r34,ptr %r357,ptr %r358,float %r37,float %r38,ptr %r361,ptr %r362,i32 %r41,i32 %r42,float %r43,float %r44,ptr %r367,i32 %r46,ptr %r369,i32 %r48,ptr %r371,ptr %r372,float %r51,float %r52,ptr %r375,i32 %r54,ptr %r377,ptr %r378,float %r57,i32 %r58,float %r59,ptr %r382,ptr %r383,float %r385,i32 %r387)
     ret i32 %r388
-L5:  ;
+L5:  ;  exiting0  header0
     %r389 = phi i32 [0,%L2],[%r312,%L6]
     %r298 = icmp slt i32 %r389,10
     br i1 %r298, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch0
     %r300 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r389
     %r303 = load i32, ptr %r300
     %r305 = getelementptr [10 x float], ptr %r99, i32 0, i32 %r389
@@ -634,26 +634,26 @@ L0:  ;
     %r1 = alloca [24 x [3 x i32]]
     %r0 = alloca [40 x [3 x float]]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r4 = call i32 @getint()
     store i32 %r4, ptr @k
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r736 = phi i32 [0,%L1],[%r14,%L3]
     %r8 = icmp slt i32 %r736,40
     br i1 %r8, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r10 = getelementptr [40 x [3 x float]], ptr %r0, i32 0, i32 %r736
     %r11 = call i32 @getfarray(ptr %r10)
     %r14 = add i32 %r736,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r737 = phi i32 [0,%L4],[%r24,%L6]
     %r18 = icmp slt i32 %r737,24
     br i1 %r18, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch1
     %r20 = getelementptr [24 x [3 x i32]], ptr %r1, i32 0, i32 %r737
     %r21 = call i32 @getarray(ptr %r20)
     %r24 = add i32 %r737,1

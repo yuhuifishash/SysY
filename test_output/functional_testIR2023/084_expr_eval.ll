@@ -62,14 +62,14 @@ define i32 @next_token()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r0 = load i32, ptr @last_char
     %r1 = call i32 @is_space(i32 %r0)
     %r2 = icmp ne i32 %r1,0
     br i1 %r2, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r3 = call i32 @next_char()
     br label %L2
 L4:  ;
@@ -77,7 +77,7 @@ L4:  ;
     %r5 = call i32 @is_num(i32 %r4)
     %r6 = icmp ne i32 %r5,0
     br i1 %r6, label %L5, label %L6
-L5:  ;
+L5:  ;  preheader1
     %r7 = load i32, ptr @last_char
     %r9 = sub i32 %r7,48
     store i32 %r9, ptr @num
@@ -91,12 +91,12 @@ L6:  ;
 L7:  ;
     %r24 = load i32, ptr @cur_token
     ret i32 %r24
-L8:  ;
+L8:  ;  exiting1  header1
     %r10 = call i32 @next_char()
     %r11 = call i32 @is_num(i32 %r10)
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L9, label %L10
-L9:  ;latch
+L9:  ;  latch1
     %r13 = load i32, ptr @num
     %r15 = mul i32 %r13,10
     %r16 = load i32, ptr @last_char
@@ -247,47 +247,47 @@ L1:  ;
 L2:  ;
     %r5 = call i32 @panic()
     ret i32 %r5
-L3:  ;
+L3:  ;  preheader1
     %r6 = getelementptr [256 x i32], ptr %r0, i32 0
     %r7 = load i32, ptr @num
     call void @stack_push(ptr %r6,i32 %r7)
     %r8 = call i32 @next_token()
     br label %L4
-L4:  ;
+L4:  ;  exiting1  header1
     %r9 = load i32, ptr @cur_token
     %r11 = icmp eq i32 %r9,1
     br i1 %r11, label %L5, label %L6
-L5:  ;
+L5:  ;  exiting1
     %r13 = load i32, ptr @other
     %r15 = call i32 @get_op_prec(i32 %r13)
     %r16 = icmp eq i32 %r15,0
     br i1 %r16, label %L7, label %L8
-L6:  ;
+L6:  ;  preheader2
     %r50 = call i32 @next_token()
     br label %L16
 L7:  ;
     br label %L6
-L8:  ;
+L8:  ;  preheader0
     %r17 = call i32 @next_token()
     br label %L10
-L10:  ;
+L10:  ;  exiting0  header0
     %r18 = getelementptr [256 x i32], ptr %r1, i32 0
     %r19 = call i32 @stack_size(ptr %r18)
     %r20 = icmp ne i32 %r19,0
     br i1 %r20, label %L13, label %L12
-L11:  ;latch
+L11:  ;  latch0
     %r29 = call i32 @stack_pop(ptr %r18)
     %r32 = call i32 @stack_pop(ptr %r6)
     %r35 = call i32 @stack_pop(ptr %r6)
     %r40 = call i32 @eval_op(i32 %r29,i32 %r35,i32 %r32)
     call void @stack_push(ptr %r6,i32 %r40)
     br label %L10
-L12:  ;
+L12:  ;  exiting1
     call void @stack_push(ptr %r18,i32 %r13)
     %r43 = load i32, ptr @cur_token
     %r45 = icmp ne i32 %r43,0
     br i1 %r45, label %L14, label %L15
-L13:  ;
+L13:  ;  exiting0
     %r22 = call i32 @stack_peek(ptr %r18)
     %r23 = call i32 @get_op_prec(i32 %r22)
     %r26 = icmp sge i32 %r23,%r15
@@ -295,17 +295,17 @@ L13:  ;
 L14:  ;
     %r46 = call i32 @panic()
     ret i32 %r46
-L15:  ;latch
+L15:  ;  latch1
     %r48 = load i32, ptr @num
     call void @stack_push(ptr %r6,i32 %r48)
     %r49 = call i32 @next_token()
     br label %L4
-L16:  ;
+L16:  ;  exiting2  header2
     %r51 = getelementptr [256 x i32], ptr %r1, i32 0
     %r52 = call i32 @stack_size(ptr %r51)
     %r53 = icmp ne i32 %r52,0
     br i1 %r53, label %L17, label %L18
-L17:  ;latch
+L17:  ;  latch2
     %r56 = call i32 @stack_pop(ptr %r51)
     %r59 = call i32 @stack_pop(ptr %r6)
     %r62 = call i32 @stack_pop(ptr %r6)
@@ -320,16 +320,16 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     %r2 = call i32 @getch()
     %r3 = call i32 @next_token()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r12 = phi i32 [%r1,%L1],[%r10,%L3]
     %r5 = icmp ne i32 %r12,0
     br i1 %r5, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r6 = call i32 @eval()
     call void @putint(i32 %r6)
     call void @putch(i32 10)

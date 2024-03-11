@@ -58,6 +58,9 @@ void NaturalLoop::FindExitNodes(CFG* C)
             if(is_exit){exiting_nodes.insert(node);}
         }
     }
+    for(auto nodes:exiting_nodes){
+        nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
+    }
 }
 
 
@@ -87,9 +90,54 @@ void NaturalLoopForest::CombineSameHeadLoop()
     }
 }
 
+bool JudgeLoopContain(NaturalLoop* l1,NaturalLoop* l2) //judge if l1 contains l2
+{
+    for(auto l2_n:l2->loop_nodes){
+        if(l1->loop_nodes.find(l2_n) == l1->loop_nodes.end()){
+            return false;
+        }
+    }
+    return true;
+}
+
 void NaturalLoopForest::BuildLoopForest()
 {
+    loopG.resize(loop_cnt+1);
 
+    std::vector<std::vector<NaturalLoop*> > tmploopG;
+    std::vector<std::pair<int,NaturalLoop*> > Indegree;
+    tmploopG.resize(loop_cnt+1);
+    Indegree.resize(loop_cnt+1);
+    for(auto l1:loop_set){
+        Indegree[l1->loop_id].second = l1;
+        for(auto l2:loop_set){
+            if(l1 == l2){continue;}
+            if(JudgeLoopContain(l1,l2)){
+                tmploopG[l1->loop_id].push_back(l2);
+                Indegree[l2->loop_id].first++;
+            }
+        }
+    }
+
+    std::queue<NaturalLoop*> q;
+
+    for(auto L:Indegree){
+        if(L.first == 0 && L.second){
+            q.push(L.second);
+        }
+    }
+    while(!q.empty()){
+        NaturalLoop* x = q.front();
+        q.pop();
+        for(auto v:tmploopG[x->loop_id]){
+            --Indegree[v->loop_id].first;
+            if(Indegree[v->loop_id].first == 0){
+                loopG[x->loop_id].push_back(v);
+                v->fa_loop = x;
+                q.push(v);
+            }
+        }
+    }
 }
 
 void CFG::BuildLoopInfo()
@@ -116,6 +164,7 @@ void CFG::BuildLoopInfo()
 
     for(auto l:LoopForest.loop_set){
         l->FindExitNodes(this);
+        l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
     }
 
     LoopForest.BuildLoopForest();
@@ -135,7 +184,8 @@ void LLVMIR::BuildLoopInfo()
 
 void NaturalLoop::PrintLoopDebugInfo()
 {
-    std::cerr<<"------------------------------------\n";
+    std::cerr<<"\n";
+    std::cerr<<"loop:"<<loop_id<<"------------------------------------\n";
     std::cerr<<"loop nodes: ";
     for(auto nodes:loop_nodes){
         std::cerr<<nodes->block_id<<" ";
@@ -153,5 +203,8 @@ void NaturalLoop::PrintLoopDebugInfo()
     for(auto nodes:exit_nodes){
         std::cerr<<nodes->block_id<<" ";
     }std::cerr<<"\n";
+    if(fa_loop){
+        std::cerr<<"father loop "<<fa_loop->loop_id<<"\n";
+    }
 }
 

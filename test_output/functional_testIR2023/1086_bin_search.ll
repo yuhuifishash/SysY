@@ -17,21 +17,21 @@ define i32 @main()
 L0:  ;
     %r4 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r80 = phi i32 [0,%L1],[%r14,%L3]
     %r9 = icmp slt i32 %r80,10
     br i1 %r9, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r11 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r80
     %r14 = add i32 %r80,1
     store i32 %r14, ptr %r11
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     %r29 = call i32 @getint()
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r78 = phi i32 [9,%L4],[%r77,%L11]
     %r76 = phi i32 [0,%L4],[%r75,%L11]
     %r74 = phi i32 [4,%L4],[%r51,%L11]
@@ -50,7 +50,7 @@ L7:  ;
     %r66 = load i32, ptr %r40
     %r67 = icmp eq i32 %r29,%r66
     br i1 %r67, label %L12, label %L13
-L8:  ;
+L8:  ;  exiting1
     %r46 = icmp slt i32 %r76,%r78
     br i1 %r46, label %L6, label %L7
 L9:  ;
@@ -59,7 +59,7 @@ L9:  ;
 L10:  ;
     %r62 = add i32 %r51,1
     br label %L11
-L11:  ;latch
+L11:  ;  latch1
     %r77 = phi i32 [%r59,%L9],[%r78,%L10]
     %r75 = phi i32 [%r76,%L9],[%r62,%L10]
     br label %L5

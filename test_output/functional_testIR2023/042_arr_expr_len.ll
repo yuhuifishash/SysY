@@ -18,14 +18,14 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r17 = phi i32 [0,%L1],[%r14,%L3]
     %r16 = phi i32 [0,%L1],[%r11,%L3]
     %r6 = icmp slt i32 %r17,6
     br i1 %r6, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r9 = getelementptr [6 x i32], ptr @arr, i32 0, i32 %r17
     %r10 = load i32, ptr %r9
     %r11 = add i32 %r16,%r10

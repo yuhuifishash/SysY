@@ -18,9 +18,9 @@ define i32 @factor(i32 %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r27 = phi i32 [1,%L1],[%r23,%L6]
     %r26 = phi i32 [0,%L1],[%r25,%L6]
     %r11 = add i32 %r0,1
@@ -35,7 +35,7 @@ L4:  ;
 L5:  ;
     %r20 = add i32 %r26,%r27
     br label %L6
-L6:  ;latch
+L6:  ;  latch0
     %r25 = phi i32 [%r26,%L3],[%r20,%L5]
     %r23 = add i32 %r27,1
     br label %L2

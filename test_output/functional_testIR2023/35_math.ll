@@ -41,7 +41,7 @@ L2:  ;
     %r11 = call float @my_sqrt(float %r10)
     %r12 = fmul float %r6,%r11
     ret float %r12
-L3:  ;
+L3:  ;  preheader0
     %r16 = sitofp i32 8 to float
     %r17 = fdiv float %r0,%r16
     %r18 = fadd float 0x3fe0000000000000,0x0
@@ -53,12 +53,12 @@ L3:  ;
     %r28 = fdiv float %r23,%r27
     %r29 = fadd float %r19,%r28
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r47 = phi float [%r29,%L3],[%r41,%L5]
     %r46 = phi i32 [10,%L3],[%r44,%L5]
     %r33 = icmp ne i32 %r46,0
     br i1 %r33, label %L5, label %L6
-L5:  ;latch
+L5:  ;  latch0
     %r37 = fdiv float %r0,%r47
     %r38 = fadd float %r47,%r37
     %r41 = fdiv float %r38,%r22
@@ -80,10 +80,10 @@ L2:  ;
     %r12 = sitofp i32 1 to float
     %r13 = fdiv float %r12,%r11
     ret float %r13
-L3:  ;
+L3:  ;  preheader0
     %r15 = fadd float 0x3ff0000000000000,0x0
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r35 = phi float [%r0,%L3],[%r27,%L8]
     %r34 = phi i32 [%r1,%L3],[%r30,%L8]
     %r33 = phi float [%r15,%L3],[%r32,%L8]
@@ -98,7 +98,7 @@ L6:  ;
 L7:  ;
     %r24 = fmul float %r33,%r35
     br label %L8
-L8:  ;latch
+L8:  ;  latch0
     %r32 = phi float [%r33,%L5],[%r24,%L7]
     %r27 = fmul float %r35,%r35
     %r30 = sdiv i32 %r34,2
@@ -299,10 +299,10 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r55 = phi i32 [%r1,%L1],[%r53,%L14]
     %r3 = icmp ne i32 %r55,0
     br i1 %r3, label %L3, label %L4
@@ -358,7 +358,7 @@ L12:  ;
 L13:  ;
     call void @putch(i32 45)
     br label %L14
-L14:  ;latch
+L14:  ;  latch0
     call void @putch(i32 10)
     %r53 = sub i32 %r55,1
     br label %L2

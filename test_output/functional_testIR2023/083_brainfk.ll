@@ -21,14 +21,14 @@ define void @read_program()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r3 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r16 = phi i32 [0,%L1],[%r12,%L3]
     %r6 = icmp slt i32 %r16,%r3
     br i1 %r6, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r8 = getelementptr [32768 x i32], ptr @program, i32 0, i32 %r16
     %r9 = call i32 @getch()
     store i32 %r9, ptr %r8
@@ -43,9 +43,9 @@ define void @interpret(ptr %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r106 = phi i32 [0,%L1],[%r105,%L7]
     %r90 = phi i32 [0,%L1],[%r89,%L7]
     %r8 = getelementptr i32, ptr %r0, i32 %r90
@@ -66,7 +66,7 @@ L5:  ;
 L6:  ;
     %r22 = icmp eq i32 %r13,60
     br i1 %r22, label %L8, label %L9
-L7:  ;latch
+L7:  ;  latch0
     %r105 = phi i32 [%r106,%L5],[%r104,%L10]
     %r98 = phi i32 [%r90,%L5],[%r97,%L10]
     %r89 = add i32 %r98,1
@@ -137,7 +137,7 @@ L22:  ;
     %r100 = phi i32 [%r106,%L20],[%r99,%L24]
     %r93 = phi i32 [%r90,%L20],[%r92,%L24]
     br label %L19
-L23:  ;
+L23:  ;  preheader1
     br label %L26
 L24:  ;
     %r99 = phi i32 [%r106,%L21],[%r106,%L25],[%r108,%L28]
@@ -149,7 +149,7 @@ L25:  ;
     %r63 = load i32, ptr %r62
     %r64 = icmp ne i32 %r63,0
     br i1 %r64, label %L23, label %L24
-L26:  ;
+L26:  ;  exiting1  header1
     %r108 = phi i32 [1,%L23],[%r107,%L31]
     %r91 = phi i32 [%r90,%L23],[%r71,%L31]
     %r68 = icmp sgt i32 %r108,0
@@ -168,7 +168,7 @@ L29:  ;
 L30:  ;
     %r83 = icmp eq i32 %r74,93
     br i1 %r83, label %L32, label %L33
-L31:  ;latch
+L31:  ;  latch1
     %r107 = phi i32 [%r80,%L29],[%r109,%L33]
     br label %L26
 L32:  ;

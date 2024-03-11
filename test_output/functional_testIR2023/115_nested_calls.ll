@@ -108,17 +108,17 @@ define i32 @main()
 L0:  ;
     %r8 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     %r3 = call i32 @getint()
     %r5 = call i32 @getint()
     %r7 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r125 = phi i32 [0,%L1],[%r19,%L3]
     %r13 = icmp slt i32 %r125,10
     br i1 %r13, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r15 = getelementptr [10 x i32], ptr %r8, i32 0, i32 %r125
     %r16 = call i32 @getint()
     store i32 %r16, ptr %r15

@@ -16,10 +16,10 @@ define i32 @maxArea(ptr %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r10 = sub i32 %r1,1
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r66 = phi i32 [0,%L1],[%r65,%L12]
     %r64 = phi i32 [%r10,%L1],[%r63,%L12]
     %r62 = phi i32 [-1,%L1],[%r61,%L12]
@@ -62,7 +62,7 @@ L10:  ;
 L11:  ;
     %r57 = add i32 %r66,1
     br label %L12
-L12:  ;latch
+L12:  ;  latch0
     %r65 = phi i32 [%r66,%L10],[%r57,%L11]
     %r63 = phi i32 [%r54,%L10],[%r64,%L11]
     br label %L2

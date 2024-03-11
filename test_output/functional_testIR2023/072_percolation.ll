@@ -18,15 +18,15 @@ define void @init(i32 %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r18 = phi i32 [1,%L1],[%r17,%L3]
     %r7 = mul i32 %r0,%r0
     %r9 = add i32 %r7,1
     %r10 = icmp sle i32 %r18,%r9
     br i1 %r10, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r12 = getelementptr [110 x i32], ptr @array, i32 0, i32 %r18
     store i32 -1, ptr %r12
     %r17 = add i32 %r18,1
@@ -72,15 +72,15 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r165 = phi i32 [1,%L1],[%r13,%L31]
     %r163 = phi i32 [0,%L1],[%r162,%L31]
     %r161 = phi i32 [0,%L1],[%r160,%L31]
     %r10 = icmp ne i32 %r165,0
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     %r13 = sub i32 %r165,1
     store i32 4, ptr @n
     %r20 = load i32, ptr @n
@@ -90,7 +90,7 @@ L3:  ;
     br label %L5
 L4:  ;
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r162 = phi i32 [%r163,%L3],[%r30,%L9]
     %r160 = phi i32 [%r161,%L3],[%r31,%L9]
     %r159 = phi i32 [0,%L3],[%r147,%L9]
@@ -114,7 +114,7 @@ L8:  ;
     store i32 %r41, ptr %r43
     %r47 = icmp eq i32 %r30,1
     br i1 %r47, label %L10, label %L11
-L9:  ;latch
+L9:  ;  latch0
     %r156 = phi i32 [%r157,%L6],[%r155,%L27]
     %r147 = add i32 %r159,1
     br label %L5
@@ -215,6 +215,6 @@ L30:  ;
     call void @putint(i32 -1)
     call void @putch(i32 10)
     br label %L31
-L31:  ;latch
+L31:  ;  latch1
     br label %L2
 }

@@ -16,19 +16,19 @@ define void @sort(ptr %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r44 = phi i32 [0,%L1],[%r13,%L7]
     %r8 = sub i32 %r1,1
     %r9 = icmp slt i32 %r44,%r8
     br i1 %r9, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     %r13 = add i32 %r44,1
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting1  header1
     %r43 = phi i32 [%r13,%L3],[%r38,%L9]
     %r16 = icmp slt i32 %r43,%r1
     br i1 %r16, label %L6, label %L7
@@ -39,7 +39,7 @@ L6:  ;
     %r22 = load i32, ptr %r21
     %r23 = icmp slt i32 %r19,%r22
     br i1 %r23, label %L8, label %L9
-L7:  ;latch
+L7:  ;  latch0
     br label %L2
 L8:  ;
     %r27 = load i32, ptr %r18
@@ -47,7 +47,7 @@ L8:  ;
     store i32 %r32, ptr %r18
     store i32 %r27, ptr %r21
     br label %L9
-L9:  ;latch
+L9:  ;  latch1
     %r38 = add i32 %r43,1
     br label %L5
 }
@@ -330,7 +330,7 @@ define i32 @main()
 L0:  ;
     %r0 = alloca [32 x [2 x i32]]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r0,i8 0,i32 256,i1 0)
     %r1 = call i32 @getint()
     %r2 = call i32 @getint()
@@ -354,11 +354,11 @@ L1:  ;
     %r20 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 0, i32 1
     store i32 8848, ptr %r20
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r118 = phi i32 [1,%L1],[%r50,%L3]
     %r25 = icmp slt i32 %r118,32
     br i1 %r25, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r28 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r118, i32 0
     %r31 = sub i32 %r118,1
     %r33 = getelementptr [32 x [2 x i32]], ptr %r0, i32 0, i32 %r31, i32 1

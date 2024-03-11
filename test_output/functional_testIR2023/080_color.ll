@@ -127,70 +127,70 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r120 = phi i32 [0,%L1],[%r58,%L7]
     %r6 = icmp slt i32 %r120,18
     br i1 %r6, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
-L4:  ;
+L4:  ;  preheader6
     br label %L20
-L5:  ;
+L5:  ;  exiting1  header1
     %r119 = phi i32 [0,%L3],[%r55,%L10]
     %r11 = icmp slt i32 %r119,18
     br i1 %r11, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader2
     br label %L8
-L7:  ;latch
+L7:  ;  latch0
     %r58 = add i32 %r120,1
     br label %L2
-L8:  ;
+L8:  ;  exiting2  header2
     %r117 = phi i32 [0,%L6],[%r52,%L13]
     %r16 = icmp slt i32 %r117,18
     br i1 %r16, label %L9, label %L10
-L9:  ;
+L9:  ;  preheader3
     br label %L11
-L10:  ;latch
+L10:  ;  latch1
     %r55 = add i32 %r119,1
     br label %L5
-L11:  ;
+L11:  ;  exiting3  header3
     %r114 = phi i32 [0,%L9],[%r49,%L16]
     %r21 = icmp slt i32 %r114,18
     br i1 %r21, label %L12, label %L13
-L12:  ;
+L12:  ;  preheader5
     br label %L14
-L13:  ;latch
+L13:  ;  latch2
     %r52 = add i32 %r117,1
     br label %L8
-L14:  ;
+L14:  ;  exiting5  header5
     %r110 = phi i32 [0,%L12],[%r46,%L19]
     %r26 = icmp slt i32 %r110,18
     br i1 %r26, label %L15, label %L16
-L15:  ;
+L15:  ;  preheader4
     br label %L17
-L16:  ;latch
+L16:  ;  latch3
     %r49 = add i32 %r114,1
     br label %L11
-L17:  ;
+L17:  ;  exiting4  header4
     %r105 = phi i32 [0,%L15],[%r43,%L18]
     %r31 = icmp slt i32 %r105,7
     br i1 %r31, label %L18, label %L19
-L18:  ;latch
+L18:  ;  latch4
     %r38 = getelementptr [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], ptr @dp, i32 0, i32 %r120, i32 %r119, i32 %r117, i32 %r114, i32 %r110, i32 %r105
     store i32 -1, ptr %r38
     %r43 = add i32 %r105,1
     br label %L17
-L19:  ;latch
+L19:  ;  latch5
     %r46 = add i32 %r110,1
     br label %L14
-L20:  ;
+L20:  ;  exiting6  header6
     %r121 = phi i32 [0,%L4],[%r79,%L21]
     %r62 = icmp slt i32 %r121,%r1
     br i1 %r62, label %L21, label %L22
-L21:  ;latch
+L21:  ;  latch6
     %r64 = getelementptr [200 x i32], ptr @list, i32 0, i32 %r121
     %r65 = call i32 @getint()
     store i32 %r65, ptr %r64

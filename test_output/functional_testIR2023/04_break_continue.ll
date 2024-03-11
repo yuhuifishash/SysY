@@ -16,38 +16,38 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r91 = phi i32 [0,%L1],[%r90,%L7]
     %r87 = phi i32 [0,%L1],[%r71,%L7]
     %r6 = icmp slt i32 %r87,20
     br i1 %r6, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     ret i32 %r91
-L5:  ;
+L5:  ;  exiting1  header1
     %r90 = phi i32 [%r91,%L3],[%r89,%L10]
     %r86 = phi i32 [0,%L3],[%r65,%L10]
     %r11 = icmp slt i32 %r86,10
     br i1 %r11, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader4
     br label %L8
-L7:  ;latch
+L7:  ;  latch0
     %r71 = add i32 %r87,1
     br label %L2
-L8:  ;
+L8:  ;  exiting4  header4
     %r89 = phi i32 [%r90,%L6],[%r88,%L32]
     %r84 = phi i32 [0,%L6],[%r62,%L32]
     %r16 = icmp slt i32 %r84,5
     br i1 %r16, label %L9, label %L10
-L9:  ;
+L9:  ;  preheader3
     br label %L11
-L10:  ;latch
+L10:  ;  latch1
     %r65 = add i32 %r86,1
     br label %L5
-L11:  ;
+L11:  ;  exiting3  header3
     %r88 = phi i32 [%r89,%L9],[%r55,%L27]
     %r81 = phi i32 [0,%L9],[%r24,%L27]
     %r21 = icmp slt i32 %r81,3
@@ -61,14 +61,14 @@ L13:  ;
 L14:  ;
     %r28 = icmp ne i32 %r81,0
     br i1 %r28, label %L16, label %L17
-L15:  ;
+L15:  ;  preheader2
     br label %L25
 L16:  ;
     %r30 = icmp ne i32 %r81,0
     br i1 %r30, label %L18, label %L20
 L17:  ;
     br label %L15
-L18:  ;
+L18:  ;  exiting3
     %r36 = sub i32 %r81,-1
     %r38 = icmp sge i32 %r36,3
     br i1 %r38, label %L21, label %L22
@@ -81,21 +81,21 @@ L21:  ;
     br label %L13
 L22:  ;
     br label %L19
-L25:  ;
+L25:  ;  exiting2  header2
     %r77 = phi i32 [0,%L15],[%r46,%L26]
     %r43 = icmp slt i32 %r77,2
     br i1 %r43, label %L26, label %L27
-L26:  ;latch
+L26:  ;  latch2
     %r46 = add i32 %r77,1
     br label %L25
-L27:  ;latch
+L27:  ;  latch3
     %r55 = add i32 %r88,1
     br label %L11
 L30:  ;
     br label %L31
 L31:  ;
     br label %L33
-L32:  ;latch
+L32:  ;  latch4
     %r62 = add i32 %r84,1
     br label %L8
 L33:  ;

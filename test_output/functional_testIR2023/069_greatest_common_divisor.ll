@@ -16,14 +16,14 @@ define i32 @fun(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r17 = phi i32 [%r0,%L1],[%r16,%L3]
     %r16 = phi i32 [%r1,%L1],[%r11,%L3]
     %r8 = icmp sgt i32 %r16,0
     br i1 %r8, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r11 = srem i32 %r17,%r16
     br label %L2
 L4:  ;

@@ -34,20 +34,20 @@ define i32 @longest_common_subseq(ptr %r0,i32 %r1,ptr %r2,i32 %r3)
 L0:  ;
     %r6 = alloca [16 x [16 x i32]]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r6,i8 0,i32 1024,i1 0)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r71 = phi i32 [1,%L1],[%r64,%L7]
     %r14 = icmp sle i32 %r71,%r1
     br i1 %r14, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     %r67 = getelementptr [16 x [16 x i32]], ptr %r6, i32 0, i32 %r1, i32 %r3
     %r68 = load i32, ptr %r67
     ret i32 %r68
-L5:  ;
+L5:  ;  exiting1  header1
     %r70 = phi i32 [1,%L3],[%r61,%L10]
     %r18 = icmp sle i32 %r70,%r3
     br i1 %r18, label %L6, label %L7
@@ -60,7 +60,7 @@ L6:  ;
     %r28 = load i32, ptr %r27
     %r29 = icmp eq i32 %r23,%r28
     br i1 %r29, label %L8, label %L9
-L7:  ;latch
+L7:  ;  latch0
     %r64 = add i32 %r71,1
     br label %L2
 L8:  ;
@@ -79,7 +79,7 @@ L9:  ;
     %r58 = call i32 @MAX(i32 %r51,i32 %r57)
     store i32 %r58, ptr %r45
     br label %L10
-L10:  ;latch
+L10:  ;  latch1
     %r61 = add i32 %r70,1
     br label %L5
 }
@@ -88,7 +88,7 @@ define i32 @max_sum_nonadjacent(ptr %r0,i32 %r1)
 L0:  ;
     %r3 = alloca [16 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r3,i8 0,i32 64,i1 0)
     %r5 = getelementptr [16 x i32], ptr %r3, i32 0, i32 0
     %r7 = getelementptr i32, ptr %r0, i32 0
@@ -100,11 +100,11 @@ L1:  ;
     %r17 = call i32 @MAX(i32 %r8,i32 %r16)
     store i32 %r17, ptr %r10
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r48 = phi i32 [2,%L1],[%r42,%L3]
     %r22 = icmp slt i32 %r48,%r1
     br i1 %r22, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r24 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r48
     %r27 = sub i32 %r48,2
     %r28 = getelementptr [16 x i32], ptr %r3, i32 0, i32 %r27

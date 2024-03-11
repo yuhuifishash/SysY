@@ -234,30 +234,30 @@ L1:  ;
     br i1 %r4, label %L2, label %L3
 L2:  ;
     ret i32 0
-L3:  ;
+L3:  ;  preheader0
     %r7 = call i32 @getint()
     %r8 = call i32 @new_node(i32 %r7)
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r36 = phi i32 [1,%L3],[%r19,%L5]
     %r13 = icmp slt i32 %r36,%r2
     br i1 %r13, label %L5, label %L6
-L5:  ;latch
+L5:  ;  latch0
     %r15 = call i32 @getint()
     %r16 = call i32 @insert(i32 %r8,i32 %r15)
     %r19 = add i32 %r36,1
     br label %L4
-L6:  ;
+L6:  ;  preheader1
     call void @inorder(i32 %r8)
     call void @putch(i32 10)
     %r22 = call i32 @getint()
     br label %L7
-L7:  ;
+L7:  ;  exiting1  header1
     %r38 = phi i32 [%r8,%L6],[%r29,%L8]
     %r37 = phi i32 [0,%L6],[%r32,%L8]
     %r26 = icmp slt i32 %r37,%r22
     br i1 %r26, label %L8, label %L9
-L8:  ;latch
+L8:  ;  latch1
     %r28 = call i32 @getint()
     %r29 = call i32 @delete(i32 %r38,i32 %r28)
     %r32 = add i32 %r37,1

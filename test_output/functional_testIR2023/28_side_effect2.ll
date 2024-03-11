@@ -98,9 +98,9 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r287 = phi i32 [0,%L1],[%r87,%L6]
     %r4 = icmp slt i32 %r287,20
     br i1 %r4, label %L3, label %L4
@@ -108,11 +108,11 @@ L3:  ;
     %r7 = call i32 @f(i32 0,i32 %r287)
     %r8 = icmp ne i32 %r7,0
     br i1 %r8, label %L25, label %L6
-L4:  ;
+L4:  ;  preheader1
     br label %L26
 L5:  ;
     br label %L6
-L6:  ;latch
+L6:  ;  latch0
     %r87 = add i32 %r287,1
     br label %L2
 L7:  ;
@@ -191,7 +191,7 @@ L25:  ;
     %r11 = call i32 @f(i32 1,i32 %r287)
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L24, label %L6
-L26:  ;
+L26:  ;  exiting1  header1
     %r288 = phi i32 [0,%L4],[%r174,%L30]
     %r91 = icmp slt i32 %r288,20
     br i1 %r91, label %L27, label %L28
@@ -199,11 +199,11 @@ L27:  ;
     %r94 = call i32 @g(i32 0,i32 %r288)
     %r95 = icmp ne i32 %r94,0
     br i1 %r95, label %L29, label %L49
-L28:  ;
+L28:  ;  preheader2
     br label %L50
 L29:  ;
     br label %L30
-L30:  ;latch
+L30:  ;  latch1
     %r174 = add i32 %r288,1
     br label %L26
 L31:  ;
@@ -282,18 +282,18 @@ L49:  ;
     %r98 = call i32 @g(i32 1,i32 %r288)
     %r99 = icmp ne i32 %r98,0
     br i1 %r99, label %L29, label %L48
-L50:  ;
+L50:  ;  exiting2  header2
     %r289 = phi i32 [1,%L28],[%r187,%L51]
     %r178 = icmp slt i32 %r289,20
     br i1 %r178, label %L53, label %L52
-L51:  ;latch
+L51:  ;  latch2
     %r187 = add i32 %r289,1
     br label %L50
 L52:  ;
     %r192 = call i32 @h(i32 0)
     %r193 = icmp ne i32 %r192,0
     br i1 %r193, label %L58, label %L57
-L53:  ;
+L53:  ;  exiting2
     %r181 = sub i32 %r289,1
     %r183 = call i32 @f(i32 %r181,i32 %r289)
     %r184 = icmp ne i32 %r183,0

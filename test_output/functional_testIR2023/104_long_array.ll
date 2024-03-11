@@ -20,26 +20,26 @@ L0:  ;
     %r3 = alloca [10000 x i32]
     %r2 = alloca [10000 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r170 = phi i32 [0,%L1],[%r19,%L3]
     %r9 = icmp slt i32 %r170,10000
     br i1 %r9, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r11 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r170
     %r14 = mul i32 %r170,%r170
     %r16 = srem i32 %r14,10
     store i32 %r16, ptr %r11
     %r19 = add i32 %r170,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r171 = phi i32 [0,%L4],[%r37,%L6]
     %r23 = icmp slt i32 %r171,10000
     br i1 %r23, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch1
     %r25 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r171
     %r27 = getelementptr [10000 x i32], ptr %r2, i32 0, i32 %r171
     %r28 = load i32, ptr %r27
@@ -48,13 +48,13 @@ L6:  ;latch
     store i32 %r34, ptr %r25
     %r37 = add i32 %r171,1
     br label %L5
-L7:  ;
+L7:  ;  preheader2
     br label %L8
-L8:  ;
+L8:  ;  exiting2  header2
     %r172 = phi i32 [0,%L7],[%r59,%L9]
     %r41 = icmp slt i32 %r172,10000
     br i1 %r41, label %L9, label %L10
-L9:  ;latch
+L9:  ;  latch2
     %r43 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r172
     %r45 = getelementptr [10000 x i32], ptr %r3, i32 0, i32 %r172
     %r46 = load i32, ptr %r45
@@ -66,9 +66,9 @@ L9:  ;latch
     store i32 %r56, ptr %r43
     %r59 = add i32 %r172,1
     br label %L8
-L10:  ;
+L10:  ;  preheader3
     br label %L11
-L11:  ;
+L11:  ;  exiting3  header3
     %r173 = phi i32 [0,%L10],[%r151,%L16]
     %r164 = phi i32 [0,%L10],[%r163,%L16]
     %r65 = icmp slt i32 %r173,10000
@@ -88,11 +88,11 @@ L14:  ;
 L15:  ;
     %r79 = icmp slt i32 %r173,20
     br i1 %r79, label %L17, label %L18
-L16:  ;latch
+L16:  ;  latch3
     %r163 = phi i32 [%r75,%L14],[%r166,%L19]
     %r151 = add i32 %r173,1
     br label %L11
-L17:  ;
+L17:  ;  preheader4
     br label %L20
 L18:  ;
     %r102 = icmp slt i32 %r173,30
@@ -100,12 +100,12 @@ L18:  ;
 L19:  ;
     %r166 = phi i32 [%r165,%L22],[%r167,%L25]
     br label %L16
-L20:  ;
+L20:  ;  exiting4  header4
     %r165 = phi i32 [%r164,%L17],[%r95,%L21]
     %r162 = phi i32 [5000,%L17],[%r98,%L21]
     %r86 = icmp slt i32 %r162,10000
     br i1 %r86, label %L21, label %L22
-L21:  ;latch
+L21:  ;  latch4
     %r89 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r173
     %r90 = load i32, ptr %r89
     %r91 = add i32 %r165,%r90
@@ -117,7 +117,7 @@ L21:  ;latch
 L22:  ;
     call void @putint(i32 %r165)
     br label %L19
-L23:  ;
+L23:  ;  preheader5
     br label %L26
 L24:  ;
     %r142 = getelementptr [10000 x i32], ptr %r4, i32 0, i32 %r173
@@ -129,7 +129,7 @@ L24:  ;
 L25:  ;
     %r167 = phi i32 [%r148,%L24],[%r169,%L28]
     br label %L19
-L26:  ;
+L26:  ;  exiting5  header5
     %r169 = phi i32 [%r164,%L23],[%r168,%L31]
     %r158 = phi i32 [5000,%L23],[%r157,%L31]
     %r109 = icmp slt i32 %r158,10000
@@ -159,7 +159,7 @@ L30:  ;
     %r135 = srem i32 %r133,13333
     %r138 = add i32 %r158,2
     br label %L31
-L31:  ;latch
+L31:  ;  latch5
     %r168 = phi i32 [%r121,%L29],[%r135,%L30]
     %r157 = phi i32 [%r124,%L29],[%r138,%L30]
     br label %L26

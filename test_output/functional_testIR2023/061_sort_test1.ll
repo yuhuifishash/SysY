@@ -17,19 +17,19 @@ define i32 @bubblesort(ptr %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r54 = phi i32 [0,%L1],[%r50,%L7]
     %r7 = load i32, ptr @n
     %r9 = sub i32 %r7,1
     %r10 = icmp slt i32 %r54,%r9
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     ret i32 0
-L5:  ;
+L5:  ;  exiting1  header1
     %r53 = phi i32 [0,%L3],[%r24,%L9]
     %r13 = load i32, ptr @n
     %r15 = sub i32 %r13,%r54
@@ -44,7 +44,7 @@ L6:  ;
     %r26 = load i32, ptr %r25
     %r27 = icmp sgt i32 %r21,%r26
     br i1 %r27, label %L8, label %L9
-L7:  ;latch
+L7:  ;  latch0
     %r50 = add i32 %r54,1
     br label %L2
 L8:  ;
@@ -53,7 +53,7 @@ L8:  ;
     store i32 %r41, ptr %r25
     store i32 %r34, ptr %r20
     br label %L9
-L9:  ;latch
+L9:  ;  latch1
     br label %L5
 }
 define i32 @main()
@@ -61,7 +61,7 @@ define i32 @main()
 L0:  ;
     %r1 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 10, ptr @n
     %r3 = getelementptr [10 x i32], ptr %r1, i32 0, i32 0
     store i32 4, ptr %r3
@@ -86,12 +86,12 @@ L1:  ;
     %r34 = getelementptr [10 x i32], ptr %r1, i32 0
     %r35 = call i32 @bubblesort(ptr %r34)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r51 = phi i32 [%r35,%L1],[%r49,%L3]
     %r37 = load i32, ptr @n
     %r38 = icmp slt i32 %r51,%r37
     br i1 %r38, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r42 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r51
     %r43 = load i32, ptr %r42
     call void @putint(i32 %r43)

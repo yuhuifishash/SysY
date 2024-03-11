@@ -8112,13 +8112,13 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r21 = phi i32 [1,%L1],[%r19,%L3]
     %r4 = icmp sle i32 %r21,20
     br i1 %r4, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     call void @putch(i32 102)
     call void @putch(i32 105)
     call void @putch(i32 98)

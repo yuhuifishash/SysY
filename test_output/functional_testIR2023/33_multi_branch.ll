@@ -16,10 +16,10 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r6 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r914 = phi i32 [0,%L1],[%r912,%L7]
     %r11 = icmp slt i32 %r914,%r6
     br i1 %r11, label %L3, label %L4
@@ -34,7 +34,7 @@ L5:  ;
     br i1 %r22, label %L12, label %L10
 L6:  ;
     br label %L7
-L7:  ;latch
+L7:  ;  latch0
     %r916 = phi i32 [100,%L6],[%r917,%L11]
     call void @putint(i32 %r916)
     call void @putch(i32 10)

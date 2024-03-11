@@ -19,14 +19,14 @@ define i32 @add(ptr %r0,ptr %r1,ptr %r2,ptr %r3,ptr %r4,ptr %r5,ptr %r6,ptr %r7,
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r46 = phi i32 [0,%L1],[%r44,%L3]
     %r13 = load i32, ptr @M
     %r14 = icmp slt i32 %r46,%r13
     br i1 %r14, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r16 = getelementptr i32, ptr %r6, i32 %r46
     %r18 = getelementptr i32, ptr %r0, i32 %r46
     %r19 = load i32, ptr %r18
@@ -66,17 +66,17 @@ L0:  ;
     %r4 = alloca [3 x i32]
     %r3 = alloca [3 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 3, ptr @N
     store i32 3, ptr @M
     store i32 3, ptr @L
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r93 = phi i32 [0,%L1],[%r38,%L3]
     %r16 = load i32, ptr @M
     %r17 = icmp slt i32 %r93,%r16
     br i1 %r17, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r19 = getelementptr [3 x i32], ptr %r3, i32 0, i32 %r93
     store i32 %r93, ptr %r19
     %r22 = getelementptr [3 x i32], ptr %r4, i32 0, i32 %r93
@@ -91,7 +91,7 @@ L3:  ;latch
     store i32 %r93, ptr %r34
     %r38 = add i32 %r93,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     %r39 = getelementptr [3 x i32], ptr %r3, i32 0
     %r40 = getelementptr [3 x i32], ptr %r4, i32 0
     %r41 = getelementptr [3 x i32], ptr %r5, i32 0
@@ -103,40 +103,40 @@ L4:  ;
     %r47 = getelementptr [3 x i32], ptr %r11, i32 0
     %r48 = call i32 @add(ptr %r39,ptr %r40,ptr %r41,ptr %r42,ptr %r43,ptr %r44,ptr %r45,ptr %r46,ptr %r47)
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r94 = phi i32 [%r48,%L4],[%r60,%L6]
     %r52 = load i32, ptr @N
     %r53 = icmp slt i32 %r94,%r52
     br i1 %r53, label %L6, label %L7
-L6:  ;latch
+L6:  ;  latch1
     %r55 = getelementptr [6 x i32], ptr %r9, i32 0, i32 %r94
     %r56 = load i32, ptr %r55
     call void @putint(i32 %r56)
     %r60 = add i32 %r94,1
     br label %L5
-L7:  ;
+L7:  ;  preheader2
     call void @putch(i32 10)
     br label %L8
-L8:  ;
+L8:  ;  exiting2  header2
     %r95 = phi i32 [0,%L7],[%r73,%L9]
     %r65 = load i32, ptr @N
     %r66 = icmp slt i32 %r95,%r65
     br i1 %r66, label %L9, label %L10
-L9:  ;latch
+L9:  ;  latch2
     %r68 = getelementptr [3 x i32], ptr %r10, i32 0, i32 %r95
     %r69 = load i32, ptr %r68
     call void @putint(i32 %r69)
     %r73 = add i32 %r95,1
     br label %L8
-L10:  ;
+L10:  ;  preheader3
     call void @putch(i32 10)
     br label %L11
-L11:  ;
+L11:  ;  exiting3  header3
     %r96 = phi i32 [0,%L10],[%r86,%L12]
     %r78 = load i32, ptr @N
     %r79 = icmp slt i32 %r96,%r78
     br i1 %r79, label %L12, label %L13
-L12:  ;latch
+L12:  ;  latch3
     %r81 = getelementptr [3 x i32], ptr %r11, i32 0, i32 %r96
     %r82 = load i32, ptr %r81
     call void @putint(i32 %r82)

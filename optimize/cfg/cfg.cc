@@ -176,6 +176,7 @@ LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to)
             BrCondI->SetNewTarget(from->block_id, midBB->block_id);
         }
     }
+    BuildCFG();
 
     return midBB;
 }

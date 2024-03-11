@@ -17,19 +17,19 @@ define i32 @select_sort(ptr %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r58 = phi i32 [0,%L1],[%r18,%L11]
     %r13 = sub i32 %r1,1
     %r14 = icmp slt i32 %r58,%r13
     br i1 %r14, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     %r18 = add i32 %r58,1
     br label %L5
 L4:  ;
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r57 = phi i32 [%r18,%L3],[%r32,%L9]
     %r55 = phi i32 [%r58,%L3],[%r54,%L9]
     %r21 = icmp slt i32 %r57,%r1
@@ -46,7 +46,7 @@ L7:  ;
     br i1 %r35, label %L10, label %L11
 L8:  ;
     br label %L9
-L9:  ;latch
+L9:  ;  latch0
     %r54 = phi i32 [%r55,%L6],[%r57,%L8]
     %r32 = add i32 %r57,1
     br label %L5
@@ -58,7 +58,7 @@ L10:  ;
     store i32 %r45, ptr %r39
     store i32 %r40, ptr %r44
     br label %L11
-L11:  ;latch
+L11:  ;  latch1
     br label %L2
 }
 define i32 @main()
@@ -66,7 +66,7 @@ define i32 @main()
 L0:  ;
     %r1 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 10, ptr @n
     %r3 = getelementptr [10 x i32], ptr %r1, i32 0, i32 0
     store i32 4, ptr %r3
@@ -92,12 +92,12 @@ L1:  ;
     %r36 = load i32, ptr @n
     %r37 = call i32 @select_sort(ptr %r35,i32 %r36)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r53 = phi i32 [%r37,%L1],[%r51,%L3]
     %r39 = load i32, ptr @n
     %r40 = icmp slt i32 %r53,%r39
     br i1 %r40, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r44 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r53
     %r45 = load i32, ptr %r44
     call void @putint(i32 %r45)

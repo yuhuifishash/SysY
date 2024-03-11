@@ -20,15 +20,15 @@ define i32 @putstr(ptr %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r15 = phi i32 [0,%L1],[%r13,%L3]
     %r5 = getelementptr i32, ptr %r0, i32 %r15
     %r6 = load i32, ptr %r5
     %r7 = icmp ne i32 %r6,0
     br i1 %r7, label %L3, label %L4
-L3:  ;latch
+L3:  ;  latch0
     %r10 = load i32, ptr %r5
     call void @putch(i32 %r10)
     %r13 = add i32 %r15,1
@@ -40,11 +40,11 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r0 = getelementptr [100 x i32], ptr @__HELLO, i32 0
     %r1 = call i32 @putstr(ptr %r0)
     br label %L2
-L2:  ;
+L2:  ;  header0
     %r38 = phi i32 [0,%L1],[%r33,%L8]
     br label %L3
 L3:  ;
@@ -64,7 +64,7 @@ L5:  ;
     %r25 = getelementptr [5 x i32], ptr @RET, i32 0
     %r26 = call i32 @putstr(ptr %r25)
     br label %L6
-L6:  ;
+L6:  ;  exiting0
     %r29 = mul i32 %r38,17
     %r31 = add i32 %r29,23
     %r33 = srem i32 %r31,32
@@ -72,6 +72,6 @@ L6:  ;
     br i1 %r36, label %L7, label %L8
 L7:  ;
     br label %L4
-L8:  ;latch
+L8:  ;  latch0
     br label %L2
 }

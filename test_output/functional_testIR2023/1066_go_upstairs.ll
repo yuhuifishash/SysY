@@ -22,7 +22,7 @@ L1:  ;
     br i1 %r4, label %L2, label %L3
 L2:  ;
     ret i32 %r0
-L3:  ;
+L3:  ;  preheader0
     %r8 = getelementptr [10 x i32], ptr %r6, i32 0, i32 0
     store i32 0, ptr %r8
     %r11 = getelementptr [10 x i32], ptr %r6, i32 0, i32 1
@@ -30,12 +30,12 @@ L3:  ;
     %r14 = getelementptr [10 x i32], ptr %r6, i32 0, i32 2
     store i32 2, ptr %r14
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r43 = phi i32 [3,%L3],[%r39,%L5]
     %r22 = add i32 %r0,1
     %r23 = icmp slt i32 %r43,%r22
     br i1 %r23, label %L5, label %L6
-L5:  ;latch
+L5:  ;  latch0
     %r25 = getelementptr [10 x i32], ptr %r6, i32 0, i32 %r43
     %r28 = sub i32 %r43,1
     %r29 = getelementptr [10 x i32], ptr %r6, i32 0, i32 %r28
