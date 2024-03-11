@@ -47,8 +47,8 @@ void Mem2Reg(CFG*);
 void SparseConditionalConstantPropagation(CFG* C);
 void SimplifyCFGBeforeMem2Reg(CFG* C);
 void SimpleDCE(CFG* C);
-void ElimateEmptyIndexGEP(CFG* C);
-void TailRecursiveElimate(CFG* C);
+void EliminateEmptyIndexGEP(CFG* C);
+void TailRecursiveEliminate(CFG* C);
 void BasicBlockCSE(CFG* C);
 void DomTreeWalkCSE(CFG* C);
 void InstSimplify(CFG* C);
@@ -56,6 +56,8 @@ void InstCombine(CFG* C);
 void EliminateDoubleBrUnCond(CFG* C);
 void LoopSimplify(CFG* C);
 void LoopRotate(CFG* C);
+void LoopInvariantCodeMotion(CFG* C);
+void LoopClosedSSA(CFG* C);
 
 enum Target{ARMV7 = 1,RV64GC = 2}target;
 
@@ -118,8 +120,8 @@ int main(int argc,char** argv)
     bool optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0));
     if(optimize_flag){
         llvmIR.PassExecutor( EliminateSimpleConstInstructions );
-        //llvmIR.PassExecutor( ElimateEmptyIndexGEP ); //to do
-        //llvmIR.PassExecutor( TailRecursiveElimate ); //to do
+        //llvmIR.PassExecutor( EliminateEmptyIndexGEP ); //to do
+        //llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
         //llvmIR.PassExecutor( MakeFunctionOneExit ); //to do
         //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 

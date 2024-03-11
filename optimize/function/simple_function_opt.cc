@@ -19,7 +19,7 @@ void MakeFunctionOneExit(CFG* C)
     * you can use testcase 087_gcd.sy to check
     * you should set CFG::max_reg correctly
     * @param C the control flow graph of the function */
-void TailRecursiveElimate(CFG* C)
+void TailRecursiveEliminate(CFG* C)
 {
     std::cerr<<"TailRecursiveElimate is not implemented now\n";
 }
