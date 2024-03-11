@@ -34,14 +34,14 @@ L4:  ;  preheader3
 L5:  ;  exiting0  header0
     %r72 = phi i32 [1,%L3],[%r27,%L9]
     %r18 = icmp sle i32 %r72,%r0
-    br i1 %r18, label %L6, label %L7
+    br i1 %r18, label %L6, label %L19
 L6:  ;  exiting0
     %r20 = getelementptr [10 x i32], ptr @indegree, i32 0, i32 %r72
     %r21 = load i32, ptr %r20
     %r23 = icmp eq i32 %r21,0
     br i1 %r23, label %L8, label %L9
 L7:  ;  preheader2
-    %r77 = phi i32 [%r78,%L5],[%r72,%L8]
+    %r77 = phi i32 [%r72,%L8],[%r79,%L19]
     %r29 = getelementptr [10 x i32], ptr @queue, i32 0, i32 %r76
     store i32 %r77, ptr %r29
     %r33 = add i32 %r76,1
@@ -87,6 +87,9 @@ L17:  ;  latch3
     br label %L16
 L18:  ;
     ret void
+L19:  ;
+    %r79 = phi i32 [%r78,%L5]
+    br label %L7
 }
 define i32 @main()
 {

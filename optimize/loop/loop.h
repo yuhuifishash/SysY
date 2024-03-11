@@ -31,6 +31,7 @@ public:
     void ExitInsert(CFG* C);
 
     void LoopSimplify(CFG* C);
+    void LoopSimplifyCheck(CFG* C);
 
     void LoopRotate(CFG* C);
 

@@ -140,8 +140,8 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( DomTreeWalkCSE );
 
         llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor( LoopSimplify );
-        llvmIR.PassExecutor( LoopRotate );
+        //llvmIR.PassExecutor( LoopSimplify );
+        //llvmIR.PassExecutor( LoopRotate );
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){

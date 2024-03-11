@@ -173,7 +173,7 @@ LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to)
             BrUnCondI->SetTarget(new LabelOperand(midBB->block_id));
         }else if(I->GetOpcode() == BR_COND){
             auto BrCondI = (BrCondInstruction*)I;
-            BrCondI->SetNewTarget(from->block_id, midBB->block_id);
+            BrCondI->SetNewTarget(to->block_id, midBB->block_id);
         }
     }
     BuildCFG();

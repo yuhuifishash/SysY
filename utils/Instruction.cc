@@ -1,5 +1,6 @@
 #include "Instruction.h"
 #include "basic_block.h"
+#include <assert.h>
 
 void IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
@@ -191,6 +192,8 @@ Operand PhiInstruction::GetValOperand(int label_id){
             return val;
         }
     }
+    assert(false);
+    return nullptr;
 }
 
 void BrCondInstruction::SetNewTarget(int oldlabel,int newlabel){
@@ -202,6 +205,7 @@ void BrCondInstruction::SetNewTarget(int oldlabel,int newlabel){
         f_target->SetLabelNo(newlabel);
     }else{
         std::cerr<<"oldlabel is not existed\n";
+        assert(false);
     }
 }
 

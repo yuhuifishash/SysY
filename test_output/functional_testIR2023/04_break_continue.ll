@@ -51,7 +51,7 @@ L11:  ;  exiting3  header3
     %r88 = phi i32 [%r89,%L9],[%r55,%L27]
     %r81 = phi i32 [0,%L9],[%r24,%L27]
     %r21 = icmp slt i32 %r81,3
-    br i1 %r21, label %L12, label %L13
+    br i1 %r21, label %L12, label %L39
 L12:  ;
     %r24 = add i32 %r81,1
     %r26 = icmp sge i32 %r24,3
@@ -104,4 +104,6 @@ L34:  ;
     br label %L35
 L35:  ;
     br label %L32
+L39:  ;
+    br label %L13
 }

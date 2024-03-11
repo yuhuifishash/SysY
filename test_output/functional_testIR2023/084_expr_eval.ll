@@ -256,7 +256,7 @@ L3:  ;  preheader1
 L4:  ;  exiting1  header1
     %r9 = load i32, ptr @cur_token
     %r11 = icmp eq i32 %r9,1
-    br i1 %r11, label %L5, label %L6
+    br i1 %r11, label %L5, label %L19
 L5:  ;  exiting1
     %r13 = load i32, ptr @other
     %r15 = call i32 @get_op_prec(i32 %r13)
@@ -315,6 +315,8 @@ L17:  ;  latch2
 L18:  ;
     %r69 = call i32 @stack_peek(ptr %r6)
     ret i32 %r69
+L19:  ;
+    br label %L6
 }
 define i32 @main()
 {

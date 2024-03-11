@@ -12,8 +12,8 @@ void LoopSimplify(CFG* C)
 void NaturalLoop::LoopSimplify(CFG* C)
 {
     SingleLatchInsert(C);
-    ExitInsert(C);
     AddPreheader(C);
+    ExitInsert(C);
 }
 
 void NaturalLoop::SingleLatchInsert(CFG* C)
@@ -33,7 +33,7 @@ void NaturalLoop::SingleLatchInsert(CFG* C)
     //update father loop's loop nodes
     auto now = this;
     while(now->fa_loop != nullptr){
-        now = fa_loop;
+        now = now->fa_loop;
         now->loop_nodes.insert(new_latch);
     }
     //PrintLoopDebugInfo();
@@ -41,7 +41,40 @@ void NaturalLoop::SingleLatchInsert(CFG* C)
 
 void NaturalLoop::ExitInsert(CFG* C)
 {
-    //std::set<LLVMBlock> inloop_preblocks;
+    std::set<LLVMBlock> inloop_preblocks;
+    std::map<LLVMBlock,LLVMBlock> exit_map;
+    for(auto exit:exit_nodes){
+        bool is_dom_exit = true;
+        for(auto preBB:C->GetPredecessor(exit)){
+            if(loop_nodes.find(preBB) != loop_nodes.end()){
+                inloop_preblocks.insert(preBB);
+            }else{
+                is_dom_exit = false;
+            }    
+        }
+        
+        if(is_dom_exit){continue;}
+        auto new_exit = C->InsertTransferBlock(inloop_preblocks, exit);
+        //update father loop's loop nodes
+        auto now = this;
+        
+        while(now->fa_loop != nullptr){
+            now = now->fa_loop;
+            if(now->loop_nodes.find(exit) != now->loop_nodes.end()){
+                now->loop_nodes.insert(exit);
+            }
+        }
+        
+        exit_map[exit] = new_exit;
+    }
+
+    for(auto [pre,now]:exit_map){
+        exit_nodes.erase(pre);
+        exit_nodes.insert(now);
+    }
+    // if(!exit_map.empty()){
+    //     PrintLoopDebugInfo();
+    // }
 }
 
 void NaturalLoop::AddPreheader(CFG* C)
@@ -57,7 +90,7 @@ void NaturalLoop::AddPreheader(CFG* C)
 
     if(outloop_preblocks.size() == 1){
         preheader = *(outloop_preblocks.begin());
-        preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);;
+        preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
         return;
     }
 
@@ -69,7 +102,12 @@ void NaturalLoop::AddPreheader(CFG* C)
     //update father loop's loop nodes
     auto now = this;
     while(now->fa_loop != nullptr){
-        now = fa_loop;
+        now = now->fa_loop;
         now->loop_nodes.insert(new_pre);
     }
+}
+
+void NaturalLoop::LoopSimplifyCheck(CFG* C)
+{
+
 }

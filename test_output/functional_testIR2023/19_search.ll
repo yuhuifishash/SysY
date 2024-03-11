@@ -33,8 +33,8 @@ L2:  ;
 L3:  ;  preheader1
     br label %L4
 L4:  ;  exiting1  header1
-    %r129 = phi i32 [1073741824,%L3],[%r130,%L30]
-    %r127 = phi i32 [0,%L3],[%r131,%L30]
+    %r129 = phi i32 [1073741824,%L3],[%r130,%L31]
+    %r127 = phi i32 [0,%L3],[%r131,%L31]
     %r16 = icmp slt i32 %r127,4
     br i1 %r16, label %L5, label %L6
 L5:  ;  preheader0
@@ -49,7 +49,7 @@ L7:  ;  exiting0  header0
     %r25 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r124, i32 %r122
     %r26 = load i32, ptr %r25
     %r28 = icmp ne i32 %r26,1
-    br i1 %r28, label %L8, label %L9
+    br i1 %r28, label %L8, label %L30
 L8:  ;
     %r30 = load i32, ptr @x_1
     %r31 = icmp eq i32 %r124,%r30
@@ -84,13 +84,13 @@ L16:  ;  exiting1
     br i1 %r55, label %L14, label %L15
 L17:  ;
     %r62 = add i32 %r127,1
-    br label %L30
+    br label %L31
 L18:  ;
     %r65 = icmp eq i32 %r124,0
     br i1 %r65, label %L20, label %L24
 L20:  ;
     %r81 = add i32 %r127,1
-    br label %L30
+    br label %L31
 L21:  ;
     store i32 0, ptr %r25
     %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
@@ -123,12 +123,14 @@ L27:  ;
     %r128 = phi i32 [%r129,%L21],[%r104,%L26]
     store i32 1, ptr %r25
     %r115 = add i32 %r127,1
-    br label %L30
+    br label %L31
 L28:  ;
     ret i32 1073741824
 L29:  ;
     ret i32 %r129
-L30:  ;latch1
+L30:  ;
+    br label %L9
+L31:  ;latch1
     %r130 = phi i32 [%r129,%L17],[%r129,%L20],[%r128,%L27]
     %r131 = phi i32 [%r62,%L17],[%r81,%L20],[%r115,%L27]
     br label %L4

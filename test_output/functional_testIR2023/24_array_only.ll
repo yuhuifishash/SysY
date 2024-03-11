@@ -153,7 +153,7 @@ L1:  ;  preheader1
 L2:  ;  exiting1  header1
     %r17 = load i32, ptr %r10
     %r18 = icmp ne i32 %r17,0
-    br i1 %r18, label %L3, label %L4
+    br i1 %r18, label %L3, label %L11
 L3:  ;  preheader0
     %r20 = getelementptr [1 x i32], ptr %r0, i32 0, i32 0
     %r24 = load i32, ptr %r5
@@ -196,4 +196,6 @@ L8:  ;
     br label %L4
 L9:  ;  latch1
     br label %L2
+L11:  ;
+    br label %L4
 }

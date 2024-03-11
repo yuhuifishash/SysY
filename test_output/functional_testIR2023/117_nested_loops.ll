@@ -227,11 +227,11 @@ L2:  ;  exiting6  header6
     %r148 = phi i32 [0,%L1],[%r147,%L42]
     %r136 = phi i32 [0,%L1],[%r135,%L42]
     %r33 = icmp slt i32 %r192,10
-    br i1 %r33, label %L3, label %L4
+    br i1 %r33, label %L3, label %L48
 L3:  ;  preheader5
     br label %L5
 L4:  ;
-    %r137 = phi i32 [%r136,%L2],[%r135,%L41]
+    %r137 = phi i32 [%r135,%L41],[%r211,%L48]
     ret i32 %r137
 L5:  ;  exiting5  header5
     %r190 = phi i32 [0,%L3],[%r113,%L39]
@@ -242,16 +242,16 @@ L5:  ;  exiting5  header5
     %r146 = phi i32 [%r148,%L3],[%r145,%L39]
     %r134 = phi i32 [%r136,%L3],[%r133,%L39]
     %r37 = icmp slt i32 %r190,100
-    br i1 %r37, label %L6, label %L7
+    br i1 %r37, label %L6, label %L47
 L6:  ;  preheader4
     br label %L8
 L7:  ;  exiting6
-    %r183 = phi i32 [%r182,%L5],[%r187,%L38]
-    %r177 = phi i32 [%r176,%L5],[%r175,%L38]
-    %r169 = phi i32 [%r168,%L5],[%r167,%L38]
-    %r159 = phi i32 [%r158,%L5],[%r157,%L38]
-    %r147 = phi i32 [%r146,%L5],[%r145,%L38]
-    %r135 = phi i32 [%r134,%L5],[%r133,%L38]
+    %r183 = phi i32 [%r187,%L38],[%r205,%L47]
+    %r177 = phi i32 [%r175,%L38],[%r206,%L47]
+    %r169 = phi i32 [%r167,%L38],[%r207,%L47]
+    %r159 = phi i32 [%r157,%L38],[%r208,%L47]
+    %r147 = phi i32 [%r145,%L38],[%r209,%L47]
+    %r135 = phi i32 [%r133,%L38],[%r210,%L47]
     %r119 = add i32 %r192,1
     %r122 = icmp sge i32 %r119,%r0
     br i1 %r122, label %L41, label %L42
@@ -263,16 +263,16 @@ L8:  ;  exiting4  header4
     %r144 = phi i32 [%r146,%L6],[%r143,%L36]
     %r132 = phi i32 [%r134,%L6],[%r131,%L36]
     %r41 = icmp slt i32 %r186,1000
-    br i1 %r41, label %L9, label %L10
+    br i1 %r41, label %L9, label %L46
 L9:  ;  preheader3
     br label %L11
 L10:  ;  exiting5
-    %r187 = phi i32 [%r186,%L8],[%r107,%L35]
-    %r175 = phi i32 [%r174,%L8],[%r181,%L35]
-    %r167 = phi i32 [%r166,%L8],[%r165,%L35]
-    %r157 = phi i32 [%r156,%L8],[%r155,%L35]
-    %r145 = phi i32 [%r144,%L8],[%r143,%L35]
-    %r133 = phi i32 [%r132,%L8],[%r131,%L35]
+    %r187 = phi i32 [%r107,%L35],[%r199,%L46]
+    %r175 = phi i32 [%r181,%L35],[%r200,%L46]
+    %r167 = phi i32 [%r165,%L35],[%r201,%L46]
+    %r157 = phi i32 [%r155,%L35],[%r202,%L46]
+    %r145 = phi i32 [%r143,%L35],[%r203,%L46]
+    %r133 = phi i32 [%r131,%L35],[%r204,%L46]
     %r113 = add i32 %r190,1
     %r116 = icmp sge i32 %r113,%r1
     br i1 %r116, label %L38, label %L39
@@ -283,15 +283,15 @@ L11:  ;  exiting3  header3
     %r142 = phi i32 [%r144,%L9],[%r141,%L33]
     %r130 = phi i32 [%r132,%L9],[%r129,%L33]
     %r45 = icmp slt i32 %r180,10000
-    br i1 %r45, label %L12, label %L13
+    br i1 %r45, label %L12, label %L50
 L12:  ;  preheader2
     br label %L14
 L13:  ;  exiting4
-    %r181 = phi i32 [%r180,%L11],[%r101,%L32]
-    %r165 = phi i32 [%r164,%L11],[%r173,%L32]
-    %r155 = phi i32 [%r154,%L11],[%r153,%L32]
-    %r143 = phi i32 [%r142,%L11],[%r141,%L32]
-    %r131 = phi i32 [%r130,%L11],[%r129,%L32]
+    %r181 = phi i32 [%r101,%L32],[%r216,%L50]
+    %r165 = phi i32 [%r173,%L32],[%r217,%L50]
+    %r155 = phi i32 [%r153,%L32],[%r218,%L50]
+    %r143 = phi i32 [%r141,%L32],[%r219,%L50]
+    %r131 = phi i32 [%r129,%L32],[%r220,%L50]
     %r107 = add i32 %r186,1
     %r110 = icmp sge i32 %r107,%r2
     br i1 %r110, label %L35, label %L36
@@ -301,14 +301,14 @@ L14:  ;  exiting2  header2
     %r140 = phi i32 [%r142,%L12],[%r139,%L30]
     %r128 = phi i32 [%r130,%L12],[%r127,%L30]
     %r49 = icmp slt i32 %r172,100000
-    br i1 %r49, label %L15, label %L16
+    br i1 %r49, label %L15, label %L49
 L15:  ;  preheader1
     br label %L17
 L16:  ;  exiting3
-    %r173 = phi i32 [%r172,%L14],[%r95,%L29]
-    %r153 = phi i32 [%r152,%L14],[%r163,%L29]
-    %r141 = phi i32 [%r140,%L14],[%r139,%L29]
-    %r129 = phi i32 [%r128,%L14],[%r127,%L29]
+    %r173 = phi i32 [%r95,%L29],[%r212,%L49]
+    %r153 = phi i32 [%r163,%L29],[%r213,%L49]
+    %r141 = phi i32 [%r139,%L29],[%r214,%L49]
+    %r129 = phi i32 [%r127,%L29],[%r215,%L49]
     %r101 = add i32 %r180,1
     %r104 = icmp sge i32 %r101,%r3
     br i1 %r104, label %L32, label %L33
@@ -317,13 +317,13 @@ L17:  ;  exiting1  header1
     %r138 = phi i32 [%r140,%L15],[%r151,%L27]
     %r126 = phi i32 [%r128,%L15],[%r125,%L27]
     %r53 = icmp slt i32 %r162,1000000
-    br i1 %r53, label %L18, label %L19
+    br i1 %r53, label %L18, label %L45
 L18:  ;  preheader0
     br label %L20
 L19:  ;  exiting2
-    %r163 = phi i32 [%r162,%L17],[%r89,%L26]
-    %r139 = phi i32 [%r138,%L17],[%r151,%L26]
-    %r127 = phi i32 [%r126,%L17],[%r125,%L26]
+    %r163 = phi i32 [%r89,%L26],[%r196,%L45]
+    %r139 = phi i32 [%r151,%L26],[%r197,%L45]
+    %r127 = phi i32 [%r125,%L26],[%r198,%L45]
     %r95 = add i32 %r172,1
     %r98 = icmp sge i32 %r95,%r4
     br i1 %r98, label %L29, label %L30
@@ -331,7 +331,7 @@ L20:  ;  exiting0  header0
     %r150 = phi i32 [0,%L18],[%r83,%L24]
     %r124 = phi i32 [%r126,%L18],[%r80,%L24]
     %r57 = icmp slt i32 %r150,10000000
-    br i1 %r57, label %L21, label %L22
+    br i1 %r57, label %L21, label %L44
 L21:  ;  exiting0
     %r60 = srem i32 %r124,817
     %r68 = getelementptr [10 x [2 x [3 x [4 x [5 x [6 x [2 x i32]]]]]]], ptr @arr1, i32 0, i32 %r192, i32 %r190, i32 %r186, i32 %r180, i32 %r172, i32 %r162, i32 %r150
@@ -344,8 +344,8 @@ L21:  ;  exiting0
     %r86 = icmp sge i32 %r83,%r6
     br i1 %r86, label %L23, label %L24
 L22:  ;  exiting1
-    %r151 = phi i32 [%r150,%L20],[%r83,%L23]
-    %r125 = phi i32 [%r124,%L20],[%r80,%L23]
+    %r151 = phi i32 [%r83,%L23],[%r194,%L44]
+    %r125 = phi i32 [%r80,%L23],[%r195,%L44]
     %r89 = add i32 %r162,1
     %r92 = icmp sge i32 %r89,%r5
     br i1 %r92, label %L26, label %L27
@@ -377,6 +377,47 @@ L41:  ;
     br label %L4
 L42:  ;  latch6
     br label %L2
+L44:  ;
+    %r194 = phi i32 [%r150,%L20]
+    %r195 = phi i32 [%r124,%L20]
+    br label %L22
+L45:  ;
+    %r196 = phi i32 [%r162,%L17]
+    %r197 = phi i32 [%r138,%L17]
+    %r198 = phi i32 [%r126,%L17]
+    br label %L19
+L46:  ;
+    %r199 = phi i32 [%r186,%L8]
+    %r200 = phi i32 [%r174,%L8]
+    %r201 = phi i32 [%r166,%L8]
+    %r202 = phi i32 [%r156,%L8]
+    %r203 = phi i32 [%r144,%L8]
+    %r204 = phi i32 [%r132,%L8]
+    br label %L10
+L47:  ;
+    %r205 = phi i32 [%r182,%L5]
+    %r206 = phi i32 [%r176,%L5]
+    %r207 = phi i32 [%r168,%L5]
+    %r208 = phi i32 [%r158,%L5]
+    %r209 = phi i32 [%r146,%L5]
+    %r210 = phi i32 [%r134,%L5]
+    br label %L7
+L48:  ;
+    %r211 = phi i32 [%r136,%L2]
+    br label %L4
+L49:  ;
+    %r212 = phi i32 [%r172,%L14]
+    %r213 = phi i32 [%r152,%L14]
+    %r214 = phi i32 [%r140,%L14]
+    %r215 = phi i32 [%r128,%L14]
+    br label %L16
+L50:  ;
+    %r216 = phi i32 [%r180,%L11]
+    %r217 = phi i32 [%r164,%L11]
+    %r218 = phi i32 [%r154,%L11]
+    %r219 = phi i32 [%r142,%L11]
+    %r220 = phi i32 [%r130,%L11]
+    br label %L13
 }
 define i32 @main()
 {
