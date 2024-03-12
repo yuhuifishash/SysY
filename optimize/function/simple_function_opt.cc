@@ -8,9 +8,65 @@
     * then create a new bb for ret instruction.(this bb is the target of the new br uncond instruction)
     * you should set CFG::max_reg correctly
     * @param C the control flow graph of the function */
+
+
 void MakeFunctionOneExit(CFG* C)
 {
-    std::cerr<<"MakeFunctionOneExit is not implemented now\n";
+    std::queue<LLVMBlock> OneExitqueue;
+    enum LLVMType ret_type = VOID;
+    bool ret_exist = false;
+    for(auto [id,bb]:*C->block_map){
+        auto I=bb->Instruction_list.back();
+        if(I->GetOpcode() != RET ){continue;}
+        ret_exist = true;
+        auto RetI = (RetInstruction*)I;
+        if(RetI->GetType() == VOID){continue;}
+        ret_type = RetI->GetType();
+        OneExitqueue.push(bb);
+    }
+    if(!ret_exist){return;}
+    RegOperand *ret_reg=new RegOperand(++C->max_reg);
+    auto B=*C->NewBlock();
+    auto B_RetI=new RegOperand(++C->max_reg);
+    if(ret_type == VOID){
+        /*
+        ret type -->
+        br uncond newblock
+        */
+        while(!OneExitqueue.empty()){
+            auto bb = OneExitqueue.front();
+            OneExitqueue.pop();
+            auto RetI = bb->Instruction_list.back();
+            bb->Instruction_list.pop_back();
+            bb->InsertInstruction(1,new BrUncondInstruction(new LabelOperand(B.block_id)));
+        }
+        auto B_RetI=new RegOperand(++C->max_reg);
+        B.InsertInstruction(1,new RetInstruction(ret_type,B_RetI));
+    } else {
+        auto bb0 = *C->block_map->begin()->second;
+        auto AllocaI=new AllocaInstruction(ret_type,ret_reg);
+        bb0.InsertInstruction(0,AllocaI);
+        /*
+        ret type value --> 
+        store type value pointer
+        br uncond newblock
+        */
+        while(!OneExitqueue.empty()){
+            auto bb = OneExitqueue.front();
+            OneExitqueue.pop();
+            auto RetI = bb->Instruction_list.back();
+            bb->Instruction_list.pop_back();
+            bb->InsertInstruction(1,new StoreInstruction(ret_type,ret_reg,RetI->GetResultReg()));
+            bb->InsertInstruction(1,new BrUncondInstruction(new LabelOperand(B.block_id)));
+        }
+        B.InsertInstruction(1,new LoadInstruction(ret_type,ret_reg,B_RetI));
+        B.InsertInstruction(1,new RetInstruction(ret_type,B_RetI));
+        /*
+        load reg_type pointer
+        ret pointer
+        */
+    }
+    //std::cerr<<"MakeFunctionOneExit is not implemented now\n";
 }
 
 

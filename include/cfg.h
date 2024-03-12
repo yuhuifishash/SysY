@@ -19,6 +19,7 @@ public:
     int max_label = 0;
     int max_reg = 0;
     FuncDefInstruction function_def;
+    LLVMBlock ret_block;
 
     /*this is the pointer to the value of LLVMIR.function_block_map
       you can see it in the LLVMIR::CFGInit()*/
@@ -47,7 +48,7 @@ public:
     std::vector<LLVMBlock> GetSuccessor(int bbid);
     LLVMBlock GetBlock(int bbid);
     LLVMBlock NewBlock();
-
+    
     /*B1  \                                   B1  \
       B2  -> B4   will be transformed to      B2  -> midB -> B5
       B3  /                                   B3  /
