@@ -122,7 +122,7 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( EliminateSimpleConstInstructions );
         //llvmIR.PassExecutor( EliminateEmptyIndexGEP ); //to do
         //llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
-        //llvmIR.PassExecutor( MakeFunctionOneExit ); //to do
+        llvmIR.PassExecutor( MakeFunctionOneExit );
         //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 
         llvmIR.BuildDominatorTree();

@@ -641,10 +641,10 @@ public:
     RetInstruction(enum LLVMType retType,Operand res):ret_type(retType),ret_val(res){
         this->opcode=RET;
     }
-    Operand GetResultReg(){return NULL;}
+    Operand GetResultReg(){return nullptr;}
     //Getters
     enum LLVMType GetType(){return ret_type;}
-    Operand GetResult(){return ret_val;}
+    Operand GetRetVal(){return ret_val;}
 
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
