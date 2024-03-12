@@ -140,7 +140,7 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( DomTreeWalkCSE );
 
         llvmIR.BuildLoopInfo();
-        //llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopSimplify );
         //llvmIR.PassExecutor( LoopRotate );
     }
     

@@ -6,6 +6,10 @@ void LoopSimplify(CFG* C)
     for(auto loop:C->LoopForest.loop_set){
         loop->LoopSimplify(C);
     }
+    C->BuildDominatorTree();
+    // for(auto loop:C->LoopForest.loop_set){
+    //     loop->LoopSimplifyCheck(C);
+    // }
 }
 
 
@@ -61,7 +65,7 @@ void NaturalLoop::ExitInsert(CFG* C)
         while(now->fa_loop != nullptr){
             now = now->fa_loop;
             if(now->loop_nodes.find(exit) != now->loop_nodes.end()){
-                now->loop_nodes.insert(exit);
+                now->loop_nodes.insert(new_exit);
             }
         }
         
@@ -107,7 +111,39 @@ void NaturalLoop::AddPreheader(CFG* C)
     }
 }
 
+
+std::set<LLVMBlock> FindNodesInLoop(CFG* C,LLVMBlock n,LLVMBlock d); //backedge n->d
 void NaturalLoop::LoopSimplifyCheck(CFG* C)
 {
+    //check single latch
+    //PrintLoopDebugInfo();
+    assert(latch.size() == 1);
 
+    //check loop nodes with single latch
+    auto S = FindNodesInLoop(C,*latch.begin(),header);
+    assert(S.size() == loop_nodes.size());
+    for(auto node:loop_nodes){
+        assert(S.find(node) != S.end());
+    }
+
+    //check preheader
+    int pre_outloop_cnt = 0;
+    for(auto bb:C->GetPredecessor(header)){
+        if(loop_nodes.find(bb) == loop_nodes.end()){
+            ++pre_outloop_cnt;
+        }
+    }
+    assert(pre_outloop_cnt <= 1);
+
+    //check exit
+    for(auto exit:exit_nodes){
+        pre_outloop_cnt = 0;
+        for(auto bb:C->GetPredecessor(exit)){
+            if(loop_nodes.find(bb) == loop_nodes.end()){
+                ++pre_outloop_cnt;
+            }
+        }
+    }
+    assert(pre_outloop_cnt == 0);
+    std::cerr<<"Pass LoopSimplify Test\n";
 }

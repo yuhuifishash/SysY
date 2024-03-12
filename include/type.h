@@ -17,6 +17,7 @@ public:
         DOUBLE = 5
     }type;
     std::string GetTypeInfo();
+    Type(){type = VOID;}
 };
 
 
