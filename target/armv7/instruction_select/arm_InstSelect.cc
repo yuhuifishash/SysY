@@ -68,8 +68,8 @@ void ArmSelector::ConvertAndAppend<CallInstruction*>(CallInstruction* ins,ArmBlo
 
 template<>
 void ArmSelector::ConvertAndAppend<RetInstruction*>(RetInstruction* ins,ArmBlock* blk){
-    if(ins->GetResult() != NULL){
-        if(ins->GetResult()->GetOperandType() == BasicOperand::REG){
+    if(ins->GetRetVal() != NULL){
+        if(ins->GetRetVal()->GetOperandType() == BasicOperand::REG){
             if(ins->GetType() == FLOAT32){
 
             }else if(ins->GetType() == I32){

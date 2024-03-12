@@ -28,45 +28,48 @@ L1:  ;  preheader0
     %r1 = call i32 @getch()
     br label %L2
 L2:  ;  header0
-    %r39 = phi i32 [%r1,%L1],[%r16,%L7]
-    %r37 = phi i32 [0,%L1],[%r36,%L7]
-    %r8 = icmp slt i32 %r39,48
+    %r42 = phi i32 [%r1,%L1],[%r16,%L7]
+    %r40 = phi i32 [0,%L1],[%r39,%L7]
+    %r8 = icmp slt i32 %r42,48
     br i1 %r8, label %L3, label %L5
 L3:  ;
-    %r14 = icmp eq i32 %r39,45
+    %r14 = icmp eq i32 %r42,45
     br i1 %r14, label %L6, label %L7
 L4:  ;  preheader1
     br label %L8
 L5:  ;  exiting0
-    %r11 = icmp sgt i32 %r39,57
+    %r11 = icmp sgt i32 %r42,57
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
 L7:  ;  latch0
-    %r36 = phi i32 [%r37,%L3],[1,%L6]
+    %r39 = phi i32 [%r40,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
 L8:  ;  exiting1  header1
-    %r40 = phi i32 [%r39,%L4],[%r30,%L9]
-    %r38 = phi i32 [0,%L4],[%r29,%L9]
-    %r19 = icmp sge i32 %r40,48
+    %r43 = phi i32 [%r42,%L4],[%r30,%L9]
+    %r41 = phi i32 [0,%L4],[%r29,%L9]
+    %r19 = icmp sge i32 %r43,48
     br i1 %r19, label %L11, label %L10
 L9:  ;  latch1
-    %r25 = mul i32 %r38,10
-    %r27 = add i32 %r25,%r40
+    %r25 = mul i32 %r41,10
+    %r27 = add i32 %r25,%r43
     %r29 = sub i32 %r27,48
     %r30 = call i32 @getch()
     br label %L8
 L10:  ;
-    %r32 = icmp ne i32 %r37,0
+    %r32 = icmp ne i32 %r40,0
     br i1 %r32, label %L12, label %L13
 L11:  ;  exiting1
-    %r22 = icmp sle i32 %r40,57
+    %r22 = icmp sle i32 %r43,57
     br i1 %r22, label %L9, label %L10
 L12:  ;
-    %r34 = sub i32 0,%r38
-    ret i32 %r34
+    %r34 = sub i32 0,%r41
+    br label %L15
 L13:  ;
+    br label %L15
+L15:  ;
+    %r38 = phi i32 [%r34,%L12],[%r41,%L13]
     ret i32 %r38
 }
 define i32 @find(i32 %r0)
@@ -79,12 +82,15 @@ L1:  ;
     %r6 = icmp eq i32 %r0,%r5
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 %r0
+    br label %L4
 L3:  ;
     %r11 = load i32, ptr %r4
     %r12 = call i32 @find(i32 %r11)
     store i32 %r12, ptr %r4
-    ret i32 %r12
+    br label %L4
+L4:  ;
+    %r19 = phi i32 [%r0,%L2],[%r12,%L3]
+    ret i32 %r19
 }
 define i32 @same(i32 %r0,i32 %r1)
 {
@@ -96,9 +102,12 @@ L1:  ;
     %r10 = icmp eq i32 %r5,%r7
     br i1 %r10, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L4
 L3:  ;
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r15 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r15
 }
 define i32 @prim()
 {

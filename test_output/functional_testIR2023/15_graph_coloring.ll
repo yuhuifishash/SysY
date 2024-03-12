@@ -59,37 +59,40 @@ L0:  ;
 L1:  ;  preheader0
     br label %L2
 L2:  ;  exiting0  header0
-    %r36 = phi i32 [0,%L1],[%r10,%L7]
-    %r6 = icmp slt i32 %r36,4
+    %r40 = phi i32 [0,%L1],[%r10,%L7]
+    %r6 = icmp slt i32 %r40,4
     br i1 %r6, label %L3, label %L4
 L3:  ;  preheader1
-    %r10 = add i32 %r36,1
+    %r10 = add i32 %r40,1
     br label %L5
 L4:  ;
-    ret i32 1
+    br label %L11
 L5:  ;  exiting1  header1
-    %r35 = phi i32 [%r10,%L3],[%r29,%L9]
-    %r13 = icmp slt i32 %r35,4
+    %r39 = phi i32 [%r10,%L3],[%r29,%L9]
+    %r13 = icmp slt i32 %r39,4
     br i1 %r13, label %L6, label %L7
 L6:  ;
-    %r16 = getelementptr [4 x i32], ptr %r0, i32 %r36, i32 %r35
+    %r16 = getelementptr [4 x i32], ptr %r0, i32 %r40, i32 %r39
     %r17 = load i32, ptr %r16
     %r18 = icmp ne i32 %r17,0
     br i1 %r18, label %L10, label %L9
 L7:  ;  latch0
     br label %L2
 L8:  ;
-    ret i32 0
+    br label %L11
 L9:  ;  latch1
-    %r29 = add i32 %r35,1
+    %r29 = add i32 %r39,1
     br label %L5
-L10:  ;  exiting1  exiting0
-    %r20 = getelementptr i32, ptr %r1, i32 %r35
+L10:  ;  exiting0  exiting1
+    %r20 = getelementptr i32, ptr %r1, i32 %r39
     %r21 = load i32, ptr %r20
-    %r23 = getelementptr i32, ptr %r1, i32 %r36
+    %r23 = getelementptr i32, ptr %r1, i32 %r40
     %r24 = load i32, ptr %r23
     %r25 = icmp eq i32 %r21,%r24
     br i1 %r25, label %L8, label %L9
+L11:  ;
+    %r36 = phi i32 [1,%L4],[0,%L8]
+    ret i32 %r36
 }
 define i32 @graphColoring(ptr %r0,i32 %r1,i32 %r2,ptr %r3)
 {
@@ -108,16 +111,16 @@ L3:  ;  preheader0
     br label %L6
 L4:  ;
     call void @printSolution(ptr %r10)
-    ret i32 1
+    br label %L11
 L5:  ;
-    ret i32 0
+    br label %L11
 L6:  ;  exiting0  header0
-    %r40 = phi i32 [1,%L3],[%r38,%L10]
-    %r20 = icmp sle i32 %r40,%r1
+    %r44 = phi i32 [1,%L3],[%r38,%L10]
+    %r20 = icmp sle i32 %r44,%r1
     br i1 %r20, label %L7, label %L8
 L7:  ;  exiting0
     %r22 = getelementptr i32, ptr %r3, i32 %r2
-    store i32 %r40, ptr %r22
+    store i32 %r44, ptr %r22
     %r24 = getelementptr [4 x i32], ptr %r0
     %r28 = add i32 %r2,1
     %r29 = getelementptr i32, ptr %r3
@@ -125,13 +128,16 @@ L7:  ;  exiting0
     %r31 = icmp ne i32 %r30,0
     br i1 %r31, label %L9, label %L10
 L8:  ;
-    ret i32 0
+    br label %L11
 L9:  ;
-    ret i32 1
+    br label %L11
 L10:  ;  latch0
     store i32 0, ptr %r22
-    %r38 = add i32 %r40,1
+    %r38 = add i32 %r44,1
     br label %L6
+L11:  ;
+    %r42 = phi i32 [1,%L4],[0,%L5],[0,%L8],[1,%L9]
+    ret i32 %r42
 }
 define i32 @main()
 {

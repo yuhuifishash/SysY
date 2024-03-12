@@ -36,12 +36,15 @@ L1:  ;
     %r4 = icmp sge i32 %r0,48
     br i1 %r4, label %L5, label %L3
 L2:  ;
-    ret i32 1
+    br label %L6
 L3:  ;
-    ret i32 0
+    br label %L6
 L5:  ;
     %r7 = icmp sle i32 %r0,57
     br i1 %r7, label %L2, label %L3
+L6:  ;
+    %r12 = phi i32 [0,%L3],[1,%L2]
+    ret i32 %r12
 }
 define i32 @is_space(i32 %r0)
 {
@@ -51,12 +54,15 @@ L1:  ;
     %r4 = icmp eq i32 %r0,32
     br i1 %r4, label %L2, label %L5
 L2:  ;
-    ret i32 1
+    br label %L6
 L3:  ;
-    ret i32 0
+    br label %L6
 L5:  ;
     %r7 = icmp eq i32 %r0,10
     br i1 %r7, label %L2, label %L3
+L6:  ;
+    %r12 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r12
 }
 define i32 @next_token()
 {
@@ -130,7 +136,7 @@ L1:  ;
     %r4 = icmp eq i32 %r0,43
     br i1 %r4, label %L2, label %L4
 L2:  ;
-    ret i32 10
+    br label %L9
 L3:  ;
     %r11 = icmp eq i32 %r0,42
     br i1 %r11, label %L5, label %L8
@@ -138,15 +144,18 @@ L4:  ;
     %r7 = icmp eq i32 %r0,45
     br i1 %r7, label %L2, label %L3
 L5:  ;
-    ret i32 20
+    br label %L9
 L6:  ;
-    ret i32 0
+    br label %L9
 L7:  ;
     %r17 = icmp eq i32 %r0,37
     br i1 %r17, label %L5, label %L6
 L8:  ;
     %r14 = icmp eq i32 %r0,47
     br i1 %r14, label %L5, label %L7
+L9:  ;
+    %r22 = phi i32 [10,%L2],[20,%L5],[0,%L6]
+    ret i32 %r22
 }
 define void @stack_push(ptr %r0,i32 %r1)
 {
@@ -204,33 +213,36 @@ L1:  ;
     br i1 %r8, label %L2, label %L3
 L2:  ;
     %r11 = add i32 %r1,%r2
-    ret i32 %r11
+    br label %L12
 L3:  ;
     %r14 = icmp eq i32 %r0,45
     br i1 %r14, label %L4, label %L5
 L4:  ;
     %r17 = sub i32 %r1,%r2
-    ret i32 %r17
+    br label %L12
 L5:  ;
     %r20 = icmp eq i32 %r0,42
     br i1 %r20, label %L6, label %L7
 L6:  ;
     %r23 = mul i32 %r1,%r2
-    ret i32 %r23
+    br label %L12
 L7:  ;
     %r26 = icmp eq i32 %r0,47
     br i1 %r26, label %L8, label %L9
 L8:  ;
     %r29 = sdiv i32 %r1,%r2
-    ret i32 %r29
+    br label %L12
 L9:  ;
     %r32 = icmp eq i32 %r0,37
     br i1 %r32, label %L10, label %L11
 L10:  ;
     %r35 = srem i32 %r1,%r2
-    ret i32 %r35
+    br label %L12
 L11:  ;
-    ret i32 0
+    br label %L12
+L12:  ;
+    %r39 = phi i32 [%r11,%L2],[%r17,%L4],[%r23,%L6],[%r29,%L8],[%r35,%L10],[0,%L11]
+    ret i32 %r39
 }
 define i32 @eval()
 {
@@ -246,7 +258,7 @@ L1:  ;
     br i1 %r4, label %L2, label %L3
 L2:  ;
     %r5 = call i32 @panic()
-    ret i32 %r5
+    br label %L19
 L3:  ;  preheader1
     %r6 = getelementptr [256 x i32], ptr %r0, i32 0
     %r7 = load i32, ptr @num
@@ -256,7 +268,7 @@ L3:  ;  preheader1
 L4:  ;  exiting1  header1
     %r9 = load i32, ptr @cur_token
     %r11 = icmp eq i32 %r9,1
-    br i1 %r11, label %L5, label %L19
+    br i1 %r11, label %L5, label %L20
 L5:  ;  exiting1
     %r13 = load i32, ptr @other
     %r15 = call i32 @get_op_prec(i32 %r13)
@@ -294,7 +306,7 @@ L13:  ;  exiting0
     br i1 %r26, label %L11, label %L12
 L14:  ;
     %r46 = call i32 @panic()
-    ret i32 %r46
+    br label %L19
 L15:  ;  latch1
     %r48 = load i32, ptr @num
     call void @stack_push(ptr %r6,i32 %r48)
@@ -314,8 +326,11 @@ L17:  ;  latch2
     br label %L16
 L18:  ;
     %r69 = call i32 @stack_peek(ptr %r6)
-    ret i32 %r69
+    br label %L19
 L19:  ;
+    %r72 = phi i32 [%r5,%L2],[%r46,%L14],[%r69,%L18]
+    ret i32 %r72
+L20:  ;
     br label %L6
 }
 define i32 @main()

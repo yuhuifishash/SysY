@@ -29,10 +29,13 @@ L1:  ;
     %r5 = fcmp ogt float %r0,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fsub float 0x0,%r0
-    ret float %r8
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r0,%L2],[%r8,%L3]
+    ret float %r11
 }
 define float @my_cos(float %r0)
 {
@@ -70,13 +73,16 @@ L1:  ;
     %r5 = fcmp ole float %r3,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fadd float 0x4008000000000000,0x0
     %r9 = fdiv float %r0,%r8
     %r10 = call float @my_sin_impl(float %r9)
     %r11 = call float @p(float %r10)
-    ret float %r11
+    br label %L4
+L4:  ;
+    %r14 = phi float [%r0,%L2],[%r11,%L3]
+    ret float %r14
 }
 define float @my_sin(float %r0)
 {

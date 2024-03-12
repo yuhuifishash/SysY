@@ -20,14 +20,17 @@ L1:  ;
     %r6 = icmp eq i32 %r0,%r1
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 %r0
+    br label %L8
 L3:  ;
     %r10 = icmp sgt i32 %r0,%r1
     br i1 %r10, label %L5, label %L6
 L5:  ;
-    ret i32 %r0
+    br label %L8
 L6:  ;
-    ret i32 %r1
+    br label %L8
+L8:  ;
+    %r15 = phi i32 [%r0,%L2],[%r0,%L5],[%r1,%L6]
+    ret i32 %r15
 }
 define i32 @longest_common_subseq(ptr %r0,i32 %r1,ptr %r2,i32 %r3)
 {

@@ -25,7 +25,7 @@ L1:  ;
     %r9 = icmp sge i32 %r0,%r1
     br i1 %r9, label %L2, label %L4
 L2:  ;
-    ret i32 0
+    br label %L8
 L3:  ;
     %r15 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r0
     store i32 1, ptr %r15
@@ -37,12 +37,15 @@ L4:  ;
 L5:  ;
     %r21 = getelementptr [20 x i32], ptr @array, i32 0, i32 0
     %r22 = load i32, ptr %r21
-    ret i32 %r22
+    br label %L8
 L6:  ;
     %r25 = sub i32 %r0,1
     %r26 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r25
     %r27 = load i32, ptr %r26
-    ret i32 %r27
+    br label %L8
+L8:  ;
+    %r30 = phi i32 [0,%L2],[%r22,%L5],[%r27,%L6]
+    ret i32 %r30
 }
 define i32 @g(i32 %r0,i32 %r1)
 {
@@ -55,7 +58,7 @@ L1:  ;
     %r9 = icmp sge i32 %r0,%r1
     br i1 %r9, label %L2, label %L4
 L2:  ;
-    ret i32 1
+    br label %L8
 L3:  ;
     %r15 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r0
     store i32 0, ptr %r15
@@ -67,12 +70,15 @@ L4:  ;
 L5:  ;
     %r21 = getelementptr [20 x i32], ptr @array, i32 0, i32 0
     %r22 = load i32, ptr %r21
-    ret i32 %r22
+    br label %L8
 L6:  ;
     %r25 = sub i32 %r0,1
     %r26 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r25
     %r27 = load i32, ptr %r26
-    ret i32 %r27
+    br label %L8
+L8:  ;
+    %r30 = phi i32 [1,%L2],[%r22,%L5],[%r27,%L6]
+    ret i32 %r30
 }
 define i32 @h(i32 %r0)
 {
@@ -85,14 +91,17 @@ L1:  ;
     %r7 = icmp slt i32 %r0,0
     br i1 %r7, label %L2, label %L4
 L2:  ;
-    ret i32 0
+    br label %L5
 L3:  ;
     %r13 = getelementptr [20 x i32], ptr @array, i32 0, i32 %r0
     %r14 = load i32, ptr %r13
-    ret i32 %r14
+    br label %L5
 L4:  ;
     %r10 = icmp sge i32 %r0,20
     br i1 %r10, label %L2, label %L3
+L5:  ;
+    %r17 = phi i32 [0,%L2],[%r14,%L3]
+    ret i32 %r17
 }
 define i32 @main()
 {

@@ -24,7 +24,7 @@ L2:  ;
     store i32 1, ptr %r10
     %r13 = getelementptr i32, ptr %r3, i32 0
     store i32 0, ptr %r13
-    ret i32 %r0
+    br label %L5
 L3:  ;
     %r20 = srem i32 %r0,%r1
     %r21 = getelementptr i32, ptr %r2
@@ -39,7 +39,10 @@ L3:  ;
     %r42 = mul i32 %r38,%r32
     %r43 = sub i32 %r27,%r42
     store i32 %r43, ptr %r31
-    ret i32 %r23
+    br label %L5
+L5:  ;
+    %r47 = phi i32 [%r0,%L2],[%r23,%L3]
+    ret i32 %r47
 }
 define i32 @main()
 {

@@ -71,37 +71,37 @@ L1:  ;
     %r8 = icmp eq i32 %r0,%r1
     br i1 %r8, label %L2, label %L3
 L2:  ;
-    ret i32 %r2
-L3:  ;  preheader0
+    br label %L18
+L3:  ;  preheader1
     %r11 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r0
     store i32 1, ptr %r11
     br label %L4
-L4:  ;  exiting0  header0
-    %r100 = phi i32 [0,%L3],[%r101,%L18]
+L4:  ;  exiting1  header1
+    %r105 = phi i32 [0,%L3],[%r106,%L19]
     %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r18 = load i32, ptr %r17
-    %r19 = icmp slt i32 %r100,%r18
+    %r19 = icmp slt i32 %r105,%r18
     br i1 %r19, label %L5, label %L6
 L5:  ;
-    %r22 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r100
+    %r22 = getelementptr [10 x [10 x i32]], ptr @to, i32 0, i32 %r0, i32 %r105
     %r23 = load i32, ptr %r22
     %r24 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r23
     %r25 = load i32, ptr %r24
     %r26 = icmp ne i32 %r25,0
     br i1 %r26, label %L7, label %L8
 L6:  ;
-    ret i32 0
-L7:  ;
-    %r29 = add i32 %r100,1
     br label %L18
+L7:  ;
+    %r29 = add i32 %r105,1
+    br label %L19
 L8:  ;
-    %r32 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r100
+    %r32 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r0, i32 %r105
     %r33 = load i32, ptr %r32
     %r35 = icmp sle i32 %r33,0
     br i1 %r35, label %L10, label %L11
 L10:  ;
-    %r38 = add i32 %r100,1
-    br label %L18
+    %r38 = add i32 %r105,1
+    br label %L19
 L11:  ;
     %r45 = load i32, ptr %r32
     %r46 = icmp slt i32 %r2,%r45
@@ -111,10 +111,10 @@ L13:  ;
 L14:  ;
     %r51 = load i32, ptr %r32
     br label %L15
-L15:  ;  exiting0
-    %r99 = phi i32 [%r2,%L13],[%r51,%L14]
+L15:  ;  exiting1
+    %r103 = phi i32 [%r2,%L13],[%r51,%L14]
     %r56 = load i32, ptr %r22
-    %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r99)
+    %r59 = call i32 @dfs(i32 %r56,i32 %r1,i32 %r103)
     %r62 = icmp sgt i32 %r59,0
     br i1 %r62, label %L16, label %L17
 L16:  ;
@@ -122,18 +122,21 @@ L16:  ;
     %r71 = sub i32 %r69,%r59
     store i32 %r71, ptr %r32
     %r75 = load i32, ptr %r22
-    %r78 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r100
+    %r78 = getelementptr [10 x [10 x i32]], ptr @rev, i32 0, i32 %r0, i32 %r105
     %r79 = load i32, ptr %r78
     %r80 = getelementptr [10 x [10 x i32]], ptr @cap, i32 0, i32 %r75, i32 %r79
     %r90 = load i32, ptr %r80
     %r92 = add i32 %r90,%r59
     store i32 %r92, ptr %r80
-    ret i32 %r59
-L17:  ;
-    %r96 = add i32 %r100,1
     br label %L18
-L18:  ;latch0
-    %r101 = phi i32 [%r29,%L7],[%r38,%L10],[%r96,%L17]
+L17:  ;
+    %r96 = add i32 %r105,1
+    br label %L19
+L18:  ;
+    %r100 = phi i32 [%r2,%L2],[0,%L6],[%r59,%L16]
+    ret i32 %r100
+L19:  ;latch1
+    %r106 = phi i32 [%r29,%L7],[%r38,%L10],[%r96,%L17]
     br label %L4
 }
 define i32 @max_flow(i32 %r0,i32 %r1)
@@ -143,7 +146,7 @@ L0:  ;
 L1:  ;  preheader0
     br label %L2
 L2:  ;  header0
-    %r23 = phi i32 [0,%L1],[%r22,%L6]
+    %r26 = phi i32 [0,%L1],[%r22,%L6]
     br label %L3
 L3:  ;  exiting0
     %r8 = getelementptr [10 x i32], ptr @used, i32 0
@@ -152,10 +155,13 @@ L3:  ;  exiting0
     %r18 = icmp eq i32 %r15,0
     br i1 %r18, label %L5, label %L6
 L5:  ;
-    ret i32 %r23
+    br label %L7
 L6:  ;  latch0
-    %r22 = add i32 %r23,%r15
+    %r22 = add i32 %r26,%r15
     br label %L2
+L7:  ;
+    %r25 = phi i32 [%r26,%L5]
+    ret i32 %r25
 }
 define i32 @main()
 {

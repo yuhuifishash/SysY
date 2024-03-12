@@ -25,22 +25,22 @@ L0:  ;
 L1:  ;  preheader0
     br label %L2
 L2:  ;  exiting0  header0
-    %r34 = phi i32 [1,%L1],[%r10,%L7]
-    %r6 = icmp slt i32 %r34,%r0
+    %r38 = phi i32 [1,%L1],[%r10,%L7]
+    %r6 = icmp slt i32 %r38,%r0
     br i1 %r6, label %L3, label %L4
 L3:  ;  preheader1
-    %r10 = add i32 %r34,1
+    %r10 = add i32 %r38,1
     br label %L5
 L4:  ;
-    ret i32 1
+    br label %L10
 L5:  ;  exiting1  header1
-    %r33 = phi i32 [%r10,%L3],[%r27,%L9]
-    %r13 = icmp slt i32 %r33,%r0
+    %r37 = phi i32 [%r10,%L3],[%r27,%L9]
+    %r13 = icmp slt i32 %r37,%r0
     br i1 %r13, label %L6, label %L7
-L6:  ;  exiting1  exiting0
-    %r15 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r34
+L6:  ;  exiting0  exiting1
+    %r15 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r38
     %r16 = load i32, ptr %r15
-    %r18 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r33
+    %r18 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r37
     %r19 = load i32, ptr %r18
     %r20 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r16, i32 %r19
     %r21 = load i32, ptr %r20
@@ -49,10 +49,13 @@ L6:  ;  exiting1  exiting0
 L7:  ;  latch0
     br label %L2
 L8:  ;
-    ret i32 0
+    br label %L10
 L9:  ;  latch1
-    %r27 = add i32 %r33,1
+    %r27 = add i32 %r37,1
     br label %L5
+L10:  ;
+    %r34 = phi i32 [1,%L4],[0,%L8]
+    ret i32 %r34
 }
 define i32 @maxCliques(i32 %r0,i32 %r1)
 {

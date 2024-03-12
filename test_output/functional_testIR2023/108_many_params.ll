@@ -59,13 +59,16 @@ L1:  ;
     %r66 = icmp eq i32 %r0,0
     br i1 %r66, label %L2, label %L3
 L2:  ;
-    ret i32 %r1
+    br label %L5
 L3:  ;
     %r70 = sub i32 %r0,1
     %r73 = add i32 %r1,%r2
     %r75 = srem i32 %r73,998244353
     %r106 = call i32 @param32_rec(i32 %r70,i32 %r75,i32 %r3,i32 %r4,i32 %r5,i32 %r6,i32 %r7,i32 %r8,i32 %r9,i32 %r10,i32 %r11,i32 %r12,i32 %r13,i32 %r14,i32 %r15,i32 %r16,i32 %r17,i32 %r18,i32 %r19,i32 %r20,i32 %r21,i32 %r22,i32 %r23,i32 %r24,i32 %r25,i32 %r26,i32 %r27,i32 %r28,i32 %r29,i32 %r30,i32 %r31,i32 0)
-    ret i32 %r106
+    br label %L5
+L5:  ;
+    %r109 = phi i32 [%r1,%L2],[%r106,%L3]
+    ret i32 %r109
 }
 define i32 @param32_arr(ptr %r0,ptr %r1,ptr %r2,ptr %r3,ptr %r4,ptr %r5,ptr %r6,ptr %r7,ptr %r8,ptr %r9,ptr %r10,ptr %r11,ptr %r12,ptr %r13,ptr %r14,ptr %r15,ptr %r16,ptr %r17,ptr %r18,ptr %r19,ptr %r20,ptr %r21,ptr %r22,ptr %r23,ptr %r24,ptr %r25,ptr %r26,ptr %r27,ptr %r28,ptr %r29,ptr %r30,ptr %r31)
 {

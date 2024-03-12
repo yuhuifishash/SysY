@@ -51,15 +51,15 @@ L6:  ;
 L7:  ;
     br label %L4
 L8:  ;  exiting0  header0
-    %r46 = phi i32 [0,%L5],[%r29,%L9]
-    %r22 = icmp slt i32 %r46,%r14
+    %r48 = phi i32 [0,%L5],[%r29,%L9]
+    %r22 = icmp slt i32 %r48,%r14
     br i1 %r22, label %L9, label %L10
 L9:  ;  latch0
-    %r24 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r46
+    %r24 = getelementptr [1000 x i32], ptr @array, i32 0, i32 %r48
     %r25 = load i32, ptr %r24
     call void @putint(i32 %r25)
     call void @putch(i32 32)
-    %r29 = add i32 %r46,1
+    %r29 = add i32 %r48,1
     br label %L8
 L10:  ;
     br label %L7

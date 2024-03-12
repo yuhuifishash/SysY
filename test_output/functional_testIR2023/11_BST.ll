@@ -27,7 +27,7 @@ L1:  ;
     %r7 = icmp eq i32 %r0,-1
     br i1 %r7, label %L2, label %L5
 L2:  ;
-    ret i32 %r0
+    br label %L9
 L3:  ;
     %r17 = load i32, ptr %r9
     %r18 = icmp sgt i32 %r1,%r17
@@ -41,12 +41,15 @@ L6:  ;
     %r20 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
     %r21 = load i32, ptr %r20
     %r23 = call i32 @search(i32 %r21,i32 %r1)
-    ret i32 %r23
+    br label %L9
 L7:  ;
     %r25 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
     %r26 = load i32, ptr %r25
     %r28 = call i32 @search(i32 %r26,i32 %r1)
-    ret i32 %r28
+    br label %L9
+L9:  ;
+    %r31 = phi i32 [%r0,%L2],[%r23,%L6],[%r28,%L7]
+    ret i32 %r31
 }
 define i32 @new_node(i32 %r0)
 {
@@ -74,20 +77,23 @@ L1:  ;
     %r5 = icmp eq i32 %r0,-1
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret i32 -1
+    br label %L7
 L3:  ;
     %r9 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
     %r10 = load i32, ptr %r9
     %r13 = icmp ne i32 %r10,-1
     br i1 %r13, label %L5, label %L6
 L4:  ;
-    ret i32 %r0
+    br label %L7
 L5:  ;
     %r16 = load i32, ptr %r9
     %r17 = call i32 @find_minimum(i32 %r16)
-    ret i32 %r17
+    br label %L7
 L6:  ;
     br label %L4
+L7:  ;
+    %r21 = phi i32 [-1,%L2],[%r17,%L5],[%r0,%L4]
+    ret i32 %r21
 }
 define i32 @insert(i32 %r0,i32 %r1)
 {
@@ -98,14 +104,14 @@ L1:  ;
     br i1 %r7, label %L2, label %L3
 L2:  ;
     %r9 = call i32 @new_node(i32 %r1)
-    ret i32 %r9
+    br label %L8
 L3:  ;
     %r12 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r0
     %r13 = load i32, ptr %r12
     %r14 = icmp sgt i32 %r1,%r13
     br i1 %r14, label %L5, label %L6
 L4:  ;
-    ret i32 %r0
+    br label %L8
 L5:  ;
     %r16 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
     %r19 = load i32, ptr %r16
@@ -120,6 +126,9 @@ L6:  ;
     br label %L7
 L7:  ;
     br label %L4
+L8:  ;
+    %r32 = phi i32 [%r9,%L2],[%r0,%L4]
+    ret i32 %r32
 }
 define i32 @delete(i32 %r0,i32 %r1)
 {
@@ -129,7 +138,7 @@ L1:  ;
     %r7 = icmp eq i32 %r0,-1
     br i1 %r7, label %L2, label %L3
 L2:  ;
-    ret i32 -1
+    br label %L21
 L3:  ;
     %r12 = getelementptr [10000 x i32], ptr @value, i32 0, i32 %r0
     %r13 = load i32, ptr %r12
@@ -146,7 +155,7 @@ L5:  ;
     %r26 = icmp slt i32 %r1,%r25
     br i1 %r26, label %L7, label %L8
 L6:  ;
-    ret i32 %r0
+    br label %L21
 L7:  ;
     %r28 = getelementptr [10000 x i32], ptr @left_child, i32 0, i32 %r0
     %r31 = load i32, ptr %r28
@@ -161,7 +170,7 @@ L8:  ;
 L9:  ;
     br label %L6
 L10:  ;
-    ret i32 -1
+    br label %L21
 L11:  ;
     %r50 = load i32, ptr %r35
     %r53 = icmp eq i32 %r50,-1
@@ -196,10 +205,13 @@ L17:  ;
 L18:  ;
     %r67 = getelementptr [10000 x i32], ptr @right_child, i32 0, i32 %r0
     %r68 = load i32, ptr %r67
-    ret i32 %r68
+    br label %L21
 L19:  ;
     %r71 = load i32, ptr %r35
-    ret i32 %r71
+    br label %L21
+L21:  ;
+    %r94 = phi i32 [-1,%L2],[%r0,%L6],[-1,%L10],[%r68,%L18],[%r71,%L19]
+    ret i32 %r94
 }
 define void @inorder(i32 %r0)
 {
@@ -233,19 +245,19 @@ L1:  ;
     %r4 = icmp eq i32 %r2,0
     br i1 %r4, label %L2, label %L3
 L2:  ;
-    ret i32 0
+    br label %L10
 L3:  ;  preheader0
     %r7 = call i32 @getint()
     %r8 = call i32 @new_node(i32 %r7)
     br label %L4
 L4:  ;  exiting0  header0
-    %r36 = phi i32 [1,%L3],[%r19,%L5]
-    %r13 = icmp slt i32 %r36,%r2
+    %r40 = phi i32 [1,%L3],[%r19,%L5]
+    %r13 = icmp slt i32 %r40,%r2
     br i1 %r13, label %L5, label %L6
 L5:  ;  latch0
     %r15 = call i32 @getint()
     %r16 = call i32 @insert(i32 %r8,i32 %r15)
-    %r19 = add i32 %r36,1
+    %r19 = add i32 %r40,1
     br label %L4
 L6:  ;  preheader1
     call void @inorder(i32 %r8)
@@ -253,17 +265,19 @@ L6:  ;  preheader1
     %r22 = call i32 @getint()
     br label %L7
 L7:  ;  exiting1  header1
-    %r38 = phi i32 [%r8,%L6],[%r29,%L8]
-    %r37 = phi i32 [0,%L6],[%r32,%L8]
-    %r26 = icmp slt i32 %r37,%r22
+    %r43 = phi i32 [%r8,%L6],[%r29,%L8]
+    %r41 = phi i32 [0,%L6],[%r32,%L8]
+    %r26 = icmp slt i32 %r41,%r22
     br i1 %r26, label %L8, label %L9
 L8:  ;  latch1
     %r28 = call i32 @getint()
-    %r29 = call i32 @delete(i32 %r38,i32 %r28)
-    %r32 = add i32 %r37,1
+    %r29 = call i32 @delete(i32 %r43,i32 %r28)
+    %r32 = add i32 %r41,1
     br label %L7
 L9:  ;
-    call void @inorder(i32 %r38)
+    call void @inorder(i32 %r43)
     call void @putch(i32 10)
+    br label %L10
+L10:  ;
     ret i32 0
 }

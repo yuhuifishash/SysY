@@ -21,11 +21,14 @@ L1:  ;
     br i1 %r8, label %L2, label %L3
 L2:  ;
     %r11 = mul i32 %r0,%r1
-    ret i32 %r11
+    br label %L5
 L3:  ;
     %r15 = sub i32 %r1,%r2
     %r17 = call i32 @func1(i32 %r0,i32 %r15,i32 0)
-    ret i32 %r17
+    br label %L5
+L5:  ;
+    %r20 = phi i32 [%r11,%L2],[%r17,%L3]
+    ret i32 %r20
 }
 define i32 @func2(i32 %r0,i32 %r1)
 {
@@ -37,9 +40,12 @@ L1:  ;
 L2:  ;
     %r8 = srem i32 %r0,%r1
     %r10 = call i32 @func2(i32 %r8,i32 0)
-    ret i32 %r10
+    br label %L5
 L3:  ;
-    ret i32 %r0
+    br label %L5
+L5:  ;
+    %r14 = phi i32 [%r10,%L2],[%r0,%L3]
+    ret i32 %r14
 }
 define i32 @func3(i32 %r0,i32 %r1)
 {
@@ -50,11 +56,14 @@ L1:  ;
     br i1 %r6, label %L2, label %L3
 L2:  ;
     %r9 = add i32 %r0,1
-    ret i32 %r9
+    br label %L5
 L3:  ;
     %r12 = add i32 %r0,%r1
     %r14 = call i32 @func3(i32 %r12,i32 0)
-    ret i32 %r14
+    br label %L5
+L5:  ;
+    %r17 = phi i32 [%r9,%L2],[%r14,%L3]
+    ret i32 %r17
 }
 define i32 @func4(i32 %r0,i32 %r1,i32 %r2)
 {
@@ -64,9 +73,12 @@ L1:  ;
     %r7 = icmp ne i32 %r0,0
     br i1 %r7, label %L2, label %L3
 L2:  ;
-    ret i32 %r1
+    br label %L5
 L3:  ;
-    ret i32 %r2
+    br label %L5
+L5:  ;
+    %r12 = phi i32 [%r1,%L2],[%r2,%L3]
+    ret i32 %r12
 }
 define i32 @func5(i32 %r0)
 {
@@ -84,12 +96,15 @@ L1:  ;
     %r5 = icmp ne i32 %r0,0
     br i1 %r5, label %L5, label %L3
 L2:  ;
-    ret i32 1
+    br label %L6
 L3:  ;
-    ret i32 0
+    br label %L6
 L5:  ;
     %r7 = icmp ne i32 %r1,0
     br i1 %r7, label %L2, label %L3
+L6:  ;
+    %r12 = phi i32 [0,%L3],[1,%L2]
+    ret i32 %r12
 }
 define i32 @func7(i32 %r0)
 {
@@ -99,9 +114,12 @@ L1:  ;
     %r3 = icmp eq i32 %r0,0
     br i1 %r3, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
+L5:  ;
+    %r8 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r8
 }
 define i32 @main()
 {

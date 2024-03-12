@@ -29,12 +29,15 @@ L1:  ;
     %r4 = icmp sge i32 %r0,48
     br i1 %r4, label %L4, label %L3
 L2:  ;
-    ret i32 1
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
 L4:  ;
     %r7 = icmp sle i32 %r0,57
     br i1 %r7, label %L2, label %L3
+L5:  ;
+    %r12 = phi i32 [0,%L3],[1,%L2]
+    ret i32 %r12
 }
 define i32 @getstr(ptr %r0)
 {
@@ -167,9 +170,12 @@ L1:  ;
     %r14 = icmp eq i32 %r12,0
     br i1 %r14, label %L2, label %L3
 L2:  ;
-    ret i32 0
+    br label %L4
 L3:  ;
-    ret i32 1
+    br label %L4
+L4:  ;
+    %r19 = phi i32 [0,%L2],[1,%L3]
+    ret i32 %r19
 }
 define i32 @main()
 {
@@ -288,7 +294,7 @@ L22:  ;  exiting2
     %r86 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r85
     %r87 = load i32, ptr %r86
     %r89 = icmp eq i32 %r87,94
-    br i1 %r89, label %L20, label %L110
+    br i1 %r89, label %L20, label %L107
 L23:  ;
     %r80 = load i32, ptr @chat
     %r81 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r80
@@ -343,7 +349,7 @@ L35:  ;  exiting3
     %r125 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r124
     %r126 = load i32, ptr %r125
     %r128 = icmp eq i32 %r126,94
-    br i1 %r128, label %L33, label %L111
+    br i1 %r128, label %L33, label %L108
 L36:  ;
     %r119 = load i32, ptr @chat
     %r120 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r119
@@ -398,7 +404,7 @@ L48:  ;  exiting4
     %r154 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r153
     %r155 = load i32, ptr %r154
     %r157 = icmp eq i32 %r155,94
-    br i1 %r157, label %L46, label %L107
+    br i1 %r157, label %L46, label %L109
 L49:  ;
     %r148 = load i32, ptr @chat
     %r149 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r148
@@ -441,7 +447,7 @@ L59:  ;  exiting5
     %r183 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r182
     %r184 = load i32, ptr %r183
     %r186 = icmp eq i32 %r184,94
-    br i1 %r186, label %L57, label %L108
+    br i1 %r186, label %L57, label %L110
 L60:  ;
     %r177 = load i32, ptr @chat
     %r178 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r177
@@ -485,7 +491,7 @@ L70:  ;  exiting6
     %r212 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r211
     %r213 = load i32, ptr %r212
     %r215 = icmp eq i32 %r213,94
-    br i1 %r215, label %L68, label %L109
+    br i1 %r215, label %L68, label %L111
 L71:  ;
     %r206 = load i32, ptr @chat
     %r207 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r206
@@ -683,13 +689,13 @@ L106:  ;
     store i32 %r371, ptr @i
     br label %L103
 L107:  ;
-    br label %L47
-L108:  ;
-    br label %L58
-L109:  ;
-    br label %L69
-L110:  ;
     br label %L21
-L111:  ;
+L108:  ;
     br label %L34
+L109:  ;
+    br label %L47
+L110:  ;
+    br label %L58
+L111:  ;
+    br label %L69
 }

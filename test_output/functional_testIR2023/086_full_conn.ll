@@ -20,14 +20,17 @@ L1:  ;
     %r4 = icmp sgt i32 %r0,127
     br i1 %r4, label %L2, label %L3
 L2:  ;
-    ret i32 127
+    br label %L6
 L3:  ;
     %r8 = icmp slt i32 %r0,0
     br i1 %r8, label %L4, label %L5
 L4:  ;
-    ret i32 0
+    br label %L6
 L5:  ;
-    ret i32 %r0
+    br label %L6
+L6:  ;
+    %r13 = phi i32 [127,%L2],[0,%L4],[%r0,%L5]
+    ret i32 %r13
 }
 define i32 @model(ptr %r0)
 {
@@ -598,9 +601,12 @@ L1:  ;
     %r1908 = icmp sgt i32 %r1906,0
     br i1 %r1908, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L4
 L3:  ;
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r1913 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r1913
 }
 define i32 @main()
 {

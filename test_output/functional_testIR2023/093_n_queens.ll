@@ -28,16 +28,16 @@ L1:  ;  preheader0
     store i32 %r2, ptr @sum
     br label %L2
 L2:  ;  exiting0  header0
-    %r19 = phi i32 [1,%L1],[%r18,%L7]
+    %r21 = phi i32 [1,%L1],[%r18,%L7]
     %r6 = load i32, ptr @n
-    %r7 = icmp sle i32 %r19,%r6
+    %r7 = icmp sle i32 %r21,%r6
     br i1 %r7, label %L3, label %L4
 L3:  ;  exiting0
-    %r9 = getelementptr [50 x i32], ptr @ans, i32 0, i32 %r19
+    %r9 = getelementptr [50 x i32], ptr @ans, i32 0, i32 %r21
     %r10 = load i32, ptr %r9
     call void @putint(i32 %r10)
     %r12 = load i32, ptr @n
-    %r13 = icmp eq i32 %r19,%r12
+    %r13 = icmp eq i32 %r21,%r12
     br i1 %r13, label %L5, label %L6
 L4:  ;
     ret void
@@ -48,7 +48,7 @@ L6:  ;
     call void @putch(i32 32)
     br label %L7
 L7:  ;  latch0
-    %r18 = add i32 %r19,1
+    %r18 = add i32 %r21,1
     br label %L2
 }
 define void @f(i32 %r0)

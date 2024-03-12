@@ -22,9 +22,12 @@ L1:  ;
     %r6 = icmp eq i32 1,%r1
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
+L5:  ;
+    %r14 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r14
 }
 define i32 @main()
 {

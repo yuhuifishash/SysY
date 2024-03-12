@@ -27,45 +27,48 @@ L1:  ;  preheader0
     %r1 = call i32 @getch()
     br label %L2
 L2:  ;  header0
-    %r39 = phi i32 [%r1,%L1],[%r16,%L7]
-    %r37 = phi i32 [0,%L1],[%r36,%L7]
-    %r8 = icmp slt i32 %r39,48
+    %r42 = phi i32 [%r1,%L1],[%r16,%L7]
+    %r40 = phi i32 [0,%L1],[%r39,%L7]
+    %r8 = icmp slt i32 %r42,48
     br i1 %r8, label %L3, label %L5
 L3:  ;
-    %r14 = icmp eq i32 %r39,45
+    %r14 = icmp eq i32 %r42,45
     br i1 %r14, label %L6, label %L7
 L4:  ;  preheader1
     br label %L8
 L5:  ;  exiting0
-    %r11 = icmp sgt i32 %r39,57
+    %r11 = icmp sgt i32 %r42,57
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
 L7:  ;  latch0
-    %r36 = phi i32 [%r37,%L3],[1,%L6]
+    %r39 = phi i32 [%r40,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
 L8:  ;  exiting1  header1
-    %r40 = phi i32 [%r39,%L4],[%r30,%L9]
-    %r38 = phi i32 [0,%L4],[%r29,%L9]
-    %r19 = icmp sge i32 %r40,48
+    %r43 = phi i32 [%r42,%L4],[%r30,%L9]
+    %r41 = phi i32 [0,%L4],[%r29,%L9]
+    %r19 = icmp sge i32 %r43,48
     br i1 %r19, label %L11, label %L10
 L9:  ;  latch1
-    %r25 = mul i32 %r38,10
-    %r27 = add i32 %r25,%r40
+    %r25 = mul i32 %r41,10
+    %r27 = add i32 %r25,%r43
     %r29 = sub i32 %r27,48
     %r30 = call i32 @getch()
     br label %L8
 L10:  ;
-    %r32 = icmp ne i32 %r37,0
+    %r32 = icmp ne i32 %r40,0
     br i1 %r32, label %L12, label %L13
 L11:  ;  exiting1
-    %r22 = icmp sle i32 %r40,57
+    %r22 = icmp sle i32 %r43,57
     br i1 %r22, label %L9, label %L10
 L12:  ;
-    %r34 = sub i32 0,%r38
-    ret i32 %r34
+    %r34 = sub i32 0,%r41
+    br label %L15
 L13:  ;
+    br label %L15
+L15:  ;
+    %r38 = phi i32 [%r34,%L12],[%r41,%L13]
     ret i32 %r38
 }
 define void @sortA(ptr %r0)
@@ -217,21 +220,21 @@ L1:  ;  preheader0
     store i32 %r0, ptr @n
     br label %L2
 L2:  ;  exiting0  header0
-    %r75 = phi i32 [0,%L1],[%r21,%L3]
+    %r78 = phi i32 [0,%L1],[%r21,%L3]
     %r4 = load i32, ptr @n
-    %r5 = icmp ne i32 %r75,%r4
+    %r5 = icmp ne i32 %r78,%r4
     br i1 %r5, label %L3, label %L4
 L3:  ;  latch0
-    %r7 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r75
+    %r7 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r78
     %r8 = call i32 @quick_read()
     store i32 %r8, ptr %r7
-    %r10 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r75
+    %r10 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r78
     %r13 = load i32, ptr %r7
     store i32 %r13, ptr %r10
-    %r15 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r75
+    %r15 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r78
     %r18 = load i32, ptr %r10
     store i32 %r18, ptr %r15
-    %r21 = add i32 %r75,1
+    %r21 = add i32 %r78,1
     br label %L2
 L4:  ;  preheader1
     %r22 = getelementptr [100005 x i32], ptr @a, i32 0
@@ -242,51 +245,54 @@ L4:  ;  preheader1
     call void @sortC(ptr %r24)
     br label %L5
 L5:  ;  exiting1  header1
-    %r76 = phi i32 [0,%L4],[%r54,%L6]
+    %r79 = phi i32 [0,%L4],[%r54,%L6]
     %r26 = load i32, ptr @n
-    %r28 = sub i32 %r26,%r76
+    %r28 = sub i32 %r26,%r79
     %r29 = icmp ne i32 %r28,0
     br i1 %r29, label %L6, label %L7
 L6:  ;  latch1
-    %r31 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r76
+    %r31 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r79
     %r34 = load i32, ptr %r31
-    %r36 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r76
+    %r36 = getelementptr [100005 x i32], ptr @a, i32 0, i32 %r79
     %r37 = load i32, ptr %r36
     %r38 = sub i32 %r34,%r37
     store i32 %r38, ptr %r31
-    %r40 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r76
+    %r40 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r79
     %r43 = load i32, ptr %r40
     %r46 = load i32, ptr %r31
     %r47 = sub i32 %r43,%r46
     %r51 = sub i32 %r47,%r37
     store i32 %r51, ptr %r40
-    %r54 = add i32 %r76,1
+    %r54 = add i32 %r79,1
     br label %L5
 L7:  ;  preheader2
     br label %L8
 L8:  ;  exiting2  header2
-    %r77 = phi i32 [0,%L7],[%r72,%L14]
+    %r80 = phi i32 [0,%L7],[%r72,%L14]
     %r57 = load i32, ptr @n
-    %r58 = sub i32 %r77,%r57
+    %r58 = sub i32 %r80,%r57
     %r59 = icmp ne i32 %r58,0
     br i1 %r59, label %L9, label %L10
 L9:  ;  exiting2
-    %r61 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r77
+    %r61 = getelementptr [100005 x i32], ptr @b, i32 0, i32 %r80
     %r62 = load i32, ptr %r61
     %r63 = icmp ne i32 %r62,0
     br i1 %r63, label %L11, label %L12
 L10:  ;
-    ret i32 -123
+    br label %L15
 L11:  ;
-    ret i32 1
+    br label %L15
 L12:  ;  exiting2
-    %r66 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r77
+    %r66 = getelementptr [100005 x i32], ptr @c, i32 0, i32 %r80
     %r67 = load i32, ptr %r66
     %r68 = icmp ne i32 %r67,0
     br i1 %r68, label %L13, label %L14
 L13:  ;
-    ret i32 2
+    br label %L15
 L14:  ;  latch2
-    %r72 = add i32 %r77,1
+    %r72 = add i32 %r80,1
     br label %L8
+L15:  ;
+    %r77 = phi i32 [-123,%L10],[1,%L11],[2,%L13]
+    ret i32 %r77
 }

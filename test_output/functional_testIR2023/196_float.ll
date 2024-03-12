@@ -37,9 +37,12 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     %r7 = fsub float 0x0,%r0
-    ret float %r7
+    br label %L4
 L3:  ;
-    ret float %r0
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r7,%L2],[%r0,%L3]
+    ret float %r11
 }
 define void @error()
 {
@@ -88,9 +91,12 @@ L2:  ;
     %r15 = sitofp i32 2 to float
     %r16 = fdiv float %r13,%r15
     %r17 = fptosi float %r16 to i32
-    ret i32 %r17
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
+L5:  ;
+    %r21 = phi i32 [%r17,%L2],[0,%L3]
+    ret i32 %r21
 }
 define void @ok()
 {

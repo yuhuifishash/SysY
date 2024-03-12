@@ -24,13 +24,16 @@ L1:  ;
     %r6 = icmp eq i32 %r4,%r0
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 %r0
+    br label %L5
 L3:  ;
     %r12 = load i32, ptr %r3
     %r13 = call i32 @find(i32 %r12)
     store i32 %r13, ptr %r3
     %r16 = load i32, ptr %r3
-    ret i32 %r16
+    br label %L5
+L5:  ;
+    %r19 = phi i32 [%r0,%L2],[%r16,%L3]
+    ret i32 %r19
 }
 define void @merge(i32 %r0,i32 %r1)
 {

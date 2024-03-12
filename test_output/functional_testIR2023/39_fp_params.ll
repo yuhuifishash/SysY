@@ -79,12 +79,15 @@ L2:  ;
     %r167 = load i32, ptr @k
     %r168 = getelementptr [10 x float], ptr %r84, i32 0, i32 %r167
     %r169 = load float, ptr %r168
-    ret float %r169
+    br label %L5
 L3:  ;
     %r211 = fadd float %r0,%r1
     %r213 = fadd float %r211,%r2
     %r214 = call float @params_f40(float %r1,float %r2,float %r3,float %r4,float %r5,float %r6,float %r7,float %r8,float %r9,float %r10,float %r11,float %r12,float %r13,float %r14,float %r15,float %r16,float %r17,float %r18,float %r19,float %r20,float %r21,float %r22,float %r23,float %r24,float %r25,float %r26,float %r27,float %r28,float %r29,float %r30,float %r31,float %r32,float %r33,float %r34,float %r35,float %r36,float %r37,float %r38,float %r39,float %r213)
-    ret float %r214
+    br label %L5
+L5:  ;
+    %r217 = phi float [%r169,%L2],[%r214,%L3]
+    ret float %r217
 }
 define float @params_f40_i24(i32 %r0,i32 %r1,i32 %r2,float %r3,i32 %r4,i32 %r5,i32 %r6,float %r7,float %r8,float %r9,i32 %r10,float %r11,float %r12,i32 %r13,float %r14,i32 %r15,float %r16,float %r17,float %r18,float %r19,float %r20,float %r21,i32 %r22,float %r23,i32 %r24,i32 %r25,float %r26,float %r27,float %r28,float %r29,float %r30,i32 %r31,float %r32,i32 %r33,float %r34,float %r35,float %r36,float %r37,i32 %r38,i32 %r39,float %r40,float %r41,float %r42,i32 %r43,float %r44,i32 %r45,i32 %r46,float %r47,float %r48,float %r49,float %r50,i32 %r51,i32 %r52,i32 %r53,float %r54,float %r55,float %r56,float %r57,float %r58,float %r59,i32 %r60,float %r61,i32 %r62,float %r63)
 {
@@ -187,28 +190,31 @@ L2:  ;  preheader0
     br label %L5
 L3:  ;
     %r352 = call float @params_f40_i24(i32 %r4,i32 %r1,i32 %r2,float %r3,i32 %r4,i32 %r5,i32 %r6,float %r7,float %r8,float %r9,i32 %r10,float %r11,float %r12,i32 %r13,float %r14,i32 %r15,float %r16,float %r17,float %r18,float %r19,float %r20,float %r21,i32 %r22,float %r23,i32 %r24,i32 %r25,float %r26,float %r27,float %r28,float %r29,float %r30,i32 %r31,float %r32,i32 %r33,float %r34,float %r35,float %r36,float %r37,i32 %r38,i32 %r39,float %r40,float %r41,float %r42,i32 %r43,float %r44,i32 %r45,i32 %r46,float %r47,float %r48,float %r49,float %r50,i32 %r51,i32 %r52,i32 %r53,float %r54,float %r55,float %r56,float %r57,float %r58,float %r59,i32 %r60,float %r61,i32 %r62,float %r63)
-    ret float %r352
+    br label %L8
 L5:  ;  exiting0  header0
-    %r353 = phi i32 [0,%L2],[%r283,%L6]
-    %r269 = icmp slt i32 %r353,8
+    %r357 = phi i32 [0,%L2],[%r283,%L6]
+    %r269 = icmp slt i32 %r357,8
     br i1 %r269, label %L6, label %L7
 L6:  ;  latch0
-    %r271 = getelementptr [8 x i32], ptr %r212, i32 0, i32 %r353
+    %r271 = getelementptr [8 x i32], ptr %r212, i32 0, i32 %r357
     %r274 = load i32, ptr %r271
-    %r276 = getelementptr [10 x float], ptr %r131, i32 0, i32 %r353
+    %r276 = getelementptr [10 x float], ptr %r131, i32 0, i32 %r357
     %r277 = load float, ptr %r276
     %r278 = sitofp i32 %r274 to float
     %r279 = fsub float %r278,%r277
     %r280 = fptosi float %r279 to i32
     store i32 %r280, ptr %r271
-    %r283 = add i32 %r353,1
+    %r283 = add i32 %r357,1
     br label %L5
 L7:  ;
     %r284 = load i32, ptr @k
     %r285 = getelementptr [8 x i32], ptr %r212, i32 0, i32 %r284
     %r286 = load i32, ptr %r285
     %r287 = sitofp i32 %r286 to float
-    ret float %r287
+    br label %L8
+L8:  ;
+    %r355 = phi float [%r352,%L3],[%r287,%L7]
+    ret float %r355
 }
 define float @params_fa40(ptr %r0,ptr %r1,ptr %r2,ptr %r3,ptr %r4,ptr %r5,ptr %r6,ptr %r7,ptr %r8,ptr %r9,ptr %r10,ptr %r11,ptr %r12,ptr %r13,ptr %r14,ptr %r15,ptr %r16,ptr %r17,ptr %r18,ptr %r19,ptr %r20,ptr %r21,ptr %r22,ptr %r23,ptr %r24,ptr %r25,ptr %r26,ptr %r27,ptr %r28,ptr %r29,ptr %r30,ptr %r31,ptr %r32,ptr %r33,ptr %r34,ptr %r35,ptr %r36,ptr %r37,ptr %r38,ptr %r39)
 {
@@ -366,7 +372,7 @@ L2:  ;
     %r220 = load i32, ptr @k
     %r221 = getelementptr [10 x float], ptr %r40, i32 0, i32 %r220
     %r222 = load float, ptr %r221
-    ret float %r222
+    br label %L5
 L3:  ;
     %r223 = getelementptr float, ptr %r1
     %r224 = getelementptr float, ptr %r2
@@ -409,7 +415,10 @@ L3:  ;
     %r261 = getelementptr float, ptr %r39
     %r262 = getelementptr [10 x float], ptr %r40, i32 0
     %r263 = call float @params_fa40(ptr %r223,ptr %r224,ptr %r225,ptr %r226,ptr %r227,ptr %r228,ptr %r229,ptr %r230,ptr %r231,ptr %r232,ptr %r233,ptr %r234,ptr %r235,ptr %r236,ptr %r237,ptr %r238,ptr %r239,ptr %r240,ptr %r241,ptr %r242,ptr %r243,ptr %r244,ptr %r245,ptr %r246,ptr %r247,ptr %r248,ptr %r249,ptr %r250,ptr %r251,ptr %r252,ptr %r253,ptr %r254,ptr %r255,ptr %r256,ptr %r257,ptr %r258,ptr %r259,ptr %r260,ptr %r261,ptr %r262)
-    ret float %r263
+    br label %L5
+L5:  ;
+    %r266 = phi float [%r222,%L2],[%r263,%L3]
+    ret float %r266
 }
 define i32 @params_mix(float %r0,ptr %r1,i32 %r2,ptr %r3,float %r4,i32 %r5,float %r6,float %r7,ptr %r8,ptr %r9,i32 %r10,i32 %r11,ptr %r12,ptr %r13,ptr %r14,i32 %r15,ptr %r16,ptr %r17,float %r18,float %r19,float %r20,ptr %r21,i32 %r22,float %r23,float %r24,float %r25,ptr %r26,ptr %r27,ptr %r28,ptr %r29,ptr %r30,float %r31,float %r32,ptr %r33,i32 %r34,ptr %r35,ptr %r36,float %r37,float %r38,ptr %r39,ptr %r40,i32 %r41,i32 %r42,float %r43,float %r44,ptr %r45,i32 %r46,ptr %r47,i32 %r48,ptr %r49,ptr %r50,float %r51,float %r52,ptr %r53,i32 %r54,ptr %r55,ptr %r56,float %r57,i32 %r58,float %r59,ptr %r60,ptr %r61,float %r62,i32 %r63)
 {
@@ -602,21 +611,21 @@ L3:  ;
     %r385 = sitofp i32 %r63 to float
     %r387 = fptosi float %r62 to i32
     %r388 = call i32 @params_mix(float %r0,ptr %r323,i32 %r2,ptr %r325,float %r4,i32 %r5,float %r6,float %r7,ptr %r330,ptr %r331,i32 %r10,i32 %r11,ptr %r334,ptr %r335,ptr %r336,i32 %r15,ptr %r338,ptr %r339,float %r18,float %r19,float %r20,ptr %r343,i32 %r22,float %r23,float %r24,float %r25,ptr %r348,ptr %r349,ptr %r350,ptr %r351,ptr %r352,float %r31,float %r32,ptr %r355,i32 %r34,ptr %r357,ptr %r358,float %r37,float %r38,ptr %r361,ptr %r362,i32 %r41,i32 %r42,float %r43,float %r44,ptr %r367,i32 %r46,ptr %r369,i32 %r48,ptr %r371,ptr %r372,float %r51,float %r52,ptr %r375,i32 %r54,ptr %r377,ptr %r378,float %r57,i32 %r58,float %r59,ptr %r382,ptr %r383,float %r385,i32 %r387)
-    ret i32 %r388
+    br label %L8
 L5:  ;  exiting0  header0
-    %r389 = phi i32 [0,%L2],[%r312,%L6]
-    %r298 = icmp slt i32 %r389,10
+    %r393 = phi i32 [0,%L2],[%r312,%L6]
+    %r298 = icmp slt i32 %r393,10
     br i1 %r298, label %L6, label %L7
 L6:  ;  latch0
-    %r300 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r389
+    %r300 = getelementptr [10 x i32], ptr %r202, i32 0, i32 %r393
     %r303 = load i32, ptr %r300
-    %r305 = getelementptr [10 x float], ptr %r99, i32 0, i32 %r389
+    %r305 = getelementptr [10 x float], ptr %r99, i32 0, i32 %r393
     %r306 = load float, ptr %r305
     %r307 = sitofp i32 %r303 to float
     %r308 = fsub float %r307,%r306
     %r309 = fptosi float %r308 to i32
     store i32 %r309, ptr %r300
-    %r312 = add i32 %r389,1
+    %r312 = add i32 %r393,1
     br label %L5
 L7:  ;
     %r313 = load i32, ptr @k
@@ -626,7 +635,10 @@ L7:  ;
     %r319 = sitofp i32 %r315 to float
     %r320 = fmul float %r319,%r318
     %r321 = fptosi float %r320 to i32
-    ret i32 %r321
+    br label %L8
+L8:  ;
+    %r391 = phi i32 [%r388,%L3],[%r321,%L7]
+    ret i32 %r391
 }
 define i32 @main()
 {

@@ -197,13 +197,16 @@ L2:  ;
     %r18 = load i32, ptr %r17
     %r19 = add i32 %r13,%r18
     %r21 = sdiv i32 %r19,2
-    ret i32 %r21
+    br label %L5
 L3:  ;
     %r22 = load i32, ptr @n
     %r24 = sdiv i32 %r22,2
     %r26 = getelementptr i32, ptr %r0, i32 %r24
     %r27 = load i32, ptr %r26
-    ret i32 %r27
+    br label %L5
+L5:  ;
+    %r30 = phi i32 [%r21,%L2],[%r27,%L3]
+    ret i32 %r30
 }
 define i32 @getMost(ptr %r0)
 {

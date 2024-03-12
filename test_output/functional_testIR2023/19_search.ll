@@ -29,111 +29,114 @@ L1:  ;
     %r8 = icmp sgt i32 %r2,10
     br i1 %r8, label %L2, label %L3
 L2:  ;
-    ret i32 1073741824
-L3:  ;  preheader1
+    br label %L30
+L3:  ;  preheader2
     br label %L4
-L4:  ;  exiting1  header1
-    %r129 = phi i32 [1073741824,%L3],[%r130,%L31]
-    %r127 = phi i32 [0,%L3],[%r131,%L31]
-    %r16 = icmp slt i32 %r127,4
+L4:  ;  exiting2  header2
+    %r137 = phi i32 [1073741824,%L3],[%r138,%L31]
+    %r134 = phi i32 [0,%L3],[%r139,%L31]
+    %r16 = icmp slt i32 %r134,4
     br i1 %r16, label %L5, label %L6
 L5:  ;  preheader0
     br label %L7
 L6:  ;
-    %r118 = icmp sgt i32 %r129,10
+    %r118 = icmp sgt i32 %r137,10
     br i1 %r118, label %L28, label %L29
 L7:  ;  exiting0  header0
-    %r126 = phi i32 [0,%L5],[%r49,%L11]
-    %r124 = phi i32 [%r0,%L5],[%r40,%L11]
-    %r122 = phi i32 [%r1,%L5],[%r46,%L11]
-    %r25 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r124, i32 %r122
+    %r132 = phi i32 [0,%L5],[%r49,%L11]
+    %r129 = phi i32 [%r0,%L5],[%r40,%L11]
+    %r126 = phi i32 [%r1,%L5],[%r46,%L11]
+    %r25 = getelementptr [30 x [30 x i32]], ptr @a, i32 0, i32 %r129, i32 %r126
     %r26 = load i32, ptr %r25
     %r28 = icmp ne i32 %r26,1
-    br i1 %r28, label %L8, label %L30
+    br i1 %r28, label %L8, label %L32
 L8:  ;
     %r30 = load i32, ptr @x_1
-    %r31 = icmp eq i32 %r124,%r30
+    %r31 = icmp eq i32 %r129,%r30
     br i1 %r31, label %L12, label %L11
 L9:  ;
     %r51 = load i32, ptr @x_1
-    %r52 = icmp eq i32 %r124,%r51
+    %r52 = icmp eq i32 %r129,%r51
     br i1 %r52, label %L16, label %L15
 L10:  ;
     br label %L9
 L11:  ;  latch0
-    %r38 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
+    %r38 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r134, i32 0
     %r39 = load i32, ptr %r38
-    %r40 = add i32 %r124,%r39
-    %r44 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 1
+    %r40 = add i32 %r129,%r39
+    %r44 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r134, i32 1
     %r45 = load i32, ptr %r44
-    %r46 = add i32 %r122,%r45
-    %r49 = add i32 %r126,1
+    %r46 = add i32 %r126,%r45
+    %r49 = add i32 %r132,1
     br label %L7
 L12:  ;  exiting0
     %r33 = load i32, ptr @y_1
-    %r34 = icmp eq i32 %r122,%r33
+    %r34 = icmp eq i32 %r126,%r33
     br i1 %r34, label %L10, label %L11
 L14:  ;
-    ret i32 1
+    br label %L30
 L15:  ;
-    %r59 = icmp sle i32 %r126,1
+    %r59 = icmp sle i32 %r132,1
     br i1 %r59, label %L17, label %L18
-L16:  ;  exiting1
+L16:  ;  exiting2
     %r54 = load i32, ptr @y_1
-    %r55 = icmp eq i32 %r122,%r54
+    %r55 = icmp eq i32 %r126,%r54
     br i1 %r55, label %L14, label %L15
 L17:  ;
-    %r62 = add i32 %r127,1
+    %r62 = add i32 %r134,1
     br label %L31
 L18:  ;
-    %r65 = icmp eq i32 %r124,0
+    %r65 = icmp eq i32 %r129,0
     br i1 %r65, label %L20, label %L24
 L20:  ;
-    %r81 = add i32 %r127,1
+    %r81 = add i32 %r134,1
     br label %L31
 L21:  ;
     store i32 0, ptr %r25
-    %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 0
+    %r90 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r134, i32 0
     %r91 = load i32, ptr %r90
-    %r92 = sub i32 %r124,%r91
-    %r96 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r127, i32 1
+    %r92 = sub i32 %r129,%r91
+    %r96 = getelementptr [4 x [2 x i32]], ptr @step, i32 0, i32 %r134, i32 1
     %r97 = load i32, ptr %r96
-    %r98 = sub i32 %r122,%r97
+    %r98 = sub i32 %r126,%r97
     %r101 = add i32 %r2,1
     %r102 = call i32 @search(i32 %r92,i32 %r98,i32 %r101)
     %r104 = add i32 %r102,1
-    %r107 = icmp slt i32 %r104,%r129
+    %r107 = icmp slt i32 %r104,%r137
     br i1 %r107, label %L26, label %L27
 L22:  ;
     %r75 = load i32, ptr @w
     %r77 = add i32 %r75,1
-    %r78 = icmp eq i32 %r122,%r77
+    %r78 = icmp eq i32 %r126,%r77
     br i1 %r78, label %L20, label %L21
 L23:  ;
-    %r73 = icmp eq i32 %r122,0
+    %r73 = icmp eq i32 %r126,0
     br i1 %r73, label %L20, label %L22
 L24:  ;
     %r67 = load i32, ptr @h
     %r69 = add i32 %r67,1
-    %r70 = icmp eq i32 %r124,%r69
+    %r70 = icmp eq i32 %r129,%r69
     br i1 %r70, label %L20, label %L23
 L26:  ;
     br label %L27
 L27:  ;
-    %r128 = phi i32 [%r129,%L21],[%r104,%L26]
+    %r136 = phi i32 [%r137,%L21],[%r104,%L26]
     store i32 1, ptr %r25
-    %r115 = add i32 %r127,1
+    %r115 = add i32 %r134,1
     br label %L31
 L28:  ;
-    ret i32 1073741824
+    br label %L30
 L29:  ;
-    ret i32 %r129
+    br label %L30
 L30:  ;
-    br label %L9
-L31:  ;latch1
-    %r130 = phi i32 [%r129,%L17],[%r129,%L20],[%r128,%L27]
-    %r131 = phi i32 [%r62,%L17],[%r81,%L20],[%r115,%L27]
+    %r123 = phi i32 [1073741824,%L2],[1,%L14],[1073741824,%L28],[%r137,%L29]
+    ret i32 %r123
+L31:  ;latch2
+    %r138 = phi i32 [%r137,%L17],[%r137,%L20],[%r136,%L27]
+    %r139 = phi i32 [%r62,%L17],[%r81,%L20],[%r115,%L27]
     br label %L4
+L32:  ;
+    br label %L9
 }
 define i32 @main()
 {

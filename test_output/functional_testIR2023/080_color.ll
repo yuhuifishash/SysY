@@ -25,9 +25,12 @@ L1:  ;
     %r6 = icmp eq i32 %r0,%r1
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L4
 L3:  ;
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r11 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r11
 }
 define i32 @dfs(i32 %r0,i32 %r1,i32 %r2,i32 %r3,i32 %r4,i32 %r5)
 {
@@ -40,7 +43,7 @@ L1:  ;
     br i1 %r22, label %L2, label %L3
 L2:  ;
     %r30 = load i32, ptr %r18
-    ret i32 %r30
+    br label %L16
 L3:  ;
     %r33 = add i32 %r0,%r1
     %r35 = add i32 %r33,%r2
@@ -49,7 +52,7 @@ L3:  ;
     %r41 = icmp eq i32 %r39,0
     br i1 %r41, label %L4, label %L5
 L4:  ;
-    ret i32 1
+    br label %L16
 L5:  ;
     %r46 = icmp ne i32 %r0,0
     br i1 %r46, label %L6, label %L7
@@ -63,7 +66,7 @@ L6:  ;
     %r65 = srem i32 %r63,1000000007
     br label %L7
 L7:  ;
-    %r172 = phi i32 [0,%L5],[%r65,%L6]
+    %r176 = phi i32 [0,%L5],[%r65,%L6]
     %r67 = icmp ne i32 %r1,0
     br i1 %r67, label %L8, label %L9
 L8:  ;
@@ -73,11 +76,11 @@ L8:  ;
     %r79 = sub i32 %r1,1
     %r84 = call i32 @dfs(i32 %r76,i32 %r79,i32 %r2,i32 %r3,i32 %r4,i32 2)
     %r85 = mul i32 %r73,%r84
-    %r86 = add i32 %r172,%r85
+    %r86 = add i32 %r176,%r85
     %r88 = srem i32 %r86,1000000007
     br label %L9
 L9:  ;
-    %r173 = phi i32 [%r172,%L7],[%r88,%L8]
+    %r177 = phi i32 [%r176,%L7],[%r88,%L8]
     %r90 = icmp ne i32 %r2,0
     br i1 %r90, label %L10, label %L11
 L10:  ;
@@ -87,11 +90,11 @@ L10:  ;
     %r103 = sub i32 %r2,1
     %r107 = call i32 @dfs(i32 %r0,i32 %r100,i32 %r103,i32 %r3,i32 %r4,i32 3)
     %r108 = mul i32 %r96,%r107
-    %r109 = add i32 %r173,%r108
+    %r109 = add i32 %r177,%r108
     %r111 = srem i32 %r109,1000000007
     br label %L11
 L11:  ;
-    %r174 = phi i32 [%r173,%L9],[%r111,%L10]
+    %r178 = phi i32 [%r177,%L9],[%r111,%L10]
     %r113 = icmp ne i32 %r3,0
     br i1 %r113, label %L12, label %L13
 L12:  ;
@@ -101,11 +104,11 @@ L12:  ;
     %r127 = sub i32 %r3,1
     %r130 = call i32 @dfs(i32 %r0,i32 %r1,i32 %r124,i32 %r127,i32 %r4,i32 4)
     %r131 = mul i32 %r119,%r130
-    %r132 = add i32 %r174,%r131
+    %r132 = add i32 %r178,%r131
     %r134 = srem i32 %r132,1000000007
     br label %L13
 L13:  ;
-    %r175 = phi i32 [%r174,%L11],[%r134,%L12]
+    %r179 = phi i32 [%r178,%L11],[%r134,%L12]
     %r136 = icmp ne i32 %r4,0
     br i1 %r136, label %L14, label %L15
 L14:  ;
@@ -113,15 +116,18 @@ L14:  ;
     %r147 = sub i32 %r4,1
     %r149 = call i32 @dfs(i32 %r0,i32 %r1,i32 %r2,i32 %r144,i32 %r147,i32 5)
     %r150 = mul i32 %r4,%r149
-    %r151 = add i32 %r175,%r150
+    %r151 = add i32 %r179,%r150
     %r153 = srem i32 %r151,1000000007
     br label %L15
 L15:  ;
-    %r176 = phi i32 [%r175,%L13],[%r153,%L14]
-    %r163 = srem i32 %r176,1000000007
+    %r180 = phi i32 [%r179,%L13],[%r153,%L14]
+    %r163 = srem i32 %r180,1000000007
     store i32 %r163, ptr %r18
     %r171 = load i32, ptr %r18
-    ret i32 %r171
+    br label %L16
+L16:  ;
+    %r174 = phi i32 [%r30,%L2],[1,%L4],[%r171,%L15]
+    ret i32 %r174
 }
 define i32 @main()
 {
