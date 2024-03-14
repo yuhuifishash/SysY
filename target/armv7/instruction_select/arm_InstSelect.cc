@@ -170,9 +170,9 @@ void ArmSelector::SelectInstruction(){
     }
 }
 
-MachineCFG<ArmBlock>* ArmSelector::SelectInstructionAndBuildCFG(){
+MachineCFG* ArmSelector::SelectInstructionAndBuildCFG(){
     Dest->global_def = IR->global_def;
-    MachineCFG<ArmBlock>* mcfg = new MachineCFG<ArmBlock>;
+    MachineCFG* mcfg = new MachineCFG;
     for(auto func_pair:IR->llvm_cfg){
         auto cfg = func_pair.second;
         std::string name = cfg->function_def->GetFunctionName();

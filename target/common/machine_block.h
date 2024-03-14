@@ -2,43 +2,44 @@
 #define MACHINE_BLOCK_H
 #include "ir.h"
 
-template<class FUNCPTR>
+class MachineBaseInstruction;
+class MachineFuntion;
+class MachineBlock;
+class MachineUnit;
 class MachineUnit{
 public:
     std::vector<Instruction> global_def{};
-    std::vector<FUNCPTR> functions;
+    std::vector<MachineFuntion*> functions;
     virtual void emit(std::ostream& s) = 0;
     // MachineUnit(LLVM_IR& IR);
 };
 
-template<class BLKPTR,class UNITPTR>
 class MachineFunction{
 public:
     std::string func_name;
-    std::vector<BLKPTR> blocks{};
-    UNITPTR parent;
+    std::vector<MachineBlock*> blocks{};
+    MachineUnit* parent;
     virtual void emit(std::ostream& s) = 0;
     MachineFunction(std::string name):func_name(name){}
 };
 
-template<class INSPTR,class FUNCPTR>
 class MachineBlock{
 public:
     int label_id;
-    std::deque<INSPTR> instructions;
-    FUNCPTR parent;
+    std::deque<MachineBaseInstruction*> instructions;
+    MachineFunction* parent;
     virtual void emit(std::ostream& s) = 0;
+    virtual void GetDefUse() = 0;
     MachineBlock(int id):label_id(id){}
     // template<class T>
     // virtual void ConvertAndAppend(T ins) = 0;
 };
 
-template<class MachineBlk>
 class MachineCFG{
 private:
     class MachineCFGNode{
     public:
-        MachineBlk* Mblock;
+        MachineBlock* Mblock;
     public:
         std::set<int>IN{},OUT{},DEF{},USE{};
         void UpdateDefUse();
@@ -47,7 +48,7 @@ private:
 public:
     std::map<int,MachineCFGNode*> block_map{};
     std::vector<std::vector<MachineCFGNode*> > G{},invG{};
-    void AssignEmptyNode(int id,MachineBlk* Mblk){
+    void AssignEmptyNode(int id,MachineBlock* Mblk){
         MachineCFGNode* node = new MachineCFGNode;
         node->Mblock = Mblk;
         block_map[id] = node;
@@ -64,7 +65,6 @@ public:
     // MachineCFGNode* GetNode(int bbid);
 };
 
-template<class MachineUnit,class MachineBlk>
 class MachineSelector{
 protected:
     MachineUnit* Dest;
@@ -72,7 +72,7 @@ protected:
 public:
     MachineSelector(MachineUnit* Dest,LLVMIR* IR):Dest(Dest),IR(IR){}
     virtual void SelectInstruction() = 0;
-    virtual MachineCFG<MachineBlk>* SelectInstructionAndBuildCFG() = 0;
+    virtual MachineCFG* SelectInstructionAndBuildCFG() = 0;
     MachineUnit* GetMachineUnit(){return Dest;}
     // template<class INSPTR>
     // virtual void ConvertAndAppend(INSPTR,MachineBlk*) = 0;

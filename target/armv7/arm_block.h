@@ -9,24 +9,25 @@
 
 class ArmFunction;
 class ArmUnit;
-class ArmBlock : public MachineBlock<ArmBaseInstruction*,ArmFunction*>{
+class ArmBlock : public MachineBlock{
 public:
     void emit(std::ostream& s);
+    void GetDefUse();
     ArmBlock(int id):MachineBlock(id){}
 };
 
-class ArmFunction : public MachineFunction<ArmBlock*,ArmUnit*>{
+class ArmFunction : public MachineFunction{
 public:
     void emit(std::ostream& s);
     ArmFunction(std::string name):MachineFunction(name){}
 };
 
-class ArmUnit : public MachineUnit<ArmFunction*>{
+class ArmUnit : public MachineUnit{
 public:
     void emit(std::ostream& s);
 };
 
-class ArmSelector : public MachineSelector<ArmUnit,ArmBlock>{
+class ArmSelector : public MachineSelector{
 private:
     std::map<FuncDefInstruction,int> alloca_offset_map{};
     std::map<FuncDefInstruction,int> cur_vregi{};
@@ -40,9 +41,9 @@ private:
     }last_cond;
     
 public:
-    ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector<ArmUnit,ArmBlock>(Dest,IR){}
+    ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector(Dest,IR){}
     void SelectInstruction();
-    MachineCFG<ArmBlock>* SelectInstructionAndBuildCFG();
+    MachineCFG* SelectInstructionAndBuildCFG();
 
     template<class INSPTR>
     void ConvertAndAppend(INSPTR,ArmBlock*);
