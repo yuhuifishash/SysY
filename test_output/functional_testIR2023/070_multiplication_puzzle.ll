@@ -28,6 +28,8 @@ L2:  ;  exiting0  header0
     %r16 = icmp sle i32 %r98,6
     br i1 %r16, label %L3, label %L4
 L3:  ;  preheader1
+    %r21 = sub i32 6,%r98
+    %r23 = add i32 %r21,1
     br label %L5
 L4:  ;
     %r85 = getelementptr [10 x [10 x i32]], ptr @dp, i32 0, i32 0, i32 5
@@ -39,8 +41,6 @@ L5:  ;  exiting1  header1
     %r93 = phi i32 [%r94,%L3],[%r95,%L10]
     %r91 = phi i32 [%r92,%L3],[%r29,%L10]
     %r89 = phi i32 [%r90,%L3],[%r88,%L10]
-    %r21 = sub i32 6,%r98
-    %r23 = add i32 %r21,1
     %r24 = icmp slt i32 %r97,%r23
     br i1 %r24, label %L6, label %L7
 L6:  ;  preheader2

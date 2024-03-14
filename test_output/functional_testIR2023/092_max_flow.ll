@@ -75,10 +75,10 @@ L2:  ;
 L3:  ;  preheader1
     %r11 = getelementptr [10 x i32], ptr @used, i32 0, i32 %r0
     store i32 1, ptr %r11
+    %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     br label %L4
 L4:  ;  exiting1  header1
     %r105 = phi i32 [0,%L3],[%r106,%L19]
-    %r17 = getelementptr [10 x i32], ptr @size, i32 0, i32 %r0
     %r18 = load i32, ptr %r17
     %r19 = icmp slt i32 %r105,%r18
     br i1 %r19, label %L5, label %L6
@@ -144,12 +144,12 @@ define i32 @max_flow(i32 %r0,i32 %r1)
 L0:  ;
     br label %L1
 L1:  ;  preheader0
+    %r8 = getelementptr [10 x i32], ptr @used, i32 0
     br label %L2
 L2:  ;  header0
     %r26 = phi i32 [0,%L1],[%r22,%L6]
     br label %L3
 L3:  ;  exiting0
-    %r8 = getelementptr [10 x i32], ptr @used, i32 0
     call void @my_memset(ptr %r8,i32 0,i32 10)
     %r15 = call i32 @dfs(i32 %r0,i32 %r1,i32 1879048192)
     %r18 = icmp eq i32 %r15,0

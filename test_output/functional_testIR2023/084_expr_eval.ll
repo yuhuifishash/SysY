@@ -276,14 +276,15 @@ L5:  ;  exiting1
     br i1 %r16, label %L7, label %L8
 L6:  ;  preheader2
     %r50 = call i32 @next_token()
+    %r51 = getelementptr [256 x i32], ptr %r1, i32 0
     br label %L16
 L7:  ;
     br label %L6
 L8:  ;  preheader0
     %r17 = call i32 @next_token()
+    %r18 = getelementptr [256 x i32], ptr %r1, i32 0
     br label %L10
 L10:  ;  exiting0  header0
-    %r18 = getelementptr [256 x i32], ptr %r1, i32 0
     %r19 = call i32 @stack_size(ptr %r18)
     %r20 = icmp ne i32 %r19,0
     br i1 %r20, label %L13, label %L12
@@ -313,7 +314,6 @@ L15:  ;  latch1
     %r49 = call i32 @next_token()
     br label %L4
 L16:  ;  exiting2  header2
-    %r51 = getelementptr [256 x i32], ptr %r1, i32 0
     %r52 = call i32 @stack_size(ptr %r51)
     %r53 = icmp ne i32 %r52,0
     br i1 %r53, label %L17, label %L18

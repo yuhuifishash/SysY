@@ -177,7 +177,11 @@ LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to)
         }
     }
     BuildCFG();
-
     return midBB;
+}
+LLVMBlock CFG::InsertTransferBlock(LLVMBlock from, std::set<LLVMBlock>& tos)
+{
+    assert(false);
+    return nullptr;
 }
 

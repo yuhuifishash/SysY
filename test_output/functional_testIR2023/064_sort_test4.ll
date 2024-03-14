@@ -18,10 +18,10 @@ define i32 @select_sort(ptr %r0,i32 %r1)
 L0:  ;
     br label %L1
 L1:  ;  preheader1
+    %r13 = sub i32 %r1,1
     br label %L2
 L2:  ;  exiting1  header1
     %r58 = phi i32 [0,%L1],[%r18,%L11]
-    %r13 = sub i32 %r1,1
     %r14 = icmp slt i32 %r58,%r13
     br i1 %r14, label %L3, label %L4
 L3:  ;  preheader0

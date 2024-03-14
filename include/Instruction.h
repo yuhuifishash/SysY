@@ -399,6 +399,7 @@ public:
     Operand GetResultOp(){return result;}
     decltype(phi_list)& GetPhiList(){return phi_list;}
     Operand GetResultReg(){return result;}
+    void SetResultReg(int reg){result = new RegOperand(reg);}
     PhiInstruction(enum LLVMType type,Operand result,decltype(phi_list) val_labels){
         this->opcode=LLVMIROpcode::PHI;
         this->type=type;
@@ -418,6 +419,8 @@ public:
     //erase the val from label_id
     void ErasePhi(int label_id);
     Operand GetValOperand(int label_id);
+    void SetValOperand(int label_id, Operand val);
+    void SetNewFrom(int old_id, int new_id);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();

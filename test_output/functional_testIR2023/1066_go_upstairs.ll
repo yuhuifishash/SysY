@@ -29,10 +29,10 @@ L3:  ;  preheader0
     store i32 1, ptr %r11
     %r14 = getelementptr [10 x i32], ptr %r6, i32 0, i32 2
     store i32 2, ptr %r14
+    %r22 = add i32 %r0,1
     br label %L4
 L4:  ;  exiting0  header0
     %r47 = phi i32 [3,%L3],[%r39,%L5]
-    %r22 = add i32 %r0,1
     %r23 = icmp slt i32 %r47,%r22
     br i1 %r23, label %L5, label %L6
 L5:  ;  latch0

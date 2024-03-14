@@ -11,13 +11,17 @@ public:
 
     std::set<LLVMBlock> exit_nodes;
     std::set<LLVMBlock> exiting_nodes;
-    std::set<LLVMBlock> latch;
+    std::set<LLVMBlock> latches;
     LLVMBlock header;
     LLVMBlock preheader;
+    
+    int loop_id;
+
+    //if is_rotate is true, the loop must execute once or more
+    bool is_rotate;
 
     NaturalLoop* fa_loop = nullptr;
 
-    int loop_id;
     void FindExitNodes(CFG* C);
 
     /*the only predecessor of header node(out of loop)*/

@@ -141,6 +141,7 @@ int main(int argc,char** argv)
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopInvariantCodeMotion );
         //llvmIR.PassExecutor( LoopRotate );
     }
     

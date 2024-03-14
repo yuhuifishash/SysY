@@ -19,11 +19,11 @@ define i32 @factor(i32 %r0)
 L0:  ;
     br label %L1
 L1:  ;  preheader0
+    %r11 = add i32 %r0,1
     br label %L2
 L2:  ;  exiting0  header0
     %r27 = phi i32 [1,%L1],[%r23,%L6]
     %r26 = phi i32 [0,%L1],[%r25,%L6]
-    %r11 = add i32 %r0,1
     %r12 = icmp slt i32 %r27,%r11
     br i1 %r12, label %L3, label %L4
 L3:  ;

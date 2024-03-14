@@ -31,10 +31,10 @@ L3:  ;
 L4:  ;
     br label %L20
 L5:  ;  preheader0
+    %r22 = sub i32 %r1,1
     br label %L6
 L6:  ;  exiting0  header0
     %r92 = phi i32 [0,%L5],[%r29,%L7]
-    %r22 = sub i32 %r1,1
     %r23 = icmp slt i32 %r92,%r22
     br i1 %r23, label %L7, label %L8
 L7:  ;  latch0

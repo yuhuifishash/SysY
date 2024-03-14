@@ -67,11 +67,11 @@ L0:  ;
 L1:  ;  preheader0
     %r12 = mul i32 %r1,2
     %r14 = add i32 %r12,1
+    %r18 = add i32 %r2,1
     br label %L2
 L2:  ;  exiting0  header0
     %r60 = phi i32 [%r1,%L1],[%r57,%L10]
     %r58 = phi i32 [%r14,%L1],[%r52,%L10]
-    %r18 = add i32 %r2,1
     %r19 = icmp slt i32 %r58,%r18
     br i1 %r19, label %L3, label %L4
 L3:  ;

@@ -24,12 +24,12 @@ L2:  ;  exiting0  header0
     %r14 = icmp sle i32 %r112,%r0
     br i1 %r14, label %L3, label %L4
 L3:  ;  preheader1
+    %r19 = add i32 %r4,1
     br label %L5
 L4:  ;  preheader2
     br label %L14
 L5:  ;  exiting1  header1
     %r109 = phi i32 [0,%L3],[%r70,%L10]
-    %r19 = add i32 %r4,1
     %r20 = icmp slt i32 %r109,%r19
     br i1 %r20, label %L6, label %L7
 L6:  ;

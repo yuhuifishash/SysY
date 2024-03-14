@@ -19,11 +19,11 @@ define void @init(i32 %r0)
 L0:  ;
     br label %L1
 L1:  ;  preheader0
+    %r7 = mul i32 %r0,%r0
+    %r9 = add i32 %r7,1
     br label %L2
 L2:  ;  exiting0  header0
     %r18 = phi i32 [1,%L1],[%r17,%L3]
-    %r7 = mul i32 %r0,%r0
-    %r9 = add i32 %r7,1
     %r10 = icmp sle i32 %r18,%r9
     br i1 %r10, label %L3, label %L4
 L3:  ;  latch0

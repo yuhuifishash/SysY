@@ -170,13 +170,13 @@ L2:  ;
 L3:  ;  preheader0
     %r88 = phi i32 [%r0,%L1],[%r1,%L2]
     %r84 = phi i32 [%r1,%L1],[%r0,%L2]
+    %r21 = getelementptr [10005 x i32], ptr @dep, i32 0, i32 %r84
     br label %L4
 L4:  ;  exiting0  header0
     %r90 = phi i32 [%r88,%L3],[%r89,%L8]
     %r81 = phi i32 [19,%L3],[%r45,%L8]
     %r18 = getelementptr [10005 x i32], ptr @dep, i32 0, i32 %r90
     %r19 = load i32, ptr %r18
-    %r21 = getelementptr [10005 x i32], ptr @dep, i32 0, i32 %r84
     %r22 = load i32, ptr %r21
     %r23 = icmp sgt i32 %r19,%r22
     br i1 %r23, label %L5, label %L6

@@ -93,27 +93,36 @@ std::vector<Instruction> CalculateInvariant(CFG* C, NaturalLoop* L)
     return InvariantInsList;
 }
 
+void CalculateLoopRegisterPressure(CFG* C,NaturalLoop* L)
+{
+    
+}
+
 
 void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 {
     auto InvariantInsList = CalculateInvariant(C,L);
-
+    //for(auto I:InvariantInsList){I->PrintIR(std::cerr);}
     std::set<Instruction> EraseSet;
 
     //remove end instructions temporarily to accelerate instruction inserting
     auto endI = *(L->preheader->Instruction_list.end() - 1);
     L->preheader->Instruction_list.pop_back();
 
-    for(auto it = InvariantInsList.begin();it != InvariantInsList.end();++it){
+    for(auto it = InvariantInsList.begin();it != InvariantInsList.end();){
         auto I = *it;
         //the def instruction should dominate all the exitingBB
         if(IsDomExitBB(C,(*(C->block_map))[I->GetBlockID()],L)){
+            //TODO: calculate the loop register pressure
+
             //move to preheader
             EraseSet.insert(I);
             I->SetBlockID(L->preheader->block_id);
             L->preheader->InsertInstruction(1,I);
             it = InvariantInsList.erase(it);//erase this Instruction
-            //std::cerr<<"code motion ";I->printIR(std::cerr);
+            //std::cerr<<"code motion ";I->PrintIR(std::cerr);
+        }else{
+            ++it;
         }
     }
     if(!EraseSet.empty()){
@@ -138,6 +147,8 @@ void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 
 void LoopInvariantCodeMotion(CFG* C)
 {
+    ResultMap.clear();
+    InvariantMap.clear();
     for(auto formal_reg:C->function_def->formals_reg){
         ResultMap[((RegOperand*)formal_reg)->GetRegNo()] = C->function_def;
     }
@@ -148,6 +159,11 @@ void LoopInvariantCodeMotion(CFG* C)
             if(v != -1){//result exists
                 ResultMap[v] = I;
             }
+        }
+    }
+    for(auto l:C->LoopForest.loop_set){
+        if(l->fa_loop == nullptr){
+            DFSLoopForest(C,C->LoopForest,l);
         }
     }
 }

@@ -61,6 +61,7 @@ public:
       %3 = phi [%4,L4],[%2,L3]
     */
     LLVMBlock InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to);
+    LLVMBlock InsertTransferBlock(LLVMBlock from, std::set<LLVMBlock>& tos);
 };
 
 

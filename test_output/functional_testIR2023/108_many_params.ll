@@ -17,10 +17,10 @@ define void @sort(ptr %r0,i32 %r1)
 L0:  ;
     br label %L1
 L1:  ;  preheader0
+    %r8 = sub i32 %r1,1
     br label %L2
 L2:  ;  exiting0  header0
     %r44 = phi i32 [0,%L1],[%r13,%L7]
-    %r8 = sub i32 %r1,1
     %r9 = icmp slt i32 %r44,%r8
     br i1 %r9, label %L3, label %L4
 L3:  ;  preheader1

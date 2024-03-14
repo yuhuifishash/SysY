@@ -75,8 +75,8 @@ void NaturalLoopForest::CombineSameHeadLoop()
             for(auto l_nodes:l->loop_nodes){
                 oldl->loop_nodes.insert(l_nodes);
             }
-            for(auto latch_nodes:l->latch){
-                oldl->latch.insert(latch_nodes);
+            for(auto latch_nodes:l->latches){
+                oldl->latches.insert(latch_nodes);
             }
         }
         else{
@@ -152,7 +152,7 @@ void CFG::BuildLoopInfo()
             if(IfDominate(head_bb->block_id,id)){
                 NaturalLoop* l = new NaturalLoop();
                 l->header = head_bb;
-                l->latch.insert(bb);
+                l->latches.insert(bb);
                 l->loop_id = loop_cnt++;
                 l->loop_nodes = FindNodesInLoop(this,bb,head_bb);
                 LoopForest.loop_set.insert(l);
@@ -192,7 +192,7 @@ void NaturalLoop::PrintLoopDebugInfo()
     }std::cerr<<"\n";
     std::cerr<<"header: "<<header->block_id<<"\n";
     std::cerr<<"latch: ";
-    for(auto nodes:latch){
+    for(auto nodes:latches){
         std::cerr<<nodes->block_id<<" ";
     }std::cerr<<"\n";
     std::cerr<<"exitings: ";

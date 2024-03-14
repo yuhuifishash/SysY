@@ -22,16 +22,16 @@ void NaturalLoop::LoopSimplify(CFG* C)
 
 void NaturalLoop::SingleLatchInsert(CFG* C)
 {
-    assert(latch.size() >= 1);
-    if(latch.size() == 1){
-        (*latch.begin())->comment = (*latch.begin())->comment + "  latch" + std::to_string(loop_id);
+    assert(latches.size() >= 1);
+    if(latches.size() == 1){
+        (*latches.begin())->comment = (*latches.begin())->comment + "  latch" + std::to_string(loop_id);
         return;
     }
 
-    auto new_latch = C->InsertTransferBlock(latch,header);
+    auto new_latch = C->InsertTransferBlock(latches,header);
     new_latch->comment = "latch" + std::to_string(loop_id);
-    latch.clear();
-    latch.insert(new_latch);
+    latches.clear();
+    latches.insert(new_latch);
     loop_nodes.insert(new_latch);
 
     //update father loop's loop nodes
@@ -117,10 +117,10 @@ void NaturalLoop::LoopSimplifyCheck(CFG* C)
 {
     //check single latch
     //PrintLoopDebugInfo();
-    assert(latch.size() == 1);
+    assert(latches.size() == 1);
 
     //check loop nodes with single latch
-    auto S = FindNodesInLoop(C,*latch.begin(),header);
+    auto S = FindNodesInLoop(C,*latches.begin(),header);
     assert(S.size() == loop_nodes.size());
     for(auto node:loop_nodes){
         assert(S.find(node) != S.end());
