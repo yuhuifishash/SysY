@@ -1,644 +1,164 @@
 Program
-  ConstDecls   Type: Float
-    ConstDef   name:e   scope:0
-      init:
-        ConstInitVal_exp   Type: Float   ConstValue: 2.718282
-          Floatconst   val:2.71828   Type: Float   ConstValue: 2.718282
-  FuncDef   Name:my_fabs   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:2
-      IfStmt:
-      Cond   type:bool
-        RelExp_gt: (>)   Type: Bool   
-          Lval   Type: Float      name:x   scope:1
-          Intconst   val:0   Type: Int   ConstValue: 0
-      if_stmt:
-        ReturnStmt:
-          Lval   Type: Float      name:x   scope:1
-      ReturnStmt:
-        UnaryExp_neg:(-)   Type: Int   
-          Lval   Type: Float      name:x   scope:1
-  FuncDef   Name:my_pow   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:n   Type:Int   scope:1
-
-    Block   Size:4
-      IfStmt:
-      Cond   type:bool
-        RelExp_lt: (<)   Type: Bool   
-          Lval   Type: Int      name:n   scope:1
-          Intconst   val:0   Type: Int   ConstValue: 0
-      if_stmt:
-        ReturnStmt:
-          MulExp_div: (/)   Type: Float   
-            Intconst   val:1   Type: Int   ConstValue: 1
-            FuncCall   name:my_pow   Type: Float   
-              FuncRParams:
-                Lval   Type: Float      name:a   scope:1
-                UnaryExp_neg:(-)   Type: Int   
-                  Lval   Type: Int      name:n   scope:1
-      VarDecls   Type: Float
-        VarDef   name:res   scope:1
-          init:
-            VarInitVal_exp
-              Floatconst   val:1   Type: Float   ConstValue: 1.000000
-      WhileStmt:
-      Cond   type:bool
-        Lval   Type: Int      name:n   scope:1
-      Body:
-        BlockStmt:
-          Block   Size:3
-            IfStmt:
-            Cond   type:bool
-              MulExp_mod: (%)   Type: Int   
-                Lval   Type: Int      name:n   scope:1
-                Intconst   val:2   Type: Int   ConstValue: 2
-            if_stmt:
-              AssignStmt:
-                Lval   Type: Float      name:res   scope:1
-                MulExp_mul: (*)   Type: Float   
-                  Lval   Type: Float      name:res   scope:1
-                  Lval   Type: Float      name:a   scope:1
-            AssignStmt:
-              Lval   Type: Float      name:a   scope:1
-              MulExp_mul: (*)   Type: Float   
-                Lval   Type: Float      name:a   scope:1
-                Lval   Type: Float      name:a   scope:1
-            AssignStmt:
-              Lval   Type: Int      name:n   scope:1
-              MulExp_div: (/)   Type: Int   
-                Lval   Type: Int      name:n   scope:1
-                Intconst   val:2   Type: Int   ConstValue: 2
-      ReturnStmt:
-        Lval   Type: Float      name:res   scope:1
-  FuncDef   Name:my_sqrt   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:5
-      IfStmt:
-      Cond   type:bool
-        RelExp_gt: (>)   Type: Bool   
-          Lval   Type: Float      name:x   scope:1
-          Intconst   val:100   Type: Int   ConstValue: 100
-      if_stmt:
-        ReturnStmt:
-          MulExp_mul: (*)   Type: Float   
-            Floatconst   val:10   Type: Float   ConstValue: 10.000000
-            FuncCall   name:my_sqrt   Type: Float   
-              FuncRParams:
-                MulExp_div: (/)   Type: Float   
-                  Lval   Type: Float      name:x   scope:1
-                  Intconst   val:100   Type: Int   ConstValue: 100
-      VarDecls   Type: Float
-        VarDef   name:t   scope:1
-          init:
-            VarInitVal_exp
-              AddExp_plus: (+)   Type: Float   
-                AddExp_plus: (+)   Type: Float   
-                  MulExp_div: (/)   Type: Float   
-                    Lval   Type: Float      name:x   scope:1
-                    Intconst   val:8   Type: Int   ConstValue: 8
-                  Floatconst   val:0.5   Type: Float   ConstValue: 0.500000
-                MulExp_div: (/)   Type: Float   
-                  MulExp_mul: (*)   Type: Float   
-                    Intconst   val:2   Type: Int   ConstValue: 2
-                    Lval   Type: Float      name:x   scope:1
-                  PrimaryExp_branch   Type: Int   
-                    AddExp_plus: (+)   Type: Float   
-                      Intconst   val:4   Type: Int   ConstValue: 4
-                      Lval   Type: Float      name:x   scope:1
-      VarDecls   Type: Int
-        VarDef   name:c   scope:1
-          init:
-            VarInitVal_exp
-              Intconst   val:10   Type: Int   ConstValue: 10
-      WhileStmt:
-      Cond   type:bool
-        Lval   Type: Int      name:c   scope:1
-      Body:
-        BlockStmt:
-          Block   Size:2
-            AssignStmt:
-              Lval   Type: Float      name:t   scope:1
-              MulExp_div: (/)   Type: Int   
-                PrimaryExp_branch   Type: Int   
-                  AddExp_plus: (+)   Type: Float   
-                    Lval   Type: Float      name:t   scope:1
-                    MulExp_div: (/)   Type: Float   
-                      Lval   Type: Float      name:x   scope:1
-                      Lval   Type: Float      name:t   scope:1
-                Intconst   val:2   Type: Int   ConstValue: 2
-            AssignStmt:
-              Lval   Type: Int      name:c   scope:1
-              AddExp_sub: (-)   Type: Int   
-                Lval   Type: Int      name:c   scope:1
-                Intconst   val:1   Type: Int   ConstValue: 1
-      ReturnStmt:
-        Lval   Type: Float      name:t   scope:1
-  FuncDef   Name:F1   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        MulExp_div: (/)   Type: Float   
-          Intconst   val:1   Type: Int   ConstValue: 1
-          Lval   Type: Float      name:x   scope:1
-  FuncDef   Name:F2   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        MulExp_div: (/)   Type: Float   
-          Intconst   val:1   Type: Int   ConstValue: 1
-          FuncCall   name:my_sqrt   Type: Float   
-            FuncRParams:
-              AddExp_sub: (-)   Type: Float   
-                Intconst   val:1   Type: Int   ConstValue: 1
-                MulExp_mul: (*)   Type: Float   
-                  Lval   Type: Float      name:x   scope:1
-                  Lval   Type: Float      name:x   scope:1
-  FuncDef   Name:simpson   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:b   Type:Float   scope:1
-
-    FuncFParam   name:flag   Type:Int   scope:1
-
-    Block   Size:4
-      VarDecls   Type: Float
-        VarDef   name:c   scope:1
-          init:
-            VarInitVal_exp
-              AddExp_plus: (+)   Type: Float   
-                Lval   Type: Float      name:a   scope:1
-                MulExp_div: (/)   Type: Int   
-                  PrimaryExp_branch   Type: Int   
-                    AddExp_sub: (-)   Type: Float   
-                      Lval   Type: Float      name:b   scope:1
-                      Lval   Type: Float      name:a   scope:1
-                  Intconst   val:2   Type: Int   ConstValue: 2
-      IfStmt:
-      Cond   type:bool
-        EqExp_eq: (==)   Type: Bool   
-          Lval   Type: Int      name:flag   scope:1
-          Intconst   val:1   Type: Int   ConstValue: 1
-      if_stmt:
-        ReturnStmt:
-          MulExp_div: (/)   Type: Int   
-            MulExp_mul: (*)   Type: Int   
-              PrimaryExp_branch   Type: Int   
-                AddExp_plus: (+)   Type: Float   
-                  AddExp_plus: (+)   Type: Float   
-                    FuncCall   name:F1   Type: Float   
-                      FuncRParams:
-                        Lval   Type: Float      name:a   scope:1
-                    MulExp_mul: (*)   Type: Float   
-                      Intconst   val:4   Type: Int   ConstValue: 4
-                      FuncCall   name:F1   Type: Float   
-                        FuncRParams:
-                          Lval   Type: Float      name:c   scope:1
-                  FuncCall   name:F1   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:b   scope:1
-              PrimaryExp_branch   Type: Int   
-                AddExp_sub: (-)   Type: Float   
-                  Lval   Type: Float      name:b   scope:1
-                  Lval   Type: Float      name:a   scope:1
-            Intconst   val:6   Type: Int   ConstValue: 6
-      IfStmt:
-      Cond   type:bool
-        EqExp_eq: (==)   Type: Bool   
-          Lval   Type: Int      name:flag   scope:1
-          Intconst   val:2   Type: Int   ConstValue: 2
-      if_stmt:
-        ReturnStmt:
-          MulExp_div: (/)   Type: Int   
-            MulExp_mul: (*)   Type: Int   
-              PrimaryExp_branch   Type: Int   
-                AddExp_plus: (+)   Type: Float   
-                  AddExp_plus: (+)   Type: Float   
-                    FuncCall   name:F2   Type: Float   
-                      FuncRParams:
-                        Lval   Type: Float      name:a   scope:1
-                    MulExp_mul: (*)   Type: Float   
-                      Intconst   val:4   Type: Int   ConstValue: 4
-                      FuncCall   name:F2   Type: Float   
-                        FuncRParams:
-                          Lval   Type: Float      name:c   scope:1
-                  FuncCall   name:F2   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:b   scope:1
-              PrimaryExp_branch   Type: Int   
-                AddExp_sub: (-)   Type: Float   
-                  Lval   Type: Float      name:b   scope:1
-                  Lval   Type: Float      name:a   scope:1
-            Intconst   val:6   Type: Int   ConstValue: 6
-      ReturnStmt:
-        Intconst   val:0   Type: Int   ConstValue: 0
-  FuncDef   Name:asr5   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:b   Type:Float   scope:1
-
-    FuncFParam   name:eps   Type:Float   scope:1
-
-    FuncFParam   name:A   Type:Float   scope:1
-
-    FuncFParam   name:flag   Type:Int   scope:1
-
-    Block   Size:4
-      VarDecls   Type: Float
-        VarDef   name:c   scope:1
-          init:
-            VarInitVal_exp
-              AddExp_plus: (+)   Type: Float   
-                Lval   Type: Float      name:a   scope:1
-                MulExp_div: (/)   Type: Int   
-                  PrimaryExp_branch   Type: Int   
-                    AddExp_sub: (-)   Type: Float   
-                      Lval   Type: Float      name:b   scope:1
-                      Lval   Type: Float      name:a   scope:1
-                  Intconst   val:2   Type: Int   ConstValue: 2
-      VarDecls   Type: Float
-        VarDef   name:L   scope:1
-          init:
-            VarInitVal_exp
-              FuncCall   name:simpson   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float      name:a   scope:1
-                  Lval   Type: Float      name:c   scope:1
-                  Lval   Type: Int      name:flag   scope:1
-        VarDef   name:R   scope:1
-          init:
-            VarInitVal_exp
-              FuncCall   name:simpson   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float      name:c   scope:1
-                  Lval   Type: Float      name:b   scope:1
-                  Lval   Type: Int      name:flag   scope:1
-      IfStmt:
-      Cond   type:bool
-        RelExp_leq: (<=)   Type: Bool   
-          FuncCall   name:my_fabs   Type: Float   
-            FuncRParams:
-              AddExp_sub: (-)   Type: Float   
-                AddExp_plus: (+)   Type: Float   
-                  Lval   Type: Float      name:L   scope:1
-                  Lval   Type: Float      name:R   scope:1
-                Lval   Type: Float      name:A   scope:1
-          MulExp_mul: (*)   Type: Float   
-            Intconst   val:15   Type: Int   ConstValue: 15
-            Lval   Type: Float      name:eps   scope:1
-      if_stmt:
-        ReturnStmt:
-          AddExp_plus: (+)   Type: Float   
-            AddExp_plus: (+)   Type: Float   
-              Lval   Type: Float      name:L   scope:1
-              Lval   Type: Float      name:R   scope:1
-            MulExp_div: (/)   Type: Float   
-              PrimaryExp_branch   Type: Int   
-                AddExp_sub: (-)   Type: Float   
-                  AddExp_plus: (+)   Type: Float   
-                    Lval   Type: Float      name:L   scope:1
-                    Lval   Type: Float      name:R   scope:1
-                  Lval   Type: Float      name:A   scope:1
-              Floatconst   val:15   Type: Float   ConstValue: 15.000000
-      ReturnStmt:
-        AddExp_plus: (+)   Type: Float   
-          FuncCall   name:asr5   Type: Float   
-            FuncRParams:
-              Lval   Type: Float      name:a   scope:1
-              Lval   Type: Float      name:c   scope:1
-              MulExp_div: (/)   Type: Float   
-                Lval   Type: Float      name:eps   scope:1
-                Intconst   val:2   Type: Int   ConstValue: 2
-              Lval   Type: Float      name:L   scope:1
-              Lval   Type: Int      name:flag   scope:1
-          FuncCall   name:asr5   Type: Float   
-            FuncRParams:
-              Lval   Type: Float      name:c   scope:1
-              Lval   Type: Float      name:b   scope:1
-              MulExp_div: (/)   Type: Float   
-                Lval   Type: Float      name:eps   scope:1
-                Intconst   val:2   Type: Int   ConstValue: 2
-              Lval   Type: Float      name:R   scope:1
-              Lval   Type: Int      name:flag   scope:1
-  FuncDef   Name:asr4   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:b   Type:Float   scope:1
-
-    FuncFParam   name:eps   Type:Float   scope:1
-
-    FuncFParam   name:flag   Type:Int   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        FuncCall   name:asr5   Type: Float   
-          FuncRParams:
-            Lval   Type: Float      name:a   scope:1
-            Lval   Type: Float      name:b   scope:1
-            Lval   Type: Float      name:eps   scope:1
-            FuncCall   name:simpson   Type: Float   
-              FuncRParams:
-                Lval   Type: Float      name:a   scope:1
-                Lval   Type: Float      name:b   scope:1
-                Lval   Type: Int      name:flag   scope:1
-            Lval   Type: Int      name:flag   scope:1
-  FuncDef   Name:eee   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:2
-      IfStmt:
-      Cond   type:bool
-        RelExp_gt: (>)   Type: Bool   
-          Lval   Type: Float      name:x   scope:1
-          Floatconst   val:0.001   Type: Float   ConstValue: 0.001000
-      if_stmt:
-        BlockStmt:
-          Block   Size:2
-            VarDecls   Type: Float
-              VarDef   name:ee   scope:2
-                init:
-                  VarInitVal_exp
-                    FuncCall   name:eee   Type: Float   
-                      FuncRParams:
-                        MulExp_div: (/)   Type: Float   
-                          Lval   Type: Float      name:x   scope:1
-                          Intconst   val:2   Type: Int   ConstValue: 2
-            ReturnStmt:
-              MulExp_mul: (*)   Type: Float   
-                Lval   Type: Float      name:ee   scope:2
-                Lval   Type: Float      name:ee   scope:2
-      ReturnStmt:
-        AddExp_plus: (+)   Type: Float   
-          AddExp_plus: (+)   Type: Float   
-            AddExp_plus: (+)   Type: Float   
-              AddExp_plus: (+)   Type: Float   
-                AddExp_plus: (+)   Type: Float   
-                  Intconst   val:1   Type: Int   ConstValue: 1
-                  Lval   Type: Float      name:x   scope:1
-                MulExp_div: (/)   Type: Float   
-                  MulExp_mul: (*)   Type: Float   
-                    Lval   Type: Float      name:x   scope:1
-                    Lval   Type: Float      name:x   scope:1
-                  Intconst   val:2   Type: Int   ConstValue: 2
-              MulExp_div: (/)   Type: Float   
-                FuncCall   name:my_pow   Type: Float   
-                  FuncRParams:
-                    Lval   Type: Float      name:x   scope:1
-                    Intconst   val:3   Type: Int   ConstValue: 3
-                Intconst   val:6   Type: Int   ConstValue: 6
-            MulExp_div: (/)   Type: Float   
-              FuncCall   name:my_pow   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float      name:x   scope:1
-                  Intconst   val:4   Type: Int   ConstValue: 4
-              Intconst   val:24   Type: Int   ConstValue: 24
-          MulExp_div: (/)   Type: Float   
-            FuncCall   name:my_pow   Type: Float   
-              FuncRParams:
-                Lval   Type: Float      name:x   scope:1
-                Intconst   val:5   Type: Int   ConstValue: 5
-            Intconst   val:120   Type: Int   ConstValue: 120
-  FuncDef   Name:my_exp   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:6
-      IfStmt:
-      Cond   type:bool
-        RelExp_lt: (<)   Type: Bool   
-          Lval   Type: Float      name:x   scope:1
-          Intconst   val:0   Type: Int   ConstValue: 0
-      if_stmt:
-        ReturnStmt:
-          MulExp_div: (/)   Type: Float   
-            Intconst   val:1   Type: Int   ConstValue: 1
-            FuncCall   name:my_exp   Type: Float   
-              FuncRParams:
-                UnaryExp_neg:(-)   Type: Int   
-                  Lval   Type: Float      name:x   scope:1
-      VarDecls   Type: Int
-        VarDef   name:n   scope:1
-          init:
-            VarInitVal_exp
-              Lval   Type: Float      name:x   scope:1
-      AssignStmt:
-        Lval   Type: Float      name:x   scope:1
-        AddExp_sub: (-)   Type: Float   
-          Lval   Type: Float      name:x   scope:1
-          Lval   Type: Int      name:n   scope:1
-      VarDecls   Type: Float
-        VarDef   name:e1   scope:1
-          init:
-            VarInitVal_exp
-              FuncCall   name:my_pow   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float   ConstValue: 2.718282   name:e   scope:0
-                  Lval   Type: Int      name:n   scope:1
-      VarDecls   Type: Float
-        VarDef   name:e2   scope:1
-          init:
-            VarInitVal_exp
-              FuncCall   name:eee   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float      name:x   scope:1
-      ReturnStmt:
-        MulExp_mul: (*)   Type: Float   
-          Lval   Type: Float      name:e1   scope:1
-          Lval   Type: Float      name:e2   scope:1
-  FuncDef   Name:my_ln   ReturnType: Float
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        FuncCall   name:asr4   Type: Float   
-          FuncRParams:
-            Intconst   val:1   Type: Int   ConstValue: 1
-            Lval   Type: Float      name:x   scope:1
-            Floatconst   val:1e-08   Type: Float   ConstValue: 0.000000
-            Intconst   val:1   Type: Int   ConstValue: 1
-  FuncDef   Name:my_log   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:N   Type:Float   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        MulExp_div: (/)   Type: Float   
-          FuncCall   name:my_ln   Type: Float   
-            FuncRParams:
-              Lval   Type: Float      name:N   scope:1
-          FuncCall   name:my_ln   Type: Float   
-            FuncRParams:
-              Lval   Type: Float      name:a   scope:1
-  FuncDef   Name:my_powf   ReturnType: Float
-    FuncFParam   name:a   Type:Float   scope:1
-
-    FuncFParam   name:x   Type:Float   scope:1
-
-    Block   Size:1
-      ReturnStmt:
-        FuncCall   name:my_exp   Type: Float   
-          FuncRParams:
-            MulExp_mul: (*)   Type: Float   
-              Lval   Type: Float      name:x   scope:1
-              FuncCall   name:my_ln   Type: Float   
-                FuncRParams:
-                  Lval   Type: Float      name:a   scope:1
   FuncDef   Name:main   ReturnType: Int
-    Block   Size:3
-      VarDecls   Type: Int
-        VarDef   name:num   scope:1
+    Block   Size:7
+      ConstDecls   Type: Int
+        ConstDef   name:a   scope:-1
           init:
-            VarInitVal_exp
-              FuncCall   name:getint   Type: Int   
-                Empty params
-      WhileStmt:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:1   Type: Void   
+      ConstDecls   Type: Int
+        ConstDef   name:b   scope:-1
+          init:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:2   Type: Void   
+      ConstDecls   Type: Int
+        ConstDef   name:c   scope:-1
+          init:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:3   Type: Void   
+      ConstDecls   Type: Int
+        ConstDef   name:d   scope:-1
+          init:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:4   Type: Void   
+      ConstDecls   Type: Int
+        ConstDef   name:e   scope:-1
+          init:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:5   Type: Void   
+      ConstDecls   Type: Int
+        ConstDef   name:f   scope:-1
+          init:
+            ConstInitVal_exp   Type: Void   
+              Intconst   val:6   Type: Void   
+      IfElseStmt:
       Cond   type:bool
-        Lval   Type: Int      name:num   scope:1
-      Body:
+        LAndExp_and: (&&)   Type: Void   
+          RelExp_lt: (<)   Type: Void   
+            AddExp_plus: (+)   Type: Void   
+              MulExp_mul: (*)   Type: Void   
+                Lval   Type: Void      name:a   scope:-1
+                Lval   Type: Void      name:b   scope:-1
+              Lval   Type: Void      name:c   scope:-1
+            Intconst   val:6   Type: Void   
+          EqExp_neq: (!=)   Type: Void   
+            Lval   Type: Void      name:d   scope:-1
+            Intconst   val:0   Type: Void   
+      if_stmt:
         BlockStmt:
-          Block   Size:16
-            VarDecls   Type: Float
-              VarDef   name:x   scope:2
-                init:
-                  VarInitVal_exp
-                    FuncCall   name:getfloat   Type: Float   
-                      Empty params
-              VarDef   name:y   scope:2
-                init:
-                  VarInitVal_exp
-                    FuncCall   name:getfloat   Type: Float   
-                      Empty params
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putfloat   Type: Void   
-                FuncRParams:
-                  FuncCall   name:my_fabs   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:x   scope:2
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putfloat   Type: Void   
-                FuncRParams:
-                  FuncCall   name:my_pow   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:x   scope:2
-                      Intconst   val:2   Type: Int   ConstValue: 2
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putfloat   Type: Void   
-                FuncRParams:
-                  FuncCall   name:my_sqrt   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:x   scope:2
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putfloat   Type: Void   
-                FuncRParams:
-                  FuncCall   name:my_exp   Type: Float   
-                    FuncRParams:
-                      Lval   Type: Float      name:x   scope:2
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
+          Block   Size:1
             IfElseStmt:
             Cond   type:bool
-              RelExp_gt: (>)   Type: Bool   
-                Lval   Type: Float      name:x   scope:2
-                Intconst   val:0   Type: Int   ConstValue: 0
+              LOrExp_or: (||)   Type: Void   
+                Lval   Type: Void      name:e   scope:-1
+                AddExp_plus: (+)   Type: Void   
+                  UnaryExp_not:(!)   Type: Void   
+                    Lval   Type: Void      name:a   scope:-1
+                  Intconst   val:0   Type: Void   
             if_stmt:
               BlockStmt:
                 Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putfloat   Type: Void   
-                      FuncRParams:
-                        FuncCall   name:my_ln   Type: Float   
-                          FuncRParams:
-                            Lval   Type: Float      name:x   scope:2
+                  IfElseStmt:
+                  Cond   type:bool
+                    LAndExp_and: (&&)   Type: Void   
+                      EqExp_eq: (==)   Type: Void   
+                        Lval   Type: Void      name:c   scope:-1
+                        Intconst   val:2   Type: Void   
+                      RelExp_gt: (>)   Type: Void   
+                        AddExp_plus: (+)   Type: Void   
+                          Lval   Type: Void      name:d   scope:-1
+                          Lval   Type: Void      name:e   scope:-1
+                        Intconst   val:2   Type: Void   
+                  if_stmt:
+                    ReturnStmt:
+                      Intconst   val:3   Type: Void   
+                  else_Stmt:
+                    BlockStmt:
+                      Block   Size:1
+                        IfElseStmt:
+                        Cond   type:bool
+                          LAndExp_and: (&&)   Type: Void   
+                            MulExp_mod: (%)   Type: Void   
+                              Lval   Type: Void      name:f   scope:-1
+                              Lval   Type: Void      name:c   scope:-1
+                            Lval   Type: Void      name:e   scope:-1
+                        if_stmt:
+                          ReturnStmt:
+                            Intconst   val:4   Type: Void   
+                        else_Stmt:
+                          BlockStmt:
+                            Block   Size:1
+                              IfElseStmt:
+                              Cond   type:bool
+                                RelExp_geq: (>=)   Type: Void   
+                                  AddExp_plus: (+)   Type: Void   
+                                    MulExp_div: (/)   Type: Void   
+                                      Lval   Type: Void      name:d   scope:-1
+                                      Lval   Type: Void      name:b   scope:-1
+                                    Lval   Type: Void      name:a   scope:-1
+                                  Intconst   val:2   Type: Void   
+                              if_stmt:
+                                BlockStmt:
+                                  Block   Size:1
+                                    IfElseStmt:
+                                    Cond   type:bool
+                                      LOrExp_or: (||)   Type: Void   
+                                        RelExp_geq: (>=)   Type: Void   
+                                          AddExp_sub: (-)   Type: Void   
+                                            Lval   Type: Void      name:e   scope:-1
+                                            Lval   Type: Void      name:f   scope:-1
+                                          Intconst   val:0   Type: Void   
+                                        RelExp_gt: (>)   Type: Void   
+                                          Lval   Type: Void      name:d   scope:-1
+                                          Intconst   val:4   Type: Void   
+                                    if_stmt:
+                                      ReturnStmt:
+                                        Intconst   val:6   Type: Void   
+                                    else_Stmt:
+                                      BlockStmt:
+                                        Block   Size:1
+                                          IfElseStmt:
+                                          Cond   type:bool
+                                            EqExp_neq: (!=)   Type: Void   
+                                              Lval   Type: Void      name:c   scope:-1
+                                              Lval   Type: Void      name:f   scope:-1
+                                          if_stmt:
+                                            BlockStmt:
+                                              Block   Size:1
+                                                IfElseStmt:
+                                                Cond   type:bool
+                                                  RelExp_gt: (>)   Type: Void   
+                                                    AddExp_plus: (+)   Type: Void   
+                                                      Lval   Type: Void      name:b   scope:-1
+                                                      MulExp_mul: (*)   Type: Void   
+                                                        Lval   Type: Void      name:e   scope:-1
+                                                        Lval   Type: Void      name:d   scope:-1
+                                                    Intconst   val:10   Type: Void   
+                                                if_stmt:
+                                                  BlockStmt:
+                                                    Block   Size:1
+                                                      IfElseStmt:
+                                                      Cond   type:bool
+                                                        UnaryExp_not:(!)   Type: Void   
+                                                          Lval   Type: Void      name:f   scope:-1
+                                                      if_stmt:
+                                                        ReturnStmt:
+                                                          Intconst   val:9   Type: Void   
+                                                      else_Stmt:
+                                                        ReturnStmt:
+                                                          Intconst   val:10   Type: Void   
+                                                else_Stmt:
+                                                  ReturnStmt:
+                                                    Intconst   val:8   Type: Void   
+                                          else_Stmt:
+                                            ReturnStmt:
+                                              Intconst   val:7   Type: Void   
+                              else_Stmt:
+                                ReturnStmt:
+                                  Intconst   val:5   Type: Void   
             else_Stmt:
-              BlockStmt:
-                Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putch   Type: Void   
-                      FuncRParams:
-                        Intconst   val:45   Type: Int   ConstValue: 45
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
-            IfElseStmt:
-            Cond   type:bool
-              LAndExp_and: (&&)   Type: Bool   
-                RelExp_gt: (>)   Type: Bool   
-                  Lval   Type: Float      name:x   scope:2
-                  Intconst   val:0   Type: Int   ConstValue: 0
-                RelExp_gt: (>)   Type: Bool   
-                  Lval   Type: Float      name:y   scope:2
-                  Intconst   val:0   Type: Int   ConstValue: 0
-            if_stmt:
-              BlockStmt:
-                Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putfloat   Type: Void   
-                      FuncRParams:
-                        FuncCall   name:my_log   Type: Float   
-                          FuncRParams:
-                            Lval   Type: Float      name:x   scope:2
-                            Lval   Type: Float      name:y   scope:2
-            else_Stmt:
-              BlockStmt:
-                Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putch   Type: Void   
-                      FuncRParams:
-                        Intconst   val:45   Type: Int   ConstValue: 45
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:32   Type: Int   ConstValue: 32
-            IfElseStmt:
-            Cond   type:bool
-              RelExp_gt: (>)   Type: Bool   
-                Lval   Type: Float      name:x   scope:2
-                Intconst   val:0   Type: Int   ConstValue: 0
-            if_stmt:
-              BlockStmt:
-                Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putfloat   Type: Void   
-                      FuncRParams:
-                        FuncCall   name:my_powf   Type: Float   
-                          FuncRParams:
-                            Lval   Type: Float      name:x   scope:2
-                            Lval   Type: Float      name:y   scope:2
-            else_Stmt:
-              BlockStmt:
-                Block   Size:1
-                  ExpressionStmt:   Type: Void   
-                    FuncCall   name:putch   Type: Void   
-                      FuncRParams:
-                        Intconst   val:45   Type: Int   ConstValue: 45
-            ExpressionStmt:   Type: Void   
-              FuncCall   name:putch   Type: Void   
-                FuncRParams:
-                  Intconst   val:10   Type: Int   ConstValue: 10
-            AssignStmt:
-              Lval   Type: Int      name:num   scope:1
-              AddExp_sub: (-)   Type: Int   
-                Lval   Type: Int      name:num   scope:1
-                Intconst   val:1   Type: Int   ConstValue: 1
-      ReturnStmt:
-        Intconst   val:0   Type: Int   ConstValue: 0
+              ReturnStmt:
+                Intconst   val:2   Type: Void   
+      else_Stmt:
+        ReturnStmt:
+          Intconst   val:1   Type: Void   

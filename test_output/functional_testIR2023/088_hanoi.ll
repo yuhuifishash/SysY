@@ -28,14 +28,14 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r14 = phi i32 [%r1,%L1],[%r12,%L3]
     %r4 = icmp sgt i32 %r14,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r5 = call i32 @getint()
     call void @hanoi(i32 %r5,i32 1,i32 2,i32 3)
     call void @putch(i32 10)

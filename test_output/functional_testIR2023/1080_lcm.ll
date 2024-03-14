@@ -22,17 +22,17 @@ L1:  ;
     br i1 %r16, label %L2, label %L3
 L2:  ;
     br label %L3
-L3:  ;
+L3:  ;  preheader0
     %r40 = phi i32 [%r0,%L1],[%r1,%L2]
     %r38 = phi i32 [%r1,%L1],[%r0,%L2]
     %r22 = srem i32 %r40,%r38
     br label %L4
-L4:  ;
+L4:  ;  exiting0  header0
     %r39 = phi i32 [%r38,%L3],[%r36,%L5]
     %r36 = phi i32 [%r22,%L3],[%r30,%L5]
     %r25 = icmp ne i32 %r36,0
     br i1 %r25, label %L5, label %L6
-L5:  ;
+L5:  ;  latch0
     %r30 = srem i32 %r39,%r36
     br label %L4
 L6:  ;

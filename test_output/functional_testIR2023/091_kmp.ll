@@ -16,11 +16,11 @@ define void @get_next(ptr %r0,ptr %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r3 = getelementptr i32, ptr %r1, i32 0
     store i32 -1, ptr %r3
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r41 = phi i32 [0,%L1],[%r40,%L7]
     %r39 = phi i32 [-1,%L1],[%r38,%L7]
     %r12 = getelementptr i32, ptr %r0, i32 %r41
@@ -42,7 +42,7 @@ L6:  ;
     %r36 = getelementptr i32, ptr %r1, i32 %r39
     %r37 = load i32, ptr %r36
     br label %L7
-L7:  ;
+L7:  ;  latch0
     %r40 = phi i32 [%r31,%L5],[%r41,%L6]
     %r38 = phi i32 [%r28,%L5],[%r37,%L6]
     br label %L2
@@ -58,65 +58,68 @@ define i32 @KMP(ptr %r0,ptr %r1)
 L0:  ;
     %r2 = alloca [4096 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r3 = getelementptr i32, ptr %r0
     %r4 = getelementptr [4096 x i32], ptr %r2, i32 0
     call void @get_next(ptr %r3,ptr %r4)
     br label %L2
-L2:  ;
-    %r50 = phi i32 [0,%L1],[%r49,%L7]
-    %r47 = phi i32 [0,%L1],[%r46,%L7]
-    %r10 = getelementptr i32, ptr %r1, i32 %r47
+L2:  ;  exiting0  header0
+    %r55 = phi i32 [0,%L1],[%r53,%L7]
+    %r51 = phi i32 [0,%L1],[%r49,%L7]
+    %r10 = getelementptr i32, ptr %r1, i32 %r51
     %r11 = load i32, ptr %r10
     %r12 = icmp ne i32 %r11,0
     br i1 %r12, label %L3, label %L4
 L3:  ;
-    %r14 = getelementptr i32, ptr %r0, i32 %r50
+    %r14 = getelementptr i32, ptr %r0, i32 %r55
     %r15 = load i32, ptr %r14
     %r18 = load i32, ptr %r10
     %r19 = icmp eq i32 %r15,%r18
     br i1 %r19, label %L5, label %L6
 L4:  ;
-    ret i32 -1
-L5:  ;
-    %r22 = add i32 %r50,1
-    %r25 = add i32 %r47,1
+    br label %L12
+L5:  ;  exiting0
+    %r22 = add i32 %r55,1
+    %r25 = add i32 %r51,1
     %r27 = getelementptr i32, ptr %r0, i32 %r22
     %r28 = load i32, ptr %r27
     %r29 = icmp eq i32 %r28,0
     br i1 %r29, label %L8, label %L9
 L6:  ;
-    %r32 = getelementptr [4096 x i32], ptr %r2, i32 0, i32 %r50
+    %r32 = getelementptr [4096 x i32], ptr %r2, i32 0, i32 %r55
     %r33 = load i32, ptr %r32
     %r37 = icmp eq i32 %r33,-1
     br i1 %r37, label %L10, label %L11
-L7:  ;
-    %r49 = phi i32 [%r22,%L9],[%r51,%L11]
-    %r46 = phi i32 [%r25,%L9],[%r48,%L11]
+L7:  ;  latch0
+    %r53 = phi i32 [%r22,%L9],[%r56,%L11]
+    %r49 = phi i32 [%r25,%L9],[%r52,%L11]
     br label %L2
 L8:  ;
-    ret i32 %r25
+    br label %L12
 L9:  ;
     br label %L7
 L10:  ;
     %r40 = add i32 %r33,1
-    %r43 = add i32 %r47,1
+    %r43 = add i32 %r51,1
     br label %L11
 L11:  ;
-    %r51 = phi i32 [%r33,%L6],[%r40,%L10]
-    %r48 = phi i32 [%r47,%L6],[%r43,%L10]
+    %r56 = phi i32 [%r33,%L6],[%r40,%L10]
+    %r52 = phi i32 [%r51,%L6],[%r43,%L10]
     br label %L7
+L12:  ;
+    %r48 = phi i32 [-1,%L4],[%r25,%L8]
+    ret i32 %r48
 }
 define i32 @read_str(ptr %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  header0
     %r20 = phi i32 [0,%L1],[%r15,%L6]
     br label %L3
-L3:  ;
+L3:  ;  exiting0
     %r6 = getelementptr i32, ptr %r0, i32 %r20
     %r7 = call i32 @getch()
     store i32 %r7, ptr %r6
@@ -128,7 +131,7 @@ L4:  ;
     ret i32 %r20
 L5:  ;
     br label %L4
-L6:  ;
+L6:  ;  latch0
     %r15 = add i32 %r20,1
     br label %L2
 }

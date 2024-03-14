@@ -29,10 +29,13 @@ L1:  ;
     %r5 = fcmp ogt float %r0,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fsub float 0x0,%r0
-    ret float %r8
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r0,%L2],[%r8,%L3]
+    ret float %r11
 }
 define float @my_cos(float %r0)
 {
@@ -70,13 +73,16 @@ L1:  ;
     %r5 = fcmp ole float %r3,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fadd float 0x4008000000000000,0x0
     %r9 = fdiv float %r0,%r8
     %r10 = call float @my_sin_impl(float %r9)
     %r11 = call float @p(float %r10)
-    ret float %r11
+    br label %L4
+L4:  ;
+    %r14 = phi float [%r0,%L2],[%r11,%L3]
+    ret float %r14
 }
 define float @my_sin(float %r0)
 {
@@ -122,13 +128,13 @@ define void @write_mat(ptr %r0,i32 %r1,i32 %r2)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r34 = phi i32 [0,%L1],[%r30,%L7]
     %r9 = icmp slt i32 %r34,%r1
     br i1 %r9, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     %r12 = getelementptr [8 x float], ptr %r0, i32 %r34, i32 0
     %r13 = load float, ptr %r12
     call void @putfloat(float %r13)
@@ -136,18 +142,18 @@ L3:  ;
 L4:  ;
     call void @putch(i32 10)
     ret void
-L5:  ;
+L5:  ;  exiting0  header0
     %r33 = phi i32 [1,%L3],[%r26,%L6]
     %r18 = icmp slt i32 %r33,%r2
     br i1 %r18, label %L6, label %L7
-L6:  ;
+L6:  ;  latch0
     call void @putch(i32 32)
     %r22 = getelementptr [8 x float], ptr %r0, i32 %r34, i32 %r33
     %r23 = load float, ptr %r22
     call void @putfloat(float %r23)
     %r26 = add i32 %r33,1
     br label %L5
-L7:  ;
+L7:  ;  latch1
     call void @putch(i32 10)
     %r30 = add i32 %r34,1
     br label %L2
@@ -156,42 +162,42 @@ define void @dct(ptr %r0,ptr %r1,i32 %r2,i32 %r3)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r96 = phi i32 [0,%L1],[%r86,%L7]
     %r10 = icmp slt i32 %r96,%r2
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting1  header1
     %r95 = phi i32 [0,%L3],[%r83,%L10]
     %r15 = icmp slt i32 %r95,%r3
     br i1 %r15, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader3
     %r18 = getelementptr [8 x float], ptr %r0, i32 %r96, i32 %r95
     %r20 = sitofp i32 0 to float
     store float %r20, ptr %r18
     br label %L8
-L7:  ;
+L7:  ;  latch0
     %r86 = add i32 %r96,1
     br label %L2
-L8:  ;
+L8:  ;  exiting3  header3
     %r93 = phi i32 [0,%L6],[%r80,%L13]
     %r25 = icmp slt i32 %r93,%r2
     br i1 %r25, label %L9, label %L10
-L9:  ;
+L9:  ;  preheader2
     br label %L11
-L10:  ;
+L10:  ;  latch1
     %r83 = add i32 %r95,1
     br label %L5
-L11:  ;
+L11:  ;  exiting2  header2
     %r90 = phi i32 [0,%L9],[%r77,%L12]
     %r30 = icmp slt i32 %r90,%r3
     br i1 %r30, label %L12, label %L13
-L12:  ;
+L12:  ;  latch2
     %r37 = load float, ptr %r18
     %r40 = getelementptr [8 x float], ptr %r1, i32 %r93, i32 %r90
     %r41 = load float, ptr %r40
@@ -221,7 +227,7 @@ L12:  ;
     store float %r74, ptr %r18
     %r77 = add i32 %r90,1
     br label %L11
-L13:  ;
+L13:  ;  latch3
     %r80 = add i32 %r93,1
     br label %L8
 }
@@ -229,21 +235,21 @@ define void @idct(ptr %r0,ptr %r1,i32 %r2,i32 %r3)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r172 = phi i32 [0,%L1],[%r160,%L7]
     %r10 = icmp slt i32 %r172,%r2
     br i1 %r10, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader3
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting3  header3
     %r171 = phi i32 [0,%L3],[%r157,%L16]
     %r15 = icmp slt i32 %r171,%r3
     br i1 %r15, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader1
     %r18 = getelementptr [8 x float], ptr %r0, i32 %r172, i32 %r171
     %r20 = fadd float 0x4010000000000000,0x0
     %r21 = sitofp i32 1 to float
@@ -253,14 +259,14 @@ L6:  ;
     %r27 = fmul float %r22,%r26
     store float %r27, ptr %r18
     br label %L8
-L7:  ;
+L7:  ;  latch0
     %r160 = add i32 %r172,1
     br label %L2
-L8:  ;
+L8:  ;  exiting1  header1
     %r168 = phi i32 [1,%L6],[%r55,%L9]
     %r35 = icmp slt i32 %r168,%r2
     br i1 %r35, label %L9, label %L10
-L9:  ;
+L9:  ;  latch1
     %r42 = load float, ptr %r18
     %r44 = fadd float 0x4000000000000000,0x0
     %r46 = fdiv float %r21,%r44
@@ -271,13 +277,13 @@ L9:  ;
     store float %r52, ptr %r18
     %r55 = add i32 %r168,1
     br label %L8
-L10:  ;
+L10:  ;  preheader2
     br label %L11
-L11:  ;
+L11:  ;  exiting2  header2
     %r163 = phi i32 [1,%L10],[%r79,%L12]
     %r59 = icmp slt i32 %r163,%r3
     br i1 %r59, label %L12, label %L13
-L12:  ;
+L12:  ;  latch2
     %r66 = load float, ptr %r18
     %r68 = fadd float 0x4000000000000000,0x0
     %r70 = fdiv float %r21,%r68
@@ -288,15 +294,15 @@ L12:  ;
     store float %r76, ptr %r18
     %r79 = add i32 %r163,1
     br label %L11
-L13:  ;
+L13:  ;  preheader5
     br label %L14
-L14:  ;
+L14:  ;  exiting5  header5
     %r169 = phi i32 [1,%L13],[%r137,%L19]
     %r83 = icmp slt i32 %r169,%r2
     br i1 %r83, label %L15, label %L16
-L15:  ;
+L15:  ;  preheader4
     br label %L17
-L16:  ;
+L16:  ;  latch3
     %r144 = load float, ptr %r18
     %r145 = fadd float 0x4000000000000000,0x0
     %r146 = fmul float %r144,%r145
@@ -308,11 +314,11 @@ L16:  ;
     store float %r154, ptr %r18
     %r157 = add i32 %r171,1
     br label %L5
-L17:  ;
+L17:  ;  exiting4  header4
     %r165 = phi i32 [1,%L15],[%r134,%L18]
     %r87 = icmp slt i32 %r165,%r3
     br i1 %r87, label %L18, label %L19
-L18:  ;
+L18:  ;  latch4
     %r94 = load float, ptr %r18
     %r97 = getelementptr [8 x float], ptr %r1, i32 %r169, i32 %r165
     %r98 = load float, ptr %r97
@@ -342,7 +348,7 @@ L18:  ;
     store float %r131, ptr %r18
     %r134 = add i32 %r165,1
     br label %L17
-L19:  ;
+L19:  ;  latch5
     %r137 = add i32 %r169,1
     br label %L14
 }
@@ -350,15 +356,15 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     %r1 = call i32 @getint()
     %r3 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r41 = phi i32 [0,%L1],[%r23,%L7]
     %r8 = icmp slt i32 %r41,%r1
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     br label %L5
 L4:  ;
     %r24 = getelementptr [8 x [8 x float]], ptr @test_dct, i32 0
@@ -369,17 +375,17 @@ L4:  ;
     call void @idct(ptr %r31,ptr %r24,i32 %r1,i32 %r3)
     call void @write_mat(ptr %r31,i32 %r1,i32 %r3)
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r40 = phi i32 [0,%L3],[%r20,%L6]
     %r13 = icmp slt i32 %r40,%r3
     br i1 %r13, label %L6, label %L7
-L6:  ;
+L6:  ;  latch0
     %r16 = getelementptr [8 x [8 x float]], ptr @test_block, i32 0, i32 %r41, i32 %r40
     %r17 = call float @getfloat()
     store float %r17, ptr %r16
     %r20 = add i32 %r40,1
     br label %L5
-L7:  ;
+L7:  ;  latch1
     %r23 = add i32 %r41,1
     br label %L2
 }

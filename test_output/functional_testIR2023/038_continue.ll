@@ -16,11 +16,11 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
-    %r23 = phi i32 [0,%L1],[%r14,%L5],[%r20,%L6]
-    %r22 = phi i32 [0,%L1],[%r22,%L5],[%r17,%L6]
+L2:  ;  exiting0  header0
+    %r23 = phi i32 [0,%L1],[%r24,%L8]
+    %r22 = phi i32 [0,%L1],[%r25,%L8]
     %r8 = icmp slt i32 %r23,100
     br i1 %r8, label %L3, label %L4
 L3:  ;
@@ -30,9 +30,13 @@ L4:  ;
     ret i32 %r22
 L5:  ;
     %r14 = add i32 %r23,1
-    br label %L2
+    br label %L8
 L6:  ;
     %r17 = add i32 %r22,%r23
     %r20 = add i32 %r23,1
+    br label %L8
+L8:  ;latch0
+    %r24 = phi i32 [%r14,%L5],[%r20,%L6]
+    %r25 = phi i32 [%r22,%L5],[%r17,%L6]
     br label %L2
 }

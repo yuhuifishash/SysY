@@ -29,26 +29,29 @@ L1:  ;
     %r4 = icmp sge i32 %r0,48
     br i1 %r4, label %L4, label %L3
 L2:  ;
-    ret i32 1
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
 L4:  ;
     %r7 = icmp sle i32 %r0,57
     br i1 %r7, label %L2, label %L3
+L5:  ;
+    %r12 = phi i32 [0,%L3],[1,%L2]
+    ret i32 %r12
 }
 define i32 @getstr(ptr %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r2 = call i32 @getch()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r20 = phi i32 [%r2,%L1],[%r17,%L3]
     %r19 = phi i32 [0,%L1],[%r16,%L3]
     %r7 = icmp ne i32 %r20,13
     br i1 %r7, label %L5, label %L4
-L3:  ;
+L3:  ;  latch0
     %r12 = getelementptr i32, ptr %r0, i32 %r19
     store i32 %r20, ptr %r12
     %r16 = add i32 %r19,1
@@ -56,7 +59,7 @@ L3:  ;
     br label %L2
 L4:  ;
     ret i32 %r19
-L5:  ;
+L5:  ;  exiting0
     %r10 = icmp ne i32 %r20,10
     br i1 %r10, label %L3, label %L4
 }
@@ -64,14 +67,14 @@ define i32 @power(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r17 = phi i32 [%r1,%L1],[%r14,%L3]
     %r16 = phi i32 [1,%L1],[%r11,%L3]
     %r8 = icmp ne i32 %r17,0
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r11 = mul i32 %r16,%r0
     %r14 = sub i32 %r17,1
     br label %L2
@@ -167,21 +170,24 @@ L1:  ;
     %r14 = icmp eq i32 %r12,0
     br i1 %r14, label %L2, label %L3
 L2:  ;
-    ret i32 0
+    br label %L4
 L3:  ;
-    ret i32 1
+    br label %L4
+L4:  ;
+    %r19 = phi i32 [0,%L2],[1,%L3]
+    ret i32 %r19
 }
 define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 0, ptr @intt
     store i32 0, ptr @chat
     %r3 = getelementptr [10000 x i32], ptr @get, i32 0
     %r4 = call i32 @getstr(ptr %r3)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r5 = load i32, ptr @i
     %r7 = icmp slt i32 %r5,%r4
     br i1 %r7, label %L3, label %L4
@@ -192,7 +198,7 @@ L3:  ;
     %r11 = call i32 @isdigit(i32 %r10)
     %r13 = icmp eq i32 %r11,1
     br i1 %r13, label %L5, label %L6
-L4:  ;
+L4:  ;  preheader7
     br label %L76
 L5:  ;
     %r14 = load i32, ptr @ii
@@ -210,7 +216,7 @@ L6:  ;
     %r24 = load i32, ptr %r23
     %r26 = icmp eq i32 %r24,40
     br i1 %r26, label %L8, label %L9
-L7:  ;
+L7:  ;  latch0
     %r226 = load i32, ptr @i
     %r228 = add i32 %r226,1
     store i32 %r228, ptr @i
@@ -233,7 +239,7 @@ L11:  ;
     %r36 = load i32, ptr %r35
     %r38 = icmp eq i32 %r36,41
     br i1 %r38, label %L12, label %L13
-L12:  ;
+L12:  ;  preheader1
     %r39 = call i32 @chapop()
     store i32 %r39, ptr @c
     br label %L14
@@ -243,11 +249,11 @@ L13:  ;
     %r57 = load i32, ptr %r56
     %r59 = icmp eq i32 %r57,43
     br i1 %r59, label %L17, label %L18
-L14:  ;
+L14:  ;  exiting1  header1
     %r40 = load i32, ptr @c
     %r42 = icmp ne i32 %r40,40
     br i1 %r42, label %L15, label %L16
-L15:  ;
+L15:  ;  latch1
     %r43 = load i32, ptr @ii
     %r44 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r43
     store i32 32, ptr %r44
@@ -262,7 +268,7 @@ L15:  ;
     br label %L14
 L16:  ;
     br label %L13
-L17:  ;
+L17:  ;  preheader2
     br label %L19
 L18:  ;
     %r94 = load i32, ptr @i
@@ -270,25 +276,25 @@ L18:  ;
     %r96 = load i32, ptr %r95
     %r98 = icmp eq i32 %r96,45
     br i1 %r98, label %L30, label %L31
-L19:  ;
+L19:  ;  header2
     %r60 = load i32, ptr @chat
     %r61 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r60
     %r62 = load i32, ptr %r61
     %r64 = icmp eq i32 %r62,43
     br i1 %r64, label %L20, label %L26
-L20:  ;
+L20:  ;  exiting2
     %r90 = call i32 @find()
     %r92 = icmp eq i32 %r90,0
     br i1 %r92, label %L27, label %L28
 L21:  ;
     call void @chapush(i32 43)
     br label %L18
-L22:  ;
+L22:  ;  exiting2
     %r85 = load i32, ptr @chat
     %r86 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r85
     %r87 = load i32, ptr %r86
     %r89 = icmp eq i32 %r87,94
-    br i1 %r89, label %L20, label %L21
+    br i1 %r89, label %L20, label %L107
 L23:  ;
     %r80 = load i32, ptr @chat
     %r81 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r80
@@ -315,9 +321,9 @@ L26:  ;
     br i1 %r69, label %L20, label %L25
 L27:  ;
     br label %L21
-L28:  ;
+L28:  ;  latch2
     br label %L19
-L30:  ;
+L30:  ;  preheader3
     br label %L32
 L31:  ;
     %r133 = load i32, ptr @i
@@ -325,25 +331,25 @@ L31:  ;
     %r135 = load i32, ptr %r134
     %r137 = icmp eq i32 %r135,42
     br i1 %r137, label %L43, label %L44
-L32:  ;
+L32:  ;  header3
     %r99 = load i32, ptr @chat
     %r100 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r99
     %r101 = load i32, ptr %r100
     %r103 = icmp eq i32 %r101,43
     br i1 %r103, label %L33, label %L39
-L33:  ;
+L33:  ;  exiting3
     %r129 = call i32 @find()
     %r131 = icmp eq i32 %r129,0
     br i1 %r131, label %L40, label %L41
 L34:  ;
     call void @chapush(i32 45)
     br label %L31
-L35:  ;
+L35:  ;  exiting3
     %r124 = load i32, ptr @chat
     %r125 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r124
     %r126 = load i32, ptr %r125
     %r128 = icmp eq i32 %r126,94
-    br i1 %r128, label %L33, label %L34
+    br i1 %r128, label %L33, label %L108
 L36:  ;
     %r119 = load i32, ptr @chat
     %r120 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r119
@@ -370,9 +376,9 @@ L39:  ;
     br i1 %r108, label %L33, label %L38
 L40:  ;
     br label %L34
-L41:  ;
+L41:  ;  latch3
     br label %L32
-L43:  ;
+L43:  ;  preheader4
     br label %L45
 L44:  ;
     %r162 = load i32, ptr @i
@@ -380,25 +386,25 @@ L44:  ;
     %r164 = load i32, ptr %r163
     %r166 = icmp eq i32 %r164,47
     br i1 %r166, label %L54, label %L55
-L45:  ;
+L45:  ;  header4
     %r138 = load i32, ptr @chat
     %r139 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r138
     %r140 = load i32, ptr %r139
     %r142 = icmp eq i32 %r140,42
     br i1 %r142, label %L46, label %L50
-L46:  ;
+L46:  ;  exiting4
     %r158 = call i32 @find()
     %r160 = icmp eq i32 %r158,0
     br i1 %r160, label %L51, label %L52
 L47:  ;
     call void @chapush(i32 42)
     br label %L44
-L48:  ;
+L48:  ;  exiting4
     %r153 = load i32, ptr @chat
     %r154 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r153
     %r155 = load i32, ptr %r154
     %r157 = icmp eq i32 %r155,94
-    br i1 %r157, label %L46, label %L47
+    br i1 %r157, label %L46, label %L109
 L49:  ;
     %r148 = load i32, ptr @chat
     %r149 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r148
@@ -413,9 +419,9 @@ L50:  ;
     br i1 %r147, label %L46, label %L49
 L51:  ;
     br label %L47
-L52:  ;
+L52:  ;  latch4
     br label %L45
-L54:  ;
+L54:  ;  preheader5
     br label %L56
 L55:  ;
     %r191 = load i32, ptr @i
@@ -423,25 +429,25 @@ L55:  ;
     %r193 = load i32, ptr %r192
     %r195 = icmp eq i32 %r193,37
     br i1 %r195, label %L65, label %L66
-L56:  ;
+L56:  ;  header5
     %r167 = load i32, ptr @chat
     %r168 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r167
     %r169 = load i32, ptr %r168
     %r171 = icmp eq i32 %r169,42
     br i1 %r171, label %L57, label %L61
-L57:  ;
+L57:  ;  exiting5
     %r187 = call i32 @find()
     %r189 = icmp eq i32 %r187,0
     br i1 %r189, label %L62, label %L63
 L58:  ;
     call void @chapush(i32 47)
     br label %L55
-L59:  ;
+L59:  ;  exiting5
     %r182 = load i32, ptr @chat
     %r183 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r182
     %r184 = load i32, ptr %r183
     %r186 = icmp eq i32 %r184,94
-    br i1 %r186, label %L57, label %L58
+    br i1 %r186, label %L57, label %L110
 L60:  ;
     %r177 = load i32, ptr @chat
     %r178 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r177
@@ -456,9 +462,9 @@ L61:  ;
     br i1 %r176, label %L57, label %L60
 L62:  ;
     br label %L58
-L63:  ;
+L63:  ;  latch5
     br label %L56
-L65:  ;
+L65:  ;  preheader6
     br label %L67
 L66:  ;
     %r220 = load i32, ptr @ii
@@ -467,25 +473,25 @@ L66:  ;
     %r225 = add i32 %r220,1
     store i32 %r225, ptr @ii
     br label %L7
-L67:  ;
+L67:  ;  header6
     %r196 = load i32, ptr @chat
     %r197 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r196
     %r198 = load i32, ptr %r197
     %r200 = icmp eq i32 %r198,42
     br i1 %r200, label %L68, label %L72
-L68:  ;
+L68:  ;  exiting6
     %r216 = call i32 @find()
     %r218 = icmp eq i32 %r216,0
     br i1 %r218, label %L73, label %L74
 L69:  ;
     call void @chapush(i32 37)
     br label %L66
-L70:  ;
+L70:  ;  exiting6
     %r211 = load i32, ptr @chat
     %r212 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r211
     %r213 = load i32, ptr %r212
     %r215 = icmp eq i32 %r213,94
-    br i1 %r215, label %L68, label %L69
+    br i1 %r215, label %L68, label %L111
 L71:  ;
     %r206 = load i32, ptr @chat
     %r207 = getelementptr [10000 x i32], ptr @chas, i32 0, i32 %r206
@@ -500,13 +506,13 @@ L72:  ;
     br i1 %r205, label %L68, label %L71
 L73:  ;
     br label %L69
-L74:  ;
+L74:  ;  latch6
     br label %L67
-L76:  ;
+L76:  ;  exiting7  header7
     %r229 = load i32, ptr @chat
     %r231 = icmp sgt i32 %r229,0
     br i1 %r231, label %L77, label %L78
-L77:  ;
+L77:  ;  latch7
     %r233 = call i32 @chapop()
     %r234 = load i32, ptr @ii
     %r235 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r234
@@ -517,13 +523,13 @@ L77:  ;
     %r244 = add i32 %r234,2
     store i32 %r244, ptr @ii
     br label %L76
-L78:  ;
+L78:  ;  preheader8
     %r245 = load i32, ptr @ii
     %r246 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r245
     store i32 64, ptr %r246
     store i32 1, ptr @i
     br label %L79
-L79:  ;
+L79:  ;  exiting8  header8
     %r249 = load i32, ptr @i
     %r250 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r249
     %r251 = load i32, ptr %r250
@@ -554,7 +560,7 @@ L83:  ;
     %r341 = load i32, ptr %r340
     %r343 = icmp ne i32 %r341,32
     br i1 %r343, label %L102, label %L103
-L84:  ;
+L84:  ;  latch8
     %r372 = load i32, ptr @i
     %r374 = add i32 %r372,1
     store i32 %r374, ptr @i
@@ -646,7 +652,7 @@ L101:  ;
     %r386 = phi i32 [%r385,%L99],[%r337,%L100]
     call void @intpush(i32 %r386)
     br label %L84
-L102:  ;
+L102:  ;  preheader9
     %r344 = load i32, ptr @i
     %r345 = getelementptr [10000 x i32], ptr @get2, i32 0, i32 %r344
     %r346 = load i32, ptr %r345
@@ -656,7 +662,7 @@ L102:  ;
     br label %L104
 L103:  ;
     br label %L84
-L104:  ;
+L104:  ;  exiting9  header9
     %r350 = load i32, ptr @i
     %r351 = load i32, ptr @ii
     %r352 = add i32 %r350,%r351
@@ -664,7 +670,7 @@ L104:  ;
     %r354 = load i32, ptr %r353
     %r356 = icmp ne i32 %r354,32
     br i1 %r356, label %L105, label %L106
-L105:  ;
+L105:  ;  latch9
     %r357 = load i32, ptr @i
     %r358 = load i32, ptr @ii
     %r359 = add i32 %r357,%r358
@@ -682,4 +688,14 @@ L106:  ;
     %r371 = sub i32 %r369,1
     store i32 %r371, ptr @i
     br label %L103
+L107:  ;
+    br label %L21
+L108:  ;
+    br label %L34
+L109:  ;
+    br label %L47
+L110:  ;
+    br label %L58
+L111:  ;
+    br label %L69
 }

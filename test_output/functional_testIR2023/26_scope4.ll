@@ -138,13 +138,13 @@ L4:  ;
     ret i32 0
 L5:  ;
     br label %L6
-L6:  ;
+L6:  ;  preheader1
     br label %L8
 L7:  ;
     br label %L4
-L8:  ;
-    %r58 = phi i32 [%r6,%L6],[%r57,%L17],[%r48,%L19]
-    %r56 = phi i32 [0,%L6],[%r46,%L17],[%r51,%L19]
+L8:  ;  exiting1  header1
+    %r58 = phi i32 [%r6,%L6],[%r61,%L24]
+    %r56 = phi i32 [0,%L6],[%r62,%L24]
     %r31 = icmp slt i32 %r56,3
     br i1 %r31, label %L9, label %L10
 L9:  ;
@@ -170,7 +170,7 @@ L17:  ;
     call void @f2()
     call void @f3()
     %r46 = add i32 %r56,1
-    br label %L8
+    br label %L24
 L18:  ;
     call void @f1(i32 %r57)
     call void @f2()
@@ -179,5 +179,9 @@ L18:  ;
 L19:  ;
     %r48 = call i32 @getA()
     %r51 = add i32 %r56,1
+    br label %L24
+L24:  ;latch1
+    %r61 = phi i32 [%r57,%L17],[%r48,%L19]
+    %r62 = phi i32 [%r46,%L17],[%r51,%L19]
     br label %L8
 }

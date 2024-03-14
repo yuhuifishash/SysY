@@ -21,10 +21,13 @@ L1:  ;
     br i1 %r4, label %L2, label %L3
 L2:  ;
     call void @putint(i32 %r0)
-    ret i32 1
+    br label %L5
 L3:  ;
     call void @putint(i32 %r0)
-    ret i32 0
+    br label %L5
+L5:  ;
+    %r11 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r11
 }
 define i32 @main()
 {

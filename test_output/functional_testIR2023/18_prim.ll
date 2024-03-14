@@ -24,49 +24,52 @@ define i32 @quick_read()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getch()
     br label %L2
-L2:  ;
-    %r39 = phi i32 [%r1,%L1],[%r16,%L7]
-    %r37 = phi i32 [0,%L1],[%r36,%L7]
-    %r8 = icmp slt i32 %r39,48
+L2:  ;  header0
+    %r42 = phi i32 [%r1,%L1],[%r16,%L7]
+    %r40 = phi i32 [0,%L1],[%r39,%L7]
+    %r8 = icmp slt i32 %r42,48
     br i1 %r8, label %L3, label %L5
 L3:  ;
-    %r14 = icmp eq i32 %r39,45
+    %r14 = icmp eq i32 %r42,45
     br i1 %r14, label %L6, label %L7
-L4:  ;
+L4:  ;  preheader1
     br label %L8
-L5:  ;
-    %r11 = icmp sgt i32 %r39,57
+L5:  ;  exiting0
+    %r11 = icmp sgt i32 %r42,57
     br i1 %r11, label %L3, label %L4
 L6:  ;
     br label %L7
-L7:  ;
-    %r36 = phi i32 [%r37,%L3],[1,%L6]
+L7:  ;  latch0
+    %r39 = phi i32 [%r40,%L3],[1,%L6]
     %r16 = call i32 @getch()
     br label %L2
-L8:  ;
-    %r40 = phi i32 [%r39,%L4],[%r30,%L9]
-    %r38 = phi i32 [0,%L4],[%r29,%L9]
-    %r19 = icmp sge i32 %r40,48
+L8:  ;  exiting1  header1
+    %r43 = phi i32 [%r42,%L4],[%r30,%L9]
+    %r41 = phi i32 [0,%L4],[%r29,%L9]
+    %r19 = icmp sge i32 %r43,48
     br i1 %r19, label %L11, label %L10
-L9:  ;
-    %r25 = mul i32 %r38,10
-    %r27 = add i32 %r25,%r40
+L9:  ;  latch1
+    %r25 = mul i32 %r41,10
+    %r27 = add i32 %r25,%r43
     %r29 = sub i32 %r27,48
     %r30 = call i32 @getch()
     br label %L8
 L10:  ;
-    %r32 = icmp ne i32 %r37,0
+    %r32 = icmp ne i32 %r40,0
     br i1 %r32, label %L12, label %L13
-L11:  ;
-    %r22 = icmp sle i32 %r40,57
+L11:  ;  exiting1
+    %r22 = icmp sle i32 %r43,57
     br i1 %r22, label %L9, label %L10
 L12:  ;
-    %r34 = sub i32 0,%r38
-    ret i32 %r34
+    %r34 = sub i32 0,%r41
+    br label %L15
 L13:  ;
+    br label %L15
+L15:  ;
+    %r38 = phi i32 [%r34,%L12],[%r41,%L13]
     ret i32 %r38
 }
 define i32 @find(i32 %r0)
@@ -79,12 +82,15 @@ L1:  ;
     %r6 = icmp eq i32 %r0,%r5
     br i1 %r6, label %L2, label %L3
 L2:  ;
-    ret i32 %r0
+    br label %L4
 L3:  ;
     %r11 = load i32, ptr %r4
     %r12 = call i32 @find(i32 %r11)
     store i32 %r12, ptr %r4
-    ret i32 %r12
+    br label %L4
+L4:  ;
+    %r19 = phi i32 [%r0,%L2],[%r12,%L3]
+    ret i32 %r19
 }
 define i32 @same(i32 %r0,i32 %r1)
 {
@@ -96,27 +102,30 @@ L1:  ;
     %r10 = icmp eq i32 %r5,%r7
     br i1 %r10, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L4
 L3:  ;
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r15 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r15
 }
 define i32 @prim()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r103 = phi i32 [0,%L1],[%r8,%L7]
     %r3 = load i32, ptr @m
     %r4 = icmp slt i32 %r103,%r3
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     %r8 = add i32 %r103,1
     br label %L5
-L4:  ;
+L4:  ;  preheader2
     br label %L10
-L5:  ;
+L5:  ;  exiting1  header1
     %r102 = phi i32 [%r8,%L3],[%r55,%L9]
     %r10 = load i32, ptr @m
     %r11 = icmp slt i32 %r102,%r10
@@ -128,7 +137,7 @@ L6:  ;
     %r17 = load i32, ptr %r16
     %r18 = icmp sgt i32 %r14,%r17
     br i1 %r18, label %L8, label %L9
-L7:  ;
+L7:  ;  latch0
     br label %L2
 L8:  ;
     %r21 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r103
@@ -148,24 +157,24 @@ L8:  ;
     store i32 %r49, ptr %r13
     store i32 %r44, ptr %r16
     br label %L9
-L9:  ;
+L9:  ;  latch1
     %r55 = add i32 %r102,1
     br label %L5
-L10:  ;
+L10:  ;  exiting2  header2
     %r104 = phi i32 [1,%L4],[%r68,%L11]
     %r61 = load i32, ptr @n
     %r62 = icmp sle i32 %r104,%r61
     br i1 %r62, label %L11, label %L12
-L11:  ;
+L11:  ;  latch2
     %r64 = getelementptr [1005 x i32], ptr @fa, i32 0, i32 %r104
     store i32 %r104, ptr %r64
     %r68 = add i32 %r104,1
     br label %L10
-L12:  ;
+L12:  ;  preheader3
     br label %L13
-L13:  ;
-    %r105 = phi i32 [0,%L12],[%r105,%L16],[%r98,%L17]
-    %r100 = phi i32 [0,%L12],[%r100,%L16],[%r87,%L17]
+L13:  ;  exiting3  header3
+    %r105 = phi i32 [0,%L12],[%r106,%L19]
+    %r100 = phi i32 [0,%L12],[%r107,%L19]
     %r73 = load i32, ptr @m
     %r74 = icmp slt i32 %r105,%r73
     br i1 %r74, label %L14, label %L15
@@ -180,7 +189,7 @@ L14:  ;
 L15:  ;
     ret i32 %r100
 L16:  ;
-    br label %L13
+    br label %L19
 L17:  ;
     %r85 = getelementptr [1005 x i32], ptr @c, i32 0, i32 %r105
     %r86 = load i32, ptr %r85
@@ -191,21 +200,25 @@ L17:  ;
     %r95 = load i32, ptr %r79
     store i32 %r95, ptr %r92
     %r98 = add i32 %r105,1
+    br label %L19
+L19:  ;latch3
+    %r106 = phi i32 [%r105,%L16],[%r98,%L17]
+    %r107 = phi i32 [%r100,%L16],[%r87,%L17]
     br label %L13
 }
 define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @quick_read()
     %r3 = call i32 @quick_read()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r22 = phi i32 [0,%L1],[%r20,%L3]
     %r8 = icmp slt i32 %r22,%r3
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r10 = getelementptr [1005 x i32], ptr @u, i32 0, i32 %r22
     %r11 = call i32 @quick_read()
     store i32 %r11, ptr %r10

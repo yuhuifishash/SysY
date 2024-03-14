@@ -16,27 +16,27 @@ define i32 @concat(ptr %r0,ptr %r1,ptr %r2)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r36 = phi i32 [0,%L1],[%r16,%L3]
     %r8 = icmp slt i32 %r36,3
     br i1 %r8, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r10 = getelementptr i32, ptr %r2, i32 %r36
     %r12 = getelementptr i32, ptr %r0, i32 %r36
     %r13 = load i32, ptr %r12
     store i32 %r13, ptr %r10
     %r16 = add i32 %r36,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r37 = phi i32 [%r36,%L4],[%r30,%L6]
     %r35 = phi i32 [0,%L4],[%r33,%L6]
     %r22 = icmp slt i32 %r35,3
     br i1 %r22, label %L6, label %L7
-L6:  ;
+L6:  ;  latch1
     %r24 = getelementptr i32, ptr %r2, i32 %r37
     %r26 = getelementptr i32, ptr %r1, i32 %r35
     %r27 = load i32, ptr %r26
@@ -58,13 +58,13 @@ L0:  ;
     %r1 = alloca [3 x i32]
     %r0 = alloca [3 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r56 = phi i32 [0,%L1],[%r35,%L3]
     %r14 = icmp slt i32 %r56,3
     br i1 %r14, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r16 = getelementptr [3 x i32], ptr %r0, i32 0, i32 %r56
     store i32 %r56, ptr %r16
     %r19 = getelementptr [3 x i32], ptr %r1, i32 0, i32 %r56
@@ -79,17 +79,17 @@ L3:  ;
     store i32 %r56, ptr %r31
     %r35 = add i32 %r56,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     %r36 = getelementptr [3 x i32], ptr %r0, i32 0
     %r37 = getelementptr [3 x i32], ptr %r3, i32 0
     %r38 = getelementptr [6 x i32], ptr %r6, i32 0
     %r39 = call i32 @concat(ptr %r36,ptr %r37,ptr %r38)
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r57 = phi i32 [%r39,%L4],[%r51,%L6]
     %r44 = icmp slt i32 %r57,6
     br i1 %r44, label %L6, label %L7
-L6:  ;
+L6:  ;  latch1
     %r46 = getelementptr [6 x i32], ptr %r6, i32 0, i32 %r57
     %r47 = load i32, ptr %r46
     call void @putint(i32 %r47)

@@ -11,16 +11,20 @@ public:
 
     std::set<LLVMBlock> exit_nodes;
     std::set<LLVMBlock> exiting_nodes;
-    std::set<LLVMBlock> latch;
+    std::set<LLVMBlock> latches;
     LLVMBlock header;
     LLVMBlock preheader;
-
-
+    
     int loop_id;
+
+    //if is_rotate is true, the loop must execute once or more
+    bool is_rotate;
+
+    NaturalLoop* fa_loop = nullptr;
+
     void FindExitNodes(CFG* C);
 
-
-    /*the only predecessor of header node*/
+    /*the only predecessor of header node(out of loop)*/
     void AddPreheader(CFG* C);
 
     /*A single backedge (which implies that there is a single latch).*/
@@ -31,6 +35,11 @@ public:
     void ExitInsert(CFG* C);
 
     void LoopSimplify(CFG* C);
+    void LoopSimplifyCheck(CFG* C);
+
+    void LoopRotate(CFG* C);
+
+    void PrintLoopDebugInfo();
 };
 
 class NaturalLoopForest

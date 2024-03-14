@@ -399,6 +399,7 @@ public:
     Operand GetResultOp(){return result;}
     decltype(phi_list)& GetPhiList(){return phi_list;}
     Operand GetResultReg(){return result;}
+    void SetResultReg(int reg){result = new RegOperand(reg);}
     PhiInstruction(enum LLVMType type,Operand result,decltype(phi_list) val_labels){
         this->opcode=LLVMIROpcode::PHI;
         this->type=type;
@@ -417,6 +418,9 @@ public:
     
     //erase the val from label_id
     void ErasePhi(int label_id);
+    Operand GetValOperand(int label_id);
+    void SetValOperand(int label_id, Operand val);
+    void SetNewFrom(int old_id, int new_id);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
@@ -482,6 +486,7 @@ public:
     void SetCond(Operand r1){cond = r1;}
     void SetTrueLabel(Operand l1){trueLabel = l1;}
     void SetFalseLabel(Operand l1){falseLabel = l1;}
+    void SetNewTarget(int oldlabel,int newlabel);
 
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
@@ -639,10 +644,10 @@ public:
     RetInstruction(enum LLVMType retType,Operand res):ret_type(retType),ret_val(res){
         this->opcode=RET;
     }
-    Operand GetResultReg(){return NULL;}
+    Operand GetResultReg(){return nullptr;}
     //Getters
     enum LLVMType GetType(){return ret_type;}
-    Operand GetResult(){return ret_val;}
+    Operand GetRetVal(){return ret_val;}
 
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}

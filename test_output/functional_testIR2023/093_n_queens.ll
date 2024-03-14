@@ -22,22 +22,22 @@ define void @printans()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r0 = load i32, ptr @sum
     %r2 = add i32 %r0,1
     store i32 %r2, ptr @sum
     br label %L2
-L2:  ;
-    %r19 = phi i32 [1,%L1],[%r18,%L7]
+L2:  ;  exiting0  header0
+    %r21 = phi i32 [1,%L1],[%r18,%L7]
     %r6 = load i32, ptr @n
-    %r7 = icmp sle i32 %r19,%r6
+    %r7 = icmp sle i32 %r21,%r6
     br i1 %r7, label %L3, label %L4
-L3:  ;
-    %r9 = getelementptr [50 x i32], ptr @ans, i32 0, i32 %r19
+L3:  ;  exiting0
+    %r9 = getelementptr [50 x i32], ptr @ans, i32 0, i32 %r21
     %r10 = load i32, ptr %r9
     call void @putint(i32 %r10)
     %r12 = load i32, ptr @n
-    %r13 = icmp eq i32 %r19,%r12
+    %r13 = icmp eq i32 %r21,%r12
     br i1 %r13, label %L5, label %L6
 L4:  ;
     ret void
@@ -47,17 +47,17 @@ L5:  ;
 L6:  ;
     call void @putch(i32 32)
     br label %L7
-L7:  ;
-    %r18 = add i32 %r19,1
+L7:  ;  latch0
+    %r18 = add i32 %r21,1
     br label %L2
 }
 define void @f(i32 %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r69 = phi i32 [1,%L1],[%r68,%L6]
     %r5 = load i32, ptr @n
     %r6 = icmp sle i32 %r69,%r5
@@ -75,7 +75,7 @@ L5:  ;
     %r31 = load i32, ptr @n
     %r32 = icmp eq i32 %r0,%r31
     br i1 %r32, label %L9, label %L10
-L6:  ;
+L6:  ;  latch0
     %r68 = add i32 %r69,1
     br label %L2
 L7:  ;
@@ -114,14 +114,14 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r11 = phi i32 [%r1,%L1],[%r9,%L3]
     %r4 = icmp sgt i32 %r11,0
     br i1 %r4, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r5 = call i32 @getint()
     store i32 %r5, ptr @n
     call void @f(i32 1)

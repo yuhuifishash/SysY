@@ -17,29 +17,29 @@ define i32 @insert(ptr %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r38 = phi i32 [0,%L1],[%r18,%L3]
     %r10 = getelementptr i32, ptr %r0, i32 %r38
     %r11 = load i32, ptr %r10
     %r12 = icmp sgt i32 %r1,%r11
     br i1 %r12, label %L5, label %L4
-L3:  ;
+L3:  ;  latch0
     %r18 = add i32 %r38,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     %r19 = load i32, ptr @N
     br label %L6
-L5:  ;
+L5:  ;  exiting0
     %r14 = load i32, ptr @N
     %r15 = icmp slt i32 %r38,%r14
     br i1 %r15, label %L3, label %L4
-L6:  ;
+L6:  ;  exiting1  header1
     %r37 = phi i32 [%r19,%L4],[%r27,%L7]
     %r22 = icmp sgt i32 %r37,%r38
     br i1 %r22, label %L7, label %L8
-L7:  ;
+L7:  ;  latch1
     %r24 = getelementptr i32, ptr %r0, i32 %r37
     %r27 = sub i32 %r37,1
     %r28 = getelementptr i32, ptr %r0, i32 %r27
@@ -55,7 +55,7 @@ define i32 @main()
 L0:  ;
     %r1 = alloca [11 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 10, ptr @N
     %r3 = getelementptr [11 x i32], ptr %r1, i32 0, i32 0
     store i32 1, ptr %r3
@@ -81,12 +81,12 @@ L1:  ;
     %r38 = getelementptr [11 x i32], ptr %r1, i32 0
     %r40 = call i32 @insert(ptr %r38,i32 %r37)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r54 = phi i32 [0,%L1],[%r52,%L3]
     %r42 = load i32, ptr @N
     %r43 = icmp slt i32 %r54,%r42
     br i1 %r43, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r45 = getelementptr [11 x i32], ptr %r1, i32 0, i32 %r54
     %r46 = load i32, ptr %r45
     call void @putint(i32 %r46)

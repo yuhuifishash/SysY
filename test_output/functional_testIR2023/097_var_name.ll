@@ -17,19 +17,19 @@ define i32 @main()
 L0:  ;
     %r4 = alloca [20 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r4,i8 0,i32 80,i1 0)
     %r6 = getelementptr [20 x i32], ptr %r4, i32 0, i32 0
     store i32 1, ptr %r6
     %r8 = getelementptr [20 x i32], ptr %r4, i32 0, i32 1
     store i32 2, ptr %r8
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r45 = phi i32 [2,%L1],[%r42,%L3]
     %r44 = phi i32 [0,%L1],[%r35,%L3]
     %r13 = icmp slt i32 %r45,20
     br i1 %r13, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r15 = getelementptr [20 x i32], ptr %r4, i32 0, i32 %r45
     %r18 = load i32, ptr %r15
     %r21 = sub i32 %r45,1

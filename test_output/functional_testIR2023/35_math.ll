@@ -22,10 +22,13 @@ L1:  ;
     %r5 = fcmp ogt float %r0,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fsub float 0x0,%r0
-    ret float %r8
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r0,%L2],[%r8,%L3]
+    ret float %r11
 }
 define float @my_sqrt(float %r0)
 {
@@ -40,8 +43,8 @@ L2:  ;
     %r10 = fdiv float %r0,%r4
     %r11 = call float @my_sqrt(float %r10)
     %r12 = fmul float %r6,%r11
-    ret float %r12
-L3:  ;
+    br label %L7
+L3:  ;  preheader0
     %r16 = sitofp i32 8 to float
     %r17 = fdiv float %r0,%r16
     %r18 = fadd float 0x3fe0000000000000,0x0
@@ -53,19 +56,22 @@ L3:  ;
     %r28 = fdiv float %r23,%r27
     %r29 = fadd float %r19,%r28
     br label %L4
-L4:  ;
-    %r47 = phi float [%r29,%L3],[%r41,%L5]
-    %r46 = phi i32 [10,%L3],[%r44,%L5]
-    %r33 = icmp ne i32 %r46,0
+L4:  ;  exiting0  header0
+    %r52 = phi float [%r29,%L3],[%r41,%L5]
+    %r50 = phi i32 [10,%L3],[%r44,%L5]
+    %r33 = icmp ne i32 %r50,0
     br i1 %r33, label %L5, label %L6
-L5:  ;
-    %r37 = fdiv float %r0,%r47
-    %r38 = fadd float %r47,%r37
+L5:  ;  latch0
+    %r37 = fdiv float %r0,%r52
+    %r38 = fadd float %r52,%r37
     %r41 = fdiv float %r38,%r22
-    %r44 = sub i32 %r46,1
+    %r44 = sub i32 %r50,1
     br label %L4
 L6:  ;
-    ret float %r47
+    br label %L7
+L7:  ;
+    %r48 = phi float [%r12,%L2],[%r52,%L6]
+    ret float %r48
 }
 define float @my_pow(float %r0,i32 %r1)
 {
@@ -79,30 +85,33 @@ L2:  ;
     %r11 = call float @my_pow(float %r0,i32 %r10)
     %r12 = sitofp i32 1 to float
     %r13 = fdiv float %r12,%r11
-    ret float %r13
-L3:  ;
+    br label %L9
+L3:  ;  preheader0
     %r15 = fadd float 0x3ff0000000000000,0x0
     br label %L4
-L4:  ;
-    %r35 = phi float [%r0,%L3],[%r27,%L8]
-    %r34 = phi i32 [%r1,%L3],[%r30,%L8]
-    %r33 = phi float [%r15,%L3],[%r32,%L8]
-    %r17 = icmp ne i32 %r34,0
+L4:  ;  exiting0  header0
+    %r40 = phi float [%r0,%L3],[%r27,%L8]
+    %r38 = phi i32 [%r1,%L3],[%r30,%L8]
+    %r37 = phi float [%r15,%L3],[%r36,%L8]
+    %r17 = icmp ne i32 %r38,0
     br i1 %r17, label %L5, label %L6
 L5:  ;
-    %r20 = srem i32 %r34,2
+    %r20 = srem i32 %r38,2
     %r21 = icmp ne i32 %r20,0
     br i1 %r21, label %L7, label %L8
 L6:  ;
-    ret float %r33
+    br label %L9
 L7:  ;
-    %r24 = fmul float %r33,%r35
+    %r24 = fmul float %r37,%r40
     br label %L8
-L8:  ;
-    %r32 = phi float [%r33,%L5],[%r24,%L7]
-    %r27 = fmul float %r35,%r35
-    %r30 = sdiv i32 %r34,2
+L8:  ;  latch0
+    %r36 = phi float [%r37,%L5],[%r24,%L7]
+    %r27 = fmul float %r40,%r40
+    %r30 = sdiv i32 %r38,2
     br label %L4
+L9:  ;
+    %r34 = phi float [%r13,%L2],[%r37,%L6]
+    ret float %r34
 }
 define float @F1(float %r0)
 {
@@ -147,7 +156,7 @@ L2:  ;
     %r32 = fmul float %r28,%r10
     %r34 = sitofp i32 6 to float
     %r35 = fdiv float %r32,%r34
-    ret float %r35
+    br label %L6
 L3:  ;
     %r38 = icmp eq i32 %r2,2
     br i1 %r38, label %L4, label %L5
@@ -162,10 +171,13 @@ L4:  ;
     %r53 = fmul float %r49,%r10
     %r55 = sitofp i32 6 to float
     %r56 = fdiv float %r53,%r55
-    ret float %r56
+    br label %L6
 L5:  ;
     %r58 = sitofp i32 0 to float
-    ret float %r58
+    br label %L6
+L6:  ;
+    %r61 = phi float [%r35,%L2],[%r56,%L4],[%r58,%L5]
+    ret float %r61
 }
 define float @asr5(float %r0,float %r1,float %r2,float %r3,i32 %r4)
 {
@@ -189,13 +201,16 @@ L2:  ;
     %r48 = fadd float 0x402e000000000000,0x0
     %r49 = fdiv float %r33,%r48
     %r50 = fadd float %r31,%r49
-    ret float %r50
+    br label %L4
 L3:  ;
     %r56 = fdiv float %r2,%r16
     %r59 = call float @asr5(float %r0,float %r18,float %r56,float %r23,i32 %r4)
     %r68 = call float @asr5(float %r18,float %r1,float %r56,float %r28,i32 %r4)
     %r69 = fadd float %r59,%r68
-    ret float %r69
+    br label %L4
+L4:  ;
+    %r72 = phi float [%r50,%L2],[%r69,%L3]
+    ret float %r72
 }
 define float @asr4(float %r0,float %r1,float %r2,i32 %r3)
 {
@@ -219,7 +234,7 @@ L2:  ;
     %r9 = fdiv float %r0,%r8
     %r10 = call float @eee(float %r9)
     %r13 = fmul float %r10,%r10
-    ret float %r13
+    br label %L4
 L3:  ;
     %r16 = sitofp i32 1 to float
     %r17 = fadd float %r16,%r0
@@ -239,7 +254,10 @@ L3:  ;
     %r43 = sitofp i32 120 to float
     %r44 = fdiv float %r41,%r43
     %r45 = fadd float %r38,%r44
-    ret float %r45
+    br label %L4
+L4:  ;
+    %r48 = phi float [%r13,%L2],[%r45,%L3]
+    ret float %r48
 }
 define float @my_exp(float %r0)
 {
@@ -254,7 +272,7 @@ L2:  ;
     %r9 = call float @my_exp(float %r8)
     %r10 = sitofp i32 1 to float
     %r11 = fdiv float %r10,%r9
-    ret float %r11
+    br label %L4
 L3:  ;
     %r14 = fptosi float %r0 to i32
     %r17 = sitofp i32 %r14 to float
@@ -263,7 +281,10 @@ L3:  ;
     %r22 = call float @my_pow(float %r20,i32 %r14)
     %r25 = call float @eee(float %r18)
     %r28 = fmul float %r22,%r25
-    ret float %r28
+    br label %L4
+L4:  ;
+    %r31 = phi float [%r11,%L2],[%r28,%L3]
+    ret float %r31
 }
 define float @my_ln(float %r0)
 {
@@ -299,10 +320,10 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r55 = phi i32 [%r1,%L1],[%r53,%L14]
     %r3 = icmp ne i32 %r55,0
     br i1 %r3, label %L3, label %L4
@@ -358,7 +379,7 @@ L12:  ;
 L13:  ;
     call void @putch(i32 45)
     br label %L14
-L14:  ;
+L14:  ;  latch0
     call void @putch(i32 10)
     %r53 = sub i32 %r55,1
     br label %L2

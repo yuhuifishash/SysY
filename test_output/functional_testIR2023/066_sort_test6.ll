@@ -18,24 +18,24 @@ define i32 @counting_sort(ptr %r0,ptr %r1,i32 %r2)
 L0:  ;
     %r4 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r94 = phi i32 [0,%L1],[%r22,%L3]
     %r16 = icmp slt i32 %r94,10
     br i1 %r16, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r18 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r94
     store i32 0, ptr %r18
     %r22 = add i32 %r94,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r97 = phi i32 [0,%L4],[%r39,%L6]
     %r25 = icmp slt i32 %r97,%r2
     br i1 %r25, label %L6, label %L7
-L6:  ;
+L6:  ;  latch1
     %r27 = getelementptr i32, ptr %r0, i32 %r97
     %r28 = load i32, ptr %r27
     %r29 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r28
@@ -44,13 +44,13 @@ L6:  ;
     store i32 %r36, ptr %r29
     %r39 = add i32 %r97,1
     br label %L5
-L7:  ;
+L7:  ;  preheader2
     br label %L8
-L8:  ;
+L8:  ;  exiting2  header2
     %r95 = phi i32 [1,%L7],[%r57,%L9]
     %r43 = icmp slt i32 %r95,10
     br i1 %r43, label %L9, label %L10
-L9:  ;
+L9:  ;  latch2
     %r45 = getelementptr [10 x i32], ptr %r4, i32 0, i32 %r95
     %r48 = load i32, ptr %r45
     %r51 = sub i32 %r95,1
@@ -60,13 +60,13 @@ L9:  ;
     store i32 %r54, ptr %r45
     %r57 = add i32 %r95,1
     br label %L8
-L10:  ;
+L10:  ;  preheader3
     br label %L11
-L11:  ;
+L11:  ;  exiting3  header3
     %r96 = phi i32 [%r2,%L10],[%r64,%L12]
     %r61 = icmp sgt i32 %r96,0
     br i1 %r61, label %L12, label %L13
-L12:  ;
+L12:  ;  latch3
     %r64 = sub i32 %r96,1
     %r65 = getelementptr i32, ptr %r0, i32 %r64
     %r66 = load i32, ptr %r65
@@ -87,7 +87,7 @@ L0:  ;
     %r35 = alloca [10 x i32]
     %r1 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 10, ptr @n
     %r3 = getelementptr [10 x i32], ptr %r1, i32 0, i32 0
     store i32 4, ptr %r3
@@ -114,12 +114,12 @@ L1:  ;
     %r38 = load i32, ptr @n
     %r39 = call i32 @counting_sort(ptr %r36,ptr %r37,i32 %r38)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r55 = phi i32 [%r39,%L1],[%r53,%L3]
     %r41 = load i32, ptr @n
     %r42 = icmp slt i32 %r55,%r41
     br i1 %r42, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r46 = getelementptr [10 x i32], ptr %r35, i32 0, i32 %r55
     %r47 = load i32, ptr %r46
     call void @putint(i32 %r47)

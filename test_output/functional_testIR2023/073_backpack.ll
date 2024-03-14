@@ -17,19 +17,19 @@ define i32 @KnapSack(i32 %r0,ptr %r1,ptr %r2,ptr %r3,i32 %r4)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r112 = phi i32 [1,%L1],[%r73,%L7]
     %r14 = icmp sle i32 %r112,%r0
     br i1 %r14, label %L3, label %L4
-L3:  ;
-    br label %L5
-L4:  ;
-    br label %L14
-L5:  ;
-    %r109 = phi i32 [0,%L3],[%r70,%L10]
+L3:  ;  preheader1
     %r19 = add i32 %r4,1
+    br label %L5
+L4:  ;  preheader2
+    br label %L14
+L5:  ;  exiting1  header1
+    %r109 = phi i32 [0,%L3],[%r70,%L10]
     %r20 = icmp slt i32 %r109,%r19
     br i1 %r20, label %L6, label %L7
 L6:  ;
@@ -37,7 +37,7 @@ L6:  ;
     %r24 = load i32, ptr %r23
     %r25 = icmp slt i32 %r109,%r24
     br i1 %r25, label %L8, label %L9
-L7:  ;
+L7:  ;  latch0
     %r73 = add i32 %r112,1
     br label %L2
 L8:  ;
@@ -60,7 +60,7 @@ L9:  ;
     %r56 = add i32 %r52,%r55
     %r59 = icmp sgt i32 %r41,%r56
     br i1 %r59, label %L11, label %L12
-L10:  ;
+L10:  ;  latch1
     %r70 = add i32 %r109,1
     br label %L5
 L11:  ;
@@ -73,7 +73,7 @@ L12:  ;
     br label %L13
 L13:  ;
     br label %L10
-L14:  ;
+L14:  ;  exiting2  header2
     %r113 = phi i32 [%r0,%L4],[%r85,%L19]
     %r111 = phi i32 [%r4,%L4],[%r110,%L19]
     %r78 = icmp sge i32 %r113,1
@@ -101,7 +101,7 @@ L18:  ;
     %r99 = getelementptr i32, ptr %r3, i32 %r113
     store i32 0, ptr %r99
     br label %L19
-L19:  ;
+L19:  ;  latch2
     %r110 = phi i32 [%r97,%L17],[%r111,%L18]
     br label %L14
 }

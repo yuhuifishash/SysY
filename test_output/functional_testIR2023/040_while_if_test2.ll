@@ -18,17 +18,17 @@ L0:  ;
     br label %L1
 L1:  ;
     br label %L3
-L3:  ;
+L3:  ;  preheader0
     br label %L8
 L4:  ;
     %r29 = phi i32 [%r30,%L10]
     ret i32 %r29
-L8:  ;
+L8:  ;  exiting0  header0
     %r31 = phi i32 [0,%L3],[%r26,%L9]
     %r30 = phi i32 [3,%L3],[%r23,%L9]
     %r20 = icmp slt i32 %r31,5
     br i1 %r20, label %L9, label %L10
-L9:  ;
+L9:  ;  latch0
     %r23 = mul i32 %r30,2
     %r26 = add i32 %r31,1
     br label %L8

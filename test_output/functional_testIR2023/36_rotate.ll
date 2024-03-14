@@ -29,10 +29,13 @@ L1:  ;
     %r5 = fcmp ogt float %r0,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fsub float 0x0,%r0
-    ret float %r8
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r0,%L2],[%r8,%L3]
+    ret float %r11
 }
 define float @my_cos(float %r0)
 {
@@ -70,13 +73,16 @@ L1:  ;
     %r5 = fcmp ole float %r3,%r4
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret float %r0
+    br label %L4
 L3:  ;
     %r8 = fadd float 0x4008000000000000,0x0
     %r9 = fdiv float %r0,%r8
     %r10 = call float @my_sin_impl(float %r9)
     %r11 = call float @p(float %r10)
-    ret float %r11
+    br label %L4
+L4:  ;
+    %r14 = phi float [%r0,%L2],[%r11,%L3]
+    ret float %r14
 }
 define float @my_sin(float %r0)
 {
@@ -127,7 +133,7 @@ L1:  ;
     %r2 = icmp ne i32 %r0,80
     br i1 %r2, label %L2, label %L4
 L2:  ;
-    ret i32 -1
+    br label %L15
 L3:  ;
     %r8 = call i32 @getint()
     store i32 %r8, ptr @width
@@ -141,8 +147,8 @@ L4:  ;
     %r5 = icmp ne i32 %r3,50
     br i1 %r5, label %L2, label %L3
 L5:  ;
-    ret i32 -1
-L6:  ;
+    br label %L15
+L6:  ;  preheader1
     br label %L9
 L7:  ;
     %r16 = call i32 @getint()
@@ -152,32 +158,35 @@ L8:  ;
     %r13 = load i32, ptr @height
     %r15 = icmp sgt i32 %r13,1024
     br i1 %r15, label %L5, label %L7
-L9:  ;
-    %r47 = phi i32 [0,%L6],[%r43,%L14]
+L9:  ;  exiting1  header1
+    %r52 = phi i32 [0,%L6],[%r43,%L14]
     %r24 = load i32, ptr @height
-    %r25 = icmp slt i32 %r47,%r24
+    %r25 = icmp slt i32 %r52,%r24
     br i1 %r25, label %L10, label %L11
-L10:  ;
+L10:  ;  preheader0
     br label %L12
 L11:  ;
-    ret i32 0
-L12:  ;
-    %r46 = phi i32 [0,%L10],[%r40,%L13]
+    br label %L15
+L12:  ;  exiting0  header0
+    %r50 = phi i32 [0,%L10],[%r40,%L13]
     %r29 = load i32, ptr @width
-    %r30 = icmp slt i32 %r46,%r29
+    %r30 = icmp slt i32 %r50,%r29
     br i1 %r30, label %L13, label %L14
-L13:  ;
+L13:  ;  latch0
     %r32 = load i32, ptr @width
-    %r33 = mul i32 %r47,%r32
-    %r35 = add i32 %r33,%r46
+    %r33 = mul i32 %r52,%r32
+    %r35 = add i32 %r33,%r50
     %r36 = getelementptr [1048576 x i32], ptr @image, i32 0, i32 %r35
     %r37 = call i32 @getint()
     store i32 %r37, ptr %r36
-    %r40 = add i32 %r46,1
+    %r40 = add i32 %r50,1
     br label %L12
-L14:  ;
-    %r43 = add i32 %r47,1
+L14:  ;  latch1
+    %r43 = add i32 %r52,1
     br label %L9
+L15:  ;
+    %r47 = phi i32 [-1,%L2],[-1,%L5],[0,%L11]
+    ret i32 %r47
 }
 define i32 @rotate(i32 %r0,i32 %r1,float %r2)
 {
@@ -209,14 +218,14 @@ L1:  ;
     %r58 = icmp slt i32 %r41,0
     br i1 %r58, label %L2, label %L6
 L2:  ;
-    ret i32 0
+    br label %L7
 L3:  ;
     %r70 = load i32, ptr @width
     %r71 = mul i32 %r55,%r70
     %r73 = add i32 %r71,%r41
     %r74 = getelementptr [1048576 x i32], ptr @image, i32 0, i32 %r73
     %r75 = load i32, ptr %r74
-    ret i32 %r75
+    br label %L7
 L4:  ;
     %r66 = load i32, ptr @height
     %r67 = icmp sge i32 %r55,%r66
@@ -228,12 +237,15 @@ L6:  ;
     %r60 = load i32, ptr @width
     %r61 = icmp sge i32 %r41,%r60
     br i1 %r61, label %L2, label %L5
+L7:  ;
+    %r78 = phi i32 [0,%L2],[%r75,%L3]
+    ret i32 %r78
 }
 define void @write_pgm(float %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     call void @putch(i32 80)
     call void @putch(i32 50)
     call void @putch(i32 10)
@@ -246,27 +258,27 @@ L1:  ;
     call void @putint(i32 255)
     call void @putch(i32 10)
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r35 = phi i32 [0,%L1],[%r32,%L7]
     %r14 = load i32, ptr @height
     %r15 = icmp slt i32 %r35,%r14
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader0
     br label %L5
 L4:  ;
     ret void
-L5:  ;
+L5:  ;  exiting0  header0
     %r34 = phi i32 [0,%L3],[%r28,%L6]
     %r19 = load i32, ptr @width
     %r20 = icmp slt i32 %r34,%r19
     br i1 %r20, label %L6, label %L7
-L6:  ;
+L6:  ;  latch0
     %r24 = call i32 @rotate(i32 %r34,i32 %r35,float %r0)
     call void @putint(i32 %r24)
     call void @putch(i32 32)
     %r28 = add i32 %r34,1
     br label %L5
-L7:  ;
+L7:  ;  latch1
     call void @putch(i32 10)
     %r32 = add i32 %r35,1
     br label %L2
@@ -282,8 +294,11 @@ L1:  ;
     %r5 = icmp slt i32 %r3,0
     br i1 %r5, label %L2, label %L3
 L2:  ;
-    ret i32 -1
+    br label %L4
 L3:  ;
     call void @write_pgm(float %r1)
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r12 = phi i32 [-1,%L2],[0,%L3]
+    ret i32 %r12
 }

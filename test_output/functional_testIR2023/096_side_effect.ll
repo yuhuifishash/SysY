@@ -29,9 +29,9 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r41 = phi i32 [5,%L1],[%r34,%L11]
     %r4 = icmp sge i32 %r41,0
     br i1 %r4, label %L3, label %L4
@@ -78,7 +78,7 @@ L9:  ;
 L10:  ;
     %r31 = call i32 @inc_a()
     br label %L11
-L11:  ;
+L11:  ;  latch0
     %r40 = phi i32 [%r41,%L9],[%r41,%L10]
     %r34 = sub i32 %r40,1
     br label %L2

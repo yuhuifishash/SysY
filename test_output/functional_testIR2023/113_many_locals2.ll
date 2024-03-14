@@ -17,14 +17,14 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r62 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r196 = phi i32 [%r62,%L1],[%r68,%L3]
     %r65 = icmp eq i32 %r196,5
     br i1 %r65, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r68 = add i32 %r196,1
     br label %L2
 L4:  ;

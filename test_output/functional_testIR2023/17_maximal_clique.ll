@@ -22,45 +22,48 @@ define i32 @is_clique(i32 %r0)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
-    %r34 = phi i32 [1,%L1],[%r10,%L7]
-    %r6 = icmp slt i32 %r34,%r0
+L2:  ;  exiting0  header0
+    %r38 = phi i32 [1,%L1],[%r10,%L7]
+    %r6 = icmp slt i32 %r38,%r0
     br i1 %r6, label %L3, label %L4
-L3:  ;
-    %r10 = add i32 %r34,1
+L3:  ;  preheader1
+    %r10 = add i32 %r38,1
     br label %L5
 L4:  ;
-    ret i32 1
-L5:  ;
-    %r33 = phi i32 [%r10,%L3],[%r27,%L9]
-    %r13 = icmp slt i32 %r33,%r0
+    br label %L10
+L5:  ;  exiting1  header1
+    %r37 = phi i32 [%r10,%L3],[%r27,%L9]
+    %r13 = icmp slt i32 %r37,%r0
     br i1 %r13, label %L6, label %L7
-L6:  ;
-    %r15 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r34
+L6:  ;  exiting0  exiting1
+    %r15 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r38
     %r16 = load i32, ptr %r15
-    %r18 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r33
+    %r18 = getelementptr [30 x i32], ptr @store, i32 0, i32 %r37
     %r19 = load i32, ptr %r18
     %r20 = getelementptr [30 x [30 x i32]], ptr @graph, i32 0, i32 %r16, i32 %r19
     %r21 = load i32, ptr %r20
     %r23 = icmp eq i32 %r21,0
     br i1 %r23, label %L8, label %L9
-L7:  ;
+L7:  ;  latch0
     br label %L2
 L8:  ;
-    ret i32 0
-L9:  ;
-    %r27 = add i32 %r33,1
+    br label %L10
+L9:  ;  latch1
+    %r27 = add i32 %r37,1
     br label %L5
+L10:  ;
+    %r34 = phi i32 [1,%L4],[0,%L8]
+    ret i32 %r34
 }
 define i32 @maxCliques(i32 %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r41 = phi i32 [0,%L1],[%r40,%L6]
     %r38 = phi i32 [1,%L1],[%r36,%L6]
     %r10 = load i32, ptr @n
@@ -78,7 +81,7 @@ L4:  ;
 L5:  ;
     %r22 = icmp sgt i32 %r1,%r41
     br i1 %r22, label %L7, label %L8
-L6:  ;
+L6:  ;  latch0
     %r40 = phi i32 [%r41,%L3],[%r42,%L10]
     %r36 = add i32 %r38,1
     br label %L2
@@ -100,18 +103,18 @@ define i32 @main()
 L0:  ;
     %r2 = alloca [600 x [2 x i32]]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r0 = call i32 @getint()
     store i32 %r0, ptr @n
     %r1 = call i32 @getint()
     store i32 %r1, ptr @m
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r50 = phi i32 [0,%L1],[%r18,%L3]
     %r6 = load i32, ptr @m
     %r7 = icmp slt i32 %r50,%r6
     br i1 %r7, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r10 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r50, i32 0
     %r11 = call i32 @getint()
     store i32 %r11, ptr %r10
@@ -120,14 +123,14 @@ L3:  ;
     store i32 %r15, ptr %r14
     %r18 = add i32 %r50,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r51 = phi i32 [0,%L4],[%r45,%L6]
     %r21 = load i32, ptr @m
     %r22 = icmp slt i32 %r51,%r21
     br i1 %r22, label %L6, label %L7
-L6:  ;
+L6:  ;  latch1
     %r25 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 0
     %r26 = load i32, ptr %r25
     %r29 = getelementptr [600 x [2 x i32]], ptr %r2, i32 0, i32 %r51, i32 1

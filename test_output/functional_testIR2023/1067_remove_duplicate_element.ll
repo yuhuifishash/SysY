@@ -16,9 +16,9 @@ define i32 @removeElement(ptr %r0,i32 %r1,i32 %r2)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r33 = phi i32 [%r1,%L1],[%r32,%L7]
     %r31 = phi i32 [0,%L1],[%r30,%L7]
     %r10 = icmp slt i32 %r31,%r33
@@ -39,7 +39,7 @@ L5:  ;
 L6:  ;
     %r28 = add i32 %r31,1
     br label %L7
-L7:  ;
+L7:  ;  latch0
     %r32 = phi i32 [%r20,%L5],[%r33,%L6]
     %r30 = phi i32 [%r31,%L5],[%r28,%L6]
     br label %L2

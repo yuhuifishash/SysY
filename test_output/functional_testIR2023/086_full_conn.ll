@@ -20,14 +20,17 @@ L1:  ;
     %r4 = icmp sgt i32 %r0,127
     br i1 %r4, label %L2, label %L3
 L2:  ;
-    ret i32 127
+    br label %L6
 L3:  ;
     %r8 = icmp slt i32 %r0,0
     br i1 %r8, label %L4, label %L5
 L4:  ;
-    ret i32 0
+    br label %L6
 L5:  ;
-    ret i32 %r0
+    br label %L6
+L6:  ;
+    %r13 = phi i32 [127,%L2],[0,%L4],[%r0,%L5]
+    ret i32 %r13
 }
 define i32 @model(ptr %r0)
 {
@@ -598,48 +601,51 @@ L1:  ;
     %r1908 = icmp sgt i32 %r1906,0
     br i1 %r1908, label %L2, label %L3
 L2:  ;
-    ret i32 1
+    br label %L4
 L3:  ;
-    ret i32 0
+    br label %L4
+L4:  ;
+    %r1913 = phi i32 [1,%L2],[0,%L3]
+    ret i32 %r1913
 }
 define i32 @main()
 {
 L0:  ;
     %r2 = alloca [5 x [5 x i32]]
     br label %L1
-L1:  ;
+L1:  ;  preheader2
     %r1 = call i32 @getint()
     br label %L2
-L2:  ;
+L2:  ;  exiting2  header2
     %r46 = phi i32 [%r1,%L1],[%r39,%L13]
     %r5 = icmp sgt i32 %r46,0
     br i1 %r5, label %L3, label %L4
-L3:  ;
+L3:  ;  preheader1
     br label %L5
 L4:  ;
     ret i32 0
-L5:  ;
+L5:  ;  exiting1  header1
     %r45 = phi i32 [0,%L3],[%r25,%L10]
     %r10 = icmp slt i32 %r45,5
     br i1 %r10, label %L6, label %L7
-L6:  ;
+L6:  ;  preheader0
     br label %L8
 L7:  ;
     %r26 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0
     %r27 = call i32 @model(ptr %r26)
     %r28 = icmp ne i32 %r27,0
     br i1 %r28, label %L11, label %L12
-L8:  ;
+L8:  ;  exiting0  header0
     %r43 = phi i32 [0,%L6],[%r22,%L9]
     %r15 = icmp slt i32 %r43,5
     br i1 %r15, label %L9, label %L10
-L9:  ;
+L9:  ;  latch0
     %r18 = getelementptr [5 x [5 x i32]], ptr %r2, i32 0, i32 %r45, i32 %r43
     %r19 = call i32 @getint()
     store i32 %r19, ptr %r18
     %r22 = add i32 %r43,1
     br label %L8
-L10:  ;
+L10:  ;  latch1
     %r25 = add i32 %r45,1
     br label %L5
 L11:  ;
@@ -654,7 +660,7 @@ L12:  ;
     call void @putch(i32 103)
     call void @putch(i32 10)
     br label %L13
-L13:  ;
+L13:  ;  latch2
     %r39 = sub i32 %r46,1
     br label %L2
 }

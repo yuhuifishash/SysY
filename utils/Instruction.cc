@@ -1,5 +1,6 @@
 #include "Instruction.h"
 #include "basic_block.h"
+#include <assert.h>
 
 void IRgenArithmeticI32(LLVMBlock B,LLVMIROpcode opcode,int reg1,int reg2,int result_reg)
 {
@@ -182,6 +183,46 @@ void PhiInstruction::ErasePhi(int label_id){
             phi_list.erase(it);
             break;
         }
+    }
+}
+
+Operand PhiInstruction::GetValOperand(int label_id){
+    for(auto [label,val]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == label_id){
+            return val;
+        }
+    }
+    assert(false);
+    return nullptr;
+}
+
+void PhiInstruction::SetValOperand(int label_id, Operand val){
+    for(auto &[label,v]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == label_id){
+            v = val;
+        }
+    }
+    assert(false);
+}
+
+void PhiInstruction::SetNewFrom(int old_id, int new_id){
+    for(auto &[label,v]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == old_id){
+            ((LabelOperand*)label)->SetLabelNo(new_id);
+        }
+    }
+}
+
+void BrCondInstruction::SetNewTarget(int oldlabel,int newlabel){
+    auto t_target = (LabelOperand*)GetTrueLabel();
+    auto f_target = (LabelOperand*)GetFalseLabel();
+    if(t_target->GetLabelNo() == oldlabel){
+        t_target->SetLabelNo(newlabel);
+    }else if(f_target->GetLabelNo() == oldlabel){
+        f_target->SetLabelNo(newlabel);
+    }else{
+        std::cerr<<"oldlabel is not existed\n";
+        assert(false);
     }
 }
 

@@ -16,22 +16,24 @@ define i32 @main()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r20 = phi i32 [0,%L1],[%r17,%L6]
     %r19 = phi i32 [0,%L1],[%r14,%L6]
     %r8 = icmp slt i32 %r20,100
-    br i1 %r8, label %L3, label %L4
-L3:  ;
+    br i1 %r8, label %L3, label %L8
+L3:  ;  exiting0
     %r11 = icmp eq i32 %r20,50
     br i1 %r11, label %L5, label %L6
 L4:  ;
     ret i32 %r19
 L5:  ;
     br label %L4
-L6:  ;
+L6:  ;  latch0
     %r14 = add i32 %r19,%r20
     %r17 = add i32 %r20,1
     br label %L2
+L8:  ;
+    br label %L4
 }

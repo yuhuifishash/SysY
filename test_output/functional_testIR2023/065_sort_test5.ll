@@ -30,28 +30,28 @@ define i32 @heap_sort(ptr %r0,i32 %r1)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r9 = sdiv i32 %r1,2
     %r11 = sub i32 %r9,1
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r52 = phi i32 [%r11,%L1],[%r25,%L3]
     %r15 = icmp sgt i32 %r52,-1
     br i1 %r15, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r18 = sub i32 %r1,1
     %r19 = getelementptr i32, ptr %r0
     %r22 = call i32 @heap_ajust(ptr %r19,i32 %r52,i32 %r18)
     %r25 = sub i32 %r52,1
     br label %L2
-L4:  ;
+L4:  ;  preheader1
     %r28 = sub i32 %r1,1
     br label %L5
-L5:  ;
+L5:  ;  exiting1  header1
     %r53 = phi i32 [%r28,%L4],[%r41,%L6]
     %r31 = icmp sgt i32 %r53,0
     br i1 %r31, label %L6, label %L7
-L6:  ;
+L6:  ;  latch1
     %r35 = getelementptr i32, ptr %r0
     %r38 = call i32 @swap(ptr %r35,i32 0,i32 %r53)
     %r41 = sub i32 %r53,1
@@ -64,56 +64,58 @@ define i32 @heap_ajust(ptr %r0,i32 %r1,i32 %r2)
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     %r12 = mul i32 %r1,2
     %r14 = add i32 %r12,1
-    br label %L2
-L2:  ;
-    %r56 = phi i32 [%r1,%L1],[%r54,%L10]
-    %r55 = phi i32 [%r14,%L1],[%r52,%L10]
     %r18 = add i32 %r2,1
-    %r19 = icmp slt i32 %r55,%r18
+    br label %L2
+L2:  ;  exiting0  header0
+    %r60 = phi i32 [%r1,%L1],[%r57,%L10]
+    %r58 = phi i32 [%r14,%L1],[%r52,%L10]
+    %r19 = icmp slt i32 %r58,%r18
     br i1 %r19, label %L3, label %L4
 L3:  ;
-    %r22 = icmp slt i32 %r55,%r2
+    %r22 = icmp slt i32 %r58,%r2
     br i1 %r22, label %L7, label %L6
 L4:  ;
-    ret i32 0
+    br label %L11
 L5:  ;
     br label %L6
-L6:  ;
-    %r54 = phi i32 [%r55,%L3],[%r55,%L7],[%r28,%L5]
-    %r36 = getelementptr i32, ptr %r0, i32 %r56
+L6:  ;  exiting0
+    %r57 = phi i32 [%r58,%L3],[%r58,%L7],[%r28,%L5]
+    %r36 = getelementptr i32, ptr %r0, i32 %r60
     %r37 = load i32, ptr %r36
-    %r39 = getelementptr i32, ptr %r0, i32 %r54
+    %r39 = getelementptr i32, ptr %r0, i32 %r57
     %r40 = load i32, ptr %r39
     %r41 = icmp sgt i32 %r37,%r40
     br i1 %r41, label %L8, label %L9
 L7:  ;
-    %r24 = getelementptr i32, ptr %r0, i32 %r55
+    %r24 = getelementptr i32, ptr %r0, i32 %r58
     %r25 = load i32, ptr %r24
-    %r28 = add i32 %r55,1
+    %r28 = add i32 %r58,1
     %r29 = getelementptr i32, ptr %r0, i32 %r28
     %r30 = load i32, ptr %r29
     %r31 = icmp slt i32 %r25,%r30
     br i1 %r31, label %L5, label %L6
 L8:  ;
-    ret i32 0
+    br label %L11
 L9:  ;
     %r43 = getelementptr i32, ptr %r0
-    %r46 = call i32 @swap(ptr %r43,i32 %r56,i32 %r54)
-    %r50 = mul i32 %r54,2
+    %r46 = call i32 @swap(ptr %r43,i32 %r60,i32 %r57)
+    %r50 = mul i32 %r57,2
     %r52 = add i32 %r50,1
     br label %L10
-L10:  ;
+L10:  ;  latch0
     br label %L2
+L11:  ;
+    ret i32 0
 }
 define i32 @main()
 {
 L0:  ;
     %r1 = alloca [10 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     store i32 10, ptr @n
     %r3 = getelementptr [10 x i32], ptr %r1, i32 0, i32 0
     store i32 4, ptr %r3
@@ -139,12 +141,12 @@ L1:  ;
     %r36 = load i32, ptr @n
     %r37 = call i32 @heap_sort(ptr %r35,i32 %r36)
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r53 = phi i32 [%r37,%L1],[%r51,%L3]
     %r39 = load i32, ptr @n
     %r40 = icmp slt i32 %r53,%r39
     br i1 %r40, label %L3, label %L4
-L3:  ;
+L3:  ;  latch0
     %r44 = getelementptr [10 x i32], ptr %r1, i32 0, i32 %r53
     %r45 = load i32, ptr %r44
     call void @putint(i32 %r45)

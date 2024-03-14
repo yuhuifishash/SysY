@@ -21,7 +21,7 @@ L1:  ;
 L3:  ;
     br label %L9
 L4:  ;
-    ret i32 -5
+    br label %L14
 L5:  ;
     br label %L3
 L7:  ;
@@ -36,6 +36,8 @@ L12:  ;
     br label %L8
 L13:  ;
     br label %L11
+L14:  ;
+    ret i32 -5
 }
 define i32 @main()
 {

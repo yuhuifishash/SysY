@@ -39,5 +39,7 @@ L25:  ;
 L28:  ;
     br label %L32
 L32:  ;
+    br label %L34
+L34:  ;
     ret i32 10
 }

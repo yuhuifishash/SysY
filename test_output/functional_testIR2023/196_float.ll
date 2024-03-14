@@ -37,9 +37,12 @@ L1:  ;
     br i1 %r5, label %L2, label %L3
 L2:  ;
     %r7 = fsub float 0x0,%r0
-    ret float %r7
+    br label %L4
 L3:  ;
-    ret float %r0
+    br label %L4
+L4:  ;
+    %r11 = phi float [%r7,%L2],[%r0,%L3]
+    ret float %r11
 }
 define void @error()
 {
@@ -88,9 +91,12 @@ L2:  ;
     %r15 = sitofp i32 2 to float
     %r16 = fdiv float %r13,%r15
     %r17 = fptosi float %r16 to i32
-    ret i32 %r17
+    br label %L5
 L3:  ;
-    ret i32 0
+    br label %L5
+L5:  ;
+    %r21 = phi i32 [%r17,%L2],[0,%L3]
+    ret i32 %r21
 }
 define void @ok()
 {
@@ -179,7 +185,7 @@ L8:  ;
 L9:  ;
     call void @ok()
     br label %L10
-L10:  ;
+L10:  ;  preheader0
     call void @llvm.memset.p0.i32(ptr %r42,i8 0,i32 40,i1 0)
     %r43 = fadd float 0x3ff0000000000000,0x0
     %r44 = getelementptr [10 x float], ptr %r42, i32 0, i32 0
@@ -194,12 +200,12 @@ L11:  ;
     %r36 = fadd float 0x3fd3333340000000,0x0
     %r37 = fcmp one float %r36,0x0
     br i1 %r37, label %L9, label %L10
-L12:  ;
+L12:  ;  exiting0  header0
     %r92 = phi i32 [1,%L10],[%r84,%L13]
     %r91 = phi i32 [0,%L10],[%r87,%L13]
     %r53 = icmp slt i32 %r92,1000000000
     br i1 %r53, label %L13, label %L14
-L13:  ;
+L13:  ;  latch0
     %r55 = call float @getfloat()
     %r57 = fadd float 0x0,0x400921fb60000000
     %r59 = fmul float %r57,%r55

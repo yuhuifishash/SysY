@@ -16,9 +16,9 @@ define i32 @whileIf()
 {
 L0:  ;
     br label %L1
-L1:  ;
+L1:  ;  preheader0
     br label %L2
-L2:  ;
+L2:  ;  exiting0  header0
     %r27 = phi i32 [0,%L1],[%r22,%L7]
     %r25 = phi i32 [0,%L1],[%r24,%L7]
     %r8 = icmp slt i32 %r27,100
@@ -33,7 +33,7 @@ L5:  ;
 L6:  ;
     %r15 = icmp eq i32 %r27,10
     br i1 %r15, label %L8, label %L9
-L7:  ;
+L7:  ;  latch0
     %r24 = phi i32 [25,%L5],[%r26,%L10]
     %r22 = add i32 %r27,1
     br label %L2

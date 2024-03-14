@@ -137,7 +137,7 @@ L0:  ;
     %r1 = alloca [1 x i32]
     %r0 = alloca [1 x i32]
     br label %L1
-L1:  ;
+L1:  ;  preheader1
     call void @llvm.memset.p0.i32(ptr %r2,i8 0,i32 8,i1 0)
     %r5 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0, i32 0
     store i32 -1, ptr %r5
@@ -150,11 +150,11 @@ L1:  ;
     %r13 = getelementptr [1 x [2 x i32]], ptr %r2, i32 0, i32 0
     %r14 = call i32 @getarray(ptr %r13)
     br label %L2
-L2:  ;
+L2:  ;  exiting1  header1
     %r17 = load i32, ptr %r10
     %r18 = icmp ne i32 %r17,0
-    br i1 %r18, label %L3, label %L4
-L3:  ;
+    br i1 %r18, label %L3, label %L11
+L3:  ;  preheader0
     %r20 = getelementptr [1 x i32], ptr %r0, i32 0, i32 0
     %r24 = load i32, ptr %r5
     store i32 %r24, ptr %r20
@@ -162,11 +162,11 @@ L3:  ;
 L4:  ;
     call void @putch(i32 10)
     ret i32 0
-L5:  ;
+L5:  ;  exiting0  header0
     %r27 = load i32, ptr %r20
     %r29 = icmp slt i32 %r27,5
     br i1 %r29, label %L6, label %L7
-L6:  ;
+L6:  ;  latch0
     %r31 = getelementptr [1 x i32], ptr @i, i32 0, i32 0
     %r32 = load i32, ptr %r31
     call void @putint(i32 %r32)
@@ -182,7 +182,7 @@ L6:  ;
     call void @add(ptr %r46,ptr %r45)
     call void @sub(ptr %r13,ptr %r45)
     br label %L5
-L7:  ;
+L7:  ;  exiting1
     %r51 = getelementptr [1 x i32], ptr @i, i32 0
     call void @inc(ptr %r51)
     call void @add(ptr %r51,ptr %r13)
@@ -194,6 +194,8 @@ L7:  ;
     br i1 %r62, label %L8, label %L9
 L8:  ;
     br label %L4
-L9:  ;
+L9:  ;  latch1
     br label %L2
+L11:  ;
+    br label %L4
 }
