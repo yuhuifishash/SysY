@@ -2,9 +2,9 @@ obj/
 bin/
 .vscode/
 test_output/example/*
-test_output/functional_testAsm/*
-test_output/functional_testIR/*
-test_output/performance_testAsm/*
-test_output/performance_testIR/*
+test_output/functional_testAsm/*.s
+test_output/functional_testIR/*.ll
+test_output/performance_testAsm/*.s
+test_output/performance_testIR/*.ll
 testcase/performance/*.in
 testcase/performance/*.out
