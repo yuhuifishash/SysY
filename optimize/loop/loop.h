@@ -17,7 +17,7 @@ public:
     
     int loop_id;
 
-    //if is_rotate is true, the loop must execute once or more
+    //if is_rotate is true, the loop body must execute once or more
     bool is_rotate;
 
     NaturalLoop* fa_loop = nullptr;
@@ -36,6 +36,9 @@ public:
 
     void LoopSimplify(CFG* C);
     void LoopSimplifyCheck(CFG* C);
+
+    void LCSSA(CFG* C);
+    void LCSSACheck(CFG* C);
 
     void LoopRotate(CFG* C);
 

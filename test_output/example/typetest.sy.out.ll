@@ -23,32 +23,22 @@ L1:  ;
 L2:  ;
     br label %L3
 L3:  ;  preheader0
-    %r46 = phi i32 [%r0,%L1],[%r1,%L2]
-    %r44 = phi i32 [%r1,%L1],[%r0,%L2]
-    %r22 = srem i32 %r46,%r44
-    br label %L7
+    %r40 = phi i32 [%r0,%L1],[%r1,%L2]
+    %r38 = phi i32 [%r1,%L1],[%r0,%L2]
+    %r22 = srem i32 %r40,%r38
+    br label %L4
 L4:  ;  exiting0  header0
-    %r47 = phi i32 [%r46,%L7],[%r45,%L5]
-    %r45 = phi i32 [%r44,%L7],[%r42,%L5]
-    %r42 = phi i32 [%r22,%L7],[%r36,%L5]
-    br label %L5
+    %r39 = phi i32 [%r38,%L3],[%r36,%L5]
+    %r36 = phi i32 [%r22,%L3],[%r30,%L5]
+    %r25 = icmp ne i32 %r36,0
+    br i1 %r25, label %L5, label %L6
 L5:  ;  latch0
-    call void @putint(i32 %r47)
-    call void @putch(i32 10)
-    call void @putint(i32 %r45)
-    call void @putch(i32 10)
-    call void @putint(i32 %r42)
-    call void @putch(i32 10)
-    %r36 = srem i32 %r45,%r42
-    %r51 = icmp ne i32 %r36,0
-    br i1 %r51, label %L4, label %L6
+    %r30 = srem i32 %r39,%r36
+    br label %L4
 L6:  ;
-    %r39 = mul i32 %r0,%r1
-    %r41 = sdiv i32 %r39,%r45
-    ret i32 %r41
-L7:  ;
-    %r25 = icmp ne i32 %r22,0
-    br i1 %r25, label %L4, label %L6
+    %r33 = mul i32 %r0,%r1
+    %r35 = sdiv i32 %r33,%r39
+    ret i32 %r35
 }
 define i32 @main()
 {
