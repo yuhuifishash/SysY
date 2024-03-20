@@ -1,7 +1,10 @@
 obj/
 bin/
 .vscode/
+test_output/example/*
+test_output/functional_testAsm/*
+test_output/functional_testIR/*
+test_output/performance_testAsm/*
+test_output/performance_testIR/*
 testcase/performance/*.in
 testcase/performance/*.out
-test_output/performance_testAsm/*.out
-test_output/performance_testIR/*.out

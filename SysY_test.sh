@@ -10,18 +10,18 @@ if [[ "$2" != "O1" ]] && [[ "$2" != "O0" ]] ; then
 fi
 
 #user example:
-#./Sysy_test.sh llvm O1 2023
-#./Sysy_test.sh llvm O0 2023
-#./Sysy_test.sh S O0 2023
+#./Sysy_test.sh llvm O1 armv7
+#./Sysy_test.sh llvm O0 armv7
+#./Sysy_test.sh S O0 rv64gc
 step=$1
 optimize_flag=$2
-year=$3
+target=$3
 
 if [ $1 == 'llvm' ] ; then
     score=0
     score_all=0
-    pwdin=testcase/functional_test$3
-    pwdout=test_output/functional_testIR$3
+    pwdin=testcase/functional_test
+    pwdout=test_output/functional_testIR
     rm -rf ${pwdout}/*
     for file in ${pwdin}/*.sy
     do
@@ -50,11 +50,11 @@ if [ $1 == 'llvm' ] ; then
         rm ${pwdout}/${var##*/}
     done
     echo IRTest:${score}/${score_all}
-elif [ $1 == 'S' ] ; then
+elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
     score=0
     score_all=0
-    pwdin=testcase/functional_test$3
-    pwdout=test_output/functional_testAsm$3
+    pwdin=testcase/functional_test
+    pwdout=test_output/functional_testAsm
     rm -rf ${pwdout}/*
     for file in ${pwdin}/*.sy
     do
@@ -82,7 +82,9 @@ elif [ $1 == 'S' ] ; then
         fi
         rm ${pwdout}/${var##*/}
     done
-    echo AsmTest:${score}/${score_all}
+    echo AsmArmv7Test:${score}/${score_all}
+elif [ $1 == 'S' ] && [ $3 == 'rv64gc' ] ; then
+    echo "S rv64gc is not implenmented now"
 else
     echo "step arguments is invalid"
 fi

@@ -120,7 +120,7 @@ void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
             I->SetBlockID(L->preheader->block_id);
             L->preheader->InsertInstruction(1,I);
             it = InvariantInsList.erase(it);//erase this Instruction
-            std::cerr<<"code motion ";I->PrintIR(std::cerr);
+            //std::cerr<<"code motion ";I->PrintIR(std::cerr);
         }else{
             ++it;
         }
