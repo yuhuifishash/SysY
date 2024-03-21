@@ -1,17 +1,29 @@
 #ifndef MACHINE_BLOCK_H
 #define MACHINE_BLOCK_H
 #include "ir.h"
+#include "MachineBaseInstruction.h"
 
-class MachineBaseInstruction;
-class MachineFuntion;
+class MachineFunction;
 class MachineBlock;
 class MachineUnit;
+class MachineCFG;
 class MachineUnit{
 public:
     std::vector<Instruction> global_def{};
-    std::vector<MachineFuntion*> functions;
+    std::vector<MachineFunction*> functions;
+    std::map<MachineFunction*,MachineCFG*> mcfgs;
     virtual void emit(std::ostream& s) = 0;
-    // MachineUnit(LLVM_IR& IR);
+    /*this function will execute the pass you write, you can use function pointer to 
+      tell it to execute what, it will execute through all the MachineCFG* in this MachineUnit*/
+    void PassExecutor(void (*Pass)(MachineCFG*)){
+        for(auto [mfun,mcfg]:mcfgs){
+            Pass(mcfg);
+        }
+    }
+    /*if your pass is global optimize, you can use this function, the pass will only be executed once*/
+    void PassExecutor(void (*Pass)(MachineUnit*)){
+        Pass(this);
+    }
 };
 
 class MachineFunction{
@@ -29,7 +41,8 @@ public:
     std::deque<MachineBaseInstruction*> instructions;
     MachineFunction* parent;
     virtual void emit(std::ostream& s) = 0;
-    virtual void GetDefUse() = 0;
+    // std::set<int> GetDef();
+    // std::set<int> GetUse();
     MachineBlock(int id):label_id(id){}
     // template<class T>
     // virtual void ConvertAndAppend(T ins) = 0;
@@ -67,13 +80,15 @@ public:
 
 class MachineSelector{
 protected:
-    MachineUnit* Dest;
+    MachineUnit* dest;
+    MachineFunction* cur_func;
+    MachineBlock* cur_block;
     LLVMIR* IR;
 public:
-    MachineSelector(MachineUnit* Dest,LLVMIR* IR):Dest(Dest),IR(IR){}
-    virtual void SelectInstruction() = 0;
-    virtual MachineCFG* SelectInstructionAndBuildCFG() = 0;
-    MachineUnit* GetMachineUnit(){return Dest;}
+    MachineSelector(MachineUnit* dest,LLVMIR* IR):dest(dest),IR(IR){}
+    // virtual void SelectInstruction() = 0;
+    virtual void SelectInstructionAndBuildCFG() = 0;
+    MachineUnit* GetMachineUnit(){return dest;}
     // template<class INSPTR>
     // virtual void ConvertAndAppend(INSPTR,MachineBlk*) = 0;
 };

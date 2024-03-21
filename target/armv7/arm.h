@@ -5,9 +5,9 @@
 #include "Instruction.h"
 #include <iostream>
 #include <vector>
-class ArmBaseInstruction{
+class ArmBaseInstruction : public MachineBaseInstruction{
 public:
-    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM}ins_type;
+    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM,PHI}ins_type;
     std::string comment;
 
     enum {EQ = 0,NE,CS_HS,CC_LO,MI,PL,VS,VC,HI,LS,GE,LT,GT,LE,AL};
@@ -22,6 +22,9 @@ void printCond(std::ostream& s,int cond);
 void printRegList(std::ostream& s,const std::vector<Register>& reglist);
 
 class ArmBinary : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {ADD = 0,ADC,SUB,SBC,RSB,RSC,AND,EOR,ORR,ORN,BIC};
     int opcode;
@@ -38,6 +41,9 @@ public:
 
 class ArmAddsubImm : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {ADD = 0,SUB};
     int opcode;
     Register Rd,Rn;
@@ -51,6 +57,9 @@ public:
 };
 
 class ArmParallelAddsub : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {S = 0,Q,SH,U,UQ,UH};
     enum {ADD16 = 0,SUB16,ADD8,SUB8,ASX,SAX//,USAD8,USADA8
@@ -66,6 +75,9 @@ public:
 };
 
 class ArmMulas : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {MUL = 0,MLA,MLS,SMULL,SMLAL,SMMUL};
     int opcode;
@@ -86,6 +98,9 @@ public:
 
 class ArmMove : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {MOV = 0,MVN};
     int opcode;
     bool S;
@@ -101,6 +116,9 @@ public:
 
 class ArmMovwt : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {MOVW = 0,MOVT};
     int opcode;
     Register R;
@@ -115,6 +133,9 @@ public:
 
 class ArmShift : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     bool S;
     Register Rd;
     RmOpsh Rmsh;
@@ -128,6 +149,9 @@ public:
 
 class ArmCmp : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {CMP = 0,CMN}opcode;
     Register Rn;
     Operand2 op2;
@@ -140,6 +164,9 @@ public:
 };
 
 class ArmIt : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     // high  |low
     // 0000  |0000
@@ -166,6 +193,9 @@ public:
 
 class ArmBranchLabel : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {B = 0,BL,BLX};
     int opcode;
     Label target;
@@ -178,6 +208,9 @@ public:
 };
 
 class ArmBranchReg : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {BX = 0,BLX,BXJ};
     int opcode;
@@ -192,6 +225,9 @@ public:
 
 class ArmBranchLabelreg : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     bool N;
     Register Rn;
     Label target;
@@ -204,6 +240,9 @@ public:
 };
 
 class ArmLoadStore : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {LOAD = 0,STORE};
     int op;
@@ -231,6 +270,9 @@ public:
 
 class ArmLoadStoreM : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {LOAD = 0,STORE};
     int op;
     enum {IA = 0,IB,DA,DB};
@@ -248,6 +290,9 @@ public:
 };
 
 class ArmPushpop : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
     enum {PUSH = 0,POP};
     int opcode;
     std::vector<Register> reglist;
@@ -260,6 +305,9 @@ class ArmPushpop : public ArmBaseInstruction{
 };// push pop
 
 class VFPVbin : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
     enum {VADD = 0,VSUM,VMUL,VDIV};
     int opcode;
     int P;
@@ -273,6 +321,9 @@ class VFPVbin : public ArmBaseInstruction{
 };// VADD VSUB VMUL VDIV
 class VFPVcmp : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     bool E;
     int P;
     Register Fd,Fm;
@@ -284,6 +335,9 @@ public:
     }
 };
 class VFPVcvt : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum{F64 = 0,F32,S32};
     int dstType,srcType;
@@ -298,6 +352,9 @@ public:
 };
 class VFPVmov : public ArmBaseInstruction{
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum{NONE = 0,F32,F64};
     int P;
     Register Rd,Rs;
@@ -309,6 +366,9 @@ public:
     }
 };
 class VFPVldst : public ArmBaseInstruction{
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {VLDR = 0,VSTR};
     int op;
@@ -331,6 +391,9 @@ public:
 };// VLDR VSTR
 class VFPVpushpop : public ArmBaseInstruction {
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     enum {VPUSH = 0,VPOP};
     int opcode;
     std::vector<Register> VFPregs;
@@ -342,6 +405,9 @@ public:
     }
 };// VPUSH VPOP
 class VFPVstm : public ArmBaseInstruction {
+public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
 public:
     enum {VSTM = 0,VSTMDB,VLDM,VLDMDB};
     int opcode;
@@ -357,11 +423,16 @@ public:
 };// VSTM VSTMDB VLDM VLDMDB
 class ArmPhiInstruction : public ArmBaseInstruction {
 public:
+    std::set<int> GetReadReg();
+    std::set<int> GetWriteReg();
+public:
     Register result;
     std::vector<std::pair<Label,RegisterOrImm> >phi_list;
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
-    ArmPhiInstruction(Register result,int cond,std::string comment = std::string()):result(result),ArmBaseInstruction(cond,comment){}
+    ArmPhiInstruction(Register result,int cond,std::string comment = std::string()):result(result),ArmBaseInstruction(cond,comment){
+        ins_type = PHI;
+    }
     void pushPhiList(Label label,Register reg){
         RegisterOrImm re;
         re.type = RegisterOrImm::REG;

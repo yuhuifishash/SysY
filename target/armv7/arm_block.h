@@ -12,7 +12,6 @@ class ArmUnit;
 class ArmBlock : public MachineBlock{
 public:
     void emit(std::ostream& s);
-    void GetDefUse();
     ArmBlock(int id):MachineBlock(id){}
 };
 
@@ -41,11 +40,11 @@ private:
     }last_cond;
     
 public:
-    ArmSelector(ArmUnit* Dest,LLVMIR* IR):MachineSelector(Dest,IR){}
-    void SelectInstruction();
-    MachineCFG* SelectInstructionAndBuildCFG();
+    ArmSelector(ArmUnit* dest,LLVMIR* IR):MachineSelector(dest,IR){}
+    // void SelectInstruction();
+    void SelectInstructionAndBuildCFG();
 
     template<class INSPTR>
-    void ConvertAndAppend(INSPTR,ArmBlock*);
+    void ConvertAndAppend(INSPTR);
 };
 #endif

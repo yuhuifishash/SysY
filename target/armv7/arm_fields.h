@@ -2,6 +2,29 @@
 #define ARM_FIELDS_H
 #include <string>
 #include <iostream>
+/*
+struct ArmCPU{
+    unsigned int CPSR;
+    union{
+        int r[11];
+        struct{
+            int :??;
+            int pc;
+            int :??;
+            int fp;
+            int :??;
+            int sp;
+            int :??;
+        };
+    };
+    // Co-Processor
+    union{
+        float s[16];
+        double d[8];
+        long long double q[4];
+    };
+};
+*/
 struct Register{
 public:
     bool Virtual;
