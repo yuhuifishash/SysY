@@ -59,7 +59,7 @@ void NaturalLoop::LoopRotate(CFG* C)
         auto brI = (BrUncondInstruction*)I;
         brI->SetTarget(new LabelOperand(CondBlock->block_id));
     }
-
+    
     //Insert CondBlock Instruction
     std::map<int,int> RegReplaceMap;
     for(auto I:header->Instruction_list){
@@ -77,14 +77,14 @@ void NaturalLoop::LoopRotate(CFG* C)
         //br_uncond is impossible
         assert(nI->GetOpcode() != BR_UNCOND);
         if(nI->GetOpcode() == BR_COND){
-            auto BrI = (BrCondInstruction*)nI;
-            int true_id = ((LabelOperand*)BrI->GetTrueLabel())->GetLabelNo();
-            int false_id = ((LabelOperand*)BrI->GetFalseLabel())->GetLabelNo();
+            auto nBrI = (BrCondInstruction*)nI;
+            int true_id = ((LabelOperand*)nBrI->GetTrueLabel())->GetLabelNo();
+            int false_id = ((LabelOperand*)nBrI->GetFalseLabel())->GetLabelNo();
             auto exit = *exit_nodes.begin();
             if(true_id == exit->block_id){
-                BrI->SetNewTarget(false_id,header->block_id);
+                nBrI->SetNewTarget(false_id,header->block_id);
             }else{
-                BrI->SetNewTarget(true_id,header->block_id);
+                nBrI->SetNewTarget(true_id,header->block_id);
             }
         }
         CondBlock->InsertInstruction(1,nI);
@@ -113,6 +113,9 @@ void NaturalLoop::LoopRotate(CFG* C)
     while(CondBlock->Instruction_list.front()->GetOpcode() == PHI){
         CondBlock->Instruction_list.pop_front();
     }
+    //TODO:update phi instructions in exit(add label from CondBlock)
+    //use RegValMap
+
 
     auto latch = *latches.begin();
     assert(latch->Instruction_list.back()->GetOpcode() == BR_UNCOND);
@@ -140,6 +143,8 @@ void NaturalLoop::LoopRotate(CFG* C)
                 auto nBrCondI = (BrCondInstruction*)nI;
                 int body_label_id;
                 auto exit = *exit_nodes.begin();
+
+                //change br_cond in header to br_uncond
                 if(((LabelOperand*)nBrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id){
                     body_label_id = ((LabelOperand*)nBrCondI->GetTrueLabel())->GetLabelNo();
                     nBrCondI->SetNewTarget(body_label_id,header->block_id);
@@ -162,7 +167,9 @@ void NaturalLoop::LoopRotate(CFG* C)
             nI->SetNonResultOperands(NonResultList);
         }
     }
-
+    //TODO: update phi instructions in exit(from header to latch)
+    //use RegValMap
+    
     //erase useless instructions in header
     for(auto it = header->Instruction_list.begin(); it != header->Instruction_list.end();){
         auto I = *it;
