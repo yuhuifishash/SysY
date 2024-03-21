@@ -9,6 +9,6 @@ int MachineFunction::GetNewRegister(int regtype,int reglength){
     }
     am_registers[new_regno].data_type = regtype;
     am_registers[new_regno].data_length = reglength;
-    InitializeNewRegister(new_regno);
+    InitializeNewVirtualRegister(new_regno);
     return new_regno;
 }

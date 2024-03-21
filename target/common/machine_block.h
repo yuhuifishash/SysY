@@ -28,7 +28,7 @@ public:
 
     int GetNewRegister(int regtype,int regwidth);
 protected:
-    virtual void InitializeNewRegister(int vregno) = 0;
+    virtual void InitializeNewVirtualRegister(int vregno) = 0;
 public:
     void PassExecutor(void (*Pass)(MachineCFG*)){
         Pass(mcfg);

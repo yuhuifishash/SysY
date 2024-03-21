@@ -1,4 +1,5 @@
 #include "arm_fields.h"
+#include "arm_block.h"
 struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[]={
     [ArmPhysicalRegisterDescriptor::r0]={"r0"},
     [ArmPhysicalRegisterDescriptor::r1]={"r1"},
@@ -43,3 +44,30 @@ struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[]={
     [ArmPhysicalRegisterDescriptor::cpsr]={"cpsr"},
     [ArmPhysicalRegisterDescriptor::INVALID]={"INVALID"},
 };
+
+void ArmFunction::InitializeNewVirtualRegister(int vregno){
+    am_registers[vregno].physical_register_descriptor_index = ArmPhysicalRegisterDescriptor::INVALID;
+    if(am_registers[vregno].data_type == AmRegisterInfo::FLOAT){
+        if(am_registers[vregno].data_length == AmRegisterInfo::B128){
+            am_registers[vregno].accessible_physical_registers = {
+                ArmPhysicalRegisterDescriptor::q0,
+                ArmPhysicalRegisterDescriptor::q1,
+                ArmPhysicalRegisterDescriptor::q2,
+                ArmPhysicalRegisterDescriptor::q3,
+            };
+        }else if(am_registers[vregno].data_length = AmRegisterInfo::B64){
+
+        }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
+
+        }
+    }else if(am_registers[vregno].data_type == AmRegisterInfo::INT){
+        if(am_registers[vregno].data_length == AmRegisterInfo::B128){
+
+        }else if(am_registers[vregno].data_length = AmRegisterInfo::B64){
+
+        }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
+
+        }
+    }
+    // Adjust accessible_physical_register for forced alloc
+}

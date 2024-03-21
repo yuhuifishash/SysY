@@ -18,7 +18,7 @@ class ArmFunction : public MachineFunction{
 public:
     ArmFunction(std::string name):MachineFunction(name){}
 protected:
-    void InitializeNewRegister(int vregno);
+    void InitializeNewVirtualRegister(int vregno);
 };
 
 class ArmUnit : public MachineUnit{
