@@ -1,5 +1,6 @@
 #ifndef ARM_H
 #define ARM_H
+#include "MachineBaseInstruction.h"
 #include "arm_fields.h"
 #include "ir.h"
 #include "Instruction.h"
@@ -385,7 +386,7 @@ private:
     }
 public:
     VFPVldst(int op,Register Fd,Label label,int cond,std::string comment)
-    :VFPVldst(op,Fd,Register(0,Register::I32,0),label,1,cond,comment){}
+    :VFPVldst(op,Fd,Register(),label,1,cond,comment){}
     VFPVldst(int op,Register Fd,Register Rn,int immed)
     :VFPVldst(op,Fd,Rn,std::string(),0,cond,comment){}
 };// VLDR VSTR

@@ -2,6 +2,7 @@
 #define MACHINE_BLOCK_H
 #include "ir.h"
 #include "MachineBaseInstruction.h"
+#include "am_register.h"
 
 class MachineFunction;
 class MachineBlock;
@@ -11,16 +12,7 @@ class MachineUnit{
 public:
     std::vector<Instruction> global_def{};
     std::vector<MachineFunction*> functions;
-    std::map<MachineFunction*,MachineCFG*> mcfgs;
-    virtual void emit(std::ostream& s) = 0;
-    /*this function will execute the pass you write, you can use function pointer to 
-      tell it to execute what, it will execute through all the MachineCFG* in this MachineUnit*/
-    void PassExecutor(void (*Pass)(MachineCFG*)){
-        for(auto [mfun,mcfg]:mcfgs){
-            Pass(mcfg);
-        }
-    }
-    /*if your pass is global optimize, you can use this function, the pass will only be executed once*/
+    void PassExecutor(void (*Pass)(MachineCFG*));
     void PassExecutor(void (*Pass)(MachineUnit*)){
         Pass(this);
     }
@@ -29,9 +21,19 @@ public:
 class MachineFunction{
 public:
     std::string func_name;
-    std::vector<MachineBlock*> blocks{};
     MachineUnit* parent;
-    virtual void emit(std::ostream& s) = 0;
+    MachineCFG* mcfg;
+    std::vector<MachineBlock*> blocks{};
+    std::map<int,AmRegisterInfo> am_registers{};
+
+    int GetNewRegister(int regtype,int regwidth);
+protected:
+    virtual void InitializeNewRegister(int vregno) = 0;
+public:
+    void PassExecutor(void (*Pass)(MachineCFG*)){
+        Pass(mcfg);
+    }
+    
     MachineFunction(std::string name):func_name(name){}
 };
 
@@ -40,12 +42,7 @@ public:
     int label_id;
     std::deque<MachineBaseInstruction*> instructions;
     MachineFunction* parent;
-    virtual void emit(std::ostream& s) = 0;
-    // std::set<int> GetDef();
-    // std::set<int> GetUse();
     MachineBlock(int id):label_id(id){}
-    // template<class T>
-    // virtual void ConvertAndAppend(T ins) = 0;
 };
 
 class MachineCFG{
@@ -71,11 +68,6 @@ public:
     std::set<int> GetOUT(int bid){return block_map[bid]->OUT;}
     std::set<int> GetDef(int bid){return block_map[bid]->DEF;}
     std::set<int> GetUse(int bid){return block_map[bid]->USE;}
-    // std::vector<MachineCFGNode*> GetPredecessorNode(MachineBlk* B);
-    // std::vector<MachineCFGNode*> GetPredecessorNode(int bbid);
-    // std::vector<MachineCFGNode*> GetSuccessorNode(MachineBlk* B);
-    // std::vector<MachineCFGNode*> GetSuccessorNode(int bbid);
-    // MachineCFGNode* GetNode(int bbid);
 };
 
 class MachineSelector{
@@ -86,11 +78,22 @@ protected:
     LLVMIR* IR;
 public:
     MachineSelector(MachineUnit* dest,LLVMIR* IR):dest(dest),IR(IR){}
-    // virtual void SelectInstruction() = 0;
     virtual void SelectInstructionAndBuildCFG() = 0;
     MachineUnit* GetMachineUnit(){return dest;}
-    // template<class INSPTR>
-    // virtual void ConvertAndAppend(INSPTR,MachineBlk*) = 0;
+};
+
+class MachinePrinter{
+protected:
+    MachineUnit* printee;
+    MachineFunction* current_func;
+    MachineBlock* cur_block;
+    std::ostream& s;
+    bool output_physical_reg;
+public:
+    virtual void emit() = 0;
+    virtual void printMahcineIR() = 0;
+    MachinePrinter(std::ostream& s,MachineUnit* printee):s(s),printee(printee),output_physical_reg(false){}
+    void SetOutputPhysicalReg(bool outputPhy){output_physical_reg = outputPhy;}
 };
 
 

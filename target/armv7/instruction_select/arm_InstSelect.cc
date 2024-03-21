@@ -93,10 +93,6 @@ template<>
 void ArmSelector::ConvertAndAppend<ZextInstruction*>(ZextInstruction* ins){
 }
 
-// template<>
-// void ArmSelector::ConvertAndAppend<get_elementptr_Instruction*>(get_elementptr_Instruction* ins,ArmBlock* blk){
-// }
-
 template<>
 void ArmSelector::ConvertAndAppend<Instruction>(Instruction inst){
     switch(inst->GetOpcode()){
@@ -146,33 +142,14 @@ void ArmSelector::ConvertAndAppend<Instruction>(Instruction inst){
 
     }
 }
-/*
-void ArmSelector::SelectInstruction(){
-    dest->global_def = IR->global_def;
-    for(auto func_pair:IR->llvm_cfg){
-        auto cfg = func_pair.second;
-        std::string name = cfg->function_def->GetFunctionName();
-        auto cur_armfunc = new ArmFunction(name);
-        cur_armfunc->parent = dest;
-        dest->functions.push_back(cur_armfunc);
-        for(auto [id,block]:*(cfg->block_map)){
-            // We assume IR blocks have already been concated
-            auto cur_armblk = new ArmBlock(id);
-            cur_armblk->parent = cur_armfunc;
-            cur_armfunc->blocks.push_back(cur_armblk);
-            // Expand
-            for(auto instruction : block->Instruction_list){
-                ConvertAndAppend<Instruction>(instruction);
-                // cur_armblk->ConvertAndAppend<Instruction>(instruction);
-            }
-            // Simplify&Match : peehole
-        }
-    }
+
+void ArmSelector::ClearFunctionSelectState(){
+    ir_arm_vreg_map.clear();
+    ir_negativeoffset_map.clear();
 }
-*/
+
 void ArmSelector::SelectInstructionAndBuildCFG(){
     dest->global_def = IR->global_def;
-    // MachineCFG* mcfg = new MachineCFG;
     for(auto func_pair:IR->llvm_cfg){
         auto cfg = func_pair.second;
         std::string name = cfg->function_def->GetFunctionName();
@@ -184,7 +161,9 @@ void ArmSelector::SelectInstructionAndBuildCFG(){
 
         auto cur_mcfg = new MachineCFG;
 
-        dest->mcfgs[cur_func] = cur_mcfg;
+        cur_func->mcfg = cur_mcfg;
+
+        ClearFunctionSelectState();
 
         for(auto [id,block]:*(cfg->block_map)){
             // We assume IR blocks have already been concated
@@ -197,7 +176,6 @@ void ArmSelector::SelectInstructionAndBuildCFG(){
             // Expand
             for(auto instruction : block->Instruction_list){
                 ConvertAndAppend<Instruction>(instruction);
-                // cur_armblk->ConvertAndAppend<Instruction>(instruction);
             }
             // Simplify&Match : peehole
         }
@@ -217,7 +195,6 @@ void ArmSelector::SelectInstructionAndBuildCFG(){
             }
         }
     }
-    // return mcfg;
 }
 
 #endif

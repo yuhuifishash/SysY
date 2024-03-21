@@ -25,12 +25,24 @@ struct ArmCPU{
     };
 };
 */
+struct ArmPhysicalRegisterDescriptor{
+    char* name;
+    enum{
+        r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,
+        s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,
+        d0,d1,d2,d3,d4,d5,d6,d7,
+        q0,q1,q2,q3,
+        cpsr,
+        INVALID,
+    };
+};
+extern struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[];
 struct Register{
 public:
-    bool Virtual;
-    enum {I32,FLOAT,DOUBLE}type;
-    int reg_no;
-    Register(bool Virtual,decltype(type) reg_type,int no):Virtual(Virtual),type(reg_type),reg_no(no){}
+    // bool Virtual;
+    // enum {I32,FLOAT,DOUBLE}type;
+    int am_reg_no;
+    // Register(bool Virtual,decltype(type) reg_type,int no):Virtual(Virtual),type(reg_type),reg_no(no){}
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
 };

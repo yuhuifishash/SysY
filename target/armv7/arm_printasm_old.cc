@@ -69,17 +69,17 @@ std::ostream& operator<<(std::ostream& s,RegisterOrImm roi){
 }
 //-----Arm Field Print-----
 void Register::printArm(std::ostream& s){
-    if(Virtual){
-        s<<"%";
-    }
-    if(type == I32){
-        s<<"r";
-    }else if(type == FLOAT){
-        s<<"s";
-    }else if(type == DOUBLE){
-        s<<"d";
-    }
-    s<<reg_no;
+    // if(Virtual){
+        // s<<"%";
+    // }
+    // if(type == I32){
+    //     s<<"r";
+    // }else if(type == FLOAT){
+    //     s<<"s";
+    // }else if(type == DOUBLE){
+    //     s<<"d";
+    // }
+    // s<<reg_no;
 }
 
 void RmOpsh::printArm(std::ostream& s){
@@ -641,23 +641,57 @@ void ArmPhiInstruction::printArm(std::ostream& s){
     s<<" @"<<comment<<"\n";
 }
 
-void ArmBlock::emit(std::ostream& s){
-    for(auto ins:instructions){
-        s<<"\t";
-        ((ArmBaseInstruction*)ins)->printArm(s);
+// void ArmBlock::emit(std::ostream& s){
+//     for(auto ins:instructions){
+//         s<<"\t";
+//         ((ArmBaseInstruction*)ins)->printArm(s);
+//     }
+// }
+
+// void ArmFunction::emit(std::ostream& s){
+//     s<<func_name<<":\n";
+//     for(auto block:blocks){
+//         s<<func_name<<block->label_id<<":\n";
+//         block->emit(s);
+//     }
+// }
+
+// void ArmUnit::emit(std::ostream& s){// global def
+//     for(auto func:functions){
+//         func->emit(s);
+//     }
+// }
+
+void ArmPrinter::emit(){
+    ins_offset = 0;
+    for(auto func:printee->functions){
+        current_func = func;
+        s<<func->func_name<<":\n";
+        for(auto block:func->blocks){
+            s<<func->func_name<<block->label_id<<":\n";
+            cur_block = block;
+            for(auto ins:block->instructions){
+                s<<"\t";
+                ins_offset += 4;
+
+                printArm<ArmBaseInstruction*>((ArmBaseInstruction*)ins);
+            }
+        }
     }
 }
 
-void ArmFunction::emit(std::ostream& s){
-    s<<func_name<<":\n";
-    for(auto block:blocks){
-        s<<func_name<<block->label_id<<":\n";
-        block->emit(s);
-    }
-}
-
-void ArmUnit::emit(std::ostream& s){// global def
-    for(auto func:functions){
-        func->emit(s);
+void ArmPrinter::printMachineIR(){
+    ins_offset = 0;
+    for(auto func:printee->functions){
+        current_func = func;
+        s<<func->func_name<<":\n";
+        for(auto block:func->blocks){
+            s<<func->func_name<<block->label_id<<":\n";
+            cur_block = block;
+            for(auto ins:block->instructions){
+                s<<"\t";
+                printMachineIR<ArmBaseInstruction*>((ArmBaseInstruction*)ins);
+            }
+        }
     }
 }

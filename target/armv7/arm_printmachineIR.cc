@@ -1,153 +1,223 @@
-#include "arm.h"
-void Register::printMachineIR(std::ostream& s){
-    printArm(s);
+#include "arm_block.h"
+
+template<>
+void ArmPrinter::printMachineIR<Register*>(Register* ins){
+	
 }
-void RmOpsh::printMachineIR(std::ostream& s){
-    if(type == RRX){
-        s<<"("<<properties.RRX.Rm<<" RRX)";
-    }else if(type == RSHIFTI){
-        s<<"("<<properties.regShiftImm.Rm<<" "<<properties.regShiftImm.shift_type<<" #"<<properties.regShiftImm.shift<<")";
+
+template<>
+void ArmPrinter::printMachineIR<RmOpsh*>(RmOpsh* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<Operand2*>(Operand2* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<Rssh*>(Rssh* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<Label*>(Label* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<RegisterOrImm*>(RegisterOrImm* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmBinary*>(ArmBinary* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmAddsubImm*>(ArmAddsubImm* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmParallelAddsub*>(ArmParallelAddsub* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmMulas*>(ArmMulas* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmMove*>(ArmMove* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmMovwt*>(ArmMovwt* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmShift*>(ArmShift* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmCmp*>(ArmCmp* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmIt*>(ArmIt* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmBranchLabel*>(ArmBranchLabel* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmBranchReg*>(ArmBranchReg* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmBranchLabelreg*>(ArmBranchLabelreg* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmLoadStore*>(ArmLoadStore* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmLoadStoreM*>(ArmLoadStoreM* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmPushpop*>(ArmPushpop* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVbin*>(VFPVbin* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVcmp*>(VFPVcmp* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVcvt*>(VFPVcvt* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVmov*>(VFPVmov* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVldst*>(VFPVldst* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVpushpop*>(VFPVpushpop* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<VFPVstm*>(VFPVstm* ins){
+	
+}
+
+template<>
+void ArmPrinter::printMachineIR<ArmPhiInstruction*>(ArmPhiInstruction* ins){
+	
+}
+
+
+
+template<>
+void ArmPrinter::printMachineIR<ArmBaseInstruction*>(ArmBaseInstruction* ins){
+    switch(ins->ins_type){
+        case ArmBaseInstruction::BINARY:
+            printMachineIR<ArmBinary*>((ArmBinary*)ins);
+            break;
+        case ArmBaseInstruction::ADDSUBIMM:
+            printMachineIR<ArmAddsubImm*>((ArmAddsubImm*)ins);
+            break;
+        case ArmBaseInstruction::PARALLELADDSUB:
+            printMachineIR<ArmParallelAddsub*>((ArmParallelAddsub*)ins);
+            break;
+        case ArmBaseInstruction::MULAS:
+            printMachineIR<ArmMulas*>((ArmMulas*)ins);
+            break;
+        case ArmBaseInstruction::MOVE:
+            printMachineIR<ArmMove*>((ArmMove*)ins);
+            break;
+        case ArmBaseInstruction::MOVWT:
+            printMachineIR<ArmMovwt*>((ArmMovwt*)ins);
+            break;
+        case ArmBaseInstruction::SHIFT:
+            printMachineIR<ArmShift*>((ArmShift*)ins);
+            break;
+        case ArmBaseInstruction::_CMP:
+            printMachineIR<ArmCmp*>((ArmCmp*)ins);
+            break;
+        case ArmBaseInstruction::IT:
+            printMachineIR<ArmIt*>((ArmIt*)ins);
+            break;
+        case ArmBaseInstruction::BRANCH_LABEL:
+            printMachineIR<ArmBranchLabel*>((ArmBranchLabel*)ins);
+            break;
+        case ArmBaseInstruction::BRANCH_REG:
+            printMachineIR<ArmBranchReg*>((ArmBranchReg*)ins);
+            break;
+        case ArmBaseInstruction::BRANCH_LABELREG:
+            printMachineIR<ArmBranchLabelreg*>((ArmBranchLabelreg*)ins);
+            break;
+        case ArmBaseInstruction::LOADSTORE:
+            printMachineIR<ArmLoadStore*>((ArmLoadStore*)ins);
+            break;
+        case ArmBaseInstruction::LOADSTOREM:
+            printMachineIR<ArmLoadStoreM*>((ArmLoadStoreM*)ins);
+            break;
+        case ArmBaseInstruction::PUSHPOP:
+            printMachineIR<ArmPushpop*>((ArmPushpop*)ins);
+            break;
+        case ArmBaseInstruction::VBIN:
+            printMachineIR<VFPVbin*>((VFPVbin*)ins);
+            break;
+        case ArmBaseInstruction::VCMP:
+            printMachineIR<VFPVcmp*>((VFPVcmp*)ins);
+            break;
+        case ArmBaseInstruction::VCVT:
+            printMachineIR<VFPVcvt*>((VFPVcvt*)ins);
+            break;
+        case ArmBaseInstruction::VLDST:
+            printMachineIR<VFPVldst*>((VFPVldst*)ins);
+            break;
+        case ArmBaseInstruction::VMOV:
+            printMachineIR<VFPVmov*>((VFPVmov*)ins);
+            break;
+        case ArmBaseInstruction::VPUSHPOP:
+            printMachineIR<VFPVpushpop*>((VFPVpushpop*)ins);
+            break;
+        case ArmBaseInstruction::_VSTM:
+            printMachineIR<VFPVstm*>((VFPVstm*)ins);
+            break;
+        case ArmBaseInstruction::PHI:
+            printMachineIR<ArmPhiInstruction*>((ArmPhiInstruction*)ins);
+            break;
     }
-}
-void Operand2::printMachineIR(std::ostream& s){
-    switch (type)
-    {
-    case IMM8M:
-        s<<"#"<<properties.imm8m;
-        break;
-    case RSHIFTR:
-        s<<"("<<properties.regShiftReg.Rm<<" "<<properties.regShiftReg.shift_type<<" "<<properties.regShiftReg.Rs<<")";
-        break;
-    case RSHIFTI:
-        s<<"("<<properties.regShiftImm.Rm<<" "<<properties.regShiftImm.shift_type<<" #"<<properties.regShiftImm.shift<<")";
-        break;
-    case RRX:
-        s<<"("<<properties.RRX.Rm<<" RRX)";
-        break;
-    }
-}
-void Rssh::printMachineIR(std::ostream& s){
-    s<<"Unused_struct_Rssh";
-}
-void Label::printMachineIR(std::ostream& s){
-    s<<label_name;
-}
-void RegisterOrImm::printMachineIR(std::ostream& s){
-    if(type == RegisterOrImm::REG){
-        s<<properties.reg;
-    }else if(type == RegisterOrImm::IMM){
-        s<<properties.imm32;
-    }
-}
-void ArmBinary::printMachineIR(std::ostream& s){
-    Rd.printMachineIR(s);
-    s<<" = ";
-    Rn.printMachineIR(s);
-    switch (opcode)
-    {
-    case ArmBinary::ADD:
-        s<<"+";
-        break;
-    case ArmBinary::ADC:
-        s<<"adc";
-        break;
-    case ArmBinary::SUB:
-        s<<"-";
-        break;
-    case ArmBinary::SBC:
-        s<<"sbc";
-        break;
-    case ArmBinary::RSB:
-        s<<"rsb";
-        break;
-    case ArmBinary::RSC:
-        s<<"rsc";
-        break;
-    case ArmBinary::AND:
-        s<<"&";
-        break;
-    case ArmBinary::EOR:
-        s<<"^";
-        break;
-    case ArmBinary::ORR:
-        s<<"|";
-        break;
-    case ArmBinary::ORN:
-        s<<"orn";
-        break;
-    case ArmBinary::BIC:
-        s<<"bic";
-        break;
-    }
-    op2.printMachineIR(s);
-}
-void ArmAddsubImm::printMachineIR(std::ostream& s){
-
-}
-void ArmParallelAddsub::printMachineIR(std::ostream& s){
-
-}
-void ArmMulas::printMachineIR(std::ostream& s){
-
-}
-void ArmMove::printMachineIR(std::ostream& s){
-
-}
-void ArmMovwt::printMachineIR(std::ostream& s){
-
-}
-void ArmShift::printMachineIR(std::ostream& s){
-
-}
-void ArmCmp::printMachineIR(std::ostream& s){
-
-}
-void ArmIt::printMachineIR(std::ostream& s){
-
-}
-void ArmBranchLabel::printMachineIR(std::ostream& s){
-
-}
-void ArmBranchReg::printMachineIR(std::ostream& s){
-
-}
-void ArmBranchLabelreg::printMachineIR(std::ostream& s){
-
-}
-void ArmLoadStore::printMachineIR(std::ostream& s){
-
-}
-void ArmLoadStoreM::printMachineIR(std::ostream& s){
-
-}
-void ArmPushpop::printMachineIR(std::ostream& s){
-
-}
-void VFPVbin::printMachineIR(std::ostream& s){
-
-}
-void VFPVcmp::printMachineIR(std::ostream& s){
-
-}
-void VFPVcvt::printMachineIR(std::ostream& s){
-
-}
-void VFPVmov::printMachineIR(std::ostream& s){
-
-}
-void VFPVldst::printMachineIR(std::ostream& s){
-
-}
-void VFPVpushpop::printMachineIR(std::ostream& s){
-
-}
-void VFPVstm::printMachineIR(std::ostream& s){
-
-}
-void ArmPhiInstruction::printMachineIR(std::ostream& s){
-    s<<result<<" = phi ";
-    for(auto [label,roi] : phi_list){
-        s<<"["<<label<<","<<roi<<"],";
-    }
-    s<<" @"<<comment<<"\n";
 }
