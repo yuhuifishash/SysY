@@ -153,10 +153,5 @@ std::set<int> VFPVstm::GetWriteReg(){
 	return std::set<int>();
 }
 
-std::set<int> ArmPhiInstruction::GetReadReg(){
-	return std::set<int>();
-}
-std::set<int> ArmPhiInstruction::GetWriteReg(){
-	return std::set<int>();
-}
+
 

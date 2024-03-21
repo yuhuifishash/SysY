@@ -8,7 +8,7 @@
 #include <vector>
 class ArmBaseInstruction : public MachineBaseInstruction{
 public:
-    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM,PHI}ins_type;
+    enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM}ins_type;
     std::string comment;
 
     enum {EQ = 0,NE,CS_HS,CC_LO,MI,PL,VS,VC,HI,LS,GE,LT,GT,LE,AL};
@@ -16,7 +16,7 @@ public:
 
     virtual void printArm(std::ostream& s) = 0;
     virtual void printMachineIR(std::ostream& s) = 0;
-    ArmBaseInstruction(int cond,std::string comment):cond(cond),comment(comment){}
+    ArmBaseInstruction(int cond,std::string comment):cond(cond),comment(comment),MachineBaseInstruction(MachineBaseInstruction::ARM){}
 };
 
 void printCond(std::ostream& s,int cond);
@@ -422,29 +422,5 @@ public:
         ins_type = _VSTM;
     }
 };// VSTM VSTMDB VLDM VLDMDB
-class ArmPhiInstruction : public ArmBaseInstruction {
-public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
-public:
-    Register result;
-    std::vector<std::pair<Label,RegisterOrImm> >phi_list;
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-    ArmPhiInstruction(Register result,int cond,std::string comment = std::string()):result(result),ArmBaseInstruction(cond,comment){
-        ins_type = PHI;
-    }
-    void pushPhiList(Label label,Register reg){
-        RegisterOrImm re;
-        re.type = RegisterOrImm::REG;
-        re.properties.reg = reg;
-        phi_list.push_back(std::make_pair(label,re));
-    }
-    void pushPhiList(Label label,int imm32){
-        RegisterOrImm im;
-        im.type = RegisterOrImm::IMM;
-        im.properties.imm32 = imm32;
-        phi_list.push_back(std::make_pair(label,im));
-    }
-};
+
 #endif

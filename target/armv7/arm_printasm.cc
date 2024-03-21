@@ -1,4 +1,6 @@
 #include "arm_block.h"
+#include <assert.h>
+#include "MachinePhiInstruction.h"
 
 // Printing Instructions
 
@@ -113,7 +115,7 @@ void ArmPrinter::printArm<VFPVstm*>(VFPVstm* ins){
 }
 
 template<>
-void ArmPrinter::printArm<ArmPhiInstruction*>(ArmPhiInstruction* ins){
+void ArmPrinter::printArm<MachinePhiInstruction*>(MachinePhiInstruction* ins){
 	
 }
 
@@ -121,6 +123,12 @@ void ArmPrinter::printArm<ArmPhiInstruction*>(ArmPhiInstruction* ins){
 
 template<>
 void ArmPrinter::printArm<ArmBaseInstruction*>(ArmBaseInstruction* ins){
+    if(ins->arch == MachineBaseInstruction::PHI){
+        printArm<MachinePhiInstruction*>((MachinePhiInstruction*)ins);
+        return;
+    }else{
+        assert(ins->arch == MachineBaseInstruction::ARM);
+    }
     switch(ins->ins_type){
         case ArmBaseInstruction::BINARY:
             printArm<ArmBinary*>((ArmBinary*)ins);
@@ -188,8 +196,8 @@ void ArmPrinter::printArm<ArmBaseInstruction*>(ArmBaseInstruction* ins){
         case ArmBaseInstruction::_VSTM:
             printArm<VFPVstm*>((VFPVstm*)ins);
             break;
-        case ArmBaseInstruction::PHI:
-            printArm<ArmPhiInstruction*>((ArmPhiInstruction*)ins);
-            break;
+        // case ArmBaseInstruction::PHI:
+        //     printArm<ArmPhiInstruction*>((ArmPhiInstruction*)ins);
+        //     break;
     }
 }

@@ -44,7 +44,7 @@ std::ostream& operator<<(std::ostream& s,ShiftType typ){
     return s;
 }
 std::ostream& operator<<(std::ostream& s,Register reg){
-    reg.printArm(s);
+    // reg.printArm(s);
     return s;
 }
 std::ostream& operator<<(std::ostream& s,RmOpsh rmo){
@@ -63,12 +63,12 @@ std::ostream& operator<<(std::ostream& s,Label lbl){
     lbl.printArm(s);
     return s;
 }
-std::ostream& operator<<(std::ostream& s,RegisterOrImm roi){
-    roi.printArm(s);
-    return s;
-}
+// std::ostream& operator<<(std::ostream& s,RegisterOrImm roi){
+//     roi.printArm(s);
+//     return s;
+// }
 //-----Arm Field Print-----
-void Register::printArm(std::ostream& s){
+// void Register::printArm(std::ostream& s){
     // if(Virtual){
         // s<<"%";
     // }
@@ -80,7 +80,7 @@ void Register::printArm(std::ostream& s){
     //     s<<"d";
     // }
     // s<<reg_no;
-}
+// }
 
 void RmOpsh::printArm(std::ostream& s){
     if(type == RRX){
@@ -116,13 +116,13 @@ void Label::printArm(std::ostream& s){
     s<<label_name;
 }
 
-void RegisterOrImm::printArm(std::ostream& s){
-    if(type == RegisterOrImm::REG){
-        s<<properties.reg;
-    }else if(type == RegisterOrImm::IMM){
-        s<<properties.imm32;
-    }
-}
+// void RegisterOrImm::printArm(std::ostream& s){
+//     if(type == RegisterOrImm::REG){
+//         s<<properties.reg;
+//     }else if(type == RegisterOrImm::IMM){
+//         s<<properties.imm32;
+//     }
+// }
 //-------------------------
 
 //-----Arm Instruction Print-----
@@ -633,13 +633,13 @@ void VFPVstm::printArm(std::ostream& s){
     s<<" @"<<comment<<"\n";
 }
 
-void ArmPhiInstruction::printArm(std::ostream& s){
-    s<<result<<" = phi ";
-    for(auto [label,roi] : phi_list){
-        s<<"["<<label<<","<<roi<<"],";
-    }
-    s<<" @"<<comment<<"\n";
-}
+// void ArmPhiInstruction::printArm(std::ostream& s){
+//     s<<result<<" = phi ";
+//     for(auto [label,roi] : phi_list){
+//         s<<"["<<label<<","<<roi<<"],";
+//     }
+//     s<<" @"<<comment<<"\n";
+// }
 
 // void ArmBlock::emit(std::ostream& s){
 //     for(auto ins:instructions){

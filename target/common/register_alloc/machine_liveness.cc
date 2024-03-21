@@ -1,4 +1,5 @@
 #include "machine_block.h"
+#include "MachinePhiInstruction.h"
 
 template<class T>
 std::set<T> SetIntersect(const std::set<T>&a,const std::set<T>&b){
@@ -74,4 +75,10 @@ void MachineCFG::UpdateLiveness(){
             }
         }
     }
+}
+std::set<int> MachinePhiInstruction::GetReadReg(){
+	return std::set<int>();
+}
+std::set<int> MachinePhiInstruction::GetWriteReg(){
+	return std::set<int>();
 }

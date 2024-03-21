@@ -1,7 +1,7 @@
 #include "arm.h"
-void Register::printMachineIR(std::ostream& s){
-    printArm(s);
-}
+// void Register::printMachineIR(std::ostream& s){
+//     printArm(s);
+// }
 void RmOpsh::printMachineIR(std::ostream& s){
     if(type == RRX){
         s<<"("<<properties.RRX.Rm<<" RRX)";
@@ -32,17 +32,17 @@ void Rssh::printMachineIR(std::ostream& s){
 void Label::printMachineIR(std::ostream& s){
     s<<label_name;
 }
-void RegisterOrImm::printMachineIR(std::ostream& s){
-    if(type == RegisterOrImm::REG){
-        s<<properties.reg;
-    }else if(type == RegisterOrImm::IMM){
-        s<<properties.imm32;
-    }
-}
+// void RegisterOrImm::printMachineIR(std::ostream& s){
+//     if(type == RegisterOrImm::REG){
+//         s<<properties.reg;
+//     }else if(type == RegisterOrImm::IMM){
+//         s<<properties.imm32;
+//     }
+// }
 void ArmBinary::printMachineIR(std::ostream& s){
-    Rd.printMachineIR(s);
+    // Rd.printMachineIR(s);
     s<<" = ";
-    Rn.printMachineIR(s);
+    // Rn.printMachineIR(s);
     switch (opcode)
     {
     case ArmBinary::ADD:
@@ -144,10 +144,10 @@ void VFPVpushpop::printMachineIR(std::ostream& s){
 void VFPVstm::printMachineIR(std::ostream& s){
 
 }
-void ArmPhiInstruction::printMachineIR(std::ostream& s){
-    s<<result<<" = phi ";
-    for(auto [label,roi] : phi_list){
-        s<<"["<<label<<","<<roi<<"],";
-    }
-    s<<" @"<<comment<<"\n";
-}
+// void ArmPhiInstruction::printMachineIR(std::ostream& s){
+//     s<<result<<" = phi ";
+//     for(auto [label,roi] : phi_list){
+//         s<<"["<<label<<","<<roi<<"],";
+//     }
+//     s<<" @"<<comment<<"\n";
+// }

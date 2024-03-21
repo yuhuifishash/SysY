@@ -37,15 +37,15 @@ struct ArmPhysicalRegisterDescriptor{
     };
 };
 extern struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[];
-struct Register{
-public:
+// struct Register{
+// public:
     // bool Virtual;
     // enum {I32,FLOAT,DOUBLE}type;
-    int am_reg_no;
+    // int am_reg_no;
     // Register(bool Virtual,decltype(type) reg_type,int no):Virtual(Virtual),type(reg_type),reg_no(no){}
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-};
+//     void printArm(std::ostream& s);
+//     void printMachineIR(std::ostream& s);
+// };
 enum ShiftType{LSL = 0,LSR,ASR,ROR,RRX};
 struct RmOpsh{
     enum {RSHIFTI = 0,RRX}type;
@@ -159,22 +159,11 @@ public:
     void printMachineIR(std::ostream& s);
 };
 
-struct RegisterOrImm{
-public:
-    enum{REG = 0,IMM}type;
-    union prop{
-        Register reg;
-        int imm32;
-        prop(){}
-    }properties;
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-};
+
 std::ostream& operator<<(std::ostream& s,ShiftType typ);
 std::ostream& operator<<(std::ostream& s,Register reg);
 std::ostream& operator<<(std::ostream& s,RmOpsh rmo);
 std::ostream& operator<<(std::ostream& s,Operand2 op2);
 std::ostream& operator<<(std::ostream& s,Rssh rsh);
 std::ostream& operator<<(std::ostream& s,Label lbl);
-std::ostream& operator<<(std::ostream& s,RegisterOrImm roi);
 #endif

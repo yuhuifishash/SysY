@@ -29,10 +29,10 @@ void ArmPrinter::printArm<Label*>(Label* ins){
 	
 }
 
-template<>
-void ArmPrinter::printArm<RegisterOrImm*>(RegisterOrImm* ins){
+// template<>
+// void ArmPrinter::printArm<RegisterOrImm*>(RegisterOrImm* ins){
 	
-}
+// }
 
 // Printing fields
 // ^-----------------------------------
@@ -69,11 +69,11 @@ const ArmPrinter& ArmPrinter::operator<< <Label>(Label reg){
     return *this;
 }
 
-template<>
-const ArmPrinter& ArmPrinter::operator<< <RegisterOrImm>(RegisterOrImm reg){
-    printArm(&reg);
-    return *this;
-}
+// template<>
+// const ArmPrinter& ArmPrinter::operator<< <RegisterOrImm>(RegisterOrImm reg){
+//     printArm(&reg);
+//     return *this;
+// }
 
 // operator for object
 // ^------------------
@@ -110,8 +110,8 @@ const ArmPrinter& ArmPrinter::operator<< <Label*>(Label* reg){
     return *this;
 }
 
-template<>
-const ArmPrinter& ArmPrinter::operator<< <RegisterOrImm*>(RegisterOrImm* reg){
-    printArm(reg);
-    return *this;
-}
+// template<>
+// const ArmPrinter& ArmPrinter::operator<< <RegisterOrImm*>(RegisterOrImm* reg){
+//     printArm(reg);
+//     return *this;
+// }

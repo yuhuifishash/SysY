@@ -1,4 +1,6 @@
 #include "arm_block.h"
+#include "MachinePhiInstruction.h"
+#include <assert.h>
 
 template<>
 void ArmPrinter::printMachineIR<Register*>(Register* ins){
@@ -22,11 +24,6 @@ void ArmPrinter::printMachineIR<Rssh*>(Rssh* ins){
 
 template<>
 void ArmPrinter::printMachineIR<Label*>(Label* ins){
-	
-}
-
-template<>
-void ArmPrinter::printMachineIR<RegisterOrImm*>(RegisterOrImm* ins){
 	
 }
 
@@ -141,7 +138,7 @@ void ArmPrinter::printMachineIR<VFPVstm*>(VFPVstm* ins){
 }
 
 template<>
-void ArmPrinter::printMachineIR<ArmPhiInstruction*>(ArmPhiInstruction* ins){
+void ArmPrinter::printMachineIR<MachinePhiInstruction*>(MachinePhiInstruction* ins){
 	
 }
 
@@ -149,6 +146,11 @@ void ArmPrinter::printMachineIR<ArmPhiInstruction*>(ArmPhiInstruction* ins){
 
 template<>
 void ArmPrinter::printMachineIR<ArmBaseInstruction*>(ArmBaseInstruction* ins){
+    if(ins->arch == MachineBaseInstruction::PHI){
+        printMachineIR<MachinePhiInstruction*>((MachinePhiInstruction*)ins);
+    }else{
+        assert(ins->arch == MachineBaseInstruction::ARM);
+    }
     switch(ins->ins_type){
         case ArmBaseInstruction::BINARY:
             printMachineIR<ArmBinary*>((ArmBinary*)ins);
@@ -216,8 +218,8 @@ void ArmPrinter::printMachineIR<ArmBaseInstruction*>(ArmBaseInstruction* ins){
         case ArmBaseInstruction::_VSTM:
             printMachineIR<VFPVstm*>((VFPVstm*)ins);
             break;
-        case ArmBaseInstruction::PHI:
-            printMachineIR<ArmPhiInstruction*>((ArmPhiInstruction*)ins);
-            break;
+        // case ArmBaseInstruction::PHI:
+        //     printMachineIR<ArmPhiInstruction*>((ArmPhiInstruction*)ins);
+        //     break;
     }
 }
