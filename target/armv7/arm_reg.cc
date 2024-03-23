@@ -55,7 +55,7 @@ void ArmFunction::InitializeNewVirtualRegister(int vregno){
                 ArmPhysicalRegisterDescriptor::q2,
                 ArmPhysicalRegisterDescriptor::q3,
             };
-        }else if(am_registers[vregno].data_length = AmRegisterInfo::B64){
+        }else if(am_registers[vregno].data_length == AmRegisterInfo::B64){
 
         }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
 
@@ -63,7 +63,7 @@ void ArmFunction::InitializeNewVirtualRegister(int vregno){
     }else if(am_registers[vregno].data_type == AmRegisterInfo::INT){
         if(am_registers[vregno].data_length == AmRegisterInfo::B128){
 
-        }else if(am_registers[vregno].data_length = AmRegisterInfo::B64){
+        }else if(am_registers[vregno].data_length == AmRegisterInfo::B64){
 
         }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
 
