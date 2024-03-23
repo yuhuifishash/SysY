@@ -159,6 +159,12 @@ public:
     Label(std::string name):label_name(name){}
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
+/*
+    // Replace with these in future:
+    int jmp_label_id;
+    int seq_label_id;
+    
+*/
 };
 
 

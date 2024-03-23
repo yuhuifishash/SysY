@@ -1,4 +1,11 @@
 private:
+#define ITERATOR_INTERFACE \
+    void open();\
+    MachineCFGNode* next();\
+    bool hasNext();\
+    void rewind();\
+    void close();
+
     class SeqScanIterator : public Iterator{
     private:
         decltype(block_map.begin()) current;
@@ -19,11 +26,7 @@ private:
         std::stack<int> stk;
     public:
         DFSIterator(MachineCFG* mcfg):Iterator(mcfg){}
-        void open();
-        MachineCFGNode* next();
-        bool hasNext();
-        void rewind();
-        void close();
+        ITERATOR_INTERFACE
     };
     class BFSIterator : public Iterator{
     private:
@@ -31,12 +34,9 @@ private:
         std::queue<int> que;
     public:
         BFSIterator(MachineCFG* mcfg):Iterator(mcfg){}
-        void open();
-        MachineCFGNode* next();
-        bool hasNext();
-        void rewind();
-        void close();
+        ITERATOR_INTERFACE
     };
+#undef ITERATOR_INTERFACE
 public:
     DFSIterator* getDFSIterator(){return new DFSIterator(this);}
     BFSIterator* getBFSIterator(){return new BFSIterator(this);}

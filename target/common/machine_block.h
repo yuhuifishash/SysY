@@ -38,6 +38,7 @@ public:
     int GetNewRegister(int regtype,int regwidth);
 
     // Not implemented by now
+    // Not only CFG but also instructions need to be changed
     MachineBlock* CreateNewEmptyBlock(std::vector<int>pre,std::vector<int>succ);
     MachineBlock* InsertNewEmptyBlockBetweenEdge(int begin,int end);
     MachineBlock* InsertNewEmptyPreheaderBetweenThisAndAllPredecessors(int id);

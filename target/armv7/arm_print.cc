@@ -4,6 +4,7 @@ void ArmPrinter::emit(){
     for(auto func:printee->functions){
         current_func = func;
         s<<func->func_name<<":\n";
+        // May use iterator instead of directly accessing vector<blocks> in future
         for(auto block:func->blocks){
             s<<func->func_name<<block->label_id<<":\n";
             cur_block = block;

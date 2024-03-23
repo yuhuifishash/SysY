@@ -165,6 +165,9 @@ void ArmSelector::SelectInstructionAndBuildCFG(){
 
         ClearFunctionSelectState();
 
+        // Can also (?) create new blocks and build cfg all in ConvertAndAppend<br_uncond/br_cond>
+
+
         for(auto [id,block]:*(cfg->block_map)){
             // We assume IR blocks have already been concated
             cur_block = new ArmBlock(id);
