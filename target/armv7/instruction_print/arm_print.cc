@@ -8,7 +8,7 @@ void ArmPrinter::emit(){
         for(auto block:func->blocks){
             s<<func->func_name<<block->label_id<<":\n";
             cur_block = block;
-            for(auto ins:block->instructions){
+            for(auto ins:*block){
                 s<<"\t";
                 ins_offset += 4;
 
@@ -26,7 +26,7 @@ void ArmPrinter::printMachineIR(){
         for(auto block:func->blocks){
             s<<func->func_name<<block->label_id<<":\n";
             cur_block = block;
-            for(auto ins:block->instructions){
+            for(auto ins:*block){
                 s<<"\t";
                 printMachineIR<ArmBaseInstruction*>((ArmBaseInstruction*)ins);
             }

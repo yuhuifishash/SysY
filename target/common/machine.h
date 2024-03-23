@@ -57,8 +57,15 @@ public:
 class MachineBlock{
 public:
     int label_id;
+private:
     std::deque<MachineBaseInstruction*> instructions;
+public:
     MachineFunction* parent;
+public:
+    auto begin(){return instructions.begin();}
+    auto end(){return instructions.end();}
+    void push_back(MachineBaseInstruction* ins){instructions.push_back(ins);}
+    void push_front(MachineBaseInstruction* ins){instructions.push_front(ins);}
     MachineBlock(int id):label_id(id){}
 };
 
@@ -86,7 +93,6 @@ public:
     std::vector<MachineCFGNode*> GetPredecessorsByBlockId(int id){return G[id];}
 
     void UpdateLiveness();
-    // void UpdateLiveInterval(bool updateliveness = false);
     std::set<int> GetIN(int bid){return block_map[bid]->IN;}
     std::set<int> GetOUT(int bid){return block_map[bid]->OUT;}
     std::set<int> GetDef(int bid){return block_map[bid]->DEF;}
@@ -105,7 +111,7 @@ private:
         virtual void rewind() = 0;
         virtual void close() = 0;
     };
-#include "CFGIterators.h"
+#include "cfg_iterators/CFGIterators.h"
 };
 
 class MachineSelector{

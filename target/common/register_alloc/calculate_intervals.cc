@@ -17,7 +17,7 @@ void RegisterAlloc::UpdateIntervals(){
             // Extend or add new Range
             // do sth for intervals[reg]
         }
-        for(auto ins : mcfg_node->Mblock->instructions){
+        for(auto ins : *(mcfg_node->Mblock)){
             for(auto reg : ins->GetWriteReg()){
                 // Cut intervals[reg]
                 // do sth for intervals[reg]

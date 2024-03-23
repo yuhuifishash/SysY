@@ -34,7 +34,7 @@ std::set<T> SetDiff(const std::set<T>&a,const std::set<T>&b){
 void MachineCFG::MachineCFGNode::UpdateDefUse(){
     DEF.clear();
     USE.clear();
-    for(auto ins:Mblock->instructions){
+    for(auto ins:*Mblock){
         for(auto reg_r:ins->GetReadReg()){
             if(DEF.find(reg_r) == DEF.end()){
                 USE.insert(reg_r);
