@@ -3,7 +3,7 @@
 
 extern std::map<std::string,CFG*> CFGMap;
 
-static std::map<int,bool> InvariantMap;
+static std::map<int,bool> InvariantMap;//<RegNO, is_invariant>
 static std::map<int,Instruction> ResultMap;
 
 bool IsDomExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
@@ -98,11 +98,9 @@ void CalculateLoopRegisterPressure(CFG* C,NaturalLoop* L)
     
 }
 
-
-void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
 {
     auto InvariantInsList = CalculateInvariant(C,L);
-    //for(auto I:InvariantInsList){I->PrintIR(std::cerr);}
     std::set<Instruction> EraseSet;
 
     //remove end instructions temporarily to accelerate instruction inserting
@@ -138,9 +136,18 @@ void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 
 
     L->preheader->InsertInstruction(1,endI);
+}
 
+void SingleLoopMemoryLICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+{
+    
+}
+
+void DFSLoopForest4LICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+{
+    SingleLoopLICM(C,loop_forest,L);
     for(auto lv:loop_forest.loopG[L->loop_id]){
-        DFSLoopForest(C,loop_forest,lv);
+        DFSLoopForest4LICM(C,loop_forest,lv);
     }
 }
 
@@ -163,7 +170,7 @@ void LoopInvariantCodeMotion(CFG* C)
     }
     for(auto l:C->LoopForest.loop_set){
         if(l->fa_loop == nullptr){
-            DFSLoopForest(C,C->LoopForest,l);
+            DFSLoopForest4LICM(C,C->LoopForest,l);
         }
     }
 }
