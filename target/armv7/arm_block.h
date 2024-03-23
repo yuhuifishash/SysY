@@ -56,6 +56,5 @@ public:
 
     template<class INSORFLDPTR>void printArm(INSORFLDPTR);
     template<class INSORFLDPTR>void printMachineIR(INSORFLDPTR);
-    template<class FLDORPTR>const ArmPrinter& operator<<(FLDORPTR);
 };
 #endif

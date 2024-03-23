@@ -20,9 +20,6 @@ public:
     ArmBaseInstruction(int cond,std::string comment):cond(cond),comment(comment),MachineBaseInstruction(MachineBaseInstruction::ARM){}
 };
 
-void printCond(std::ostream& s,int cond);
-void printRegList(std::ostream& s,const std::vector<Register>& reglist);
-
 class ArmBinary : public ArmBaseInstruction{
 public:
     std::set<int> GetReadReg();
@@ -258,14 +255,16 @@ public:
     union{
         int offset;
         RmOpsh Rmsh;
-    }OFFSET;// not used when offset_type == LABEL
+    };// not used when offset_type == LABEL
+    Label addr_label;// not used when offset_type != LABEL
+
     bool ispreindex;// not used when offset_type == LABEL
     bool dowriteback;// not used when offset_type == LABEL
-    Label addr_label;// not used when offset_type != LABEL
+
     void printArm(std::ostream& s);
     void printMachineIR(std::ostream& s);
     ArmLoadStore(int op,int size,bool T,Register Rd,Register Rn,int offset_type,bool ispreindex,bool dowriteback,Label addr_label,int cond,std::string comment = std::string())
-    :op(op),size(size),T(T),Rd(Rd),Rn(Rn),offset_type(offset_type),OFFSET(OFFSET),ispreindex(ispreindex),dowriteback(dowriteback),addr_label(addr_label),ArmBaseInstruction(cond,comment){
+    :op(op),size(size),T(T),Rd(Rd),Rn(Rn),offset_type(offset_type),ispreindex(ispreindex),dowriteback(dowriteback),addr_label(addr_label),ArmBaseInstruction(cond,comment){
         ins_type = LOADSTORE;
     }
 };
@@ -389,7 +388,7 @@ public:
     VFPVldst(int op,Register Fd,Label label,int cond,std::string comment)
     :VFPVldst(op,Fd,Register(),label,1,cond,comment){}
     VFPVldst(int op,Register Fd,Register Rn,int immed)
-    :VFPVldst(op,Fd,Rn,std::string(),0,cond,comment){}
+    :VFPVldst(op,Fd,Rn,Label(0,false),0,cond,comment){}
 };// VLDR VSTR
 class VFPVpushpop : public ArmBaseInstruction {
 public:

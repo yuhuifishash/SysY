@@ -18,11 +18,6 @@ void ArmPrinter::printMachineIR<Operand2*>(Operand2* ins){
 }
 
 template<>
-void ArmPrinter::printMachineIR<Rssh*>(Rssh* ins){
-	
-}
-
-template<>
 void ArmPrinter::printMachineIR<Label*>(Label* ins){
 	
 }
