@@ -1,12 +1,15 @@
-#ifndef DynamicBitset_H
-#define DynamicBitset_H
+#ifndef CH3BITSET_H
+#define CH3BITSET_H
 class DynamicBitset{
 private:
     int bit_width;
     int bit_array_length;
-    long long* bits;
+    long* bits;
 public:
-    DynamicBitset(int bit_width):bit_width(bit_width),bit_array_length((bit_width+63)/64),bits(new long long[bit_array_length]){
+    DynamicBitset(int bit_width):
+        bit_width(bit_width),
+        bit_array_length((bit_width+sizeof(long)-1)/sizeof(long)),
+        bits(new long[bit_array_length]){
         for(int i=0;i<bit_array_length;i++){
             bits[i] = 0;
         }
@@ -33,5 +36,7 @@ public:
     
     bool operator==(DynamicBitset);// Deep Compare
     bool operator!=(DynamicBitset);// return !(*this == other)
+
+    DynamicBitset(const DynamicBitset&);
 };
 #endif
