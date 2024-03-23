@@ -9,7 +9,14 @@ private:
     }*segments;
 public:
     LiveInterval():segment_count(0),segments(nullptr){}
+    
+    // Needs to be implemented (?)
     void AddNewInterval(int,int){}
+ 
+    // There should be more operations for convenience in calculating live interval
+
+
+    // Unsure if it's useful
     class iterator{
     private:
         struct LiveSegment* current;

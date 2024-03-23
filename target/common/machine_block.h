@@ -20,15 +20,29 @@ public:
 
 class MachineFunction{
 public:
+//private:
     std::string func_name;
     MachineUnit* parent;
     MachineCFG* mcfg;
+public:
+    MachineCFG* getMachineCFG(){return mcfg;}
+    MachineUnit* getParentMachineUnit(){return parent;}
+    std::string getFunctionName(){return func_name;}
+
+    // May be removed in future (?)
+    // You can also iterate blocks in MachineCFG
     std::vector<MachineBlock*> blocks{};
+    
     std::map<int,AmRegisterInfo> am_registers{};
 
     int GetNewRegister(int regtype,int regwidth);
-    // MachineBlock* GetNewEmptyBlock(std::vector<int>pre,std::vector<int>succ);
-    // MachineBlock* InsertNewEmptyBlockBetweenEdge(int begin,int end);
+
+    // Not implemented by now
+    MachineBlock* CreateNewEmptyBlock(std::vector<int>pre,std::vector<int>succ);
+    MachineBlock* InsertNewEmptyBlockBetweenEdge(int begin,int end);
+    MachineBlock* InsertNewEmptyPreheaderBetweenThisAndAllPredecessors(int id);
+    MachineBlock* InsertNewEmptySuccessorBetweenThisAndAllSuccessors(int id);
+
 protected:
     virtual void InitializeNewVirtualRegister(int vregno) = 0;
 public:
