@@ -19,6 +19,9 @@ public:
 
     //if is_rotate is true, the loop body must execute once or more
     bool is_rotate;
+    
+    //if is_lcssa is true, the var def in loop can not use outside the loop
+    bool is_lcssa;
 
     NaturalLoop* fa_loop = nullptr;
 

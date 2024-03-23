@@ -32,6 +32,12 @@ int main()
     //int t;
     i=getint();
     m=getint();
+    int a = getint();
+    int b = getint();
+    int c = getint();
+    while(i < a*b*c){
+        i = i + 1;
+    }
     
     return gcd(i,m);
 }
