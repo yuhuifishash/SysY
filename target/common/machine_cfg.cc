@@ -1,4 +1,4 @@
-#include "machine_block.h"
+#include "machine.h"
 #include "assert.h"
 void MachineCFG::AssignEmptyNode(int id,MachineBlock* Mblk){
     MachineCFGNode* node = new MachineCFGNode;

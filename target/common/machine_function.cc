@@ -1,4 +1,4 @@
-#include "machine_block.h"
+#include "machine.h"
 
 int MachineFunction::GetNewRegister(int regtype,int reglength){
     int new_regno;

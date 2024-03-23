@@ -1,5 +1,5 @@
-#include "machine_block.h"
-#include "assert.h"
+#include "machine.h"
+#include <assert.h>
 void MachineCFG::DFSIterator::open(){
     visited.clear();
     while(!stk.empty())stk.pop();

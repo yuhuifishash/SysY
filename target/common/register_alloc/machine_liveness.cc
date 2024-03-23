@@ -1,4 +1,4 @@
-#include "machine_block.h"
+#include "machine.h"
 #include "MachinePhiInstruction.h"
 
 template<class T>

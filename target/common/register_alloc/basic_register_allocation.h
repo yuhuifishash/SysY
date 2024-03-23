@@ -1,7 +1,7 @@
 #ifndef BASIC_REGISTER_ALLOCATION_H
 #define BASIC_REGISTER_ALLOCATION_H
 #include "liveinterval.h"
-#include "machine_block.h"
+#include "machine.h"
 #include <vector>
 class RegisterAlloc{
 protected:
