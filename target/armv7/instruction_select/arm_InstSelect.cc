@@ -183,17 +183,18 @@ void ArmSelector::SelectInstructionAndBuildCFG(){
         for(int i = 0;i < cfg->G.size();i++){
             const auto& arcs = cfg->G[i];
             for(auto arc : arcs){
-                auto arc_m = cur_mcfg->block_map[arc->block_id];
-                cur_mcfg->G[i].push_back(arc_m);
+                // auto arc_m = cur_mcfg->block_map[arc->block_id];
+                // cur_mcfg->G[i].push_back(arc_m);
+                cur_mcfg->MakeEdge(i,arc->block_id);
             }
         }
-        for(int i = 0;i < cfg->invG.size();i++){
-            const auto& arcs = cfg->invG[i];
-            for(auto arc : arcs){
-                auto arc_m = cur_mcfg->block_map[arc->block_id];
-                cur_mcfg->invG[i].push_back(arc_m);
-            }
-        }
+        // for(int i = 0;i < cfg->invG.size();i++){
+        //     const auto& arcs = cfg->invG[i];
+        //     for(auto arc : arcs){
+        //         auto arc_m = cur_mcfg->block_map[arc->block_id];
+        //         cur_mcfg->invG[i].push_back(arc_m);
+        //     }
+        // }
     }
 }
 

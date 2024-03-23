@@ -27,6 +27,8 @@ public:
     std::map<int,AmRegisterInfo> am_registers{};
 
     int GetNewRegister(int regtype,int regwidth);
+    // MachineBlock* GetNewEmptyBlock(std::vector<int>pre,std::vector<int>succ);
+    // MachineBlock* InsertNewEmptyBlockBetweenEdge(int begin,int end);
 protected:
     virtual void InitializeNewVirtualRegister(int vregno) = 0;
 public:
@@ -55,20 +57,40 @@ private:
         void UpdateDefUse();
     };
     void UpdateDefUse();
-public:
+private:
     std::map<int,MachineCFGNode*> block_map{};
     std::vector<std::vector<MachineCFGNode*> > G{},invG{};
-    void AssignEmptyNode(int id,MachineBlock* Mblk){
-        MachineCFGNode* node = new MachineCFGNode;
-        node->Mblock = Mblk;
-        block_map[id] = node;
-    }
+    // std::vector<std::vector<int> > G{},invG{};
+public:
+    void AssignEmptyNode(int id,MachineBlock* Mblk);
+    void MakeEdge(int edg_begin,int edg_end);
+    void RemoveEdge(int edg_begin,int edg_end);
+
+    MachineCFGNode* GetNodeByBlockId(int id){return block_map[id];}
+    std::vector<MachineCFGNode*> GetSuccessorsByBlockId(int id){return G[id];}
+    std::vector<MachineCFGNode*> GetPredecessorsByBlockId(int id){return G[id];}
+
     void UpdateLiveness();
     // void UpdateLiveInterval(bool updateliveness = false);
     std::set<int> GetIN(int bid){return block_map[bid]->IN;}
     std::set<int> GetOUT(int bid){return block_map[bid]->OUT;}
     std::set<int> GetDef(int bid){return block_map[bid]->DEF;}
     std::set<int> GetUse(int bid){return block_map[bid]->USE;}
+
+private:
+    class Iterator{
+    protected:
+        MachineCFG* mcfg;
+    public:
+        Iterator(MachineCFG* mcfg):mcfg(mcfg){}
+        MachineCFG* getMachineCFG(){return mcfg;}
+        virtual void open() = 0;
+        virtual MachineCFGNode* next() = 0;
+        virtual bool hasNext() = 0;
+        virtual void rewind() = 0;
+        virtual void close() = 0;
+    };
+#include "CFGIterators.h"
 };
 
 class MachineSelector{
