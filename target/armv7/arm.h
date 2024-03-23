@@ -6,6 +6,7 @@
 #include "Instruction.h"
 #include <iostream>
 #include <vector>
+#pragma GCC diagnostic ignored "-Wuninitialized"
 class ArmBaseInstruction : public MachineBaseInstruction{
 public:
     enum {BINARY = 0,ADDSUBIMM,PARALLELADDSUB,MULAS,MOVE,MOVWT,SHIFT,_CMP,IT,BRANCH_LABEL,BRANCH_REG,BRANCH_LABELREG,LOADSTORE,LOADSTOREM,PUSHPOP,VBIN,VCMP,VCVT,VLDST,VMOV,VPUSHPOP,_VSTM}ins_type;

@@ -13,6 +13,9 @@ struct AmRegisterInfo{
     int physical_register_descriptor_index;
     // RegisterAlloc result in MachineFunction
 
+    int mem_offset;
+    // Only valid when spilled
+
     std::vector<int> accessible_physical_registers;
 };
 

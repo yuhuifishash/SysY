@@ -64,6 +64,7 @@ public:
         block_map[id] = node;
     }
     void UpdateLiveness();
+    // void UpdateLiveInterval(bool updateliveness = false);
     std::set<int> GetIN(int bid){return block_map[bid]->IN;}
     std::set<int> GetOUT(int bid){return block_map[bid]->OUT;}
     std::set<int> GetDef(int bid){return block_map[bid]->DEF;}
