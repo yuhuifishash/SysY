@@ -1,7 +1,6 @@
-#include "arm_printer.h"
-#include "MachinePhiInstruction.h"
-void ArmPrinter::emit(){
-    ins_offset = 0;
+#include "riscv64_printer.h"
+#include <assert.h>
+void RiscV64Printer::emit(){
     for(auto func:printee->functions){
         current_func = func;
         s<<func->func_name<<":\n";
@@ -11,20 +10,18 @@ void ArmPrinter::emit(){
             cur_block = block;
             for(auto ins:*block){
                 s<<"\t";
-                ins_offset += 4;
 
-                if(ins->arch == MachineBaseInstruction::ARM){
-                    printArm<ArmBaseInstruction*>((ArmBaseInstruction*)ins);
+                if(ins->arch == MachineBaseInstruction::RiscV){
+                    printAsm((RiscV64Instruction*)ins);
                 }else if(ins->arch == MachineBaseInstruction::PHI){
-                    printArm<MachinePhiInstruction*>((MachinePhiInstruction*)ins);
+
                 }
             }
         }
     }
 }
 
-void ArmPrinter::printMachineIR(){
-    ins_offset = 0;
+void RiscV64Printer::printMachineIR(){
     for(auto func:printee->functions){
         current_func = func;
         s<<func->func_name<<":\n";
@@ -33,10 +30,11 @@ void ArmPrinter::printMachineIR(){
             cur_block = block;
             for(auto ins:*block){
                 s<<"\t";
-                if(ins->arch == MachineBaseInstruction::ARM){
-                    printMachineIR<ArmBaseInstruction*>((ArmBaseInstruction*)ins);
+
+                if(ins->arch == MachineBaseInstruction::RiscV){
+                    printMachineIR((RiscV64Instruction*)ins);
                 }else if(ins->arch == MachineBaseInstruction::PHI){
-                    printMachineIR<MachinePhiInstruction*>((MachinePhiInstruction*)ins);
+
                 }
             }
         }

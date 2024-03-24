@@ -88,23 +88,4 @@ public:
     }
 };
 
-struct Label{
-public:
-    union{
-        int jmp_label_id;
-        int mem_label_id;
-        int print_label_id;
-    };
-    int seq_label_id;
-    bool is_data_address;
-    Label(int jmp,int seq){
-        this->jmp_label_id = jmp;
-        this->seq_label_id = seq;
-    }
-    Label(int jmp,bool is_data_address = false){
-        this->is_data_address = is_data_address;
-        this->jmp_label_id = jmp;
-    }
-};
-
 #endif
