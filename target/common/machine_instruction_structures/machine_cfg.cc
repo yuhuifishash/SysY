@@ -6,6 +6,7 @@ void MachineCFG::AssignEmptyNode(int id,MachineBlock* Mblk){
     block_map[id] = node;
 }
 
+// Just modify CFG edge, no change on branch instructions
 void MachineCFG::MakeEdge(int edg_begin,int edg_end){
     assert(block_map.find(edg_begin) != block_map.end());
     assert(block_map.find(edg_end) != block_map.end());
@@ -13,6 +14,7 @@ void MachineCFG::MakeEdge(int edg_begin,int edg_end){
     invG[edg_end].push_back(block_map[edg_begin]);
 }
 
+// Just modify CFG edge, no change on branch instructions
 void MachineCFG::RemoveEdge(int edg_begin,int edg_end){
     assert(block_map.find(edg_begin) != block_map.end());
     assert(block_map.find(edg_end) != block_map.end());

@@ -1,4 +1,4 @@
-#include "machine.h"
-void ArmPhiDestruction(MachineCFG* mcfg){
+#include "arm.h"
+void ArmPhiDestruction(MachineFunction* mfunc){
 
 }

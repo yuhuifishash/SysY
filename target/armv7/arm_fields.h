@@ -1,7 +1,6 @@
 #ifndef ARM_FIELDS_H
 #define ARM_FIELDS_H
 #include <string>
-#include <iostream>
 #include "MachineBaseInstruction.h"
 /*
 struct ArmCPU{

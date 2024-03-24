@@ -1,7 +1,11 @@
-#include "arm_block.h"
+#include "arm_structures.h"
 
-void MachineUnit::PassExecutor(void (*Pass)(MachineCFG*)){
-    for(auto func : functions){
-        func->PassExecutor(Pass);
-    }
+void ArmFunction::MoveAllPredecessorsBranchTargetToNewBlock(int original_target,int new_target){
+	
+}
+void ArmFunction::MoveOnePredecessorBranchTargetToNewBlock(int pre,int original_target,int new_target){
+	
+}
+void ArmFunction::YankBranchInstructionToNewBlock(int original_block_id,int new_block){
+	
 }

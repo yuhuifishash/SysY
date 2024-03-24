@@ -1,7 +1,7 @@
 #ifndef ARM_PRINTOP_H
 #define ARM_PRINTOP_H
 #include "arm_fields.h"
-#include "arm_block.h"
+class ArmPrinter;
 
 // operator<< for fields
 ArmPrinter& operator<< (ArmPrinter&,Register);

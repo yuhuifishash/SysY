@@ -1,5 +1,4 @@
-#include "arm_fields.h"
-#include "arm_block.h"
+#include "arm.h"
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"
 struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[]={

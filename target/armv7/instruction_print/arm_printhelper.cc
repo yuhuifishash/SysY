@@ -1,4 +1,5 @@
 #include "arm_printhelper.h"
+#include "arm_instructions.h"
 void printCond(std::ostream& s,int cond){
     switch(cond){
 	case ArmBaseInstruction::EQ:
