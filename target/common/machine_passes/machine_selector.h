@@ -1,6 +1,6 @@
 #ifndef MACHINE_SELECTOR_H
 #define MACHINE_SELECTOR_H
-#include "machine.h"
+#include "../machine_instruction_structures/machine.h"
 class MachineSelector{
 protected:
     MachineUnit* dest;

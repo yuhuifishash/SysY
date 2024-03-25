@@ -1,4 +1,4 @@
-#include "machine.h"
+#include "../machine.h"
 #include <assert.h>
 void MachineCFG::DFSIterator::open(){
     visited.clear();

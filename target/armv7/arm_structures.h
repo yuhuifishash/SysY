@@ -4,7 +4,7 @@
 #include <deque>
 #include <string>
 #include <iostream>
-#include "machine.h"
+#include "../common/machine_instruction_structures/machine.h"
 
 class ArmFunction;
 class ArmUnit;

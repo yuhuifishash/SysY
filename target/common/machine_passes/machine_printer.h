@@ -1,6 +1,6 @@
 #ifndef MACHINE_PRINTER_H
 #define MACHINE_PRINTER_H
-#include "machine.h"
+#include "../machine_instruction_structures/machine.h"
 class MachinePrinter{
 protected:
     MachineUnit* printee;

@@ -2,8 +2,8 @@
 #define AM_REGISTER_H
 #include <vector>
 struct AmRegisterInfo{
-    enum{INT,FLOAT};
-    enum{B32,B64,B128};
+    enum {INT,FLOAT};
+    enum {B32,B64,B128};
     unsigned data_type:1;
     unsigned data_length:2;
 

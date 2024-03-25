@@ -1,7 +1,7 @@
 #ifndef RV64_STRUCTURES_H
 #define RV64_STRUCTURES_H
 #include "riscv64_instructions.h"
-#include "machine.h"
+#include "../common/machine_instruction_structures/machine.h"
 class RiscV64Function;
 class RiscV64Unit;
 
