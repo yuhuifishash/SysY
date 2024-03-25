@@ -45,6 +45,15 @@ private:
         virtual void rewind() = 0;
         virtual void close() = 0;
     };
-#include "cfg_iterators/CFGIterators.h"
+    class SeqScanIterator;
+    class ReverseIterator;
+    class DFSIterator;
+    class BFSIterator;
+public:
+    DFSIterator* getDFSIterator();
+    BFSIterator* getBFSIterator();
+    SeqScanIterator* getSeqScanIterator();
+    ReverseIterator* getReverseIterator(Iterator*);
 };
+#include "cfg_iterators/cfg_iterators.h"
 #endif

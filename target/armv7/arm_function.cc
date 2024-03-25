@@ -9,3 +9,6 @@ void ArmFunction::MoveOnePredecessorBranchTargetToNewBlock(int pre,int original_
 void ArmFunction::YankBranchInstructionToNewBlock(int original_block_id,int new_block){
 	
 }
+void ArmFunction::AppendUncondBranchInstructionToNewBlock(int new_block,int br_target){
+
+}

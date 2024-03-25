@@ -9,4 +9,6 @@ void RiscV64Function::MoveOnePredecessorBranchTargetToNewBlock(int pre,int origi
 void RiscV64Function::YankBranchInstructionToNewBlock(int original_block_id,int new_block){
 	
 }
+void RiscV64Function::AppendUncondBranchInstructionToNewBlock(int new_block,int br_target){
 
+}

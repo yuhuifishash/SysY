@@ -21,6 +21,7 @@ protected:
     void MoveAllPredecessorsBranchTargetToNewBlock(int original_target,int new_target);
     void MoveOnePredecessorBranchTargetToNewBlock(int pre,int original_target,int new_target);
     void YankBranchInstructionToNewBlock(int original_block_id,int new_block);
+    void AppendUncondBranchInstructionToNewBlock(int new_block,int br_target);
 };
 
 class ArmUnit : public MachineUnit{

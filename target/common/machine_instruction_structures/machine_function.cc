@@ -16,12 +16,17 @@ int MachineFunction::GetNewRegister(int regtype,int reglength){
 MachineBlock* MachineFunction::CreateNewEmptyBlock(std::vector<int>pre,std::vector<int>succ){
     return nullptr;
 }
-MachineBlock* MachineFunction::InsertNewEmptyBlockBetweenEdge(int begin,int end){
+MachineBlock* MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin,int end){
     return nullptr;
 }
-MachineBlock* MachineFunction::InsertNewEmptyPreheaderBetweenThisAndAllPredecessors(int id){
+MachineBlock* MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id){
     return nullptr;
 }
-MachineBlock* MachineFunction::InsertNewEmptySuccessorBetweenThisAndAllSuccessors(int id){
+MachineBlock* MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id){
     return nullptr;
+}
+void RedirectPhiNodePredecessor(int phi_block,int old_predecessor,int new_predecessor){
+    // in phi_block, find all phi_instructions containing <label old_predecessor> in phi instruction
+    // then replace <label old_predecessor> to <label new_predecessor>
+
 }

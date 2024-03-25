@@ -1,5 +1,5 @@
-#include "../machine.h"
-#include "assert.h"
+#include "cfg_iterators.h"
+#include <assert.h>
 void MachineCFG::BFSIterator::open(){
     visited.clear();
     while(!que.empty())que.pop();

@@ -7,6 +7,7 @@ protected:
     MachineFunction* current_func;
     MachineBlock* cur_block;
 public:
-
+    virtual void Execute() = 0;
+    MachinePass(MachineUnit* unit):unit(unit){}
 };
 #endif

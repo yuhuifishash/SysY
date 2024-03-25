@@ -3,7 +3,7 @@
 #include "MachineBaseInstruction.h"
 #include <vector>
 class MachinePhiInstruction : public MachineBaseInstruction {
-private:
+public:
     struct RegisterOrImm{
     public:
         bool isimm32:1;
