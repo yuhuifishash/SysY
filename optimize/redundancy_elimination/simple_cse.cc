@@ -68,7 +68,7 @@ bool CanCSE(Instruction I)
             return false;
         }
         auto cfg = CFGMap[CallI->GetFunctionName()];
-        if(cfg->FunctionInfo.is_no_side_effect == false){
+        if(cfg->FunctionInfo.is_independent == false){
             return false;
         }
     }
