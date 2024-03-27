@@ -4,7 +4,7 @@
 class FunctionBasicInfo
 {
 public:
-    bool is_pure_function = false;
+    bool is_no_side_effect = false;
     bool is_direct_recursive = false;
     int inst_number = 0;
     int bb_number = 0;

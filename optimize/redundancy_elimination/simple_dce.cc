@@ -38,7 +38,7 @@ void SimpleDCE(CFG* C)
                 auto CallI = (CallInstruction*)resultI;
                 if(CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()){continue;}
                 auto target_cfg = CFGMap[CallI->GetFunctionName()];
-                if(!target_cfg->FunctionInfo.is_pure_function){continue;}
+                if(!target_cfg->FunctionInfo.is_no_side_effect){continue;}
             }
 
             EraseSet.insert(resultI);

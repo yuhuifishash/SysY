@@ -25,7 +25,7 @@ bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
         auto tI = (CallInstruction*)I;
         if(CFGMap.find(tI->GetFunctionName()) == CFGMap.end()){return false;}
         auto target_cfg = CFGMap[tI->GetFunctionName()];
-        if(!target_cfg->FunctionInfo.is_pure_function){
+        if(!target_cfg->FunctionInfo.is_no_side_effect){
             return false;//not pure function, can not move
         }
         //I->printIR(std::cerr);
