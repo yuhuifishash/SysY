@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include "ir.h"
+#include "alias_analysis.h"
 #include <functional>
 
 /*this pass will do some simple common subexpression elimination

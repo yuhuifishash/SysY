@@ -75,7 +75,7 @@ std::vector<Instruction> CalculateInvariant(CFG* C, NaturalLoop* L)
 
     std::vector<Instruction> InvariantInsList;
     std::set<Instruction> InsVisited;
-
+    
     int change_flag = 1;
     while(change_flag){
         change_flag = 0;
@@ -93,11 +93,6 @@ std::vector<Instruction> CalculateInvariant(CFG* C, NaturalLoop* L)
     return InvariantInsList;
 }
 
-void CalculateLoopRegisterPressure(CFG* C,NaturalLoop* L)
-{
-    
-}
-
 void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
 {
     auto InvariantInsList = CalculateInvariant(C,L);
@@ -111,7 +106,6 @@ void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
         auto I = *it;
         //the def instruction should dominate all the exitingBB
         if(IsDomExitBB(C,(*(C->block_map))[I->GetBlockID()],L)){
-            //TODO: calculate the loop register pressure
 
             //move to preheader
             EraseSet.insert(I);
