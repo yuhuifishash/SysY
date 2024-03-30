@@ -1,7 +1,7 @@
 #ifndef ALIAS_ANALYSIS_H
 #define ALIAS_ANALYSIS_H
 
-#include "../../include/cfg.h"
+#include "../../include/Instruction.h"
 
 enum AliasResult{
     NoAlias = 1,

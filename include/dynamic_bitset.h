@@ -1,5 +1,5 @@
-#ifndef CH3BITSET_H
-#define CH3BITSET_H
+#ifndef DYNAMIC_BITSET_H
+#define DYNAMIC_BITSET_H
 class DynamicBitset{
 private:
     int bit_width;

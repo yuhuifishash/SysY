@@ -1,4 +1,4 @@
-#include "cfg.h"
+#include "../include/ir.h"
 
 /**
     * this function will make function only has one return block.
@@ -73,9 +73,9 @@ void TailRecursiveEliminate(CFG* C)
 
 
 
-void FunctionInline()
+void FunctionInline(LLVMIR* IR)
 {
-
+    
 }
 
 

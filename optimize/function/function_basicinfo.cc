@@ -1,5 +1,5 @@
 #include "function_basicinfo.h"
-#include "ir.h"
+#include "../include/ir.h"
 
 extern std::map<std::string,CFG*> CFGMap;
 static std::map<CFG*,std::vector<CallInstruction*> > CallInstList;
