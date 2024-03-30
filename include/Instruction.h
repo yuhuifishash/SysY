@@ -213,6 +213,7 @@ public:
     static AutoCounter insNoCounter;//instruction No counter
     int GetOpcode(){return opcode;}//one solution: convert to pointer of subclasses
 
+    virtual LLVMType GetResultType(){return VOID;}
     virtual void PrintIR(std::ostream& s) = 0;
     virtual int GetResultRegNo() = 0;
     virtual Operand GetResultReg() = 0;
@@ -244,6 +245,8 @@ public:
         this->result=result;
         this->pointer=pointer;
     }
+
+    virtual LLVMType GetResultType(){return type;}
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     int GetUseRegNo(){return ((RegOperand*)pointer)->GetRegNo();}
@@ -273,6 +276,8 @@ public:
         this->pointer=pointer;
         this->value=value;
     }
+
+    virtual LLVMType GetResultType(){return VOID;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
     Operand GetResultReg(){return nullptr;}
@@ -310,6 +315,8 @@ public:
         this->result=result;
         this->type=type;
     }
+
+    virtual LLVMType GetResultType(){return type;}
     virtual void PrintIR(std::ostream& s);
     virtual int isArithmetic(){return 1;}
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
@@ -343,6 +350,8 @@ public:
         this->cond=cond;
         this->result=result;
     }
+
+    virtual LLVMType GetResultType(){return I1;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     Operand GetResultReg(){return result;}
@@ -376,6 +385,8 @@ public:
         this->cond=cond;
         this->result=result;
     }
+
+    virtual LLVMType GetResultType(){return I1;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     Operand GetResultReg(){return result;}
@@ -421,7 +432,8 @@ public:
     Operand GetValOperand(int label_id);
     void SetValOperand(int label_id, Operand val);
     void SetNewFrom(int old_id, int new_id);
-
+    
+    virtual LLVMType GetResultType(){return type;}
     void ReplaceByMap(const std::map<int,int>&Rule);
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
@@ -453,6 +465,8 @@ public:
         this->result=result;
         dims=ArrDims;
     }
+
+    virtual LLVMType GetResultType(){return PTR;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     void ReplaceByMap(const std::map<int,int>&Rule);
@@ -481,6 +495,7 @@ public:
         this->falseLabel=falseLabel;
     }
 
+    virtual LLVMType GetResultType(){return VOID;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
     void SetCond(Operand r1){cond = r1;}
@@ -507,6 +522,8 @@ public:
         this->opcode=BR_UNCOND;
         this->destLabel=destLabel;
     }
+
+    virtual LLVMType GetResultType(){return VOID;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
     int GetTarget(){return ((LabelOperand*)destLabel)->GetLabelNo();}
@@ -616,6 +633,7 @@ public:
     void push_back_Parameter(std::pair<enum LLVMType,Operand> newPara){args.push_back(newPara);}
     void push_back_Parameter(enum LLVMType type,Operand val){args.push_back(std::make_pair(type,val));}
 
+    virtual LLVMType GetResultType(){return ret_type;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo();
     void ReplaceByMap(const std::map<int,int>&Rule);
@@ -649,6 +667,7 @@ public:
     enum LLVMType GetType(){return ret_type;}
     Operand GetRetVal(){return ret_val;}
 
+    virtual LLVMType GetResultType(){return VOID;}
     virtual void PrintIR(std::ostream& s);
     int GetResultRegNo(){return -1;}
     void ReplaceByMap(const std::map<int,int>&Rule);
@@ -697,6 +716,7 @@ public:
     std::vector<int> GetDims(){return dims;}
     std::vector<Operand> GetIndexes(){return indexes;}
 
+    virtual LLVMType GetResultType(){return PTR;}
     void PrintIR(std::ostream& s);
     int GetResultRegNo(){return ((RegOperand*)result)->GetRegNo();}
     void ReplaceByMap(const std::map<int,int>&Rule);

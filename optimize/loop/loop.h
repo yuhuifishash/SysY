@@ -24,6 +24,7 @@ public:
     
     //if is_lcssa is true, the var def in loop can not use outside the loop
     bool is_lcssa;
+    std::vector<PhiInstruction*> lcssa_instlist;
 
     NaturalLoop* fa_loop = nullptr;
 
