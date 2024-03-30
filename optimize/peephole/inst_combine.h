@@ -1,6 +1,6 @@
 #ifndef INST_COMBINE_H
 #define INST_COMBINE_H
-#include "ir.h"
+#include "../include/Instruction.h"
 /*if instructions change, this function will return true*/
 bool ApplyCombineRules(std::deque<Instruction>& InstList,std::deque<Instruction>::iterator begin);
 

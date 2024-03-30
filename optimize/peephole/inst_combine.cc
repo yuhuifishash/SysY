@@ -1,4 +1,5 @@
 #include "inst_combine.h"
+#include "../include/ir.h"
 
 extern std::map<std::string,VarAttribute> GlobalConstMap;
 

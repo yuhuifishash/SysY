@@ -1,8 +1,8 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include "cfg.h"
-#include "alias_analysis.h"
+#include "../include/cfg.h"
+#include "../alias_analysis/alias_analysis.h"
 
 class CFG;
 
