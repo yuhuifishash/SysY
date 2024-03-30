@@ -167,7 +167,7 @@ void NaturalLoop::LoopRotate(CFG* C)
             nI->SetNonResultOperands(NonResultList);
         }
     }
-    //TODO: update phi instructions in exit(from header to latch)
+    //TODO: update phi instructions in exit(label header changes to latch)
     //use RegValMap
     
     //erase useless instructions in header
