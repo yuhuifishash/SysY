@@ -164,7 +164,7 @@ void CFG::BuildLoopInfo()
 
     for(auto l:LoopForest.loop_set){
         l->FindExitNodes(this);
-        l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
+        //l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
     }
 
     LoopForest.BuildLoopForest();

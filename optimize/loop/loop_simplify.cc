@@ -3,8 +3,13 @@
 
 void LoopSimplify(CFG* C)
 {
+    for(auto [id,bb]:*C->block_map){
+        bb->comment = "";
+    }
+
     for(auto loop:C->LoopForest.loop_set){
         loop->LoopSimplify(C);
+        //loop->PrintLoopDebugInfo();
     }
     C->BuildDominatorTree();
     // for(auto loop:C->LoopForest.loop_set){

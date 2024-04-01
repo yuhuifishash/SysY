@@ -110,6 +110,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<In
         auto CSEiter = InstCSEMap.find(Info);
         if(CSEiter != InstCSEMap.end()){
             EraseSet.insert(I);
+            //I->PrintIR(std::cerr);
             reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
             changed |= true;
         }else{

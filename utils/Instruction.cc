@@ -200,6 +200,7 @@ void PhiInstruction::SetValOperand(int label_id, Operand val){
     for(auto &[label,v]:phi_list){
         if(((LabelOperand*)label)->GetLabelNo() == label_id){
             v = val;
+            return;
         }
     }
     assert(false);

@@ -3,7 +3,7 @@
 
 extern std::map<std::string,CFG*> CFGMap;
 
-static std::map<int,bool> InvariantMap;//<RegNO, is_invariant>
+static std::map<int,bool> InvariantMap;//<RegNo, is_invariant>
 static std::map<int,Instruction> ResultMap;
 
 bool IsDomExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
@@ -47,7 +47,6 @@ bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
             Instruction resultI = ResultMap[op_reg];
             int I_BB_id = resultI->GetBlockID();
             auto I_BB = (*(C->block_map))[I_BB_id];
-
             //the reg operand is def in the loop, the reg operand is not invariant
             if(L->loop_nodes.find(I_BB) != L->loop_nodes.end()){
                 return false;
@@ -97,7 +96,6 @@ void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
 {
     auto InvariantInsList = CalculateInvariant(C,L);
     std::set<Instruction> EraseSet;
-
     //remove end instructions temporarily to accelerate instruction inserting
     auto endI = *(L->preheader->Instruction_list.end() - 1);
     L->preheader->Instruction_list.pop_back();
@@ -149,7 +147,7 @@ void DFSLoopForest4LICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 void LoopInvariantCodeMotion(CFG* C)
 {
     ResultMap.clear();
-    InvariantMap.clear();
+
     for(auto formal_reg:C->function_def->formals_reg){
         ResultMap[((RegOperand*)formal_reg)->GetRegNo()] = C->function_def;
     }

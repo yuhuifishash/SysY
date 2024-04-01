@@ -1,4 +1,4 @@
-#include "cfg.h"
+#include "../include/cfg.h"
 #include <assert.h>
 
 void LoopClosedSSA(CFG* C)
@@ -50,6 +50,7 @@ auto GetUsedOperandOutOfLoop(CFG* C, NaturalLoop* L)
 
 void NaturalLoop::LCSSA(CFG* C)
 {
+    lcssa_instlist.clear();
     //now ignore the loop with multiple exits
     if(exit_nodes.size() > 1){
         is_lcssa = false;
