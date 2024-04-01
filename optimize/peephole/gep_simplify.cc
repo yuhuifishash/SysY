@@ -31,7 +31,7 @@ void EliminateEmptyIndexGEP(CFG* C)
     * you may add inttoptr,ptrtoint,sext class in Instruction.h, Instruction.cc, Instruction_out.cc
     * you should set CFG::max_reg correctly
     * @param C the control flow graph of the function */
-void GEP2MulAdd(CFG* C)
+void LowerGEP(CFG* C)
 {
 
 }

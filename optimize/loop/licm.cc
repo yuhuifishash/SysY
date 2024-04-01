@@ -6,7 +6,7 @@ extern std::map<std::string,CFG*> CFGMap;
 static std::map<int,bool> InvariantMap;//<RegNo, is_invariant>
 static std::map<int,Instruction> ResultMap;
 
-bool IsDomExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
+bool IsDomAllExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 {
     for(auto ExitBB:L->exit_nodes){
         if(!cfg->IfDominate(BB->block_id,ExitBB->block_id)){
@@ -14,6 +14,22 @@ bool IsDomExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
         }
     }
     return true;
+}
+
+bool canMotion(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
+{
+    //The instruction dominates all loop exits.
+    bool c1 = IsDomAllExitBB(cfg,BB,L);
+
+    /*
+    It's possible to relax this condition if:
+
+    The assigned-to variable is dead after the loop, and
+    The instruction can't have side effects, 
+    including exceptions—generally ruling out division because it might divide by zero. 
+    */
+    bool c2 = true;
+    return c1 | c2;
 }
 
 bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
@@ -103,7 +119,7 @@ void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
     for(auto it = InvariantInsList.begin();it != InvariantInsList.end();){
         auto I = *it;
         //the def instruction should dominate all the exitingBB
-        if(IsDomExitBB(C,(*(C->block_map))[I->GetBlockID()],L)){
+        if(canMotion(C,(*(C->block_map))[I->GetBlockID()],L)){
 
             //move to preheader
             EraseSet.insert(I);

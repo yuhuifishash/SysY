@@ -83,7 +83,11 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<In
 
     //CSE load/store instructions
     for(auto I:bb->Instruction_list){
-        if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
+        if(I->GetOpcode() == CALL){
+            //we don't know how memory changes
+            //TODO(): we can erase LoadMap precisely with function analysis
+            LoadMap.clear();
+        }else if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
             //TODO(): we need alias analysis to erase the LoadMap precisely further more
             //auto ptr = ((StoreInstruction*)I)->GetPointer();
             //LoadMap.erase(ptr->GetFullName());
