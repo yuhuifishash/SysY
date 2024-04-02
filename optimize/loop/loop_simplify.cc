@@ -99,12 +99,12 @@ void NaturalLoop::AddPreheader(CFG* C)
 
     if(outloop_preblocks.size() == 1){
         preheader = *(outloop_preblocks.begin());
-        preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
+        //preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
         return;
     }
 
     auto new_pre = C->InsertTransferBlock(outloop_preblocks,header);
-    new_pre->comment = "preheader" + std::to_string(loop_id);
+    //new_pre->comment = "preheader" + std::to_string(loop_id);
     preheader = new_pre;
     //std::cerr<<"add preheader "<<preheader->block_id<<"\n";
     

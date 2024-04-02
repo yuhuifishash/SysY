@@ -58,9 +58,9 @@ void NaturalLoop::FindExitNodes(CFG* C)
             if(is_exit){exiting_nodes.insert(node);}
         }
     }
-    for(auto nodes:exiting_nodes){
-        nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
-    }
+    // for(auto nodes:exiting_nodes){
+    //     nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
+    // }
 }
 
 

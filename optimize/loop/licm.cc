@@ -42,7 +42,7 @@ bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
         if(CFGMap.find(tI->GetFunctionName()) == CFGMap.end()){return false;}
         auto target_cfg = CFGMap[tI->GetFunctionName()];
         if(!target_cfg->FunctionInfo.is_independent){
-            return false;//not pure function, can not move
+            return false;//not independent function, can not move
         }
         //I->printIR(std::cerr);
     }

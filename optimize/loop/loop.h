@@ -3,6 +3,7 @@
 
 #include "../include/cfg.h"
 #include "../alias_analysis/alias_analysis.h"
+#include "scev/scev_expr.h"
 
 class CFG;
 
@@ -10,14 +11,15 @@ class NaturalLoop
 {
 public:
     std::set<LLVMBlock> loop_nodes;
-
     std::set<LLVMBlock> exit_nodes;
     std::set<LLVMBlock> exiting_nodes;
     std::set<LLVMBlock> latches;
     LLVMBlock header;
     LLVMBlock preheader;
-    
     int loop_id;
+
+    //the loop does not have side_effect call, so we can licm some memory inst
+    bool has_no_side_effect_call;
 
     //if is_rotate is true, the loop body must execute once or more
     bool is_rotate;
@@ -27,6 +29,9 @@ public:
     std::vector<PhiInstruction*> lcssa_instlist;
 
     NaturalLoop* fa_loop = nullptr;
+
+    SCEV scev;
+    void ScalarEvolution(CFG* C);
 
     void FindExitNodes(CFG* C);
 
