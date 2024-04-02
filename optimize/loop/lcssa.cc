@@ -50,10 +50,8 @@ auto GetUsedOperandOutOfLoop(CFG* C, NaturalLoop* L)
 
 void NaturalLoop::LCSSA(CFG* C)
 {
-    lcssa_instlist.clear();
     //now ignore the loop with multiple exits
     if(exit_nodes.size() > 1){
-        is_lcssa = false;
         return;
     }
     auto [vset,type_map] = GetUsedOperandOutOfLoop(C,this);
@@ -67,7 +65,6 @@ void NaturalLoop::LCSSA(CFG* C)
         }
         //PhiI->PrintIR(std::cerr);
         exit_bb->InsertInstruction(0,PhiI);
-        lcssa_instlist.push_back(PhiI);
         ReplaceMap.insert({v,C->max_reg});
     }
 
@@ -82,8 +79,6 @@ void NaturalLoop::LCSSA(CFG* C)
             I->ReplaceByMap(ReplaceMap);
         }
     }
-
-    is_lcssa = true;
 }
 
 //check if the var def in loop is only used in loop(except phi in exits)

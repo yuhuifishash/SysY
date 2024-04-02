@@ -18,10 +18,13 @@ bool IsDomAllExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 
 bool canMotion(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 {
+    //TODO():the dependent instructions must be moved before
+
+
     //The instruction dominates all loop exits.
     bool c1 = IsDomAllExitBB(cfg,BB,L);
 
-    /*
+    /*TODO():
     It's possible to relax this condition if:
 
     The assigned-to variable is dead after the loop, and
@@ -146,7 +149,18 @@ void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
     L->preheader->InsertInstruction(1,endI);
 }
 
-void SingleLoopMemoryLICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+
+/*
+Scalar Promotion of Memory - If there is a store instruction inside of
+the loop, we try to move the store to happen AFTER the loop instead of
+inside of the loop.  This can only happen if a few conditions are true:
+A. The pointer stored through is loop invariant
+B. There are no stores or loads in the loop which _may_ alias the
+pointer.  There are no calls in the loop which mod/ref the pointer.
+If these conditions are true, we can promote the loads and stores in the
+loop of the pointer to use a temporary alloca'd variable.
+*/
+void SingleLoopStoreLICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 {
     
 }

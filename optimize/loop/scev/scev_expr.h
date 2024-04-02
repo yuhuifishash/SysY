@@ -26,10 +26,17 @@ public:
     std::map<int, bool> InvariantMap;//<RegNo, is_invariant>
     std::map<int, SCEVExpr> SCEVMap;//<RegNo, SCEVExpr>
 
-    bool is_simpleforloop;
-    Operand lowerbound;//if is_simpleforloop is true, this must be invariant i32
-    Operand upperbound;//if is_simpleforloop is true, this must be invariant i32
-    Operand step;//if is_simpleforloop is true, this must be invariant i32
+    /*this indicates that the loop is the formal:
+    i = lowerbound
+    do{
+        ......
+        i += step
+    }while(i < upperbound)
+    */
+    bool is_simpleloop;
+    Operand lowerbound;//if is_simpleloop is true, this must be invariant i32
+    Operand upperbound;//if is_simpleloop is true, this must be invariant i32
+    Operand step;//if is_simpleloop is true, this must be invariant i32
 
     void FindInvariantVar();
     void FindBasicIndVar();

@@ -54,11 +54,9 @@ preheader ->(transformBB)-> header -> body
 void NaturalLoop::LoopRotate(CFG* C)
 {
     if(exit_nodes.size() > 1){
-        is_rotate = false;
         return;
     }
     if(exiting_nodes.find(header) == exiting_nodes.end()){
-        is_rotate = false;
         return;
     }
     auto exit = *exit_nodes.begin();
@@ -253,5 +251,4 @@ void NaturalLoop::LoopRotate(CFG* C)
 
     std::set froms{CondBlock};
     C->InsertTransferBlock(froms,header);
-    is_rotate = true;
 }

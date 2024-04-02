@@ -18,16 +18,6 @@ public:
     LLVMBlock preheader;
     int loop_id;
 
-    //the loop does not have side_effect call, so we can licm some memory inst
-    bool has_no_side_effect_call;
-
-    //if is_rotate is true, the loop body must execute once or more
-    bool is_rotate;
-    
-    //if is_lcssa is true, the var def in loop can not use outside the loop
-    bool is_lcssa;
-    std::vector<PhiInstruction*> lcssa_instlist;
-
     NaturalLoop* fa_loop = nullptr;
 
     SCEV scev;

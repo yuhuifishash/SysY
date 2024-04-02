@@ -148,6 +148,8 @@ int main(int argc,char** argv)
 
         llvmIR.PassExecutor( BasicBlockCSE );
         llvmIR.PassExecutor( DomTreeWalkCSE );
+
+        
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
