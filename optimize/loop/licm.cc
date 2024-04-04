@@ -3,17 +3,36 @@
 
 extern std::map<std::string,CFG*> CFGMap;
 
-static std::map<int,bool> InvariantMap;
+static std::map<int,bool> InvariantMap;//<RegNo, is_invariant>
 static std::map<int,Instruction> ResultMap;
 
-bool IsDomExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
+bool IsDomAllExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 {
-    for(auto ExitBB:L->exiting_nodes){
+    for(auto ExitBB:L->exit_nodes){
         if(!cfg->IfDominate(BB->block_id,ExitBB->block_id)){
             return false;
         }
     }
     return true;
+}
+
+bool canMotion(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
+{
+    //TODO():the dependent instructions must be moved before
+
+
+    //The instruction dominates all loop exits.
+    bool c1 = IsDomAllExitBB(cfg,BB,L);
+
+    /*TODO():
+    It's possible to relax this condition if:
+
+    The assigned-to variable is dead after the loop, and
+    The instruction can't have side effects, 
+    including exceptions—generally ruling out division because it might divide by zero. 
+    */
+    bool c2 = true;
+    return c1 | c2;
 }
 
 bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
@@ -25,8 +44,8 @@ bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
         auto tI = (CallInstruction*)I;
         if(CFGMap.find(tI->GetFunctionName()) == CFGMap.end()){return false;}
         auto target_cfg = CFGMap[tI->GetFunctionName()];
-        if(!target_cfg->FunctionInfo.is_pure_function){
-            return false;//not pure function, can not move
+        if(!target_cfg->FunctionInfo.is_independent){
+            return false;//not independent function, can not move
         }
         //I->printIR(std::cerr);
     }
@@ -47,7 +66,6 @@ bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
             Instruction resultI = ResultMap[op_reg];
             int I_BB_id = resultI->GetBlockID();
             auto I_BB = (*(C->block_map))[I_BB_id];
-
             //the reg operand is def in the loop, the reg operand is not invariant
             if(L->loop_nodes.find(I_BB) != L->loop_nodes.end()){
                 return false;
@@ -75,7 +93,7 @@ std::vector<Instruction> CalculateInvariant(CFG* C, NaturalLoop* L)
 
     std::vector<Instruction> InvariantInsList;
     std::set<Instruction> InsVisited;
-
+    
     int change_flag = 1;
     while(change_flag){
         change_flag = 0;
@@ -93,27 +111,27 @@ std::vector<Instruction> CalculateInvariant(CFG* C, NaturalLoop* L)
     return InvariantInsList;
 }
 
-
-void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
 {
     auto InvariantInsList = CalculateInvariant(C,L);
-
     std::set<Instruction> EraseSet;
-
     //remove end instructions temporarily to accelerate instruction inserting
     auto endI = *(L->preheader->Instruction_list.end() - 1);
     L->preheader->Instruction_list.pop_back();
 
-    for(auto it = InvariantInsList.begin();it != InvariantInsList.end();++it){
+    for(auto it = InvariantInsList.begin();it != InvariantInsList.end();){
         auto I = *it;
         //the def instruction should dominate all the exitingBB
-        if(IsDomExitBB(C,(*(C->block_map))[I->GetBlockID()],L)){
+        if(canMotion(C,(*(C->block_map))[I->GetBlockID()],L)){
+
             //move to preheader
             EraseSet.insert(I);
             I->SetBlockID(L->preheader->block_id);
             L->preheader->InsertInstruction(1,I);
             it = InvariantInsList.erase(it);//erase this Instruction
-            //std::cerr<<"code motion ";I->printIR(std::cerr);
+            //std::cerr<<"code motion ";I->PrintIR(std::cerr);
+        }else{
+            ++it;
         }
     }
     if(!EraseSet.empty()){
@@ -129,15 +147,37 @@ void DFSLoopForest(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
 
 
     L->preheader->InsertInstruction(1,endI);
+}
 
+
+/*
+Scalar Promotion of Memory - If there is a store instruction inside of
+the loop, we try to move the store to happen AFTER the loop instead of
+inside of the loop.  This can only happen if a few conditions are true:
+A. The pointer stored through is loop invariant
+B. There are no stores or loads in the loop which _may_ alias the
+pointer.  There are no calls in the loop which mod/ref the pointer.
+If these conditions are true, we can promote the loads and stores in the
+loop of the pointer to use a temporary alloca'd variable.
+*/
+void SingleLoopStoreLICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+{
+    
+}
+
+void DFSLoopForest4LICM(CFG* C, NaturalLoopForest& loop_forest,NaturalLoop* L)
+{
+    SingleLoopLICM(C,loop_forest,L);
     for(auto lv:loop_forest.loopG[L->loop_id]){
-        DFSLoopForest(C,loop_forest,lv);
+        DFSLoopForest4LICM(C,loop_forest,lv);
     }
 }
 
 
 void LoopInvariantCodeMotion(CFG* C)
 {
+    ResultMap.clear();
+
     for(auto formal_reg:C->function_def->formals_reg){
         ResultMap[((RegOperand*)formal_reg)->GetRegNo()] = C->function_def;
     }
@@ -148,6 +188,11 @@ void LoopInvariantCodeMotion(CFG* C)
             if(v != -1){//result exists
                 ResultMap[v] = I;
             }
+        }
+    }
+    for(auto l:C->LoopForest.loop_set){
+        if(l->fa_loop == nullptr){
+            DFSLoopForest4LICM(C,C->LoopForest,l);
         }
     }
 }

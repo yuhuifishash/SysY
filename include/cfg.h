@@ -9,9 +9,9 @@
 #include <bitset>
 #include "basic_block.h"
 #include "SysY_tree.h"
-#include "function_basicinfo.h"
-#include "loop.h"
-#include "dominator_tree.h"
+#include "../optimize/function/function_basicinfo.h"
+#include "../optimize/loop/loop.h"
+#include "../optimize/cfg/dominator_tree.h"
 
 class CFG
 {   
@@ -61,6 +61,7 @@ public:
       %3 = phi [%4,L4],[%2,L3]
     */
     LLVMBlock InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to);
+    LLVMBlock InsertTransferBlock(LLVMBlock from, std::set<LLVMBlock>& tos);
 };
 
 

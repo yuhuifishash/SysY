@@ -1,5 +1,5 @@
 #include "function_basicinfo.h"
-#include "ir.h"
+#include "../include/ir.h"
 
 extern std::map<std::string,CFG*> CFGMap;
 static std::map<CFG*,std::vector<CallInstruction*> > CallInstList;
@@ -17,17 +17,17 @@ void LLVMIR::BuildFunctionInfo(){
                 if(CFGMap.find(call_name) == CFGMap.end()){continue;}
                 auto target_cfg = CFGMap[call_name];
 
-                bool old_is_pure_function = cfg->FunctionInfo.is_pure_function;
-                cfg->FunctionInfo.is_pure_function &= target_cfg->FunctionInfo.is_pure_function;
+                bool old_tag = cfg->FunctionInfo.is_independent;
+                cfg->FunctionInfo.is_independent &= target_cfg->FunctionInfo.is_independent;
 
-                changed |= (old_is_pure_function != cfg->FunctionInfo.is_pure_function);
+                changed |= (old_tag != cfg->FunctionInfo.is_independent);
             }
         }
     }
 
     CallInstList.clear();
     // for(auto [defI,cfg]:llvm_cfg){
-    //     std::cerr<<defI->GetFunctionName()<<" "<<cfg->FunctionInfo.is_pure_function<<"\n";
+    //     std::cerr<<defI->GetFunctionName()<<" "<<cfg->FunctionInfo.is_independent<<"\n";
     // }
 }
 
@@ -38,12 +38,12 @@ void LLVMIR::BuildFunctionInfo(){
 void CFG::BuildFunctionInfo(){
     FunctionInfo.bb_number = block_map->size();
     FunctionInfo.inst_number = 0;
-    FunctionInfo.is_pure_function = true;
+    FunctionInfo.is_independent = true;
     FunctionInfo.is_direct_recursive = false;
 
     for(auto param:function_def->formals){
         if(param == LLVMType::PTR){
-            FunctionInfo.is_pure_function = false;
+            FunctionInfo.is_independent = false;
         }
     }
 
@@ -53,17 +53,17 @@ void CFG::BuildFunctionInfo(){
             if(I->GetOpcode() == LLVMIROpcode::LOAD){
                 auto LoadI = (LoadInstruction*)I;
                 if(LoadI->GetPointer()->GetOperandType() == BasicOperand::GLOBAL){
-                    FunctionInfo.is_pure_function = false;
+                    FunctionInfo.is_independent = false;
                 }
             }else if(I->GetOpcode() == LLVMIROpcode::STORE){
                 auto StoreI = (StoreInstruction*)I;
                 if(StoreI->GetPointer()->GetOperandType() == BasicOperand::GLOBAL){
-                    FunctionInfo.is_pure_function = false;
+                    FunctionInfo.is_independent = false;
                 }
             }else if(I->GetOpcode() == LLVMIROpcode::GETELEMENTPTR){
                 auto GEPI = (GetElementprtInstruction*)I;
                 if(GEPI->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL){
-                    FunctionInfo.is_pure_function = false;
+                    FunctionInfo.is_independent = false;
                 }
             }else if(I->GetOpcode() == LLVMIROpcode::CALL){
                 auto CallI = (CallInstruction*)I;
@@ -73,7 +73,7 @@ void CFG::BuildFunctionInfo(){
                     FunctionInfo.is_direct_recursive = true;
                 }
                 if(CFGMap.find(call_name) == CFGMap.end()){//external call
-                    FunctionInfo.is_pure_function = false;
+                    FunctionInfo.is_independent = false;
                 }
             }
         }

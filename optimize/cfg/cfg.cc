@@ -1,7 +1,6 @@
-#include "cfg.h"
-#include "ir.h"
-#include "Instruction.h"
-#include "IRgen.h"
+#include "../include/ir.h"
+#include "../include/Instruction.h"
+#include "../ir_gen/IRgen.h"
 #include <bitset>
 
 extern std::map<FuncDefInstruction, int> max_label_map;
@@ -177,7 +176,11 @@ LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock>& froms, LLVMBlock to)
         }
     }
     BuildCFG();
-
     return midBB;
+}
+LLVMBlock CFG::InsertTransferBlock(LLVMBlock from, std::set<LLVMBlock>& tos)
+{
+    assert(false);
+    return nullptr;
 }
 

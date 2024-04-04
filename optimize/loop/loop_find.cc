@@ -58,9 +58,9 @@ void NaturalLoop::FindExitNodes(CFG* C)
             if(is_exit){exiting_nodes.insert(node);}
         }
     }
-    for(auto nodes:exiting_nodes){
-        nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
-    }
+    // for(auto nodes:exiting_nodes){
+    //     nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
+    // }
 }
 
 
@@ -75,8 +75,8 @@ void NaturalLoopForest::CombineSameHeadLoop()
             for(auto l_nodes:l->loop_nodes){
                 oldl->loop_nodes.insert(l_nodes);
             }
-            for(auto latch_nodes:l->latch){
-                oldl->latch.insert(latch_nodes);
+            for(auto latch_nodes:l->latches){
+                oldl->latches.insert(latch_nodes);
             }
         }
         else{
@@ -152,7 +152,7 @@ void CFG::BuildLoopInfo()
             if(IfDominate(head_bb->block_id,id)){
                 NaturalLoop* l = new NaturalLoop();
                 l->header = head_bb;
-                l->latch.insert(bb);
+                l->latches.insert(bb);
                 l->loop_id = loop_cnt++;
                 l->loop_nodes = FindNodesInLoop(this,bb,head_bb);
                 LoopForest.loop_set.insert(l);
@@ -164,7 +164,7 @@ void CFG::BuildLoopInfo()
 
     for(auto l:LoopForest.loop_set){
         l->FindExitNodes(this);
-        l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
+        //l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
     }
 
     LoopForest.BuildLoopForest();
@@ -192,7 +192,7 @@ void NaturalLoop::PrintLoopDebugInfo()
     }std::cerr<<"\n";
     std::cerr<<"header: "<<header->block_id<<"\n";
     std::cerr<<"latch: ";
-    for(auto nodes:latch){
+    for(auto nodes:latches){
         std::cerr<<nodes->block_id<<" ";
     }std::cerr<<"\n";
     std::cerr<<"exitings: ";

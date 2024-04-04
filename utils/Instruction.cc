@@ -196,6 +196,24 @@ Operand PhiInstruction::GetValOperand(int label_id){
     return nullptr;
 }
 
+void PhiInstruction::SetValOperand(int label_id, Operand val){
+    for(auto &[label,v]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == label_id){
+            v = val;
+            return;
+        }
+    }
+    assert(false);
+}
+
+void PhiInstruction::SetNewFrom(int old_id, int new_id){
+    for(auto &[label,v]:phi_list){
+        if(((LabelOperand*)label)->GetLabelNo() == old_id){
+            ((LabelOperand*)label)->SetLabelNo(new_id);
+        }
+    }
+}
+
 void BrCondInstruction::SetNewTarget(int oldlabel,int newlabel){
     auto t_target = (LabelOperand*)GetTrueLabel();
     auto f_target = (LabelOperand*)GetFalseLabel();

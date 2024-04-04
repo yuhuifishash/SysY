@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include "ir.h"
+#include "alias_analysis.h"
 #include <functional>
 
 /*this pass will do some simple common subexpression elimination
@@ -67,7 +68,7 @@ bool CanCSE(Instruction I)
             return false;
         }
         auto cfg = CFGMap[CallI->GetFunctionName()];
-        if(cfg->FunctionInfo.is_pure_function == false){
+        if(cfg->FunctionInfo.is_independent == false){
             return false;
         }
     }
@@ -82,10 +83,15 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<In
 
     //CSE load/store instructions
     for(auto I:bb->Instruction_list){
-        if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
-            auto ptr = ((StoreInstruction*)I)->GetPointer();
-            LoadMap.erase(ptr->GetFullName());
-
+        if(I->GetOpcode() == CALL){
+            //we don't know how memory changes
+            //TODO(): we can erase LoadMap precisely with function analysis
+            LoadMap.clear();
+        }else if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
+            //TODO(): we need alias analysis to erase the LoadMap precisely further more
+            //auto ptr = ((StoreInstruction*)I)->GetPointer();
+            //LoadMap.erase(ptr->GetFullName());
+            LoadMap.clear();
         }else if(I->GetOpcode() == LOAD){
             auto ptr = ((StoreInstruction*)I)->GetPointer();
             auto it = LoadMap.find(ptr->GetFullName());
@@ -108,6 +114,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<In
         auto CSEiter = InstCSEMap.find(Info);
         if(CSEiter != InstCSEMap.end()){
             EraseSet.insert(I);
+            //I->PrintIR(std::cerr);
             reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
             changed |= true;
         }else{

@@ -1,145 +1,91 @@
 #ifndef ARM_FIELDS_H
 #define ARM_FIELDS_H
 #include <string>
-#include <iostream>
-struct Register{
-public:
-    bool Virtual;
-    enum {I32,FLOAT,DOUBLE}type;
-    int reg_no;
-    Register(bool Virtual,decltype(type) reg_type,int no):Virtual(Virtual),type(reg_type),reg_no(no){}
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
+#include "MachineBaseInstruction.h"
+/*
+struct ArmCPU{
+    unsigned int cpsr;
+    int r[11];
+    union{
+        float s[32];
+        double d[16];
+        long long double q[16];
+    };
 };
+*/
+struct ArmPhysicalRegisterDescriptor{
+    char* name;
+    enum{
+        r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,
+        s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,
+        d0,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,d18,d19,d20,d21,d22,d23,d24,d25,d26,d27,d28,d29,d30,d31,
+        q0,q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12,q13,q14,q15,
+        cpsr,
+        INVALID,
+        spilled_in_memory,
+    };
+};
+extern struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[];
+
 enum ShiftType{LSL = 0,LSR,ASR,ROR,RRX};
 struct RmOpsh{
-    enum {RSHIFTI = 0,RRX}type;
-    union prop{
-        struct{
-            Register Rm;
-            ShiftType shift_type;
-            int shift;
-        }regShiftImm;
-        struct{
-            Register Rm;
-        }RRX;
-        prop(){}
-    }properties;
+    Register Rm;
+    ShiftType shift_type;
+    int shift;
     RmOpsh(Register Rm){
-        type = RSHIFTI;
-        properties.regShiftImm.Rm = Rm;
-        properties.regShiftImm.shift_type = LSL;
-        properties.regShiftImm.shift = 0;
+        this->Rm = Rm;
+        this->shift_type = LSL;
+        this->shift = 0;
     }
-    RmOpsh(Register Rm,ShiftType shiftype,int shift){
+    RmOpsh(Register Rm,ShiftType shiftype,int shift = 0){
         if(shiftype != ::RRX){
-            type = RSHIFTI;
-            properties.regShiftImm.Rm = Rm;
-            properties.regShiftImm.shift_type = shiftype;
-            properties.regShiftImm.shift = shift;
+            this->Rm = Rm;
+            this->shift_type = shiftype;
+            this->shift = shift;
         }else{
-            type = RRX;
-            properties.RRX.Rm = Rm;
+            this->Rm = Rm;
         }
     }
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
 };
 
 struct Operand2{
 public:
-    enum {IMM8M = 0,RSHIFTR,RSHIFTI,RRX}type;
-    union prop{
+    enum {IMM8M = 0,RSHIFTR,RSHIFTI}type;
+    union{
         int imm8m;
         struct{
             Register Rm;
             ShiftType shift_type;
-            Register Rs;
-        }regShiftReg;
-        struct{
-            Register Rm;
-            ShiftType shift_type;
-            int shift;
-        }regShiftImm;
-        struct{
-            Register Rm;
-        }RRX;
-        prop(){}
-    }properties;
+            union{
+                Register Rs;
+                int shift;
+            };
+        };
+    };
     Operand2(int imm8m){
-        type = IMM8M;
-        properties.imm8m = imm8m;
+        this->type = IMM8M;
+        this->imm8m = imm8m;
     }
     Operand2(Register Rm,ShiftType shiftype,Register Rs){
+        this->type = RSHIFTR;
         if(shiftype != ::RRX){
-            type = RSHIFTR;
-            properties.regShiftReg.Rm = Rm;
-            properties.regShiftReg.shift_type = shiftype;
-            properties.regShiftReg.Rs = Rs;
+            this->Rm = Rm;
+            this->shift_type = shiftype;
+            this->Rs = Rs;
         }else{
-            type = RRX;
-            properties.RRX.Rm = Rm;
+            this->Rm = Rm;
         }
     }
     Operand2(Register Rm,ShiftType shiftype,int shift){
+        type = RSHIFTI;
         if(shiftype != ::RRX){
-            type = RSHIFTI;
-            properties.regShiftImm.Rm = Rm;
-            properties.regShiftImm.shift_type = shiftype;
-            properties.regShiftImm.shift = shift;
+            this->Rm = Rm;
+            this->shift_type = shiftype;
+            this->shift = shift;
         }else{
-            type = RRX;
-            properties.RRX.Rm = Rm;
+            this->Rm = Rm;
         }
     }
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
 };
 
-struct Rssh{
-public:
-    enum{RS = 0,SH}type;
-    union prop{
-        int shift;
-        Register Rs;
-        prop(){}
-    }properties;
-    Rssh(Register Rs){
-        type = RS;
-        properties.Rs = Rs;
-    }
-    Rssh(int shift){
-        type = SH;
-        properties.shift = shift;
-    }
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-};
-
-struct Label{
-public:
-    std::string label_name;
-    Label(std::string name):label_name(name){}
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-};
-
-struct RegisterOrImm{
-public:
-    enum{REG = 0,IMM}type;
-    union prop{
-        Register reg;
-        int imm32;
-        prop(){}
-    }properties;
-    void printArm(std::ostream& s);
-    void printMachineIR(std::ostream& s);
-};
-std::ostream& operator<<(std::ostream& s,ShiftType typ);
-std::ostream& operator<<(std::ostream& s,Register reg);
-std::ostream& operator<<(std::ostream& s,RmOpsh rmo);
-std::ostream& operator<<(std::ostream& s,Operand2 op2);
-std::ostream& operator<<(std::ostream& s,Rssh rsh);
-std::ostream& operator<<(std::ostream& s,Label lbl);
-std::ostream& operator<<(std::ostream& s,RegisterOrImm roi);
 #endif

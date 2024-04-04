@@ -1,10 +1,16 @@
 #ifndef BASIC_REGISTER_ALLOCATION_H
 #define BASIC_REGISTER_ALLOCATION_H
-
-class RegisterAllocTable{
+#include "liveinterval.h"
+#include "../machine_instruction_structures/machine.h"
+#include <vector>
+class RegisterAlloc{
+protected:
+    std::vector<LiveInterval> intervals;
+    MachineCFG* mcfg;
 public:
-    void RegisterAlloc(/* RegAllocAlgorithm* strategy */){}
-    void ApplyResult(/* MachineUnit* unit */){}
+    RegisterAlloc(MachineCFG* mcfg):mcfg(mcfg){}
+    void UpdateIntervals();
+    virtual void DoAlloc() = 0;
 };
 
 

@@ -2,8 +2,14 @@ SRCDIR += ./target
 SRCDIR += ./target/armv7
 SRCDIR += ./target/common
 SRCDIR += ./target/common/register_alloc
+SRCDIR += ./target/common/machine_instruction_structures
+SRCDIR += ./target/common/machine_instruction_structures/cfg_iterators
+SRCDIR += ./target/common/machine_passes
 SRCDIR += ./target/armv7/instruction_select
+SRCDIR += ./target/armv7/instruction_print
 SRCDIR += ./target/riscv64gc
+SRCDIR += ./target/riscv64gc/instruction_print
+SRCDIR += ./target/riscv64gc/instruction_select
 SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./ir_gen
@@ -15,6 +21,7 @@ SRCDIR += ./optimize/redundancy_elimination
 SRCDIR += ./optimize/cfg
 SRCDIR += ./optimize/loop
 SRCDIR += ./optimize/function
+SRCDIR += ./optimize/alias_analysis
 SRCDIR += ./utils
 
 

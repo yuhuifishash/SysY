@@ -1,0 +1,19 @@
+int A[100] = {};
+int main()
+{
+    int a = getint();
+    int b = getint();
+    int c = getint();
+    int i = 0;
+    while(i < 100){
+        A[i] = a*b*c;
+        if(a){
+            A[i] = a*b*c;
+        }
+        if(b){
+            A[i] = a*b*c;
+        }
+        A[i] = a*b*c;
+        i = i + 1;
+    }
+}

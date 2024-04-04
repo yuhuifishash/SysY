@@ -3,8 +3,13 @@
 
 void LoopSimplify(CFG* C)
 {
+    for(auto [id,bb]:*C->block_map){
+        bb->comment = "";
+    }
+
     for(auto loop:C->LoopForest.loop_set){
         loop->LoopSimplify(C);
+        //loop->PrintLoopDebugInfo();
     }
     C->BuildDominatorTree();
     // for(auto loop:C->LoopForest.loop_set){
@@ -22,16 +27,16 @@ void NaturalLoop::LoopSimplify(CFG* C)
 
 void NaturalLoop::SingleLatchInsert(CFG* C)
 {
-    assert(latch.size() >= 1);
-    if(latch.size() == 1){
-        (*latch.begin())->comment = (*latch.begin())->comment + "  latch" + std::to_string(loop_id);
+    assert(latches.size() >= 1);
+    if(latches.size() == 1){
+        (*latches.begin())->comment = (*latches.begin())->comment + "  latch" + std::to_string(loop_id);
         return;
     }
 
-    auto new_latch = C->InsertTransferBlock(latch,header);
+    auto new_latch = C->InsertTransferBlock(latches,header);
     new_latch->comment = "latch" + std::to_string(loop_id);
-    latch.clear();
-    latch.insert(new_latch);
+    latches.clear();
+    latches.insert(new_latch);
     loop_nodes.insert(new_latch);
 
     //update father loop's loop nodes
@@ -94,12 +99,12 @@ void NaturalLoop::AddPreheader(CFG* C)
 
     if(outloop_preblocks.size() == 1){
         preheader = *(outloop_preblocks.begin());
-        preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
+        //preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
         return;
     }
 
     auto new_pre = C->InsertTransferBlock(outloop_preblocks,header);
-    new_pre->comment = "preheader" + std::to_string(loop_id);
+    //new_pre->comment = "preheader" + std::to_string(loop_id);
     preheader = new_pre;
     //std::cerr<<"add preheader "<<preheader->block_id<<"\n";
     
@@ -117,10 +122,10 @@ void NaturalLoop::LoopSimplifyCheck(CFG* C)
 {
     //check single latch
     //PrintLoopDebugInfo();
-    assert(latch.size() == 1);
+    assert(latches.size() == 1);
 
     //check loop nodes with single latch
-    auto S = FindNodesInLoop(C,*latch.begin(),header);
+    auto S = FindNodesInLoop(C,*latches.begin(),header);
     assert(S.size() == loop_nodes.size());
     for(auto node:loop_nodes){
         assert(S.find(node) != S.end());

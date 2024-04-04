@@ -1,15 +1,17 @@
 # this shell will test the performance of IR, it will only check the correctness of it
 # this shell will test the performance of Asm and will generate logs
 #!/usr/bin/env bash
-if [ $# != 1 ] ; then 
+if [ $# != 2 ] ; then 
     echo "arguments number is invalid" 
     exit 1; 
 fi
 
 #user example:
-#./Sysy_test.sh llvm
-#./Sysy_test.sh S
+#./Sysy_test.sh llvm armv7
+#./Sysy_test.sh S armv7
+#./Sysy_test.sh S rv64gc
 step=$1
+target=$2
 
 if [ $1 == 'llvm' ] ; then
     score=0

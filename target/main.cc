@@ -133,15 +133,23 @@ int main(int argc,char** argv)
         // llvmIR.PassExecutor( InstSimplify );
         // llvmIR.PassExecutor( InstCombine );
 
-
         // llvmIR.BuildFunctionInfo();
         // llvmIR.PassExecutor( SimpleDCE );
         // llvmIR.PassExecutor( BasicBlockCSE );
-        // llvmIR.PassExecutor( DomTreeWalkCSE );
 
         // llvmIR.BuildLoopInfo();
         // llvmIR.PassExecutor( LoopSimplify );
-        //llvmIR.PassExecutor( LoopRotate );
+        // llvmIR.PassExecutor( LoopInvariantCodeMotion );
+        // llvmIR.PassExecutor( LoopClosedSSA );
+        // llvmIR.PassExecutor( LoopRotate );
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor( LoopSimplify );
+        // llvmIR.PassExecutor( LoopInvariantCodeMotion );
+
+        // llvmIR.PassExecutor( BasicBlockCSE );
+        // llvmIR.PassExecutor( DomTreeWalkCSE );
+
+        
     }
     
     if(strcmp(argv[step_tag],"-llvm") == 0){
