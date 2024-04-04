@@ -121,33 +121,33 @@ int main(int argc,char** argv)
     if(optimize_flag){
         llvmIR.PassExecutor( EliminateSimpleConstInstructions );
         llvmIR.PassExecutor( EliminateEmptyIndexGEP );
-        llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
-        // llvmIR.PassExecutor( MakeFunctionOneExit );
-        // //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
+        // llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
+        llvmIR.PassExecutor( MakeFunctionOneExit );
+        //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 
-        // llvmIR.BuildDominatorTree();
-        // llvmIR.PassExecutor( Mem2Reg );
-        // llvmIR.PassExecutor( SparseConditionalConstantPropagation );
-        // //llvmIR.PassExecutor( EliminateDoubleBrUnCond ); // to do
+        llvmIR.BuildDominatorTree();
+        llvmIR.PassExecutor( Mem2Reg );
+        llvmIR.PassExecutor( SparseConditionalConstantPropagation );
+        //llvmIR.PassExecutor( EliminateDoubleBrUnCond ); // to do
 
-        // llvmIR.PassExecutor( InstSimplify );
-        // llvmIR.PassExecutor( InstCombine );
+        llvmIR.PassExecutor( InstSimplify );
+        llvmIR.PassExecutor( InstCombine );
 
-        // llvmIR.BuildFunctionInfo();
-        // llvmIR.PassExecutor( SimpleDCE );
-        // llvmIR.PassExecutor( BasicBlockCSE );
+        llvmIR.BuildFunctionInfo();
+        llvmIR.PassExecutor( SimpleDCE );
+        llvmIR.PassExecutor( BasicBlockCSE );
 
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor( LoopSimplify );
-        // llvmIR.PassExecutor( LoopInvariantCodeMotion );
-        // llvmIR.PassExecutor( LoopClosedSSA );
-        // llvmIR.PassExecutor( LoopRotate );
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor( LoopSimplify );
-        // llvmIR.PassExecutor( LoopInvariantCodeMotion );
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopInvariantCodeMotion );
+        llvmIR.PassExecutor( LoopClosedSSA );
+        llvmIR.PassExecutor( LoopRotate );
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor( LoopSimplify );
+        llvmIR.PassExecutor( LoopInvariantCodeMotion );
 
-        // llvmIR.PassExecutor( BasicBlockCSE );
-        // llvmIR.PassExecutor( DomTreeWalkCSE );
+        llvmIR.PassExecutor( BasicBlockCSE );
+        llvmIR.PassExecutor( DomTreeWalkCSE );
 
         
     }

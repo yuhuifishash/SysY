@@ -10,9 +10,9 @@ if [[ "$2" != "O1" ]] && [[ "$2" != "O0" ]] ; then
 fi
 
 #user example:
-#./Sysy_test.sh llvm O1 armv7
-#./Sysy_test.sh llvm O0 armv7
-#./Sysy_test.sh S O0 rv64gc
+#./SysY_test.sh llvm O1 armv7
+#./SysY_test.sh llvm O0 armv7
+#./SysY_test.sh S O0 rv64gc
 step=$1
 optimize_flag=$2
 target=$3
