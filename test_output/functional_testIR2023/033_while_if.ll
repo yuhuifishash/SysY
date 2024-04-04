@@ -15,52 +15,99 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @get_one(i32 %r0)
 {
 L0:  ;
+    %r1 = alloca i32
+    store i32 %r0, ptr %r1
     br label %L1
 L1:  ;
-    ret i32 1
+    %r2 = add i32 1,0
+    ret i32 %r2
 }
 define i32 @main()
 {
 L0:  ;
+    %r0 = alloca i32
     br label %L1
 L1:  ;
-    %r5 = call i32 @deepWhileBr(i32 2,i32 2)
-    call void @putint(i32 %r5)
-    ret i32 0
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
+    %r2 = add i32 2,0
+    store i32 %r2, ptr %r0
+    %r3 = load i32, ptr %r0
+    %r4 = load i32, ptr %r0
+    %r5 = call i32 @deepWhileBr(i32 %r3,i32 %r4)
+    store i32 %r5, ptr %r0
+    %r6 = load i32, ptr %r0
+    call void @putint(i32 %r6)
+    %r7 = add i32 0,0
+    ret i32 %r7
 }
 define i32 @deepWhileBr(i32 %r0,i32 %r1)
 {
 L0:  ;
+    %r24 = alloca i32
+    %r12 = alloca i32
+    %r4 = alloca i32
+    %r3 = alloca i32
+    %r2 = alloca i32
+    store i32 %r0, ptr %r2
+    store i32 %r1, ptr %r3
     br label %L1
-L1:  ;  preheader0
-    %r8 = add i32 %r0,%r1
+L1:  ;
+    %r5 = add i32 0,0
+    store i32 %r5, ptr %r4
+    %r6 = load i32, ptr %r2
+    %r7 = load i32, ptr %r3
+    %r8 = add i32 %r6,%r7
+    store i32 %r8, ptr %r4
     br label %L2
-L2:  ;  exiting0  header0
-    %r42 = phi i32 [%r8,%L1],[%r41,%L6]
-    %r11 = icmp slt i32 %r42,75
+L2:  ;
+    %r9 = load i32, ptr %r4
+    %r10 = add i32 75,0
+    %r11 = icmp slt i32 %r9,%r10
     br i1 %r11, label %L3, label %L4
 L3:  ;
-    %r17 = icmp slt i32 %r42,100
+    %r13 = add i32 0,0
+    store i32 %r13, ptr %r12
+    %r14 = add i32 42,0
+    store i32 %r14, ptr %r12
+    %r15 = load i32, ptr %r4
+    %r16 = add i32 100,0
+    %r17 = icmp slt i32 %r15,%r16
     br i1 %r17, label %L5, label %L6
 L4:  ;
-    ret i32 %r42
+    %r36 = load i32, ptr %r4
+    ret i32 %r36
 L5:  ;
-    %r20 = add i32 %r42,42
-    %r23 = icmp sgt i32 %r20,99
+    %r18 = load i32, ptr %r4
+    %r19 = load i32, ptr %r12
+    %r20 = add i32 %r18,%r19
+    store i32 %r20, ptr %r4
+    %r21 = load i32, ptr %r4
+    %r22 = add i32 99,0
+    %r23 = icmp sgt i32 %r21,%r22
     br i1 %r23, label %L7, label %L8
-L6:  ;  latch0
-    %r41 = phi i32 [%r42,%L3],[%r44,%L8]
+L6:  ;
     br label %L2
 L7:  ;
-    %r30 = call i32 @get_one(i32 0)
-    %r32 = icmp eq i32 %r30,1
+    %r25 = add i32 0,0
+    store i32 %r25, ptr %r24
+    %r26 = load i32, ptr %r12
+    %r27 = add i32 2,0
+    %r28 = mul i32 %r26,%r27
+    store i32 %r28, ptr %r24
+    %r29 = add i32 0,0
+    %r30 = call i32 @get_one(i32 %r29)
+    %r31 = add i32 1,0
+    %r32 = icmp eq i32 %r30,%r31
     br i1 %r32, label %L9, label %L10
 L8:  ;
-    %r44 = phi i32 [%r20,%L5],[%r43,%L10]
     br label %L6
 L9:  ;
+    %r33 = load i32, ptr %r24
+    %r34 = add i32 2,0
+    %r35 = mul i32 %r33,%r34
+    store i32 %r35, ptr %r4
     br label %L10
 L10:  ;
-    %r43 = phi i32 [%r20,%L7],[168,%L9]
     br label %L8
 }

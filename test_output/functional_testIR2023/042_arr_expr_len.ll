@@ -17,20 +17,33 @@ declare void @llvm.memset.p0.i32(ptr,i8,i32,i1)
 define i32 @main()
 {
 L0:  ;
+    %r2 = alloca i32
+    %r0 = alloca i32
     br label %L1
-L1:  ;  preheader0
+L1:  ;
+    %r1 = add i32 0,0
+    store i32 %r1, ptr %r0
+    %r3 = add i32 0,0
+    store i32 %r3, ptr %r2
     br label %L2
-L2:  ;  exiting0  header0
-    %r17 = phi i32 [0,%L1],[%r14,%L3]
-    %r16 = phi i32 [0,%L1],[%r11,%L3]
-    %r6 = icmp slt i32 %r17,6
+L2:  ;
+    %r4 = load i32, ptr %r0
+    %r5 = add i32 6,0
+    %r6 = icmp slt i32 %r4,%r5
     br i1 %r6, label %L3, label %L4
-L3:  ;  latch0
-    %r9 = getelementptr [6 x i32], ptr @arr, i32 0, i32 %r17
+L3:  ;
+    %r7 = load i32, ptr %r2
+    %r8 = load i32, ptr %r0
+    %r9 = getelementptr [6 x i32], ptr @arr, i32 0, i32 %r8
     %r10 = load i32, ptr %r9
-    %r11 = add i32 %r16,%r10
-    %r14 = add i32 %r17,1
+    %r11 = add i32 %r7,%r10
+    store i32 %r11, ptr %r2
+    %r12 = load i32, ptr %r0
+    %r13 = add i32 1,0
+    %r14 = add i32 %r12,%r13
+    store i32 %r14, ptr %r0
     br label %L2
 L4:  ;
-    ret i32 %r16
+    %r15 = load i32, ptr %r2
+    ret i32 %r15
 }
