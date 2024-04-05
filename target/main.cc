@@ -58,6 +58,7 @@ void LoopSimplify(CFG* C);
 void LoopRotate(CFG* C);
 void LoopInvariantCodeMotion(CFG* C);
 void LoopClosedSSA(CFG* C);
+void ScalarEvolution(CFG* C);
 
 enum Target{ARMV7 = 1,RV64GC = 2}target;
 
@@ -148,7 +149,8 @@ int main(int argc,char** argv)
 
         llvmIR.PassExecutor( BasicBlockCSE );
         llvmIR.PassExecutor( DomTreeWalkCSE );
-
+        
+        llvmIR.PassExecutor( ScalarEvolution );
         
     }
     

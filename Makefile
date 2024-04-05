@@ -20,6 +20,7 @@ SRCDIR += ./optimize/propagating
 SRCDIR += ./optimize/redundancy_elimination
 SRCDIR += ./optimize/cfg
 SRCDIR += ./optimize/loop
+SRCDIR += ./optimize/loop/scev
 SRCDIR += ./optimize/function
 SRCDIR += ./optimize/alias_analysis
 SRCDIR += ./utils

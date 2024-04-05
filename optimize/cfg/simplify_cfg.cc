@@ -68,3 +68,12 @@ void EliminateDoubleBrUnCond(CFG* C)
 {
     std::cerr<<"EliminateDoubleBrUnCond in SimplifyCFG is not implemented now\n";
 }
+
+/*
+    * this function will eliminate useless phi
+    * such as %rx = phi [%ry, L1], [%ry, L1]
+*/
+void EliminateUselessPhi(CFG* C)
+{
+    std::cerr<<"EliminateUselessPhi in SimplifyCFG is not implemented now\n";
+}
