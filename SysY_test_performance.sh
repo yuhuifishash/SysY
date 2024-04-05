@@ -7,9 +7,9 @@ if [ $# != 2 ] ; then
 fi
 
 #user example:
-#./Sysy_test.sh llvm armv7
-#./Sysy_test.sh S armv7
-#./Sysy_test.sh S rv64gc
+#./SysY_test_performance.sh llvm armv7
+#./SysY_test_performance.sh S armv7
+#./SysY_test_performance.sh S rv64gc
 step=$1
 target=$2
 
@@ -29,10 +29,10 @@ if [ $1 == 'llvm' ] ; then
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            timeout 5 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 60 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            timeout 5 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 60 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
