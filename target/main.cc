@@ -121,8 +121,8 @@ int main(int argc,char** argv)
     bool optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag],"-O1") == 0 || strcmp(argv[optimize_tag],"-O2") == 0));
     if(optimize_flag){
         llvmIR.PassExecutor( EliminateSimpleConstInstructions );
-        //llvmIR.PassExecutor( EliminateEmptyIndexGEP ); //to do
-        //llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
+        llvmIR.PassExecutor( EliminateEmptyIndexGEP );
+        // llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
         llvmIR.PassExecutor( MakeFunctionOneExit );
         //llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 

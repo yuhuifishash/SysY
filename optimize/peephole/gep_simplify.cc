@@ -9,7 +9,36 @@
     * @param C the control flow graph of the function */
 void EliminateEmptyIndexGEP(CFG* C)
 {
-    std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
+    std::map<int,int> reg_replace_map;
+    std::set<Instruction> EraseSet;
+    for(auto [id,bb]:*C->block_map){
+        for(auto I:bb->Instruction_list){
+            if(I->GetOpcode() != GETELEMENTPTR){continue;}
+            auto GetptrI = (GetElementprtInstruction*)I;
+            if(!GetptrI->GetDims().empty() || !GetptrI->GetIndexes().empty()){continue;}
+            //auto rx = GetptrI->GetResultRegNo();
+            auto rx = ((RegOperand*)GetptrI->GetResult())->GetRegNo();
+            auto ry = ((RegOperand*)GetptrI->GetPtrVal())->GetRegNo();
+            reg_replace_map[rx] = ry;
+            EraseSet.insert(I);
+        }
+    }
+    for(auto [id,bb]:*C->block_map){
+        auto tmp_Instruction_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for(auto I:tmp_Instruction_list){
+            if(EraseSet.find(I) != EraseSet.end()){continue;}
+            bb->InsertInstruction(1,I);
+        }
+    }
+    for(auto [id,bb]:*C->block_map){
+        for(auto I:bb->Instruction_list){
+            I->ReplaceByMap(reg_replace_map);
+        }
+    }
+    reg_replace_map.clear();
+    EraseSet.clear();
+    //std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
 }
 
 

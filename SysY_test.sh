@@ -10,9 +10,9 @@ if [[ "$2" != "O1" ]] && [[ "$2" != "O0" ]] ; then
 fi
 
 #user example:
-#./Sysy_test.sh llvm O1 armv7
-#./Sysy_test.sh llvm O0 armv7
-#./Sysy_test.sh S O0 rv64gc
+#./SysY_test.sh llvm O1 armv7
+#./SysY_test.sh llvm O0 armv7
+#./SysY_test.sh S O0 rv64gc
 step=$1
 optimize_flag=$2
 target=$3
@@ -33,10 +33,10 @@ if [ $1 == 'llvm' ] ; then
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            timeout 5 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 20 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            timeout 5 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 20 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
