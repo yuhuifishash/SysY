@@ -4,11 +4,12 @@
 class FastLinearScan : RegisterAlloc{
 private:
     // All States here, like queue
-    // May need another class, .h
-    // May need new folder
+    std::priority_queue<LiveInterval> unalloc_queue;
+
+    double CalculateSpillWeight(LiveInterval);
 public:
-    FastLinearScan(MachineCFG* mcfg):RegisterAlloc(mcfg){}
-    void DoAlloc(){}
+    FastLinearScan(MachineFunction* mfun,PhysicalRegisters*phy):RegisterAlloc(mfun,phy){}
+    void DoAlloc();
 };
 
 

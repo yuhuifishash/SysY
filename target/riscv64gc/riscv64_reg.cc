@@ -1,5 +1,4 @@
-#include "riscv64_instructions.h"
-#include "riscv64_structures.h"
+#include "riscv64.h"
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"
 struct RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[]={

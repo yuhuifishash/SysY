@@ -1,4 +1,4 @@
-#include "riscv64_instructions.h"
+#include "riscv64.h"
 #include <assert.h>
 std::set<int> RiscV64Instruction::GetReadReg(){
     switch(OpTable[op].ins_formattype){

@@ -1,4 +1,4 @@
-#include "riscv64_structures.h"
+#include "riscv64.h"
 
 void RiscV64Function::MoveAllPredecessorsBranchTargetToNewBlock(int original_target,int new_target){
 	

@@ -7,6 +7,17 @@ struct AmRegisterInfo{
     unsigned data_type:1;
     unsigned data_length:2;
 
+    int getDataWidth(){
+        switch(data_length){
+            case B32:
+                return 4;
+            case B64:
+                return 8;
+            case B128:
+                return 16;    
+        }
+    }
+
     // int reg_no;
     // VRegister number is implied in MachineFunction::am_registers
 
