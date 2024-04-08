@@ -100,10 +100,10 @@ struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[]={
 };
 
 void ArmFunction::InitializeNewVirtualRegister(int vregno){
-    am_registers[vregno].physical_register_descriptor_index = ArmPhysicalRegisterDescriptor::INVALID;
-    if(am_registers[vregno].data_type == AmRegisterInfo::FLOAT){
-        if(am_registers[vregno].data_length == AmRegisterInfo::B128){
-            am_registers[vregno].accessible_physical_registers = {
+    virtual_registers[vregno].physical_register_descriptor_index = ArmPhysicalRegisterDescriptor::INVALID;
+    if(virtual_registers[vregno].type.data_type == MachineDataType::FLOAT){
+        if(virtual_registers[vregno].type.data_length == MachineDataType::B128){
+            virtual_registers[vregno].accessible_physical_registers = {
                 ArmPhysicalRegisterDescriptor::q0,
                 ArmPhysicalRegisterDescriptor::q1,
                 ArmPhysicalRegisterDescriptor::q2,
@@ -121,17 +121,17 @@ void ArmFunction::InitializeNewVirtualRegister(int vregno){
                 ArmPhysicalRegisterDescriptor::q14,
                 ArmPhysicalRegisterDescriptor::q15,
             };
-        }else if(am_registers[vregno].data_length == AmRegisterInfo::B64){
+        }else if(virtual_registers[vregno].type.data_length == MachineDataType::B64){
 
-        }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
+        }else if(virtual_registers[vregno].type.data_length == MachineDataType::B32){
 
         }
-    }else if(am_registers[vregno].data_type == AmRegisterInfo::INT){
-        if(am_registers[vregno].data_length == AmRegisterInfo::B128){
+    }else if(virtual_registers[vregno].type.data_type == MachineDataType::INT){
+        if(virtual_registers[vregno].type.data_length == MachineDataType::B128){
 
-        }else if(am_registers[vregno].data_length == AmRegisterInfo::B64){
+        }else if(virtual_registers[vregno].type.data_length == MachineDataType::B64){
 
-        }else if(am_registers[vregno].data_length == AmRegisterInfo::B32){
+        }else if(virtual_registers[vregno].type.data_length == MachineDataType::B32){
 
         }
     }

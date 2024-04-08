@@ -22,13 +22,14 @@ int GraphColor::SelectSpill(){
     return -1;
 }
 
-void GraphColor::Spill(int am_reg){
+void GraphColor::Spill(int v_reg){
 
 }
 
-void GraphColor::DoAlloc(){
+void GraphColor::DoAllocInCurrentFunc(){
+    auto mfun = current_func;
     do{
-        UpdateIntervals();
+        UpdateIntervalsInCurrentFunc();
         ConstructInterferenceGraph();
         if(TryReduce()){
             StkAssign();

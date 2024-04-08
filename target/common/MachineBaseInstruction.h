@@ -12,9 +12,65 @@ public:
     virtual std::set<int> GetWriteReg() = 0;
 };
 
+struct MachineDataType{
+    enum {INT,FLOAT};
+    enum {B32,B64,B128};
+    unsigned data_type;
+    unsigned data_length;
+    int getDataWidth(){
+        switch(data_length){
+            case B32:
+                return 4;
+            case B64:
+                return 8;
+            case B128:
+                return 16;    
+        }
+        return 0;
+    }
+};
+
+struct VirtualRegisterInfo{
+    MachineDataType type;
+    int getDataWidth(){
+        return type.getDataWidth();
+    }
+    // int reg_no;
+    // VRegister number is implied in MachineFunction::virtual_registers
+
+    int physical_register_descriptor_index;
+    // RegisterAllocation result
+
+    int mem_offset;
+    // Only valid when spilled
+
+    std::vector<int> accessible_physical_registers;
+};
+
 struct Register{
 public:
-    int am_reg_no;
+    int virtual_reg_no;
+};
+
+struct MachineBaseOperand{
+    MachineDataType type;
+    enum {REG,IMMI,IMMF};
+    int op_type;
+    MachineBaseOperand(int op_type):op_type(op_type){}
+};
+
+struct MachineRegister : public MachineBaseOperand{
+    Register reg;
+    MachineRegister(int reg_no):MachineBaseOperand(MachineBaseOperand::REG){reg.virtual_reg_no = reg_no;}
+};
+
+struct MachineImmediateInt : public MachineBaseOperand{
+    int imm32;
+    MachineImmediateInt(int imm32):MachineBaseOperand(MachineBaseOperand::IMMI),imm32(imm32){}
+};
+struct MachineImmediateFloat : public MachineBaseOperand{
+    float fimm32;
+    MachineImmediateFloat(float fimm32):MachineBaseOperand(MachineBaseOperand::IMMF),fimm32(fimm32){}
 };
 
 struct Label{
@@ -37,69 +93,28 @@ public:
 };
 class MachinePhiInstruction : public MachineBaseInstruction {
 public:
-    struct RegisterOrImm{
-    public:
-        bool isimm32:1;
-        union{
-            Register reg;
-            int imm32;
-        };
-    };
-public:
     std::set<int> GetReadReg();
     std::set<int> GetWriteReg();
 
     Register result;
-    std::vector<std::pair<int,RegisterOrImm> >phi_list;
+    std::vector<std::pair<int,MachineBaseOperand*> >phi_list;
     MachinePhiInstruction(Register result):result(result),MachineBaseInstruction(MachineBaseInstruction::PHI){}
     void pushPhiList(int label,Register reg){
-        RegisterOrImm re;
-        re.isimm32 = 0;
-        re.reg = reg;
-        phi_list.push_back(std::make_pair(label,re));
+        phi_list.push_back(std::make_pair(label,new MachineRegister(reg.virtual_reg_no)));
     }
     void pushPhiList(int label,int imm32){
-        RegisterOrImm im;
-        im.isimm32 = 1;
-        im.imm32 = imm32;
-        phi_list.push_back(std::make_pair(label,im));
+        phi_list.push_back(std::make_pair(label,new MachineImmediateInt(imm32)));
     }
 };
 // %x: type = COPY type %y: type
 class MachineCopyInstruction : public MachineBaseInstruction {
 public:
-    int src_regno;
-    int dst_regno;
-
-    enum{INT,FLOAT};
-    enum{B32,B64,B128};
-
-    union{
-        int src_type;
-        struct{
-            int src_datatype:1;
-            int src_width:2;
-            bool src_isimm:1;
-        };
-    };
-
-    union{
-        int dst_type;
-        struct{
-            int dst_datatype:1;
-            int dst_width:2;
-            bool dst_isimm:1;
-        };
-    };
-
-    union{
-        int copy_type;
-        struct{
-            int copy_datatype:1;
-            int copy_width:2;
-        };
-    };
+    MachineDataType copy_type;
+    MachineBaseOperand* src;
+    MachineBaseOperand* dst;
+    std::set<int> GetReadReg(){return std::set<int>();}
+    std::set<int> GetWriteReg(){return std::set<int>();}
 public:
-    MachineCopyInstruction(int src_regno,int dst_regno):src_regno(src_regno),dst_regno(dst_regno),MachineBaseInstruction(MachineBaseInstruction::COPY){}
+    MachineCopyInstruction(MachineBaseOperand* src,MachineBaseOperand* dst,MachineDataType copy_type):copy_type(copy_type),src(src),dst(dst),MachineBaseInstruction(MachineBaseInstruction::COPY){}
 };
 #endif

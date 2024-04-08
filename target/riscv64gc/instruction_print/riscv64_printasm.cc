@@ -1,12 +1,31 @@
 #include "riscv64_printer.h"
 #include <assert.h>
+void RiscV64Printer::emit(){
+    for(auto func:printee->functions){
+        current_func = func;
+        s<<func->func_name<<":\n";
+        // May use iterator instead of directly accessing vector<blocks> in future
+        for(auto block:func->blocks){
+            s<<func->func_name<<block->label_id<<":\n";
+            cur_block = block;
+            for(auto ins:*block){
+                s<<"\t";
 
+                if(ins->arch == MachineBaseInstruction::RiscV){
+                    printAsm((RiscV64Instruction*)ins);
+                }else if(ins->arch == MachineBaseInstruction::PHI){
+
+                }
+            }
+        }
+    }
+}
 template<>
 void RiscV64Printer::printRVfield<Register*>(Register* printee){
     if(output_physical_reg){
-        s<<RiscV64RegDescriptor[current_func->am_registers[printee->am_reg_no].physical_register_descriptor_index].name;
+        s<<RiscV64RegDescriptor[current_func->virtual_registers[printee->virtual_reg_no].physical_register_descriptor_index].name;
     }else{
-        s<<"%"<<printee->am_reg_no;
+        s<<"%"<<printee->virtual_reg_no;
     }
 }
 

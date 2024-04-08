@@ -1,13 +1,11 @@
 #include "arm_printer.h"
-#include "arm_print_op.h"
-#include "arm_printhelper.h"
 
 template<>
 void ArmPrinter::printArm<Register*>(Register* ins){
 	if(output_physical_reg){
-        s<<ArmRegDescriptor[current_func->am_registers[ins->am_reg_no].physical_register_descriptor_index].name;
+        s<<ArmRegDescriptor[current_func->virtual_registers[ins->virtual_reg_no].physical_register_descriptor_index].name;
     }else{
-        s<<"%"<<ins->am_reg_no;
+        s<<"%"<<ins->virtual_reg_no;
     }
 }
 
@@ -135,4 +133,55 @@ ArmPrinter& operator<< (ArmPrinter& printer,enum ShiftType printee){
 		break;
     }
     return printer;
+}
+void printCond(std::ostream& s,int cond){
+    switch(cond){
+	case ArmBaseInstruction::EQ:
+		s<<"eq";
+		break;
+	case ArmBaseInstruction::NE:
+		s<<"ne";
+		break;
+	case ArmBaseInstruction::CS_HS:
+		// s<<"CS_HS";
+        s<<"cs";
+		break;
+	case ArmBaseInstruction::CC_LO:
+		// s<<"CC_LO";
+        s<<"cc";
+		break;
+	case ArmBaseInstruction::MI:
+		s<<"mi";
+		break;
+	case ArmBaseInstruction::PL:
+		s<<"pl";
+		break;
+	case ArmBaseInstruction::VS:
+		s<<"vs";
+		break;
+	case ArmBaseInstruction::VC:
+		s<<"vc";
+		break;
+	case ArmBaseInstruction::HI:
+		s<<"hi";
+		break;
+	case ArmBaseInstruction::LS:
+		s<<"ls";
+		break;
+	case ArmBaseInstruction::GE:
+		s<<"ge";
+		break;
+	case ArmBaseInstruction::LT:
+		s<<"lt";
+		break;
+	case ArmBaseInstruction::GT:
+		s<<"gt";
+		break;
+	case ArmBaseInstruction::LE:
+		s<<"le";
+		break;
+	case ArmBaseInstruction::AL:
+		s<<"al";
+		break;
+    }
 }

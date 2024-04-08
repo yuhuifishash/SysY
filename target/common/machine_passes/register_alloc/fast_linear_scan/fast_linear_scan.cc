@@ -1,14 +1,15 @@
 #include "fast_linear_scan.h"
-void FastLinearScan::DoAlloc(){
+void FastLinearScan::DoAllocInCurrentFunc(){
     bool spilled = false;
+    auto mfun = current_func;
     do{
-        UpdateIntervals();
+        UpdateIntervalsInCurrentFunc();
         for(auto interval : intervals){
             unalloc_queue.push(interval.second);
         }
         while(!unalloc_queue.empty()){
             auto interval = unalloc_queue.top();
-            auto& cur_am_register = mfun->am_registers[interval.getAmRegId()];
+            auto& cur_am_register = mfun->virtual_registers[interval.getVirtualRegId()];
             int phy_reg_id = phy_regs->getIdleReg(cur_am_register.accessible_physical_registers,interval);
             if(phy_reg_id >= 0){
                 phy_regs->OccupyReg(phy_reg_id,interval);
@@ -22,9 +23,9 @@ void FastLinearScan::DoAlloc(){
 
                 double spill_weight = CalculateSpillWeight(interval);
                 auto& candidate_spill = cur_am_register;
-                auto candidate_vreg = interval.getAmRegId();
+                auto candidate_vreg = interval.getVirtualRegId();
                 for(auto v_reg : phy_regs->getAllConflictAmRegs(interval)){
-                    auto other_am_register = mfun->am_registers[v_reg];
+                    auto other_am_register = mfun->virtual_registers[v_reg];
                     double other_am_spill_weight = CalculateSpillWeight(intervals[v_reg]);
                     if(spill_weight > other_am_spill_weight){
                         spill_weight = other_am_spill_weight;

@@ -8,7 +8,7 @@ void InsertLoadStore::ExecuteInFunc(){
         for(auto it = block->begin();it != block->end();++it){
             auto ins = *it;
             for(auto reg : ins->GetReadReg()){
-                auto reg_info = func->GetAmRegisterInfo(reg);
+                auto reg_info = func->GetVirtualRegisterInfo(reg);
                 if(reg_info.physical_register_descriptor_index == /* ??? */-1){
                     // new_load_reg = GetNewReg();
                     // insertasmBeforeins("load new_load_reg = [fp,mem_offset]")
@@ -16,7 +16,7 @@ void InsertLoadStore::ExecuteInFunc(){
                 }
             }
             for(auto reg : ins->GetWriteReg()){
-                auto reg_info = func->GetAmRegisterInfo(reg);
+                auto reg_info = func->GetVirtualRegisterInfo(reg);
                 if(reg_info.physical_register_descriptor_index == /* ??? */-1){
                     // new_store_reg = GetNewReg();
                     // for(oldreg& : ins->GetWriteReg()) if(oldreg==reg) oldreg=new_store_reg

@@ -1,7 +1,7 @@
 #ifndef GRAPH_COLOR_H
 #define GRAPH_COLOR_H
 #include "basic_register_allocation.h"
-class GraphColor : public RegisterAlloc{
+class GraphColor : public RegisterAllocation{
 private:
     // All States here
     std::stack<int> alloc_stk;
@@ -13,10 +13,11 @@ private:
     void ConstructInterferenceGraph();
     bool TryReduce();
     int SelectSpill();
-    void Spill(int am_reg);
+    void Spill(int v_reg);
     void StkAssign();
+protected:
+    void DoAllocInCurrentFunc();
 public:
-    GraphColor(MachineFunction* mfun,PhysicalRegisters* phy):RegisterAlloc(mfun,phy){}
-    void DoAlloc(){}
+    GraphColor(MachineUnit* unit,PhysicalRegisters* phy):RegisterAllocation(unit,phy){}
 };
 #endif
