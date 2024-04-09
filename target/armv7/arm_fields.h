@@ -2,17 +2,7 @@
 #define ARM_FIELDS_H
 #include <string>
 #include "MachineBaseInstruction.h"
-/*
-struct ArmCPU{
-    unsigned int cpsr;
-    int r[11];
-    union{
-        float s[32];
-        double d[16];
-        long long double q[16];
-    };
-};
-*/
+
 struct ArmPhysicalRegisterDescriptor{
     char* name;
     enum{

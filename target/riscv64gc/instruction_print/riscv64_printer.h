@@ -1,6 +1,6 @@
 #ifndef RISCV64_PRINT_H
 #define RISCV64_PRINT_H
-#include "riscv64_structures.h"
+#include "riscv64.h"
 #include "../common/machine_passes/machine_printer.h"
 class RiscV64Printer : public MachinePrinter{
 private:

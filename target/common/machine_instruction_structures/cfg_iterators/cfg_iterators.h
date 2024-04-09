@@ -1,6 +1,7 @@
 #ifndef CFG_ITERS_H
 #define CFG_ITERS_H
 #include "../machine.h"
+#include <assert.h>
 class MachineCFG::SeqScanIterator : public Iterator{
 private:
     decltype(block_map.begin()) current;
@@ -50,4 +51,7 @@ public:
     void rewind();
     void close();
 };
+
+
+
 #endif
