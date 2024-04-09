@@ -149,7 +149,7 @@ void CFG::BuildLoopInfo()
     int loop_cnt = 0;
     for(auto [id,bb]:*block_map){
         for(auto head_bb:G[id]){//bb->head_bb   backedge
-            if(IfDominate(head_bb->block_id,id)){
+            if(IsDominate(head_bb->block_id,id)){
                 NaturalLoop* l = new NaturalLoop();
                 l->header = head_bb;
                 l->latches.insert(bb);

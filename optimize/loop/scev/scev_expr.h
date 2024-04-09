@@ -36,7 +36,7 @@ public:
     }while(i < upperbound)
     */
     bool is_simpleloop;
-    bool is_positive;//i += d -> true     i -= d -> false
+    LLVMIROpcode step_way;
     Operand lowerbound;//if is_simpleloop is true, this must be invariant i32
     Operand upperbound;//if is_simpleloop is true, this must be invariant i32
     Operand step;//if is_simpleloop is true, this must be invariant i32
@@ -47,7 +47,6 @@ public:
 
 
     bool SCEV_isI32Invariant(Operand op);
-    Operand is_Calculate_r(Instruction I, int r);
 
     /*
         %st = phi [%x, preheader], [%y, latch]
@@ -58,7 +57,7 @@ public:
         else
             return nullptr
     */
-    Operand FindBasicIndVarCycleVarDef(int st, int r2);//(RegNO, RegNo)
+    std::pair<Operand,LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2);//(RegNO, RegNo)
 };
 
 #endif

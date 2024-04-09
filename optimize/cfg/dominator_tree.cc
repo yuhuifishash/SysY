@@ -107,7 +107,7 @@ void DominatorTree::BuildDominatorTree()
             // a dom prev(b)=a
             int x = a;
             // a==b or a not dom b
-            while(x == b || IfDominate(x,b) == 0){
+            while(x == b || IsDominate(x,b) == 0){
                 df[x][b] = 1;
                 if(idom[x]!=NULL){
                     // idom(a) must dom prev(b)=a
@@ -149,7 +149,7 @@ std::set<int> DominatorTree::GetDF(int id)
 
 }
 
-bool DominatorTree::IfDominate(int id1,int id2)
+bool DominatorTree::IsDominate(int id1,int id2)
 {
     return atdom[id2][id1];
 }

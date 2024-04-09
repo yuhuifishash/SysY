@@ -20,6 +20,6 @@ public:
     void BuildDominatorTree();//build the dominator tree of CFG* C
     std::set<int> GetDF(std::set<int> S);//return DF(S)  S = {id1,id2,id3,...}
     std::set<int> GetDF(int id);//return DF(id)
-    bool IfDominate(int id1,int id2);//if blockid1 dominate blockid2, return true, else return false
+    bool IsDominate(int id1,int id2);//if blockid1 dominate blockid2, return true, else return false
 };
 #endif

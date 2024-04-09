@@ -134,7 +134,7 @@ void InsertPhi(CFG* C)
             int block_id = *(alloca_defs.begin());
             int dom_flag = 1;
             for(auto load_BBid:alloca_uses){
-                if(C->IfDominate(block_id,load_BBid) == false){
+                if(C->IsDominate(block_id,load_BBid) == false){
                     dom_flag = 0;
                     break;
                 }

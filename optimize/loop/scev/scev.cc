@@ -55,38 +55,50 @@ bool SCEV::SCEV_isI32Invariant(Operand op)
         return true;
     }else if(op->GetOperandType() == BasicOperand::REG){
         int regno = ((RegOperand*)op)->GetRegNo();
-        return InvariantSet.find(regno) != InvariantSet.end();
+        auto I = ResultMap[regno];
+        return (InvariantSet.find(regno) != InvariantSet.end()) && (I->GetResultType() == I32);
     }else{
         return false;
     }
 }
 
-//if ths instruction is like result = r +(-) d, return d
-//else return nullptr
-Operand SCEV::is_Calculate_r(Instruction I, int r)
+//if ths instruction is like result = r +(-) d (d is invariant), return {r,d}
+//else return {nullptr,nullptr}
+std::pair<Operand,Operand> is_AddSubInvariant(Instruction I, int r, SCEV* scev)
 {
-    if(I->GetOpcode() == ADD){
+    if(I->GetOpcode() != ADD || I->GetOpcode() != SUB){return {nullptr,nullptr};}
 
-    }else if(I->GetOpcode() == SUB){
+    auto ArithI = (ArithmeticInstruction*)I;
+    auto op1 = ArithI->GetOperand1();
+    auto op2 = ArithI->GetOperand2();
 
-    }
+    bool t1 = scev->SCEV_isI32Invariant(op1);
+    bool t2 = scev->SCEV_isI32Invariant(op2);
+    //both invariant or both not invariant, return nullptr
+    if(t1^t2){return {nullptr,nullptr};}
+    
+    if(t1){std::swap(op1,op2);}
+    //now op2 is invariant
+    return {op1,op2};
 }
 
 //we only care about ADD and SUB
 //r2 = f(st) , f is ADD or SUB
 //example: r2 = st + 1  
-Operand SCEV::FindBasicIndVarCycleVarDef(int st, int r2)
+std::pair<Operand,LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2)
 {
-    //first solve step is reg, we only optimize cycle with size 2
+    //first solve step is reg. If step is reg, we only optimize cycle with size 2
     Operand ans;
     Instruction now = ResultMap[r2];
-    if(now->GetOpcode() == ADD){
-        auto d = is_Calculate_r(now, st);
 
-    }else if(now->GetOpcode() == SUB){
+    auto [r,d] = is_AddSubInvariant(now, st, this);
+    if(r == nullptr){return {nullptr,OTHER};}
 
+    assert(r->GetOperandType() == BasicOperand::REG);
+    int op1 = ((RegOperand*)r)->GetRegNo();
+    if(op1 == st){
+        return {d,(LLVMIROpcode)now->GetOpcode()};
     }
-    return nullptr;
 
     int step;
     while(r2 != st){
@@ -95,7 +107,7 @@ Operand SCEV::FindBasicIndVarCycleVarDef(int st, int r2)
         }else if(now->GetOpcode() == SUB){
 
         }else{
-            return nullptr;
+            return {nullptr,OTHER};
         }
     }
 }
@@ -117,7 +129,7 @@ void SCEV::FindBasicIndVar()
         Operand r2 = PhiI->GetValOperand(latch->block_id);
         if(r2->GetOperandType() != BasicOperand::REG){continue;}
         
-        step = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand*)r2)->GetRegNo());
+        //step = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand*)r2)->GetRegNo());
                 
     }
 }

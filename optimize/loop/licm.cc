@@ -9,7 +9,7 @@ static std::map<int,Instruction> ResultMap;
 bool IsDomAllExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 {
     for(auto ExitBB:L->exit_nodes){
-        if(!cfg->IfDominate(BB->block_id,ExitBB->block_id)){
+        if(!cfg->IsDominate(BB->block_id,ExitBB->block_id)){
             return false;
         }
     }
