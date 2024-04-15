@@ -53,7 +53,7 @@ void BasicBlockCSE(CFG* C);
 void DomTreeWalkCSE(CFG* C);
 void InstSimplify(CFG* C);
 void InstCombine(CFG* C);
-void EliminateDoubleBrUnCond(CFG* C);
+void SimplifyCFGAfterMem2Reg(CFG* C);
 void LoopSimplify(CFG* C);
 void LoopRotate(CFG* C);
 void LoopInvariantCodeMotion(CFG* C);
@@ -129,7 +129,7 @@ int main(int argc,char** argv)
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor( Mem2Reg );
         llvmIR.PassExecutor( SparseConditionalConstantPropagation );
-        //llvmIR.PassExecutor( EliminateDoubleBrUnCond ); // to do
+        //llvmIR.PassExecutor( SimplifyCFGAfterMem2Reg ); // to do
 
         llvmIR.PassExecutor( InstSimplify );
         llvmIR.PassExecutor( InstCombine );
@@ -143,10 +143,12 @@ int main(int argc,char** argv)
         llvmIR.PassExecutor( LoopInvariantCodeMotion );
         llvmIR.PassExecutor( LoopClosedSSA );
         llvmIR.PassExecutor( LoopRotate );
+        //llvmIR.PassExecutor( SimplifyCFGAfterMem2Reg ); // to do
+
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor( LoopSimplify );
         llvmIR.PassExecutor( LoopInvariantCodeMotion );
-
+        
         llvmIR.PassExecutor( BasicBlockCSE );
         llvmIR.PassExecutor( DomTreeWalkCSE );
         

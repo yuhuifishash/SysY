@@ -1,6 +1,5 @@
-#include "cfg.h"
-#include "ir.h"
-#include "alias_analysis.h"
+#include "../include/ir.h"
+#include "../alias_analysis/alias_analysis.h"
 #include <functional>
 
 /*this pass will do some simple common subexpression elimination
@@ -10,6 +9,7 @@ DomTreeWalkCSE will do dfs on the dominator tree to search common subexpression 
 
 extern std::map<std::string,CFG*> CFGMap;
 extern std::map<std::string,int> GlobalMap;
+extern AliasAnalyser alias_analyser;
 
 struct InstCSEInfo
 {
@@ -39,6 +39,7 @@ struct InstCSEInfo
     }
 };
 
+//memory instructions and special instructions will return false
 InstCSEInfo GetCSEInfo(Instruction I)
 {
     InstCSEInfo ans;
@@ -81,11 +82,11 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int,int>& reg_replace_map, std::set<In
     std::map<std::string,int> LoadMap;//<operand_string, result_reg>
     std::map<InstCSEInfo,int> InstCSEMap;//<inst_info, result_reg>
 
-    //CSE load/store instructions
+    //CSE load/store/call instructions
     for(auto I:bb->Instruction_list){
         if(I->GetOpcode() == CALL){
             //we don't know how memory changes
-            //TODO(): we can erase LoadMap precisely with function analysis
+            //TODO(): we can erase LoadMap precisely with function analysis and alias analysis
             LoadMap.clear();
         }else if(I->GetOpcode() == STORE){//store instructions, this will kill load before this store
             //TODO(): we need alias analysis to erase the LoadMap precisely further more

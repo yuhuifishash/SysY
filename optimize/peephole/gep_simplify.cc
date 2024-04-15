@@ -1,4 +1,4 @@
-#include "ir.h"
+#include "../include/ir.h"
 
 /**
     * this function will elimate getelementptr instruction with empty index

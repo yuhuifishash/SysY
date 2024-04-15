@@ -1,4 +1,4 @@
-#include "ir.h"
+#include "../include/ir.h"
 
 /*this pass will delete simple dead code, but will not change the control flow graph.
 and in this function, we do not care about the useless function args.

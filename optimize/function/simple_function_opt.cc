@@ -116,10 +116,6 @@ void TailRecursiveEliminate(CFG* C)
 
 
 
-void FunctionInline(LLVMIR* IR)
-{
-    
-}
 
 
 

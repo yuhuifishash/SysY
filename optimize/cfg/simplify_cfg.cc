@@ -1,4 +1,4 @@
-#include "cfg.h"
+#include "../include/cfg.h"
 /**
     * this function will eliminate some simple short circult
     * for example, if(a && b) will be transformed as below:
@@ -71,9 +71,16 @@ void EliminateDoubleBrUnCond(CFG* C)
 
 /*
     * this function will eliminate useless phi
-    * such as %rx = phi [%ry, L1], [%ry, L1]
+    * such as %rx = phi [%ry, %L1], [%ry, %L1]
+    * such as %rx = phi [5, %L5]
 */
 void EliminateUselessPhi(CFG* C)
 {
     std::cerr<<"EliminateUselessPhi in SimplifyCFG is not implemented now\n";
+}
+
+void SimplifyCFGAfterMem2Reg(CFG* C)
+{
+  EliminateDoubleBrUnCond(C);
+  EliminateUselessPhi(C);
 }

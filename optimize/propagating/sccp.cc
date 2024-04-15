@@ -1,6 +1,4 @@
-#include "cfg.h"
-#include "ir.h"
-#include "Instruction.h"
+#include "../include/ir.h"
 #include "lattice.h"
 
 static std::map<Instruction,ConstLattice> ConstLatticeMap;

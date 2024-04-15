@@ -1,10 +1,11 @@
-#include "cfg.h"
-#include "Instruction.h"
+#include "../include/cfg.h"
+#include "../alias_analysis/alias_analysis.h"
 
 extern std::map<std::string,CFG*> CFGMap;
 
 static std::map<int,bool> InvariantMap;//<RegNo, is_invariant>
 static std::map<int,Instruction> ResultMap;
+extern AliasAnalyser alias_analyser;
 
 bool IsDomAllExitBB(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
 {
@@ -33,6 +34,11 @@ bool canMotion(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
     */
     bool c2 = true;
     return c1 | c2;
+}
+
+bool isCallInvariant(CFG* C,Instruction I,NaturalLoop* L)
+{
+    
 }
 
 bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)

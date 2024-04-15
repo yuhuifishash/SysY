@@ -1,12 +1,26 @@
 #include "alias_analysis.h"
 
-AliasResult QueryAliasAll(Operand op1)
+AliasAnalyser alias_analyser;
+
+AliasAnalyser::AliasResult AliasAnalyser::QueryAlias(Operand op1, Operand op2,CFG* C)
 {
     return AliasResult::MustAlias;
 }
 
-AliasResult QueryAlias(Operand op1, Operand op2)
+AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction* I,Operand op,CFG* C)
 {
-    return AliasResult::MustAlias;
+    return ModRefResult::ModRef;
 }
 
+void AliasAnalyser::AliasAnalysis()
+{
+
+}
+
+
+
+void AliasAnalysis(LLVMIR* IR)
+{
+    alias_analyser.SetLLVMIR(IR);
+    alias_analyser.AliasAnalysis();
+}

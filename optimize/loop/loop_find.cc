@@ -1,7 +1,4 @@
-#include "cfg.h"
-#include "ir.h"
-#include "Instruction.h"
-#include "loop.h"
+#include "../include/ir.h"
 #include <stack>
 
 std::set<LLVMBlock> FindNodesInLoop(CFG* C,LLVMBlock n,LLVMBlock d) //backedge n->d

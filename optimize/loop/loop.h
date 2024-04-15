@@ -1,8 +1,6 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include "../include/cfg.h"
-#include "../alias_analysis/alias_analysis.h"
 #include "scev/scev_expr.h"
 
 class CFG;

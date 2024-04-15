@@ -1,4 +1,4 @@
-#include "ir.h"
+#include "../include/ir.h"
 /*
 %r1 = add i32 4,%r0 will be transformed to %r1 = add i32 %r0,4
 */
