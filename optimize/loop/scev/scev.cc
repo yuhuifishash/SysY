@@ -38,7 +38,7 @@ void SCEV::FindInvariantVar() {
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             int v = I->GetResultRegNo();
-            if (v != -1) { // result exists
+            if (v != -1) {    // result exists
                 ResultMap[v] = I;
             }
         }

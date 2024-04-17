@@ -2,8 +2,8 @@
 #include "lattice.h"
 
 static std::map<Instruction, ConstLattice> ConstLatticeMap;
-static std::map<Instruction, std::vector<Instruction>> SSAG{}; // SSA-Graph
-static std::map<int, Instruction> ResultMap;                   //<regno,the instruction that define regno>
+static std::map<Instruction, std::vector<Instruction>> SSAG{};    // SSA-Graph
+static std::map<int, Instruction> ResultMap;                      //<regno,the instruction that define regno>
 
 void BuildSSAGraph(CFG *C) {
     ResultMap.clear();
@@ -403,7 +403,7 @@ void VisitOperation(Instruction I, std::set<Instruction> &SSAWorklist,
             Operand val = phi_node.second;
             auto pre_lattice = GetOperandLattice(val, regresult_map);
             if (CFGedgeExec.find({pre, I->GetBlockID()}) !=
-                CFGedgeExec.end()) { // where the corresponding control-flow edge is executable.
+                CFGedgeExec.end()) {    // where the corresponding control-flow edge is executable.
                 change |= UpdateLatticeStatus(I, pre_lattice);
             }
         }
@@ -596,7 +596,7 @@ void SCCP(CFG *C) {
 
     CFGWorklist.insert({-1, 0});
     while (!SSAWorklist.empty() || !CFGWorklist.empty()) {
-        if (!SSAWorklist.empty()) { // SSAEdge
+        if (!SSAWorklist.empty()) {    // SSAEdge
             Instruction I = *SSAWorklist.begin();
             SSAWorklist.erase(I);
             // When the target operation is a phi-operation visit that phi-operation
@@ -618,10 +618,10 @@ void SCCP(CFG *C) {
                     }
                 }
             }
-        } else { // CFGEdge
+        } else {    // CFGEdge
             auto CFGEdge = *CFGWorklist.begin();
             CFGWorklist.erase(CFGEdge);
-            CFGedgeExec[CFGEdge] = 1; // mark the edge as exectuable
+            CFGedgeExec[CFGEdge] = 1;    // mark the edge as exectuable
 
             int target = CFGEdge.second;
             auto B = (*C->block_map)[target];
@@ -643,8 +643,8 @@ void SCCP(CFG *C) {
                 } else {
                     if (!firstvis_tag) {
                         break;
-                    } // If the target node was reached the first time via the CFGWorkList, visit all its
-                      // operations
+                    }    // If the target node was reached the first time via the CFGWorkList, visit all its
+                         // operations
                     else {
                         VisitOperation(I, SSAWorklist, CFGedgeExec, CFGWorklist, ResultMap, SSAG);
                     }

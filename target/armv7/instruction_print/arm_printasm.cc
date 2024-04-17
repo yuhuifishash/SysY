@@ -206,7 +206,7 @@ template <> void ArmPrinter::printArm<ArmCmp *>(ArmCmp *ins) {
 
 template <> void ArmPrinter::printArm<ArmIt *>(ArmIt *ins) {
     unsigned pattern_len = ins->pattern >> 4;
-    (*this) << "it"; //<<pattern;
+    (*this) << "it";    //<<pattern;
     if (pattern_len != 0) {
         int bitmask = 1 << (pattern_len - 1);
         for (int i = 1; i <= pattern_len; i++) {

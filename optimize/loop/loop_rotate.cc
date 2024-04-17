@@ -76,7 +76,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
     for (auto I : header->Instruction_list) {
         auto nI = I->CopyInstruction();
 
-        if (nI->GetOpcode() == PHI) { // erase the phi from latch
+        if (nI->GetOpcode() == PHI) {    // erase the phi from latch
             auto PhiI = (PhiInstruction *)nI;
             assert(PhiI->GetPhiList().size() == 2);
 
@@ -85,7 +85,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             // change result operand
             PhiI->SetResultReg(++C->max_reg);
             RegReplaceMap[I->GetResultRegNo()] = C->max_reg;
-        } else { // not phi, change its' operands
+        } else {    // not phi, change its' operands
             nI->ReplaceByMap(RegReplaceMap);
         }
         // br_uncond is impossible (because preheader->header  and  latch->header)
@@ -175,7 +175,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             PhiI->SetNewFrom(preheader->block_id, CondBlock->block_id);
             RegValMap[PhiI->GetResultRegNo()] = PhiI->GetValOperand(latch->block_id);
         } else {
-            if (I->GetResultRegNo() != -1) { // set new result RegOperand
+            if (I->GetResultRegNo() != -1) {    // set new result RegOperand
                 NewResultRegMap[I->GetResultRegNo()] = ++C->max_reg;
             }
 
@@ -184,7 +184,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             latch->InsertInstruction(1, nI);
             // br_uncond is impossible
             assert(nI->GetOpcode() != BR_UNCOND);
-            if (nI->GetOpcode() == BR_COND) { // header -> exit  and  header->loopbody
+            if (nI->GetOpcode() == BR_COND) {    // header -> exit  and  header->loopbody
                 auto nBrCondI = (BrCondInstruction *)nI;
                 int body_label_id;
 

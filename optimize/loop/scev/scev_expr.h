@@ -22,9 +22,9 @@ public:
     CFG *C;
     NaturalLoop *L;
 
-    std::set<int> InvariantSet;      //<RegNo>
+    std::set<int> InvariantSet;    //<RegNo>
     SCEVExpr BasicIndVar;
-    std::map<int, SCEVExpr> SCEVMap; //<RegNo, SCEVExpr>
+    std::map<int, SCEVExpr> SCEVMap;    //<RegNo, SCEVExpr>
 
     /*this indicates that the loop is the formal:
     i = lowerbound
@@ -35,9 +35,9 @@ public:
     */
     bool is_simpleloop;
     LLVMIROpcode step_way;
-    Operand lowerbound; // if is_simpleloop is true, this must be invariant i32
-    Operand upperbound; // if is_simpleloop is true, this must be invariant i32
-    Operand step;       // if is_simpleloop is true, this must be invariant i32
+    Operand lowerbound;    // if is_simpleloop is true, this must be invariant i32
+    Operand upperbound;    // if is_simpleloop is true, this must be invariant i32
+    Operand step;          // if is_simpleloop is true, this must be invariant i32
 
     void FindInvariantVar();
     void FindBasicIndVar();
@@ -54,7 +54,7 @@ public:
         else
             return nullptr
     */
-    std::pair<Operand, LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2); //(RegNO, RegNo)
+    std::pair<Operand, LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2);    //(RegNO, RegNo)
 };
 
 #endif

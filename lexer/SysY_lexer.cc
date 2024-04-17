@@ -718,7 +718,7 @@ YY_DECL {
 
             YY_DO_BEFORE_ACTION;
 
-        do_action:            /* This label is used only to access EOF actions. */
+        do_action: /* This label is used only to access EOF actions. */
 
             switch (yy_act) { /* beginning of action switch */
             case 0:           /* must back up */
@@ -1003,7 +1003,7 @@ YY_DECL {
                     }
                     if (yytext[frac_after_dot_idx]) {
                         int eEPos = frac_after_dot_idx;
-                        int expoCur = eEPos + 1; // expo Begin
+                        int expoCur = eEPos + 1;    // expo Begin
                         int sign = 1;
                         if (yytext[expoCur] == '+') {
                             sign = 1;
@@ -1079,10 +1079,10 @@ YY_DECL {
                     while (str[dotpos] != '.') {
                         ++dotpos;
                     }
-                    int pPos = dotpos + 1; // str[i]='.'
+                    int pPos = dotpos + 1;    // str[i]='.'
                     while (pPos < str.length() && str[pPos] != 'p' && str[pPos] != 'P') {
                         ++pPos;
-                    } // str[j]=='p' or 'P'
+                    }    // str[j]=='p' or 'P'
                     int binExp_begin = pPos + 1;
                     double exp_raw = 0;
                     if (pPos < str.length()) {
@@ -1140,7 +1140,7 @@ YY_DECL {
                     int pPos = 0;
                     while (pPos < str.length() && str[pPos] != 'p' && str[pPos] != 'P') {
                         ++pPos;
-                    } // str[j]=='p' or 'P'
+                    }    // str[j]=='p' or 'P'
                     double exp = 0;
 
                     if (pPos < str.length()) {

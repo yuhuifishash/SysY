@@ -223,9 +223,9 @@ class Lval : public __Expression {
 public:
     Symbol name;
     std::vector<Expression> *dims;
-    bool is_left = true; // left value or right value
+    bool is_left = true;    // left value or right value
     int scope = -1;
-    Operand ptr;         // use IRgen, determine the ptr of this lval
+    Operand ptr;    // use IRgen, determine the ptr of this lval
     Lval(Symbol n, std::vector<Expression> *d) : name(n), dims(d) {}
     void codeIR();
     void TypeCheck();
@@ -404,7 +404,7 @@ class ifelse_stmt : public __Stmt {
 public:
     Expression Cond;
     Stmt ifstmt;
-    Stmt elsestmt; // else
+    Stmt elsestmt;    // else
     // construction
     ifelse_stmt(Expression c, Stmt i, Stmt t) : Cond(c), ifstmt(i), elsestmt(t) {}
     void codeIR();

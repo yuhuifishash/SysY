@@ -10,7 +10,7 @@ protected:
     std::map<int, LiveInterval> intervals;
 
     // a = COPY b ==> copy_sources[a].push_back[b]
-    std::map<int, std::vector<int>> copy_sources; // For coalescing
+    std::map<int, std::vector<int>> copy_sources;    // For coalescing
 
     PhysicalRegisters *phy_regs;
     virtual void DoAllocInCurrentFunc() = 0;

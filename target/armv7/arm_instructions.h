@@ -92,7 +92,7 @@ public:
         ADD8,
         SUB8,
         ASX,
-        SAX //,USAD8,USADA8
+        SAX    //,USAD8,USADA8
     };
     int prefix, opcode;
     Register Rd, Rn, Rm;
@@ -112,9 +112,9 @@ public:
 public:
     enum { MUL = 0, MLA, MLS, SMULL, SMLAL, SMMUL };
     int opcode;
-    bool SR;     // Sometimes not used
+    bool SR;    // Sometimes not used
     Register Rd, Rm, Rs;
-    Register Rn; // Sometimes not used
+    Register Rn;    // Sometimes not used
     // Rd - RdLo
     // Rn - RdHi
 
@@ -281,17 +281,17 @@ public:
     int size;
     bool T;
     Register Rd;
-    Register Rn; // not used when offset_type == LABEL
+    Register Rn;    // not used when offset_type == LABEL
     enum { IMM = 0, REG_ADD, REG_SUB, LABEL };
     int offset_type;
     union {
         int offset;
         RmOpsh Rmsh;
-    };                // not used when offset_type == LABEL
-    Label addr_label; // not used when offset_type != LABEL
+    };                   // not used when offset_type == LABEL
+    Label addr_label;    // not used when offset_type != LABEL
 
-    bool ispreindex;  // not used when offset_type == LABEL
-    bool dowriteback; // not used when offset_type == LABEL
+    bool ispreindex;     // not used when offset_type == LABEL
+    bool dowriteback;    // not used when offset_type == LABEL
 
     ArmLoadStore(int op, int size, bool T, Register Rd, Register Rn, int offset_type, bool ispreindex,
                  bool dowriteback, Label addr_label, int cond, std::string comment = std::string())
@@ -336,7 +336,7 @@ public:
         : opcode(opcode), reglist(reglist), ArmBaseInstruction(cond, comment) {
         ins_type = LOADSTOREM;
     }
-}; // push pop
+};    // push pop
 
 class VFPVbin : public ArmBaseInstruction {
 public:
@@ -352,7 +352,7 @@ public:
         : opcode(opcode), P(P), Fd(Fd), Fn(Fn), Fm(Fm), ArmBaseInstruction(cond, comment) {
         ins_type = VBIN;
     }
-}; // VADD VSUB VMUL VDIV
+};    // VADD VSUB VMUL VDIV
 class VFPVcmp : public ArmBaseInstruction {
 public:
     std::set<int> GetReadReg();
@@ -423,7 +423,7 @@ public:
         : VFPVldst(op, Fd, Register(), label, 1, cond, comment) {}
     VFPVldst(int op, Register Fd, Register Rn, int immed)
         : VFPVldst(op, Fd, Rn, Label(0, false), 0, cond, comment) {}
-}; // VLDR VSTR
+};    // VLDR VSTR
 class VFPVpushpop : public ArmBaseInstruction {
 public:
     std::set<int> GetReadReg();
@@ -438,7 +438,7 @@ public:
         : opcode(opcode), VFPregs(VFPregs), ArmBaseInstruction(cond, comment) {
         ins_type = VPUSHPOP;
     }
-}; // VPUSH VPOP
+};    // VPUSH VPOP
 class VFPVstm : public ArmBaseInstruction {
 public:
     std::set<int> GetReadReg();
@@ -457,6 +457,6 @@ public:
           ArmBaseInstruction(cond, comment) {
         ins_type = _VSTM;
     }
-}; // VSTM VSTMDB VLDM VLDMDB
+};    // VSTM VSTMDB VLDM VLDMDB
 
 #endif

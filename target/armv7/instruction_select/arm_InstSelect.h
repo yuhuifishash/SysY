@@ -4,8 +4,8 @@
 #include "machine_selector.h"
 class ArmSelector : public MachineSelector {
 private:
-    std::map<int, int> ir_arm_vreg_map;       // needs to be cleared in new function
-    std::map<int, int> ir_negativeoffset_map; // needs to be cleared in new function
+    std::map<int, int> ir_arm_vreg_map;          // needs to be cleared in new function
+    std::map<int, int> ir_negativeoffset_map;    // needs to be cleared in new function
     struct tagLastCond {
         enum condType { ICMP = 0, FCMP = 1 } cond_type;
         union condContent {

@@ -101,7 +101,7 @@ void RecursiveArrayInit(InitVal init, VarAttribute &val, int begPos, int endPos,
     }
 }
 
-void SolveIntInitVal(InitVal init, VarAttribute &val) // used for global or const
+void SolveIntInitVal(InitVal init, VarAttribute &val)    // used for global or const
 {
     val.type = Type::INT;
     int arraySz = 1;
@@ -134,7 +134,7 @@ void SolveIntInitVal(InitVal init, VarAttribute &val) // used for global or cons
     }
 }
 
-void SolveFloatInitVal(InitVal init, VarAttribute &val) // used for global or const
+void SolveFloatInitVal(InitVal init, VarAttribute &val)    // used for global or const
 {
     val.type = Type::FLOAT;
     int arraySz = 1;
@@ -314,7 +314,7 @@ void LOrExp_or::TypeCheck() {
 void ConstExp::TypeCheck() {
     addexp->TypeCheck();
     attribute = addexp->attribute;
-    if (!attribute.V.ConstTag) { // addexp is not const
+    if (!attribute.V.ConstTag) {    // addexp is not const
         error_msgs.push_back("Expression is not const " + std::to_string(line_number) + "\n");
     }
 }
@@ -339,9 +339,9 @@ void Lval::TypeCheck() {
     }
 
     VarAttribute val = semant_table.symbol_table.lookup_val(name);
-    if (val.type != Type::VOID) {                                                       // local var
+    if (val.type != Type::VOID) {    // local var
         scope = semant_table.symbol_table.lookup_scope(name);
-    } else if (semant_table.GlobalTable.find(name) != semant_table.GlobalTable.end()) { // global var
+    } else if (semant_table.GlobalTable.find(name) != semant_table.GlobalTable.end()) {    // global var
         val = semant_table.GlobalTable[name];
         scope = 0;
     } else {
@@ -349,7 +349,7 @@ void Lval::TypeCheck() {
         return;
     }
 
-    if (arrayindexs.size() == val.dims.size()) { // lval is a number(not a array)
+    if (arrayindexs.size() == val.dims.size()) {    // lval is a number(not a array)
         attribute.V.ConstTag = val.ConstTag & arrayindexConstTag;
         attribute.T.type = val.type;
         if (attribute.V.ConstTag) {
@@ -359,7 +359,7 @@ void Lval::TypeCheck() {
                 attribute.V.val.FloatVal = GetArrayFloatVal(val, arrayindexs);
             }
         }
-    } else if (arrayindexs.size() < val.dims.size()) { // lval is a array
+    } else if (arrayindexs.size() < val.dims.size()) {    // lval is a array
         attribute.V.ConstTag = false;
         attribute.T.type = Type::PTR;
     } else {
@@ -435,7 +435,7 @@ void PrimaryExp_branch::TypeCheck() {
 void assign_stmt::TypeCheck() {
     lval->TypeCheck();
     exp->TypeCheck();
-    ((Lval *)lval)->is_left = true; // assign_stmt -> leftvalue
+    ((Lval *)lval)->is_left = true;    // assign_stmt -> leftvalue
     if (exp->attribute.T.type == Type::VOID) {
         error_msgs.push_back("void type can not be assign_stmt's expression " + std::to_string(line_number) +
                              "\n");
@@ -518,7 +518,7 @@ void ConstInitVal_exp::TypeCheck() {
         error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) +
                              "\n");
     }
-    if (!attribute.V.ConstTag) { // exp is not const
+    if (!attribute.V.ConstTag) {    // exp is not const
         error_msgs.push_back("Expression is not const " + std::to_string(line_number) + "\n");
     }
 }

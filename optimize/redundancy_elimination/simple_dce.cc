@@ -15,7 +15,7 @@ void SimpleDCE(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             int v = I->GetResultRegNo();
-            if (v != -1) { // result exists
+            if (v != -1) {    // result exists
                 WorkList.insert(v);
                 ResultMap[v] = I;
             }
@@ -34,9 +34,9 @@ void SimpleDCE(CFG *C) {
             auto resultI = ResultMap[v];
             if (resultI == nullptr) {
                 continue;
-            } // resultI may be FuncDefInstructions, but we do not care this, so continue
-            if (resultI->GetOpcode() == CALL) { // the call result is useless, if we want to erase this, the
-                                                // call must be pure function
+            }    // resultI may be FuncDefInstructions, but we do not care this, so continue
+            if (resultI->GetOpcode() == CALL) {    // the call result is useless, if we want to erase this,
+                                                   // the call must be pure function
                 auto CallI = (CallInstruction *)resultI;
                 if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
                     continue;

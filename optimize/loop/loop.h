@@ -47,7 +47,7 @@ class NaturalLoopForest {
 public:
     int loop_cnt = 0;
     std::set<NaturalLoop *> loop_set;
-    std::map<LLVMBlock, NaturalLoop *> header_loop_map; // <headBB,Loop>
+    std::map<LLVMBlock, NaturalLoop *> header_loop_map;    // <headBB,Loop>
 
     std::vector<std::vector<NaturalLoop *>> loopG;
     void CombineSameHeadLoop();

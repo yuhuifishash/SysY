@@ -35,7 +35,7 @@ public:
     Type::ty type;
     bool ConstTag = 0;
     std::vector<int> dims{};
-    std::vector<int> IntInitVals{}; // used for array
+    std::vector<int> IntInitVals{};    // used for array
     std::vector<float> FloatInitVals{};
     VarAttribute() {
         type = Type::VOID;
@@ -46,20 +46,20 @@ public:
 class NodeAttribute {
 public:
     enum opcode {
-        ADD = 0,  // +
-        SUB = 1,  // -
-        MUL = 2,  // *
-        DIV = 3,  // /
-        MOD = 4,  // %
-        GEQ = 5,  // >=
-        GT = 6,   // >
-        LEQ = 7,  // <=
-        LT = 8,   // <
-        EQ = 9,   // ==
-        NE = 10,  // !=
-        OR = 11,  // ||
-        AND = 12, // &&
-        NOT = 13, // !
+        ADD = 0,     // +
+        SUB = 1,     // -
+        MUL = 2,     // *
+        DIV = 3,     // /
+        MOD = 4,     // %
+        GEQ = 5,     // >=
+        GT = 6,      // >
+        LEQ = 7,     // <=
+        LT = 8,      // <
+        EQ = 9,      // ==
+        NE = 10,     // !=
+        OR = 11,     // ||
+        AND = 12,    // &&
+        NOT = 13,    // !
     };
     int line_number;
     Type T;

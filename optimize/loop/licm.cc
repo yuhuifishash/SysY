@@ -3,7 +3,7 @@
 
 extern std::map<std::string, CFG *> CFGMap;
 
-static std::map<int, bool> InvariantMap; //<RegNo, is_invariant>
+static std::map<int, bool> InvariantMap;    //<RegNo, is_invariant>
 static std::map<int, Instruction> ResultMap;
 extern AliasAnalyser alias_analyser;
 
@@ -59,7 +59,7 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L) {
         }
         auto target_cfg = CFGMap[tI->GetFunctionName()];
         if (!target_cfg->FunctionInfo.is_independent) {
-            return false; // not independent function, can not move
+            return false;    // not independent function, can not move
         }
         // I->printIR(std::cerr);
     }
@@ -84,14 +84,14 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L) {
             int op_reg = ((RegOperand *)op)->GetRegNo();
             if (InvariantMap[op_reg] == 1) {
                 continue;
-            } // reg operand is invariant
+            }    // reg operand is invariant
             Instruction resultI = ResultMap[op_reg];
             int I_BB_id = resultI->GetBlockID();
             auto I_BB = (*(C->block_map))[I_BB_id];
             // the reg operand is def in the loop, the reg operand is not invariant
             if (L->loop_nodes.find(I_BB) != L->loop_nodes.end()) {
                 return false;
-            } else { // def instruction is out of loop, the reg operand is invariant
+            } else {    // def instruction is out of loop, the reg operand is invariant
                 InvariantMap[op_reg] = 1;
                 continue;
             }
@@ -100,7 +100,7 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L) {
         return false;
     }
     // I->printIR(std::cerr);
-    if (I->GetResultRegNo() != -1) { // mark the reg operand to be invariant
+    if (I->GetResultRegNo() != -1) {    // mark the reg operand to be invariant
         InvariantMap[I->GetResultRegNo()] = 1;
     }
     return true;
@@ -148,7 +148,7 @@ void SingleLoopLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
             EraseSet.insert(I);
             I->SetBlockID(L->preheader->block_id);
             L->preheader->InsertInstruction(1, I);
-            it = InvariantInsList.erase(it); // erase this Instruction
+            it = InvariantInsList.erase(it);    // erase this Instruction
             // std::cerr<<"code motion ";I->PrintIR(std::cerr);
         } else {
             ++it;
@@ -199,7 +199,7 @@ void LoopInvariantCodeMotion(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             int v = I->GetResultRegNo();
-            if (v != -1) { // result exists
+            if (v != -1) {    // result exists
                 ResultMap[v] = I;
             }
         }
