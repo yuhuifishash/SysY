@@ -100,9 +100,9 @@ union YYSTYPE {
     Stmt stmt;
     Block block;
     InitVal initval;
-    std::vector<InitVal> *initvals;      // added *
+    std::vector<InitVal> *initvals; // added *
     FuncFParam formal;
-    std::vector<FuncFParam> *formals;    // added *
+    std::vector<FuncFParam> *formals; // added *
     BlockItem block_item;
     std::vector<BlockItem> *block_items; // added *
 
