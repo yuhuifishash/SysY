@@ -112,7 +112,7 @@ public:
 public:
     enum { MUL = 0, MLA, MLS, SMULL, SMLAL, SMMUL };
     int opcode;
-    bool SR; // Sometimes not used
+    bool SR;     // Sometimes not used
     Register Rd, Rm, Rs;
     Register Rn; // Sometimes not used
     // Rd - RdLo

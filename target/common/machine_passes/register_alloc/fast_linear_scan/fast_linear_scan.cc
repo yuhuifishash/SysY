@@ -10,7 +10,8 @@ void FastLinearScan::DoAllocInCurrentFunc() {
         while (!unalloc_queue.empty()) {
             auto interval = unalloc_queue.top();
             auto &cur_virtual_register = mfun->virtual_registers[interval.getVirtualRegId()];
-            int phy_reg_id = phy_regs->getIdleReg(cur_virtual_register.accessible_physical_registers, interval);
+            int phy_reg_id =
+            phy_regs->getIdleReg(cur_virtual_register.accessible_physical_registers, interval);
             if (phy_reg_id >= 0) {
                 phy_regs->OccupyReg(phy_reg_id, interval);
                 cur_virtual_register.physical_register_descriptor_index = phy_reg_id;

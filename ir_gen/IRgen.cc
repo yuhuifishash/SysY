@@ -252,7 +252,7 @@ void Lval::codeIR() {
         attribute.T.type == Type::PTR) { // lval is array, first use getelementptr to get address
         if (formal_array_tag) {          // formal array ptr, getelementptr first does not use 0
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
-        } else { // array ptr, getelementptr first use 0
+        } else {                         // array ptr, getelementptr first use 0
             arrayindexs.insert(arrayindexs.begin(), new ImmI32Operand(0));
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
         }
@@ -541,7 +541,7 @@ void VarDecl::codeIR() {
         int alloca_reg = max_reg;
         if (def->GetDims() != nullptr) { // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) { // init val.dims
+            for (auto d : dim_vector) {  // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
@@ -603,7 +603,7 @@ void ConstDecl::codeIR() {
         int alloca_reg = max_reg;
         if (def->GetDims() != nullptr) { // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) { // init val.dims
+            for (auto d : dim_vector) {  // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
