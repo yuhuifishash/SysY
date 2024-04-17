@@ -1,7 +1,9 @@
 SRCDIR += ./target
 SRCDIR += ./target/armv7
 SRCDIR += ./target/common
-SRCDIR += ./target/common/register_alloc
+SRCDIR += ./target/common/machine_passes/register_alloc
+SRCDIR += ./target/common/machine_passes/register_alloc/fast_linear_scan
+SRCDIR += ./target/common/machine_passes/register_alloc/graph_color
 SRCDIR += ./target/common/machine_instruction_structures
 SRCDIR += ./target/common/machine_instruction_structures/cfg_iterators
 SRCDIR += ./target/common/machine_passes
@@ -59,3 +61,4 @@ clean-all:
 
 format:
 	clang-format -style=file -i ${SRCS}
+	clang-format -style=file -i $(foreach dir,$(SRCDIR),$(wildcard $(dir)/*.h))
