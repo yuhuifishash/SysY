@@ -108,7 +108,7 @@ void TailRecursiveEliminate(CFG *C) {
                     auto funcdefI_reg = (RegOperand *)FuncdefI->formals_reg[i];
                     if (callI_reg->GetRegNo() == i) {
                         continue;
-                    } // funtion params id stand by i
+                    }    // funtion params id stand by i
                     auto storeI =
                     new StoreInstruction(callI->get_parameterList()[i].first, allocaI->GetResultReg(),
                                          callI->get_parameterList()[i].second);

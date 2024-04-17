@@ -243,10 +243,10 @@ void PhiInstruction::PrintIR(std::ostream &s) {
 void AllocaInstruction::PrintIR(std::ostream &s) {
     s << result << " = alloca ";
     if (dims.empty())
-        s << type << "\n"; // 单个变量
+        s << type << "\n";    // 单个变量
     else {
         for (std::vector<int>::iterator it = dims.begin(); it != dims.end(); ++it)
-            s << "[" << *it << " x "; // 高维数组
+            s << "[" << *it << " x ";    // 高维数组
         s << type << std::string(dims.size(), ']') << "\n";
     }
 }
@@ -296,7 +296,7 @@ void BasicBlock::printIR(std::ostream &s) {
 
     for (Instruction ins : Instruction_list) {
         s << "    ";
-        ins->PrintIR(s); // Auto "\n" In Instruction::printIR()
+        ins->PrintIR(s);    // Auto "\n" In Instruction::printIR()
     }
 }
 
@@ -312,7 +312,7 @@ void LLVMIR::printIR(std::ostream &s) {
     }
 
     // output Functions
-    for (auto Func_Block_item : function_block_map) { //<function,<id,block> >
+    for (auto Func_Block_item : function_block_map) {    //<function,<id,block> >
         FuncDefInstruction f = Func_Block_item.first;
         current_CFG = llvm_cfg[f];
         // output function Syntax
@@ -415,7 +415,7 @@ void recursive_print(std::ostream &s, LLVMType type, VarAttribute &v, int dimDph
     for (int i = 0; i < v.dims[dimDph]; i++) {
         recursive_print(s, type, v, dimDph + 1, beginPos + i * step, beginPos + (i + 1) * step - 1);
         if (i != v.dims[dimDph] - 1)
-            s << ","; // Not the last element
+            s << ",";    // Not the last element
     }
     s << "]";
 }

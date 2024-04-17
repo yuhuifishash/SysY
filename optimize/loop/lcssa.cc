@@ -20,16 +20,16 @@ auto GetUsedOperandOutOfLoop(CFG *C, NaturalLoop *L) {
             }
         }
     }
-    std::set<int> RegUsedSet; // the RegNo that def in the loop but used out of loop
+    std::set<int> RegUsedSet;    // the RegNo that def in the loop but used out of loop
     std::map<int, LLVMType> RegUsedTypeMap;
 
     for (auto [id, bb] : *C->block_map) {
         if (L->loop_nodes.find(bb) != L->loop_nodes.end()) {
-            continue; // in the loop
+            continue;    // in the loop
         }
-        for (auto I : bb->Instruction_list) { // assert(L->exit_nodes.size() == 1)
+        for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *L->exit_nodes.begin()) {
-                continue; // the phi in exit_nodes, we assume the var is used in the loop
+                continue;    // the phi in exit_nodes, we assume the var is used in the loop
             }
             for (auto op : I->GetNonResultOperands()) {
                 if (op->GetOperandType() != BasicOperand::REG) {
@@ -67,11 +67,11 @@ void NaturalLoop::LCSSA(CFG *C) {
 
     for (auto [id, bb] : *C->block_map) {
         if (this->loop_nodes.find(bb) != this->loop_nodes.end()) {
-            continue; // in the loop
+            continue;    // in the loop
         }
-        for (auto I : bb->Instruction_list) { // assert(L->exit_nodes.size() == 1)
+        for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *this->exit_nodes.begin()) {
-                continue; // the phi in exit_nodes, we assume the var is used in the loop
+                continue;    // the phi in exit_nodes, we assume the var is used in the loop
             }
             I->ReplaceByMap(ReplaceMap);
         }

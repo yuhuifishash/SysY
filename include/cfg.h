@@ -24,8 +24,8 @@ public:
       you can see it in the LLVMIR::CFGInit()*/
     std::map<int, LLVMBlock> *block_map;
 
-    std::vector<std::vector<LLVMBlock>> G{};    // control flow graph
-    std::vector<std::vector<LLVMBlock>> invG{}; // inverse control flow graph
+    std::vector<std::vector<LLVMBlock>> G{};       // control flow graph
+    std::vector<std::vector<LLVMBlock>> invG{};    // inverse control flow graph
     DominatorTree DomTree;
     FunctionBasicInfo FunctionInfo;
     NaturalLoopForest LoopForest;

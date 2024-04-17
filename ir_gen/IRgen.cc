@@ -7,8 +7,8 @@ extern SemantTable semant_table;
 static FuncDefInstruction function_now;
 static Type::ty function_returntype = Type::VOID;
 static int now_label = 0;
-static int loop_start_label = -1; // continue;
-static int loop_end_label = -1;   // break;
+static int loop_start_label = -1;    // continue;
+static int loop_end_label = -1;      // break;
 
 std::map<FuncDefInstruction, int> max_label_map{};
 std::map<FuncDefInstruction, int> max_reg_map{};
@@ -238,32 +238,32 @@ void Lval::codeIR() {
     VarAttribute lval_attribute;
     bool formal_array_tag = false;
     int alloca_reg = irgen_table.symbol_table.lookup(name);
-    if (alloca_reg != -1) { // local, use var's alloca_reg
+    if (alloca_reg != -1) {    // local, use var's alloca_reg
         ptr_operand = new RegOperand(alloca_reg);
         lval_attribute = irgen_table.RegTable[alloca_reg];
         formal_array_tag = irgen_table.FormalArrayTable[alloca_reg];
-    } else { // global, use var's name
+    } else {    // global, use var's name
         ptr_operand = new GlobalOperand(name->get_string());
         lval_attribute = semant_table.GlobalTable[name];
     }
 
     auto lltype = Type2LLvm[lval_attribute.type];
     if (arrayindexs.empty() == false ||
-        attribute.T.type == Type::PTR) { // lval is array, first use getelementptr to get address
-        if (formal_array_tag) {          // formal array ptr, getelementptr first does not use 0
+        attribute.T.type == Type::PTR) {    // lval is array, first use getelementptr to get address
+        if (formal_array_tag) {             // formal array ptr, getelementptr first does not use 0
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
-        } else { // array ptr, getelementptr first use 0
+        } else {    // array ptr, getelementptr first use 0
             arrayindexs.insert(arrayindexs.begin(), new ImmI32Operand(0));
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
         }
-        ptr_operand = new RegOperand(max_reg); // final address of ptr
+        ptr_operand = new RegOperand(max_reg);    // final address of ptr
     }
 
     // store the ptr_operand in ptr, if this lval is left value, we can use this to get the address
     // you can see it in assign_stmt::codeIR()
     ptr = ptr_operand;
-    if (is_left == false) {                  // lval is right value, use load
-        if (attribute.T.type != Type::PTR) { // not ptr, we need to use load to get the value of the array
+    if (is_left == false) {                     // lval is right value, use load
+        if (attribute.T.type != Type::PTR) {    // not ptr, we need to use load to get the value of the array
             IRgenLoad(B, lltype, ++max_reg, ptr_operand);
         }
     }
@@ -536,12 +536,12 @@ void VarDecl::codeIR() {
     for (auto def : def_vector) {
 
         VarAttribute val;
-        val.type = type_decl; // init val.type
+        val.type = type_decl;    // init val.type
         irgen_table.symbol_table.add_Symbol(def->GetName(), ++max_reg);
         int alloca_reg = max_reg;
-        if (def->GetDims() != nullptr) { // this var is array
+        if (def->GetDims() != nullptr) {    // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) { // init val.dims
+            for (auto d : dim_vector) {    // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
@@ -556,7 +556,7 @@ void VarDecl::codeIR() {
 
                 CallInstruction *memsetCall =
                 new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
-                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg)); // array address
+                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));
                 memsetCall->push_back_Parameter(I1, new ImmI32Operand(0));
@@ -564,7 +564,7 @@ void VarDecl::codeIR() {
                 // recursive_Array_Init_IR
                 RecursiveArrayInitIR(InitB, val.dims, alloca_reg, init, 0, array_sz - 1, 0, type_decl);
             }
-        } else { // this var is not array
+        } else {    // this var is not array
             IRgenAlloca(B, Type2LLvm[type_decl], alloca_reg);
             irgen_table.RegTable[alloca_reg] = val;
 
@@ -576,7 +576,7 @@ void VarDecl::codeIR() {
                 initExp->codeIR();
                 IRgenTypeConverse(InitB, initExp->attribute.T.type, type_decl, max_reg);
                 val_operand = new RegOperand(max_reg);
-            } else { // we consume that no init will be 0 by default
+            } else {    // we consume that no init will be 0 by default
                 if (type_decl == Type::INT) {
                     IRgenArithmeticI32ImmAll(InitB, LLVMIROpcode::ADD, 0, 0, ++max_reg);
                     val_operand = new RegOperand(max_reg);
@@ -598,12 +598,12 @@ void ConstDecl::codeIR() {
     auto def_vector = *var_def_list;
     for (auto def : def_vector) {
         VarAttribute val;
-        val.type = type_decl; // init val.type
+        val.type = type_decl;    // init val.type
         irgen_table.symbol_table.add_Symbol(def->GetName(), ++max_reg);
         int alloca_reg = max_reg;
-        if (def->GetDims() != nullptr) { // this var is array
+        if (def->GetDims() != nullptr) {    // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) { // init val.dims
+            for (auto d : dim_vector) {    // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
@@ -619,7 +619,7 @@ void ConstDecl::codeIR() {
 
                 CallInstruction *memsetCall =
                 new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
-                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg)); // array address
+                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));
                 memsetCall->push_back_Parameter(I1, new ImmI32Operand(0));
@@ -627,7 +627,7 @@ void ConstDecl::codeIR() {
                 // recursive_Array_Init_IR
                 RecursiveArrayInitIR(InitB, val.dims, alloca_reg, init, 0, array_sz - 1, 0, type_decl);
             }
-        } else { // this var is not array
+        } else {    // this var is not array
             IRgenAlloca(B, Type2LLvm[type_decl], alloca_reg);
             irgen_table.RegTable[alloca_reg] = val;
             Operand val_operand;
@@ -686,12 +686,12 @@ void __FuncDef::codeIR() {
         VarAttribute val;
         val.type = formal->type_decl;
         LLVMType lltype = Type2LLvm[formal->type_decl];
-        if (formal->dims != nullptr) { // formal is array
+        if (formal->dims != nullptr) {    // formal is array
             // in SysY, we can assume that we can not modify the array address, so we do not need alloca
             FuncDefIns->InsertFormal(LLVMType::PTR);
 
-            for (int i = 1; i < formal->dims->size(); ++i) { // in IRgen, we ignore the first dim of the
-                                                             // formal
+            for (int i = 1; i < formal->dims->size(); ++i) {    // in IRgen, we ignore the first dim of the
+                                                                // formal
                 auto d = formal->dims->at(i);
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
@@ -699,7 +699,7 @@ void __FuncDef::codeIR() {
             irgen_table.FormalArrayTable[i] = 1;
             irgen_table.symbol_table.add_Symbol(formal->name, i);
             irgen_table.RegTable[i] = val;
-        } else { // formal is not array
+        } else {    // formal is not array
             FuncDefIns->InsertFormal(lltype);
             IRgenAlloca(B, lltype, ++max_reg);
             IRgenStore(B, lltype, new RegOperand(i), new RegOperand(max_reg));

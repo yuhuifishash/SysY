@@ -4,8 +4,8 @@
 // due to IRgen, we can assume that all the store value are RegOperand
 
 static std::set<Instruction> EraseSet;
-static std::map<int, int> mem2reg_map; //<old regno, new regno>
-static std::set<int> common_allocas;   // alloca of common situations
+static std::map<int, int> mem2reg_map;    //<old regno, new regno>
+static std::set<int> common_allocas;      // alloca of common situations
 static std::map<PhiInstruction *, int> phi_map;
 
 auto CalculatedDefAndUse(CFG *C) {
@@ -47,7 +47,7 @@ void Mem2RegNoUseAlloca(CFG *C, std::set<int> &vset) {
 
 // vset is the set of alloca regno that load and store are all in the BB block_id
 void Mem2RegUseDefInSameBlock(CFG *C, std::set<int> vset, int block_id) {
-    std::map<int, int> curr_reg_map; //<alloca reg, current store value regno>
+    std::map<int, int> curr_reg_map;    //<alloca reg, current store value regno>
     for (auto I : (*C->block_map)[block_id]->Instruction_list) {
         if (I->GetOpcode() == STORE) {
             auto StoreI = (StoreInstruction *)I;
@@ -127,13 +127,13 @@ void InsertPhi(CFG *C) {
         auto AllocaI = (AllocaInstruction *)I;
         if (!(AllocaI->GetDims().empty())) {
             continue;
-        } // array can not be promoted
+        }    // array can not be promoted
         int v = AllocaI->GetResultRegNo();
         LLVMType type = AllocaI->GetDataType();
 
         auto alloca_defs = defs[v];
         auto alloca_uses = uses[v];
-        if (alloca_uses.size() == 0) { // not use
+        if (alloca_uses.size() == 0) {    // not use
             EraseSet.insert(I);
             no_use_vset.insert(v);
             continue;
@@ -142,14 +142,14 @@ void InsertPhi(CFG *C) {
         if (alloca_defs.size() == 1) {
             int block_id = *(alloca_defs.begin());
             if (alloca_uses.size() == 1 &&
-                *(alloca_uses.begin()) == block_id) { // def and use in the same block
+                *(alloca_uses.begin()) == block_id) {    // def and use in the same block
                 EraseSet.insert(I);
                 sameblock_vset_map[block_id].insert(v);
                 continue;
             }
         }
 
-        if (def_num[v] == 1) { // only def once
+        if (def_num[v] == 1) {    // only def once
             int block_id = *(alloca_defs.begin());
             int dom_flag = 1;
             for (auto load_BBid : alloca_uses) {
@@ -158,7 +158,7 @@ void InsertPhi(CFG *C) {
                     break;
                 }
             }
-            if (dom_flag) { // one def dominate all uses
+            if (dom_flag) {    // one def dominate all uses
                 EraseSet.insert(I);
                 onedom_vset.insert(v);
                 continue;
@@ -168,8 +168,8 @@ void InsertPhi(CFG *C) {
         // next is the common situation
         common_allocas.insert(v);
         EraseSet.insert(I);
-        std::set<int> F{};         // set of blocks where phi is added
-        std::set<int> W = defs[v]; // set of blocks that contain the def of regno
+        std::set<int> F{};            // set of blocks where phi is added
+        std::set<int> W = defs[v];    // set of blocks that contain the def of regno
 
         while (!W.empty()) {
             int BB_X = *W.begin();
@@ -220,7 +220,7 @@ int in_allocas(std::set<int> &S, Instruction I) {
 }
 
 void VarRename(CFG *C) {
-    std::map<int, std::map<int, int>> WorkList; //< BB, <alloca_reg,val_reg> >
+    std::map<int, std::map<int, int>> WorkList;    //< BB, <alloca_reg,val_reg> >
     WorkList.insert({0, std::map<int, int>{}});
     std::vector<int> BBvis;
     BBvis.resize(C->max_label + 1);
@@ -236,7 +236,7 @@ void VarRename(CFG *C) {
             if (I->GetOpcode() == LOAD) {
                 auto LoadI = (LoadInstruction *)I;
                 int v = in_allocas(common_allocas, I);
-                if (v >= 0) { // load instruction is in common_allocas
+                if (v >= 0) {    // load instruction is in common_allocas
                     // 如果当前指令是 load，找到对应的 alloca v，将用到 load 结果的地方都替换成
                     // IncomingVals[v]
                     EraseSet.insert(LoadI);
@@ -246,7 +246,7 @@ void VarRename(CFG *C) {
             if (I->GetOpcode() == STORE) {
                 auto StoreI = (StoreInstruction *)I;
                 int v = in_allocas(common_allocas, I);
-                if (v >= 0) { // store instruction is in common_allocas
+                if (v >= 0) {    // store instruction is in common_allocas
                     // 如果当前指令是 store，找到对应的 alloca v，更新IncomingVals[v] = val,并删除store
                     EraseSet.insert(StoreI);
                     IncomingVals[v] = ((RegOperand *)(StoreI->GetValue()))->GetRegNo();
@@ -258,7 +258,7 @@ void VarRename(CFG *C) {
                     continue;
                 }
                 auto it = phi_map.find(PhiI);
-                if (it != phi_map.end()) { // phi instruction is in allocas
+                if (it != phi_map.end()) {    // phi instruction is in allocas
                     // 更新IncomingVals[v] = val
                     IncomingVals[it->second] = PhiI->GetResultRegNo();
                 }

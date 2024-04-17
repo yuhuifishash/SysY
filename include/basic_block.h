@@ -9,7 +9,7 @@
 
 class BasicBlock {
 public:
-    std::string comment; // used for debug
+    std::string comment;    // used for debug
     int block_id = 0;
     std::deque<Instruction> Instruction_list{};
 

@@ -22,7 +22,7 @@ public:
     void setbit(int, bool);
     bool getbit(int);
 
-    DynamicBitset operator&(DynamicBitset); // assert(this->bit_width == other.bit_width)
+    DynamicBitset operator&(DynamicBitset);    // assert(this->bit_width == other.bit_width)
     DynamicBitset operator|(DynamicBitset);
     DynamicBitset operator^(DynamicBitset);
     DynamicBitset operator-(DynamicBitset);
@@ -32,10 +32,10 @@ public:
     // DynamicBitset operator^=(DynamicBitset);
     // DynamicBitset operator-=(DynamicBitset);
 
-    DynamicBitset operator=(DynamicBitset); // Deep Copy
+    DynamicBitset operator=(DynamicBitset);    // Deep Copy
 
-    bool operator==(DynamicBitset); // Deep Compare
-    bool operator!=(DynamicBitset); // return !(*this == other)
+    bool operator==(DynamicBitset);    // Deep Compare
+    bool operator!=(DynamicBitset);    // return !(*this == other)
 
     DynamicBitset(const DynamicBitset &);
 };

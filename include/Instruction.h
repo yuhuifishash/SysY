@@ -42,35 +42,35 @@ enum LLVMType { I32 = 1, FLOAT32 = 2, PTR = 3, VOID = 4, I8 = 5, I1 = 6, I64 = 7
 
 // @ <cond> in icmp Instruction
 enum IcmpCond {
-    eq = 1,  //: equal
-    ne = 2,  //: not equal
-    ugt = 3, //: unsigned greater than
-    uge = 4, //: unsigned greater or equal
-    ult = 5, //: unsigned less than
-    ule = 6, //: unsigned less or equal
-    sgt = 7, //: signed greater than
-    sge = 8, //: signed greater or equal
-    slt = 9, //: signed less than
-    sle = 10 //: signed less or equal
+    eq = 1,     //: equal
+    ne = 2,     //: not equal
+    ugt = 3,    //: unsigned greater than
+    uge = 4,    //: unsigned greater or equal
+    ult = 5,    //: unsigned less than
+    ule = 6,    //: unsigned less or equal
+    sgt = 7,    //: signed greater than
+    sge = 8,    //: signed greater or equal
+    slt = 9,    //: signed less than
+    sle = 10    //: signed less or equal
 };
 
 enum FcmpCond {
-    FALSE = 1, //: no comparison, always returns false
-    OEQ = 2,   // ordered and equal
-    OGT = 3,   //: ordered and greater than
-    OGE = 4,   //: ordered and greater than or equal
-    OLT = 5,   //: ordered and less than
-    OLE = 6,   //: ordered and less than or equal
-    ONE = 7,   //: ordered and not equal
-    ORD = 8,   //: ordered (no nans)
-    UEQ = 9,   //: unordered or equal
-    UGT = 10,  //: unordered or greater than
-    UGE = 11,  //: unordered or greater than or equal
-    ULT = 12,  //: unordered or less than
-    ULE = 13,  //: unordered or less than or equal
-    UNE = 14,  //: unordered or not equal
-    UNO = 15,  //: unordered (either nans)
-    TRUE = 16  //: no comparison, always returns true
+    FALSE = 1,    //: no comparison, always returns false
+    OEQ = 2,      // ordered and equal
+    OGT = 3,      //: ordered and greater than
+    OGE = 4,      //: ordered and greater than or equal
+    OLT = 5,      //: ordered and less than
+    OLE = 6,      //: ordered and less than or equal
+    ONE = 7,      //: ordered and not equal
+    ORD = 8,      //: ordered (no nans)
+    UEQ = 9,      //: unordered or equal
+    UGT = 10,     //: unordered or greater than
+    UGE = 11,     //: unordered or greater than or equal
+    ULT = 12,     //: unordered or less than
+    ULE = 13,     //: unordered or less than or equal
+    UNE = 14,     //: unordered or not equal
+    UNO = 15,     //: unordered (either nans)
+    TRUE = 16     //: no comparison, always returns true
 };
 
 // @float32 directly to Hex
@@ -219,8 +219,8 @@ public:
         insNoCounter.Inc();
     }
     void SetInstructionNo(int new_no) { insNo = new_no; }
-    static AutoCounter insNoCounter;   // instruction No counter
-    int GetOpcode() { return opcode; } // one solution: convert to pointer of subclasses
+    static AutoCounter insNoCounter;      // instruction No counter
+    int GetOpcode() { return opcode; }    // one solution: convert to pointer of subclasses
 
     virtual LLVMType GetResultType() { return VOID; }
     virtual void PrintIR(std::ostream &s) = 0;
@@ -609,7 +609,7 @@ class CallInstruction : public BasicInstruction {
     // Datas About the Instruction
 private:
     enum LLVMType ret_type;
-    Operand result; // result can be null
+    Operand result;    // result can be null
     std::string name;
     std::vector<std::pair<enum LLVMType, Operand>> args;
 

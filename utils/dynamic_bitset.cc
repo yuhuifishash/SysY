@@ -62,7 +62,7 @@ DynamicBitset DynamicBitset::operator-(DynamicBitset other) {
     return result;
 }
 
-DynamicBitset DynamicBitset::operator=(DynamicBitset other) { // Deep Copy
+DynamicBitset DynamicBitset::operator=(DynamicBitset other) {    // Deep Copy
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -71,7 +71,7 @@ DynamicBitset DynamicBitset::operator=(DynamicBitset other) { // Deep Copy
     return result;
 }
 
-bool DynamicBitset::operator==(DynamicBitset other) { // Deep Compare
+bool DynamicBitset::operator==(DynamicBitset other) {    // Deep Compare
     assert(this->bit_width == other.bit_width);
     for (int i = 0; i < bit_array_length; i++) {
         if (this->bits[i] != other.bits[i]) {
@@ -81,7 +81,7 @@ bool DynamicBitset::operator==(DynamicBitset other) { // Deep Compare
     return true;
 }
 
-bool DynamicBitset::operator!=(DynamicBitset other) { // return !(*this == other)
+bool DynamicBitset::operator!=(DynamicBitset other) {    // return !(*this == other)
     assert(this->bit_width == other.bit_width);
     for (int i = 0; i < bit_array_length; i++) {
         if (this->bits[i] != other.bits[i]) {

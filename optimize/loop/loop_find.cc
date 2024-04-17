@@ -1,7 +1,7 @@
 #include "../include/ir.h"
 #include <stack>
 
-std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d) // backedge n->d
+std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d)    // backedge n->d
 {
     std::set<LLVMBlock> loop_nodes;
 
@@ -88,7 +88,7 @@ void NaturalLoopForest::CombineSameHeadLoop() {
     }
 }
 
-bool JudgeLoopContain(NaturalLoop *l1, NaturalLoop *l2) // judge if l1 contains l2
+bool JudgeLoopContain(NaturalLoop *l1, NaturalLoop *l2)    // judge if l1 contains l2
 {
     for (auto l2_n : l2->loop_nodes) {
         if (l1->loop_nodes.find(l2_n) == l1->loop_nodes.end()) {
@@ -146,7 +146,7 @@ void CFG::BuildLoopInfo() {
 
     int loop_cnt = 0;
     for (auto [id, bb] : *block_map) {
-        for (auto head_bb : G[id]) { // bb->head_bb   backedge
+        for (auto head_bb : G[id]) {    // bb->head_bb   backedge
             if (IsDominate(head_bb->block_id, id)) {
                 NaturalLoop *l = new NaturalLoop();
                 l->header = head_bb;

@@ -112,7 +112,7 @@ void NaturalLoop::AddPreheader(CFG *C) {
     }
 }
 
-std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d); // backedge n->d
+std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d);    // backedge n->d
 void NaturalLoop::LoopSimplifyCheck(CFG *C) {
     // check single latch
     // PrintLoopDebugInfo();

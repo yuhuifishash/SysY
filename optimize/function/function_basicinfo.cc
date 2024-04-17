@@ -75,7 +75,7 @@ void CFG::BuildFunctionInfo() {
                 if (call_name == this->function_def->GetFunctionName()) {
                     FunctionInfo.is_direct_recursive = true;
                 }
-                if (CFGMap.find(call_name) == CFGMap.end()) { // external call
+                if (CFGMap.find(call_name) == CFGMap.end()) {    // external call
                     FunctionInfo.is_independent = false;
                 }
             }

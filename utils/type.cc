@@ -592,7 +592,7 @@ void IRgenIntFloat(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LLV
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenSitofp(B, reg1, ++max_reg); // a int->float
+    IRgenSitofp(B, reg1, ++max_reg);    // a int->float
     reg1 = max_reg;
 
     BinaryIRgenFloat[opcode](B, reg1, reg2);
@@ -605,7 +605,7 @@ void IRgenIntBool(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LLVM
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenZextI1toI32(B, reg2, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg2, ++max_reg);    // bool -> int
     reg2 = max_reg;
 
     BinaryIRgenInt[opcode](B, reg1, reg2);
@@ -618,7 +618,7 @@ void IRgenFloatInt(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LLV
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenSitofp(B, reg2, ++max_reg); // b int->float
+    IRgenSitofp(B, reg2, ++max_reg);    // b int->float
     reg2 = max_reg;
 
     BinaryIRgenFloat[opcode](B, reg1, reg2);
@@ -641,10 +641,10 @@ void IRgenFloatBool(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LL
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenZextI1toI32(B, reg2, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg2, ++max_reg);    // bool -> int
     reg2 = max_reg;
 
-    IRgenSitofp(B, reg2, ++max_reg); // int -> float
+    IRgenSitofp(B, reg2, ++max_reg);    // int -> float
     reg2 = max_reg;
 
     BinaryIRgenFloat[opcode](B, reg1, reg2);
@@ -657,7 +657,7 @@ void IRgenBoolInt(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LLVM
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenZextI1toI32(B, reg1, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg1, ++max_reg);    // bool -> int
     reg1 = max_reg;
 
     BinaryIRgenInt[opcode](B, reg1, reg2);
@@ -670,10 +670,10 @@ void IRgenBoolFloat(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LL
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenZextI1toI32(B, reg1, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg1, ++max_reg);    // bool -> int
     reg1 = max_reg;
 
-    IRgenSitofp(B, reg1, ++max_reg); // int -> float
+    IRgenSitofp(B, reg1, ++max_reg);    // int -> float
     reg1 = max_reg;
 
     BinaryIRgenFloat[opcode](B, reg1, reg2);
@@ -686,10 +686,10 @@ void IRgenBoolBool(tree_node *a, tree_node *b, NodeAttribute::opcode opcode, LLV
     b->codeIR();
     int reg2 = max_reg;
 
-    IRgenZextI1toI32(B, reg1, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg1, ++max_reg);    // bool -> int
     reg1 = max_reg;
 
-    IRgenZextI1toI32(B, reg2, ++max_reg); // bool -> int
+    IRgenZextI1toI32(B, reg2, ++max_reg);    // bool -> int
     reg2 = max_reg;
 
     BinaryIRgenInt[opcode](B, reg1, reg2);

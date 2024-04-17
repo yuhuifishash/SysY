@@ -40,7 +40,7 @@ public:
     void SetLLVMIR(LLVMIR *ir) { this->IR = ir; }
 
     void AliasAnalysis();
-    void AliasAnalysis(CFG *C); // alias_analysis in single function
+    void AliasAnalysis(CFG *C);    // alias_analysis in single function
 
     // return alias information of op1 and op2
     // the type of op1 and op2 maybe RegOperand or GlobalOperand

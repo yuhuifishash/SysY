@@ -96,15 +96,15 @@ union YYSTYPE {
     std::vector<Def> *defs;
     FuncDef func_def;
     Expression expression;
-    std::vector<Expression> *expressions; // added *
+    std::vector<Expression> *expressions;    // added *
     Stmt stmt;
     Block block;
     InitVal initval;
-    std::vector<InitVal> *initvals; // added *
+    std::vector<InitVal> *initvals;    // added *
     FuncFParam formal;
-    std::vector<FuncFParam> *formals; // added *
+    std::vector<FuncFParam> *formals;    // added *
     BlockItem block_item;
-    std::vector<BlockItem> *block_items; // added *
+    std::vector<BlockItem> *block_items;    // added *
 
 #line 106 "SysY_parser.tab.h"
 };

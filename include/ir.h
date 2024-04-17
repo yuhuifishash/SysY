@@ -8,8 +8,8 @@ public:
     std::vector<Instruction> global_def{};
     std::vector<Instruction> function_declare{};
 
-    std::map<FuncDefInstruction, CFG *> llvm_cfg{};                            //<function,cfg>
-    std::map<FuncDefInstruction, std::map<int, LLVMBlock>> function_block_map; //<function,<id,block> >
+    std::map<FuncDefInstruction, CFG *> llvm_cfg{};                               //<function,cfg>
+    std::map<FuncDefInstruction, std::map<int, LLVMBlock>> function_block_map;    //<function,<id,block> >
 
     void NewFunction(FuncDefInstruction I) { function_block_map[I] = {}; }
     LLVMBlock GetBlock(FuncDefInstruction I, int now_label) { return function_block_map[I][now_label]; }
