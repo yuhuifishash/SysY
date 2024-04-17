@@ -28,7 +28,7 @@ bool DynamicBitset::getbit(int pos){
 
 DynamicBitset DynamicBitset::operator&(DynamicBitset other){
 	assert(this->bit_width == other.bit_width);
-	DynamicBitset result(bit_array_length);
+	DynamicBitset result(bit_width);
 	for(int i=0;i<bit_array_length;i++){
 		result.bits[i] = this->bits[i] & other.bits[i];
 	}
@@ -37,7 +37,7 @@ DynamicBitset DynamicBitset::operator&(DynamicBitset other){
 
 DynamicBitset DynamicBitset::operator|(DynamicBitset other){
 	assert(this->bit_width == other.bit_width);
-	DynamicBitset result(bit_array_length);
+	DynamicBitset result(bit_width);
 	for(int i=0;i<bit_array_length;i++){
 		result.bits[i] = this->bits[i] | other.bits[i];
 	}
@@ -46,7 +46,7 @@ DynamicBitset DynamicBitset::operator|(DynamicBitset other){
 
 DynamicBitset DynamicBitset::operator^(DynamicBitset other){
 	assert(this->bit_width == other.bit_width);
-	DynamicBitset result(bit_array_length);
+	DynamicBitset result(bit_width);
 	for(int i=0;i<bit_array_length;i++){
 		result.bits[i] = this->bits[i] ^ other.bits[i];
 	}
@@ -55,7 +55,7 @@ DynamicBitset DynamicBitset::operator^(DynamicBitset other){
 
 DynamicBitset DynamicBitset::operator-(DynamicBitset other){
 	assert(this->bit_width == other.bit_width);
-	DynamicBitset result(bit_array_length);
+	DynamicBitset result(bit_width);
 	for(int i=0;i<bit_array_length;i++){
 		result.bits[i] = this->bits[i] & (this->bits[i] ^ other.bits[i]);
 	}
@@ -64,7 +64,7 @@ DynamicBitset DynamicBitset::operator-(DynamicBitset other){
 
 DynamicBitset DynamicBitset::operator=(DynamicBitset other){// Deep Copy
 	assert(this->bit_width == other.bit_width);
-	DynamicBitset result(bit_array_length);
+	DynamicBitset result(bit_width);
 	for(int i=0;i<bit_array_length;i++){
 		result.bits[i] = this->bits[i] = other.bits[i];
 	}

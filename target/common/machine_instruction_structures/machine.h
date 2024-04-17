@@ -42,7 +42,7 @@ public:
     // auto GetDFSBlockIterator(){return mcfg->getDFSIterator();}
 public:
 // private:
-    std::map<int,VirtualRegisterInfo> virtual_registers{};
+    std::map<int,VirtualRegisterAllocResult> virtual_registers{};
     auto GetVirtualRegisterInfo(int id){return virtual_registers[id];}
 public:
     int GetNewRegister(int regtype,int regwidth);

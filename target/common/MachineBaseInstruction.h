@@ -30,7 +30,7 @@ struct MachineDataType{
     }
 };
 
-struct VirtualRegisterInfo{
+struct VirtualRegisterAllocResult{
     MachineDataType type;
     int getDataWidth(){
         return type.getDataWidth();
