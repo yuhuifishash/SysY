@@ -4,12 +4,8 @@
 (such as useless loop)
 */
 
-auto BuildPostDominatorTree(std::vector<std::vector<LLVMBlock> > invG, int max_label, int ret_block_id)
-{
-    //build the post dominator tree of Graph G
+auto BuildPostDominatorTree(std::vector<std::vector<LLVMBlock>> invG, int max_label, int ret_block_id) {
+    // build the post dominator tree of Graph G
 }
 
-void AggressiveDeadCodeElimination(CFG* C)
-{
-    
-}
+void AggressiveDeadCodeElimination(CFG *C) {}

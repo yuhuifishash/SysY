@@ -39,7 +39,7 @@ $(OBJDIR)/%.o : %.cc
 	mkdir -p $(dir $@)
 	clang++ -c $(INCS) $< -o $@ -O2 -std=c++17
 
-.PHONY : clean-obj,clean-all,lexer,parser
+.PHONY : clean-obj,clean-all,lexer,parser,format
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
 
@@ -56,3 +56,6 @@ clean-obj:
 clean-all:
 	rm -r ${OBJDIR}/*
 	rm -r bin/*
+
+format:
+	clang-format -style=file -i ${SRCS}
