@@ -1,21 +1,21 @@
 #ifndef TREE_H
 #define TREE_H
 
-//tree definition (used for AST)
-#include <iostream>
+// tree definition (used for AST)
 #include "type.h"
+#include <iostream>
 
-class tree_node
-{
+class tree_node {
 protected:
     int line_number;
+
 public:
     NodeAttribute attribute;
-    int GetLineNumber(){return line_number;}
-    void SetLineNumber(int t){line_number = t;}
+    int GetLineNumber() { return line_number; }
+    void SetLineNumber(int t) { line_number = t; }
 
     virtual void codeIR() = 0;
-    virtual void printAST(std::ostream& s,int pad) = 0;
+    virtual void printAST(std::ostream &s, int pad) = 0;
     virtual void TypeCheck() = 0;
 };
 

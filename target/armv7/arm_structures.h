@@ -1,32 +1,32 @@
 #ifndef ARM_STRUCTURES_H
 #define ARM_STRUCTURES_H
+#include "../common/machine_instruction_structures/machine.h"
 #include "arm_instructions.h"
 #include <deque>
-#include <string>
 #include <iostream>
-#include "../common/machine_instruction_structures/machine.h"
+#include <string>
 
 class ArmFunction;
 class ArmUnit;
-class ArmBlock : public MachineBlock{
+class ArmBlock : public MachineBlock {
 public:
-    ArmBlock(int id):MachineBlock(id){}
+    ArmBlock(int id) : MachineBlock(id) {}
 };
 
-class ArmFunction : public MachineFunction{
+class ArmFunction : public MachineFunction {
 public:
-    ArmFunction(std::string name):MachineFunction(name){}
+    ArmFunction(std::string name) : MachineFunction(name) {}
+
 protected:
     void InitializeNewVirtualRegister(int vregno);
-    void MoveAllPredecessorsBranchTargetToNewBlock(int original_target,int new_target);
-    void MoveOnePredecessorBranchTargetToNewBlock(int pre,int original_target,int new_target);
-    void YankBranchInstructionToNewBlock(int original_block_id,int new_block);
-    void AppendUncondBranchInstructionToNewBlock(int new_block,int br_target);
+    void MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target);
+    void MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target);
+    void YankBranchInstructionToNewBlock(int original_block_id, int new_block);
+    void AppendUncondBranchInstructionToNewBlock(int new_block, int br_target);
 };
 
-class ArmUnit : public MachineUnit{
+class ArmUnit : public MachineUnit {
 public:
 };
-
 
 #endif

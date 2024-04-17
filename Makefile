@@ -1,7 +1,9 @@
 SRCDIR += ./target
 SRCDIR += ./target/armv7
 SRCDIR += ./target/common
-SRCDIR += ./target/common/register_alloc
+SRCDIR += ./target/common/machine_passes/register_alloc
+SRCDIR += ./target/common/machine_passes/register_alloc/fast_linear_scan
+SRCDIR += ./target/common/machine_passes/register_alloc/graph_color
 SRCDIR += ./target/common/machine_instruction_structures
 SRCDIR += ./target/common/machine_instruction_structures/cfg_iterators
 SRCDIR += ./target/common/machine_passes
@@ -39,7 +41,7 @@ $(OBJDIR)/%.o : %.cc
 	mkdir -p $(dir $@)
 	clang++ -c $(INCS) $< -o $@ -O2 -std=c++17
 
-.PHONY : clean,clean-all,lexer,parser,clean_example_test_output
+.PHONY : clean-obj,clean-all,lexer,parser,format
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
 
@@ -56,3 +58,7 @@ clean-obj:
 clean-all:
 	rm -r ${OBJDIR}/*
 	rm -r bin/*
+
+format:
+	clang-format -style=file -i ${SRCS}
+	clang-format -style=file -i $(foreach dir,$(SRCDIR),$(wildcard $(dir)/*.h))

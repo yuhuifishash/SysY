@@ -1,36 +1,32 @@
 #ifndef LATTICE_H
 #define LATTICE_H
 
-class ConstLattice
-{
+class ConstLattice {
 public:
-    enum LatticeStatus{
+    enum LatticeStatus {
         UNINIT = 0,
         CONST = 1,
         VAR = 2,
-    }status;
-    enum LatticeType{
+    } status;
+    enum LatticeType {
         NONE = 0,
         I32 = 1,
         FLOAT = 2,
-    }val_type;
-    union{
+    } val_type;
+    union {
         int I32Val;
         float FloatVal;
-    }vals;
-    ConstLattice()
-    {
+    } vals;
+    ConstLattice() {
         status = UNINIT;
         val_type = NONE;
     }
-    ConstLattice(LatticeStatus s,LatticeType type,int val)
-    {
+    ConstLattice(LatticeStatus s, LatticeType type, int val) {
         status = s;
         val_type = type;
         vals.I32Val = val;
     }
-    ConstLattice(LatticeStatus s,LatticeType type,float val)
-    {
+    ConstLattice(LatticeStatus s, LatticeType type, float val) {
         status = s;
         val_type = type;
         vals.FloatVal = val;

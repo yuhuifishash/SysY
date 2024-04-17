@@ -1,3 +1,2 @@
 #include "riscv64_lowercopy.h"
-void RiscV64LowerCopy::Execute(){
-}
+void RiscV64LowerCopy::Execute() {}
