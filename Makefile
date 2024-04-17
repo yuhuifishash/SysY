@@ -39,7 +39,7 @@ $(OBJDIR)/%.o : %.cc
 	mkdir -p $(dir $@)
 	clang++ -c $(INCS) $< -o $@ -O2 -std=c++17
 
-.PHONY : clean,clean-all,lexer,parser,clean_example_test_output
+.PHONY : clean-obj,clean-all,lexer,parser
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
 

@@ -36,9 +36,20 @@ bool canMotion(CFG* cfg,LLVMBlock BB,NaturalLoop* L)
     return c1 | c2;
 }
 
+
+/*
+Moving loop invariant loads and calls out of loops.  If we can determine
+that a load or call inside of a loop never aliases anything stored to,
+we can hoist it or sink it like any other instruction.
+*/
 bool isCallInvariant(CFG* C,Instruction I,NaturalLoop* L)
 {
     
+}
+
+bool isLoadInvariant(CFG* C,Instruction I,NaturalLoop* L)
+{
+
 }
 
 bool isInvariant(CFG* C,Instruction I,NaturalLoop* L)
@@ -127,7 +138,7 @@ void SingleLoopLICM(CFG* C, NaturalLoopForest& loop_forest, NaturalLoop* L)
 
     for(auto it = InvariantInsList.begin();it != InvariantInsList.end();){
         auto I = *it;
-        //the def instruction should dominate all the exitingBB
+        //check if we can motion this instructions
         if(canMotion(C,(*(C->block_map))[I->GetBlockID()],L)){
 
             //move to preheader

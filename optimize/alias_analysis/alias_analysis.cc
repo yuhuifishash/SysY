@@ -5,11 +5,13 @@ AliasAnalyser alias_analyser;
 
 AliasAnalyser::AliasResult AliasAnalyser::QueryAlias(Operand op1, Operand op2,CFG* C)
 {
+    //TODO()
     return AliasResult::MustAlias;
 }
 
 AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I,Operand op,CFG* C)
 {
+    //TODO()
     return ModRefResult::ModRef;
 }
 
@@ -33,7 +35,7 @@ void AliasAnalyser::AliasAnalysis()
 
 void AliasAnalyser::AliasAnalysis(CFG* C)
 {
-
+    
 }
 
 
@@ -47,5 +49,5 @@ void AliasAnalysis(LLVMIR* IR)
 
 void AliasAnalyser::PrintAAResult()
 {
-    
+
 }

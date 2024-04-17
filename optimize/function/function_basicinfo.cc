@@ -3,6 +3,8 @@
 
 extern std::map<std::string,CFG*> CFGMap;
 static std::map<CFG*,std::vector<CallInstruction*> > CallInstList;
+FunctionCallGraph fcallgraph;
+
 
 void LLVMIR::BuildFunctionInfo(){
     for(auto [defI,cfg]:llvm_cfg){
@@ -32,7 +34,7 @@ void LLVMIR::BuildFunctionInfo(){
 }
 
 /* this function will only care about single function.
-   so after call this function, some information is wrong.
+   so after call this function, some information is wrong.(because the call inst)
    you should call LLVMIR::BuildFunctionInfo instead to get the true function information.
 */
 void CFG::BuildFunctionInfo(){
@@ -78,4 +80,14 @@ void CFG::BuildFunctionInfo(){
             }
         }
     }
+}
+
+void FunctionCallGraph::BuildCG(LLVMIR* IR)
+{
+
+}
+
+void FunctionCallGraph::BuildCGSCC()
+{
+    
 }
