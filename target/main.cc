@@ -63,15 +63,7 @@ void ScalarEvolution(CFG *C);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
-#define TEST_CHECK
-
-#ifdef TEST_CHECK
-int BitsetCheck();
-#endif
 int main(int argc, char **argv) {
-#ifdef TEST_CHECK
-    BitsetCheck();
-#endif
     target = ARMV7;
 
     FILE *fin = fopen(argv[file_in], "r");

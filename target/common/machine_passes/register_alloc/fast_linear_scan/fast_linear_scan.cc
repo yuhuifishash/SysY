@@ -1,4 +1,8 @@
 #include "fast_linear_scan.h"
+bool IntervalsPrioCmp(LiveInterval a,LiveInterval b){
+    assert(0);
+    return false;
+}
 void FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;

@@ -27,6 +27,7 @@ public:
         return 0;
     }
     int getVirtualRegId() { return vreg_id; }
+    LiveInterval(){} // Temp
     LiveInterval(int id) : vreg_id(id), segment_count(0) {}
 
     // Needs to be implemented (?)
