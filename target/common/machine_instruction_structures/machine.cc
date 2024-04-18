@@ -1,10 +1,5 @@
 #include "machine.h"
 #include "assert.h"
-void MachineUnit::PassExecutor(void (*Pass)(MachineFunction *)) {
-    for (auto func : functions) {
-        func->PassExecutor(Pass);
-    }
-}
 
 void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
     MachineCFGNode *node = new MachineCFGNode;
@@ -26,7 +21,7 @@ void MachineCFG::RemoveEdge(int edg_begin, int edg_end) {
     assert(block_map.find(edg_end) != block_map.end());
     auto it = G[edg_begin].begin();
     for (; it != G[edg_begin].end(); ++it) {
-        if ((*it)->Mblock->label_id == edg_end) {
+        if ((*it)->Mblock->getLabelId() == edg_end) {
             break;
         }
     }
@@ -34,24 +29,22 @@ void MachineCFG::RemoveEdge(int edg_begin, int edg_end) {
 
     auto jt = invG[edg_end].begin();
     for (; jt != invG[edg_end].end(); ++jt) {
-        if ((*jt)->Mblock->label_id == edg_begin) {
+        if ((*jt)->Mblock->getLabelId() == edg_begin) {
             break;
         }
     }
     invG[edg_end].erase(jt);
 }
 
-int MachineFunction::GetNewRegister(int regtype, int reglength) {
-    int new_regno;
-    if (virtual_registers.empty()) {
-        new_regno = 0;
-    } else {
-        new_regno = (virtual_registers.rbegin())->first + 1;
-    }
-    virtual_registers[new_regno].type.data_type = regtype;
-    virtual_registers[new_regno].type.data_length = reglength;
-    InitializeNewVirtualRegister(new_regno);
-    return new_regno;
+Register MachineFunction::GetNewRegister(int regtype, int reglength) {
+    static int new_regno = 0;
+    Register new_reg;
+    new_reg.is_virtual = true;
+    new_reg.reg_no = new_regno++;
+    new_reg.type.data_type = regtype;
+    new_reg.type.data_length = reglength;
+    // InitializeNewVirtualRegister(new_regno);
+    return new_reg;
 }
 
 MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::vector<int> succ) {

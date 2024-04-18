@@ -2,16 +2,16 @@
 #define LivEInterval_H
 #include "../machine_pass.h"
 #include <assert.h>
-#include <vector>
+#include <queue>
 class LiveInterval {
 private:
-    int vreg_id;
+    Register reg;
     int segment_count;
     struct LiveSegment {
         int begin;
         int end;
     };
-    std::vector<LiveSegment> segments{};
+    std::deque<LiveSegment> segments{};
     int reference_count;
 
 public:
@@ -20,28 +20,33 @@ public:
         assert(0);
         return false;
     }
-
+    void IncreaseReferenceCount(int count){reference_count += count;}
     int getReferenceCount() { return reference_count; }
     int getIntervalLen() {
-        assert(0);
-        return 0;
+        int ret = 0;
+        for(auto seg : segments){
+            ret += (seg.end - seg.begin + 1);
+        }
+        return ret;
     }
-    int getVirtualRegId() { return vreg_id; }
+    Register getReg() { return reg; }
     LiveInterval(){} // Temp
-    LiveInterval(int id) : vreg_id(id), segment_count(0) {}
+    LiveInterval(Register reg) : reg(reg), segment_count(0) {}
 
     // Needs to be implemented (?)
-    void AddNewInterval(int, int) {}
+    void PushFront(int begin,int end) {segments.push_front({begin=begin,end=end});}
+    void SetMostBegin(int begin) {segments[0].begin = begin;}
 
-    // There should be more operations for convenience in calculating live interval
     decltype(segments.begin()) begin() { return segments.begin(); }
     decltype(segments.end()) end() { return segments.end(); }
 };
+
 class Liveness {
 private:
     MachineFunction *current_func;
     void UpdateDefUse();
-    std::map<int, std::set<int>> IN{}, OUT{}, DEF{}, USE{};
+    // Key: Block_Number
+    std::map<int, std::set<Register> > IN{}, OUT{}, DEF{}, USE{};
 
 public:
     void Execute();
@@ -50,9 +55,9 @@ public:
             Execute();
         }
     }
-    std::set<int> GetIN(int bid) { return IN[bid]; }
-    std::set<int> GetOUT(int bid) { return OUT[bid]; }
-    std::set<int> GetDef(int bid) { return DEF[bid]; }
-    std::set<int> GetUse(int bid) { return USE[bid]; }
+    std::set<Register> GetIN(int bid) { return IN[bid]; }
+    std::set<Register> GetOUT(int bid) { return OUT[bid]; }
+    std::set<Register> GetDef(int bid) { return DEF[bid]; }
+    std::set<Register> GetUse(int bid) { return USE[bid]; }
 };
 #endif

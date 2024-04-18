@@ -9,26 +9,30 @@ class MachineUnit;
 class MachineCFG;
 
 class MachineBlock {
-public:
-    int label_id;
-
 private:
+    int label_id;
     std::deque<MachineBaseInstruction *> instructions;
 
-public:
+private:
     MachineFunction *parent;
 
 public:
+    auto getParent(){return parent;}
+    void setParent(MachineFunction* parent){this->parent = parent;}
+    auto getLabelId(){return label_id;}
+    auto ReverseBegin() { return instructions.rbegin(); }
+    auto ReverseEnd() { return instructions.rend(); }
     auto begin() { return instructions.begin(); }
     auto end() { return instructions.end(); }
     void push_back(MachineBaseInstruction *ins) { instructions.push_back(ins); }
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
+    int getBlockInNumber(){ return instructions[0]->getNumber(); }
+    int getBlockOutNumber(){ return instructions[instructions.size() - 1]->getNumber(); }
     MachineBlock(int id) : label_id(id) {}
 };
 
 class MachineFunction {
-public:
-    // private:
+private:
     std::string func_name;
     MachineUnit *parent;
     MachineCFG *mcfg;
@@ -38,19 +42,16 @@ public:
     MachineUnit *getParentMachineUnit() { return parent; }
     std::string getFunctionName() { return func_name; }
 
+    void SetParent(MachineUnit *parent) { this->parent = parent; }
+    void SetMachineCFG(MachineCFG *mcfg) { this->mcfg = mcfg; }
+
     // private:
     // May be removed in future (?), or become private
     // You can also iterate blocks in MachineCFG
     std::vector<MachineBlock *> blocks{};
-    // auto GetBFSBlockIterator(){return mcfg->getBFSIterator();}
-    // auto GetDFSBlockIterator(){return mcfg->getDFSIterator();}
-public:
-    // private:
-    std::map<int, VirtualRegisterAllocResult> virtual_registers{};
-    auto GetVirtualRegisterInfo(int id) { return virtual_registers[id]; }
 
 public:
-    int GetNewRegister(int regtype, int regwidth);
+    Register GetNewRegister(int regtype, int regwidth);
 
 protected:
     // Only change branch instruction, don't change cfg or phi instruction
@@ -80,12 +81,7 @@ public:
     MachineBlock *InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id);
     MachineBlock *InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id);
 
-protected:
-    virtual void InitializeNewVirtualRegister(int vregno) = 0;
-
 public:
-    void PassExecutor(void (*Pass)(MachineFunction *)) { Pass(this); }
-
     MachineFunction(std::string name) : func_name(name) {}
 };
 
@@ -93,8 +89,6 @@ class MachineUnit {
 public:
     std::vector<Instruction> global_def{};
     std::vector<MachineFunction *> functions;
-    void PassExecutor(void (*Pass)(MachineFunction *));
-    void PassExecutor(void (*Pass)(MachineUnit *)) { Pass(this); }
 };
 
 class MachineCFG {
@@ -102,8 +96,6 @@ private:
     class MachineCFGNode {
     public:
         MachineBlock *Mblock;
-
-    public:
     };
 
 private:

@@ -14,10 +14,10 @@ private:
     bool TryReduce();
     int SelectSpill();
     void Spill(int v_reg);
-    void StkAssign();
+    bool StkAssign();
 
 protected:
-    void DoAllocInCurrentFunc();
+    bool DoAllocInCurrentFunc();
 
 public:
     GraphColor(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy) {}

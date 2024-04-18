@@ -27,8 +27,8 @@ template <class T> std::set<T> SetDiff(const std::set<T> &a, const std::set<T> &
     return ret;
 }
 
-std::set<int> MachinePhiInstruction::GetReadReg() { return std::set<int>(); }
-std::set<int> MachinePhiInstruction::GetWriteReg() { return std::set<int>(); }
+std::set<Register*> MachinePhiInstruction::GetReadReg() { return std::set<Register*>(); }
+std::set<Register*> MachinePhiInstruction::GetWriteReg() { return std::set<Register*>(); }
 
 void Liveness::UpdateDefUse() {
     DEF.clear();
@@ -39,21 +39,21 @@ void Liveness::UpdateDefUse() {
     seq_it->open();
     while (seq_it->hasNext()) {
         auto node = seq_it->next();
-        DEF[node->Mblock->label_id].clear();
-        USE[node->Mblock->label_id].clear();
+        DEF[node->Mblock->getLabelId()].clear();
+        USE[node->Mblock->getLabelId()].clear();
 
-        auto &cur_def = DEF[node->Mblock->label_id];
-        auto &cur_use = USE[node->Mblock->label_id];
+        auto &cur_def = DEF[node->Mblock->getLabelId()];
+        auto &cur_use = USE[node->Mblock->getLabelId()];
 
         for (auto ins : *(node->Mblock)) {
             for (auto reg_r : ins->GetReadReg()) {
-                if (cur_def.find(reg_r) == cur_def.end()) {
-                    cur_use.insert(reg_r);
+                if (cur_def.find(*reg_r) == cur_def.end()) {
+                    cur_use.insert(*reg_r);
                 }
             }
             for (auto reg_w : ins->GetWriteReg()) {
-                if (cur_use.find(reg_w) == cur_use.end()) {
-                    cur_def.insert(reg_w);
+                if (cur_use.find(*reg_w) == cur_use.end()) {
+                    cur_def.insert(*reg_w);
                 }
             }
         }
@@ -74,15 +74,15 @@ void Liveness::Execute() {
         seq_it->open();
         while (seq_it->hasNext()) {
             auto node = seq_it->next();
-            std::set<int> out;
-            int cur_id = node->Mblock->label_id;
+            std::set<Register> out;
+            int cur_id = node->Mblock->getLabelId();
             for (auto succ : mcfg->GetSuccessorsByBlockId(cur_id)) {
-                out = SetUnion<int>(out, IN[succ->Mblock->label_id]);
+                out = SetUnion<Register>(out, IN[succ->Mblock->getLabelId()]);
             }
             if (out != OUT[cur_id]) {
                 OUT[cur_id] = out;
             }
-            std::set<int> in = SetUnion<int>(USE[cur_id], SetDiff<int>(OUT[cur_id], DEF[cur_id]));
+            std::set<Register> in = SetUnion<Register>(USE[cur_id], SetDiff<Register>(OUT[cur_id], DEF[cur_id]));
             if (in != IN[cur_id]) {
                 changed = 1;
                 IN[cur_id] = in;

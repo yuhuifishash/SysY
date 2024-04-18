@@ -7,15 +7,15 @@ void MachinePhiDestruction::Execute() {
 }
 
 void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
-    auto block_it = current_func->mcfg->getSeqScanIterator();
+    auto block_it = current_func->getMachineCFG()->getSeqScanIterator();
     block_it->open();
     while (block_it->hasNext()) {
         auto block = block_it->next()->Mblock;
         for (auto ins : *block) {
-            for (auto predecessor : current_func->mcfg->GetPredecessorsByBlockId(block->label_id)) {
-                if (current_func->mcfg->GetSuccessorsByBlockId(predecessor->Mblock->label_id).size() > 1) {
+            for (auto predecessor : current_func->getMachineCFG()->GetPredecessorsByBlockId(block->getLabelId())) {
+                if (current_func->getMachineCFG()->GetSuccessorsByBlockId(predecessor->Mblock->getLabelId()).size() > 1) {
                     auto MidBlock = current_func->InsertNewBranchOnlyBlockBetweenEdge(
-                    predecessor->Mblock->label_id, block->label_id);
+                    predecessor->Mblock->getLabelId(), block->getLabelId());
                 }
             }
             for (auto ins : *block) {

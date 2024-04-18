@@ -118,13 +118,12 @@ void ArmSelector::SelectInstructionAndBuildCFG() {
         std::string name = cfg->function_def->GetFunctionName();
 
         cur_func = new ArmFunction(name);
-        cur_func->parent = dest;
+        cur_func->SetParent(dest);
 
         dest->functions.push_back(cur_func);
 
         auto cur_mcfg = new MachineCFG;
-
-        cur_func->mcfg = cur_mcfg;
+        cur_func->SetMachineCFG(cur_mcfg);
 
         ClearFunctionSelectState();
 
@@ -136,7 +135,7 @@ void ArmSelector::SelectInstructionAndBuildCFG() {
 
             cur_mcfg->AssignEmptyNode(id, cur_block);
 
-            cur_block->parent = cur_func;
+            cur_block->setParent(cur_func);
             cur_func->blocks.push_back(cur_block);
             // Expand
             for (auto instruction : block->Instruction_list) {

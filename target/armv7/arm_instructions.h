@@ -44,8 +44,8 @@ public:
 
 class ArmBinary : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { ADD = 0, ADC, SUB, SBC, RSB, RSC, AND, EOR, ORR, ORN, BIC };
@@ -63,8 +63,8 @@ public:
 
 class ArmAddsubImm : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { ADD = 0, SUB };
@@ -81,8 +81,8 @@ public:
 
 class ArmParallelAddsub : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { S = 0, Q, SH, U, UQ, UH };
@@ -106,8 +106,8 @@ public:
 
 class ArmMulas : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { MUL = 0, MLA, MLS, SMULL, SMLAL, SMMUL };
@@ -129,8 +129,8 @@ public:
 
 class ArmMove : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { MOV = 0, MVN };
@@ -147,8 +147,8 @@ public:
 
 class ArmMovwt : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { MOVW = 0, MOVT };
@@ -164,8 +164,8 @@ public:
 
 class ArmShift : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     bool S;
@@ -180,8 +180,8 @@ public:
 
 class ArmCmp : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { CMP = 0, CMN } opcode;
@@ -196,8 +196,8 @@ public:
 
 class ArmIt : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     // high  |low
@@ -223,8 +223,8 @@ public:
 
 class ArmBranchLabel : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { B = 0, BL, BLX };
@@ -239,8 +239,8 @@ public:
 
 class ArmBranchReg : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { BX = 0, BLX, BXJ };
@@ -255,8 +255,8 @@ public:
 
 class ArmBranchLabelreg : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     bool N;
@@ -271,8 +271,8 @@ public:
 
 class ArmLoadStore : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { LOAD = 0, STORE };
@@ -303,8 +303,8 @@ public:
 
 class ArmLoadStoreM : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { LOAD = 0, STORE };
@@ -326,8 +326,8 @@ public:
 
 class ArmPushpop : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
     enum { PUSH = 0, POP };
     int opcode;
     std::vector<Register> reglist;
@@ -340,8 +340,8 @@ public:
 
 class VFPVbin : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
     enum { VADD = 0, VSUM, VMUL, VDIV };
     int opcode;
     int P;
@@ -355,8 +355,8 @@ public:
 };    // VADD VSUB VMUL VDIV
 class VFPVcmp : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     bool E;
@@ -370,8 +370,8 @@ public:
 };
 class VFPVcvt : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { F64 = 0, F32, S32 };
@@ -386,8 +386,8 @@ public:
 };
 class VFPVmov : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { NONE = 0, F32, F64 };
@@ -401,8 +401,8 @@ public:
 };
 class VFPVldst : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { VLDR = 0, VSTR };
@@ -426,8 +426,8 @@ public:
 };    // VLDR VSTR
 class VFPVpushpop : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { VPUSH = 0, VPOP };
@@ -441,8 +441,8 @@ public:
 };    // VPUSH VPOP
 class VFPVstm : public ArmBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
 public:
     enum { VSTM = 0, VSTMDB, VLDM, VLDMDB };

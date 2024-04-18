@@ -8,10 +8,10 @@ void ArmPrinter::emit() {
     ins_offset = 0;
     for (auto func : printee->functions) {
         current_func = func;
-        s << func->func_name << ":\n";
+        s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
         for (auto block : func->blocks) {
-            s << func->func_name << block->label_id << ":\n";
+            s << func->getFunctionName() << block->getLabelId() << ":\n";
             cur_block = block;
             for (auto ins : *block) {
                 s << "\t";

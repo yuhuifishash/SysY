@@ -12,23 +12,21 @@ void GraphColor::ConstructInterferenceGraph() {
 
 bool GraphColor::TryReduce() { return false; }
 
-void GraphColor::StkAssign() {}
+bool GraphColor::StkAssign() { return false;}
 
 int GraphColor::SelectSpill() { return -1; }
 
 void GraphColor::Spill(int v_reg) {}
 
-void GraphColor::DoAllocInCurrentFunc() {
+bool GraphColor::DoAllocInCurrentFunc() {
     auto mfun = current_func;
-    do {
-        UpdateIntervalsInCurrentFunc();
-        ConstructInterferenceGraph();
-        if (TryReduce()) {
-            StkAssign();
-            break;
-        } else {
-            Spill(SelectSpill());
-        }
-        InsertLoadStore(mfun).ExecuteInFunc();
-    } while (1);
+    ConstructInterferenceGraph();
+    TryReduce();
+    StkAssign();
+    // if (TryReduce()) {
+    //     StkAssign();
+    // } else {
+    //     Spill(SelectSpill());
+    // }
+    return false;
 }

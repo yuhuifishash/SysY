@@ -98,32 +98,3 @@ struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[] = {
 [ArmPhysicalRegisterDescriptor::INVALID] = {"INVALID"},
 [ArmPhysicalRegisterDescriptor::spilled_in_memory] = {"spilled_in_memory"},
 };
-
-void ArmFunction::InitializeNewVirtualRegister(int vregno) {
-    virtual_registers[vregno].physical_register_descriptor_index = ArmPhysicalRegisterDescriptor::INVALID;
-    if (virtual_registers[vregno].type.data_type == MachineDataType::FLOAT) {
-        if (virtual_registers[vregno].type.data_length == MachineDataType::B128) {
-            virtual_registers[vregno].accessible_physical_registers = {
-            ArmPhysicalRegisterDescriptor::q0,  ArmPhysicalRegisterDescriptor::q1,
-            ArmPhysicalRegisterDescriptor::q2,  ArmPhysicalRegisterDescriptor::q3,
-            ArmPhysicalRegisterDescriptor::q4,  ArmPhysicalRegisterDescriptor::q5,
-            ArmPhysicalRegisterDescriptor::q6,  ArmPhysicalRegisterDescriptor::q7,
-            ArmPhysicalRegisterDescriptor::q8,  ArmPhysicalRegisterDescriptor::q9,
-            ArmPhysicalRegisterDescriptor::q10, ArmPhysicalRegisterDescriptor::q11,
-            ArmPhysicalRegisterDescriptor::q12, ArmPhysicalRegisterDescriptor::q13,
-            ArmPhysicalRegisterDescriptor::q14, ArmPhysicalRegisterDescriptor::q15,
-            };
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B64) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B32) {
-        }
-    } else if (virtual_registers[vregno].type.data_type == MachineDataType::INT) {
-        if (virtual_registers[vregno].type.data_length == MachineDataType::B128) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B64) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B32) {
-        }
-    }
-    // Adjust accessible_physical_register for forced alloc
-}

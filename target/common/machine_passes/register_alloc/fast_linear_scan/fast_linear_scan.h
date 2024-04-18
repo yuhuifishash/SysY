@@ -10,7 +10,7 @@ private:
     double CalculateSpillWeight(LiveInterval);
 
 protected:
-    void DoAllocInCurrentFunc();
+    bool DoAllocInCurrentFunc();
 
 public:
     FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy) {}

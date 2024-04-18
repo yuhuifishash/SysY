@@ -11,9 +11,9 @@ MachineCFG::MachineCFGNode *MachineCFG::BFSIterator::next() {
     visited[return_idx] = 1;
     que.pop();
     for (auto succ : mcfg->G[return_idx]) {
-        if (visited[succ->Mblock->label_id] == 0) {
-            visited[succ->Mblock->label_id] = 1;
-            que.push(succ->Mblock->label_id);
+        if (visited[succ->Mblock->getLabelId()] == 0) {
+            visited[succ->Mblock->getLabelId()] = 1;
+            que.push(succ->Mblock->getLabelId());
         }
     }
     return mcfg->block_map[return_idx];
@@ -37,9 +37,9 @@ MachineCFG::MachineCFGNode *MachineCFG::DFSIterator::next() {
     visited[return_idx] = 1;
     stk.pop();
     for (auto succ : mcfg->G[return_idx]) {
-        if (visited[succ->Mblock->label_id] == 0) {
-            visited[succ->Mblock->label_id] = 1;
-            stk.push(succ->Mblock->label_id);
+        if (visited[succ->Mblock->getLabelId()] == 0) {
+            visited[succ->Mblock->getLabelId()] = 1;
+            stk.push(succ->Mblock->getLabelId());
         }
     }
     return mcfg->block_map[return_idx];

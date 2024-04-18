@@ -1,12 +1,10 @@
 #include "arm_printer.h"
 
 template <> void ArmPrinter::printArm<Register *>(Register *ins) {
-    if (output_physical_reg) {
-        s << ArmRegDescriptor[current_func->virtual_registers[ins->virtual_reg_no]
-                              .physical_register_descriptor_index]
-             .name;
+    if (!ins->is_virtual) {
+        s << ArmRegDescriptor[ins->reg_no].name;
     } else {
-        s << "%" << ins->virtual_reg_no;
+        s << "%" << ins->reg_no;
     }
 }
 
@@ -38,7 +36,7 @@ template <> void ArmPrinter::printArm<Label *>(Label *ins) {
         // May change in future
         (*this) << ".LPIC" << ins->mem_label_id;
     } else {
-        (*this) << current_func->func_name << ins->jmp_label_id;
+        (*this) << current_func->getFunctionName() << ins->jmp_label_id;
     }
 }
 

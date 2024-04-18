@@ -2,16 +2,7 @@
 #define MachineBaseIns_H
 #include <set>
 #include <vector>
-class MachineBaseInstruction {
-public:
-    enum { ARM = 0, RiscV, PHI, COPY };
-    const int arch;
-
-public:
-    MachineBaseInstruction(int arch) : arch(arch) {}
-    virtual std::set<int> GetReadReg() = 0;
-    virtual std::set<int> GetWriteReg() = 0;
-};
+#include <assert.h>
 
 struct MachineDataType {
     enum { INT, FLOAT };
@@ -31,24 +22,22 @@ struct MachineDataType {
     }
 };
 
-struct VirtualRegisterAllocResult {
-    MachineDataType type;
-    int getDataWidth() { return type.getDataWidth(); }
-    // int reg_no;
-    // VRegister number is implied in MachineFunction::virtual_registers
-
-    int physical_register_descriptor_index;
-    // RegisterAllocation result
-
-    int mem_offset;
-    // Only valid when spilled
-
-    std::vector<int> accessible_physical_registers;
-};
-
 struct Register {
 public:
-    int virtual_reg_no;
+    int reg_no;
+    bool is_virtual;
+    MachineDataType type;
+    int getDataWidth() { return type.getDataWidth(); }
+    bool operator<(Register other)const{
+        if(is_virtual != other.is_virtual)return is_virtual < other.is_virtual;
+        if(reg_no != other.reg_no)return reg_no < other.reg_no;
+        if(type.data_type != other.type.data_type)return type.data_type < other.type.data_type;
+        if(type.data_length != other.type.data_length)return type.data_length < other.type.data_length;
+        return false;
+    }
+    bool operator==(Register other)const{
+        return reg_no == other.reg_no && is_virtual == other.is_virtual && type.data_type == other.type.data_type && type.data_length == other.type.data_length;
+    }
 };
 
 struct MachineBaseOperand {
@@ -60,7 +49,7 @@ struct MachineBaseOperand {
 
 struct MachineRegister : public MachineBaseOperand {
     Register reg;
-    MachineRegister(int reg_no) : MachineBaseOperand(MachineBaseOperand::REG) { reg.virtual_reg_no = reg_no; }
+    MachineRegister(int reg_no) : MachineBaseOperand(MachineBaseOperand::REG) { reg.reg_no = reg_no; }
 };
 
 struct MachineImmediateInt : public MachineBaseOperand {
@@ -90,17 +79,37 @@ public:
         this->jmp_label_id = jmp;
     }
 };
+
+class MachineBaseInstruction {
+public:
+    enum { ARM = 0, RiscV, PHI, COPY };
+    const int arch;
+private:
+    int ins_number;
+
+public:
+    void setNumber(int ins_number) {
+        this->ins_number = ins_number;
+    }
+    int getNumber() {
+        return ins_number;
+    }
+    MachineBaseInstruction(int arch) : arch(arch) {}
+    virtual std::set<Register*> GetReadReg() = 0;
+    virtual std::set<Register*> GetWriteReg() = 0;
+};
+
 class MachinePhiInstruction : public MachineBaseInstruction {
 public:
-    std::set<int> GetReadReg();
-    std::set<int> GetWriteReg();
+    std::set<Register*> GetReadReg();
+    std::set<Register*> GetWriteReg();
 
     Register result;
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
     MachinePhiInstruction(Register result)
         : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
     void pushPhiList(int label, Register reg) {
-        phi_list.push_back(std::make_pair(label, new MachineRegister(reg.virtual_reg_no)));
+        phi_list.push_back(std::make_pair(label, new MachineRegister(reg.reg_no)));
     }
     void pushPhiList(int label, int imm32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateInt(imm32)));
@@ -112,8 +121,15 @@ public:
     MachineDataType copy_type;
     MachineBaseOperand *src;
     MachineBaseOperand *dst;
-    std::set<int> GetReadReg() { return std::set<int>(); }
-    std::set<int> GetWriteReg() { return std::set<int>(); }
+    std::set<Register*> GetReadReg() { 
+        if(src->op_type == MachineBaseOperand::REG) 
+        return std::set<Register*>({&(((MachineRegister*)src)->reg)}); 
+        return std::set<Register*>();
+    }
+    std::set<Register*> GetWriteReg() {
+        assert(dst->op_type == MachineBaseOperand::REG);
+        return std::set<Register*>({&(((MachineRegister*)src)->reg)}); 
+    }
 
 public:
     MachineCopyInstruction(MachineBaseOperand *src, MachineBaseOperand *dst, MachineDataType copy_type)

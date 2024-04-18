@@ -3,10 +3,10 @@
 void RiscV64Printer::emit() {
     for (auto func : printee->functions) {
         current_func = func;
-        s << func->func_name << ":\n";
+        s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
         for (auto block : func->blocks) {
-            s << func->func_name << block->label_id << ":\n";
+            s << func->getFunctionName() << block->getLabelId() << ":\n";
             cur_block = block;
             for (auto ins : *block) {
                 s << "\t";
@@ -20,12 +20,10 @@ void RiscV64Printer::emit() {
     }
 }
 template <> void RiscV64Printer::printRVfield<Register *>(Register *printee) {
-    if (output_physical_reg) {
-        s << RiscV64RegDescriptor[current_func->virtual_registers[printee->virtual_reg_no]
-                                  .physical_register_descriptor_index]
-             .name;
+    if (!printee->is_virtual) {
+        s << RiscV64RegDescriptor[printee->reg_no].name;
     } else {
-        s << "%" << printee->virtual_reg_no;
+        s << "%" << printee->reg_no;
     }
 }
 
@@ -35,7 +33,7 @@ template <> void RiscV64Printer::printRVfield<Label *>(Label *ins) {
         // May change in future
         s << ".LPIC" << ins->mem_label_id;
     } else {
-        s << current_func->func_name << ins->jmp_label_id;
+        s << current_func->getFunctionName() << ins->jmp_label_id;
     }
 }
 

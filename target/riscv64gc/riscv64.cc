@@ -1,6 +1,6 @@
 #include "riscv64.h"
 #include <assert.h>
-std::set<int> RiscV64Instruction::GetReadReg() {
+std::set<Register*> RiscV64Instruction::GetReadReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeReadreg();
@@ -18,7 +18,7 @@ std::set<int> RiscV64Instruction::GetReadReg() {
     assert(false);
 }
 
-std::set<int> RiscV64Instruction::GetWriteReg() {
+std::set<Register*> RiscV64Instruction::GetWriteReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeWritereg();
@@ -116,22 +116,3 @@ struct RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[] = {
 [RiscV64PhysicalRegisterDescriptor::INVALID] = {"INVALID"},
 [RiscV64PhysicalRegisterDescriptor::spilled_in_memory] = {"spilled_in_memory"},
 };
-
-void RiscV64Function::InitializeNewVirtualRegister(int vregno) {
-    virtual_registers[vregno].physical_register_descriptor_index = RiscV64PhysicalRegisterDescriptor::INVALID;
-    if (virtual_registers[vregno].type.data_type == MachineDataType::FLOAT) {
-        if (virtual_registers[vregno].type.data_length == MachineDataType::B128) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B64) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B32) {
-        }
-    } else if (virtual_registers[vregno].type.data_type == MachineDataType::INT) {
-        if (virtual_registers[vregno].type.data_length == MachineDataType::B128) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B64) {
-
-        } else if (virtual_registers[vregno].type.data_length == MachineDataType::B32) {
-        }
-    }
-}
