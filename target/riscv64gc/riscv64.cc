@@ -1,6 +1,6 @@
 #include "riscv64.h"
 #include <assert.h>
-std::set<Register*> RiscV64Instruction::GetReadReg() {
+std::vector<Register *> RiscV64Instruction::GetReadReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeReadreg();
@@ -18,7 +18,7 @@ std::set<Register*> RiscV64Instruction::GetReadReg() {
     assert(false);
 }
 
-std::set<Register*> RiscV64Instruction::GetWriteReg() {
+std::vector<Register *> RiscV64Instruction::GetWriteReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeWritereg();
@@ -116,3 +116,28 @@ struct RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[] = {
 [RiscV64PhysicalRegisterDescriptor::INVALID] = {"INVALID"},
 [RiscV64PhysicalRegisterDescriptor::spilled_in_memory] = {"spilled_in_memory"},
 };
+
+std::vector<int> PhysicalRegisters::getValidRegs(LiveInterval interval) {
+    if (interval.getReg().type.data_type == MachineDataType::INT) {
+        return std::vector<int>({
+        RiscV64PhysicalRegisterDescriptor::x0,  RiscV64PhysicalRegisterDescriptor::x1,
+        RiscV64PhysicalRegisterDescriptor::x2,  RiscV64PhysicalRegisterDescriptor::x3,
+        RiscV64PhysicalRegisterDescriptor::x4,  RiscV64PhysicalRegisterDescriptor::x5,
+        RiscV64PhysicalRegisterDescriptor::x6,  RiscV64PhysicalRegisterDescriptor::x7,
+        RiscV64PhysicalRegisterDescriptor::x8,  RiscV64PhysicalRegisterDescriptor::x9,
+        RiscV64PhysicalRegisterDescriptor::x10, RiscV64PhysicalRegisterDescriptor::x11,
+        RiscV64PhysicalRegisterDescriptor::x12, RiscV64PhysicalRegisterDescriptor::x13,
+        RiscV64PhysicalRegisterDescriptor::x14, RiscV64PhysicalRegisterDescriptor::x15,
+        RiscV64PhysicalRegisterDescriptor::x16, RiscV64PhysicalRegisterDescriptor::x17,
+        RiscV64PhysicalRegisterDescriptor::x18, RiscV64PhysicalRegisterDescriptor::x19,
+        RiscV64PhysicalRegisterDescriptor::x20, RiscV64PhysicalRegisterDescriptor::x21,
+        RiscV64PhysicalRegisterDescriptor::x22, RiscV64PhysicalRegisterDescriptor::x23,
+        RiscV64PhysicalRegisterDescriptor::x24, RiscV64PhysicalRegisterDescriptor::x25,
+        RiscV64PhysicalRegisterDescriptor::x26, RiscV64PhysicalRegisterDescriptor::x27,
+        RiscV64PhysicalRegisterDescriptor::x28, RiscV64PhysicalRegisterDescriptor::x29,
+        RiscV64PhysicalRegisterDescriptor::x30, RiscV64PhysicalRegisterDescriptor::x31,
+        });
+    } else {
+        assert(false);
+    }
+}

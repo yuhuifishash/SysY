@@ -17,17 +17,17 @@ private:
     MachineFunction *parent;
 
 public:
-    auto getParent(){return parent;}
-    void setParent(MachineFunction* parent){this->parent = parent;}
-    auto getLabelId(){return label_id;}
+    auto getParent() { return parent; }
+    void setParent(MachineFunction *parent) { this->parent = parent; }
+    auto getLabelId() { return label_id; }
     auto ReverseBegin() { return instructions.rbegin(); }
     auto ReverseEnd() { return instructions.rend(); }
     auto begin() { return instructions.begin(); }
     auto end() { return instructions.end(); }
     void push_back(MachineBaseInstruction *ins) { instructions.push_back(ins); }
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
-    int getBlockInNumber(){ return instructions[0]->getNumber(); }
-    int getBlockOutNumber(){ return instructions[instructions.size() - 1]->getNumber(); }
+    int getBlockInNumber() { return instructions[0]->getNumber(); }
+    int getBlockOutNumber() { return instructions[instructions.size() - 1]->getNumber(); }
     MachineBlock(int id) : label_id(id) {}
 };
 

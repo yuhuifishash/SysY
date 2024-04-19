@@ -28,5 +28,10 @@ protected:
 class ArmUnit : public MachineUnit {
 public:
 };
-
+#include "../common/machine_passes/register_alloc/physical_register.h"
+class ArmRegisters : public PhysicalRegisters {
+protected:
+    std::vector<int> getValidRegs(LiveInterval interval);
+    std::vector<int> getAliasRegs(int phy_id);
+};
 #endif

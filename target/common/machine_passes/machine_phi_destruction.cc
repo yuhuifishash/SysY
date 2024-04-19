@@ -12,8 +12,11 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
     while (block_it->hasNext()) {
         auto block = block_it->next()->Mblock;
         for (auto ins : *block) {
-            for (auto predecessor : current_func->getMachineCFG()->GetPredecessorsByBlockId(block->getLabelId())) {
-                if (current_func->getMachineCFG()->GetSuccessorsByBlockId(predecessor->Mblock->getLabelId()).size() > 1) {
+            for (auto predecessor :
+                 current_func->getMachineCFG()->GetPredecessorsByBlockId(block->getLabelId())) {
+                if (current_func->getMachineCFG()
+                    ->GetSuccessorsByBlockId(predecessor->Mblock->getLabelId())
+                    .size() > 1) {
                     auto MidBlock = current_func->InsertNewBranchOnlyBlockBetweenEdge(
                     predecessor->Mblock->getLabelId(), block->getLabelId());
                 }

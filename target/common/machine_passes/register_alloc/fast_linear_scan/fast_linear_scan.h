@@ -2,11 +2,11 @@
 #define FAST_LINEAR_SCAN_H
 #include "../basic_register_allocation.h"
 
-bool IntervalsPrioCmp(LiveInterval a,LiveInterval b);
+bool IntervalsPrioCmp(LiveInterval a, LiveInterval b);
 class FastLinearScan : RegisterAllocation {
 private:
     // All States here, like queue
-    std::priority_queue<LiveInterval, std::vector<LiveInterval>, decltype(IntervalsPrioCmp)*> unalloc_queue;
+    std::priority_queue<LiveInterval, std::vector<LiveInterval>, decltype(IntervalsPrioCmp) *> unalloc_queue;
     double CalculateSpillWeight(LiveInterval);
 
 protected:

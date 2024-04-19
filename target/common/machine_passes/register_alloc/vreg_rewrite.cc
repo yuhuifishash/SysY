@@ -14,7 +14,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                     // new_load_reg = GetNewReg();
                     // insertasmBeforeins("load new_load_reg = [fp,mem_offset]")
                     // for(oldreg& : ins->GetReadReg()) if(oldreg==reg) oldreg=new_load_reg
-                }else{
+                } else {
                     reg->is_virtual = false;
                     reg->reg_no = result.phy_reg_no;
                 }
@@ -25,7 +25,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                     // new_store_reg = GetNewReg();
                     // for(oldreg& : ins->GetWriteReg()) if(oldreg==reg) oldreg=new_store_reg
                     // insertasmAfterins("store new_store_reg , [fp,mem_offset]")
-                }else{
+                } else {
                     reg->is_virtual = false;
                     reg->reg_no = result.phy_reg_no;
                 }

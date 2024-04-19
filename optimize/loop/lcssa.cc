@@ -25,7 +25,7 @@ auto GetUsedOperandOutOfLoop(CFG *C, NaturalLoop *L) {
 
     for (auto [id, bb] : *C->block_map) {
         if (L->loop_nodes.find(bb) != L->loop_nodes.end()) {
-            continue;    // in the loop
+            continue;                            // in the loop
         }
         for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *L->exit_nodes.begin()) {
@@ -67,7 +67,7 @@ void NaturalLoop::LCSSA(CFG *C) {
 
     for (auto [id, bb] : *C->block_map) {
         if (this->loop_nodes.find(bb) != this->loop_nodes.end()) {
-            continue;    // in the loop
+            continue;                            // in the loop
         }
         for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *this->exit_nodes.begin()) {
