@@ -118,7 +118,7 @@ struct RiscV64PhysicalRegisterDescriptor {
 };
 extern RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[];
 
-class RiscV64Instruction : MachineBaseInstruction {
+class RiscV64Instruction : public MachineBaseInstruction {
 private:
     int op;
     Register rd, rs1, rs2;
@@ -142,6 +142,18 @@ private:
     std::vector<Register *> GetJ_typeWritereg() { return {&rd}; }
 
 public:
+    RiscV64Instruction():MachineBaseInstruction(MachineBaseInstruction::RiscV){}
+    void setOpcode(int op) {this->op = op;}
+    void setRd(Register rd) {this->rd = rd;}
+    void setRs1(Register rs1) {this->rs1 = rs1;}
+    void setRs2(Register rs2) {this->rs2 = rs2;}
+    void setImm(int imm) {this->imm = imm;}
+    void setLabel(Label label) {this->label = label;}
+    Register getRd() { return rd; }
+    Register getRs1() { return rs1; }
+    Register getRs2() { return rs2; }
+    int getImm() { return imm; }
+    Label getLabel() { return label; }
     int getOpcode() { return op; }
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
