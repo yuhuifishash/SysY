@@ -150,8 +150,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             // if find, then add phi in exit
             if (PhiI2->GetResultOp()->GetFullName() == val->GetFullName()) {
                 is_find = true;
-                PhiI->InsertPhi(PhiI2->GetValOperand(preheader->block_id),
-                                new LabelOperand(CondBlock->block_id));
+                PhiI->InsertPhi(PhiI2->GetValOperand(preheader->block_id), new LabelOperand(CondBlock->block_id));
                 break;
             }
         }

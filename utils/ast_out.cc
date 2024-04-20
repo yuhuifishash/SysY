@@ -141,8 +141,8 @@ void __FuncDef::printAST(std::ostream &s, int pad) {
 }
 
 void __FuncFParam::printAST(std::ostream &s, int pad) {
-    s << std::string(pad, ' ') << "FuncFParam   name:" << name->get_string()
-      << "   Type:" << type_status[type_decl] << "   "
+    s << std::string(pad, ' ') << "FuncFParam   name:" << name->get_string() << "   Type:" << type_status[type_decl]
+      << "   "
       << "scope:" << scope << "\n";
     if (dims != nullptr) {
         s << std::string(pad + 2, ' ') << "Dimensions:\n";
@@ -276,8 +276,7 @@ void ConstExp::printAST(std::ostream &s, int pad) {
 }
 
 void Lval::printAST(std::ostream &s, int pad) {
-    s << std::string(pad, ' ') << "Lval   " << attribute.GetAttributeInfo()
-      << "   name:" << name->get_string() << "   "
+    s << std::string(pad, ' ') << "Lval   " << attribute.GetAttributeInfo() << "   name:" << name->get_string() << "   "
       << "scope:" << scope << "\n";
     if (dims != nullptr) {
         s << std::string(pad + 2, ' ') << "dims:\n";
@@ -295,8 +294,8 @@ void FuncRParams::printAST(std::ostream &s, int pad) {
 }
 
 void Func_call::printAST(std::ostream &s, int pad) {
-    s << std::string(pad, ' ') << "FuncCall   name:" << name->get_string() << "   "
-      << attribute.GetAttributeInfo() << "\n";
+    s << std::string(pad, ' ') << "FuncCall   name:" << name->get_string() << "   " << attribute.GetAttributeInfo()
+      << "\n";
     if (funcr_params != nullptr) {
         funcr_params->printAST(s, pad + 2);
     } else {

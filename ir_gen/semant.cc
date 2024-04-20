@@ -20,8 +20,7 @@ static int InWhileCount = 0;
 LLVMType Type2LLvm[6] = {LLVMType::VOID, LLVMType::I32, LLVMType::FLOAT32,
                          LLVMType::I1,   LLVMType::PTR, LLVMType::DOUBLE};
 
-extern NodeAttribute (*SemantBinaryNode[6][6])(NodeAttribute a, NodeAttribute b,
-                                               NodeAttribute::opcode opcode);
+extern NodeAttribute (*SemantBinaryNode[6][6])(NodeAttribute a, NodeAttribute b, NodeAttribute::opcode opcode);
 extern NodeAttribute (*SemantSingleNode[6])(NodeAttribute a, NodeAttribute::opcode opcode);
 /*
 Find Max Alignable Size
@@ -72,8 +71,8 @@ void RecursiveArrayInit(InitVal init, VarAttribute &val, int begPos, int endPos,
     for (InitVal iv : *(init->GetList())) {
         if (iv->IsExp()) {
             if (iv->attribute.T.type == Type::VOID) {
-                error_msgs.push_back("exp can not be void in initval in line " +
-                                     std::to_string(init->GetLineNumber()) + "\n");
+                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->GetLineNumber()) +
+                                     "\n");
             }
             if (val.type == Type::INT) {
                 if (iv->attribute.T.type == Type::INT) {
@@ -124,8 +123,7 @@ void SolveIntInitVal(InitVal init, VarAttribute &val)    // used for global or c
     } else {
         if (init->IsExp()) {
             if ((init)->GetExp() != nullptr) {
-                error_msgs.push_back("InitVal can not be exp in line " +
-                                     std::to_string(init->GetLineNumber()) + "\n");
+                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
             return;
         } else {
@@ -145,8 +143,8 @@ void SolveFloatInitVal(InitVal init, VarAttribute &val)    // used for global or
     if (val.dims.empty()) {
         if (init->GetExp() != nullptr) {
             if (init->GetExp()->attribute.T.type == Type::VOID) {
-                error_msgs.push_back("exp can not be void in initval in line " +
-                                     std::to_string(init->GetLineNumber()) + "\n");
+                error_msgs.push_back("exp can not be void in initval in line " + std::to_string(init->GetLineNumber()) +
+                                     "\n");
             } else if (init->GetExp()->attribute.T.type == Type::FLOAT) {
                 val.FloatInitVals[0] = init->GetExp()->attribute.V.val.FloatVal;
             } else if (init->GetExp()->attribute.T.type == Type::INT) {
@@ -157,8 +155,7 @@ void SolveFloatInitVal(InitVal init, VarAttribute &val)    // used for global or
     } else {
         if (init->IsExp()) {
             if ((init)->GetExp() != nullptr) {
-                error_msgs.push_back("InitVal can not be exp in line " +
-                                     std::to_string(init->GetLineNumber()) + "\n");
+                error_msgs.push_back("InitVal can not be exp in line " + std::to_string(init->GetLineNumber()) + "\n");
             }
             return;
         } else {
@@ -283,16 +280,16 @@ void EqExp_eq::TypeCheck() {
     eqexp->TypeCheck();
     relexp->TypeCheck();
 
-    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type](
-    eqexp->attribute, relexp->attribute, NodeAttribute::EQ);
+    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type](eqexp->attribute, relexp->attribute,
+                                                                                    NodeAttribute::EQ);
 }
 
 void EqExp_neq::TypeCheck() {
     eqexp->TypeCheck();
     relexp->TypeCheck();
 
-    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type](
-    eqexp->attribute, relexp->attribute, NodeAttribute::NE);
+    attribute = SemantBinaryNode[eqexp->attribute.T.type][relexp->attribute.T.type](eqexp->attribute, relexp->attribute,
+                                                                                    NodeAttribute::NE);
 }
 
 void LAndExp_and::TypeCheck() {
@@ -327,11 +324,9 @@ void Lval::TypeCheck() {
         for (auto d : *dims) {
             d->TypeCheck();
             if (d->attribute.T.type == Type::VOID) {
-                error_msgs.push_back("Array Dim can not be void in line " + std::to_string(line_number) +
-                                     "\n");
+                error_msgs.push_back("Array Dim can not be void in line " + std::to_string(line_number) + "\n");
             } else if (d->attribute.T.type == Type::FLOAT) {
-                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) +
-                                     "\n");
+                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
             }
             arrayindexs.push_back(d->attribute.V.val.IntVal);
             arrayindexConstTag &= d->attribute.V.ConstTag;
@@ -339,7 +334,7 @@ void Lval::TypeCheck() {
     }
 
     VarAttribute val = semant_table.symbol_table.lookup_val(name);
-    if (val.type != Type::VOID) {                                                          // local var
+    if (val.type != Type::VOID) {    // local var
         scope = semant_table.symbol_table.lookup_scope(name);
     } else if (semant_table.GlobalTable.find(name) != semant_table.GlobalTable.end()) {    // global var
         val = semant_table.GlobalTable[name];
@@ -437,8 +432,7 @@ void assign_stmt::TypeCheck() {
     exp->TypeCheck();
     ((Lval *)lval)->is_left = true;    // assign_stmt -> leftvalue
     if (exp->attribute.T.type == Type::VOID) {
-        error_msgs.push_back("void type can not be assign_stmt's expression " + std::to_string(line_number) +
-                             "\n");
+        error_msgs.push_back("void type can not be assign_stmt's expression " + std::to_string(line_number) + "\n");
     }
 }
 
@@ -515,8 +509,7 @@ void ConstInitVal_exp::TypeCheck() {
     attribute = exp->attribute;
 
     if (attribute.T.type == Type::VOID) {
-        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) +
-                             "\n");
+        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) + "\n");
     }
     if (!attribute.V.ConstTag) {    // exp is not const
         error_msgs.push_back("Expression is not const " + std::to_string(line_number) + "\n");
@@ -538,8 +531,7 @@ void VarInitVal_exp::TypeCheck() {
     attribute = exp->attribute;
 
     if (attribute.T.type == Type::VOID) {
-        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) +
-                             "\n");
+        error_msgs.push_back("Initval expression can not be void in line " + std::to_string(line_number) + "\n");
     }
 }
 
@@ -553,10 +545,9 @@ void VarDecl::TypeCheck() {
     auto def_vector = *var_def_list;
     for (auto def : def_vector) {
         // multiple def check
-        if (semant_table.symbol_table.lookup_scope(def->GetName()) ==
-            semant_table.symbol_table.get_current_scope()) {
-            error_msgs.push_back("multiple definition of " + def->GetName()->get_string() +
-                                 " exists in line " + std::to_string(line_number) + "\n");
+        if (semant_table.symbol_table.lookup_scope(def->GetName()) == semant_table.symbol_table.get_current_scope()) {
+            error_msgs.push_back("multiple definition of " + def->GetName()->get_string() + " exists in line " +
+                                 std::to_string(line_number) + "\n");
         }
 
         VarAttribute val;
@@ -569,12 +560,11 @@ void VarDecl::TypeCheck() {
             for (auto d : dim_vector) {
                 d->TypeCheck();
                 if (d->attribute.V.ConstTag == false) {
-                    error_msgs.push_back("Array Dim must be const expression in line " +
-                                         std::to_string(line_number) + "\n");
+                    error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) +
+                                         "\n");
                 }
                 if (d->attribute.T.type == Type::FLOAT) {
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) +
-                                         "\n");
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
                 }
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
@@ -592,8 +582,7 @@ void ConstDecl::TypeCheck() {
     auto def_vector = *var_def_list;
     for (auto def : def_vector) {
         // multiple def check
-        if (semant_table.symbol_table.lookup_scope(def->GetName()) ==
-            semant_table.symbol_table.get_current_scope()) {
+        if (semant_table.symbol_table.lookup_scope(def->GetName()) == semant_table.symbol_table.get_current_scope()) {
             error_msgs.push_back("multiple definition of " + def->GetName()->get_string() + " in line " +
                                  std::to_string(line_number) + "\n");
         }
@@ -608,12 +597,11 @@ void ConstDecl::TypeCheck() {
             for (auto d : dim_vector) {
                 d->TypeCheck();
                 if (d->attribute.V.ConstTag == false) {
-                    error_msgs.push_back("Array Dim must be const expression in line " +
-                                         std::to_string(line_number) + "\n");
+                    error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) +
+                                         "\n");
                 }
                 if (d->attribute.T.type == Type::FLOAT) {
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) +
-                                         "\n");
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
                 }
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
@@ -658,12 +646,11 @@ void __FuncFParam::TypeCheck() {
             auto d = dim_vector[i];
             d->TypeCheck();
             if (d->attribute.V.ConstTag == false) {
-                error_msgs.push_back("Array Dim must be const expression in line " +
-                                     std::to_string(line_number) + "\n");
+                error_msgs.push_back("Array Dim must be const expression in line " + std::to_string(line_number) +
+                                     "\n");
             }
             if (d->attribute.T.type == Type::FLOAT) {
-                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) +
-                                     "\n");
+                error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
             }
             val.dims.push_back(d->attribute.V.val.IntVal);
         }
@@ -674,8 +661,8 @@ void __FuncFParam::TypeCheck() {
 
     if (name != nullptr) {
         if (semant_table.symbol_table.lookup_scope(name) != -1) {
-            error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() +
-                                 " in line " + std::to_string(line_number) + "\n");
+            error_msgs.push_back("multiple difinitions of formals in function " + name->get_string() + " in line " +
+                                 std::to_string(line_number) + "\n");
         }
         semant_table.symbol_table.add_Symbol(name, val);
     }
@@ -719,8 +706,7 @@ void CompUnit_Decl::TypeCheck() {
     for (auto def : def_vector) {
 
         if (semant_table.GlobalTable.find(def->GetName()) != semant_table.GlobalTable.end()) {
-            error_msgs.push_back("multilpe difinitions of vars in line " + std::to_string(line_number) +
-                                 "\n");
+            error_msgs.push_back("multilpe difinitions of vars in line " + std::to_string(line_number) + "\n");
         }
 
         VarAttribute val;
@@ -733,12 +719,10 @@ void CompUnit_Decl::TypeCheck() {
             for (auto d : dim_vector) {
                 d->TypeCheck();
                 if (d->attribute.V.ConstTag == false) {
-                    error_msgs.push_back("Array Dim must be const expression " + std::to_string(line_number) +
-                                         "\n");
+                    error_msgs.push_back("Array Dim must be const expression " + std::to_string(line_number) + "\n");
                 }
                 if (d->attribute.T.type == Type::FLOAT) {
-                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) +
-                                         "\n");
+                    error_msgs.push_back("Array Dim can not be float in line " + std::to_string(line_number) + "\n");
                 }
             }
             for (auto d : dim_vector) {
@@ -771,8 +755,8 @@ void CompUnit_Decl::TypeCheck() {
         } else if (init == nullptr) {
             globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(), lltype, nullptr);
         } else if (lltype == I32) {
-            globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(), lltype,
-                                                        new ImmI32Operand(val.IntInitVals[0]));
+            globalDecl =
+            new GlobalVarDefineInstruction(def->GetName()->get_string(), lltype, new ImmI32Operand(val.IntInitVals[0]));
         } else if (lltype == FLOAT32) {
             globalDecl = new GlobalVarDefineInstruction(def->GetName()->get_string(), lltype,
                                                         new ImmF32Operand(val.FloatInitVals[0]));

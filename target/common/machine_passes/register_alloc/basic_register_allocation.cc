@@ -57,8 +57,8 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 intervals[reg].SetMostBegin(mblock->getBlockInNumber());
             }
         }
-        for (auto reverse_it = mcfg_node->Mblock->ReverseBegin();
-             reverse_it != mcfg_node->Mblock->ReverseEnd(); ++reverse_it) {
+        for (auto reverse_it = mcfg_node->Mblock->ReverseBegin(); reverse_it != mcfg_node->Mblock->ReverseEnd();
+             ++reverse_it) {
             auto ins = *reverse_it;
             if (ins->arch == MachineBaseInstruction::COPY) {
                 // Update copy_sources

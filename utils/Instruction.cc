@@ -3,8 +3,8 @@
 #include <assert.h>
 
 void IRgenArithmeticI32(LLVMBlock B, LLVMIROpcode opcode, int reg1, int reg2, int result_reg) {
-    B->InsertInstruction(1, new ArithmeticInstruction(opcode, LLVMType::I32, new RegOperand(reg1),
-                                                      new RegOperand(reg2), new RegOperand(result_reg)));
+    B->InsertInstruction(1, new ArithmeticInstruction(opcode, LLVMType::I32, new RegOperand(reg1), new RegOperand(reg2),
+                                                      new RegOperand(result_reg)));
 }
 
 void IRgenArithmeticF32(LLVMBlock B, LLVMIROpcode opcode, int reg1, int reg2, int result_reg) {
@@ -33,23 +33,23 @@ void IRgenArithmeticF32ImmAll(LLVMBlock B, LLVMIROpcode opcode, float val1, floa
 }
 
 void IRgenIcmp(LLVMBlock B, IcmpCond cmp_op, int reg1, int reg2, int result_reg) {
-    B->InsertInstruction(1, new IcmpInstruction(LLVMType::I32, new RegOperand(reg1), new RegOperand(reg2),
-                                                cmp_op, new RegOperand(result_reg)));
+    B->InsertInstruction(1, new IcmpInstruction(LLVMType::I32, new RegOperand(reg1), new RegOperand(reg2), cmp_op,
+                                                new RegOperand(result_reg)));
 }
 
 void IRgenFcmp(LLVMBlock B, FcmpCond cmp_op, int reg1, int reg2, int result_reg) {
-    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, new RegOperand(reg1), new RegOperand(reg2),
-                                                cmp_op, new RegOperand(result_reg)));
+    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, new RegOperand(reg1), new RegOperand(reg2), cmp_op,
+                                                new RegOperand(result_reg)));
 }
 
 void IRgenIcmpImmRight(LLVMBlock B, IcmpCond cmp_op, int reg1, int val2, int result_reg) {
-    B->InsertInstruction(1, new IcmpInstruction(LLVMType::I32, new RegOperand(reg1), new ImmI32Operand(val2),
-                                                cmp_op, new RegOperand(result_reg)));
+    B->InsertInstruction(1, new IcmpInstruction(LLVMType::I32, new RegOperand(reg1), new ImmI32Operand(val2), cmp_op,
+                                                new RegOperand(result_reg)));
 }
 
 void IRgenFcmpImmRight(LLVMBlock B, FcmpCond cmp_op, int reg1, float val2, int result_reg) {
-    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, new RegOperand(reg1),
-                                                new ImmF32Operand(val2), cmp_op, new RegOperand(result_reg)));
+    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, new RegOperand(reg1), new ImmF32Operand(val2),
+                                                cmp_op, new RegOperand(result_reg)));
 }
 
 void IRgenFptosi(LLVMBlock B, int src, int dst) {
@@ -61,14 +61,12 @@ void IRgenSitofp(LLVMBlock B, int src, int dst) {
 }
 
 void IRgenZextI1toI32(LLVMBlock B, int src, int dst) {
-    B->InsertInstruction(
-    1, new ZextInstruction(LLVMType::I32, new RegOperand(dst), LLVMType::I1, new RegOperand(src)));
+    B->InsertInstruction(1, new ZextInstruction(LLVMType::I32, new RegOperand(dst), LLVMType::I1, new RegOperand(src)));
 }
 
 void IRgenGetElementptr(LLVMBlock B, LLVMType type, int result_reg, Operand ptr, std::vector<int> dims,
                         std::vector<Operand> indexs) {
-    B->InsertInstruction(1,
-                         new GetElementprtInstruction(type, new RegOperand(result_reg), ptr, dims, indexs));
+    B->InsertInstruction(1, new GetElementprtInstruction(type, new RegOperand(result_reg), ptr, dims, indexs));
 }
 
 void IRgenLoad(LLVMBlock B, LLVMType type, int result_reg, Operand ptr) {
@@ -83,13 +81,12 @@ void IRgenStore(LLVMBlock B, LLVMType type, Operand value, Operand ptr) {
     B->InsertInstruction(1, new StoreInstruction(type, ptr, value));
 }
 
-void IRgenCall(LLVMBlock B, LLVMType type, int result_reg,
-               std::vector<std::pair<enum LLVMType, Operand>> args, std::string name) {
+void IRgenCall(LLVMBlock B, LLVMType type, int result_reg, std::vector<std::pair<enum LLVMType, Operand>> args,
+               std::string name) {
     B->InsertInstruction(1, new CallInstruction(type, new RegOperand(result_reg), name, args));
 }
 
-void IRgenCallVoid(LLVMBlock B, LLVMType type, std::vector<std::pair<enum LLVMType, Operand>> args,
-                   std::string name) {
+void IRgenCallVoid(LLVMBlock B, LLVMType type, std::vector<std::pair<enum LLVMType, Operand>> args, std::string name) {
     B->InsertInstruction(1, new CallInstruction(type, new RegOperand(-1), name, args));
 }
 
@@ -120,8 +117,8 @@ void IRgenBRUnCond(LLVMBlock B, int dst_label) {
 }
 
 void IRgenBrCond(LLVMBlock B, int cond_reg, int true_label, int false_label) {
-    B->InsertInstruction(1, new BrCondInstruction(new RegOperand(cond_reg), new LabelOperand(true_label),
-                                                  new LabelOperand(false_label)));
+    B->InsertInstruction(
+    1, new BrCondInstruction(new RegOperand(cond_reg), new LabelOperand(true_label), new LabelOperand(false_label)));
 }
 
 void IRgenAlloca(LLVMBlock B, LLVMType type, int reg) {
@@ -300,32 +297,32 @@ void RetInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     }
 }
 
-std::pair<int,int> GetElementprtInstruction::GetConstIndexes() {
+std::pair<int, int> GetElementprtInstruction::GetConstIndexes() {
     int ans = 0;
     int Siz = 1;
 
-    for(auto sz:dims){
+    for (auto sz : dims) {
         Siz *= sz;
     }
 
-    for(int i = 0; i < indexes.size(); i++){
+    for (int i = 0; i < indexes.size(); i++) {
         // std::cerr<<i<<" "<<indexes[i]->getFullName()<<"\n";
-        if(indexes[i]->GetOperandType() == BasicOperand::IMMI32){
-            ans += (((ImmI32Operand*)indexes[i])->GetIntImmVal())*Siz;
-        }else if(indexes[i]->GetOperandType() == BasicOperand::REG){
-            return {-1,-1};
+        if (indexes[i]->GetOperandType() == BasicOperand::IMMI32) {
+            ans += (((ImmI32Operand *)indexes[i])->GetIntImmVal()) * Siz;
+        } else if (indexes[i]->GetOperandType() == BasicOperand::REG) {
+            return {-1, -1};
         }
-        if(i < dims.size()){
+        if (i < dims.size()) {
             Siz /= dims[i];
         }
     }
 
-    return {ans,Siz};
+    return {ans, Siz};
 }
 
 int AllocaInstruction::GetAllocaSize() {
     int sz = 1;
-    for(auto d:dims){
+    for (auto d : dims) {
         sz *= d;
     }
     return sz;

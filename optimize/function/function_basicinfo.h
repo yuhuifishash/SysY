@@ -32,7 +32,7 @@ public:
 // class for FunctionCallGraph
 class FunctionCallGraph {
 public:
-    CFG * MainCFG;//entry of the program
+    CFG *MainCFG;    // entry of the program
     std::unordered_map<CFG *, std::vector<CFG *>> CG;
     std::unordered_map<CFGSCC *, std::vector<CFGSCC *>> CGSCC;
 

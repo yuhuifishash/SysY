@@ -42,6 +42,10 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
     switch (OpTable[ins->getOpcode()].ins_formattype) {
     case RvOpInfo::R_type:
         return;
+    case RvOpInfo::R2_type:
+        return;
+    case RvOpInfo::R4_type:
+        return;
     case RvOpInfo::I_type:
         return;
     case RvOpInfo::S_type:

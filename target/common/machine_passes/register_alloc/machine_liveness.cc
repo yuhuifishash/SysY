@@ -82,8 +82,7 @@ void Liveness::Execute() {
             if (out != OUT[cur_id]) {
                 OUT[cur_id] = out;
             }
-            std::set<Register> in =
-            SetUnion<Register>(USE[cur_id], SetDiff<Register>(OUT[cur_id], DEF[cur_id]));
+            std::set<Register> in = SetUnion<Register>(USE[cur_id], SetDiff<Register>(OUT[cur_id], DEF[cur_id]));
             if (in != IN[cur_id]) {
                 changed = 1;
                 IN[cur_id] = in;

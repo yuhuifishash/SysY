@@ -48,10 +48,9 @@ void IRgenLoad(LLVMBlock B, LLVMType type, int result_reg, Operand ptr);
 void IRgenStore(LLVMBlock B, LLVMType type, int value_reg, Operand ptr);
 void IRgenStore(LLVMBlock B, LLVMType type, Operand value, Operand ptr);
 
-void IRgenCall(LLVMBlock B, LLVMType type, int result_reg,
-               std::vector<std::pair<enum LLVMType, Operand>> args, std::string name);
-void IRgenCallVoid(LLVMBlock B, LLVMType type, std::vector<std::pair<enum LLVMType, Operand>> args,
-                   std::string name);
+void IRgenCall(LLVMBlock B, LLVMType type, int result_reg, std::vector<std::pair<enum LLVMType, Operand>> args,
+               std::string name);
+void IRgenCallVoid(LLVMBlock B, LLVMType type, std::vector<std::pair<enum LLVMType, Operand>> args, std::string name);
 
 void IRgenCallNoArgs(LLVMBlock B, LLVMType type, int result_reg, std::string name);
 void IRgenCallVoidNoArgs(LLVMBlock B, LLVMType type, std::string name);
@@ -91,8 +90,7 @@ bool IsRet(Instruction ins) {
 void AddNoReturnBlock() {
     for (auto block : llvmIR.function_block_map[function_now]) {
         LLVMBlock B = block.second;
-        if (B->Instruction_list.empty() ||
-            (!IsRet(B->Instruction_list.back()) && !IsBr(B->Instruction_list.back()))) {
+        if (B->Instruction_list.empty() || (!IsRet(B->Instruction_list.back()) && !IsBr(B->Instruction_list.back()))) {
             if (function_returntype == Type::VOID) {
                 IRgenRetVoid(B);
             } else if (function_returntype == Type::INT) {
@@ -116,38 +114,32 @@ void Exp::codeIR() { addexp->codeIR(); }
 
 void AddExp_plus::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type](addexp, mulexp, NodeAttribute::ADD,
-                                                                        B);
+    IRgenBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type](addexp, mulexp, NodeAttribute::ADD, B);
 }
 
 void AddExp_sub::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type](addexp, mulexp, NodeAttribute::SUB,
-                                                                        B);
+    IRgenBinaryNode[addexp->attribute.T.type][mulexp->attribute.T.type](addexp, mulexp, NodeAttribute::SUB, B);
 }
 
 void MulExp_mul::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp,
-                                                                           NodeAttribute::MUL, B);
+    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp, NodeAttribute::MUL, B);
 }
 
 void MulExp_div::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp,
-                                                                           NodeAttribute::DIV, B);
+    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp, NodeAttribute::DIV, B);
 }
 
 void MulExp_mod::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp,
-                                                                           NodeAttribute::MOD, B);
+    IRgenBinaryNode[mulexp->attribute.T.type][unary_exp->attribute.T.type](mulexp, unary_exp, NodeAttribute::MOD, B);
 }
 
 void RelExp_leq::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type](relexp, addexp, NodeAttribute::LEQ,
-                                                                        B);
+    IRgenBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type](relexp, addexp, NodeAttribute::LEQ, B);
 }
 
 void RelExp_lt::codeIR() {
@@ -157,8 +149,7 @@ void RelExp_lt::codeIR() {
 
 void RelExp_geq::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
-    IRgenBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type](relexp, addexp, NodeAttribute::GEQ,
-                                                                        B);
+    IRgenBinaryNode[relexp->attribute.T.type][addexp->attribute.T.type](relexp, addexp, NodeAttribute::GEQ, B);
 }
 
 void RelExp_gt::codeIR() {
@@ -252,7 +243,7 @@ void Lval::codeIR() {
         attribute.T.type == Type::PTR) {    // lval is array, first use getelementptr to get address
         if (formal_array_tag) {             // formal array ptr, getelementptr first does not use 0
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
-        } else {                            // array ptr, getelementptr first use 0
+        } else {    // array ptr, getelementptr first use 0
             arrayindexs.insert(arrayindexs.begin(), new ImmI32Operand(0));
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
         }
@@ -541,7 +532,7 @@ void VarDecl::codeIR() {
         int alloca_reg = max_reg;
         if (def->GetDims() != nullptr) {    // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) {     // init val.dims
+            for (auto d : dim_vector) {    // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
@@ -554,8 +545,7 @@ void VarDecl::codeIR() {
                     array_sz *= d;
                 }
 
-                CallInstruction *memsetCall =
-                new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
+                CallInstruction *memsetCall = new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
                 memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));
@@ -603,7 +593,7 @@ void ConstDecl::codeIR() {
         int alloca_reg = max_reg;
         if (def->GetDims() != nullptr) {    // this var is array
             auto dim_vector = *def->GetDims();
-            for (auto d : dim_vector) {     // init val.dims
+            for (auto d : dim_vector) {    // init val.dims
                 val.dims.push_back(d->attribute.V.val.IntVal);
             }
             IRgenAllocaArray(B, Type2LLvm[type_decl], alloca_reg, val.dims);
@@ -617,8 +607,7 @@ void ConstDecl::codeIR() {
                     array_sz *= d;
                 }
 
-                CallInstruction *memsetCall =
-                new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
+                CallInstruction *memsetCall = new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
                 memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));

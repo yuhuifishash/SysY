@@ -22,7 +22,7 @@ public:
     CFG *C;
     NaturalLoop *L;
 
-    std::set<int> InvariantSet;         //<RegNo>
+    std::set<int> InvariantSet;    //<RegNo>
     SCEVExpr BasicIndVar;
     std::map<int, SCEVExpr> SCEVMap;    //<RegNo, SCEVExpr>
 

@@ -585,8 +585,7 @@ class GlobalStringConstInstruction : public BasicInstruction {
 public:
     std::string str_val;
     std::string str_name;
-    GlobalStringConstInstruction(std::string strval, std::string strname)
-        : str_val(strval), str_name(strname) {}
+    GlobalStringConstInstruction(std::string strval, std::string strname) : str_val(strval), str_name(strname) {}
 
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
@@ -672,9 +671,7 @@ private:
 
 public:
     // Construction Function:Set All datas
-    RetInstruction(enum LLVMType retType, Operand res) : ret_type(retType), ret_val(res) {
-        this->opcode = RET;
-    }
+    RetInstruction(enum LLVMType retType, Operand res) : ret_type(retType), ret_val(res) { this->opcode = RET; }
     Operand GetResultReg() { return nullptr; }
     // Getters
     enum LLVMType GetType() { return ret_type; }
@@ -706,8 +703,7 @@ private:
     std::vector<Operand> indexes;
 
 public:
-    GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr)
-        : type(typ), result(res), ptrval(ptr) {
+    GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr) : type(typ), result(res), ptrval(ptr) {
         opcode = GETELEMENTPTR;
     }
     GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr, std::vector<int> dim)
@@ -733,8 +729,8 @@ public:
     std::vector<int> GetDims() { return dims; }
     std::vector<Operand> GetIndexes() { return indexes; }
 
-    //if index is constant, return {value,resultArraySize}. else, return -1.
-    std::pair<int,int> GetConstIndexes();
+    // if index is constant, return {value,resultArraySize}. else, return -1.
+    std::pair<int, int> GetConstIndexes();
 
     virtual LLVMType GetResultType() { return PTR; }
     void PrintIR(std::ostream &s);

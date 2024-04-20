@@ -24,8 +24,6 @@ public:
     bool isWriteMem() { return WritePtrs.size() != 0; }
 };
 
-
-
 class PtrRegMemInfo {
 public:
     // if we do not know where the ptr points, the is_fullmem is true
@@ -39,7 +37,7 @@ public:
 
     // if the ptr op is new, return true.
     // else, return false.
-    bool InsertNewPtrs(Operand op, std::map<int, PtrRegMemInfo>& ptrmap, CFG* C);
+    bool InsertNewPtrs(Operand op, std::map<int, PtrRegMemInfo> &ptrmap, CFG *C);
     bool PushPossiblePtr(Operand op);
 
     void PrintDebugInfo();
