@@ -37,7 +37,7 @@
 #define Log(...) do{\
     char message[256];\
     sprintf(message,__VA_ARGS__);\
-    std::cerr<<"\033[;35;1m[\033[4;35;1m"<<__FILE__<<":"<<__LINE__<<"\033[;35;1m "<<__func__<<"]";\
+    std::cerr<<"\033[;35;1m[\033[4;33;1m"<<__FILE__<<":"<<__LINE__<<"\033[;35;1m "<<__PRETTY_FUNCTION__<<"]";\
     std::cerr<<"\033[0;37;1m ";\
     std::cerr<<message<<"\n";\
     std::cerr<<"\033[0m";\
