@@ -13,10 +13,8 @@ AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I, Operan
     return ModRefResult::ModRef;
 }
 
-
 //----------------------------------------
-//implementation of alias analysis
-
+// implementation of alias analysis
 
 bool isFunctionArgs(CFG *C, Operand op) {
     if (op->GetOperandType() == BasicOperand::REG) {
@@ -33,21 +31,16 @@ void AliasAnalyser::AliasAnalysis() {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         AliasAnalysis(cfg);
     }
-    //then we should consider call inst(we need to do global R/W analysis)
+    // then we should consider call inst(we need to do global R/W analysis)
 }
 
-bool PtrRegMemInfo::InsertNewPtrs(Operand op, int index) {
-    
-}
+bool PtrRegMemInfo::InsertNewPtrs(Operand op, int index) {}
 
 // analysis all the ptr operand in CFG* C
 // it will also analysis the read/write info of inst in C(but we do not consider call inst)
 void AliasAnalyser::AliasAnalysis(CFG *C) {
     std::map<int, PtrRegMemInfo> ptrmap;
     FunctionMemRWInfo rwinfo;
-    
-
-
 
     PtrRegMemMap[C] = ptrmap;
     CFGMemRWMap[C] = rwinfo;

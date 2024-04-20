@@ -25,8 +25,7 @@ public:
     virtual int getIdleReg(LiveInterval interval);
     virtual int getIdleMem(LiveInterval interval);
 
-    virtual int swapRegspill(int p_reg1, LiveInterval interval1, int offset_spill2, int size,
-                             LiveInterval interval2);
+    virtual int swapRegspill(int p_reg1, LiveInterval interval1, int offset_spill2, int size, LiveInterval interval2);
     virtual std::vector<LiveInterval> getConflictIntervals(LiveInterval interval);
 };
 

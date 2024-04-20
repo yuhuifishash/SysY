@@ -118,31 +118,25 @@ std::vector<int> getValidRegs(LiveInterval interval) {
     } else if (interval.getReg().type.data_type == MachineDataType::FLOAT) {
         if (interval.getReg().type.data_length == MachineDataType::B32) {
             return std::vector<int>({
-            ArmPhysicalRegister::s0,  ArmPhysicalRegister::s1,  ArmPhysicalRegister::s2,
-            ArmPhysicalRegister::s3,  ArmPhysicalRegister::s4,  ArmPhysicalRegister::s5,
-            ArmPhysicalRegister::s6,  ArmPhysicalRegister::s7,  ArmPhysicalRegister::s8,
-            ArmPhysicalRegister::s9,  ArmPhysicalRegister::s10, ArmPhysicalRegister::s11,
-            ArmPhysicalRegister::s12, ArmPhysicalRegister::s13, ArmPhysicalRegister::s14,
-            ArmPhysicalRegister::s15, ArmPhysicalRegister::s16, ArmPhysicalRegister::s17,
-            ArmPhysicalRegister::s18, ArmPhysicalRegister::s19, ArmPhysicalRegister::s20,
-            ArmPhysicalRegister::s21, ArmPhysicalRegister::s22, ArmPhysicalRegister::s23,
-            ArmPhysicalRegister::s24, ArmPhysicalRegister::s25, ArmPhysicalRegister::s26,
-            ArmPhysicalRegister::s27, ArmPhysicalRegister::s28, ArmPhysicalRegister::s29,
-            ArmPhysicalRegister::s30, ArmPhysicalRegister::s31,
+            ArmPhysicalRegister::s0,  ArmPhysicalRegister::s1,  ArmPhysicalRegister::s2,  ArmPhysicalRegister::s3,
+            ArmPhysicalRegister::s4,  ArmPhysicalRegister::s5,  ArmPhysicalRegister::s6,  ArmPhysicalRegister::s7,
+            ArmPhysicalRegister::s8,  ArmPhysicalRegister::s9,  ArmPhysicalRegister::s10, ArmPhysicalRegister::s11,
+            ArmPhysicalRegister::s12, ArmPhysicalRegister::s13, ArmPhysicalRegister::s14, ArmPhysicalRegister::s15,
+            ArmPhysicalRegister::s16, ArmPhysicalRegister::s17, ArmPhysicalRegister::s18, ArmPhysicalRegister::s19,
+            ArmPhysicalRegister::s20, ArmPhysicalRegister::s21, ArmPhysicalRegister::s22, ArmPhysicalRegister::s23,
+            ArmPhysicalRegister::s24, ArmPhysicalRegister::s25, ArmPhysicalRegister::s26, ArmPhysicalRegister::s27,
+            ArmPhysicalRegister::s28, ArmPhysicalRegister::s29, ArmPhysicalRegister::s30, ArmPhysicalRegister::s31,
             });
         } else if (interval.getReg().type.data_length == MachineDataType::B64) {
             return std::vector<int>({
-            ArmPhysicalRegister::d0,  ArmPhysicalRegister::d1,  ArmPhysicalRegister::d2,
-            ArmPhysicalRegister::d3,  ArmPhysicalRegister::d4,  ArmPhysicalRegister::d5,
-            ArmPhysicalRegister::d6,  ArmPhysicalRegister::d7,  ArmPhysicalRegister::d8,
-            ArmPhysicalRegister::d9,  ArmPhysicalRegister::d10, ArmPhysicalRegister::d11,
-            ArmPhysicalRegister::d12, ArmPhysicalRegister::d13, ArmPhysicalRegister::d14,
-            ArmPhysicalRegister::d15, ArmPhysicalRegister::d16, ArmPhysicalRegister::d17,
-            ArmPhysicalRegister::d18, ArmPhysicalRegister::d19, ArmPhysicalRegister::d20,
-            ArmPhysicalRegister::d21, ArmPhysicalRegister::d22, ArmPhysicalRegister::d23,
-            ArmPhysicalRegister::d24, ArmPhysicalRegister::d25, ArmPhysicalRegister::d26,
-            ArmPhysicalRegister::d27, ArmPhysicalRegister::d28, ArmPhysicalRegister::d29,
-            ArmPhysicalRegister::d30, ArmPhysicalRegister::d31,
+            ArmPhysicalRegister::d0,  ArmPhysicalRegister::d1,  ArmPhysicalRegister::d2,  ArmPhysicalRegister::d3,
+            ArmPhysicalRegister::d4,  ArmPhysicalRegister::d5,  ArmPhysicalRegister::d6,  ArmPhysicalRegister::d7,
+            ArmPhysicalRegister::d8,  ArmPhysicalRegister::d9,  ArmPhysicalRegister::d10, ArmPhysicalRegister::d11,
+            ArmPhysicalRegister::d12, ArmPhysicalRegister::d13, ArmPhysicalRegister::d14, ArmPhysicalRegister::d15,
+            ArmPhysicalRegister::d16, ArmPhysicalRegister::d17, ArmPhysicalRegister::d18, ArmPhysicalRegister::d19,
+            ArmPhysicalRegister::d20, ArmPhysicalRegister::d21, ArmPhysicalRegister::d22, ArmPhysicalRegister::d23,
+            ArmPhysicalRegister::d24, ArmPhysicalRegister::d25, ArmPhysicalRegister::d26, ArmPhysicalRegister::d27,
+            ArmPhysicalRegister::d28, ArmPhysicalRegister::d29, ArmPhysicalRegister::d30, ArmPhysicalRegister::d31,
             });
         } else if (interval.getReg().type.data_length == MachineDataType::B128) {
             return std::vector<int>({

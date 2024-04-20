@@ -31,8 +31,8 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
             }
 
             if (!(interval == spill_interval)) {
-                phy_regs->swapRegspill(getAllocResultInReg(mfun, spill_interval.getReg()), spill_interval,
-                                       mem, cur_vreg.getDataWidth(), interval);
+                phy_regs->swapRegspill(getAllocResultInReg(mfun, spill_interval.getReg()), spill_interval, mem,
+                                       cur_vreg.getDataWidth(), interval);
                 swapAllocResult(mfun, interval.getReg(), spill_interval.getReg());
             }
         }

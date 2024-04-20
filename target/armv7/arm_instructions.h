@@ -54,8 +54,7 @@ public:
     Register Rd, Rn;
     Operand2 op2;
 
-    ArmBinary(int opcode, bool S, Register Rd, Register Rn, Operand2 op2, int cond,
-              std::string comment = std::string())
+    ArmBinary(int opcode, bool S, Register Rd, Register Rn, Operand2 op2, int cond, std::string comment = std::string())
         : opcode(opcode), S(S), Rd(Rd), Rn(Rn), op2(op2), ArmBaseInstruction(cond, comment) {
         ins_type = BINARY;
     }
@@ -72,8 +71,7 @@ public:
     Register Rd, Rn;
     int imm12;
 
-    ArmAddsubImm(int opcode, Register Rd, Register Rn, int imm12, int cond,
-                 std::string comment = std::string())
+    ArmAddsubImm(int opcode, Register Rd, Register Rn, int imm12, int cond, std::string comment = std::string())
         : opcode(opcode), Rd(Rd), Rn(Rn), imm12(imm12), ArmBaseInstruction(cond, comment) {
         ins_type = ADDSUBIMM;
     }
@@ -293,8 +291,8 @@ public:
     bool ispreindex;     // not used when offset_type == LABEL
     bool dowriteback;    // not used when offset_type == LABEL
 
-    ArmLoadStore(int op, int size, bool T, Register Rd, Register Rn, int offset_type, bool ispreindex,
-                 bool dowriteback, Label addr_label, int cond, std::string comment = std::string())
+    ArmLoadStore(int op, int size, bool T, Register Rd, Register Rn, int offset_type, bool ispreindex, bool dowriteback,
+                 Label addr_label, int cond, std::string comment = std::string())
         : op(op), size(size), T(T), Rd(Rd), Rn(Rn), offset_type(offset_type), ispreindex(ispreindex),
           dowriteback(dowriteback), addr_label(addr_label), ArmBaseInstruction(cond, comment) {
         ins_type = LOADSTORE;
@@ -318,8 +316,7 @@ public:
 
     ArmLoadStoreM(int op, Register Rn, bool dowriteback, std::vector<Register> reglist, bool hat, int cond,
                   std::string comment = std::string())
-        : op(op), Rn(Rn), dowriteback(dowriteback), reglist(reglist), hat(hat),
-          ArmBaseInstruction(cond, comment) {
+        : op(op), Rn(Rn), dowriteback(dowriteback), reglist(reglist), hat(hat), ArmBaseInstruction(cond, comment) {
         ins_type = LOADSTOREM;
     }
 };
@@ -347,8 +344,7 @@ public:
     int P;
     Register Fd, Fn, Fm;
 
-    VFPVbin(int opcode, int P, Register Fd, Register Fn, Register Fm, int cond,
-            std::string comment = std::string())
+    VFPVbin(int opcode, int P, Register Fd, Register Fn, Register Fm, int cond, std::string comment = std::string())
         : opcode(opcode), P(P), Fd(Fd), Fn(Fn), Fm(Fm), ArmBaseInstruction(cond, comment) {
         ins_type = VBIN;
     }
@@ -421,8 +417,7 @@ private:
 public:
     VFPVldst(int op, Register Fd, Label label, int cond, std::string comment)
         : VFPVldst(op, Fd, Register(), label, 1, cond, comment) {}
-    VFPVldst(int op, Register Fd, Register Rn, int immed)
-        : VFPVldst(op, Fd, Rn, Label(0, false), 0, cond, comment) {}
+    VFPVldst(int op, Register Fd, Register Rn, int immed) : VFPVldst(op, Fd, Rn, Label(0, false), 0, cond, comment) {}
 };    // VLDR VSTR
 class VFPVpushpop : public ArmBaseInstruction {
 public:
@@ -453,8 +448,7 @@ public:
 
     VFPVstm(int opcode, Register Rn, bool dowriteback, std::vector<Register> VFPregs, int cond,
             std::string comment = std::string())
-        : opcode(opcode), Rn(Rn), dowriteback(dowriteback), VFPregs(VFPregs),
-          ArmBaseInstruction(cond, comment) {
+        : opcode(opcode), Rn(Rn), dowriteback(dowriteback), VFPregs(VFPregs), ArmBaseInstruction(cond, comment) {
         ins_type = _VSTM;
     }
 };    // VSTM VSTMDB VLDM VLDMDB

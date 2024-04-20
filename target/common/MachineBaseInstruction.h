@@ -40,8 +40,8 @@ public:
         return false;
     }
     bool operator==(Register other) const {
-        return reg_no == other.reg_no && is_virtual == other.is_virtual &&
-               type.data_type == other.type.data_type && type.data_length == other.type.data_length;
+        return reg_no == other.reg_no && is_virtual == other.is_virtual && type.data_type == other.type.data_type &&
+               type.data_length == other.type.data_length;
     }
 };
 
@@ -108,8 +108,7 @@ public:
 
     Register result;
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
-    MachinePhiInstruction(Register result)
-        : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
+    MachinePhiInstruction(Register result) : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
     void pushPhiList(int label, Register reg) {
         phi_list.push_back(std::make_pair(label, new MachineRegister(reg.reg_no)));
     }

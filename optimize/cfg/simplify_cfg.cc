@@ -53,18 +53,14 @@ void SimplifyCFGBeforeMem2Reg(CFG *C) { EliminateSimpleShortCircult(C); }
     * this pass will be useful after sccp
     * you can use testcase 29_lone_line.sy to check
     * @param C the control flow graph of the function */
-void EliminateDoubleBrUnCond(CFG *C) {
-    std::cerr << "EliminateDoubleBrUnCond in SimplifyCFG is not implemented now\n";
-}
+void EliminateDoubleBrUnCond(CFG *C) { std::cerr << "EliminateDoubleBrUnCond in SimplifyCFG is not implemented now\n"; }
 
 /*
  * this function will eliminate useless phi
  * such as %rx = phi [%ry, %L1], [%ry, %L1]
  * such as %rx = phi [5, %L5]
  */
-void EliminateUselessPhi(CFG *C) {
-    std::cerr << "EliminateUselessPhi in SimplifyCFG is not implemented now\n";
-}
+void EliminateUselessPhi(CFG *C) { std::cerr << "EliminateUselessPhi in SimplifyCFG is not implemented now\n"; }
 
 void SimplifyCFGAfterMem2Reg(CFG *C) {
     EliminateDoubleBrUnCond(C);

@@ -389,8 +389,7 @@ bool UpdateLatticeStatus(Instruction I, ConstLattice pre_lattice) {
     return 0;
 }
 
-void VisitOperation(Instruction I, std::set<Instruction> &SSAWorklist,
-                    std::map<std::pair<int, int>, int> &CFGedgeExec,
+void VisitOperation(Instruction I, std::set<Instruction> &SSAWorklist, std::map<std::pair<int, int>, int> &CFGedgeExec,
                     std::set<std::pair<int, int>> &CFGWorklist, std::map<int, Instruction> &regresult_map,
                     std::map<Instruction, std::vector<Instruction>> &SSA_G) {
     // Combine the data-flow information from the node’s operands where the corresponding control-flow edge is
@@ -479,8 +478,7 @@ void ReplaceRegToConst(CFG *C) {
 
                     if (lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::I32) {
                         op = new ImmI32Operand(lattice.vals.I32Val);
-                    } else if (lattice.status == ConstLattice::CONST &&
-                               lattice.val_type == ConstLattice::FLOAT) {
+                    } else if (lattice.status == ConstLattice::CONST && lattice.val_type == ConstLattice::FLOAT) {
                         op = new ImmF32Operand(lattice.vals.FloatVal);
                     }
                 }

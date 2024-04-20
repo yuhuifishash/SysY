@@ -281,12 +281,10 @@ NodeAttribute BinaryAndFloat(NodeAttribute a, NodeAttribute b) {
 }
 
 NodeAttribute (*BinaryCalculatedFloat[15])(NodeAttribute a, NodeAttribute b) = {
-[NodeAttribute::ADD] = BinaryAddFloat, [NodeAttribute::SUB] = BinarySubFloat,
-[NodeAttribute::MUL] = BinaryMulFloat, [NodeAttribute::DIV] = BinaryDivFloat,
-[NodeAttribute::MOD] = BinaryModFloat, [NodeAttribute::GEQ] = BinaryGeqFloat,
-[NodeAttribute::GT] = BinaryGtFloat,   [NodeAttribute::LEQ] = BinaryLeqFloat,
-[NodeAttribute::LT] = BinaryLtFloat,   [NodeAttribute::EQ] = BinaryEqFloat,
-[NodeAttribute::NE] = BinaryNeFloat,   [NodeAttribute::OR] = BinaryOrFloat,
+[NodeAttribute::ADD] = BinaryAddFloat, [NodeAttribute::SUB] = BinarySubFloat, [NodeAttribute::MUL] = BinaryMulFloat,
+[NodeAttribute::DIV] = BinaryDivFloat, [NodeAttribute::MOD] = BinaryModFloat, [NodeAttribute::GEQ] = BinaryGeqFloat,
+[NodeAttribute::GT] = BinaryGtFloat,   [NodeAttribute::LEQ] = BinaryLeqFloat, [NodeAttribute::LT] = BinaryLtFloat,
+[NodeAttribute::EQ] = BinaryEqFloat,   [NodeAttribute::NE] = BinaryNeFloat,   [NodeAttribute::OR] = BinaryOrFloat,
 [NodeAttribute::AND] = BinaryAndFloat,
 };
 
@@ -446,13 +444,9 @@ NodeAttribute (*SingleCalculatedFloat[15])(NodeAttribute a) = {
 [NodeAttribute::NOT] = SingleNotFloat,
 };
 
-NodeAttribute SemantInt(NodeAttribute a, NodeAttribute::opcode opcode) {
-    return SingleCalculatedInt[opcode](a);
-}
+NodeAttribute SemantInt(NodeAttribute a, NodeAttribute::opcode opcode) { return SingleCalculatedInt[opcode](a); }
 
-NodeAttribute SemantFloat(NodeAttribute a, NodeAttribute::opcode opcode) {
-    return SingleCalculatedFloat[opcode](a);
-}
+NodeAttribute SemantFloat(NodeAttribute a, NodeAttribute::opcode opcode) { return SingleCalculatedFloat[opcode](a); }
 
 NodeAttribute SemantBool(NodeAttribute a, NodeAttribute::opcode opcode) {
     NodeAttribute tmp_a = a;
@@ -528,12 +522,10 @@ void BinaryEqIRInt(LLVMBlock B, int reg1, int reg2) { IRgenIcmp(B, IcmpCond::eq,
 void BinaryNeIRInt(LLVMBlock B, int reg1, int reg2) { IRgenIcmp(B, IcmpCond::ne, reg1, reg2, ++max_reg); }
 
 void (*BinaryIRgenInt[15])(LLVMBlock B, int reg1, int reg2) = {
-[NodeAttribute::ADD] = BinaryAddIRInt, [NodeAttribute::SUB] = BinarySubIRInt,
-[NodeAttribute::MUL] = BinaryMulIRInt, [NodeAttribute::DIV] = BinaryDivIRInt,
-[NodeAttribute::MOD] = BinaryModIRInt, [NodeAttribute::GEQ] = BinaryGeqIRInt,
-[NodeAttribute::GT] = BinaryGtIRInt,   [NodeAttribute::LEQ] = BinaryLeqIRInt,
-[NodeAttribute::LT] = BinaryLtIRInt,   [NodeAttribute::EQ] = BinaryEqIRInt,
-[NodeAttribute::NE] = BinaryNeIRInt,
+[NodeAttribute::ADD] = BinaryAddIRInt, [NodeAttribute::SUB] = BinarySubIRInt, [NodeAttribute::MUL] = BinaryMulIRInt,
+[NodeAttribute::DIV] = BinaryDivIRInt, [NodeAttribute::MOD] = BinaryModIRInt, [NodeAttribute::GEQ] = BinaryGeqIRInt,
+[NodeAttribute::GT] = BinaryGtIRInt,   [NodeAttribute::LEQ] = BinaryLeqIRInt, [NodeAttribute::LT] = BinaryLtIRInt,
+[NodeAttribute::EQ] = BinaryEqIRInt,   [NodeAttribute::NE] = BinaryNeIRInt,
 };
 
 void BinaryAddIRFloat(LLVMBlock B, int reg1, int reg2) {
@@ -716,9 +708,7 @@ void (*IRgenBinaryNode[6][6])(tree_node *a, tree_node *b, NodeAttribute::opcode 
 // single
 void SingleAddIRInt(LLVMBlock B, int reg1) {}
 
-void SingleSubIRInt(LLVMBlock B, int reg1) {
-    IRgenArithmeticI32ImmLeft(B, LLVMIROpcode::SUB, 0, reg1, ++max_reg);
-}
+void SingleSubIRInt(LLVMBlock B, int reg1) { IRgenArithmeticI32ImmLeft(B, LLVMIROpcode::SUB, 0, reg1, ++max_reg); }
 
 void SingleNotIRInt(LLVMBlock B, int reg1) { IRgenIcmpImmRight(B, IcmpCond::eq, reg1, 0, ++max_reg); }
 
@@ -730,9 +720,7 @@ void (*SingleIRgenInt[15])(LLVMBlock B, int reg1) = {
 
 void SingleAddIRFloat(LLVMBlock B, int reg1) {}
 
-void SingleSubIRFloat(LLVMBlock B, int reg1) {
-    IRgenArithmeticF32ImmLeft(B, LLVMIROpcode::FSUB, 0, reg1, ++max_reg);
-}
+void SingleSubIRFloat(LLVMBlock B, int reg1) { IRgenArithmeticF32ImmLeft(B, LLVMIROpcode::FSUB, 0, reg1, ++max_reg); }
 void SingleNotIRFloat(LLVMBlock B, int reg1) { IRgenFcmpImmRight(B, FcmpCond::OEQ, reg1, 0, ++max_reg); }
 
 void (*SingleIRgenFloat[15])(LLVMBlock B, int reg1) = {

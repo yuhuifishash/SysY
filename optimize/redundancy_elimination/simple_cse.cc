@@ -54,9 +54,9 @@ InstCSEInfo GetCSEInfo(Instruction I) {
 }
 
 bool CanCSE(Instruction I) {
-    if (I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == STORE ||
-        I->GetOpcode() == BR_UNCOND || I->GetOpcode() == ALLOCA || I->GetOpcode() == LOAD ||
-        I->GetOpcode() == RET || I->GetOpcode() == ICMP || I->GetOpcode() == FCMP) {
+    if (I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == STORE || I->GetOpcode() == BR_UNCOND ||
+        I->GetOpcode() == ALLOCA || I->GetOpcode() == LOAD || I->GetOpcode() == RET || I->GetOpcode() == ICMP ||
+        I->GetOpcode() == FCMP) {
         return false;
     }
     if (I->GetOpcode() == CALL) {

@@ -12,8 +12,7 @@ protected:
 public:
     virtual void emit() = 0;
     virtual void printMahcineIR() = 0;
-    MachinePrinter(std::ostream &s, MachineUnit *printee)
-        : s(s), printee(printee), output_physical_reg(false) {}
+    MachinePrinter(std::ostream &s, MachineUnit *printee) : s(s), printee(printee), output_physical_reg(false) {}
     void SetOutputPhysicalReg(bool outputPhy) { output_physical_reg = outputPhy; }
     std::ostream &GetPrintStream() { return s; }
 };

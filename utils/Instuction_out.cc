@@ -215,9 +215,7 @@ std::ostream &operator<<(std::ostream &s, Operand op) {
     return s;
 }
 
-void LoadInstruction::PrintIR(std::ostream &s) {
-    s << result << " = load " << type << ", ptr " << pointer << "\n";
-}
+void LoadInstruction::PrintIR(std::ostream &s) { s << result << " = load " << type << ", ptr " << pointer << "\n"; }
 void StoreInstruction::PrintIR(std::ostream &s) {
     s << "store " << type << " " << value << ", ptr " << pointer << "\n";
 }
@@ -339,9 +337,8 @@ long long Float_to_Byte(float f) {
     unsigned long long expBits_highestBit = (expBits & (1 << 7)) << 3;
     unsigned long long expBits_lowerBit = (expBits & (1 << 7) - 1);
     unsigned long long expBits_lowerBit_highestBit = expBits_lowerBit & (1 << 6);
-    unsigned long long expBits_lowerBit_ext =
-    (expBits_lowerBit_highestBit) | (expBits_lowerBit_highestBit << 1) | (expBits_lowerBit_highestBit << 2) |
-    (expBits_lowerBit_highestBit << 3);
+    unsigned long long expBits_lowerBit_ext = (expBits_lowerBit_highestBit) | (expBits_lowerBit_highestBit << 1) |
+                                              (expBits_lowerBit_highestBit << 2) | (expBits_lowerBit_highestBit << 3);
     unsigned long long expBits_full = expBits_highestBit | expBits_lowerBit | expBits_lowerBit_ext;
     unsigned long long out_expBits = expBits_full << 52;
     unsigned long long out_rawFloatByte = out_signBit | out_expBits | out_sigBits;

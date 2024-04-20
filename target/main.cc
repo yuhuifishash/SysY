@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                              \
-    fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20) \
-         << std::left << CISU << " " << std::setw(32) << std::left << PROP << std::setw(15) << std::left     \
-         << STR3 << std::setw(15) << std::left << STR4 << "\n"
+#define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
+    fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
+         << std::left << CISU << " " << std::setw(32) << std::left << PROP << std::setw(15) << std::left << STR3       \
+         << std::setw(15) << std::left << STR4 << "\n"
 
 extern LLVMIR llvmIR;
 extern Program ast_root;
@@ -168,10 +168,10 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-#define ALIGNED_FORMAT_OUTPUT(STR, CISU, PROP)                                                               \
-    s << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)    \
-      << std::left << CISU << " " << std::setw(32) << std::left << PROP << " " << std::setw(15) << std::left \
-      << line_number << std::setw(15) << std::left << cur_col_number << "\n"
+#define ALIGNED_FORMAT_OUTPUT(STR, CISU, PROP)                                                                         \
+    s << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20) << std::left \
+      << CISU << " " << std::setw(32) << std::left << PROP << " " << std::setw(15) << std::left << line_number         \
+      << std::setw(15) << std::left << cur_col_number << "\n"
 
 void PrintLexerResult(std::ostream &s, char *yytext, YYSTYPE yylval, int token, int line_number) {
     std::setfill(' ');

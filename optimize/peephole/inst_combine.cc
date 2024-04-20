@@ -18,13 +18,11 @@ void GlobalConstReplace(CFG *C) {
             if (GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()) {
                 VarAttribute val = GlobalConstMap[pointer->getName()];
                 if (val.type == Type::INT) {
-                    I =
-                    new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0),
-                                              new ImmI32Operand(val.IntInitVals[0]), LoadI->GetResultReg());
+                    I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
+                                                  LoadI->GetResultReg());
                 } else if (val.type == Type::FLOAT) {
-                    I =
-                    new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
-                                              new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
+                    I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
+                                                  new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
                 }
             }
         }

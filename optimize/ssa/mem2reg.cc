@@ -141,8 +141,7 @@ void InsertPhi(CFG *C) {
 
         if (alloca_defs.size() == 1) {
             int block_id = *(alloca_defs.begin());
-            if (alloca_uses.size() == 1 &&
-                *(alloca_uses.begin()) == block_id) {    // def and use in the same block
+            if (alloca_uses.size() == 1 && *(alloca_uses.begin()) == block_id) {    // def and use in the same block
                 EraseSet.insert(I);
                 sameblock_vset_map[block_id].insert(v);
                 continue;
@@ -289,8 +288,7 @@ void VarRename(CFG *C) {
 
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            if (I->GetOpcode() == LOAD &&
-                ((LoadInstruction *)I)->GetPointer()->GetOperandType() == BasicOperand::REG) {
+            if (I->GetOpcode() == LOAD && ((LoadInstruction *)I)->GetPointer()->GetOperandType() == BasicOperand::REG) {
                 int result = I->GetResultRegNo();
                 if (mem2reg_map.find(result) != mem2reg_map.end()) {
                     int result2 = mem2reg_map[result];

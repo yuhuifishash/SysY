@@ -403,8 +403,7 @@ template <> void ArmPrinter::printArm<VFPVcmp *>(VFPVcmp *ins) {
     if (ins->E) {
         (*this) << "e";
     }
-    (*this) << ins->cond << "." << ins->P << " " << ins->Fd << ", " << ins->Fm << " @" << ins->comment
-            << "\n";
+    (*this) << ins->cond << "." << ins->P << " " << ins->Fd << ", " << ins->Fm << " @" << ins->comment << "\n";
 }
 
 template <> void ArmPrinter::printArm<VFPVcvt *>(VFPVcvt *ins) {

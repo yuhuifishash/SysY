@@ -29,7 +29,7 @@ auto GetUsedOperandOutOfLoop(CFG *C, NaturalLoop *L) {
         }
         for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *L->exit_nodes.begin()) {
-                continue;    // the phi in exit_nodes, we assume the var is used in the loop
+                continue;                        // the phi in exit_nodes, we assume the var is used in the loop
             }
             for (auto op : I->GetNonResultOperands()) {
                 if (op->GetOperandType() != BasicOperand::REG) {
@@ -71,7 +71,7 @@ void NaturalLoop::LCSSA(CFG *C) {
         }
         for (auto I : bb->Instruction_list) {    // assert(L->exit_nodes.size() == 1)
             if (I->GetOpcode() == PHI && bb == *this->exit_nodes.begin()) {
-                continue;    // the phi in exit_nodes, we assume the var is used in the loop
+                continue;                        // the phi in exit_nodes, we assume the var is used in the loop
             }
             I->ReplaceByMap(ReplaceMap);
         }

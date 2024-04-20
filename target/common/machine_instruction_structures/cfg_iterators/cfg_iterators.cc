@@ -84,6 +84,4 @@ void MachineCFG::SeqScanIterator::close() { current = mcfg->block_map.end(); }
 MachineCFG::DFSIterator *MachineCFG::getDFSIterator() { return new DFSIterator(this); }
 MachineCFG::BFSIterator *MachineCFG::getBFSIterator() { return new BFSIterator(this); }
 MachineCFG::SeqScanIterator *MachineCFG::getSeqScanIterator() { return new SeqScanIterator(this); }
-MachineCFG::ReverseIterator *MachineCFG::getReverseIterator(Iterator *child) {
-    return new ReverseIterator(child);
-}
+MachineCFG::ReverseIterator *MachineCFG::getReverseIterator(Iterator *child) { return new ReverseIterator(child); }

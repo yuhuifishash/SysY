@@ -85,8 +85,8 @@ void TailRecursiveEliminate(CFG *C) {
             if (callI->GetFunctionName() != FuncdefI->GetFunctionName()) {
                 continue;
             }
-            bool opt1 = callI->GetResult() != NULL &&
-                        callI->GetResult()->GetFullName() == retI->GetRetVal()->GetFullName();
+            bool opt1 =
+            callI->GetResult() != NULL && callI->GetResult()->GetFullName() == retI->GetRetVal()->GetFullName();
             bool opt2 = callI->GetResult() == NULL && retI->GetType() == VOID;
             if (opt1 || opt2) {
                 EraseSet.insert(callI);
@@ -109,9 +109,8 @@ void TailRecursiveEliminate(CFG *C) {
                     if (callI_reg->GetRegNo() == i) {
                         continue;
                     }    // funtion params id stand by i
-                    auto storeI =
-                    new StoreInstruction(callI->get_parameterList()[i].first, allocaI->GetResultReg(),
-                                         callI->get_parameterList()[i].second);
+                    auto storeI = new StoreInstruction(callI->get_parameterList()[i].first, allocaI->GetResultReg(),
+                                                       callI->get_parameterList()[i].second);
                     bb->InsertInstruction(1, storeI);
                 }
                 bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(1)));
