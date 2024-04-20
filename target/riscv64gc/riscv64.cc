@@ -1,6 +1,6 @@
 #include "riscv64.h"
 #include <assert.h>
-std::set<Register*> RiscV64Instruction::GetReadReg() {
+std::set<Register *> RiscV64Instruction::GetReadReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeReadreg();
@@ -18,7 +18,7 @@ std::set<Register*> RiscV64Instruction::GetReadReg() {
     assert(false);
 }
 
-std::set<Register*> RiscV64Instruction::GetWriteReg() {
+std::set<Register *> RiscV64Instruction::GetWriteReg() {
     switch (OpTable[op].ins_formattype) {
     case RvOpInfo::R_type:
         return GetR_typeWritereg();

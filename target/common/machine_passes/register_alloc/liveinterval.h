@@ -20,22 +20,22 @@ public:
         assert(0);
         return false;
     }
-    void IncreaseReferenceCount(int count){reference_count += count;}
+    void IncreaseReferenceCount(int count) { reference_count += count; }
     int getReferenceCount() { return reference_count; }
     int getIntervalLen() {
         int ret = 0;
-        for(auto seg : segments){
+        for (auto seg : segments) {
             ret += (seg.end - seg.begin + 1);
         }
         return ret;
     }
     Register getReg() { return reg; }
-    LiveInterval(){} // Temp
+    LiveInterval() {}    // Temp
     LiveInterval(Register reg) : reg(reg), segment_count(0) {}
 
     // Needs to be implemented (?)
-    void PushFront(int begin,int end) {segments.push_front({begin=begin,end=end});}
-    void SetMostBegin(int begin) {segments[0].begin = begin;}
+    void PushFront(int begin, int end) { segments.push_front({begin = begin, end = end}); }
+    void SetMostBegin(int begin) { segments[0].begin = begin; }
 
     decltype(segments.begin()) begin() { return segments.begin(); }
     decltype(segments.end()) end() { return segments.end(); }
@@ -46,7 +46,7 @@ private:
     MachineFunction *current_func;
     void UpdateDefUse();
     // Key: Block_Number
-    std::map<int, std::set<Register> > IN{}, OUT{}, DEF{}, USE{};
+    std::map<int, std::set<Register>> IN{}, OUT{}, DEF{}, USE{};
 
 public:
     void Execute();

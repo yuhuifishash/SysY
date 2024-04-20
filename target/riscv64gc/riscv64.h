@@ -126,24 +126,24 @@ private:
         Label label;
     };
 
-    std::set<Register*> GetR_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register*> GetI_typeReadreg() { return {&rs1}; }
-    std::set<Register*> GetS_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register*> GetB_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register*> GetU_typeReadreg() { return {}; }
-    std::set<Register*> GetJ_typeReadreg() { return {}; }
+    std::set<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
+    std::set<Register *> GetI_typeReadreg() { return {&rs1}; }
+    std::set<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
+    std::set<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
+    std::set<Register *> GetU_typeReadreg() { return {}; }
+    std::set<Register *> GetJ_typeReadreg() { return {}; }
 
-    std::set<Register*> GetR_typeWritereg() { return {&rd}; }
-    std::set<Register*> GetI_typeWritereg() { return {&rd}; }
-    std::set<Register*> GetS_typeWritereg() { return {}; }
-    std::set<Register*> GetB_typeWritereg() { return {}; }
-    std::set<Register*> GetU_typeWritereg() { return {&rd}; }
-    std::set<Register*> GetJ_typeWritereg() { return {&rd}; }
+    std::set<Register *> GetR_typeWritereg() { return {&rd}; }
+    std::set<Register *> GetI_typeWritereg() { return {&rd}; }
+    std::set<Register *> GetS_typeWritereg() { return {}; }
+    std::set<Register *> GetB_typeWritereg() { return {}; }
+    std::set<Register *> GetU_typeWritereg() { return {&rd}; }
+    std::set<Register *> GetJ_typeWritereg() { return {&rd}; }
 
 public:
     int getOpcode() { return op; }
-    std::set<Register*> GetReadReg();
-    std::set<Register*> GetWriteReg();
+    std::set<Register *> GetReadReg();
+    std::set<Register *> GetWriteReg();
 };
 #include "../common/machine_instruction_structures/machine.h"
 class RiscV64Function;

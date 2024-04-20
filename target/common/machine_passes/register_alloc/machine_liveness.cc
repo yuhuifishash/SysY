@@ -27,8 +27,8 @@ template <class T> std::set<T> SetDiff(const std::set<T> &a, const std::set<T> &
     return ret;
 }
 
-std::set<Register*> MachinePhiInstruction::GetReadReg() { return std::set<Register*>(); }
-std::set<Register*> MachinePhiInstruction::GetWriteReg() { return std::set<Register*>(); }
+std::set<Register *> MachinePhiInstruction::GetReadReg() { return std::set<Register *>(); }
+std::set<Register *> MachinePhiInstruction::GetWriteReg() { return std::set<Register *>(); }
 
 void Liveness::UpdateDefUse() {
     DEF.clear();
@@ -82,7 +82,8 @@ void Liveness::Execute() {
             if (out != OUT[cur_id]) {
                 OUT[cur_id] = out;
             }
-            std::set<Register> in = SetUnion<Register>(USE[cur_id], SetDiff<Register>(OUT[cur_id], DEF[cur_id]));
+            std::set<Register> in =
+            SetUnion<Register>(USE[cur_id], SetDiff<Register>(OUT[cur_id], DEF[cur_id]));
             if (in != IN[cur_id]) {
                 changed = 1;
                 IN[cur_id] = in;

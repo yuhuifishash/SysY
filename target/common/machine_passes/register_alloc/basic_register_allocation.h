@@ -6,9 +6,9 @@
 #include "physical_register.h"
 #include <vector>
 
-struct AllocResult{
+struct AllocResult {
     bool in_mem;
-    union{
+    union {
         int phy_reg_no;
         int stack_offset;
     };
@@ -17,29 +17,32 @@ struct AllocResult{
 class RegisterAllocation : public MachinePass {
 private:
     void UpdateIntervalsInCurrentFunc();
+
 protected:
-    void AllocPhyReg(MachineFunction* mfun,Register vreg,int phyreg){
+    void AllocPhyReg(MachineFunction *mfun, Register vreg, int phyreg) {
         alloc_result[mfun][vreg].in_mem = false;
         alloc_result[mfun][vreg].phy_reg_no = phyreg;
     }
-    void AllocStack(MachineFunction* mfun,Register vreg,int offset){
+    void AllocStack(MachineFunction *mfun, Register vreg, int offset) {
         alloc_result[mfun][vreg].in_mem = true;
         alloc_result[mfun][vreg].stack_offset = offset;
     }
-    void swapAllocResult(MachineFunction* mfun,Register v1,Register v2){
+    void swapAllocResult(MachineFunction *mfun, Register v1, Register v2) {
         AllocResult tmp = alloc_result[mfun][v1];
         alloc_result[mfun][v1] = alloc_result[mfun][v2];
         alloc_result[mfun][v2] = tmp;
     }
+
 protected:
     std::map<Register, LiveInterval> intervals;
 
     // a = COPY b ==> copy_sources[a].push_back[b]
-    std::map<Register, std::vector<Register> > copy_sources;    // For coalescing
+    std::map<Register, std::vector<Register>> copy_sources;    // For coalescing
 
     PhysicalRegisters *phy_regs;
     virtual bool DoAllocInCurrentFunc() = 0;
-    std::map<MachineFunction*,std::map<Register,AllocResult> > alloc_result;
+    std::map<MachineFunction *, std::map<Register, AllocResult>> alloc_result;
+
 public:
     RegisterAllocation(MachineUnit *unit, PhysicalRegisters *phy) : MachinePass(unit), phy_regs(phy) {}
     void Execute();
@@ -53,9 +56,12 @@ public:
 
 class VirtualRegisterRewrite : public MachinePass {
 private:
-    const std::map<MachineFunction*,std::map<Register,AllocResult> >& alloc_result;
+    const std::map<MachineFunction *, std::map<Register, AllocResult>> &alloc_result;
+
 public:
-    VirtualRegisterRewrite(MachineUnit *unit, const std::map<MachineFunction*,std::map<Register,AllocResult> >& alloc_result) : MachinePass(unit), alloc_result(alloc_result) {}
+    VirtualRegisterRewrite(MachineUnit *unit,
+                           const std::map<MachineFunction *, std::map<Register, AllocResult>> &alloc_result)
+        : MachinePass(unit), alloc_result(alloc_result) {}
     void Execute();
     void ExecuteInFunc();
 };

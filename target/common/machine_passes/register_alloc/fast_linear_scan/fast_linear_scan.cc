@@ -1,7 +1,5 @@
 #include "fast_linear_scan.h"
-bool IntervalsPrioCmp(LiveInterval a,LiveInterval b){
-    return a.begin()->begin > b.begin()->begin;
-}
+bool IntervalsPrioCmp(LiveInterval a, LiveInterval b) { return a.begin()->begin > b.begin()->begin; }
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;

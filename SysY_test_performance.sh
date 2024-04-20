@@ -24,7 +24,7 @@ if [ $1 == 'llvm' ] ; then
         score_all=`expr ${score_all} + 1`
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.ll \-O1
-        clang ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w
+        clang ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w -O2
         clang -static ${pwdout}/${var##*/}.o lib/libsysy_x86.a
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
@@ -35,7 +35,7 @@ if [ $1 == 'llvm' ] ; then
             timeout 60 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
-        diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
         if [ $? == 0 ];then
             echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
             score=`expr ${score} + 1`

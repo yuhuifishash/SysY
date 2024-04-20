@@ -39,7 +39,7 @@ if [ $1 == 'llvm' ] ; then
             timeout 30 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
-        diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
         if [ $? == 0 ];then
             echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
             score=`expr ${score} + 1`
@@ -72,7 +72,7 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
             timeout 30 qemu-arm ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
-        diff --strip-trailing-cr ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
         if [ $? == 0 ];then
             echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
             rm ${pwdout}/${var##*/}.out

@@ -12,7 +12,7 @@ void GraphColor::ConstructInterferenceGraph() {
 
 bool GraphColor::TryReduce() { return false; }
 
-bool GraphColor::StkAssign() { return false;}
+bool GraphColor::StkAssign() { return false; }
 
 int GraphColor::SelectSpill() { return -1; }
 
