@@ -334,7 +334,7 @@ void Lval::TypeCheck() {
     }
 
     VarAttribute val = semant_table.symbol_table.lookup_val(name);
-    if (val.type != Type::VOID) {                                                          // local var
+    if (val.type != Type::VOID) {    // local var
         scope = semant_table.symbol_table.lookup_scope(name);
     } else if (semant_table.GlobalTable.find(name) != semant_table.GlobalTable.end()) {    // global var
         val = semant_table.GlobalTable[name];

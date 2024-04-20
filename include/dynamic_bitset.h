@@ -34,8 +34,8 @@ public:
 
     DynamicBitset operator=(DynamicBitset);    // Deep Copy
 
-    bool operator==(DynamicBitset);            // Deep Compare
-    bool operator!=(DynamicBitset);            // return !(*this == other)
+    bool operator==(DynamicBitset);    // Deep Compare
+    bool operator!=(DynamicBitset);    // return !(*this == other)
 
     DynamicBitset(const DynamicBitset &);
 };

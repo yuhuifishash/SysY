@@ -10,38 +10,37 @@ class FunctionMemRWInfo {
 public:
     bool have_external_call = false;
 
-    // pair.second is index
-    // if index is -1, the index is not a constant, so we can assume the ptr points to the full array
-    // if a[3][4],  the index is 3*size1 + 4
-    // the operand must be formal ptr operand or gloabl operand(local ptr will not appear in the vector)
-    std::vector<std::pair<Operand, int>> ReadPtrs;
-    std::vector<std::pair<Operand, int>> WritePtrs;
+    std::vector<Operand> ReadPtrs;
+    std::vector<Operand> WritePtrs;
 
     // if the ptr op is new, return true.
     // else, return false.
-    bool InsertNewReadPtrs(Operand op, int index);
-    bool InsertNewWritePtrs(Operand op, int index);
+    bool InsertNewReadPtrs(Operand op);
+    bool InsertNewWritePtrs(Operand op);
+    bool InsertNewReadPtrs(std::vector<Operand> ops);
+    bool InsertNewWritePtrs(std::vector<Operand> ops);
 
     bool isReadMem() { return ReadPtrs.size() != 0; }
     bool isWriteMem() { return WritePtrs.size() != 0; }
 };
 
 class PtrRegMemInfo {
+public:
     // if we do not know where the ptr points, the is_fullmem is true
     // for example, the formal ptr( void f(int a[]), we can not know a's value )
     bool is_fullmem = false;
 
-    // alloc in function, can not be used in other functions
-    bool is_local = false;
+    // alloc in function, the array can not be used in other functions
+    bool is_local = true;
+
+    std::vector<Operand> PossiblePtrs;
 
     // if the ptr op is new, return true.
     // else, return false.
-    bool InsertNewPtrs(Operand op, int index);
+    bool InsertNewPtrs(Operand op, std::map<int, PtrRegMemInfo> &ptrmap, CFG *C);
+    bool PushPossiblePtr(Operand op);
 
-    // pair.second is index
-    // if index is -1, the index is not a constant, so we can assume the ptr points to the full array
-    // if a[3][4],  the index is 3*size1 + 4
-    std::vector<std::pair<Operand, int>> PossiblePtrs;
+    void PrintDebugInfo();
 };
 
 class AliasAnalyser {
@@ -82,7 +81,7 @@ public:
     bool CFG_isReadMem(CFG *C) { return CFGMemRWMap[C].isReadMem(); }
     bool CFG_isWriteMem(CFG *C) { return CFGMemRWMap[C].isWriteMem(); }
 
-    void PrintAAResult();
+    void PrintAAResult(bool is_printptr);
 };
 
 #endif

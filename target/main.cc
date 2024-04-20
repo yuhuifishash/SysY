@@ -61,6 +61,8 @@ void LoopInvariantCodeMotion(CFG *C);
 void LoopClosedSSA(CFG *C);
 void ScalarEvolution(CFG *C);
 
+void AliasAnalysis(LLVMIR *IR);
+
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
 int main(int argc, char **argv) {
@@ -134,6 +136,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
 
+        llvmIR.PassExecutor(AliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(BasicBlockCSE);
