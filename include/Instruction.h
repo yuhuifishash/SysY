@@ -478,6 +478,7 @@ public:
     virtual LLVMType GetResultType() { return PTR; }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
+    int GetAllocaSize();
     void ReplaceByMap(const std::map<int, int> &Rule);
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>{}; }
     void SetNonResultOperands(std::vector<Operand> ops) {}
@@ -731,6 +732,9 @@ public:
     Operand GetPtrVal() { return ptrval; }
     std::vector<int> GetDims() { return dims; }
     std::vector<Operand> GetIndexes() { return indexes; }
+
+    //if index is constant, return {value,resultArraySize}. else, return -1.
+    std::pair<int,int> GetConstIndexes();
 
     virtual LLVMType GetResultType() { return PTR; }
     void PrintIR(std::ostream &s);

@@ -300,6 +300,37 @@ void RetInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     }
 }
 
+std::pair<int,int> GetElementprtInstruction::GetConstIndexes() {
+    int ans = 0;
+    int Siz = 1;
+
+    for(auto sz:dims){
+        Siz *= sz;
+    }
+
+    for(int i = 0; i < indexes.size(); i++){
+        // std::cerr<<i<<" "<<indexes[i]->getFullName()<<"\n";
+        if(indexes[i]->GetOperandType() == BasicOperand::IMMI32){
+            ans += (((ImmI32Operand*)indexes[i])->GetIntImmVal())*Siz;
+        }else if(indexes[i]->GetOperandType() == BasicOperand::REG){
+            return {-1,-1};
+        }
+        if(i < dims.size()){
+            Siz /= dims[i];
+        }
+    }
+
+    return {ans,Siz};
+}
+
+int AllocaInstruction::GetAllocaSize() {
+    int sz = 1;
+    for(auto d:dims){
+        sz *= d;
+    }
+    return sz;
+}
+
 std::vector<Operand> GetElementprtInstruction::GetNonResultOperands() {
     std::vector<Operand> ret(indexes);
     ret.push_back(ptrval);
