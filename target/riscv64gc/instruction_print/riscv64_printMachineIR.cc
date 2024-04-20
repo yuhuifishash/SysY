@@ -13,6 +13,11 @@ void RiscV64Printer::printMachineIR() {
                 if (ins->arch == MachineBaseInstruction::RiscV) {
                     printMachineIR((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
+                    TODO("Machine PHI Print");
+                } else if (ins->arch == MachineBaseInstruction::COPY){
+                    TODO("Machine COPY Print");
+                } else {
+                    ERROR("Unexpected arch");
                 }
             }
         }

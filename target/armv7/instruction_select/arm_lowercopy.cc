@@ -11,12 +11,15 @@ void ArmLowerCopy::Execute() {
                     assert(m_copy->dst->op_type == MachineBaseOperand::REG);
                     if (m_copy->src->op_type == MachineBaseOperand::IMMI) {
                         // ins = new
+                        TODO("Implement Arm LowerCopy for IMMI");
                     } else if (m_copy->src->op_type == MachineBaseOperand::IMMF) {
                         // ins = new
+                        TODO("Implement Arm LowerCopy for IMMF");
                     } else if (m_copy->src->op_type == MachineBaseOperand::REG) {
                         // ins = new
+                        TODO("Implement Arm LowerCopy for REG");
                     } else {
-                        assert(false);
+                        TODO("Unexpected MachineBaseOperand");
                     }
                 }
             }

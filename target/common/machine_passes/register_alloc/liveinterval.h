@@ -45,7 +45,7 @@ public:
                     return false;
                 }
             } else {
-                assert(false);
+                ERROR("LiveInterval::operator&: Error");
             }
         }
         return false;

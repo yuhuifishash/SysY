@@ -11,6 +11,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
             for (auto reg : ins->GetReadReg()) {
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
+                    TODO("Implement VirtualRegisterRewrite Read Spill Code Gen");
                     // new_load_reg = GetNewReg();
                     // insertasmBeforeins("load new_load_reg = [fp,mem_offset]")
                     // for(oldreg& : ins->GetReadReg()) if(oldreg==reg) oldreg=new_load_reg
@@ -22,6 +23,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
             for (auto reg : ins->GetWriteReg()) {
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
+                    TODO("Implement VirtualRegisterRewrite Write Spill Code Gen");
                     // new_store_reg = GetNewReg();
                     // for(oldreg& : ins->GetWriteReg()) if(oldreg==reg) oldreg=new_store_reg
                     // insertasmAfterins("store new_store_reg , [fp,mem_offset]")

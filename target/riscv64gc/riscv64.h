@@ -224,6 +224,7 @@ class RiscV64Instruction : public MachineBaseInstruction {
 private:
     int op;
     Register rd, rs1, rs2, rs3;
+    bool use_label;
     union {
         int imm;
         Label label;
@@ -249,7 +250,7 @@ private:
 
 public:
     RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV) {}
-    void setOpcode(int op) { this->op = op; }
+    void setOpcode(int op, bool use_label) { this->op = op; this->use_label = use_label; }
     void setRd(Register rd) { this->rd = rd; }
     void setRs1(Register rs1) { this->rs1 = rs1; }
     void setRs2(Register rs2) { this->rs2 = rs2; }
@@ -260,6 +261,8 @@ public:
     Register getRs1() { return rs1; }
     Register getRs2() { return rs2; }
     Register getRs3() { return rs3; }
+    void setUseLabel(bool use_label) { this->use_label = use_label; }
+    bool getUseLabel() { return use_label; }
     int getImm() { return imm; }
     Label getLabel() { return label; }
     int getOpcode() { return op; }
