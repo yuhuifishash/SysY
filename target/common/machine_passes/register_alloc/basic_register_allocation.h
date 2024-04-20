@@ -32,6 +32,14 @@ protected:
         alloc_result[mfun][v1] = alloc_result[mfun][v2];
         alloc_result[mfun][v2] = tmp;
     }
+    int getAllocResultInReg(MachineFunction *mfun, Register vreg) {
+        assert(alloc_result[mfun][vreg].in_mem == false);
+        return alloc_result[mfun][vreg].phy_reg_no;
+    }
+    int getAllocResultInMem(MachineFunction *mfun, Register vreg) {
+        assert(alloc_result[mfun][vreg].in_mem == true);
+        return alloc_result[mfun][vreg].stack_offset;
+    }
 
 protected:
     std::map<Register, LiveInterval> intervals;

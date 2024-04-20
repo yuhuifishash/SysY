@@ -24,14 +24,17 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
             auto spill_interval = interval;
             for (auto other : phy_regs->getConflictIntervals(interval)) {
                 double other_weight = CalculateSpillWeight(other);
-                if (spill_weight > other_weight) {
+                if (spill_weight > other_weight && other.getReg().is_virtual) {
                     spill_weight = other_weight;
                     spill_interval = other;
                 }
             }
 
-            phy_regs->swapPhysicalReg(interval, spill_interval);
-            swapAllocResult(mfun, interval.getReg(), spill_interval.getReg());
+            if (!(interval == spill_interval)) {
+                phy_regs->swapRegspill(getAllocResultInReg(mfun, spill_interval.getReg()), spill_interval,
+                                       mem, cur_vreg.getDataWidth(), interval);
+                swapAllocResult(mfun, interval.getReg(), spill_interval.getReg());
+            }
         }
         unalloc_queue.pop();
     }

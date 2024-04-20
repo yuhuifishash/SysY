@@ -6,9 +6,14 @@
 class PhysicalRegisters {
 private:
 protected:
-    std::vector<std::vector<int>> mem_occupied;
-    std::vector<std::vector<int>> phy_occupied;
-    // [phy_no][ins_no] -> am_number
+    std::vector<std::vector<LiveInterval>> phy_occupied;
+    // Iterate phy_occupied[phy_id] to checkout all intervals
+
+    std::vector<std::vector<LiveInterval>> mem_occupied;
+    // Iterate mem_occupied[offset] to checkout all intervals
+    // Offset: at least 4B
+    virtual std::vector<int> getValidRegs(LiveInterval interval) = 0;
+    virtual std::vector<int> getAliasRegs(int phy_id);
 
 public:
     virtual bool OccupyReg(int phy_id, LiveInterval interval);
@@ -20,7 +25,8 @@ public:
     virtual int getIdleReg(LiveInterval interval);
     virtual int getIdleMem(LiveInterval interval);
 
-    virtual int swapPhysicalReg(LiveInterval interval1, LiveInterval interval2);
+    virtual int swapRegspill(int p_reg1, LiveInterval interval1, int offset_spill2, int size,
+                             LiveInterval interval2);
     virtual std::vector<LiveInterval> getConflictIntervals(LiveInterval interval);
 };
 

@@ -1,5 +1,6 @@
 #ifndef RISCV64_H
 #define RISCV64_H
+#include "../common/machine_passes/register_alloc/physical_register.h"
 #include "MachineBaseInstruction.h"
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
@@ -117,7 +118,7 @@ struct RiscV64PhysicalRegisterDescriptor {
 };
 extern RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[];
 
-class RiscV64Instruction : MachineBaseInstruction {
+class RiscV64Instruction : public MachineBaseInstruction {
 private:
     int op;
     Register rd, rs1, rs2;
@@ -126,24 +127,36 @@ private:
         Label label;
     };
 
-    std::set<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register *> GetI_typeReadreg() { return {&rs1}; }
-    std::set<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
-    std::set<Register *> GetU_typeReadreg() { return {}; }
-    std::set<Register *> GetJ_typeReadreg() { return {}; }
+    std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
+    std::vector<Register *> GetI_typeReadreg() { return {&rs1}; }
+    std::vector<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
+    std::vector<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
+    std::vector<Register *> GetU_typeReadreg() { return {}; }
+    std::vector<Register *> GetJ_typeReadreg() { return {}; }
 
-    std::set<Register *> GetR_typeWritereg() { return {&rd}; }
-    std::set<Register *> GetI_typeWritereg() { return {&rd}; }
-    std::set<Register *> GetS_typeWritereg() { return {}; }
-    std::set<Register *> GetB_typeWritereg() { return {}; }
-    std::set<Register *> GetU_typeWritereg() { return {&rd}; }
-    std::set<Register *> GetJ_typeWritereg() { return {&rd}; }
+    std::vector<Register *> GetR_typeWritereg() { return {&rd}; }
+    std::vector<Register *> GetI_typeWritereg() { return {&rd}; }
+    std::vector<Register *> GetS_typeWritereg() { return {}; }
+    std::vector<Register *> GetB_typeWritereg() { return {}; }
+    std::vector<Register *> GetU_typeWritereg() { return {&rd}; }
+    std::vector<Register *> GetJ_typeWritereg() { return {&rd}; }
 
 public:
+    RiscV64Instruction():MachineBaseInstruction(MachineBaseInstruction::RiscV){}
+    void setOpcode(int op) {this->op = op;}
+    void setRd(Register rd) {this->rd = rd;}
+    void setRs1(Register rs1) {this->rs1 = rs1;}
+    void setRs2(Register rs2) {this->rs2 = rs2;}
+    void setImm(int imm) {this->imm = imm;}
+    void setLabel(Label label) {this->label = label;}
+    Register getRd() { return rd; }
+    Register getRs1() { return rs1; }
+    Register getRs2() { return rs2; }
+    int getImm() { return imm; }
+    Label getLabel() { return label; }
     int getOpcode() { return op; }
-    std::set<Register *> GetReadReg();
-    std::set<Register *> GetWriteReg();
+    std::vector<Register *> GetReadReg();
+    std::vector<Register *> GetWriteReg();
 };
 #include "../common/machine_instruction_structures/machine.h"
 class RiscV64Function;
@@ -165,4 +178,10 @@ protected:
     void AppendUncondBranchInstructionToNewBlock(int new_block, int br_target);
 };
 class RiscV64Unit : public MachineUnit {};
+
+class RiscV64Register : public PhysicalRegisters {
+protected:
+    std::vector<int> getValidRegs(LiveInterval interval);
+};
+
 #endif

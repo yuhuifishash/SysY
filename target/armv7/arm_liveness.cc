@@ -1,66 +1,66 @@
 #include "arm.h"
-std::set<Register *> ArmBinary::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmBinary::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmBinary::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmBinary::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmAddsubImm::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmAddsubImm::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmAddsubImm::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmAddsubImm::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmParallelAddsub::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmParallelAddsub::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmParallelAddsub::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmParallelAddsub::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmMulas::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmMulas::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmMulas::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmMulas::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmMove::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmMove::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmMove::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmMove::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmMovwt::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmMovwt::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmMovwt::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmMovwt::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmShift::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmShift::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmShift::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmShift::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmCmp::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmCmp::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmCmp::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmCmp::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmIt::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmIt::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmIt::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmIt::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmBranchLabel::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmBranchLabel::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmBranchLabel::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmBranchLabel::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmBranchReg::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmBranchReg::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmBranchReg::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmBranchReg::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmBranchLabelreg::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmBranchLabelreg::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmBranchLabelreg::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmBranchLabelreg::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmLoadStore::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmLoadStore::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmLoadStore::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmLoadStore::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmLoadStoreM::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmLoadStoreM::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmLoadStoreM::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmLoadStoreM::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> ArmPushpop::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> ArmPushpop::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> ArmPushpop::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> ArmPushpop::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVbin::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVbin::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVbin::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVbin::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVcmp::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVcmp::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVcmp::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVcmp::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVcvt::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVcvt::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVcvt::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVcvt::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVmov::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVmov::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVmov::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVmov::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVldst::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVldst::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVldst::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVldst::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVpushpop::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVpushpop::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVpushpop::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVpushpop::GetWriteReg() { return std::vector<Register *>(); }
 
-std::set<Register *> VFPVstm::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> VFPVstm::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> VFPVstm::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> VFPVstm::GetWriteReg() { return std::vector<Register *>(); }

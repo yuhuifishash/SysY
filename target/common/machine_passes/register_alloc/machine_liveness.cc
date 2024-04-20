@@ -27,8 +27,8 @@ template <class T> std::set<T> SetDiff(const std::set<T> &a, const std::set<T> &
     return ret;
 }
 
-std::set<Register *> MachinePhiInstruction::GetReadReg() { return std::set<Register *>(); }
-std::set<Register *> MachinePhiInstruction::GetWriteReg() { return std::set<Register *>(); }
+std::vector<Register *> MachinePhiInstruction::GetReadReg() { return std::vector<Register *>(); }
+std::vector<Register *> MachinePhiInstruction::GetWriteReg() { return std::vector<Register *>(); }
 
 void Liveness::UpdateDefUse() {
     DEF.clear();

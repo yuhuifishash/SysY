@@ -97,14 +97,14 @@ public:
     void setNumber(int ins_number) { this->ins_number = ins_number; }
     int getNumber() { return ins_number; }
     MachineBaseInstruction(int arch) : arch(arch) {}
-    virtual std::set<Register *> GetReadReg() = 0;
-    virtual std::set<Register *> GetWriteReg() = 0;
+    virtual std::vector<Register *> GetReadReg() = 0;
+    virtual std::vector<Register *> GetWriteReg() = 0;
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {
 public:
-    std::set<Register *> GetReadReg();
-    std::set<Register *> GetWriteReg();
+    std::vector<Register *> GetReadReg();
+    std::vector<Register *> GetWriteReg();
 
     Register result;
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
@@ -123,14 +123,14 @@ public:
     MachineDataType copy_type;
     MachineBaseOperand *src;
     MachineBaseOperand *dst;
-    std::set<Register *> GetReadReg() {
+    std::vector<Register *> GetReadReg() {
         if (src->op_type == MachineBaseOperand::REG)
-            return std::set<Register *>({&(((MachineRegister *)src)->reg)});
-        return std::set<Register *>();
+            return std::vector<Register *>({&(((MachineRegister *)src)->reg)});
+        return std::vector<Register *>();
     }
-    std::set<Register *> GetWriteReg() {
+    std::vector<Register *> GetWriteReg() {
         assert(dst->op_type == MachineBaseOperand::REG);
-        return std::set<Register *>({&(((MachineRegister *)src)->reg)});
+        return std::vector<Register *>({&(((MachineRegister *)src)->reg)});
     }
 
 public:

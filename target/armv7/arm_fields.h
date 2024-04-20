@@ -3,7 +3,7 @@
 #include "MachineBaseInstruction.h"
 #include <string>
 
-struct ArmPhysicalRegisterDescriptor {
+struct ArmPhysicalRegister {
     char *name;
     enum {
         r0,
@@ -103,7 +103,7 @@ struct ArmPhysicalRegisterDescriptor {
         spilled_in_memory,
     };
 };
-extern struct ArmPhysicalRegisterDescriptor ArmRegDescriptor[];
+extern struct ArmPhysicalRegister ArmRegs[];
 
 enum ShiftType { LSL = 0, LSR, ASR, ROR, RRX };
 struct RmOpsh {

@@ -2,7 +2,7 @@
 
 template <> void ArmPrinter::printArm<Register *>(Register *ins) {
     if (!ins->is_virtual) {
-        s << ArmRegDescriptor[ins->reg_no].name;
+        s << ArmRegs[ins->reg_no].name;
     } else {
         s << "%" << ins->reg_no;
     }
