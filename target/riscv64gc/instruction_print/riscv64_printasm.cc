@@ -15,7 +15,7 @@ void RiscV64Printer::emit() {
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
                     TODO("Machine PHI PrintAsm");
-                } else if (ins->arch == MachineBaseInstruction::COPY){
+                } else if (ins->arch == MachineBaseInstruction::COPY) {
                     TODO("Machine COPY PrintAsm");
                 } else {
                     ERROR("Unexpected arch");
@@ -40,7 +40,6 @@ template <> void RiscV64Printer::printRVfield<Register>(Register printee) {
         s << "%" << printee.reg_no;
     }
 }
-
 
 template <> void RiscV64Printer::printRVfield<Label *>(Label *ins) {
     if (ins->is_data_address) {
@@ -67,92 +66,90 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
     switch (OpTable[ins->getOpcode()].ins_formattype) {
     case RvOpInfo::R_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs2());
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::R2_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs1());
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::R4_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs2());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs3());
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::I_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
         // s<<ins->getImm();
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::S_type:
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs2());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
         // s<<ins->getImm();
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::B_type:
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         printRVfield(ins->getRs2());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
         // printRVfield(ins->getLabel());
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::U_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
         // s<<ins->getImm();
-        s<<"\n";
+        s << "\n";
         return;
     case RvOpInfo::J_type:
         printRVfield(ins->getRd());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
         // printRVfield(ins->getLabel());
-        s<<"\n";
+        s << "\n";
         return;
     }
     assert(false);
 }
-void RiscV64Printer::printMachineIR(RiscV64Instruction *ins) {
-    TODO("Implement RiscV64Instruction::printMachineIR");
-}
+void RiscV64Printer::printMachineIR(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }

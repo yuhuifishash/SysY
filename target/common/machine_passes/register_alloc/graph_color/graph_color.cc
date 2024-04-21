@@ -11,24 +11,22 @@ void GraphColor::ConstructInterferenceGraph() {
     }
 }
 
-bool GraphColor::TryReduce() { 
+bool GraphColor::TryReduce() {
     TODO("Implement TryReduce");
-    return false; 
+    return false;
 }
 
-bool GraphColor::StkAssign() { 
+bool GraphColor::StkAssign() {
     TODO("Implement StkAssign");
-    return false; 
+    return false;
 }
 
-int GraphColor::SelectSpill() { 
+int GraphColor::SelectSpill() {
     TODO("Implement SelectSpill(Not sure if it's used)");
-    return -1; 
+    return -1;
 }
 
-void GraphColor::Spill(int v_reg) {
-    TODO("Implement Spill(Not sure if it's used)");
-}
+void GraphColor::Spill(int v_reg) { TODO("Implement Spill(Not sure if it's used)"); }
 
 bool GraphColor::DoAllocInCurrentFunc() {
     auto mfun = current_func;

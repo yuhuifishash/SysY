@@ -4,14 +4,114 @@
 extern std::map<std::string, CFG *> CFGMap;
 AliasAnalyser alias_analyser;
 
+PtrRegMemInfo GetPtrInfo(Operand ptr, std::map<int, PtrRegMemInfo> &ptrmap) {
+    if (ptr->GetOperandType() == BasicOperand::REG) {
+        return ptrmap[((RegOperand *)ptr)->GetRegNo()];
+    } else if (ptr->GetOperandType() == BasicOperand::GLOBAL) {
+        PtrRegMemInfo tmp;
+        tmp.PossiblePtrs.push_back(ptr);
+        return tmp;
+    } else {    // should not reach here
+        assert(false);
+    }
+}
+
+bool IsAlias(PtrRegMemInfo ptrinfo1, PtrRegMemInfo ptrinfo2) {
+    if (ptrinfo1.is_fullmem || ptrinfo2.is_fullmem) {
+        return true;
+    }
+    for (auto p1 : ptrinfo1.PossiblePtrs) {
+        for (auto p2 : ptrinfo2.PossiblePtrs) {
+            if (p1->GetFullName() == p2->GetFullName()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 AliasAnalyser::AliasResult AliasAnalyser::QueryAlias(Operand op1, Operand op2, CFG *C) {
-    // TODO()
-    return AliasResult::MustAlias;
+    auto ptrmap = PtrRegMemMap[C];
+
+    auto ptrinfo1 = GetPtrInfo(op1, ptrmap);
+    auto ptrinfo2 = GetPtrInfo(op2, ptrmap);
+
+    if (IsAlias(ptrinfo1, ptrinfo2)) {
+        return MustAlias;
+    }
+    return NoAlias;
 }
 
 AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I, Operand op, CFG *C) {
-    // TODO()
-    return ModRefResult::ModRef;
+    auto ptrmap = PtrRegMemMap[C];
+
+    if (I->GetOpcode() == LOAD) {
+        auto ptr = ((LoadInstruction *)I)->GetPointer();
+        auto ptrinfo1 = GetPtrInfo(ptr, ptrmap);
+        auto ptrinfo2 = GetPtrInfo(op, ptrmap);
+        if (IsAlias(ptrinfo1, ptrinfo2)) {
+            return ModRefResult::Ref;
+        }
+    } else if (I->GetOpcode() == STORE) {
+        auto ptr = ((LoadInstruction *)I)->GetPointer();
+        auto ptrinfo1 = GetPtrInfo(ptr, ptrmap);
+        auto ptrinfo2 = GetPtrInfo(op, ptrmap);
+        if (IsAlias(ptrinfo1, ptrinfo2)) {
+            return ModRefResult::Mod;
+        }
+    } else if (I->GetOpcode() == CALL) {
+        auto CallI = (CallInstruction *)I;
+        auto call_name = CallI->GetFunctionName();
+        if (CFGMap.find(call_name) == CFGMap.end()) {
+            return ModRefResult::ModRef;
+        }
+        auto rwinfo = CFGMemRWMap[CFGMap[call_name]];
+        if (rwinfo.isIndependent()) {
+            return ModRefResult::NoModRef;
+        }
+
+        bool is_mod = false, is_ref = false;
+        auto ptrinfo1 = GetPtrInfo(op, ptrmap);
+
+        for (auto ptr2 : rwinfo.ReadPtrs) {
+            PtrRegMemInfo real_ptrinfo2;
+            if (ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                real_ptrinfo2 = GetPtrInfo(ptr2, ptrmap);
+            }
+            if (ptr2->GetOperandType() == BasicOperand::REG) {
+                int ptr2_regno = ((RegOperand *)ptr2)->GetRegNo();
+                auto [type, real_ptr2] = CallI->GetParameterList()[ptr2_regno];
+                real_ptrinfo2 = GetPtrInfo(real_ptr2, ptrmap);
+            }
+            is_ref |= IsAlias(ptrinfo1, real_ptrinfo2);
+            if (is_ref) {
+                break;
+            }
+        }
+        for (auto ptr2 : rwinfo.WritePtrs) {
+            PtrRegMemInfo real_ptrinfo2;
+            if (ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                real_ptrinfo2 = GetPtrInfo(ptr2, ptrmap);
+            }
+            if (ptr2->GetOperandType() == BasicOperand::REG) {
+                int ptr2_regno = ((RegOperand *)ptr2)->GetRegNo();
+                auto [type, real_ptr2] = CallI->GetParameterList()[ptr2_regno];
+                real_ptrinfo2 = GetPtrInfo(real_ptr2, ptrmap);
+            }
+            is_mod |= IsAlias(ptrinfo1, real_ptrinfo2);
+            if (is_mod) {
+                break;
+            }
+        }
+        if (is_mod && is_ref) {
+            return ModRefResult::ModRef;
+        } else if (is_mod) {
+            return ModRefResult::Mod;
+        } else if (is_ref) {
+            return ModRefResult::Ref;
+        }
+    }
+    return ModRefResult::NoModRef;
 }
 
 bool isFunctionArgs(CFG *C, Operand op) {
@@ -93,6 +193,47 @@ bool FunctionMemRWInfo::InsertNewWritePtrs(std::vector<Operand> ops) {
     return changed;
 }
 
+bool FunctionMemRWInfo::MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwinfo,
+                                  std::map<int, PtrRegMemInfo> &ptrmap) {
+    bool changed = false;
+    for (auto op : rwinfo.ReadPtrs) {
+        if (op->GetOperandType() == BasicOperand::GLOBAL) {
+            changed |= InsertNewReadPtrs(op);
+        } else if (op->GetOperandType() == BasicOperand::REG) {
+            int regno = ((RegOperand *)op)->GetRegNo();
+            assert(regno < CallI->GetParameterList().size());
+
+            auto [type, ptr] = (CallI->GetParameterList())[regno];
+            assert(ptr->GetOperandType() == BasicOperand::REG);
+
+            auto ptr_regno = ((RegOperand *)ptr)->GetRegNo();
+            if (ptrmap[ptr_regno].is_local) {
+                continue;
+            }
+            changed |= InsertNewReadPtrs(ptrmap[ptr_regno].PossiblePtrs);
+        }
+    }
+
+    for (auto op : rwinfo.WritePtrs) {
+        if (op->GetOperandType() == BasicOperand::GLOBAL) {
+            changed |= InsertNewWritePtrs(op);
+        } else if (op->GetOperandType() == BasicOperand::REG) {
+            int regno = ((RegOperand *)op)->GetRegNo();
+            assert(regno < CallI->GetParameterList().size());
+
+            auto [type, ptr] = (CallI->GetParameterList())[regno];
+            assert(ptr->GetOperandType() == BasicOperand::REG);
+
+            auto ptr_regno = ((RegOperand *)ptr)->GetRegNo();
+            if (ptrmap[ptr_regno].is_local) {
+                continue;
+            }
+            changed |= InsertNewWritePtrs(ptrmap[ptr_regno].PossiblePtrs);
+        }
+    }
+    return changed;
+}
+
 //----------------------------------------
 // implementation of alias analysis
 void AliasAnalyser::AliasAnalysis() {
@@ -101,12 +242,48 @@ void AliasAnalyser::AliasAnalysis() {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         AliasAnalysis(cfg);
     }
+
+    // cache all the call inst of cfg
+    std::map<CFG *, std::vector<CallInstruction *>> CallMap;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for (auto [id, bb] : *(cfg->block_map)) {
+            for (auto I : bb->Instruction_list) {
+                if (I->GetOpcode() == CALL) {
+                    CallMap[cfg].push_back((CallInstruction *)I);
+                }
+            }
+        }
+    }
+
     // then we should consider call inst(we need to do global R/W analysis)
     bool changed = true;
     while (changed) {
         changed = false;
+        for (auto [defI, cfg] : IR->llvm_cfg) {
+            if (CFGMemRWMap[cfg].have_external_call) {
+                continue;
+            }
+            auto ptrmap = PtrRegMemMap[cfg];
+
+            for (auto CallI : CallMap[cfg]) {
+                std::string call_name = CallI->GetFunctionName();
+                if (CFGMap.find(call_name) == CFGMap.end()) {
+                    CFGMemRWMap[cfg].have_external_call = true;
+                    changed = true;
+                    continue;
+                }
+                auto call_cfg = CFGMap[call_name];
+                auto call_info = CFGMemRWMap[call_cfg];
+                if (call_info.have_external_call) {
+                    CFGMemRWMap[cfg].have_external_call = true;
+                    changed = true;
+                    continue;
+                }
+                changed |= CFGMemRWMap[cfg].MergeCall(CallI, call_info, ptrmap);
+            }
+        }
     }
-    PrintAAResult(false);
+    // PrintAAResult(false);
 }
 
 // analysis all the ptr operand in CFG* C
@@ -218,6 +395,10 @@ void AliasAnalyser::AliasAnalysis(CFG *C) {
 void AliasAnalysis(LLVMIR *IR) {
     alias_analyser.SetLLVMIR(IR);
     alias_analyser.AliasAnalysis();
+
+    //------------------------test
+    // alias_analyser.PrintAAResult();
+    // alias_analyser.AAtest();
 }
 
 void AliasAnalyser::PrintAAResult(bool is_printptr) {
@@ -234,6 +415,10 @@ void AliasAnalyser::PrintAAResult(bool is_printptr) {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         defI->PrintIR(std::cerr);
         auto cfgrwinfo = CFGMemRWMap[cfg];
+        if (cfgrwinfo.have_external_call) {
+            std::cerr << "enternal call\n";
+            continue;
+        }
         std::cerr << "read    ";
         for (auto op : cfgrwinfo.ReadPtrs) {
             std::cerr << op << " ";
@@ -255,4 +440,47 @@ void PtrRegMemInfo::PrintDebugInfo() {
         std::cerr << op << "\n";
     }
     std::cerr << "------------------------------\n";
+}
+
+std::string alias_status[4] = {"ERROR", "NoAlias", "MayAlias", "MustAlias"};
+std::string modref_status[4] = {"NoModRef", "Ref", "Mod", "ModRef"};
+
+void AliasAnalyser::AAtest() {
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        defI->PrintIR(std::cerr);
+        std::set<Operand> ptrset;
+        for (auto [id, bb] : *(cfg->block_map)) {
+            for (auto I : bb->Instruction_list) {
+                if (I->GetOpcode() == GETELEMENTPTR) {
+                    ptrset.insert(I->GetResultReg());
+                } else if (I->GetOpcode() == LOAD) {
+                    ptrset.insert(((LoadInstruction *)I)->GetPointer());
+                } else if (I->GetOpcode() == STORE) {
+                    ptrset.insert(((StoreInstruction *)I)->GetPointer());
+                }
+            }
+        }
+        for (auto ptr1 : ptrset) {
+            for (auto ptr2 : ptrset) {
+                std::cout << ptr1 << " " << ptr2 << " " << alias_status[QueryAlias(ptr1, ptr2, cfg)] << "\n";
+            }
+        }
+
+        for (auto ptr : ptrset) {
+            for (auto [id, bb] : *(cfg->block_map)) {
+                for (auto I : bb->Instruction_list) {
+                    if (I->GetOpcode() == CALL) {
+                        I->PrintIR(std::cerr);
+                        std::cerr << ptr << " " << modref_status[QueryInstModRef(I, ptr, cfg)] << "\n";
+                    } else if (I->GetOpcode() == LOAD) {
+                        I->PrintIR(std::cerr);
+                        std::cerr << ptr << " " << modref_status[QueryInstModRef(I, ptr, cfg)] << "\n";
+                    } else if (I->GetOpcode() == STORE) {
+                        I->PrintIR(std::cerr);
+                        std::cerr << ptr << " " << modref_status[QueryInstModRef(I, ptr, cfg)] << "\n";
+                    }
+                }
+            }
+        }
+    }
 }

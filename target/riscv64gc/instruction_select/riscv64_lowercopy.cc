@@ -15,27 +15,27 @@ void RiscV64LowerCopy::Execute() {
                         auto RV_lui = new RiscV64Instruction();
                         auto RV_addi = new RiscV64Instruction();
 
-                        RV_lui->setOpcode(RISCV_LUI,false);
+                        RV_lui->setOpcode(RISCV_LUI, false);
                         RV_lui->setRd(((MachineRegister *)(m_copy->dst))->reg);
                         RV_lui->setImm((i32_imm + 0x800) &
                                        0xFFFFF000);    // Reference: https://zhuanlan.zhihu.com/p/374235855
 
-                        RV_addi->setOpcode(RISCV_ADDI,false);
+                        RV_addi->setOpcode(RISCV_ADDI, false);
                         RV_addi->setRd(((MachineRegister *)(m_copy->dst))->reg);
                         RV_addi->setImm(i32_imm & 0xFFFFF000);
                     } else if (m_copy->src->op_type == MachineBaseOperand::IMMF) {
                         TODO("Implement RiscV Float Imm Copy");
                     } else if (m_copy->src->op_type == MachineBaseOperand::REG) {
                         auto Reg = ((MachineRegister *)(m_copy->src))->reg;
-                        if(Reg.type.data_type == MachineDataType::INT){
+                        if (Reg.type.data_type == MachineDataType::INT) {
                             auto RV_copy = new RiscV64Instruction();
-                            RV_copy->setOpcode(RISCV_ADDI,false);
+                            RV_copy->setOpcode(RISCV_ADDI, false);
                             RV_copy->setRd(((MachineRegister *)(m_copy->dst))->reg);
                             RV_copy->setRs1(((MachineRegister *)(m_copy->src))->reg);
                             RV_copy->setImm(0);
-                        }else if(Reg.type.data_type == MachineDataType::FLOAT){
+                        } else if (Reg.type.data_type == MachineDataType::FLOAT) {
                             TODO("Implement RiscV Float Reg Copy");
-                        }else{
+                        } else {
                             ERROR("Unknown Machine Data Type");
                         }
                     } else {

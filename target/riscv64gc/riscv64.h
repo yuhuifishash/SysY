@@ -250,7 +250,10 @@ private:
 
 public:
     RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV) {}
-    void setOpcode(int op, bool use_label) { this->op = op; this->use_label = use_label; }
+    void setOpcode(int op, bool use_label) {
+        this->op = op;
+        this->use_label = use_label;
+    }
     void setRd(Register rd) { this->rd = rd; }
     void setRs1(Register rs1) { this->rs1 = rs1; }
     void setRs2(Register rs2) { this->rs2 = rs2; }

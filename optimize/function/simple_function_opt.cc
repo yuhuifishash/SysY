@@ -91,12 +91,12 @@ void TailRecursiveEliminate(CFG *C) {
             if (opt1 || opt2) {
                 EraseSet.insert(callI);
                 EraseSet.insert(retI);
-                auto list_size = callI->get_parameterList().size();
+                auto list_size = callI->GetParameterList().size();
                 auto bb0 = (*C->block_map->begin()).second;
                 auto bb0_it = --bb0->Instruction_list.end();
                 for (auto i = 0; i < list_size; i++, bb0_it--) {
                     auto allocaI = *bb0_it;
-                    if (callI->get_parameterList()[i].first == PTR) {
+                    if (callI->GetParameterList()[i].first == PTR) {
                         bb0_it++;
                         continue;
                     }
@@ -104,13 +104,13 @@ void TailRecursiveEliminate(CFG *C) {
                         bb0_it--;
                         allocaI = *bb0_it;
                     }
-                    auto callI_reg = (RegOperand *)(callI->get_parameterList()[i].second);
+                    auto callI_reg = (RegOperand *)(callI->GetParameterList()[i].second);
                     auto funcdefI_reg = (RegOperand *)FuncdefI->formals_reg[i];
                     if (callI_reg->GetRegNo() == i) {
                         continue;
                     }    // funtion params id stand by i
-                    auto storeI = new StoreInstruction(callI->get_parameterList()[i].first, allocaI->GetResultReg(),
-                                                       callI->get_parameterList()[i].second);
+                    auto storeI = new StoreInstruction(callI->GetParameterList()[i].first, allocaI->GetResultReg(),
+                                                       callI->GetParameterList()[i].second);
                     bb->InsertInstruction(1, storeI);
                 }
                 bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(1)));

@@ -47,21 +47,21 @@ Register MachineFunction::GetNewRegister(int regtype, int reglength) {
     return new_reg;
 }
 
-MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::vector<int> succ) { 
+MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::vector<int> succ) {
     TODO("Implement CreateNewEmptyBlock(Not sure if it's used)");
-    return nullptr; 
+    return nullptr;
 }
-MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, int end) { 
+MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, int end) {
     TODO("Implement InsertNewBranchOnlyBlockBetweenEdge");
-    return nullptr; 
+    return nullptr;
 }
-MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) { 
+MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) {
     TODO("Implement InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(Not sure if it's used)");
-    return nullptr; 
+    return nullptr;
 }
-MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id) { 
+MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id) {
     TODO("Implement InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(Not sure if it's used)");
-    return nullptr; 
+    return nullptr;
 }
 void RedirectPhiNodePredecessor(int phi_block, int old_predecessor, int new_predecessor) {
     // in phi_block, find all phi_instructions containing <label old_predecessor> in phi instruction

@@ -640,7 +640,7 @@ public:
     Operand GetResult() { return result; }
     Operand GetResultReg() { return result; }
     std::string GetFunctionName() { return name; }
-    std::vector<std::pair<enum LLVMType, Operand>> get_parameterList() { return args; }
+    std::vector<std::pair<enum LLVMType, Operand>> GetParameterList() { return args; }
     void push_back_Parameter(std::pair<enum LLVMType, Operand> newPara) { args.push_back(newPara); }
     void push_back_Parameter(enum LLVMType type, Operand val) { args.push_back(std::make_pair(type, val)); }
 
