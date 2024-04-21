@@ -66,6 +66,9 @@ AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I, Operan
             return ModRefResult::ModRef;
         }
         auto rwinfo = CFGMemRWMap[CFGMap[call_name]];
+        if(rwinfo.have_external_call){
+            return ModRefResult::ModRef;
+        }
         if (rwinfo.isIndependent()) {
             return ModRefResult::NoModRef;
         }
