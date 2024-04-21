@@ -3,6 +3,48 @@
 #include <assert.h>
 #include <set>
 #include <vector>
+#include <iostream>
+#include <cstring>
+
+#define ERROR(...) do{\
+    char message[256];\
+    sprintf(message,__VA_ARGS__);\
+    std::cerr<<"\033[;31;1m";\
+    std::cerr<<"ERROR: ";\
+    std::cerr<<"\033[0;37;1m";\
+    std::cerr<<message<<"\n";\
+    std::cerr<<"\033[0;33;1m";\
+    std::cerr<<"File: \033[4;37;1m"<<__FILE__<<":"<<__LINE__<<"\n";\
+    std::cerr<<"\033[0m";\
+    assert(false);\
+}while(0)
+
+#define TODO(...) do{\
+    char message[256];\
+    sprintf(message,__VA_ARGS__);\
+    std::cerr<<"\033[;34;1m";\
+    std::cerr<<"TODO: ";\
+    std::cerr<<"\033[0;37;1m";\
+    std::cerr<<message<<"\n";\
+    std::cerr<<"\033[0;33;1m";\
+    std::cerr<<"File: \033[4;37;1m"<<__FILE__<<":"<<__LINE__<<"\n";\
+    std::cerr<<"\033[0m";\
+    assert(false);\
+}while(0)
+
+#define ENABLE_LOG
+#ifdef  ENABLE_LOG
+#define Log(...) do{\
+    char message[256];\
+    sprintf(message,__VA_ARGS__);\
+    std::cerr<<"\033[;35;1m[\033[4;33;1m"<<__FILE__<<":"<<__LINE__<<"\033[;35;1m "<<__PRETTY_FUNCTION__<<"]";\
+    std::cerr<<"\033[0;37;1m ";\
+    std::cerr<<message<<"\n";\
+    std::cerr<<"\033[0m";\
+}while(0)
+#else
+#define Log(...)
+#endif
 
 struct MachineDataType {
     enum { INT, FLOAT };

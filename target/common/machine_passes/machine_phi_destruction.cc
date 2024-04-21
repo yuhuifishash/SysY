@@ -26,6 +26,7 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                 auto phi_Ins = (MachinePhiInstruction *)ins;
                 for (auto [phi_labelid, phi_operand] : phi_Ins->phi_list) {
                     // Insert to Parallel Copy List
+                    TODO("Insert to Parallel Copy List");
                 }
             }
         }
@@ -33,6 +34,7 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
     block_it->rewind();
     while (block_it->hasNext()) {
         auto block = block_it->next()->Mblock;
+        TODO("Convert Parallel Copy To Instructions");
         if (0 /*Parallel Copy Not Empty*/) {
             // Convert Parallel Copy To Instructions
         }
