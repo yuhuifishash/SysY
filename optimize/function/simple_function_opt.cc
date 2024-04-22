@@ -70,8 +70,16 @@ void MakeFunctionOneExit(CFG *C) {
  * you should set CFG::max_reg correctly
  * @param C the control flow graph of the function */
 void TailRecursiveEliminate(CFG *C) {
-    std::set<Instruction> EraseSet;
     auto FuncdefI = C->function_def;
+    if(FuncdefI->GetFormalSize()>5){return;}
+    auto bb0 = (*C->block_map->begin()).second;
+    bool NeedtoInsertPTR=0;
+    std::deque<Instruction> StoreDeque;
+    std::deque<Instruction> AllocaDeque;
+    std::vector<Operand> PtrArr;//store newptr equal to oldparam
+    std::set<Instruction> EraseSet;
+    std::set<Instruction> InsertSet;
+    //when exist call ptr, ret
     for (auto [id, bb] : *C->block_map) {
         if (bb->Instruction_list.back()->GetOpcode() != RET) {
             continue;
@@ -92,23 +100,45 @@ void TailRecursiveEliminate(CFG *C) {
                 EraseSet.insert(callI);
                 EraseSet.insert(retI);
                 auto list_size = callI->GetParameterList().size();
-                auto bb0 = (*C->block_map->begin()).second;
                 auto bb0_it = --bb0->Instruction_list.end();
-                for (auto i = 0; i < list_size; i++, bb0_it--) {
-                    auto allocaI = *bb0_it;
-                    if (callI->GetParameterList()[i].first == PTR) {
-                        bb0_it++;
-                        continue;
+                if(!NeedtoInsertPTR){
+                    //insert alloca and store instruction of ptr
+                    NeedtoInsertPTR=1;
+                    for(u_int32_t i=0;i<FuncdefI->GetFormalSize();++i){
+                        if(FuncdefI->formals[i]==PTR){
+                            auto PtrReg=new RegOperand(++C->max_reg);
+                            PtrArr.push_back(PtrReg);
+                            AllocaDeque.push_back(new AllocaInstruction(PTR,PtrReg));
+                            StoreDeque.push_back(new StoreInstruction(PTR,PtrReg,FuncdefI->formals_reg[i]));
+                        }
                     }
-                    while (allocaI->GetOpcode() != ALLOCA) {
+                    while(!StoreDeque.empty()){
+                        bb0->InsertInstruction(0,StoreDeque.back());
+                        StoreDeque.pop_back();
+                    }
+                    for(auto *it:AllocaDeque){
+                        bb0->InsertInstruction(0,it);
+                    }
+                }
+                auto bb0_ptr_it = bb0->Instruction_list.begin();
+                while((*bb0_ptr_it)->GetOpcode() == ALLOCA){
+                    bb0_ptr_it++;
+                }
+                //if exist alloca ptr,bb0_ptr_it=the end of alloca ptr
+                for (auto i = 0; i < list_size; i++) {
+                    Instruction allocaI;
+                    if (callI->GetParameterList()[i].first == PTR) {
+                        bb0_ptr_it--;
+                        allocaI = *bb0_ptr_it;
+                    }else{
                         bb0_it--;
                         allocaI = *bb0_it;
+                        while (allocaI->GetOpcode() != ALLOCA) {
+                            bb0_it--;
+                            allocaI = *bb0_it;
+                        }
                     }
                     auto callI_reg = (RegOperand *)(callI->GetParameterList()[i].second);
-                    auto funcdefI_reg = (RegOperand *)FuncdefI->formals_reg[i];
-                    if (callI_reg->GetRegNo() == i) {
-                        continue;
-                    }    // funtion params id stand by i
                     auto storeI = new StoreInstruction(callI->GetParameterList()[i].first, allocaI->GetResultReg(),
                                                        callI->GetParameterList()[i].second);
                     bb->InsertInstruction(1, storeI);
@@ -117,7 +147,6 @@ void TailRecursiveEliminate(CFG *C) {
             }
         }
     }
-    // std::cout<<FuncdefI->GetFunctionName()<<"\n";
     for (auto [id, bb] : *C->block_map) {
         auto tmp_Instruction_list = bb->Instruction_list;
         bb->Instruction_list.clear();
@@ -125,9 +154,34 @@ void TailRecursiveEliminate(CFG *C) {
             if (EraseSet.find(I) != EraseSet.end()) {
                 continue;
             }
+            auto ResultOperands=I->GetNonResultOperands();
+            bool NeedtoUpdate=0;
+            if(id!=0&&NeedtoInsertPTR&&!ResultOperands.empty()){
+                for(u_int32_t i=0;i<ResultOperands.size();++i){
+                    auto ResultReg=ResultOperands[i];
+                    for(u_int32_t j=0;j<FuncdefI->formals_reg.size();++j){
+                        auto DefReg=FuncdefI->formals_reg[j];
+                        if(ResultReg->GetFullName()==DefReg->GetFullName()){
+                            NeedtoUpdate=1;
+                            auto PtrReg=new RegOperand(++C->max_reg);
+                            bb->InsertInstruction(1, new LoadInstruction(PTR,PtrArr[j],PtrReg));
+                            ResultOperands[i]=PtrReg;
+                            break;
+                        }
+                    }
+                    
+                }
+                if(NeedtoUpdate){
+                    I->SetNonResultOperands(ResultOperands);
+                }
+            }
             bb->InsertInstruction(1, I);
         }
     }
+    while(!AllocaDeque.empty()){
+        AllocaDeque.pop_back();
+    }
     EraseSet.clear();
+    C->BuildCFG();
     // std::cerr<<"TailRecursiveElimate is not implemented now\n";
 }
