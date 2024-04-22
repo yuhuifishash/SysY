@@ -12,8 +12,9 @@ extern std::map<std::string, int> GlobalMap;
 extern AliasAnalyser alias_analyser;
 
 struct InstCSEInfo {
+    Instruction I;
     int opcode;
-    std::vector<Operand> operand_list;
+    std::vector<std::string> operand_list;
     bool operator<(const InstCSEInfo &x) const {
         if (opcode != x.opcode) {
             return opcode < x.opcode;
@@ -23,16 +24,12 @@ struct InstCSEInfo {
         }
 
         for (int i = 0; i < (int)operand_list.size(); ++i) {
-            if (operand_list[i]->GetOperandType() != x.operand_list[i]->GetOperandType()) {
-                return operand_list[i]->GetOperandType() < x.operand_list[i]->GetOperandType();
-            }
-            auto opstr = operand_list[i]->GetFullName();
-            auto xopstr = x.operand_list[i]->GetFullName();
+            auto opstr = operand_list[i];
+            auto xopstr = x.operand_list[i];
             if (opstr != xopstr) {
                 return opstr < xopstr;
             }
         }
-
         return false;
     }
 };
@@ -40,83 +37,193 @@ struct InstCSEInfo {
 // memory instructions and special instructions will return false
 InstCSEInfo GetCSEInfo(Instruction I) {
     InstCSEInfo ans;
+    ans.I = I;
     ans.opcode = I->GetOpcode();
+
     auto list = I->GetNonResultOperands();
     if (I->GetOpcode() == CALL) {
         auto CallI = (CallInstruction *)I;
-        ans.operand_list.push_back(new GlobalOperand(CallI->GetFunctionName()));
+        ans.operand_list.push_back(CallI->GetFunctionName());
     }
 
-    for (auto op : list) {
-        ans.operand_list.push_back(op);
+    // consider the Commutative property
+    if (I->GetOpcode() == ADD || I->GetOpcode() == MUL) {
+        assert(list.size() == 2);
+        auto op1 = list[0], op2 = list[1];
+        if (op1->GetFullName() > op2->GetFullName()) {
+            std::swap(op1, op2);
+        }
+        ans.operand_list.push_back(op1->GetFullName());
+        ans.operand_list.push_back(op2->GetFullName());
+    } else {
+        for (auto op : list) {
+            ans.operand_list.push_back(op->GetFullName());
+        }
     }
     return ans;
 }
 
-bool CanCSE(Instruction I) {
-    if (I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == STORE || I->GetOpcode() == BR_UNCOND ||
-        I->GetOpcode() == ALLOCA || I->GetOpcode() == LOAD || I->GetOpcode() == RET || I->GetOpcode() == ICMP ||
-        I->GetOpcode() == FCMP) {
+bool CSENotConsider(Instruction I) {
+    if (I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == BR_UNCOND || I->GetOpcode() == ALLOCA ||
+        I->GetOpcode() == RET || I->GetOpcode() == ICMP || I->GetOpcode() == FCMP) {
         return false;
-    }
-    if (I->GetOpcode() == CALL) {
-        auto CallI = (CallInstruction *)I;
-        if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
-            return false;
-        }
-        auto cfg = CFGMap[CallI->GetFunctionName()];
-        if (cfg->FunctionInfo.is_independent == false) {
-            return false;
-        }
     }
     return true;
 }
+void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap, std::map<InstCSEInfo, int> &LoadInstMap,
+                     std::set<Instruction> &CallInstSet, std::set<Instruction> &LoadInstSet, CFG* C) {
+    assert(I->GetOpcode() == CALL);
+    auto CallI = (CallInstruction *)I;
+    if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+        //for simple, we do not consider independent call there, this can be CSE in DomTreeWalkCSE
+        //I->PrintIR(std::cerr);std::cerr<<"kill everything\n";
+        LoadInstMap.clear();LoadInstSet.clear();
+        CallInstMap.clear();CallInstSet.clear();   
+        return;    // external call
+    }
 
-bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<Instruction> &EraseSet) {
-    bool changed = false;
-    std::map<std::string, int> LoadMap;       //<operand_string, result_reg>
-    std::map<InstCSEInfo, int> InstCSEMap;    //<inst_info, result_reg>
+    auto cfg = CFGMap[CallI->GetFunctionName()];
+    auto writeptrs = alias_analyser.GetWritePtrs(cfg);
+    // have external call
+    if (alias_analyser.CFG_haveExternalCall(cfg)) {
+        //for simple, we do not consider independent call there, this can be CSE in DomTreeWalkCSE
+        //I->PrintIR(std::cerr);std::cerr<<"kill everything\n";
+        LoadInstMap.clear();LoadInstSet.clear();
+        CallInstMap.clear();CallInstSet.clear();
+        return;
+    }
 
-    // CSE load/store/call instructions
-    for (auto I : bb->Instruction_list) {
-        if (I->GetOpcode() == CALL) {
-            // we don't know how memory changes
-            // TODO(): we can erase LoadMap precisely with function analysis and alias analysis
-            LoadMap.clear();
-        } else if (I->GetOpcode() == STORE) {    // store instructions, this will kill load before this store
-            // TODO(): we need alias analysis to erase the LoadMap precisely further more
-            // auto ptr = ((StoreInstruction*)I)->GetPointer();
-            // LoadMap.erase(ptr->GetFullName());
-            LoadMap.clear();
-        } else if (I->GetOpcode() == LOAD) {
-            auto ptr = ((StoreInstruction *)I)->GetPointer();
-            auto it = LoadMap.find(ptr->GetFullName());
-            if (it != LoadMap.end()) {
-                // I->PrintIR(std::cerr);
-                EraseSet.insert(I);
-                reg_replace_map[I->GetResultRegNo()] = it->second;
-                changed |= true;
-            } else {
-                LoadMap.insert({ptr->GetFullName(), I->GetResultRegNo()});
-            }
+    for(auto it = LoadInstSet.begin(); it != LoadInstSet.end();){
+        assert((*it)->GetOpcode() == LOAD);
+        auto LoadI = (LoadInstruction*)(*it);
+        auto ptr = LoadI->GetPointer();
+        auto result = alias_analyser.QueryInstModRef(I,ptr,C);
+        if(result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef){
+            //I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
+            
+            LoadInstMap.erase(GetCSEInfo(*it));
+            it = LoadInstSet.erase(it);
+        }else{
+            ++it;
         }
     }
 
-    // CSE other instructions
+    for(auto it = CallInstSet.begin(); it != CallInstSet.end();){
+        assert((*it)->GetOpcode() == CALL);
+        bool is_needkill = false;
+        for(auto ptr:writeptrs){
+            if(alias_analyser.QueryInstModRef(*it,ptr,C) != AliasAnalyser::NoModRef){
+                is_needkill = true;
+                break;
+            }
+        }
+        if(is_needkill){
+            //I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
+
+            CallInstMap.erase(GetCSEInfo(*it));
+            it = CallInstSet.erase(it);
+        }else{
+            ++it;
+        }
+    }
+                     
+}
+
+void StoreKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap, std::map<InstCSEInfo, int> &LoadInstMap,
+                     std::set<Instruction> &CallInstSet, std::set<Instruction> &LoadInstSet, CFG* C) {
+    assert(I->GetOpcode() == STORE);
+    auto ptr = ((StoreInstruction*)I)->GetPointer();
+
+    for(auto it = LoadInstSet.begin(); it != LoadInstSet.end();){
+        auto result = alias_analyser.QueryInstModRef(*it,ptr,C);
+        if(result == AliasAnalyser::Ref){//if load instruction ref the ptr of store instruction 
+            //I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
+
+            LoadInstMap.erase(GetCSEInfo(*it));
+            it = LoadInstSet.erase(it);
+        }else{
+            ++it;
+        }
+    }
+
+    for(auto it = CallInstSet.begin(); it != CallInstSet.end();){
+        auto result = alias_analyser.QueryInstModRef(*it,ptr,C);
+        if(result != AliasAnalyser::NoModRef){
+            //I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
+
+            CallInstMap.erase(GetCSEInfo(*it));
+            it = CallInstSet.erase(it);
+        }else{
+            ++it;
+        }
+    }
+                     
+}
+
+bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<Instruction> &EraseSet, CFG* C) {
+    bool changed = false;
+    std::map<InstCSEInfo, int> LoadInstMap;    // <load_inst_info, result_reg>
+    // call instructions in map must can not read memory
+    std::map<InstCSEInfo, int> CallInstMap;    // <call_inst_info, result_reg>
+    std::map<InstCSEInfo, int> InstMap;        // <other_inst_info, result_reg>
+
+    std::set<Instruction> LoadInstSet;
+    std::set<Instruction> CallInstSet;
+
     for (auto I : bb->Instruction_list) {
-        if (CanCSE(I) == false) {
+        if (CSENotConsider(I) == false) {
             continue;
         }
+        if (I->GetOpcode() == CALL) {
+            auto CallI = (CallInstruction *)I;
+            if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+                LoadInstMap.clear();LoadInstSet.clear();
+                CallInstMap.clear();CallInstSet.clear(); 
+                continue;    // external call, clear all instructions
+            }
+            auto cfg = CFGMap[CallI->GetFunctionName()];
+            if (alias_analyser.CFG_isNoSizeEffect(cfg)) {    // only read memory, we can CSE
+                auto Info = GetCSEInfo(I);
+                auto CSEiter = CallInstMap.find(Info);
+                if (CSEiter != CallInstMap.end()) {
+                    EraseSet.insert(I);
+                    // I->PrintIR(std::cerr);
+                    reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
+                    changed |= true;
+                } else {
+                    CallInstSet.insert(I);
+                    CallInstMap.insert({Info, I->GetResultRegNo()});
+                }
+            } else {    // write memory, can not CSE, and will kill some Load and Call
+                CallKillReadMemInst(I, CallInstMap, LoadInstMap, CallInstSet, LoadInstSet, C);
+            }
 
-        auto Info = GetCSEInfo(I);
-        auto CSEiter = InstCSEMap.find(Info);
-        if (CSEiter != InstCSEMap.end()) {
-            EraseSet.insert(I);
-            // I->PrintIR(std::cerr);
-            reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
-            changed |= true;
-        } else {
-            InstCSEMap.insert({Info, I->GetResultRegNo()});
+        } else if (I->GetOpcode() == STORE) {
+            // store instructions, this will kill some loads
+            StoreKillReadMemInst(I, CallInstMap, LoadInstMap, CallInstSet, LoadInstSet, C);
+        } else if (I->GetOpcode() == LOAD) {
+            auto Info = GetCSEInfo(I);
+            auto CSEiter = LoadInstMap.find(Info);
+            if (CSEiter != LoadInstMap.end()) {
+                EraseSet.insert(I);
+                // I->PrintIR(std::cerr);
+                reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
+                changed |= true;
+            } else {
+                LoadInstSet.insert(I);
+                LoadInstMap.insert({Info, I->GetResultRegNo()});
+            }
+        } else {//other instructions 
+            auto Info = GetCSEInfo(I);
+            auto CSEiter = InstMap.find(Info);
+            if (CSEiter != InstMap.end()) {
+                EraseSet.insert(I);
+                // I->PrintIR(std::cerr);
+                reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
+                changed |= true;
+            } else {
+                InstMap.insert({Info, I->GetResultRegNo()});
+            }
         }
     }
     return changed;
@@ -129,7 +236,7 @@ void BasicBlockCSE(CFG *C) {
         std::map<int, int> reg_replace_map;
         std::set<Instruction> EraseSet;
         for (auto [id, bb] : *C->block_map) {
-            changed |= BasicBlockCSE(bb, reg_replace_map, EraseSet);
+            changed |= BasicBlockCSE(bb, reg_replace_map, EraseSet, C);
         }
         // erase useless instructions and replace new RegOperand
         for (auto [id, bb] : *C->block_map) {
@@ -147,6 +254,7 @@ void BasicBlockCSE(CFG *C) {
                 I->ReplaceByMap(reg_replace_map);
             }
         }
+        //std::cerr<<"------------------------------\n\n";
     }
 }
 
@@ -160,8 +268,24 @@ void DomTreeWalkCSE(CFG *C) {
         for (auto v : C->DomTree.dom_tree[bbid]) {
             std::set<InstCSEInfo> tmpcse_set;
             for (auto I : v->Instruction_list) {
-                if (CanCSE(I) == false) {
+                if (CSENotConsider(I) == false) {
                     continue;
+                }
+                if (I->GetOpcode() == LOAD || I->GetOpcode() == STORE) {
+                    continue;    // Load will be CSE in GVN
+                }
+                if (I->GetOpcode() == CALL) {
+                    auto CallI = (CallInstruction *)I;
+                    if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+                        continue;    // external call
+                    }
+                    
+                    auto cfg = CFGMap[CallI->GetFunctionName()];
+                    // we only CSE independent call in this Pass
+                    // other call inst will be CSE in GVN
+                    if (!alias_analyser.CFG_isIndependent(cfg)) {
+                        continue;
+                    }
                 }
 
                 auto Info = GetCSEInfo(I);

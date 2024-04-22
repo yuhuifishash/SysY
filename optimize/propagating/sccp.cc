@@ -1,5 +1,6 @@
 #include "../include/ir.h"
 #include "lattice.h"
+#include <assert.h>
 
 static std::map<Instruction, ConstLattice> ConstLatticeMap;
 static std::map<Instruction, std::vector<Instruction>> SSAG{};    // SSA-Graph
@@ -164,9 +165,6 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
     auto op1_lattice_status = op1_lattice.status;
     auto op2_lattice_status = op2_lattice.status;
 
-    int op1_lattice_i32val = op1_lattice.vals.I32Val;
-    int op2_lattice_i32val = op2_lattice.vals.I32Val;
-
     if (lattice.status == ConstLattice::VAR) {
         return 0;
     }
@@ -179,55 +177,45 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
     if (lattice.status == ConstLattice::CONST) {
         return 0;
     }
+    if (this->GetDataType() == I32) {
+        int op1_lattice_i32val = op1_lattice.vals.I32Val;
+        int op2_lattice_i32val = op2_lattice.vals.I32Val;
+        lattice.status = ConstLattice::CONST;
+        lattice.val_type = ConstLattice::I32;
 
-    if (opcode == ADD) {
+        if (opcode == ADD) {
+            lattice.vals.I32Val = op1_lattice_i32val + op2_lattice_i32val;
+        } else if (opcode == SUB) {
+            lattice.vals.I32Val = op1_lattice_i32val - op2_lattice_i32val;
+        } else if (opcode == MUL) {
+            lattice.vals.I32Val = op1_lattice_i32val * op2_lattice_i32val;
+        } else if (opcode == DIV) {
+            lattice.vals.I32Val = op1_lattice_i32val / op2_lattice_i32val;
+        } else if (opcode == MOD) {
+            lattice.vals.I32Val = op1_lattice_i32val % op2_lattice_i32val;
+        } else {    // should not reach here
+            assert(false);
+        }
+    } else if (this->GetDataType() == FLOAT32) {
+        float op1_lattice_floatval = op1_lattice.vals.FloatVal;
+        float op2_lattice_floatval = op2_lattice.vals.FloatVal;
         lattice.status = ConstLattice::CONST;
-        lattice.vals.I32Val = op1_lattice_i32val + op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    } else if (opcode == SUB) {
-        lattice.status = ConstLattice::CONST;
-        lattice.vals.I32Val = op1_lattice_i32val - op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    } else if (opcode == MUL) {
-        lattice.status = ConstLattice::CONST;
-        lattice.vals.I32Val = op1_lattice_i32val * op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    } else if (opcode == DIV) {
-        lattice.status = ConstLattice::CONST;
-        lattice.vals.I32Val = op1_lattice_i32val / op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    } else if (opcode == MOD) {
-        lattice.status = ConstLattice::CONST;
-        lattice.vals.I32Val = op1_lattice_i32val % op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
+        lattice.val_type = ConstLattice::FLOAT;
+
+        if (opcode == FADD) {
+            lattice.vals.FloatVal = op1_lattice_floatval + op2_lattice_floatval;
+        } else if (opcode == FSUB) {
+            lattice.vals.FloatVal = op1_lattice_floatval - op2_lattice_floatval;
+        } else if (opcode == FMUL) {
+            lattice.vals.FloatVal = op1_lattice_floatval * op2_lattice_floatval;
+        } else if (opcode == FDIV) {
+            lattice.vals.FloatVal = op1_lattice_floatval / op2_lattice_floatval;
+        } else {    // should not reach here
+            assert(false);
+        }
+    } else {    // should not reach here
+        assert(false);
     }
-    if (opcode == FADD || opcode == FSUB || opcode == FMUL || opcode == FDIV) {
-        lattice.status = ConstLattice::VAR;
-    }
-
-    // float op1_lattice_floatval = op1_lattice.vals.FloatVal;
-    // float op2_lattice_floatval = op2_lattice.vals.FloatVal;
-
-    // if(opcode == FADD){
-    //     lattice.status = ConstLattice::CONST;
-    //     lattice.vals.FloatVal = op1_lattice_floatval + op2_lattice_floatval;
-    //     lattice.val_type = ConstLattice::FLOAT;
-    // }
-    // else if(opcode == FSUB){
-    //     lattice.status = ConstLattice::CONST;
-    //     lattice.vals.FloatVal = op1_lattice_floatval - op2_lattice_floatval;
-    //     lattice.val_type = ConstLattice::FLOAT;
-    // }
-    // else if(opcode == FMUL){
-    //     lattice.status = ConstLattice::CONST;
-    //     lattice.vals.FloatVal = op1_lattice_floatval * op2_lattice_floatval;
-    //     lattice.val_type = ConstLattice::FLOAT;
-    // }
-    // else if(opcode == FDIV){
-    //     lattice.status = ConstLattice::CONST;
-    //     lattice.vals.FloatVal = op1_lattice_floatval / op2_lattice_floatval;
-    //     lattice.val_type = ConstLattice::FLOAT;
-    // }
 
     return 1;
 }
@@ -240,9 +228,6 @@ int IcmpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
 
     auto op1_lattice_status = op1_lattice.status;
     auto op2_lattice_status = op2_lattice.status;
-
-    int op1_lattice_i32val = op1_lattice.vals.I32Val;
-    int op2_lattice_i32val = op2_lattice.vals.I32Val;
 
     if (lattice.status == ConstLattice::VAR) {
         return 0;
@@ -257,45 +242,76 @@ int IcmpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
         return 0;
     }
 
+    int op1_lattice_i32val = op1_lattice.vals.I32Val;
+    int op2_lattice_i32val = op2_lattice.vals.I32Val;
+    lattice.status = ConstLattice::CONST;
+    lattice.val_type = ConstLattice::I32;
+
     if (cond == eq) {
-        lattice.status = ConstLattice::CONST;
         lattice.vals.I32Val = op1_lattice_i32val == op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    }
-    if (cond == ne) {
-        lattice.status = ConstLattice::CONST;
+    } else if (cond == ne) {
         lattice.vals.I32Val = op1_lattice_i32val != op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    }
-    if (cond == sgt) {
-        lattice.status = ConstLattice::CONST;
+    } else if (cond == sgt) {
         lattice.vals.I32Val = op1_lattice_i32val > op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    }
-    if (cond == sge) {
-        lattice.status = ConstLattice::CONST;
+    } else if (cond == sge) {
         lattice.vals.I32Val = op1_lattice_i32val >= op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    }
-    if (cond == slt) {
-        lattice.status = ConstLattice::CONST;
+    } else if (cond == slt) {
         lattice.vals.I32Val = op1_lattice_i32val < op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
-    }
-    if (cond == sle) {
-        lattice.status = ConstLattice::CONST;
+    } else if (cond == sle) {
         lattice.vals.I32Val = op1_lattice_i32val <= op2_lattice_i32val;
-        lattice.val_type = ConstLattice::I32;
+    } else {    // should not reach here
+        assert(false);
     }
     return 1;
 }
 
 int FcmpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
+
+    auto op1_lattice = GetOperandLattice(op1, regresult_map);
+    auto op2_lattice = GetOperandLattice(op2, regresult_map);
+
+    auto op1_lattice_status = op1_lattice.status;
+    auto op2_lattice_status = op2_lattice.status;
+
     if (lattice.status == ConstLattice::VAR) {
         return 0;
     }
-    lattice.status = ConstLattice::VAR;
+
+    if (op1_lattice_status == 2 || op2_lattice_status == 2) {
+        lattice.status = ConstLattice::VAR;
+        return 1;
+    }
+
+    if (lattice.status == ConstLattice::CONST) {
+        return 0;
+    }
+
+    float op1_lattice_floatval = op1_lattice.vals.FloatVal;
+    float op2_lattice_floatval = op2_lattice.vals.FloatVal;
+    lattice.status = ConstLattice::CONST;
+    lattice.val_type = ConstLattice::FLOAT;
+
+    if (this->GetDataType() == FLOAT32) {
+        if (cond == OEQ) {
+            lattice.vals.I32Val = op1_lattice_floatval == op2_lattice_floatval;
+        } else if (cond == ONE) {
+            lattice.vals.I32Val = op1_lattice_floatval != op2_lattice_floatval;
+        } else if (cond == OGT) {
+            lattice.vals.I32Val = op1_lattice_floatval > op2_lattice_floatval;
+        } else if (cond == OGE) {
+            lattice.vals.I32Val = op1_lattice_floatval >= op2_lattice_floatval;
+        } else if (cond == OLT) {
+            lattice.vals.I32Val = op1_lattice_floatval < op2_lattice_floatval;
+        } else if (cond == OLE) {
+            lattice.vals.I32Val = op1_lattice_floatval <= op2_lattice_floatval;
+        } else {    // should not reach here
+            assert(false);
+        }
+    } else {    // should not reach here
+        assert(false);
+    }
+
     return 1;
 }
 
@@ -319,19 +335,55 @@ int GetElementprtInstruction::ConstPropagate(std::map<int, Instruction> &regresu
 
 int FptosiInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
+
+    auto op_lattice = GetOperandLattice(value, regresult_map);
+    auto op_lattice_status = op_lattice.status;
+    float op_lattice_floatval = op_lattice.vals.FloatVal;
+
     if (lattice.status == ConstLattice::VAR) {
         return 0;
     }
-    lattice.status = ConstLattice::VAR;
+
+    if (op_lattice_status == ConstLattice::VAR) {
+        lattice.status = ConstLattice::VAR;
+        return 1;
+    }
+
+    if (lattice.status == ConstLattice::CONST) {
+        return 0;
+    }
+
+    lattice.status = ConstLattice::CONST;
+    lattice.val_type = ConstLattice::I32;
+    lattice.vals.I32Val = (int)op_lattice_floatval;
+
     return 1;
 }
 
 int SitofpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
+
+    auto op_lattice = GetOperandLattice(value, regresult_map);
+    auto op_lattice_status = op_lattice.status;
+    int op_lattice_i32val = op_lattice.vals.I32Val;
+
     if (lattice.status == ConstLattice::VAR) {
         return 0;
     }
-    lattice.status = ConstLattice::VAR;
+
+    if (op_lattice_status == ConstLattice::VAR) {
+        lattice.status = ConstLattice::VAR;
+        return 1;
+    }
+
+    if (lattice.status == ConstLattice::CONST) {
+        return 0;
+    }
+
+    lattice.status = ConstLattice::CONST;
+    lattice.val_type = ConstLattice::FLOAT;
+    lattice.vals.FloatVal = (float)op_lattice_i32val;
+
     return 1;
 }
 
@@ -356,12 +408,14 @@ int ZextInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     }
 
     lattice.status = ConstLattice::CONST;
+    lattice.val_type = ConstLattice::I32;
     lattice.vals.I32Val = op_lattice_i32val;
 
     return 1;
 }
 
 // true if statu changes, false if not
+// used for phi instructions
 bool UpdateLatticeStatus(Instruction I, ConstLattice pre_lattice) {
     auto &lattice = ConstLatticeMap[I];
     if (lattice.status == ConstLattice::UNINIT) {

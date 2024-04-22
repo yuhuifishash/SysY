@@ -66,7 +66,7 @@ AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I, Operan
             return ModRefResult::ModRef;
         }
         auto rwinfo = CFGMemRWMap[CFGMap[call_name]];
-        if(rwinfo.have_external_call){
+        if (rwinfo.have_external_call) {
             return ModRefResult::ModRef;
         }
         if (rwinfo.isIndependent()) {
@@ -400,7 +400,7 @@ void AliasAnalysis(LLVMIR *IR) {
     alias_analyser.AliasAnalysis();
 
     //------------------------test
-    // alias_analyser.PrintAAResult();
+    // alias_analyser.PrintAAResult(true);
     // alias_analyser.AAtest();
 }
 
