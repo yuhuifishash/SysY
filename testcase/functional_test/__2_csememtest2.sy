@@ -1,0 +1,102 @@
+int x[100] = {};
+int y[100] = {};
+const int p = 4354;
+int no_refmod(int x)
+{
+  return (x+x+x)%p;
+}
+
+int ref()
+{
+  int S = 0;
+  int i = 0;
+  while(i < 100){
+    S = S + x[i];
+    S = S*y[i];
+    S = S + no_refmod(S);
+    S = S%p;
+    i = i + 1;
+  }
+  return S;
+}
+
+void mod()
+{
+  int i = 0;
+  while(i < 100){
+    x[i] = x[i] + x[i] + 2;
+    y[i] = y[i] + y[i] + 3;
+    x[i] = x[i]%p;
+    y[i] = y[i]%p;
+    i = i + 1;
+  }
+}
+
+void externalcall()
+{
+  putarray(100,x);
+  putarray(100,y);
+}
+
+void mod2()
+{
+  mod();
+}
+
+void mod3()
+{
+  mod2();
+}
+
+int main()
+{
+  int ans = 0, ans2 = 0, ans3 = 0;
+  ans = ans + no_refmod(3);
+  ans = ans + no_refmod(3);
+  ans = ans + no_refmod(4);
+  ans = ans + no_refmod(3);
+  ans = ans + no_refmod(3);
+  ans = ans + no_refmod(123);
+
+  mod();
+  ans3 = ans + no_refmod(123);
+  ans2 = ans + ref();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  mod();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans3 = ans3 + no_refmod(123);
+  ans3 = ans3 + no_refmod(123);
+  ans3 = ans3 + no_refmod(123);
+  mod2();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  mod3();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  externalcall();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans2 = ans2 + ref();
+  ans3 = ans3 + no_refmod(123);
+  ans3 = ans3 + no_refmod(123);
+  mod3();
+  mod3();
+
+  putint(ans);
+  putch(10);
+
+  putint(ans2);
+  putch(10);
+
+  putint(ans3);
+  putch(10);
+
+  externalcall();
+
+}
+

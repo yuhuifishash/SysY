@@ -86,6 +86,8 @@ public:
     bool CFG_isWriteMem(CFG *C) { return CFGMemRWMap[C].isWriteMem(); }
     bool CFG_isIndependent(CFG *C) { return CFGMemRWMap[C].isIndependent(); }
     bool CFG_isNoSizeEffect(CFG *C) { return CFGMemRWMap[C].isNoSizeEffect(); }
+    bool CFG_haveExternalCall(CFG *C) { return CFGMemRWMap[C].have_external_call; }
+    auto GetWritePtrs(CFG *C) { return CFGMemRWMap[C].WritePtrs; }
 
     void PrintAAResult(bool is_printptr);
     void AAtest();
