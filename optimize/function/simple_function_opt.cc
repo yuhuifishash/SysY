@@ -13,18 +13,12 @@ void MakeFunctionOneExit(CFG *C) {
     enum LLVMType ret_type = VOID;
     int ret_cnt = 0;
     for (auto [id, bb] : *C->block_map) {
-        // if(id==(*C->block_map).size()-1){
-        //     break;
-        // }//function main()
         auto I = bb->Instruction_list.back();
         if (I->GetOpcode() != RET) {
             continue;
         }
         ret_cnt++;
         auto RetI = (RetInstruction *)I;
-        // if (RetI->GetType() == VOID) {
-        //     continue;
-        // }
         ret_type = RetI->GetType();
         OneExitqueue.push(bb);
     }
@@ -67,7 +61,7 @@ void MakeFunctionOneExit(CFG *C) {
             bb->Instruction_list.pop_back();
             bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
         }
-        B->InsertInstruction(1, new RetInstruction(VOID,0));
+        B->InsertInstruction(1, new RetInstruction(VOID,nullptr));
     }
 
     C->ret_block = B;
@@ -88,7 +82,6 @@ void TailRecursiveEliminate(CFG *C) {
     std::deque<Instruction> AllocaDeque;
     std::vector<Operand> PtrArr;//store newptr equal to oldparam
     std::set<Instruction> EraseSet;
-    std::set<Instruction> InsertSet;
     //when exist call ptr, ret
     for (auto [id, bb] : *C->block_map) {
         if (bb->Instruction_list.back()->GetOpcode() != RET) {
@@ -111,31 +104,18 @@ void TailRecursiveEliminate(CFG *C) {
                 EraseSet.insert(retI);
                 auto list_size = callI->GetParameterList().size();
                 auto bb0_it = --bb0->Instruction_list.end();
-                if(!NeedtoInsertPTR){
-                    //insert alloca and store instruction of ptr
-                    NeedtoInsertPTR=1;
-                    for(u_int32_t i=0;i<FuncdefI->GetFormalSize();++i){
-                        if(FuncdefI->formals[i]==PTR){
-                            auto PtrReg=new RegOperand(++C->max_reg);
-                            PtrArr.push_back(PtrReg);
-                            AllocaDeque.push_back(new AllocaInstruction(PTR,PtrReg));
-                            StoreDeque.push_back(new StoreInstruction(PTR,PtrReg,FuncdefI->formals_reg[i]));
-                        }
-                    }
-                    while(!StoreDeque.empty()){
-                        bb0->InsertInstruction(0,StoreDeque.back());
-                        StoreDeque.pop_back();
-                    }
-                    for(auto *it:AllocaDeque){
-                        bb0->InsertInstruction(0,it);
-                    }
-                }
+                
                 auto bb0_ptr_it = bb0->Instruction_list.begin();
                 while((*bb0_ptr_it)->GetOpcode() == ALLOCA){
                     bb0_ptr_it++;
                 }
                 //if exist alloca ptr,bb0_ptr_it=the end of alloca ptr
                 for (auto i = 0; i < list_size; i++) {
+                    auto callI_reg = (RegOperand *)(callI->GetParameterList()[i].second);
+                    if (callI_reg->GetRegNo() == i) {
+                        continue;
+                    }// funtion params id stand by i
+                    NeedtoInsertPTR=1;
                     Instruction allocaI;
                     if (callI->GetParameterList()[i].first == PTR) {
                         bb0_ptr_it--;
@@ -148,7 +128,7 @@ void TailRecursiveEliminate(CFG *C) {
                             allocaI = *bb0_it;
                         }
                     }
-                    auto callI_reg = (RegOperand *)(callI->GetParameterList()[i].second);
+
                     auto storeI = new StoreInstruction(callI->GetParameterList()[i].first, allocaI->GetResultReg(),
                                                        callI->GetParameterList()[i].second);
                     bb->InsertInstruction(1, storeI);
@@ -156,6 +136,25 @@ void TailRecursiveEliminate(CFG *C) {
                 bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(1)));
             }
         }
+    }
+    if(NeedtoInsertPTR){
+        //insert alloca and store instruction of ptr
+        for(u_int32_t i=0;i<FuncdefI->GetFormalSize();++i){
+            if(FuncdefI->formals[i]==PTR){
+                auto PtrReg=new RegOperand(++C->max_reg);
+                PtrArr.push_back(PtrReg);
+                AllocaDeque.push_back(new AllocaInstruction(PTR,PtrReg));
+                StoreDeque.push_back(new StoreInstruction(PTR,PtrReg,FuncdefI->formals_reg[i]));
+            }
+        }
+    }
+    
+    while(!StoreDeque.empty()){
+        bb0->InsertInstruction(0,StoreDeque.back());
+        StoreDeque.pop_back();
+    }
+    for(auto *it:AllocaDeque){
+        bb0->InsertInstruction(0,it);
     }
     for (auto [id, bb] : *C->block_map) {
         auto tmp_Instruction_list = bb->Instruction_list;
