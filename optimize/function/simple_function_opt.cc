@@ -13,15 +13,18 @@ void MakeFunctionOneExit(CFG *C) {
     enum LLVMType ret_type = VOID;
     int ret_cnt = 0;
     for (auto [id, bb] : *C->block_map) {
+        // if(id==(*C->block_map).size()-1){
+        //     break;
+        // }//function main()
         auto I = bb->Instruction_list.back();
         if (I->GetOpcode() != RET) {
             continue;
         }
         ret_cnt++;
         auto RetI = (RetInstruction *)I;
-        if (RetI->GetType() == VOID) {
-            continue;
-        }
+        // if (RetI->GetType() == VOID) {
+        //     continue;
+        // }
         ret_type = RetI->GetType();
         OneExitqueue.push(bb);
     }
@@ -31,35 +34,42 @@ void MakeFunctionOneExit(CFG *C) {
         }
         return;
     }
-    auto ret_ptr = new RegOperand(++C->max_reg);
     auto B = C->NewBlock();
-    auto B_Retreg = new RegOperand(++C->max_reg);
-    auto bb0 = C->block_map->begin()->second;
-    auto AllocaI = new AllocaInstruction(ret_type, ret_ptr);
-    bb0->InsertInstruction(0, AllocaI);
-    /*
-    ret type value -->
-    store type value pointer
-    br uncond newblock
-    */
-    while (!OneExitqueue.empty()) {
-        auto bb = OneExitqueue.front();
-        OneExitqueue.pop();
-        auto RetI = (RetInstruction *)bb->Instruction_list.back();
-        bb->Instruction_list.pop_back();
-        if (ret_type != VOID) {
+    if(ret_type!=VOID){
+            /*
+            ret type value -->
+            store type value pointer
+            br uncond newblock
+            */
+            /*
+            load reg_type pointer reg
+            ret reg
+            */
+        auto ret_ptr = new RegOperand(++C->max_reg);
+        auto B_Retreg = new RegOperand(++C->max_reg);
+        auto bb0 = C->block_map->begin()->second;
+        auto AllocaI = new AllocaInstruction(ret_type, ret_ptr);
+        bb0->InsertInstruction(0, AllocaI);
+        while (!OneExitqueue.empty()) {
+            auto bb = OneExitqueue.front();
+            OneExitqueue.pop();
+            auto RetI = (RetInstruction *)bb->Instruction_list.back();
+            bb->Instruction_list.pop_back();
             bb->InsertInstruction(1, new StoreInstruction(ret_type, ret_ptr, RetI->GetRetVal()));
+            bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
         }
-        bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
-    }
-    /*
-    load reg_type pointer reg
-    ret reg
-    */
-    if (ret_type != VOID) {
         B->InsertInstruction(1, new LoadInstruction(ret_type, ret_ptr, B_Retreg));
+        B->InsertInstruction(1, new RetInstruction(ret_type, B_Retreg));
+    }else{
+         while (!OneExitqueue.empty()) {
+            auto bb = OneExitqueue.front();
+            OneExitqueue.pop();
+            bb->Instruction_list.pop_back();
+            bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
+        }
+        B->InsertInstruction(1, new RetInstruction(VOID,0));
     }
-    B->InsertInstruction(1, new RetInstruction(ret_type, B_Retreg));
+
     C->ret_block = B;
     C->BuildCFG();
 }

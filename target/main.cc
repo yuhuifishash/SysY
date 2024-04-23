@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(EliminateSimpleConstInstructions);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
         llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
-        //llvmIR.PassExecutor(MakeFunctionOneExit);
+        llvmIR.PassExecutor(MakeFunctionOneExit);
         // llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 
         llvmIR.BuildDominatorTree();
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(BasicBlockCSE);
         llvmIR.PassExecutor(DomTreeWalkCSE);
 
-        // llvmIR.PassExecutor( ScalarEvolution );
+        llvmIR.PassExecutor( ScalarEvolution );
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
