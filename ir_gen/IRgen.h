@@ -1,10 +1,10 @@
 #ifndef IRGEN_H
 #define IRGEN_H
 
-#include "SysY_tree.h"
-#include "cfg.h"
-#include "symtab.h"
-#include "type.h"
+#include "../include/SysY_tree.h"
+#include "../include/cfg.h"
+#include "../include/symtab.h"
+#include "../include/type.h"
 #include <assert.h>
 #include <map>
 #include <vector>

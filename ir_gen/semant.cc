@@ -1,7 +1,7 @@
 #include "semant.h"
-#include "SysY_tree.h"
-#include "ir.h"
-#include "type.h"
+#include "../include/SysY_tree.h"
+#include "../include/ir.h"
+#include "../include/type.h"
 
 extern LLVMIR llvmIR;
 extern StringTable str_table;

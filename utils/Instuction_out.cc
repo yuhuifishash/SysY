@@ -1,7 +1,6 @@
-#include "Instruction.h"
-#include "SysY_tree.h"
-#include "basic_block.h"
-#include "ir.h"
+#include "../include/Instruction.h"
+#include "../include/basic_block.h"
+#include "../include/ir.h"
 #include <sstream>
 AutoCounter BasicInstruction::insNoCounter;
 AutoCounter RegOperand::curRegNo;

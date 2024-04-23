@@ -1,4 +1,4 @@
-#include "dynamic_bitset.h"
+#include "../include/dynamic_bitset.h"
 #include <assert.h>
 int DynamicBitset::count() {
     int result = 0;

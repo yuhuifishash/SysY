@@ -1,5 +1,5 @@
-#include "SysY_tree.h"
-#include "type.h"
+#include "../include/SysY_tree.h"
+#include "../include/type.h"
 
 std::string type_status[5] = {"Void", "Int", "Float", "Bool", "Ptr"};
 

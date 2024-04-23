@@ -66,8 +66,8 @@
 /* First part of user prologue.  */
 #line 1 "parser/SysY_parser.y"
 
-#include "SysY_tree.h"
-#include "type.h"
+#include "../include/SysY_tree.h"
+#include "../include/type.h"
 #include <fstream>
 Program ast_root;
 

@@ -1,9 +1,9 @@
 #ifndef SEMANT_H
 #define SEMANT_H
 
-#include "SysY_tree.h"
-#include "symtab.h"
-#include "type.h"
+#include "../include/SysY_tree.h"
+#include "../include/symtab.h"
+#include "../include/type.h"
 #include <map>
 #include <set>
 #include <vector>
