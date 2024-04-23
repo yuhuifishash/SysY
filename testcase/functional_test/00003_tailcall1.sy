@@ -1,0 +1,68 @@
+int A[100] = {};
+int B[100] = {};
+int C[100] = {};
+int f(int A[],int B[],int C[],int n,int S)
+{
+    if(n == 0){
+        return S;
+    }
+    int i = 0;
+    while(i < 100){ 
+        A[i] = B[i] + C[i];
+        B[i] = A[i] + C[i];
+        C[i] = A[i] + B[i];
+        A[i] = A[i] + B[i] + C[i];
+        i = i + 1;
+    }
+    putarray(100,A);
+    putarray(100,B);
+    putarray(100,C);
+    return f(B,C,A,n-1,S+A[0]+B[0]+C[0]);
+}
+int main()
+{
+    int i = 0;
+    while(i < 100){ 
+        A[i] = i;
+        B[i] = i;
+        C[i] = i;
+        i = i + 1;
+    }
+    int ans = 0;
+    ans = ans + f(A,B,C,4,0);
+    i = 0;
+    while(i < 100){ 
+        A[i] = i;
+        B[i] = i;
+        C[i] = i;
+        i = i + 1;
+    }
+    ans = ans + f(A,A,A,4,1);
+    i = 0;
+    while(i < 100){ 
+        A[i] = i;
+        B[i] = i;
+        C[i] = i;
+        i = i + 1;
+    }
+    ans = ans + f(A,B,B,4,2);
+    i = 0;
+    while(i < 100){ 
+        A[i] = i;
+        B[i] = i;
+        C[i] = i;
+        i = i + 1;
+    }
+    ans = ans + f(C,C,A,4,3);
+    i = 0;
+    while(i < 100){ 
+        A[i] = i;
+        B[i] = i;
+        C[i] = i;
+        i = i + 1;
+    }
+    ans = ans + f(B,B,C,4,4);
+    putint(ans);
+    putch(10);
+    return 0;
+}

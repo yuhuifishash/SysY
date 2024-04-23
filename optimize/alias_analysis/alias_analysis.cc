@@ -287,7 +287,7 @@ void AliasAnalyser::AliasAnalysis() {
             }
         }
     }
-    //PrintAAResult(false);
+    // PrintAAResult(false);
 }
 
 // analysis all the ptr operand in CFG* C

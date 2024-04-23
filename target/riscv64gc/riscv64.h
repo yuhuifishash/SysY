@@ -1,7 +1,7 @@
 #ifndef RISCV64_H
 #define RISCV64_H
-#include "../common/machine_passes/register_alloc/physical_register.h"
 #include "../common/MachineBaseInstruction.h"
+#include "../common/machine_passes/register_alloc/physical_register.h"
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"

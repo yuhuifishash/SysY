@@ -1,8 +1,8 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include "scev/scev_expr.h"
 #include "../../include/basic_block.h"
+#include "scev/scev_expr.h"
 
 class CFG;
 

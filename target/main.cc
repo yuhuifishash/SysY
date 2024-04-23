@@ -1,12 +1,12 @@
-#include "../parser/SysY_parser.tab.h"
 #include "../include/ir.h"
 #include "../ir_gen/semant.h"
+#include "../parser/SysY_parser.tab.h"
+#include <assert.h>
+#include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
-#include <cstring>
-#include <assert.h>
 
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
     fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
     if (optimize_flag) {
         llvmIR.PassExecutor(EliminateSimpleConstInstructions);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
-        llvmIR.PassExecutor( TailRecursiveEliminate ); //to do
+        llvmIR.PassExecutor(TailRecursiveEliminate);    // to do
         llvmIR.PassExecutor(MakeFunctionOneExit);
         // llvmIR.PassExecutor( SimplifyCFGBeforeMem2Reg );//to do
 
@@ -154,11 +154,11 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(AliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
-        
+
         llvmIR.PassExecutor(BasicBlockCSE);
         llvmIR.PassExecutor(DomTreeWalkCSE);
 
-        llvmIR.PassExecutor( ScalarEvolution );
+        // llvmIR.PassExecutor( ScalarEvolution ); // to do
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
