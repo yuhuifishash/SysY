@@ -89,21 +89,22 @@ void TailRecursiveEliminate(CFG *C) {
     std::deque<Instruction> AllocaDeque;
     std::vector<Operand> PtrArr;    // store newptr equal to oldparam
     std::set<Instruction> EraseSet;
+    std::unordered_map<int,RegOperand*> PtrUsed;
     // when exist call ptr, ret
 
     //@NeedtoInsertPTR:check if ptr in function params need to be insert 
     for (auto [id, bb] : *C->block_map) {
-        if(NeedtoInsertPTR){
-            break;
-        }
+        // if(NeedtoInsertPTR){
+        //     break;
+        // }
         if (bb->Instruction_list.back()->GetOpcode() != RET) {
             continue;
         }
         auto retI = (RetInstruction *)bb->Instruction_list.back();
         for (auto I : bb->Instruction_list) {
-            if(NeedtoInsertPTR){
-                break;
-            }
+            // if(NeedtoInsertPTR){
+            //     break;
+            // }
             if (I->GetOpcode() != CALL) {
                 continue;
             }
@@ -121,8 +122,17 @@ void TailRecursiveEliminate(CFG *C) {
                     if (callI_reg->GetRegNo() == i) {
                         continue;
                     }    // funtion params id stand by i
-                    NeedtoInsertPTR = 1;
-                    break;
+                    if(FuncdefI->formals[i] == PTR){
+                        NeedtoInsertPTR = 1;
+                        if(PtrUsed.find(i)==PtrUsed.end()){
+                            auto PtrReg = new RegOperand(++C->max_reg);
+                            PtrArr.push_back(PtrReg);
+                            PtrUsed[i]=PtrReg;
+                            // AllocaDeque.push_back(new AllocaInstruction(PTR, PtrReg));
+                            // StoreDeque.push_back(new StoreInstruction(PTR, PtrReg, FuncdefI->formals_reg[i]));
+                        }
+                        // break;
+                    }
                 }
             }
         }
@@ -131,8 +141,8 @@ void TailRecursiveEliminate(CFG *C) {
         // insert alloca and store instruction of ptr
         for (u_int32_t i = 0; i < FuncdefI->GetFormalSize(); ++i) {
             if (FuncdefI->formals[i] == PTR) {
-                auto PtrReg = new RegOperand(++C->max_reg);
-                PtrArr.push_back(PtrReg);
+                auto PtrReg = PtrUsed[i];
+                // PtrArr.push_back(PtrReg);
                 AllocaDeque.push_back(new AllocaInstruction(PTR, PtrReg));
                 StoreDeque.push_back(new StoreInstruction(PTR, PtrReg, FuncdefI->formals_reg[i]));
             }
