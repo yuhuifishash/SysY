@@ -1,7 +1,7 @@
-#include "type.h"
-#include "Instruction.h"
-#include "basic_block.h"
-#include "tree.h"
+#include "../include/type.h"
+#include "../include/Instruction.h"
+#include "../include/basic_block.h"
+#include "../include/tree.h"
 #include <assert.h>
 /*
 -------------------------------------------------------------

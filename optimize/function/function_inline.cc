@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/ir.h"
 #include "function_basicinfo.h"
 // we process function call in bottom-up order(CallGraphSCC)
 // in one SCC, we only inline several calls(the code size should not become to large)

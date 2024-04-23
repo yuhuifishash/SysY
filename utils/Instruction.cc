@@ -1,5 +1,5 @@
-#include "Instruction.h"
-#include "basic_block.h"
+#include "../include/Instruction.h"
+#include "../include/basic_block.h"
 #include <assert.h>
 
 void IRgenArithmeticI32(LLVMBlock B, LLVMIROpcode opcode, int reg1, int reg2, int result_reg) {

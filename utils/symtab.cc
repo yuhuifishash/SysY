@@ -1,4 +1,4 @@
-#include "symtab.h"
+#include "../include/symtab.h"
 
 Symbol StringTable::add_string(std::string s) {
     auto it = string_table.find(s);

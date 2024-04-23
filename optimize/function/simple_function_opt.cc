@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/cfg.h"
 
 /**
  * this function will make function only has one return block.

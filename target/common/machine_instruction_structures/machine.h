@@ -1,8 +1,8 @@
 #ifndef MACHINE
 #define MACHINE
 
-#include "MachineBaseInstruction.h"
-#include "ir.h"
+#include "../MachineBaseInstruction.h"
+#include "../../../include/ir.h"
 class MachineFunction;
 class MachineBlock;
 class MachineUnit;

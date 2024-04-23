@@ -1,5 +1,5 @@
 #include "IRgen.h"
-#include "ir.h"
+#include "../include/ir.h"
 #include "semant.h"
 
 extern StringTable str_table;

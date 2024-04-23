@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/cfg.h"
 #include "lattice.h"
 #include <assert.h>
 

@@ -1,6 +1,6 @@
 #ifndef DOMINATOR_TREE_H
 #define DOMINATOR_TREE_H
-#include "../include/basic_block.h"
+#include "../../include/basic_block.h"
 #include <bitset>
 #include <set>
 #include <vector>
