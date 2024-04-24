@@ -1,0 +1,34 @@
+int n,lson[205],rson[205];
+
+void DFS(int rt,int b[],int size){
+    if(rt>n||rt==-1){
+        return;
+    }
+    b[size]=rt;
+    DFS(lson[rt],b,size+1);
+    DFS(rson[rt],b,size+1);
+}
+int main(){
+    n=200;
+    int i;
+    i=0;
+    int j=0;
+    while(i<n){
+        if(j==0){
+            lson[i]=i+1;
+            rson[i]=-1;
+            j=1;
+        }else{
+            rson[i]=i+1;
+            lson[i]=-1;
+            j=0;
+        }
+        i=i+1;
+    }
+    lson[n-1]=-1;
+    rson[n-1]=-1;
+    int b[200];
+    DFS(0,b,0);
+    putarray(200,b);
+    return 0;
+}
