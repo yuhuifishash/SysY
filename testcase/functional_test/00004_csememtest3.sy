@@ -1,0 +1,61 @@
+int A[100] = {};
+int B[100] = {};
+int C[100] = {};
+int D[100] = {};
+const int p = 234145;
+void f(int A[],int B[],int C[],int D[],int n)
+{
+    if(n == 0){
+        return;
+    }
+    int i = 0;
+    while(i < 100){
+        A[i] = C[i] + B[i] + D[i];
+        B[i] = A[i] + C[i] + D[i];
+        C[i] = B[i] + A[i] + D[i];
+        A[i] = A[i]%p;
+        B[i] = B[i]%p;
+        C[i] = C[i]%p;
+        i = i + 1;
+    }
+    f(B,C,A,D,n-1);
+}
+int sum(int A[])
+{
+    int i = 0;
+    int S = 0;
+    while(i < 100){
+        S = S + A[i];
+        i = i + 1;
+    }
+    return S;
+}
+int main()
+{
+    int i = 0;
+    while(i < 100){
+        A[i] = 1 + i/4;
+        B[i] = 2 + i/3;
+        C[i] = 3 + i/2;
+        D[i] = 4 + i;
+        i = i + 1;
+    }
+    int ans = 0;
+    ans = ans + sum(D);
+    f(A,B,C,D,10);
+    ans = ans + sum(D);
+    f(A,A,A,D,10);
+    ans = ans + sum(D);
+    ans = ans + sum(A);
+    f(D,D,D,A,10);
+    ans = ans + sum(A);
+    ans = ans + sum(D);
+
+    putint(ans);
+    putch(10);
+    putarray(100,A);
+    putarray(100,B);
+    putarray(100,C);
+    putarray(100,D);
+    return 0;
+}

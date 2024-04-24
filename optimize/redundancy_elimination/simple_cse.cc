@@ -86,7 +86,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
     }
 
     auto cfg = CFGMap[CallI->GetFunctionName()];
-    auto writeptrs = alias_analyser.GetWritePtrs(cfg);
+    
     // have external call
     if (alias_analyser.CFG_haveExternalCall(cfg)) {
         // for simple, we do not consider independent call there, this can be CSE in DomTreeWalkCSE
@@ -102,6 +102,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         assert((*it)->GetOpcode() == LOAD);
         auto LoadI = (LoadInstruction *)(*it);
         auto ptr = LoadI->GetPointer();
+        
         auto result = alias_analyser.QueryInstModRef(I, ptr, C);
         if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
             // I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
@@ -113,10 +114,27 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         }
     }
 
+    auto writeptrs = alias_analyser.GetWritePtrs(cfg);
+    std::vector<Operand> real_writeptrs;
+    for(auto ptr:writeptrs){
+        if(ptr->GetOperandType() == BasicOperand::GLOBAL){
+            real_writeptrs.push_back(ptr);
+        }else if(ptr->GetOperandType() == BasicOperand::REG){
+            int ptr_regno = ((RegOperand *)ptr)->GetRegNo();
+
+            assert(ptr_regno < CallI->GetParameterList().size());
+            
+            auto [type, real_ptr2] = CallI->GetParameterList()[ptr_regno];
+            real_writeptrs.push_back(real_ptr2);
+        }else{//should not reach here
+            assert(false);
+        }
+    }
+
     for (auto it = CallInstSet.begin(); it != CallInstSet.end();) {
         assert((*it)->GetOpcode() == CALL);
         bool is_needkill = false;
-        for (auto ptr : writeptrs) {
+        for (auto ptr : real_writeptrs) {
             if (alias_analyser.QueryInstModRef(*it, ptr, C) != AliasAnalyser::NoModRef) {
                 is_needkill = true;
                 break;
