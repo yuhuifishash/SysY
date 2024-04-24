@@ -1,0 +1,93 @@
+const int maxn=5e5+55;
+int n,m,k;
+float a[maxn],minn=1e9,maxx;
+int check(float x){
+    int daidai,now,i;
+    daidai=k;
+    now=1;
+    i=2;
+    while(i<=m){
+        int y;
+        y=a[i]-a[now];
+        if(y<x){
+            daidai=daidai-1;
+        }else{
+            now=i;
+        } 
+        i=i+1;
+        if(daidai<0){
+            return 0;
+        }
+    }
+    return 1;
+}
+float abs(float x){
+    if(x<0){
+        return -x;
+    }
+    return x;
+}
+float calc(float l,float r){
+    
+    float now=abs(r-l);
+    if(now<=1e-6){
+        return l;
+    }
+    float mid;
+    mid=l+r;
+    mid=mid/2;
+    int Check=check(mid);
+    if(Check==1){
+        return calc(mid,r);
+    }else{
+        return calc(l,mid);
+    }
+}
+void sort(float b[],int m){
+    int i;
+    int j;
+    i=1;
+    j=1;
+    while(i<=m){
+        while(j<i){
+            if(b[i]<b[j]){
+                float x;
+                x=b[i];
+                b[i]=b[j];
+                b[j]=x;
+            }
+            j=j+1;
+        }
+        i=i+1;
+    }
+}
+int main(){
+    n=getint();
+    m=getint();
+    k=getint();
+    int i;
+    i=2;
+    while(i<=m+1){
+        a[i]=getfloat();
+        i=i+1;
+    }
+    a[1]=0;
+    a[m+2]=n;
+    m=m+2;
+    sort(a,m);
+    i=2;
+    while(i<=m){
+        float x=a[i]-a[i-1];
+        if(minn>x){
+            minn=x;
+        }
+        if(maxx<x){
+            maxx=x;
+        }
+        i=i+1;
+    }
+    float ans;
+    ans=calc(minn,maxx);
+    putfloat(ans);
+    return 0;
+}
