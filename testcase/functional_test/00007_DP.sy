@@ -1,26 +1,32 @@
 const int maxn=1e3+5;
 int n=1e3,m;
 float a[maxn],ff[maxn];
-float g[maxn];
-float DFS(int now,float ans1,float ans2,float ans3){
-    if(now==n){
-        return ans2;
-    }
+float DFS(int now,float ans1,float ans2,float ans3,float g[]){
     ff[now]=ans3+a[now]*(3*ans1+3*ans2+1);
     g[now]=a[now]*(ans1+1);
-    return DFS(now+1,g[now],a[now]*(ans1+2*ans2+1),ff[now]);
+    if(now==n){
+        putfarray(now,g);
+        return ans2;
+    }
+    
+    float f[maxn];
+    int i=0;
+    while(i<n){
+        f[i]=g[i]+ans1+ans2+ans3;
+        i=i+1;
+    }
+    return DFS(now+1,g[now],a[now]*(ans1+2*ans2+1),ff[now],f);
 }
 
 int main(){
 	getfarray(a);
-    
+    float g[maxn]={};
     g[0]=a[0];
     ff[0]=a[0];
     float ans;
-    ans=DFS(1,a[0],a[0],a[0]);
+    ans=DFS(1,a[0],a[0],a[0],g);
     putfloat(ans);
     putch(32);
     putfarray(n,ff);
-    putfarray(n,g);
     return 0;
 }
