@@ -1,0 +1,26 @@
+const int maxn=1e3+5;
+int n=1e3,m;
+float a[maxn],ff[maxn];
+float g[maxn];
+float DFS(int now,float ans1,float ans2,float ans3){
+    if(now==n){
+        return ans2;
+    }
+    ff[now]=ans3+a[now]*(3*ans1+3*ans2+1);
+    g[now]=a[now]*(ans1+1);
+    return DFS(now+1,g[now],a[now]*(ans1+2*ans2+1),ff[now]);
+}
+
+int main(){
+	getfarray(a);
+    
+    g[0]=a[0];
+    ff[0]=a[0];
+    float ans;
+    ans=DFS(1,a[0],a[0],a[0]);
+    putfloat(ans);
+    putch(32);
+    putfarray(n,ff);
+    putfarray(n,g);
+    return 0;
+}
