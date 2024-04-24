@@ -90,7 +90,7 @@ void TailRecursiveEliminate(CFG *C) {
     std::set<Instruction> EraseSet;
     std::unordered_map<int,RegOperand*> PtrUsed;
     // when exist call ptr, ret
-
+    // FuncdefI->PrintIR(std::cout);
     //@NeedtoInsertPTR:check if ptr in function params need to be insert 
     for (auto [id, bb] : *C->block_map) {
         if (bb->Instruction_list.back()->GetOpcode() != RET) {
