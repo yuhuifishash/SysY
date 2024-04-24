@@ -42,7 +42,7 @@ public:
     bool MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwinfo, std::map<int, PtrRegMemInfo> &ptrmap);
 
     bool isIndependent() { return (!have_external_call) && ReadPtrs.size() == 0 && WritePtrs.size() == 0; }
-    bool isNoSizeEffect() { return (!have_external_call) && WritePtrs.size() == 0; }
+    bool isNoSideEffect() { return (!have_external_call) && WritePtrs.size() == 0; }
     bool isReadMem() { return ReadPtrs.size() != 0 || have_external_call; }
     bool isWriteMem() { return WritePtrs.size() != 0 || have_external_call; }
 };
@@ -85,9 +85,10 @@ public:
     bool CFG_isReadMem(CFG *C) { return CFGMemRWMap[C].isReadMem(); }
     bool CFG_isWriteMem(CFG *C) { return CFGMemRWMap[C].isWriteMem(); }
     bool CFG_isIndependent(CFG *C) { return CFGMemRWMap[C].isIndependent(); }
-    bool CFG_isNoSizeEffect(CFG *C) { return CFGMemRWMap[C].isNoSizeEffect(); }
+    bool CFG_isNoSideEffect(CFG *C) { return CFGMemRWMap[C].isNoSideEffect(); }
     bool CFG_haveExternalCall(CFG *C) { return CFGMemRWMap[C].have_external_call; }
     auto GetWritePtrs(CFG *C) { return CFGMemRWMap[C].WritePtrs; }
+    auto GetReadPtrs(CFG *C) { return CFGMemRWMap[C].ReadPtrs; }
 
     void PrintAAResult(bool is_printptr);
     void AAtest();

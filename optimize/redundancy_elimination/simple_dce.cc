@@ -44,7 +44,7 @@ void SimpleDCE(CFG *C) {
                     continue;
                 }
                 auto target_cfg = CFGMap[CallI->GetFunctionName()];
-                if (!alias_analyser.CFG_isNoSizeEffect(target_cfg)) {
+                if (!alias_analyser.CFG_isNoSideEffect(target_cfg)) {
                     continue;
                 }
             }

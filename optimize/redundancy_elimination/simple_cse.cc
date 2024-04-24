@@ -8,11 +8,9 @@ DomTreeWalkCSE will do dfs on the dominator tree to search common subexpression 
 */
 
 extern std::map<std::string, CFG *> CFGMap;
-extern std::map<std::string, int> GlobalMap;
 extern AliasAnalyser alias_analyser;
 
 struct InstCSEInfo {
-    Instruction I;
     int opcode;
     std::vector<std::string> operand_list;
     bool operator<(const InstCSEInfo &x) const {
@@ -37,7 +35,6 @@ struct InstCSEInfo {
 // memory instructions and special instructions will return false
 InstCSEInfo GetCSEInfo(Instruction I) {
     InstCSEInfo ans;
-    ans.I = I;
     ans.opcode = I->GetOpcode();
 
     auto list = I->GetNonResultOperands();
@@ -206,7 +203,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
                 continue;    // external call, clear all instructions
             }
             auto cfg = CFGMap[CallI->GetFunctionName()];
-            if (alias_analyser.CFG_isNoSizeEffect(cfg)) {    // only read memory, we can CSE
+            if (alias_analyser.CFG_isNoSideEffect(cfg)) {    // only read memory, we can CSE
                 auto Info = GetCSEInfo(I);
                 auto CSEiter = CallInstMap.find(Info);
                 if (CSEiter != CallInstMap.end()) {
@@ -225,6 +222,26 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
         } else if (I->GetOpcode() == STORE) {
             // store instructions, this will kill some loads
             StoreKillReadMemInst(I, CallInstMap, LoadInstMap, CallInstSet, LoadInstSet, C);
+
+            /* then the store can generate a new load value
+               store %rx -> ptr %p0
+               %ry = load ptr %p0
+               this will be optimized to %ry = %rx
+               for simple, now we do not consider store value is imm(we can optimize it in gvn)
+            */
+            auto StoreI = (StoreInstruction*)I;
+            if(StoreI->GetValue()->GetOperandType() != BasicOperand::REG){continue;}
+
+            int val_regno = ((RegOperand*)StoreI->GetValue())->GetRegNo();
+            if(reg_replace_map.find(val_regno) != reg_replace_map.end()){
+                val_regno = reg_replace_map[val_regno];
+            }
+
+            auto LoadI = new LoadInstruction(StoreI->GetDataType(),StoreI->GetPointer(),new RegOperand(val_regno));
+            auto Info = GetCSEInfo(LoadI);
+            LoadInstSet.insert(LoadI);
+            LoadInstMap.insert({Info, LoadI->GetResultRegNo()});
+
         } else if (I->GetOpcode() == LOAD) {
             auto Info = GetCSEInfo(I);
             auto CSEiter = LoadInstMap.find(Info);
@@ -272,7 +289,7 @@ void BasicBlockCSE(CFG *C) {
                 }
                 bb->InsertInstruction(1, I);
             }
-        }
+        }   
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
                 I->ReplaceByMap(reg_replace_map);
