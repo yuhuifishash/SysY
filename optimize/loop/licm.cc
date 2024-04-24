@@ -58,7 +58,7 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L) {
             return false;
         }
         auto target_cfg = CFGMap[tI->GetFunctionName()];
-        if (!target_cfg->FunctionInfo.is_independent) {
+        if (!alias_analyser.CFG_isIndependent(target_cfg)) {
             return false;    // not independent function, can not move
         }
         // I->printIR(std::cerr);
