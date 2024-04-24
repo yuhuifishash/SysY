@@ -72,7 +72,7 @@ void MakeFunctionOneExit(CFG *C) {
  * this function will elimate tailrecursive
  * you can use testcase 087_gcd.sy to check
  * you should set CFG::max_reg correctly
- * @param C the control flow graph of the function 
+ * @param C the control flow graph of the function
  * First,you should check if ptr's params would be changed in call.
  * If yes,create AllocaInstruction and StoreInstruction for the changed ptrs
  * Next,add load ptr before using the changed ptrs
@@ -88,10 +88,10 @@ void TailRecursiveEliminate(CFG *C) {
     std::deque<Instruction> StoreDeque;
     std::deque<Instruction> AllocaDeque;
     std::set<Instruction> EraseSet;
-    std::unordered_map<int,RegOperand*> PtrUsed;
+    std::unordered_map<int, RegOperand *> PtrUsed;
     // when exist call ptr, ret
     // FuncdefI->PrintIR(std::cout);
-    //@NeedtoInsertPTR:check if ptr in function params need to be insert 
+    //@NeedtoInsertPTR:check if ptr in function params need to be insert
     for (auto [id, bb] : *C->block_map) {
         if (bb->Instruction_list.back()->GetOpcode() != RET) {
             continue;
@@ -115,11 +115,11 @@ void TailRecursiveEliminate(CFG *C) {
                     if (callI_reg->GetRegNo() == i) {
                         continue;
                     }    // funtion params id stand by i
-                    if(FuncdefI->formals[i] == PTR){
+                    if (FuncdefI->formals[i] == PTR) {
                         NeedtoInsertPTR = 1;
-                        if(PtrUsed.find(i)==PtrUsed.end()){
+                        if (PtrUsed.find(i) == PtrUsed.end()) {
                             auto PtrReg = new RegOperand(++C->max_reg);
-                            PtrUsed[i]=PtrReg;
+                            PtrUsed[i] = PtrReg;
                             // std::cout<<PtrReg->GetFullName()<<'\n';
                             // AllocaDeque.push_back(new AllocaInstruction(PTR, PtrReg));
                             // StoreDeque.push_back(new StoreInstruction(PTR, PtrReg, FuncdefI->formals_reg[i]));
@@ -133,7 +133,7 @@ void TailRecursiveEliminate(CFG *C) {
     if (NeedtoInsertPTR) {
         // insert alloca and store instruction of ptr
         for (u_int32_t i = 0; i < FuncdefI->GetFormalSize(); ++i) {
-            if (FuncdefI->formals[i] == PTR && PtrUsed.find(i)!=PtrUsed.end()) {
+            if (FuncdefI->formals[i] == PTR && PtrUsed.find(i) != PtrUsed.end()) {
                 auto PtrReg = PtrUsed[i];
                 // std::cout<<PtrReg->GetFullName()<<'\n';
                 // std::cout<<i<<" "<<FuncdefI->formals_reg[i]<<'\n';
@@ -141,19 +141,19 @@ void TailRecursiveEliminate(CFG *C) {
                 StoreDeque.push_back(new StoreInstruction(PTR, PtrReg, FuncdefI->formals_reg[i]));
             }
         }
-        //insert load before new ptr
+        // insert load before new ptr
         for (auto [id, bb] : *C->block_map) {
             auto tmp_Instruction_list = bb->Instruction_list;
             bb->Instruction_list.clear();
             for (auto I : tmp_Instruction_list) {
                 auto ResultOperands = I->GetNonResultOperands();
                 bool NeedtoUpdate = 0;
-                //jump call self() ret
+                // jump call self() ret
                 if (id != 0 && NeedtoInsertPTR && !ResultOperands.empty()) {
                     for (u_int32_t i = 0; i < ResultOperands.size(); ++i) {
                         auto ResultReg = ResultOperands[i];
                         for (u_int32_t j = 0; j < FuncdefI->formals_reg.size(); ++j) {
-                            if(PtrUsed.find(j)==PtrUsed.end()){
+                            if (PtrUsed.find(j) == PtrUsed.end()) {
                                 continue;
                             }
                             auto DefReg = FuncdefI->formals_reg[j];
@@ -175,9 +175,8 @@ void TailRecursiveEliminate(CFG *C) {
         }
     }
 
-    
     while (!StoreDeque.empty()) {
-        auto I=StoreDeque.back();
+        auto I = StoreDeque.back();
         // I->PrintIR(std::cout);
         bb0->InsertInstruction(0, I);
         StoreDeque.pop_back();
@@ -206,8 +205,7 @@ void TailRecursiveEliminate(CFG *C) {
         if (callI->GetFunctionName() != FuncdefI->GetFunctionName()) {
             continue;
         }
-        bool opt1 =
-        callI->GetResult() != NULL && callI->GetResult()->GetFullName() == retI->GetRetVal()->GetFullName();
+        bool opt1 = callI->GetResult() != NULL && callI->GetResult()->GetFullName() == retI->GetRetVal()->GetFullName();
         bool opt2 = callI->GetResult() == NULL && retI->GetType() == VOID;
         if (opt1 || opt2) {
             // std::cout<<id<<'\n';
@@ -225,7 +223,7 @@ void TailRecursiveEliminate(CFG *C) {
                 // std::cout<<i<<'\n';
                 auto callI_type = callI->GetParameterList()[i].first;
                 auto callI_reg = (RegOperand *)(callI->GetParameterList()[i].second);
-                if (callI_reg->GetRegNo() == i || (callI_type == PTR && PtrUsed.find(i)==PtrUsed.end())) {
+                if (callI_reg->GetRegNo() == i || (callI_type == PTR && PtrUsed.find(i) == PtrUsed.end())) {
                     continue;
                 }    // funtion params id stand by i
                 Instruction allocaI;
@@ -243,7 +241,7 @@ void TailRecursiveEliminate(CFG *C) {
                 // callI->PrintIR(std::cout);
                 // allocaI->PrintIR(std::cout);
                 auto storeI = new StoreInstruction(callI->GetParameterList()[i].first, allocaI->GetResultReg(),
-                                                    callI->GetParameterList()[i].second);
+                                                   callI->GetParameterList()[i].second);
                 bb->InsertInstruction(1, storeI);
             }
             bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(1)));

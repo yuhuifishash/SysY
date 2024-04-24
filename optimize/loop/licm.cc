@@ -22,38 +22,38 @@ that a load or call inside of a loop never aliases anything stored to,
 we can hoist it or sink it like any other instruction.
 */
 bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction> WriteInsts) {
-    auto CallI = (CallInstruction*)I;
-    if(CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()){
-        return false;//external call
+    auto CallI = (CallInstruction *)I;
+    if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+        return false;    // external call
     }
     auto targetcfg = CFGMap[CallI->GetFunctionName()];
-    if(!alias_analyser.CFG_isNoSideEffect(targetcfg)){
-        return false;//write memory or IO, we can not motion
+    if (!alias_analyser.CFG_isNoSideEffect(targetcfg)) {
+        return false;    // write memory or IO, we can not motion
     }
 
     auto ReadPtrs = alias_analyser.GetReadPtrs(targetcfg);
 
-    //Get real read pointers
+    // Get real read pointers
     std::vector<Operand> real_ReadPtrs;
-    for(auto ptr:ReadPtrs){
-        if(ptr->GetOperandType() == BasicOperand::GLOBAL){
+    for (auto ptr : ReadPtrs) {
+        if (ptr->GetOperandType() == BasicOperand::GLOBAL) {
             real_ReadPtrs.push_back(ptr);
-        }else if(ptr->GetOperandType() == BasicOperand::REG){
+        } else if (ptr->GetOperandType() == BasicOperand::REG) {
             int ptr_regno = ((RegOperand *)ptr)->GetRegNo();
 
             assert(ptr_regno < CallI->GetParameterList().size());
-            
+
             auto [type, real_ptr2] = CallI->GetParameterList()[ptr_regno];
             real_ReadPtrs.push_back(real_ptr2);
-        }else{//should not reach here
+        } else {    // should not reach here
             assert(false);
         }
     }
 
-    for(auto WI:WriteInsts){
-        for(auto wptr:real_ReadPtrs){
-            auto result = alias_analyser.QueryInstModRef(WI,wptr,C);
-            if(result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef){
+    for (auto WI : WriteInsts) {
+        for (auto wptr : real_ReadPtrs) {
+            auto result = alias_analyser.QueryInstModRef(WI, wptr, C);
+            if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
                 return false;
             }
         }
@@ -62,16 +62,15 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
 }
 
 bool isLoadInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction> WriteInsts) {
-    auto ptr = ((LoadInstruction*)I)->GetPointer();
-    for(auto WI:WriteInsts){
-        auto result = alias_analyser.QueryInstModRef(WI,ptr,C);
-        if(result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef){
+    auto ptr = ((LoadInstruction *)I)->GetPointer();
+    for (auto WI : WriteInsts) {
+        auto result = alias_analyser.QueryInstModRef(WI, ptr, C);
+        if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
             return false;
         }
     }
     return true;
 }
-
 
 bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction> WriteInsts) {
     if (I->GetOpcode() == STORE) {
@@ -125,17 +124,17 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
     The instruction can't have side effects,
     including exceptions—generally ruling out division because it might divide by zero.
     */
-    if(I->GetOpcode() == LOAD){
-        if(!isLoadInvariant(C, I, L, WriteInsts)){
+    if (I->GetOpcode() == LOAD) {
+        if (!isLoadInvariant(C, I, L, WriteInsts)) {
             return false;
         }
-    }else if(I->GetOpcode() == CALL){
-        if(!isCallInvariant(C, I, L, WriteInsts)){
+    } else if (I->GetOpcode() == CALL) {
+        if (!isCallInvariant(C, I, L, WriteInsts)) {
             return false;
         }
-    }else if(I->GetOpcode() == DIV || I->GetOpcode() == MOD){
+    } else if (I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
         // The instruction needs to dominate all loop exits.
-        if(!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)){
+        if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
             return false;
         }
     }
@@ -147,21 +146,20 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
     return true;
 }
 
-std::vector<Instruction> GetLoopMemWriteInsts(CFG *C, NaturalLoop *L)
-{
+std::vector<Instruction> GetLoopMemWriteInsts(CFG *C, NaturalLoop *L) {
     std::vector<Instruction> res;
-    for(auto BB:L->loop_nodes){
-        for(auto I:BB->Instruction_list){
-            if(I->GetOpcode() == STORE){
+    for (auto BB : L->loop_nodes) {
+        for (auto I : BB->Instruction_list) {
+            if (I->GetOpcode() == STORE) {
                 res.push_back(I);
-            }else if(I->GetOpcode() == CALL){
-                auto CallI = (CallInstruction*)I;
-                if(CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()){
-                    res.push_back(I);//external call
+            } else if (I->GetOpcode() == CALL) {
+                auto CallI = (CallInstruction *)I;
+                if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+                    res.push_back(I);    // external call
                     continue;
                 }
                 auto targetcfg = CFGMap[CallI->GetFunctionName()];
-                if(alias_analyser.CFG_isWriteMem(targetcfg)){
+                if (alias_analyser.CFG_isWriteMem(targetcfg)) {
                     res.push_back(I);
                 }
             }
@@ -175,7 +173,7 @@ std::vector<Instruction> CalculateInvariant(CFG *C, NaturalLoop *L) {
     // std::cerr<<"exit nodes ";for(auto lx:L->exit_nodes){std::cerr<<lx->block_id<<" ";}std::cerr<<"\n";
 
     InvariantMap.clear();
-    auto LoopMemWriteInsts = GetLoopMemWriteInsts(C,L);
+    auto LoopMemWriteInsts = GetLoopMemWriteInsts(C, L);
 
     std::vector<Instruction> InvariantInsList;
     std::set<Instruction> InsVisited;
@@ -211,10 +209,10 @@ void SingleLoopLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
         I->SetBlockID(L->preheader->block_id);
         L->preheader->InsertInstruction(1, I);
         it = InvariantInsList.erase(it);    // erase this Instruction
-        std::cerr<<"code motion ";I->PrintIR(std::cerr);
+        // std::cerr<<"code motion ";I->PrintIR(std::cerr);
     }
 
-    //erase instructions
+    // erase instructions
     if (!EraseSet.empty()) {
         for (auto bb : L->loop_nodes) {
             auto tmp_Instruction_list = bb->Instruction_list;
@@ -240,6 +238,7 @@ B. There are no stores or loads in the loop which _may_ alias the
 pointer.  There are no calls in the loop which mod/ref the pointer.
 If these conditions are true, we can promote the loads and stores in the
 loop of the pointer to use a temporary alloca'd variable.
+reference: LLVM   LICM.cpp
 */
 void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {}
 
@@ -259,7 +258,7 @@ void LoopInvariantCodeMotion(CFG *C) {
 
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            I->SetBlockID(bb->block_id);// set block id
+            I->SetBlockID(bb->block_id);    // set block id
             int v = I->GetResultRegNo();
             if (v != -1) {    // result exists
                 ResultMap[v] = I;

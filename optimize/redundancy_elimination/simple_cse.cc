@@ -83,7 +83,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
     }
 
     auto cfg = CFGMap[CallI->GetFunctionName()];
-    
+
     // have external call
     if (alias_analyser.CFG_haveExternalCall(cfg)) {
         // for simple, we do not consider independent call there, this can be CSE in DomTreeWalkCSE
@@ -99,7 +99,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         assert((*it)->GetOpcode() == LOAD);
         auto LoadI = (LoadInstruction *)(*it);
         auto ptr = LoadI->GetPointer();
-        
+
         auto result = alias_analyser.QueryInstModRef(I, ptr, C);
         if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
             // I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
@@ -113,17 +113,17 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
 
     auto writeptrs = alias_analyser.GetWritePtrs(cfg);
     std::vector<Operand> real_writeptrs;
-    for(auto ptr:writeptrs){
-        if(ptr->GetOperandType() == BasicOperand::GLOBAL){
+    for (auto ptr : writeptrs) {
+        if (ptr->GetOperandType() == BasicOperand::GLOBAL) {
             real_writeptrs.push_back(ptr);
-        }else if(ptr->GetOperandType() == BasicOperand::REG){
+        } else if (ptr->GetOperandType() == BasicOperand::REG) {
             int ptr_regno = ((RegOperand *)ptr)->GetRegNo();
 
             assert(ptr_regno < CallI->GetParameterList().size());
-            
+
             auto [type, real_ptr2] = CallI->GetParameterList()[ptr_regno];
             real_writeptrs.push_back(real_ptr2);
-        }else{//should not reach here
+        } else {    // should not reach here
             assert(false);
         }
     }
@@ -229,15 +229,17 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
                this will be optimized to %ry = %rx
                for simple, now we do not consider store value is imm(we can optimize it in gvn)
             */
-            auto StoreI = (StoreInstruction*)I;
-            if(StoreI->GetValue()->GetOperandType() != BasicOperand::REG){continue;}
+            auto StoreI = (StoreInstruction *)I;
+            if (StoreI->GetValue()->GetOperandType() != BasicOperand::REG) {
+                continue;
+            }
 
-            int val_regno = ((RegOperand*)StoreI->GetValue())->GetRegNo();
-            if(reg_replace_map.find(val_regno) != reg_replace_map.end()){
+            int val_regno = ((RegOperand *)StoreI->GetValue())->GetRegNo();
+            if (reg_replace_map.find(val_regno) != reg_replace_map.end()) {
                 val_regno = reg_replace_map[val_regno];
             }
 
-            auto LoadI = new LoadInstruction(StoreI->GetDataType(),StoreI->GetPointer(),new RegOperand(val_regno));
+            auto LoadI = new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), new RegOperand(val_regno));
             auto Info = GetCSEInfo(LoadI);
             LoadInstSet.insert(LoadI);
             LoadInstMap.insert({Info, LoadI->GetResultRegNo()});
@@ -289,7 +291,7 @@ void BasicBlockCSE(CFG *C) {
                 }
                 bb->InsertInstruction(1, I);
             }
-        }   
+        }
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
                 I->ReplaceByMap(reg_replace_map);
