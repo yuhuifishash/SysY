@@ -1,5 +1,5 @@
-#include "../include/ir.h"
 #include "../alias_analysis/alias_analysis.h"
+#include "../include/ir.h"
 
 /*this pass will delete simple dead code, but will not change the control flow graph.
 and in this function, we do not care about the useless function args.
@@ -44,7 +44,7 @@ void SimpleDCE(CFG *C) {
                     continue;
                 }
                 auto target_cfg = CFGMap[CallI->GetFunctionName()];
-                if (!alias_analyser.CFG_isNoSizeEffect(target_cfg)) {
+                if (!alias_analyser.CFG_isNoSideEffect(target_cfg)) {
                     continue;
                 }
             }

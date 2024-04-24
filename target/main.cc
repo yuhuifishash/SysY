@@ -143,6 +143,8 @@ int main(int argc, char **argv) {
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
+
+        llvmIR.PassExecutor(AliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
