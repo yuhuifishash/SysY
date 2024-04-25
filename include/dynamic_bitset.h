@@ -8,10 +8,10 @@ private:
     long *bits;
 
 public:
-    DynamicBitset():bit_width(0),bit_array_length(0),bits(nullptr){}
-    void remake(int bit_width){
+    DynamicBitset() : bit_width(0), bit_array_length(0), bits(nullptr) {}
+    void remake(int bit_width) {
         this->bit_width = bit_width;
-        if(bits != nullptr){
+        if (bits != nullptr) {
             delete[] bits;
         }
         bit_array_length = (bit_width + sizeof(long) - 1) / sizeof(long);
@@ -27,7 +27,10 @@ public:
             bits[i] = 0;
         }
     }
-    ~DynamicBitset() { if(bits != nullptr)delete[] bits; }
+    ~DynamicBitset() {
+        if (bits != nullptr)
+            delete[] bits;
+    }
 
     int count();
 

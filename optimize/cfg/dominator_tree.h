@@ -19,7 +19,7 @@ public:
 
     // DynamicBitset* df;
     // DynamicBitset* atdom;
-    
+
     std::vector<DynamicBitset> df;
     std::vector<DynamicBitset> atdom;
 

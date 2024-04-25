@@ -1,5 +1,5 @@
-#include "../alias_analysis/alias_analysis.h"
 #include "../../include/cfg.h"
+#include "../alias_analysis/alias_analysis.h"
 
 extern std::map<std::string, CFG *> CFGMap;
 
@@ -30,6 +30,8 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
     if (!alias_analyser.CFG_isNoSideEffect(targetcfg)) {
         return false;    // write memory or IO, we can not motion
     }
+
+    // TODO(): if the call instructions may throw exceptions, it must dominate all the exitBB
 
     auto ReadPtrs = alias_analyser.GetReadPtrs(targetcfg);
 
@@ -123,6 +125,7 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
     The assigned-to variable is dead after the loop, and
     The instruction can't have side effects,
     including exceptions—generally ruling out division because it might divide by zero.
+    //TODO(): we need range analysis to judge whether the instructions may throw exceptions
     */
     if (I->GetOpcode() == LOAD) {
         if (!isLoadInvariant(C, I, L, WriteInsts)) {
@@ -133,10 +136,12 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
             return false;
         }
     } else if (I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
-        // The instruction needs to dominate all loop exits.
-        if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
-            return false;
-        }
+        // TODO(): the instructions may throw exceptions because it might divide by zero
+        // so the instruction needs to dominate all loop exits.
+
+        // if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
+        //     return false;
+        // }
     }
 
     // I->printIR(std::cerr);

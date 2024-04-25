@@ -52,17 +52,17 @@ void DominatorTree::BuildDominatorTree() {
     // std::vector<DynamicBitset> atdom;
     atdom.resize(block_num);
     // atdom = new DynamicBitset[block_num];
-    for(int i=0;i<block_num;i++){
+    for (int i = 0; i < block_num; i++) {
         atdom[i].remake(block_num);
     }
 
     // dom[u][v] = 1 <==> v dom u <==> v is in set dom(u)
 
     // atdom[0][0] = 1;
-    atdom[0].setbit(0,1);
+    atdom[0].setbit(0, 1);
     for (int i = 1; i <= C->max_label; i++) {
         for (int j = 0; j <= C->max_label; j++) {
-            atdom[i].setbit(j,1);
+            atdom[i].setbit(j, 1);
             // atdom[i][j] = 1;
         }
     }
@@ -89,7 +89,7 @@ void DominatorTree::BuildDominatorTree() {
             // Second:
             // dom(u) |= {u}
             // new_dom_u[u] = 1;
-            new_dom_u.setbit(u,1);
+            new_dom_u.setbit(u, 1);
             if (new_dom_u != atdom[u]) {
                 atdom[u] = new_dom_u;
                 changed = 1;
@@ -128,7 +128,7 @@ void DominatorTree::BuildDominatorTree() {
     // DF[x][y]: x dom prev(y), but (x==y or x not dom y)
     df.resize(block_num);
     // df = new DynamicBitset[block_num];
-    for(int i=0;i<block_num;i++){
+    for (int i = 0; i < block_num; i++) {
         df[i].remake(block_num);
     }
 
@@ -142,7 +142,7 @@ void DominatorTree::BuildDominatorTree() {
             // a==b or a not dom b
             while (x == b || IsDominate(x, b) == 0) {
                 // df[x][b] = 1;
-                df[x].setbit(b,1);
+                df[x].setbit(b, 1);
                 if (idom[x] != NULL) {
                     // idom(a) must dom prev(b)=a
                     x = idom[x]->block_id;
@@ -182,7 +182,7 @@ std::set<int> DominatorTree::GetDF(int id) {
     return ret;
 }
 
-bool DominatorTree::IsDominate(int id1, int id2) { 
-    // return atdom[id2][id1]; 
-    return atdom[id2].getbit(id1); 
+bool DominatorTree::IsDominate(int id1, int id2) {
+    // return atdom[id2][id1];
+    return atdom[id2].getbit(id1);
 }

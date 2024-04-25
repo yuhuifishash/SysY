@@ -1,8 +1,8 @@
 #ifndef ARM_PRINTER_H
 #define ARM_PRINTER_H
+#include "../../common/machine_passes/machine_printer.h"
 #include "../arm_fields.h"
 #include "../arm_structures.h"
-#include "../../common/machine_passes/machine_printer.h"
 #include <iostream>
 class ArmPrinter;
 

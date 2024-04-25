@@ -7,8 +7,8 @@ extern LLVMIR llvmIR;
 extern StringTable str_table;
 
 static int GlobalVarCnt = 0;
-std::map<std::string, VarAttribute> GlobalConstMap;
-std::map<std::string, VarAttribute> GlobalMap;
+std::map<std::string, VarAttribute> ConstGlobalMap;
+std::map<std::string, VarAttribute> StaticGlobalMap;    // in SysY2022, we assume all the global are static
 
 SemantTable semant_table;
 std::vector<std::string> error_msgs{};
@@ -741,9 +741,9 @@ void CompUnit_Decl::TypeCheck() {
         }
 
         if (def->IsConst()) {
-            GlobalConstMap[def->GetName()->get_string()] = val;
+            ConstGlobalMap[def->GetName()->get_string()] = val;
         }
-        GlobalMap[def->GetName()->get_string()] = val;
+        StaticGlobalMap[def->GetName()->get_string()] = val;
         semant_table.GlobalTable[def->GetName()] = val;
 
         // add Global Decl llvm ins

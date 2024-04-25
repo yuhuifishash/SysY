@@ -78,9 +78,9 @@ void MakeFunctionOneExit(CFG *C) {
  * Next,add load ptr before using the changed ptrs
  * Finally,deal with non-ptr params
  * */
-bool TailRecursiveEliminateCheck(CFG *C){
+bool TailRecursiveEliminateCheck(CFG *C) {
     auto FuncdefI = C->function_def;
-    if (FuncdefI->GetFormalSize() > 5 ) {
+    if (FuncdefI->GetFormalSize() > 5) {
         return false;
     }
     // AllocaReg can't be use in call
@@ -90,8 +90,8 @@ bool TailRecursiveEliminateCheck(CFG *C){
         if (I->GetOpcode() != ALLOCA) {
             continue;
         }
-        auto AllocaI=(AllocaInstruction*)I;
-        if(AllocaI->GetDims().empty()){
+        auto AllocaI = (AllocaInstruction *)I;
+        if (AllocaI->GetDims().empty()) {
             continue;
         }
         AllocaReg.push_back(AllocaI->GetResultRegNo());
@@ -101,41 +101,41 @@ bool TailRecursiveEliminateCheck(CFG *C){
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() != CALL || LastI->GetOpcode() != GETELEMENTPTR) {
-                LastI=I;
+                LastI = I;
                 continue;
             }
-            auto GetelementptrI=(GetElementprtInstruction*)LastI;
-            auto PtrReg=((RegOperand*)GetelementptrI->GetPtrVal())->GetRegNo();
-            bool reg_to_check=0;
-            for(auto reg : AllocaReg){
-                if(PtrReg==reg){
-                    reg_to_check=1;
+            auto GetelementptrI = (GetElementprtInstruction *)LastI;
+            auto PtrReg = ((RegOperand *)GetelementptrI->GetPtrVal())->GetRegNo();
+            bool reg_to_check = 0;
+            for (auto reg : AllocaReg) {
+                if (PtrReg == reg) {
+                    reg_to_check = 1;
                     break;
                 }
             }
-            if(!reg_to_check){
-                LastI=I;
+            if (!reg_to_check) {
+                LastI = I;
                 continue;
             }
-            auto GetelementptrResult=GetelementptrI->GetResultRegNo();
-            auto CallI=(CallInstruction*)I;
+            auto GetelementptrResult = GetelementptrI->GetResultRegNo();
+            auto CallI = (CallInstruction *)I;
             auto list_size = CallI->GetParameterList().size();
             for (auto i = 0; i < list_size; i++) {
                 auto CallReg = ((RegOperand *)CallI->GetParameterList()[i].second)->GetRegNo();
-                if(CallReg == GetelementptrResult){
+                if (CallReg == GetelementptrResult) {
                     return false;
                 }
             }
 
-            LastI=I;
+            LastI = I;
         }
     }
     return true;
 }
 void TailRecursiveEliminate(CFG *C) {
-    
-    bool TRECheck=TailRecursiveEliminateCheck(C);
-    if(!TRECheck){
+
+    bool TRECheck = TailRecursiveEliminateCheck(C);
+    if (!TRECheck) {
         return;
     }
     auto FuncdefI = C->function_def;

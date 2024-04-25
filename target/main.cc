@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     if (optimize_flag) {
         llvmIR.PassExecutor(EliminateSimpleConstInstructions);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
-        llvmIR.PassExecutor(TailRecursiveEliminate);  
+        llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
         llvmIR.BuildDominatorTree();

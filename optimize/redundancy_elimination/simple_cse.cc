@@ -1,5 +1,5 @@
-#include "../alias_analysis/alias_analysis.h"
 #include "../../include/cfg.h"
+#include "../alias_analysis/alias_analysis.h"
 #include <functional>
 
 /*this pass will do some simple common subexpression elimination

@@ -1,7 +1,7 @@
 #include "inst_combine.h"
 #include "../../include/cfg.h"
 
-extern std::map<std::string, VarAttribute> GlobalConstMap;
+extern std::map<std::string, VarAttribute> ConstGlobalMap;
 
 void GlobalConstReplace(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -15,8 +15,8 @@ void GlobalConstReplace(CFG *C) {
             }
 
             auto pointer = (GlobalOperand *)LoadI->GetPointer();
-            if (GlobalConstMap.find(pointer->getName()) != GlobalConstMap.end()) {
-                VarAttribute val = GlobalConstMap[pointer->getName()];
+            if (ConstGlobalMap.find(pointer->getName()) != ConstGlobalMap.end()) {
+                VarAttribute val = ConstGlobalMap[pointer->getName()];
                 if (val.type == Type::INT) {
                     I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
                                                   LoadI->GetResultReg());

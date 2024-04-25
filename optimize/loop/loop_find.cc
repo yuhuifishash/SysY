@@ -10,7 +10,9 @@ std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d)    // back
     loop_nodes.insert(n);
     loop_nodes.insert(d);
 
-    if(n == d){return loop_nodes;}
+    if (n == d) {
+        return loop_nodes;
+    }
 
     S.push(n);
     while (!S.empty()) {

@@ -12,6 +12,9 @@ public:
     int arg_number = 0;
     int inst_number = 0;
     int bb_number = 0;
+
+    // TODO(): if the function may throw exceptions, the tag is true.(such as divided by zero)
+    bool may_throwexceptions = false;
 };
 
 class CFGSCC {
