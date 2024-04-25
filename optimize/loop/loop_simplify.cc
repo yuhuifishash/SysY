@@ -92,11 +92,14 @@ void NaturalLoop::AddPreheader(CFG *C) {
         }
     }
     assert(outloop_preblocks.size() >= 1);
-
+    
     if (outloop_preblocks.size() == 1) {
-        preheader = *(outloop_preblocks.begin());
-        // preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
-        return;
+        auto preBB = *(outloop_preblocks.begin());
+        if(preBB->block_id != 0){
+            preheader = preBB;
+            // preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
+            return;
+        }
     }
 
     auto new_pre = C->InsertTransferBlock(outloop_preblocks, header);

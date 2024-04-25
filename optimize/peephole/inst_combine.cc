@@ -15,8 +15,8 @@ void GlobalConstReplace(CFG *C) {
             }
 
             auto pointer = (GlobalOperand *)LoadI->GetPointer();
-            if (ConstGlobalMap.find(pointer->getName()) != ConstGlobalMap.end()) {
-                VarAttribute val = ConstGlobalMap[pointer->getName()];
+            if (ConstGlobalMap.find(pointer->GetName()) != ConstGlobalMap.end()) {
+                VarAttribute val = ConstGlobalMap[pointer->GetName()];
                 if (val.type == Type::INT) {
                     I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
                                                   LoadI->GetResultReg());
