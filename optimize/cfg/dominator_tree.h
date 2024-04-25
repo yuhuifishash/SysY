@@ -1,7 +1,8 @@
 #ifndef DOMINATOR_TREE_H
 #define DOMINATOR_TREE_H
 #include "../../include/basic_block.h"
-#include <bitset>
+#include "../../include/dynamic_bitset.h"
+// #include <bitset>
 #include <set>
 #include <vector>
 
@@ -13,8 +14,10 @@ public:
     std::vector<std::vector<LLVMBlock>> dom_tree{};
     std::vector<LLVMBlock> idom{};
 
-    std::vector<std::bitset<65536>> df;    // The Dominance Frontier
-    std::vector<std::bitset<65536>> atdom;
+    // std::vector<std::bitset<65536>> df;    // The Dominance Frontier
+    // std::vector<std::bitset<65536>> atdom;
+    DynamicBitset* df;
+    DynamicBitset* atdom;
 
     void BuildDominatorTree();               // build the dominator tree of CFG* C
     std::set<int> GetDF(std::set<int> S);    // return DF(S)  S = {id1,id2,id3,...}

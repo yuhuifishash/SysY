@@ -1,6 +1,7 @@
 #include "../include/dynamic_bitset.h"
 #include <assert.h>
 int DynamicBitset::count() {
+    assert(bit_width);
     int result = 0;
     for (int i = 0; i < bit_array_length; i++) {
         result += __builtin_popcount(bits[i]);
@@ -27,6 +28,7 @@ bool DynamicBitset::getbit(int pos) {
 }
 
 DynamicBitset DynamicBitset::operator&(DynamicBitset other) {
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -36,6 +38,7 @@ DynamicBitset DynamicBitset::operator&(DynamicBitset other) {
 }
 
 DynamicBitset DynamicBitset::operator|(DynamicBitset other) {
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -45,6 +48,7 @@ DynamicBitset DynamicBitset::operator|(DynamicBitset other) {
 }
 
 DynamicBitset DynamicBitset::operator^(DynamicBitset other) {
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -54,6 +58,7 @@ DynamicBitset DynamicBitset::operator^(DynamicBitset other) {
 }
 
 DynamicBitset DynamicBitset::operator-(DynamicBitset other) {
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -63,6 +68,7 @@ DynamicBitset DynamicBitset::operator-(DynamicBitset other) {
 }
 
 DynamicBitset DynamicBitset::operator=(DynamicBitset other) {    // Deep Copy
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     DynamicBitset result(bit_width);
     for (int i = 0; i < bit_array_length; i++) {
@@ -72,6 +78,7 @@ DynamicBitset DynamicBitset::operator=(DynamicBitset other) {    // Deep Copy
 }
 
 bool DynamicBitset::operator==(DynamicBitset other) {    // Deep Compare
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     for (int i = 0; i < bit_array_length; i++) {
         if (this->bits[i] != other.bits[i]) {
@@ -82,6 +89,7 @@ bool DynamicBitset::operator==(DynamicBitset other) {    // Deep Compare
 }
 
 bool DynamicBitset::operator!=(DynamicBitset other) {    // return !(*this == other)
+    assert(bit_width && other.bit_width);
     assert(this->bit_width == other.bit_width);
     for (int i = 0; i < bit_array_length; i++) {
         if (this->bits[i] != other.bits[i]) {

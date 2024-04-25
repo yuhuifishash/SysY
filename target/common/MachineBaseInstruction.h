@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 
+#ifndef ERROR
 #define ERROR(...)                                                                                                     \
     do {                                                                                                               \
         char message[256];                                                                                             \
@@ -19,7 +20,9 @@
         std::cerr << "\033[0m";                                                                                        \
         assert(false);                                                                                                 \
     } while (0)
+#endif
 
+#ifndef TODO
 #define TODO(...)                                                                                                      \
     do {                                                                                                               \
         char message[256];                                                                                             \
@@ -33,9 +36,11 @@
         std::cerr << "\033[0m";                                                                                        \
         assert(false);                                                                                                 \
     } while (0)
+#endif
 
 #define ENABLE_LOG
 #ifdef ENABLE_LOG
+#ifndef Log
 #define Log(...)                                                                                                       \
     do {                                                                                                               \
         char message[256];                                                                                             \
@@ -46,8 +51,11 @@
         std::cerr << message << "\n";                                                                                  \
         std::cerr << "\033[0m";                                                                                        \
     } while (0)
+#endif
 #else
+#ifndef Log
 #define Log(...)
+#endif
 #endif
 
 struct MachineDataType {

@@ -1,5 +1,6 @@
 #ifndef DYNAMIC_BITSET_H
 #define DYNAMIC_BITSET_H
+#include <assert.h>
 class DynamicBitset {
 private:
     int bit_width;
@@ -7,6 +8,18 @@ private:
     long *bits;
 
 public:
+    DynamicBitset():bit_width(0),bit_array_length(0),bits(nullptr){}
+    void remake(int bit_width){
+        this->bit_width = bit_width;
+        if(bits != nullptr){
+            delete[] bits;
+        }
+        bit_array_length = (bit_width + sizeof(long) - 1) / sizeof(long);
+        bits = new long[bit_array_length];
+        for (int i = 0; i < bit_array_length; i++) {
+            bits[i] = 0;
+        }
+    }
     DynamicBitset(int bit_width)
         : bit_width(bit_width), bit_array_length((bit_width + sizeof(long) - 1) / sizeof(long)),
           bits(new long[bit_array_length]) {
@@ -14,7 +27,7 @@ public:
             bits[i] = 0;
         }
     }
-    ~DynamicBitset() { delete[] bits; }
+    ~DynamicBitset() { if(bits != nullptr)delete[] bits; }
 
     int count();
 
