@@ -1,7 +1,7 @@
 #ifndef ARM_INSTSELECT_H
 #define ARM_INSTSELECT_H
-#include "arm_structures.h"
-#include "machine_selector.h"
+#include "../arm_structures.h"
+#include "../../common/machine_passes/machine_selector.h"
 class ArmSelector : public MachineSelector {
 private:
     std::map<int, int> ir_arm_vreg_map;          // needs to be cleared in new function

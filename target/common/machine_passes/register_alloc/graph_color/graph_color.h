@@ -1,6 +1,6 @@
 #ifndef GRAPH_COLOR_H
 #define GRAPH_COLOR_H
-#include "basic_register_allocation.h"
+#include "../basic_register_allocation.h"
 class GraphColor : public RegisterAllocation {
 private:
     // All States here

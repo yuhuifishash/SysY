@@ -3,8 +3,8 @@
 #include <cmath>
 #include <vector>
 #include <cstring>
-#include "symtab.h"
-#include "SysY_parser.tab.h"
+#include "../include/symtab.h"
+#include "../parser/SysY_parser.tab.h"
 
 extern int line_number;
 extern int col_number;

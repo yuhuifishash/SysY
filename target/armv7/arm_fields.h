@@ -1,6 +1,6 @@
 #ifndef ARM_FIELDS_H
 #define ARM_FIELDS_H
-#include "MachineBaseInstruction.h"
+#include "../common/MachineBaseInstruction.h"
 #include <string>
 
 struct ArmPhysicalRegister {

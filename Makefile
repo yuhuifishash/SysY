@@ -39,7 +39,7 @@ SysYc : ${OBJS}
 
 $(OBJDIR)/%.o : %.cc
 	mkdir -p $(dir $@)
-	clang++ -c $(INCS) $< -o $@ -O2 -std=c++17
+	clang++ -c $< -o $@ -O2 -std=c++17
 
 .PHONY : clean-obj,clean-all,lexer,parser,format
 lexer:lexer/SysY_lexer.l

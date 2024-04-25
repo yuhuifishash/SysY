@@ -1,6 +1,6 @@
 #ifndef ARM_INSTRUCTION_H
 #define ARM_INSTRUCTION_H
-#include "MachineBaseInstruction.h"
+#include "../common/MachineBaseInstruction.h"
 #include "arm_fields.h"
 // #include "ir.h"
 // #include "Instruction.h"
