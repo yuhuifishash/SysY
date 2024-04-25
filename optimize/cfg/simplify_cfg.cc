@@ -1,4 +1,4 @@
-#include "../include/cfg.h"
+#include "../../include/cfg.h"
 /**
     * this function will eliminate some simple short circult
     * for example, if(a && b) will be transformed as below:
@@ -26,8 +26,6 @@ B0--->B2  may be transformed to B0(B1 use select)->B2
   \B1/
 */
 void SimpleIfConversion(CFG *C) {}
-
-void SimplifyCFGBeforeMem2Reg(CFG *C) { EliminateSimpleShortCircult(C); }
 
 /**
     * this function will eliminate the double br_uncond
@@ -62,7 +60,7 @@ void EliminateDoubleBrUnCond(CFG *C) { std::cerr << "EliminateDoubleBrUnCond in 
  */
 void EliminateUselessPhi(CFG *C) { std::cerr << "EliminateUselessPhi in SimplifyCFG is not implemented now\n"; }
 
-void SimplifyCFGAfterMem2Reg(CFG *C) {
+void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);
     EliminateDoubleBrUnCond(C);
 }

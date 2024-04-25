@@ -1,5 +1,6 @@
-#include "../include/cfg.h"
+#include "../../include/cfg.h"
 #include <assert.h>
+#include <set>
 
 /*
 while(cond){
@@ -258,6 +259,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
         }
     }
 
-    std::set froms{CondBlock};
+    std::set<LLVMBlock> froms{CondBlock};
     C->InsertTransferBlock(froms, header);
 }

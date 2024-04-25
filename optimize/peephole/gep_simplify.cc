@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/cfg.h"
 
 /**
  * this function will elimate getelementptr instruction with empty index

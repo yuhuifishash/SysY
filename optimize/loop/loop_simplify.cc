@@ -1,4 +1,4 @@
-#include "../include/cfg.h"
+#include "../../include/cfg.h"
 #include <assert.h>
 
 void LoopSimplify(CFG *C) {

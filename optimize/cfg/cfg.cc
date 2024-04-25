@@ -1,7 +1,6 @@
-#include "../include/Instruction.h"
-#include "../include/ir.h"
-#include "../ir_gen/IRgen.h"
-#include <bitset>
+#include "../../include/Instruction.h"
+#include "../../include/ir.h"
+#include <assert.h>
 
 extern std::map<FuncDefInstruction, int> max_label_map;
 extern std::map<FuncDefInstruction, int> max_reg_map;

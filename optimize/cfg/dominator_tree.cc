@@ -1,5 +1,5 @@
 #include "dominator_tree.h"
-#include "../include/ir.h"
+#include "../../include/ir.h"
 
 void LLVMIR::BuildDominatorTree() {
     for (auto [defI, cfg] : llvm_cfg) {

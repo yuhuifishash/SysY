@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/ir.h"
 #include <stack>
 
 std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d)    // backedge n->d
@@ -9,12 +9,14 @@ std::set<LLVMBlock> FindNodesInLoop(CFG *C, LLVMBlock n, LLVMBlock d)    // back
 
     loop_nodes.insert(n);
     loop_nodes.insert(d);
+
+    if(n == d){return loop_nodes;}
+
     S.push(n);
     while (!S.empty()) {
         LLVMBlock x = S.top();
         S.pop();
         for (auto preBB : C->invG[x->block_id]) {
-            ;
             if (loop_nodes.find(preBB) == loop_nodes.end()) {
                 loop_nodes.insert(preBB);
                 S.push(preBB);

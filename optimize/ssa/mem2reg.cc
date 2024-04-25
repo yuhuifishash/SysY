@@ -1,4 +1,4 @@
-#include "../include/ir.h"
+#include "../../include/cfg.h"
 #include <tuple>
 
 // due to IRgen, we can assume that all the store value are RegOperand
