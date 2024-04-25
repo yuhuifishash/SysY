@@ -16,8 +16,12 @@ public:
 
     // std::vector<std::bitset<65536>> df;    // The Dominance Frontier
     // std::vector<std::bitset<65536>> atdom;
-    DynamicBitset* df;
-    DynamicBitset* atdom;
+
+    // DynamicBitset* df;
+    // DynamicBitset* atdom;
+    
+    std::vector<DynamicBitset> df;
+    std::vector<DynamicBitset> atdom;
 
     void BuildDominatorTree();               // build the dominator tree of CFG* C
     std::set<int> GetDF(std::set<int> S);    // return DF(S)  S = {id1,id2,id3,...}

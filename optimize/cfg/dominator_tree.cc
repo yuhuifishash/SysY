@@ -27,17 +27,17 @@ void DominatorTree::BuildDominatorTree() {
     dom_tree.resize(block_num);
     idom.clear();
 
-    // df.clear();
-    if(df != nullptr){
-        delete[] df;
-        df = nullptr;
-    }
+    df.clear();
+    // if(df != nullptr){
+    //     delete[] df;
+    //     df = nullptr;
+    // }
 
-    // atdom.clear();
-    if(atdom != nullptr){
-        delete[] atdom;
-        atdom = nullptr;
-    }
+    atdom.clear();
+    // if(atdom != nullptr){
+    //     delete[] atdom;
+    //     atdom = nullptr;
+    // }
 
     for (int i = 0; i <= C->max_label; i++) {
         vsd.push_back(0);
@@ -47,22 +47,23 @@ void DominatorTree::BuildDominatorTree() {
     // dom(u) = {u} | {& dom(v)}
     // Pseudo code
 
-    // std::vector<std::bitset<65536>> indom;
-    DynamicBitset* indom;
-    // indom.resize(block_num);
-    indom = new DynamicBitset[block_num];
+    // std::vector<std::bitset<65536>> atdom;
+    // DynamicBitset* atdom;
+    // std::vector<DynamicBitset> atdom;
+    atdom.resize(block_num);
+    // atdom = new DynamicBitset[block_num];
     for(int i=0;i<block_num;i++){
-        indom[i].remake(block_num);
+        atdom[i].remake(block_num);
     }
 
     // dom[u][v] = 1 <==> v dom u <==> v is in set dom(u)
 
-    // indom[0][0] = 1;
-    indom[0].setbit(0,1);
+    // atdom[0][0] = 1;
+    atdom[0].setbit(0,1);
     for (int i = 1; i <= C->max_label; i++) {
         for (int j = 0; j <= C->max_label; j++) {
-            indom[i].setbit(j,1);
-            // indom[i][j] = 1;
+            atdom[i].setbit(j,1);
+            // atdom[i][j] = 1;
         }
     }
     bool changed = 1;
@@ -79,18 +80,18 @@ void DominatorTree::BuildDominatorTree() {
             // First:
             // dom(u) = {& dom(v)}, v is qianqu
             if (!C->invG[u].empty()) {
-                new_dom_u = indom[(*(C->invG[u].begin()))->block_id];
+                new_dom_u = atdom[(*(C->invG[u].begin()))->block_id];
                 for (auto v : C->invG[u]) {
-                    // new_dom_u &= indom[v->block_id];
-                    new_dom_u = new_dom_u & indom[v->block_id];
+                    // new_dom_u &= atdom[v->block_id];
+                    new_dom_u = new_dom_u & atdom[v->block_id];
                 }
             }
             // Second:
             // dom(u) |= {u}
             // new_dom_u[u] = 1;
             new_dom_u.setbit(u,1);
-            if (new_dom_u != indom[u]) {
-                indom[u] = new_dom_u;
+            if (new_dom_u != atdom[u]) {
+                atdom[u] = new_dom_u;
                 changed = 1;
             }
         }
@@ -105,14 +106,14 @@ void DominatorTree::BuildDominatorTree() {
         }
         for (int v = 0; v <= C->max_label; v++) {
             // if v idom u, v must dom u
-            // if (indom[u][v]) {
-            if (indom[u].getbit(v)) {
+            // if (atdom[u][v]) {
+            if (atdom[u].getbit(v)) {
                 // dom(u) = {u,???,v,{domv path}}
                 // dom(v) = {v,{domv path}}
                 // ??? = NULL set if v idom u
 
                 // equals dom(u)-dom(v)
-                auto tmp = (indom[u] & indom[v]) ^ indom[u];
+                auto tmp = (atdom[u] & atdom[v]) ^ atdom[u];
                 if (tmp.count() == 1 && tmp.getbit(u)) {
                     idom[u] = (*C->block_map)[v];
                     dom_tree[v].push_back((*C->block_map)[u]);
@@ -120,12 +121,13 @@ void DominatorTree::BuildDominatorTree() {
             }
         }
     }
-    // delete[]indom;
-    atdom = indom;
+    // delete[]atdom;
+    // atdom = atdom;
+
     // Dom Frontier DF
     // DF[x][y]: x dom prev(y), but (x==y or x not dom y)
-    // df.resize(block_num);
-    df = new DynamicBitset[block_num];
+    df.resize(block_num);
+    // df = new DynamicBitset[block_num];
     for(int i=0;i<block_num;i++){
         df[i].remake(block_num);
     }
