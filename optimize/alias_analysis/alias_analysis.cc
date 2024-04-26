@@ -5,6 +5,7 @@ extern std::map<std::string, CFG *> CFGMap;
 AliasAnalyser alias_analyser;
 
 PtrRegMemInfo GetPtrInfo(Operand ptr, std::map<int, PtrRegMemInfo> &ptrmap) {
+    std::cerr<<ptr<<"\n";
     if (ptr->GetOperandType() == BasicOperand::REG) {
         assert(ptrmap.find(((RegOperand *)ptr)->GetRegNo()) != ptrmap.end());
         return ptrmap[((RegOperand *)ptr)->GetRegNo()];

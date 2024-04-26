@@ -257,7 +257,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
     std::map<std::string, LLVMType> GlobalTypeMap;
 
     //cache the memory read/write instructions
-    std::vector<Instruction> MemRwInsts;
+    std::set<Instruction> MemRwInsts;
     for(auto BB : L->loop_nodes){
         for(auto I : BB->Instruction_list){
             Operand ptr;
@@ -266,14 +266,14 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
                 auto StoreI = (StoreInstruction*)I;
                 ptr = StoreI->GetPointer();
                 type = StoreI->GetDataType();
-                MemRwInsts.push_back(I);
+                MemRwInsts.insert(I);
             }else if(I->GetOpcode() == LOAD){
                 auto LoadI = (LoadInstruction*)I;
                 ptr = LoadI->GetPointer();
                 type = LoadI->GetDataType();
-                MemRwInsts.push_back(I);
+                MemRwInsts.insert(I);
             }else if(I->GetOpcode() == CALL){
-                MemRwInsts.push_back(I);
+                MemRwInsts.insert(I);
                 continue;
             }else{
                 continue;
@@ -325,9 +325,11 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
             if(I->GetOpcode() == LOAD){
                 auto LoadI = (LoadInstruction*)I;
                 LoadI->SetPointer(new RegOperand(d));
+                MemRwInsts.erase(I);
             }else if(I->GetOpcode() == STORE){
                 auto StoreI = (StoreInstruction*)I;
                 StoreI->SetPointer(new RegOperand(d));
+                MemRwInsts.erase(I);
             }
         }
         // insert load in preheader;
@@ -354,7 +356,64 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
             break;
         }
     }
-    //TODO(): then we consider GlobalVar
+
+    // then we consider GlobalVar
+    for(auto [global_name,Insts]:GlobalPtrInstMap){
+        //check if other instructions will read/write ptr_regno
+        bool can_licm = true;
+
+        auto ptr = new GlobalOperand(global_name);
+        for(auto rwI:MemRwInsts){
+            if(Insts.find(rwI) != Insts.end()){continue;}
+            auto res = alias_analyser.QueryInstModRef(rwI,ptr,C);
+            if(res != AliasAnalyser::NoModRef){
+                can_licm = false;
+                break;
+            }
+        }
+        if(!can_licm){
+            break;
+        }
+
+        // now we can do the licm
+         std::cerr<<ptr<<"\n"; for(auto I:Insts){I->PrintIR(std::cerr);}
+        // Get Type;
+        int d = ++C->max_reg;
+        auto AllocaI = new AllocaInstruction(GlobalTypeMap[global_name], new RegOperand(d));
+        (*C->block_map)[0]->InsertInstruction(0,AllocaI);
+        for(auto I:Insts){
+            if(I->GetOpcode() == LOAD){
+                auto LoadI = (LoadInstruction*)I;
+                LoadI->SetPointer(new RegOperand(d));
+            }else if(I->GetOpcode() == STORE){
+                auto StoreI = (StoreInstruction*)I;
+                StoreI->SetPointer(new RegOperand(d));
+            }
+        }
+        // insert load in preheader;
+        // remove end instructions temporarily to accelerate instruction inserting
+        auto endI = *(L->preheader->Instruction_list.end() - 1);
+        L->preheader->Instruction_list.pop_back();
+        auto I1 = new LoadInstruction(GlobalTypeMap[global_name],new GlobalOperand(global_name),new RegOperand(++C->max_reg));
+        L->preheader->InsertInstruction(1,I1);
+        auto I2 = new StoreInstruction(GlobalTypeMap[global_name],new RegOperand(d),new RegOperand(C->max_reg));
+        L->preheader->InsertInstruction(1,I2);
+        L->preheader->InsertInstruction(1,endI);
+
+        //insert store in exits;
+        for(auto it = exit->Instruction_list.begin();it != exit->Instruction_list.end(); ++it){
+            auto I = *it;
+            if(I->GetOpcode() == PHI){continue;}
+
+            auto I3 = new LoadInstruction(GlobalTypeMap[global_name],new RegOperand(d),new RegOperand(++C->max_reg));
+            it = exit->Instruction_list.insert(it,I3);
+            ++it;
+
+            auto I4 = new StoreInstruction(GlobalTypeMap[global_name],new GlobalOperand(global_name),new RegOperand(C->max_reg));
+            it = exit->Instruction_list.insert(it,I4);
+            break;
+        }
+    }
     
     Mem2Reg(C);
 }
