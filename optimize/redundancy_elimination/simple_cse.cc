@@ -315,7 +315,7 @@ void DomTreeWalkCSE(CFG *C) {
                     continue;
                 }
                 if (I->GetOpcode() == LOAD || I->GetOpcode() == STORE) {
-                    continue;    // Load will be CSE in GVN
+                    continue;    // TODO(): Use MemorySSA to CSE other calls
                 }
                 if (I->GetOpcode() == CALL) {
                     auto CallI = (CallInstruction *)I;
@@ -325,7 +325,7 @@ void DomTreeWalkCSE(CFG *C) {
 
                     auto cfg = CFGMap[CallI->GetFunctionName()];
                     // we only CSE independent call in this Pass
-                    // other call inst will be CSE in GVN
+                    // TODO(): Use MemorySSA to CSE other calls
                     if (!alias_analyser.CFG_isIndependent(cfg)) {
                         continue;
                     }

@@ -1,8 +1,6 @@
 #include "../../include/cfg.h"
 #include <tuple>
 
-// due to IRgen, we can assume that all the store value are RegOperand
-
 static std::set<Instruction> EraseSet;
 static std::map<int, int> mem2reg_map;    //<old regno, new regno>
 static std::set<int> common_allocas;      // alloca of common situations
@@ -325,7 +323,34 @@ void VarRename(CFG *C) {
     phi_map.clear();
 }
 
+// for simplify, we can assume that all the store value are RegOperand
+void Mem2RegInit(CFG *C) {
+    for (auto &[id, bb] : *C->block_map) {
+        auto tmp_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for (auto I : tmp_list) {
+            if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
+                auto val = StoreI->GetValue();
+                if (val->GetOperandType() == BasicOperand::IMMI32) {
+                    auto AI =
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(AI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
+                    auto AI =
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(AI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                }
+            }
+            bb->Instruction_list.push_back(I);
+        }
+    }
+}
+
 void Mem2Reg(CFG *C) {
+    Mem2RegInit(C);
     InsertPhi(C);
     VarRename(C);
 }

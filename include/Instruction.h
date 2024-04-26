@@ -296,7 +296,7 @@ class LoadInstruction : public BasicInstruction {
 public:
     enum LLVMType GetDataType() { return type; }
     Operand GetPointer() { return pointer; }
-    void SetPointer(Operand op){ pointer = op;}
+    void SetPointer(Operand op) { pointer = op; }
     Operand GetResultOperand() { return result; }
 
     LoadInstruction(enum LLVMType type, Operand pointer, Operand result) {
@@ -328,6 +328,7 @@ class StoreInstruction : public BasicInstruction {
 public:
     enum LLVMType GetDataType() { return type; }
     Operand GetPointer() { return pointer; }
+    void SetValue(Operand op) { value = op; }
     void SetPointer(Operand op) { pointer = op; }
     Operand GetValue() { return value; }
 

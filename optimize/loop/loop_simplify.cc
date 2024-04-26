@@ -92,10 +92,10 @@ void NaturalLoop::AddPreheader(CFG *C) {
         }
     }
     assert(outloop_preblocks.size() >= 1);
-    
+
     if (outloop_preblocks.size() == 1) {
         auto preBB = *(outloop_preblocks.begin());
-        if(preBB->block_id != 0){
+        if (preBB->block_id != 0) {
             preheader = preBB;
             // preheader->comment = preheader->comment + "  preheader" + std::to_string(loop_id);
             return;

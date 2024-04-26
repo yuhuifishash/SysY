@@ -90,7 +90,6 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
     if (I->GetOpcode() == BR_COND || I->GetOpcode() == BR_UNCOND) {
         return false;
     }
-
     for (auto op : I->GetNonResultOperands()) {
         if (op->GetOperandType() == op->IMMI32 || op->GetOperandType() == op->IMMF32) {
             continue;
@@ -143,8 +142,7 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
         //     return false;
         // }
     }
-
-    // I->printIR(std::cerr);
+    // I->PrintIR(std::cerr);
     if (I->GetResultRegNo() != -1) {    // mark the reg operand to be invariant
         InvariantMap[I->GetResultRegNo()] = 1;
     }
@@ -245,89 +243,100 @@ If these conditions are true, we can promote the loads and stores in the
 loop of the pointer to use a temporary alloca'd variable.
 reference: LLVM   LICM.cpp
 */
+
+void BasicBlockCSE(CFG *C);
 void Mem2Reg(CFG *C);
+
 void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
-    if(L->exit_nodes.size() > 1){return;}
+    if (L->exit_nodes.size() > 1) {
+        return;
+    }
     auto exit = *L->exit_nodes.begin();
 
-    std::map<int, std::set<Instruction> > InvariantPtrInstsMap;
+    std::map<int, std::set<Instruction>> InvariantPtrInstsMap;
     std::map<int, LLVMType> ptrTypeMap;
 
-    std::map<std::string, std::set<Instruction> > GlobalPtrInstMap;
+    std::map<std::string, std::set<Instruction>> GlobalPtrInstMap;
     std::map<std::string, LLVMType> GlobalTypeMap;
 
-    //cache the memory read/write instructions
+    // cache the memory read/write instructions
     std::set<Instruction> MemRwInsts;
-    for(auto BB : L->loop_nodes){
-        for(auto I : BB->Instruction_list){
+    for (auto BB : L->loop_nodes) {
+        for (auto I : BB->Instruction_list) {
             Operand ptr;
             LLVMType type;
-            if(I->GetOpcode() == STORE){
-                auto StoreI = (StoreInstruction*)I;
+            if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
                 ptr = StoreI->GetPointer();
                 type = StoreI->GetDataType();
                 MemRwInsts.insert(I);
-            }else if(I->GetOpcode() == LOAD){
-                auto LoadI = (LoadInstruction*)I;
+            } else if (I->GetOpcode() == LOAD) {
+                auto LoadI = (LoadInstruction *)I;
                 ptr = LoadI->GetPointer();
                 type = LoadI->GetDataType();
                 MemRwInsts.insert(I);
-            }else if(I->GetOpcode() == CALL){
+            } else if (I->GetOpcode() == CALL) {
                 MemRwInsts.insert(I);
                 continue;
-            }else{
+            } else {
                 continue;
             }
 
-            if(ptr->GetOperandType() == BasicOperand::GLOBAL){
-                GlobalPtrInstMap[((GlobalOperand*)ptr)->GetName()].insert(I);
-                GlobalTypeMap[((GlobalOperand*)ptr)->GetName()] = type;
-            }else if(ptr->GetOperandType() == BasicOperand::REG){
-                auto reg_ptr = (RegOperand*)ptr;
+            if (ptr->GetOperandType() == BasicOperand::GLOBAL) {
+                GlobalPtrInstMap[((GlobalOperand *)ptr)->GetName()].insert(I);
+                GlobalTypeMap[((GlobalOperand *)ptr)->GetName()] = type;
+            } else if (ptr->GetOperandType() == BasicOperand::REG) {
+                auto reg_ptr = (RegOperand *)ptr;
                 auto resultI = ResultMap[reg_ptr->GetRegNo()];
                 auto resultBB = (*C->block_map)[resultI->GetBlockID()];
-                if(L->loop_nodes.find(resultBB) == L->loop_nodes.end()){
-                    InvariantPtrInstsMap[reg_ptr->GetRegNo()].insert(I) ;
+                if (L->loop_nodes.find(resultBB) == L->loop_nodes.end()) {
+                    InvariantPtrInstsMap[reg_ptr->GetRegNo()].insert(I);
                     ptrTypeMap[reg_ptr->GetRegNo()] = type;
                 }
-            }else{//should not reach here
+            } else {    // should not reach here
                 assert(false);
             }
         }
     }
 
-    //try to licm store instructions
-    //first we consider invariant Reg ptrs
-    for(auto [ptr_regno,Insts]:InvariantPtrInstsMap){
-        //check if other instructions will read/write ptr_regno
+    bool is_motion_store = false;
+    // try to licm store instructions
+    // first we consider invariant Reg ptrs
+    for (auto [ptr_regno, Insts] : InvariantPtrInstsMap) {
+        // check if other instructions will read/write ptr_regno
         bool can_licm = true;
-
         auto ptr = new RegOperand(ptr_regno);
-        for(auto rwI:MemRwInsts){
-            if(Insts.find(rwI) != Insts.end()){continue;}
-            auto res = alias_analyser.QueryInstModRef(rwI,ptr,C);
-            if(res != AliasAnalyser::NoModRef){
+        for (auto rwI : MemRwInsts) {
+            if (Insts.find(rwI) != Insts.end()) {
+                continue;
+            }
+            auto res = alias_analyser.QueryInstModRef(rwI, ptr, C);
+            if (res != AliasAnalyser::NoModRef) {
                 can_licm = false;
                 break;
             }
         }
-        if(!can_licm){
+        if (!can_licm) {
             break;
         }
 
+        is_motion_store = true;
         // now we can do the licm
-         std::cerr<<ptr<<"\n"; for(auto I:Insts){I->PrintIR(std::cerr);}
+        std::cerr << ptr << "\n";
+        for (auto I : Insts) {
+            I->PrintIR(std::cerr);
+        }
         // Get Type;
         int d = ++C->max_reg;
         auto AllocaI = new AllocaInstruction(ptrTypeMap[ptr_regno], new RegOperand(d));
-        (*C->block_map)[0]->InsertInstruction(0,AllocaI);
-        for(auto I:Insts){
-            if(I->GetOpcode() == LOAD){
-                auto LoadI = (LoadInstruction*)I;
+        (*C->block_map)[0]->InsertInstruction(0, AllocaI);
+        for (auto I : Insts) {
+            if (I->GetOpcode() == LOAD) {
+                auto LoadI = (LoadInstruction *)I;
                 LoadI->SetPointer(new RegOperand(d));
                 MemRwInsts.erase(I);
-            }else if(I->GetOpcode() == STORE){
-                auto StoreI = (StoreInstruction*)I;
+            } else if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
                 StoreI->SetPointer(new RegOperand(d));
                 MemRwInsts.erase(I);
             }
@@ -336,93 +345,131 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // remove end instructions temporarily to accelerate instruction inserting
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         L->preheader->Instruction_list.pop_back();
-        auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno],new RegOperand(ptr_regno),new RegOperand(++C->max_reg));
-        L->preheader->InsertInstruction(1,I1);
-        auto I2 = new StoreInstruction(ptrTypeMap[ptr_regno],new RegOperand(d),new RegOperand(C->max_reg));
-        L->preheader->InsertInstruction(1,I2);
-        L->preheader->InsertInstruction(1,endI);
+        auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno], new RegOperand(ptr_regno), new RegOperand(++C->max_reg));
+        L->preheader->InsertInstruction(1, I1);
+        auto I2 = new StoreInstruction(ptrTypeMap[ptr_regno], new RegOperand(d), new RegOperand(C->max_reg));
+        L->preheader->InsertInstruction(1, I2);
+        L->preheader->InsertInstruction(1, endI);
 
-        //insert store in exits;
-        for(auto it = exit->Instruction_list.begin();it != exit->Instruction_list.end(); ++it){
+        // insert store in exits;
+        for (auto it = exit->Instruction_list.begin(); it != exit->Instruction_list.end(); ++it) {
             auto I = *it;
-            if(I->GetOpcode() == PHI){continue;}
+            if (I->GetOpcode() == PHI) {
+                continue;
+            }
 
-            auto I3 = new LoadInstruction(ptrTypeMap[ptr_regno],new RegOperand(d),new RegOperand(++C->max_reg));
-            it = exit->Instruction_list.insert(it,I3);
+            auto I3 = new LoadInstruction(ptrTypeMap[ptr_regno], new RegOperand(d), new RegOperand(++C->max_reg));
+            it = exit->Instruction_list.insert(it, I3);
             ++it;
 
-            auto I4 = new StoreInstruction(ptrTypeMap[ptr_regno],new RegOperand(ptr_regno),new RegOperand(C->max_reg));
-            it = exit->Instruction_list.insert(it,I4);
+            auto I4 =
+            new StoreInstruction(ptrTypeMap[ptr_regno], new RegOperand(ptr_regno), new RegOperand(C->max_reg));
+            it = exit->Instruction_list.insert(it, I4);
             break;
         }
     }
-
     // then we consider GlobalVar
-    for(auto [global_name,Insts]:GlobalPtrInstMap){
-        //check if other instructions will read/write ptr_regno
+    for (auto [global_name, Insts] : GlobalPtrInstMap) {
+        // check if other instructions will read/write ptr_regno
         bool can_licm = true;
 
         auto ptr = new GlobalOperand(global_name);
-        for(auto rwI:MemRwInsts){
-            if(Insts.find(rwI) != Insts.end()){continue;}
-            auto res = alias_analyser.QueryInstModRef(rwI,ptr,C);
-            if(res != AliasAnalyser::NoModRef){
+        for (auto rwI : MemRwInsts) {
+            if (Insts.find(rwI) != Insts.end()) {
+                continue;
+            }
+            auto res = alias_analyser.QueryInstModRef(rwI, ptr, C);
+            if (res != AliasAnalyser::NoModRef) {
                 can_licm = false;
                 break;
             }
         }
-        if(!can_licm){
+        if (!can_licm) {
             break;
         }
 
+        is_motion_store = true;
         // now we can do the licm
-         std::cerr<<ptr<<"\n"; for(auto I:Insts){I->PrintIR(std::cerr);}
+        std::cerr << ptr << "\n";
+        for (auto I : Insts) {
+            I->PrintIR(std::cerr);
+        }
         // Get Type;
         int d = ++C->max_reg;
         auto AllocaI = new AllocaInstruction(GlobalTypeMap[global_name], new RegOperand(d));
-        (*C->block_map)[0]->InsertInstruction(0,AllocaI);
-        for(auto I:Insts){
-            if(I->GetOpcode() == LOAD){
-                auto LoadI = (LoadInstruction*)I;
+        (*C->block_map)[0]->InsertInstruction(0, AllocaI);
+        for (auto I : Insts) {
+            if (I->GetOpcode() == LOAD) {
+                auto LoadI = (LoadInstruction *)I;
                 LoadI->SetPointer(new RegOperand(d));
-            }else if(I->GetOpcode() == STORE){
-                auto StoreI = (StoreInstruction*)I;
+                MemRwInsts.erase(I);
+            } else if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
                 StoreI->SetPointer(new RegOperand(d));
+                MemRwInsts.erase(I);
             }
         }
+
         // insert load in preheader;
         // remove end instructions temporarily to accelerate instruction inserting
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         L->preheader->Instruction_list.pop_back();
-        auto I1 = new LoadInstruction(GlobalTypeMap[global_name],new GlobalOperand(global_name),new RegOperand(++C->max_reg));
-        L->preheader->InsertInstruction(1,I1);
-        auto I2 = new StoreInstruction(GlobalTypeMap[global_name],new RegOperand(d),new RegOperand(C->max_reg));
-        L->preheader->InsertInstruction(1,I2);
-        L->preheader->InsertInstruction(1,endI);
+        auto I1 =
+        new LoadInstruction(GlobalTypeMap[global_name], new GlobalOperand(global_name), new RegOperand(++C->max_reg));
+        L->preheader->InsertInstruction(1, I1);
+        auto I2 = new StoreInstruction(GlobalTypeMap[global_name], new RegOperand(d), new RegOperand(C->max_reg));
+        L->preheader->InsertInstruction(1, I2);
+        L->preheader->InsertInstruction(1, endI);
 
-        //insert store in exits;
-        for(auto it = exit->Instruction_list.begin();it != exit->Instruction_list.end(); ++it){
+        // insert store in exits;
+        for (auto it = exit->Instruction_list.begin(); it != exit->Instruction_list.end(); ++it) {
             auto I = *it;
-            if(I->GetOpcode() == PHI){continue;}
+            if (I->GetOpcode() == PHI) {
+                continue;
+            }
 
-            auto I3 = new LoadInstruction(GlobalTypeMap[global_name],new RegOperand(d),new RegOperand(++C->max_reg));
-            it = exit->Instruction_list.insert(it,I3);
+            auto I3 = new LoadInstruction(GlobalTypeMap[global_name], new RegOperand(d), new RegOperand(++C->max_reg));
+            it = exit->Instruction_list.insert(it, I3);
             ++it;
 
-            auto I4 = new StoreInstruction(GlobalTypeMap[global_name],new GlobalOperand(global_name),new RegOperand(C->max_reg));
-            it = exit->Instruction_list.insert(it,I4);
+            auto I4 = new StoreInstruction(GlobalTypeMap[global_name], new GlobalOperand(global_name),
+                                           new RegOperand(C->max_reg));
+            it = exit->Instruction_list.insert(it, I4);
             break;
         }
     }
-    
-    Mem2Reg(C);
+    if (is_motion_store) {
+        Mem2Reg(C);
+
+        // rebuild ResultMap
+        ResultMap.clear();
+        for (auto formal_reg : C->function_def->formals_reg) {
+            ResultMap[((RegOperand *)formal_reg)->GetRegNo()] = C->function_def;
+        }
+
+        for (auto [id, bb] : *C->block_map) {
+            for (auto I : bb->Instruction_list) {
+                I->SetBlockID(bb->block_id);    // set block id
+                int v = I->GetResultRegNo();
+                if (v != -1) {    // result exists
+                    ResultMap[v] = I;
+                }
+            }
+        }
+    }
 }
 
 void DFSLoopForest4LICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
     SingleLoopLICM(C, loop_forest, L);
-    SingleLoopStoreLICM(C, loop_forest, L);
     for (auto lv : loop_forest.loopG[L->loop_id]) {
         DFSLoopForest4LICM(C, loop_forest, lv);
+    }
+}
+
+void DFSLoopForest4StoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
+    SingleLoopStoreLICM(C, loop_forest, L);
+    for (auto lv : loop_forest.loopG[L->loop_id]) {
+        DFSLoopForest4StoreLICM(C, loop_forest, lv);
     }
 }
 
@@ -445,6 +492,14 @@ void LoopInvariantCodeMotion(CFG *C) {
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
             DFSLoopForest4LICM(C, C->LoopForest, l);
+        }
+    }
+
+    BasicBlockCSE(C);
+
+    for (auto l : C->LoopForest.loop_set) {
+        if (l->fa_loop == nullptr) {
+            DFSLoopForest4StoreLICM(C, C->LoopForest, l);
         }
     }
 }
