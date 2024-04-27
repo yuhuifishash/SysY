@@ -227,12 +227,9 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
                store %rx -> ptr %p0
                %ry = load ptr %p0
                this will be optimized to %ry = %rx
-               for simple, now we do not consider store value is imm(we can optimize it in gvn)
             */
             auto StoreI = (StoreInstruction *)I;
-            if (StoreI->GetValue()->GetOperandType() != BasicOperand::REG) {
-                continue;
-            }
+            assert(StoreI->GetValue()->GetOperandType() == BasicOperand::REG);
 
             int val_regno = ((RegOperand *)StoreI->GetValue())->GetRegNo();
             if (reg_replace_map.find(val_regno) != reg_replace_map.end()) {
@@ -272,7 +269,35 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
     return changed;
 }
 
+// for simplify, we can assume that all the store value are RegOperand in BasicBlockCSE
+void BasicBlockCSEInit(CFG *C) {
+    for (auto &[id, bb] : *C->block_map) {
+        auto tmp_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for (auto I : tmp_list) {
+            if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
+                auto val = StoreI->GetValue();
+                if (val->GetOperandType() == BasicOperand::IMMI32) {
+                    auto AI =
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(AI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
+                    auto AI =
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(AI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                }
+            }
+            bb->Instruction_list.push_back(I);
+        }
+    }
+}
+
 void BasicBlockCSE(CFG *C) {
+
+    BasicBlockCSEInit(C);
     bool changed = true;
     while (changed) {
         changed = false;
@@ -315,7 +340,7 @@ void DomTreeWalkCSE(CFG *C) {
                     continue;
                 }
                 if (I->GetOpcode() == LOAD || I->GetOpcode() == STORE) {
-                    continue;    // TODO(): Use MemorySSA to CSE other calls
+                    continue;    //we will consider memory instructions in gvn
                 }
                 if (I->GetOpcode() == CALL) {
                     auto CallI = (CallInstruction *)I;
@@ -325,10 +350,9 @@ void DomTreeWalkCSE(CFG *C) {
 
                     auto cfg = CFGMap[CallI->GetFunctionName()];
                     // we only CSE independent call in this Pass
-                    // TODO(): Use MemorySSA to CSE other calls
                     if (!alias_analyser.CFG_isIndependent(cfg)) {
                         continue;
-                    }
+                    }// we will consider other call instructions in gvn
                 }
 
                 auto Info = GetCSEInfo(I);

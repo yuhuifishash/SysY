@@ -157,6 +157,7 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(BasicBlockCSE);
         llvmIR.PassExecutor(DomTreeWalkCSE);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         // llvmIR.PassExecutor( ScalarEvolution ); // to do
     }

@@ -322,10 +322,10 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
 
         is_motion_store = true;
         // now we can do the licm
-        std::cerr << ptr << "\n";
-        for (auto I : Insts) {
-            I->PrintIR(std::cerr);
-        }
+        // std::cerr << ptr << "\n";
+        // for (auto I : Insts) {
+        //     I->PrintIR(std::cerr);
+        // }
         // Get Type;
         int d = ++C->max_reg;
         auto AllocaI = new AllocaInstruction(ptrTypeMap[ptr_regno], new RegOperand(d));
@@ -390,10 +390,10 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
 
         is_motion_store = true;
         // now we can do the licm
-        std::cerr << ptr << "\n";
-        for (auto I : Insts) {
-            I->PrintIR(std::cerr);
-        }
+        // std::cerr << ptr << "\n";
+        // for (auto I : Insts) {
+        //     I->PrintIR(std::cerr);
+        // }
         // Get Type;
         int d = ++C->max_reg;
         auto AllocaI = new AllocaInstruction(GlobalTypeMap[global_name], new RegOperand(d));
