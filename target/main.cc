@@ -49,8 +49,7 @@ void SparseConditionalConstantPropagation(CFG *C);
 void SimpleDCE(CFG *C);
 void EliminateEmptyIndexGEP(CFG *C);
 void TailRecursiveEliminate(CFG *C);
-void BasicBlockCSE(CFG *C);
-void DomTreeWalkCSE(CFG *C);
+void SimpleCSE(CFG* C);
 void InstSimplify(CFG *C);
 void InstCombine(CFG *C);
 void SimplifyCFG(CFG *C);
@@ -60,7 +59,7 @@ void LoopInvariantCodeMotion(CFG *C);
 void LoopClosedSSA(CFG *C);
 void ScalarEvolution(CFG *C);
 
-void AliasAnalysis(LLVMIR *IR);
+void SimpleAliasAnalysis(LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -134,15 +133,15 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
 
-        llvmIR.PassExecutor(AliasAnalysis);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(BasicBlockCSE);
+        llvmIR.PassExecutor(SimpleCSE);
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
 
-        llvmIR.PassExecutor(AliasAnalysis);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
@@ -152,11 +151,10 @@ int main(int argc, char **argv) {
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
 
-        llvmIR.PassExecutor(AliasAnalysis);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
-        llvmIR.PassExecutor(BasicBlockCSE);
-        llvmIR.PassExecutor(DomTreeWalkCSE);
+        llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         // llvmIR.PassExecutor( ScalarEvolution ); // to do

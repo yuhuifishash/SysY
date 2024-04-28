@@ -397,3 +397,9 @@ void DomTreeWalkCSE(CFG *C) {
         }
     }
 }
+
+void SimpleCSE(CFG* C)
+{
+    BasicBlockCSE(C);
+    DomTreeWalkCSE(C);
+}

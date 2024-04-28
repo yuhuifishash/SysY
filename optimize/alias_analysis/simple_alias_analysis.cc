@@ -240,11 +240,11 @@ bool FunctionMemRWInfo::MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwin
 
 //----------------------------------------
 // implementation of alias analysis
-void AliasAnalyser::AliasAnalysis() {
+void AliasAnalyser::SimpleAliasAnalysis() {
     PtrRegMemMap.clear();
     CFGMemRWMap.clear();
     for (auto [defI, cfg] : IR->llvm_cfg) {
-        AliasAnalysis(cfg);
+        SimpleAliasAnalysis(cfg);
     }
 
     // cache all the call inst of cfg
@@ -292,7 +292,7 @@ void AliasAnalyser::AliasAnalysis() {
 
 // analysis all the ptr operand in CFG* C
 // it will also analysis the read/write info of inst in C(but we do not consider call inst)
-void AliasAnalyser::AliasAnalysis(CFG *C) {
+void AliasAnalyser::SimpleAliasAnalysis(CFG *C) {
     std::map<int, PtrRegMemInfo> ptrmap;
     FunctionMemRWInfo rwinfo;
 
@@ -396,9 +396,10 @@ void AliasAnalyser::AliasAnalysis(CFG *C) {
     CFGMemRWMap[C] = rwinfo;
 }
 
-void AliasAnalysis(LLVMIR *IR) {
+void SimpleAliasAnalysis(LLVMIR *IR) {
+    alias_analyser.analysis_type = AliasAnalyser::ONLY_FULL_ARRAY;
     alias_analyser.SetLLVMIR(IR);
-    alias_analyser.AliasAnalysis();
+    alias_analyser.SimpleAliasAnalysis();
 
     //------------------------test
     // alias_analyser.PrintAAResult(true);

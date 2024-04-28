@@ -54,6 +54,12 @@ private:
     LLVMIR *IR;
 
 public:
+    // TODO(): we need MemoryLocation to analysis more precious(maybe we need ScalarEvolution before)
+    enum{
+        ONLY_FULL_ARRAY = 0,// r/w one element of array is considered as r/w full array
+        PARTIAL_ARRAY = 1,// except call, r/w one element of array only be considered as one element
+    }analysis_type;
+
     enum AliasResult {
         NoAlias = 1,
         MayAlias = 2,    // may alias is useless now
@@ -69,8 +75,8 @@ public:
 
     void SetLLVMIR(LLVMIR *ir) { this->IR = ir; }
 
-    void AliasAnalysis();
-    void AliasAnalysis(CFG *C);    // alias_analysis in single function
+    void SimpleAliasAnalysis();
+    void SimpleAliasAnalysis(CFG *C);    // simple_alias_analysis in single function
 
     // return alias information of op1 and op2
     // the type of op1 and op2 maybe RegOperand or GlobalOperand
