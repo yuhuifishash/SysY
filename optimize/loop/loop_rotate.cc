@@ -63,15 +63,17 @@ if(t1 = a[i]){
     }while(t2 = a[i])
 }
 */
-std::set<Instruction> CheckHeaderUseInLoopBody(CFG* C, NaturalLoop* L, int result_regno) {
+std::set<Instruction> CheckHeaderUseInLoopBody(CFG *C, NaturalLoop *L, int result_regno) {
     std::set<Instruction> res;
-    for(auto bb:L->loop_nodes){
-        if(bb == L->header){continue;}
-        for(auto I:bb->Instruction_list){
-            for(auto op:I->GetNonResultOperands()){
-                if(op->GetOperandType() == BasicOperand::REG){
-                    auto rop = (RegOperand*)op;
-                    if(rop->GetRegNo() == result_regno){
+    for (auto bb : L->loop_nodes) {
+        if (bb == L->header) {
+            continue;
+        }
+        for (auto I : bb->Instruction_list) {
+            for (auto op : I->GetNonResultOperands()) {
+                if (op->GetOperandType() == BasicOperand::REG) {
+                    auto rop = (RegOperand *)op;
+                    if (rop->GetRegNo() == result_regno) {
                         res.insert(I);
                     }
                 }
@@ -81,19 +83,19 @@ std::set<Instruction> CheckHeaderUseInLoopBody(CFG* C, NaturalLoop* L, int resul
     return res;
 }
 
-void SolveHeaderUseInLoopBody(CFG* C, NaturalLoop* L, Instruction defI, int new_regno, 
-                    std::set<Instruction> useinsts, LLVMBlock CondBlock, LLVMBlock latch) {
+void SolveHeaderUseInLoopBody(CFG *C, NaturalLoop *L, Instruction defI, int new_regno, std::set<Instruction> useinsts,
+                              LLVMBlock CondBlock, LLVMBlock latch) {
     assert(defI->GetResultType() != VOID);
 
     int old_regno = defI->GetResultRegNo();
-    auto PhiI = new PhiInstruction(defI->GetResultType(),new RegOperand(++C->max_reg));
+    auto PhiI = new PhiInstruction(defI->GetResultType(), new RegOperand(++C->max_reg));
     PhiI->InsertPhi(new RegOperand(old_regno), new LabelOperand(CondBlock->block_id));
     PhiI->InsertPhi(new RegOperand(new_regno), new LabelOperand(latch->block_id));
-    L->header->InsertInstruction(0,PhiI);
+    L->header->InsertInstruction(0, PhiI);
     PhiI->PrintIR(std::cerr);
-    std::map<int,int> replace_map;
+    std::map<int, int> replace_map;
     replace_map[old_regno] = C->max_reg;
-    for(auto I:useinsts){
+    for (auto I : useinsts) {
         I->ReplaceByMap(replace_map);
     }
 }
@@ -121,12 +123,14 @@ void NaturalLoop::LoopRotate(CFG *C) {
     auto exit = *exit_nodes.begin();
 
     std::set<Instruction> HeaderDefLoopUseInsts;
-    std::map<Instruction,std::set<Instruction> > HeaderUseMap; 
+    std::map<Instruction, std::set<Instruction>> HeaderUseMap;
     for (auto I : header->Instruction_list) {
-        if(I->GetOpcode() == PHI){continue;}
-        if(I->GetResultRegNo() != -1){
-            auto useinsts = CheckHeaderUseInLoopBody(C,this,I->GetResultRegNo());
-            if(useinsts.size() != 0){
+        if (I->GetOpcode() == PHI) {
+            continue;
+        }
+        if (I->GetResultRegNo() != -1) {
+            auto useinsts = CheckHeaderUseInLoopBody(C, this, I->GetResultRegNo());
+            if (useinsts.size() != 0) {
                 HeaderDefLoopUseInsts.insert(I);
                 HeaderUseMap[I] = useinsts;
             }
@@ -194,7 +198,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
         // in header, the phi is %r = phi [%v1, %preheader],[%v2, %latch]
         // in exit, the phi is %t = phi [%r, %header], ...
 
-        // then phi is changed to %t = phi [%v1, %CondBlock], ... 
+        // then phi is changed to %t = phi [%v1, %CondBlock], ...
         for (auto I2 : header->Instruction_list) {
             if (I2->GetOpcode() != PHI) {
                 break;
@@ -210,7 +214,8 @@ void NaturalLoop::LoopRotate(CFG *C) {
         }
         // can not find, just insert the header val operand
         if (is_find == false) {
-            PhiI->InsertPhi(PhiI->GetValOperand(header->block_id)->CopyOperand(), new LabelOperand(CondBlock->block_id));
+            PhiI->InsertPhi(PhiI->GetValOperand(header->block_id)->CopyOperand(),
+                            new LabelOperand(CondBlock->block_id));
         }
     }
 
@@ -232,9 +237,8 @@ void NaturalLoop::LoopRotate(CFG *C) {
         } else {
             if (I->GetResultRegNo() != -1) {    // set new result RegOperand
                 NewResultRegMap[I->GetResultRegNo()] = ++C->max_reg;
-                if(HeaderDefLoopUseInsts.find(I) != HeaderDefLoopUseInsts.end()){
-                    SolveHeaderUseInLoopBody(C, this, I, C->max_reg,
-                                             HeaderUseMap[I], CondBlock, latch);
+                if (HeaderDefLoopUseInsts.find(I) != HeaderDefLoopUseInsts.end()) {
+                    SolveHeaderUseInLoopBody(C, this, I, C->max_reg, HeaderUseMap[I], CondBlock, latch);
                 }
             }
 
@@ -258,7 +262,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
                     I = new BrUncondInstruction(new LabelOperand(body_label_id));
                 }
             }
-            //replace the operand of insts with RegValMap
+            // replace the operand of insts with RegValMap
             std::vector<Operand> NonResultList = nI->GetNonResultOperands();
             for (auto &op : NonResultList) {
                 if (op->GetOperandType() == BasicOperand::REG) {

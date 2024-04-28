@@ -49,7 +49,7 @@ void SparseConditionalConstantPropagation(CFG *C);
 void SimpleDCE(CFG *C);
 void EliminateEmptyIndexGEP(CFG *C);
 void TailRecursiveEliminate(CFG *C);
-void SimpleCSE(CFG* C);
+void SimpleCSE(CFG *C);
 void InstSimplify(CFG *C);
 void InstCombine(CFG *C);
 void SimplifyCFG(CFG *C);

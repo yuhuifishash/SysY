@@ -95,7 +95,7 @@ void NaturalLoop::AddPreheader(CFG *C) {
 
     if (outloop_preblocks.size() == 1) {
         auto preBB = *(outloop_preblocks.begin());
-        // BB0 should not be preheader, 
+        // BB0 should not be preheader,
         // if preheader has multiple successors, we also need add transformBB to header
         if (preBB->block_id != 0 && C->GetSuccessor(preBB).size() == 1) {
             preheader = preBB;

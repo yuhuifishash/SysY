@@ -55,10 +55,10 @@ private:
 
 public:
     // TODO(): we need MemoryLocation to analysis more precious(maybe we need ScalarEvolution before)
-    enum{
-        ONLY_FULL_ARRAY = 0,// r/w one element of array is considered as r/w full array
-        PARTIAL_ARRAY = 1,// except call, r/w one element of array only be considered as one element
-    }analysis_type;
+    enum {
+        ONLY_FULL_ARRAY = 0,    // r/w one element of array is considered as r/w full array
+        PARTIAL_ARRAY = 1,      // except call, r/w one element of array only be considered as one element
+    } analysis_type;
 
     enum AliasResult {
         NoAlias = 1,

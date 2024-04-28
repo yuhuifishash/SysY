@@ -2,31 +2,28 @@
 #define MEMORY_SSA_H
 #include "../../include/cfg.h"
 
-class MemoryAccess
-{
+class MemoryAccess {
 public:
-    enum{
+    enum {
         MemoryUse = 0,
         MemoryDef = 1,
         MemoryPhi = 2,
-    }type;
+    } type;
 };
 
-class MemorySSA
-{
+class MemorySSA {
 private:
-    CFG* C;
-public:
+    CFG *C;
 
+public:
 };
 
-class IRMSSA
-{
+class IRMSSA {
 private:
-    LLVMIR* IR;
-    std::map<CFG*, MemorySSA> MSSAMap;
-public:
+    LLVMIR *IR;
+    std::map<CFG *, MemorySSA> MSSAMap;
 
+public:
 };
 
 #endif
