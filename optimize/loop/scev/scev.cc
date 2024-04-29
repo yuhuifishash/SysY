@@ -19,6 +19,8 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.L = this;
     scev.FindInvariantVar();
     scev.FindBasicIndVar();
+
+    scev.PrintLoopSCEVInfo();
 }
 
 void SCEV::FindInvariantVar() {
@@ -137,16 +139,92 @@ void SCEV::FindBasicIndVar() {
         // now we only consider step is IMMI32
         if (d != nullptr && d->GetOperandType() == BasicOperand::IMMI32) {
             // now we find one BasicIndVar
-            // SCEVMap[PhiI->GetResultRegNo()];
-            std::cerr << "BasicIndVar " << L->header->block_id << "  " << st << "  " << d << "\n";
+            SCEVMap[PhiI->GetResultRegNo()] = new SCEVExpr(st, SCEVExpr::AddRecurrences, d);
         }
     }
 }
 
-void SCEV::FindRecurrences() {}
+/*
+int S = 0;
+for(int i = 0; i < n; ++i){
+    S += i;
+}
 
-SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, Operand d) {}
+int S0 = 0;
+for(int i0 = 0; i1 < n; i1 = phi(i0,i2), S1 = phi(S0,S2)){
+    S2 = S1 + i1;
+    i2 = i1 + 1；
+}
 
-SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr) {}
+i1 -> {0,+,1}
+i2 = i1 + 1 -> {1,+,1}
+S1 -> {0,+,0,+,1}
+S2 -> {0,+,0,+,1} + {0,+,1} = {0,+,1,+,1}
+*/
+void SCEV::FindRecurrences() {
+    // first find SCEVRecurrences in the phi of header
 
-void SCEVExpr::PrintSCEVExpr() {}
+
+    // then find other SCEVRecurrences
+
+
+}
+
+
+SCEVExpr::SCEVExpr(Operand d) {
+    this->len = 1;
+    this->st = d;
+    this->type = Invariant;
+    this->RecurExpr = nullptr;
+}
+
+SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, Operand d) {
+    SCEVExpr* exp = new SCEVExpr(d);
+    this->len = 2;
+    this->st = s;
+    this->type = t;
+    this->RecurExpr = exp;
+}
+
+SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr) {
+    this->len = rec_expr->len + 1;
+    this->st = s;
+    this->type = t;
+    this->RecurExpr = rec_expr;
+}
+
+SCEVExpr* SCEVExpr::operator+(SCEVExpr* b) {
+    return nullptr;
+}
+
+SCEVExpr* SCEVExpr::operator-(SCEVExpr* b) {
+    return nullptr;
+}
+
+SCEVExpr* SCEVExpr::operator*(SCEVExpr* b) {
+    return nullptr;
+}
+
+
+std::string SCEVExprType_status[3] = {"ERROR", "Invariant", "+"};
+
+void SCEVExpr::PrintSCEVExpr() {
+    SCEVExpr* now = this;
+    std::cerr<<"len:"<<this->len<<" ";
+    std::cerr<<"{";
+    while(now->RecurExpr){
+        std::cerr<<st<<" "<<SCEVExprType_status[type]<<" ";
+        now = now->RecurExpr;
+    }
+    std::cerr<<now->st<<"}\n";
+}
+
+
+
+
+void SCEV::PrintLoopSCEVInfo() {
+    for(auto [regno, expr]: SCEVMap){
+        std::cerr<<regno<<"  ";
+        expr->PrintSCEVExpr();
+    }
+}

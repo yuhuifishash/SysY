@@ -1,6 +1,7 @@
 #include "../../include/cfg.h"
 #include <assert.h>
 
+void EliminateUselessPhi(CFG *C);
 void LoopSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         bb->comment = "";
@@ -10,6 +11,7 @@ void LoopSimplify(CFG *C) {
         loop->LoopSimplify(C);
         // loop->PrintLoopDebugInfo();
     }
+    EliminateUselessPhi(C);
     C->BuildDominatorTree();
     // for(auto loop:C->LoopForest.loop_set){
     //     loop->LoopSimplifyCheck(C);

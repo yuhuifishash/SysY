@@ -8,16 +8,30 @@
 class NaturalLoop;
 class CFG;
 
+class SCEVValue {
+public:
+    
+    void PrintSCEVValue();
+};
+
 class SCEVExpr {
 public:
+    uint32_t len;
     Operand st;
-    std::vector<SCEVExpr *> RecurExprs;
+    SCEVExpr* RecurExpr;
     enum SCEVExprType {
         Invariant = 1,
         AddRecurrences = 2,
-    };
+    }type;
+    SCEVExpr(Operand d); //create invariant SCEVexpr
     SCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
     SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr);    // create Recurrence SCEVexpr
+
+
+    // if result is invalid, return nullptr
+    SCEVExpr* operator+(SCEVExpr* b);
+    SCEVExpr* operator-(SCEVExpr* b);
+    SCEVExpr* operator*(SCEVExpr* b);
     void PrintSCEVExpr();
 };
 
@@ -58,6 +72,9 @@ public:
             return nullptr
     */
     std::pair<Operand, LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2);    //(RegNO, RegNo)
+
+
+    void PrintLoopSCEVInfo();
 };
 
 #endif
