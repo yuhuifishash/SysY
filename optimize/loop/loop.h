@@ -37,7 +37,6 @@ public:
     void LoopSimplifyCheck(CFG *C);
 
     void LCSSA(CFG *C);
-    void LCSSACheck(CFG *C);
 
     void LoopRotate(CFG *C);
 

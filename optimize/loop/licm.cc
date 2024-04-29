@@ -203,6 +203,7 @@ void SingleLoopLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
     std::set<Instruction> EraseSet;
     // remove end instructions temporarily to accelerate instruction inserting
     auto endI = *(L->preheader->Instruction_list.end() - 1);
+    assert(endI->GetOpcode() == BR_UNCOND);
     L->preheader->Instruction_list.pop_back();
 
     for (auto it = InvariantInsList.begin(); it != InvariantInsList.end();) {
@@ -344,6 +345,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // insert load in preheader;
         // remove end instructions temporarily to accelerate instruction inserting
         auto endI = *(L->preheader->Instruction_list.end() - 1);
+        assert(endI->GetOpcode() == BR_UNCOND);
         L->preheader->Instruction_list.pop_back();
         auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno], new RegOperand(ptr_regno), new RegOperand(++C->max_reg));
         L->preheader->InsertInstruction(1, I1);

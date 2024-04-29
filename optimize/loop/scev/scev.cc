@@ -12,6 +12,9 @@ void ScalarEvolution(CFG *C) {
 
 void NaturalLoop::ScalarEvolution(CFG *C) {
     ResultMap.clear();
+    scev.SCEVMap.clear();
+    scev.InvariantSet.clear();
+
     scev.C = C;
     scev.L = this;
     scev.FindInvariantVar();
@@ -60,7 +63,7 @@ bool SCEV::SCEV_isI32Invariant(Operand op) {
 // if ths instruction is like result = r +(-) d (d is invariant), return {r,d}
 // else return {nullptr,nullptr}
 std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev) {
-    if (I->GetOpcode() != ADD || I->GetOpcode() != SUB) {
+    if (I->GetOpcode() != ADD && I->GetOpcode() != SUB) {
         return {nullptr, nullptr};
     }
 
@@ -71,7 +74,7 @@ std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev)
     bool t1 = scev->SCEV_isI32Invariant(op1);
     bool t2 = scev->SCEV_isI32Invariant(op2);
     // both invariant or both not invariant, return nullptr
-    if (t1 ^ t2) {
+    if ((t1 | t2) == 0 || (t1 & t2) == 1) {
         return {nullptr, nullptr};
     }
 
@@ -85,12 +88,16 @@ std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev)
 // we only care about ADD and SUB
 // r2 = f(st) , f is ADD or SUB
 // example: r2 = st + 1
+// return {step, type(ADD,SUB)}
 std::pair<Operand, LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2) {
-    // first solve step is reg. If step is reg, we only optimize cycle with size 2
+    // for simple, now we only optimize cycle with size 2
     Operand ans;
-    Instruction now = ResultMap[r2];
+    Instruction now = ResultMap[r2];    // r2 = st +/- invariant
+    // std::cerr<<"FindBasicIndVarCycleVarDef  "<<st<<" "<<r2<<" ";
+    // now->PrintIR(std::cerr);
 
-    auto [r, d] = is_AddSubInvariant(now, st, this);
+    auto [r, d] = is_AddSubInvariant(now, st, this);    // [r, d] should be {st, step}
+    // r2 = st + d
     if (r == nullptr) {
         return {nullptr, OTHER};
     }
@@ -101,16 +108,7 @@ std::pair<Operand, LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2
         return {d, (LLVMIROpcode)now->GetOpcode()};
     }
 
-    int step;
-    while (r2 != st) {
-        if (now->GetOpcode() == ADD) {
-
-        } else if (now->GetOpcode() == SUB) {
-
-        } else {
-            return {nullptr, OTHER};
-        }
-    }
+    return {nullptr, OTHER};
 }
 
 void SCEV::FindBasicIndVar() {
@@ -135,8 +133,20 @@ void SCEV::FindBasicIndVar() {
             continue;
         }
 
-        // step = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand*)r2)->GetRegNo());
+        auto [d, type] = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand *)r2)->GetRegNo());
+        // now we only consider step is IMMI32
+        if (d != nullptr && d->GetOperandType() == BasicOperand::IMMI32) {
+            // now we find one BasicIndVar
+            // SCEVMap[PhiI->GetResultRegNo()];
+            std::cerr << "BasicIndVar " << L->header->block_id << "  " << st << "  " << d << "\n";
+        }
     }
 }
 
 void SCEV::FindRecurrences() {}
+
+SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, Operand d) {}
+
+SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr) {}
+
+void SCEVExpr::PrintSCEVExpr() {}

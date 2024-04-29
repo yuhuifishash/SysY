@@ -9,12 +9,16 @@ class NaturalLoop;
 class CFG;
 
 class SCEVExpr {
+public:
     Operand st;
-    SCEVExpr *RecurExpr;
+    std::vector<SCEVExpr *> RecurExprs;
     enum SCEVExprType {
         Invariant = 1,
         AddRecurrences = 2,
     };
+    SCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
+    SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr);    // create Recurrence SCEVexpr
+    void PrintSCEVExpr();
 };
 
 class SCEV {
@@ -22,9 +26,8 @@ public:
     CFG *C;
     NaturalLoop *L;
 
-    std::set<int> InvariantSet;    //<RegNo>
-    SCEVExpr BasicIndVar;
-    std::map<int, SCEVExpr> SCEVMap;    //<RegNo, SCEVExpr>
+    std::set<int> InvariantSet;           //<RegNo>
+    std::map<int, SCEVExpr *> SCEVMap;    //<RegNo, SCEVExpr>
 
     /*this indicates that the loop is the formal:
     i = lowerbound
@@ -34,10 +37,10 @@ public:
     }while(i < upperbound)
     */
     bool is_simpleloop;
-    LLVMIROpcode step_way;
-    Operand lowerbound;    // if is_simpleloop is true, this must be invariant i32
-    Operand upperbound;    // if is_simpleloop is true, this must be invariant i32
-    Operand step;          // if is_simpleloop is true, this must be invariant i32
+    LLVMIROpcode step_way;    // we only consider ADD, SUB
+    Operand lowerbound;       // if is_simpleloop is true, this must be invariant i32
+    Operand upperbound;       // if is_simpleloop is true, this must be invariant i32
+    Operand step;             // if is_simpleloop is true, this must be invariant i32
 
     void FindInvariantVar();
     void FindBasicIndVar();

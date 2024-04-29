@@ -154,10 +154,11 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
+        llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
-        // llvmIR.PassExecutor( ScalarEvolution ); // to do
+        llvmIR.PassExecutor(ScalarEvolution);    // to do
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

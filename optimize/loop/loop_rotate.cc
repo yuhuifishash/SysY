@@ -92,7 +92,7 @@ void SolveHeaderUseInLoopBody(CFG *C, NaturalLoop *L, Instruction defI, int new_
     PhiI->InsertPhi(new RegOperand(old_regno), new LabelOperand(CondBlock->block_id));
     PhiI->InsertPhi(new RegOperand(new_regno), new LabelOperand(latch->block_id));
     L->header->InsertInstruction(0, PhiI);
-    PhiI->PrintIR(std::cerr);
+    // PhiI->PrintIR(std::cerr);
     std::map<int, int> replace_map;
     replace_map[old_regno] = C->max_reg;
     for (auto I : useinsts) {
