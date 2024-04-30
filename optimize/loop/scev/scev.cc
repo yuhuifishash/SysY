@@ -4,6 +4,10 @@
 
 static std::map<int, Instruction> ResultMap;
 
+AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b);
+AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b);
+AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b);
+
 void ScalarEvolution(CFG *C) {
     for (auto loop : C->LoopForest.loop_set) {
         loop->ScalarEvolution(C);
@@ -19,8 +23,24 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.L = this;
     scev.FindInvariantVar();
     scev.FindBasicIndVar();
+    scev.FindRecurrences();
 
     scev.PrintLoopSCEVInfo();
+}
+
+AddSCEVExpr* SCEV::GetOperandSCEV(Operand op) {
+    if(op == nullptr){assert(false);}
+
+    if(op->GetOperandType() == BasicOperand::REG){
+        int r = ((RegOperand*)op)->GetRegNo();
+        if(SCEVMap.find(r) == SCEVMap.end()){return nullptr;}
+        return SCEVMap[r];
+    }else if(op->GetOperandType() == BasicOperand::IMMI32){
+        int imm = ((ImmI32Operand*)op)->GetIntImmVal();
+        return new AddSCEVExpr(new ImmI32Operand(imm));
+    }else{
+        return nullptr;
+    }
 }
 
 void SCEV::FindInvariantVar() {
@@ -139,10 +159,16 @@ void SCEV::FindBasicIndVar() {
         // now we only consider step is IMMI32
         if (d != nullptr && d->GetOperandType() == BasicOperand::IMMI32) {
             // now we find one BasicIndVar
-            SCEVMap[PhiI->GetResultRegNo()] = new SCEVExpr(st, SCEVExpr::AddRecurrences, d);
+            SCEVMap[PhiI->GetResultRegNo()] = new AddSCEVExpr(st, AddSCEVExpr::AddRecurrences, d);
         }
     }
+
+    for(auto r:InvariantSet){
+        SCEVMap[r] = new AddSCEVExpr(new RegOperand(r));
+    }
 }
+
+
 
 /*
 int S = 0;
@@ -162,68 +188,56 @@ S1 -> {0,+,0,+,1}
 S2 -> {0,+,0,+,1} + {0,+,1} = {0,+,1,+,1}
 */
 void SCEV::FindRecurrences() {
-    // first find SCEVRecurrences in the phi of header
-
-
-    // then find other SCEVRecurrences
-
-
-}
-
-
-SCEVExpr::SCEVExpr(Operand d) {
-    this->len = 1;
-    this->st = d;
-    this->type = Invariant;
-    this->RecurExpr = nullptr;
-}
-
-SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, Operand d) {
-    SCEVExpr* exp = new SCEVExpr(d);
-    this->len = 2;
-    this->st = s;
-    this->type = t;
-    this->RecurExpr = exp;
-}
-
-SCEVExpr::SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr) {
-    this->len = rec_expr->len + 1;
-    this->st = s;
-    this->type = t;
-    this->RecurExpr = rec_expr;
-}
-
-SCEVExpr* SCEVExpr::operator+(SCEVExpr* b) {
-    return nullptr;
-}
-
-SCEVExpr* SCEVExpr::operator-(SCEVExpr* b) {
-    return nullptr;
-}
-
-SCEVExpr* SCEVExpr::operator*(SCEVExpr* b) {
-    return nullptr;
-}
-
-
-std::string SCEVExprType_status[3] = {"ERROR", "Invariant", "+"};
-
-void SCEVExpr::PrintSCEVExpr() {
-    SCEVExpr* now = this;
-    std::cerr<<"len:"<<this->len<<" ";
-    std::cerr<<"{";
-    while(now->RecurExpr){
-        std::cerr<<st<<" "<<SCEVExprType_status[type]<<" ";
-        now = now->RecurExpr;
+    bool changed = true;
+    while(changed){
+        changed = false;
+        for(auto bb:L->loop_nodes){
+            for(auto I:bb->Instruction_list){
+                auto r = I->GetResultReg();
+                if(r == nullptr){continue;}
+                if(GetOperandSCEV(r) != nullptr){continue;}
+                
+                if(I->GetOpcode() == ADD){
+                    auto ArithI = (ArithmeticInstruction*)I;
+                    auto scev1 = GetOperandSCEV(ArithI->GetOperand1());
+                    auto scev2 = GetOperandSCEV(ArithI->GetOperand2());
+                    auto res_scev = SCEVadd(scev1,scev2);
+                    if(res_scev != nullptr){
+                        changed = true;
+                        SCEVMap[I->GetResultRegNo()] = res_scev;
+                    }
+                }else if(I->GetOpcode() == SUB){
+                    auto ArithI = (ArithmeticInstruction*)I;
+                    auto scev1 = GetOperandSCEV(ArithI->GetOperand1());
+                    auto scev2 = GetOperandSCEV(ArithI->GetOperand2());
+                    auto res_scev = SCEVsub(scev1,scev2);
+                    if(res_scev != nullptr){
+                        changed = true;
+                        SCEVMap[I->GetResultRegNo()] = res_scev;
+                    }
+                }else if(I->GetOpcode() == MUL){
+                    auto ArithI = (ArithmeticInstruction*)I;
+                    auto scev1 = GetOperandSCEV(ArithI->GetOperand1());
+                    auto scev2 = GetOperandSCEV(ArithI->GetOperand2());
+                    auto res_scev = SCEVmul(scev1,scev2);
+                    if(res_scev != nullptr){
+                        changed = true;
+                        SCEVMap[I->GetResultRegNo()] = res_scev;
+                    }
+                }
+            }
+        }
+        //TODO(): calculate more phi in header
     }
-    std::cerr<<now->st<<"}\n";
 }
-
-
 
 
 void SCEV::PrintLoopSCEVInfo() {
+    std::cerr<<"Loop: "<<L->loop_id <<" ------------------------\n";
     for(auto [regno, expr]: SCEVMap){
+        if(expr->len == 1){
+            continue;
+        }
         std::cerr<<regno<<"  ";
         expr->PrintSCEVExpr();
     }

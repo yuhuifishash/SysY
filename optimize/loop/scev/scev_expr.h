@@ -10,30 +10,37 @@ class CFG;
 
 class SCEVValue {
 public:
-    
+    // we only consider calculation of 2 invariant, if > 2, we consider it as invalid
+    // if type == OTHER, the value is op1
+    // else, the value is op1 type op2 
+    Operand op1;
+    LLVMIROpcode type;
+    Operand op2;
+
+    SCEVValue operator+(SCEVValue b);
+    SCEVValue operator-(SCEVValue b);
+    SCEVValue operator*(SCEVValue b);
+
     void PrintSCEVValue();
 };
 
-class SCEVExpr {
+class AddSCEVExpr {
 public:
     uint32_t len;
-    Operand st;
-    SCEVExpr* RecurExpr;
+    SCEVValue st;
+    AddSCEVExpr* RecurExpr;
     enum SCEVExprType {
         Invariant = 1,
         AddRecurrences = 2,
     }type;
-    SCEVExpr(Operand d); //create invariant SCEVexpr
-    SCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
-    SCEVExpr(Operand s, SCEVExprType t, SCEVExpr *rec_expr);    // create Recurrence SCEVexpr
+    AddSCEVExpr() = default;
+    AddSCEVExpr(Operand d); //create invariant SCEVexpr
+    AddSCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
+    AddSCEVExpr(Operand s, SCEVExprType t, AddSCEVExpr *rec_expr);    // create Recurrence SCEVexpr
 
-
-    // if result is invalid, return nullptr
-    SCEVExpr* operator+(SCEVExpr* b);
-    SCEVExpr* operator-(SCEVExpr* b);
-    SCEVExpr* operator*(SCEVExpr* b);
     void PrintSCEVExpr();
 };
+
 
 class SCEV {
 public:
@@ -41,7 +48,7 @@ public:
     NaturalLoop *L;
 
     std::set<int> InvariantSet;           //<RegNo>
-    std::map<int, SCEVExpr *> SCEVMap;    //<RegNo, SCEVExpr>
+    std::map<int, AddSCEVExpr *> SCEVMap;    //<RegNo, AddSCEVExpr>
 
     /*this indicates that the loop is the formal:
     i = lowerbound
@@ -61,6 +68,7 @@ public:
     void FindRecurrences();
 
     bool SCEV_isI32Invariant(Operand op);
+    AddSCEVExpr* GetOperandSCEV(Operand op);
 
     /*
         %st = phi [%x, preheader], [%y, latch]

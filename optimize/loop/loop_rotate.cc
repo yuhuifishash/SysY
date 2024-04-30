@@ -312,7 +312,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             if (v->GetOperandType() == BasicOperand::REG) {
                 auto rv = (RegOperand *)v;
                 if (NewResultRegMap.find(rv->GetRegNo()) != NewResultRegMap.end()) {
-                    rv->SetRegNo(NewResultRegMap[rv->GetRegNo()]);
+                    PhiI->SetValOperand(latch->block_id, new RegOperand(NewResultRegMap[rv->GetRegNo()]));
                 }
             }
         }
