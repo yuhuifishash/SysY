@@ -1,6 +1,31 @@
 #include "scev_expr.h"
 #include <assert.h>
 
+SCEVValue SCEVValue::operator-() {
+    if(type != OTHER){
+        return {nullptr,OTHER,nullptr};
+    }
+    SCEVValue res;
+    res.op1 = new ImmI32Operand(0);
+    res.op2 = op1;
+    res.type = SUB;
+
+    if(res.op2->GetOperandType() == BasicOperand::IMMI32){
+        auto imm2 = ((ImmI32Operand*)res.op2)->GetIntImmVal();
+        if(res.op1->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)res.op1)->GetIntImmVal();
+            res.op1 = new ImmI32Operand(imm1-imm2);
+            res.type = OTHER;
+        }else if(res.op1->GetOperandType() == BasicOperand::REG){
+            if(imm2 == 0){
+                res.type = OTHER;
+            }
+        }
+    }
+    return res;
+
+}
+
 SCEVValue SCEVValue::operator+(SCEVValue b) {
     if(type != OTHER || b.type != OTHER){
         return {nullptr,OTHER,nullptr};
@@ -38,7 +63,7 @@ SCEVValue SCEVValue::operator-(SCEVValue b) {
     SCEVValue res;
     res.op1 = op1;
     res.op2 = b.op1;
-    res.type = MUL;
+    res.type = SUB;
 
     if(res.op2->GetOperandType() == BasicOperand::IMMI32){
         auto imm2 = ((ImmI32Operand*)res.op2)->GetIntImmVal();
@@ -123,6 +148,39 @@ AddSCEVExpr::AddSCEVExpr(Operand s, SCEVExprType t, AddSCEVExpr *rec_expr) {
     this->RecurExpr = rec_expr;
 }
 
+AddSCEVExpr* SCEVneg(AddSCEVExpr* a) {
+    auto expr = a;
+    if(expr == nullptr){
+        return nullptr;
+    }
+    auto now = expr;
+    AddSCEVExpr* now_nexp = nullptr, *last_nexp = nullptr;
+    AddSCEVExpr* ans;
+    while(now != nullptr){
+        AddSCEVExpr* nexp = new AddSCEVExpr();
+        if(now_nexp == nullptr){
+            ans = nexp;
+            ans->len = expr->len;
+        }
+
+        now_nexp = nexp;
+        now_nexp->st = -now->st;
+        if(now_nexp->st.op1 == nullptr){
+            return nullptr;
+        }
+
+        now_nexp->type = now->type;
+
+        if(last_nexp != nullptr){
+            last_nexp->RecurExpr = now_nexp;
+            last_nexp = now_nexp; 
+        }
+        now = now->RecurExpr;
+    }
+    return ans;
+}
+
+
 // if result is invalid, return nullptr
 // we only consider calculation of 2 invariant, if > 2, we consider it as invalid, return nullptr
 
@@ -133,8 +191,7 @@ AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b) {
     if(expr1 == nullptr || expr2 == nullptr){
         return nullptr;
     }
-    std::cerr<<"+  ";expr1->PrintSCEVExpr();expr2->PrintSCEVExpr();
-
+    // expr1->PrintSCEVExpr();expr2->PrintSCEVExpr();std::cerr<<"+\n";
     if(expr1->len < expr2->len){//we assume expr1->len  >  expr2->len
         std::swap(expr1, expr2);
     }
@@ -165,7 +222,7 @@ AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b) {
         now2 = now2->RecurExpr;
     }
     now_nexp->RecurExpr = now1;
-    ans->PrintSCEVExpr();
+    // ans->PrintSCEVExpr();
     return ans;
 }
 
@@ -177,7 +234,7 @@ AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b) {
     if(expr1 == nullptr || expr2 == nullptr){
         return nullptr;
     }
-    std::cerr<<"-  ";expr1->PrintSCEVExpr();expr2->PrintSCEVExpr();
+    // expr1->PrintSCEVExpr();expr2->PrintSCEVExpr();std::cerr<<"-\n";
 
     bool is_rsb = false;
     if(expr1->len < expr2->len){//we assume expr1->len  >  expr2->len
@@ -216,11 +273,18 @@ AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b) {
         now1 = now1->RecurExpr;
         now2 = now2->RecurExpr;
     }
-    now_nexp->RecurExpr = now1;
-    ans->PrintSCEVExpr();
+    if(is_rsb){
+        now_nexp->RecurExpr = SCEVneg(now1);
+        if(now1 != nullptr && now_nexp->RecurExpr == nullptr){
+            return nullptr;
+        }
+    }
+    // ans->PrintSCEVExpr();
     return ans;
 }
 
+// {e,+,f}*{g,+,h} = {e*g,+,e*h+f*g+f*h,+,2*f*h}
+// E*{a,+,f} = {E*a,+,E*f}
 AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b) {
     auto expr1 = a, expr2 = b;
     if(expr1 == nullptr || expr2 == nullptr){
@@ -230,6 +294,12 @@ AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b) {
     if(expr1->len < expr2->len){
         std::swap(expr1, expr2);
     }
+
+    // now we only consider E*{a,+,f} = {E*a,+,E*f}
+    if(expr2->type != AddSCEVExpr::Invariant){
+        return nullptr;
+    }
+    std::cerr<<"SCEVmul is not implemented now\n";
 
     return nullptr;
 }

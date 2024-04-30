@@ -20,6 +20,7 @@ public:
     SCEVValue operator+(SCEVValue b);
     SCEVValue operator-(SCEVValue b);
     SCEVValue operator*(SCEVValue b);
+    SCEVValue operator-();
 
     void PrintSCEVValue();
 };
@@ -84,5 +85,10 @@ public:
 
     void PrintLoopSCEVInfo();
 };
+
+AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b);
+AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b);
+AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b);
+AddSCEVExpr* SCEVneg(AddSCEVExpr* a);
 
 #endif

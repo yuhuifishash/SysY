@@ -88,7 +88,6 @@ std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev)
     if (I->GetOpcode() != ADD && I->GetOpcode() != SUB) {
         return {nullptr, nullptr};
     }
-
     auto ArithI = (ArithmeticInstruction *)I;
     auto op1 = ArithI->GetOperand1();
     auto op2 = ArithI->GetOperand2();
@@ -156,8 +155,7 @@ void SCEV::FindBasicIndVar() {
         }
 
         auto [d, type] = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand *)r2)->GetRegNo());
-        // now we only consider step is IMMI32
-        if (d != nullptr && d->GetOperandType() == BasicOperand::IMMI32) {
+        if (d != nullptr ) {
             // now we find one BasicIndVar
             SCEVMap[PhiI->GetResultRegNo()] = new AddSCEVExpr(st, AddSCEVExpr::AddRecurrences, d);
         }
