@@ -18,7 +18,7 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     ResultMap.clear();
     scev.SCEVMap.clear();
     scev.InvariantSet.clear();
-
+    
     scev.C = C;
     scev.L = this;
     scev.FindInvariantVar();
@@ -26,6 +26,8 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.FindRecurrences();
 
     scev.PrintLoopSCEVInfo();
+
+    scev.CheckSimpleForLoop();
 }
 
 AddSCEVExpr* SCEV::GetOperandSCEV(Operand op) {
@@ -68,6 +70,12 @@ void SCEV::FindInvariantVar() {
             }
         }
     }
+
+    //function formal
+    for(int i = 0; i < C->function_def->GetFormalSize(); ++i){
+        ResultMap[i] = C->function_def;
+        InvariantSet.insert(i);
+    }
 }
 
 bool SCEV::SCEV_isI32Invariant(Operand op) {
@@ -102,7 +110,7 @@ std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev)
     if (t1) {
         std::swap(op1, op2);
     }
-    // now op2 is invariant
+    // nowI op2 is invariant
     return {op1, op2};
 }
 
@@ -113,11 +121,11 @@ std::pair<Operand, Operand> is_AddSubInvariant(Instruction I, int r, SCEV *scev)
 std::pair<Operand, LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2) {
     // for simple, now we only optimize cycle with size 2
     Operand ans;
-    Instruction now = ResultMap[r2];    // r2 = st +/- invariant
+    Instruction nowI = ResultMap[r2];    // r2 = st +/- invariant
     // std::cerr<<"FindBasicIndVarCycleVarDef  "<<st<<" "<<r2<<" ";
-    // now->PrintIR(std::cerr);
+    // nowI->PrintIR(std::cerr);
 
-    auto [r, d] = is_AddSubInvariant(now, st, this);    // [r, d] should be {st, step}
+    auto [r, d] = is_AddSubInvariant(nowI, st, this);    // [r, d] should be {st, step}
     // r2 = st + d
     if (r == nullptr) {
         return {nullptr, OTHER};
@@ -126,7 +134,7 @@ std::pair<Operand, LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2
     assert(r->GetOperandType() == BasicOperand::REG);
     int op1 = ((RegOperand *)r)->GetRegNo();
     if (op1 == st) {
-        return {d, (LLVMIROpcode)now->GetOpcode()};
+        return {d, (LLVMIROpcode)nowI->GetOpcode()};
     }
 
     return {nullptr, OTHER};
@@ -142,6 +150,9 @@ void SCEV::FindBasicIndVar() {
         }
         auto PhiI = (PhiInstruction *)I;
         assert(PhiI->GetPhiList().size() == 2);
+        if(PhiI->GetDataType() != I32) {
+            continue;
+        }
 
         Operand st, step;
         st = PhiI->GetValOperand(L->preheader->block_id);
@@ -157,10 +168,14 @@ void SCEV::FindBasicIndVar() {
         auto [d, type] = FindBasicIndVarCycleVarDef(PhiI->GetResultRegNo(), ((RegOperand *)r2)->GetRegNo());
         if (d != nullptr ) {
             // now we find one BasicIndVar
-            SCEVMap[PhiI->GetResultRegNo()] = new AddSCEVExpr(st, AddSCEVExpr::AddRecurrences, d);
+            if(type == ADD){
+                SCEVMap[PhiI->GetResultRegNo()] = new AddSCEVExpr(st, AddSCEVExpr::AddRecurrences, d);
+            }else if(type == SUB){
+                SCEVMap[PhiI->GetResultRegNo()] = new AddSCEVExpr(st, AddSCEVExpr::AddRecurrences, -SCEVValue{d,OTHER,nullptr});
+            }
         }
     }
-
+    // create loop invariant
     for(auto r:InvariantSet){
         SCEVMap[r] = new AddSCEVExpr(new RegOperand(r));
     }
@@ -229,9 +244,109 @@ void SCEV::FindRecurrences() {
     }
 }
 
+IcmpCond GetInveriseIcmpCond(IcmpCond cond) {
+    if(cond == IcmpCond::eq){
+        return IcmpCond::ne;
+    }else if(cond == IcmpCond::ne){
+        return IcmpCond::eq;
+    }else if(cond == IcmpCond::sle){
+        return IcmpCond::sgt;
+    }else if(cond == IcmpCond::sgt){
+        return IcmpCond::sle;
+    }else if(cond == IcmpCond::slt){
+        return IcmpCond::sge;
+    }else if(cond == IcmpCond::sge){
+        return IcmpCond::slt;
+    }
+    
+    // should not reach here
+    assert(false);
+    return IcmpCond::eq;
+}
+
+// return {lowerbound, upperbound}
+std::pair<Operand,Operand> GetLoopBound(IcmpCond cond, Operand ub, AddSCEVExpr* IndVar) {
+    std::cerr<<cond<<" "<<ub<<" ";
+    IndVar->PrintSCEVExpr();
+    return {nullptr,nullptr};
+}
+
+void SCEV::CheckSimpleForLoop() {
+    if(L->exit_nodes.size() > 1){
+        is_simpleloop = false;
+        return;
+    }
+
+    if(L->exiting_nodes.size() > 1){
+        is_simpleloop = false;
+        return;
+    }
+
+    auto exit = *L->exit_nodes.begin();
+    auto exiting = *L->exiting_nodes.begin();
+    auto latch = *L->latches.begin();
+    if(exiting != latch){
+        return;
+    }
+    auto I = *(latch->Instruction_list.end() - 2);
+    if(I->GetOpcode() == FCMP){
+        is_simpleloop = false;
+        return;
+    }
+    assert(I->GetOpcode() == ICMP);
+    auto I2 = *(latch->Instruction_list.end() - 1);
+    assert(I2->GetOpcode() == BR_COND);
+    auto BrCondI = (BrCondInstruction*)I2;
+
+    //ture exit or false exit
+    bool exit_tag;
+    if(((LabelOperand*)BrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id){
+        exit_tag = false;
+    }else{
+        exit_tag = true;
+    }
+
+    //then we need to calculate the loop lowerbound, upperbound and step
+    auto IcmpI = (IcmpInstruction*)I;
+    auto cond = IcmpI->GetCompareCondition();
+    auto op1 = IcmpI->GetOp1(), op2 = IcmpI->GetOp2();
+    auto scev1 = GetOperandSCEV(op1), scev2 = GetOperandSCEV(op2);
+
+    if(scev1 == nullptr || scev2 == nullptr){
+        is_simpleloop = false;
+        return;
+    }
+
+    if(scev1->len > 2 || scev2->len > 2){
+        is_simpleloop = false;
+        return;
+    }
+
+    if(scev1->len == 2 && scev2->len == 2){
+        is_simpleloop = false;
+        return;
+    }
+    if(scev1->len == 1 && scev2->len == 2){
+        std::swap(scev1, scev2);
+        cond = GetInveriseIcmpCond(cond);
+    }
+    // scev1->PrintSCEVExpr();
+    // scev2->PrintSCEVExpr();
+    
+    //assert(scev1->len == 2 && scev2->len == 1);
+    // now we can use scev1 and scev2 to check the for loop
+    // scev1   cond   scev2  
+    
+    if(scev2->st.type != OTHER){
+        is_simpleloop = false;
+        return;
+    }
+
+    auto [lb,ub] = GetLoopBound(cond, scev2->st.op1, scev1);
+}
 
 void SCEV::PrintLoopSCEVInfo() {
-    std::cerr<<"Loop: "<<L->loop_id <<" ------------------------\n";
+    std::cerr<<"Loop: "<<L->loop_id << "  header:"<< L->header->block_id <<" ------------------------\n";
     for(auto [regno, expr]: SCEVMap){
         if(expr->len == 1){
             continue;

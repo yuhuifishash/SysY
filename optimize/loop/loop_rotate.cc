@@ -67,7 +67,13 @@ std::set<Instruction> CheckHeaderUseInLoopBody(CFG *C, NaturalLoop *L, int resul
     std::set<Instruction> res;
     for (auto bb : L->loop_nodes) {
         if (bb == L->header) {
-            continue;
+            for(auto I : bb->Instruction_list){
+                if(I->GetOpcode() != PHI){break;}
+                auto PhiI = (PhiInstruction*)I;
+                auto latch = *L->latches.begin();
+                auto val = PhiI->GetValOperand(latch->block_id);
+                
+            }
         }
         for (auto I : bb->Instruction_list) {
             for (auto op : I->GetNonResultOperands()) {
@@ -122,6 +128,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
     }
     auto exit = *exit_nodes.begin();
 
+    // find header def, but use in other or header's phi
     std::set<Instruction> HeaderDefLoopUseInsts;
     std::map<Instruction, std::set<Instruction>> HeaderUseMap;
     for (auto I : header->Instruction_list) {

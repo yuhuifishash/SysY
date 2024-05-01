@@ -37,6 +37,7 @@ public:
     AddSCEVExpr() = default;
     AddSCEVExpr(Operand d); //create invariant SCEVexpr
     AddSCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
+    AddSCEVExpr(Operand s, SCEVExprType t, SCEVValue d);             // create basic SCEVexpr
     AddSCEVExpr(Operand s, SCEVExprType t, AddSCEVExpr *rec_expr);    // create Recurrence SCEVexpr
 
     void PrintSCEVExpr();
@@ -44,6 +45,8 @@ public:
 
 
 class SCEV {
+private:
+
 public:
     CFG *C;
     NaturalLoop *L;
@@ -64,12 +67,17 @@ public:
     Operand upperbound;       // if is_simpleloop is true, this must be invariant i32
     Operand step;             // if is_simpleloop is true, this must be invariant i32
 
+    AddSCEVExpr* GetOperandSCEV(Operand op);
     void FindInvariantVar();
     void FindBasicIndVar();
     void FindRecurrences();
+    void CheckSimpleForLoop();
+
+
+    void PrintLoopSCEVInfo();
+
 
     bool SCEV_isI32Invariant(Operand op);
-    AddSCEVExpr* GetOperandSCEV(Operand op);
 
     /*
         %st = phi [%x, preheader], [%y, latch]
@@ -82,8 +90,7 @@ public:
     */
     std::pair<Operand, LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2);    //(RegNO, RegNo)
 
-
-    void PrintLoopSCEVInfo();
+    
 };
 
 AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b);

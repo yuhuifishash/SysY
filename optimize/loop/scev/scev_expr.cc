@@ -27,9 +27,38 @@ SCEVValue SCEVValue::operator-() {
 }
 
 SCEVValue SCEVValue::operator+(SCEVValue b) {
-    if(type != OTHER || b.type != OTHER){
+    if(type != OTHER && b.type != OTHER){
         return {nullptr,OTHER,nullptr};
     }
+    
+    if(type != OTHER && b.type == OTHER){
+        if(op2->GetOperandType() == BasicOperand::IMMI32 && b.op1->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)b.op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)op2)->GetIntImmVal();
+            auto imm = imm1 + imm2;
+            if(imm == 0){
+                return {op1,OTHER,nullptr};
+            }else{
+                return {op1,ADD,new ImmI32Operand(imm)};
+            }
+        }
+        return {nullptr,OTHER,nullptr};
+    }
+
+    if(type == OTHER && b.type != OTHER){
+        if(op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)b.op2)->GetIntImmVal();
+            auto imm = imm1 + imm2;
+            if(imm == 0){
+                return {b.op1,OTHER,nullptr};
+            }else{
+                return {b.op1,ADD,new ImmI32Operand(imm)};
+            }
+        }
+        return {nullptr,OTHER,nullptr};
+    }
+
     SCEVValue res;
     res.op1 = op1;
     res.op2 = b.op1;
@@ -56,7 +85,35 @@ SCEVValue SCEVValue::operator+(SCEVValue b) {
 }
 
 SCEVValue SCEVValue::operator-(SCEVValue b) {
-    if(type != OTHER || b.type != OTHER){
+    if(type != OTHER && b.type != OTHER){
+        return {nullptr,OTHER,nullptr};
+    }
+    
+    if(type != OTHER && b.type == OTHER){
+        if(op2->GetOperandType() == BasicOperand::IMMI32 && b.op1->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)b.op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)op2)->GetIntImmVal();
+            auto imm = imm1 - imm2;
+            if(imm == 0){
+                return {op1,OTHER,nullptr};
+            }else{
+                return {op1,SUB,new ImmI32Operand(imm)};
+            }
+        }
+        return {nullptr,OTHER,nullptr};
+    }
+
+    if(type == OTHER && b.type != OTHER){
+        if(op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)b.op2)->GetIntImmVal();
+            auto imm = imm1 - imm2;
+            if(imm == 0){
+                return {b.op1,OTHER,nullptr};
+            }else{
+                return {b.op1,SUB,new ImmI32Operand(imm)};
+            }
+        }
         return {nullptr,OTHER,nullptr};
     }
 
@@ -81,7 +138,35 @@ SCEVValue SCEVValue::operator-(SCEVValue b) {
 }
 
 SCEVValue SCEVValue::operator*(SCEVValue b) {
-    if(type != OTHER || b.type != OTHER){
+    if(type != OTHER && b.type != OTHER){
+        return {nullptr,OTHER,nullptr};
+    }
+    
+    if(type != OTHER && b.type == OTHER){
+        if(op2->GetOperandType() == BasicOperand::IMMI32 && b.op1->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)b.op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)op2)->GetIntImmVal();
+            auto imm = imm1 * imm2;
+            if(imm == 1){
+                return {op1,OTHER,nullptr};
+            }else{
+                return {op1,MUL,new ImmI32Operand(imm)};
+            }
+        }
+        return {nullptr,OTHER,nullptr};
+    }
+
+    if(type == OTHER && b.type != OTHER){
+        if(op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32){
+            auto imm1 = ((ImmI32Operand*)op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand*)b.op2)->GetIntImmVal();
+            auto imm = imm1 * imm2;
+            if(imm == 1){
+                return {b.op1,OTHER,nullptr};
+            }else{
+                return {b.op1,MUL,new ImmI32Operand(imm)};
+            }
+        }
         return {nullptr,OTHER,nullptr};
     }
 
@@ -102,6 +187,9 @@ SCEVValue SCEVValue::operator*(SCEVValue b) {
         }else if(res.op1->GetOperandType() == BasicOperand::REG){
             if(imm2 == 1){
                 res.type = OTHER;
+            }else if(imm2 == 0){
+                res.type = OTHER;
+                res.op1 = new ImmI32Operand(0);
             }
         }
     }
@@ -133,6 +221,20 @@ AddSCEVExpr::AddSCEVExpr(Operand d) {
 
 AddSCEVExpr::AddSCEVExpr(Operand s, SCEVExprType t, Operand d) {
     AddSCEVExpr* exp = new AddSCEVExpr(d);
+    this->len = 2;
+    this->st.op1 = s;
+    this->st.type = OTHER;
+    this->type = t;
+    this->RecurExpr = exp;
+}
+
+AddSCEVExpr::AddSCEVExpr(Operand s, SCEVExprType t, SCEVValue d) {
+    AddSCEVExpr* exp = new AddSCEVExpr();
+    exp->len = 1;
+    exp->st = d;
+    exp->type = Invariant;
+    exp->RecurExpr = nullptr;
+    
     this->len = 2;
     this->st.op1 = s;
     this->st.type = OTHER;
@@ -175,6 +277,8 @@ AddSCEVExpr* SCEVneg(AddSCEVExpr* a) {
             last_nexp->RecurExpr = now_nexp;
             last_nexp = now_nexp; 
         }
+
+        last_nexp = now_nexp;
         now = now->RecurExpr;
     }
     return ans;
@@ -217,7 +321,7 @@ AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b) {
             last_nexp->RecurExpr = now_nexp;
             last_nexp = now_nexp; 
         }
-
+        last_nexp = now_nexp;
         now1 = now1->RecurExpr;
         now2 = now2->RecurExpr;
     }
@@ -270,6 +374,7 @@ AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b) {
             last_nexp = now_nexp; 
         }
 
+        last_nexp = now_nexp;
         now1 = now1->RecurExpr;
         now2 = now2->RecurExpr;
     }
@@ -278,6 +383,8 @@ AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b) {
         if(now1 != nullptr && now_nexp->RecurExpr == nullptr){
             return nullptr;
         }
+    }else{
+        now_nexp->RecurExpr = now1;
     }
     // ans->PrintSCEVExpr();
     return ans;
@@ -294,14 +401,36 @@ AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b) {
     if(expr1->len < expr2->len){
         std::swap(expr1, expr2);
     }
-
     // now we only consider E*{a,+,f} = {E*a,+,E*f}
     if(expr2->type != AddSCEVExpr::Invariant){
-        return nullptr;
+        return nullptr;//so return nullptr
     }
-    std::cerr<<"SCEVmul is not implemented now\n";
+    auto now = expr1;
+    AddSCEVExpr* now_nexp = nullptr, *last_nexp = nullptr;
+    AddSCEVExpr* ans;
+    while(now != nullptr){
+        AddSCEVExpr* nexp = new AddSCEVExpr();
+        if(now_nexp == nullptr){
+            ans = nexp;
+            ans->len = expr1->len;
+        }
+        now_nexp = nexp;
+        now_nexp->st = now->st * expr2->st;
+        if(now_nexp->st.op1 == nullptr){
+            return nullptr;
+        }
 
-    return nullptr;
+        now_nexp->type = now->type;
+
+        if(last_nexp != nullptr){
+            last_nexp->RecurExpr = now_nexp;
+            last_nexp = now_nexp; 
+        }
+
+        last_nexp = now_nexp;
+        now = now->RecurExpr;
+    }
+    return ans;
 }
 
 
