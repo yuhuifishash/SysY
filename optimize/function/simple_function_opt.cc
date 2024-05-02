@@ -86,6 +86,7 @@ bool TailRecursiveEliminateCheck(CFG *C) {
     // AllocaReg can't be use in call
     auto bb0 = (*C->block_map->begin()).second;
     std::vector<int> AllocaReg;
+    std::map<int,int> AllocaMap;
     for (auto I : bb0->Instruction_list) {
         if (I->GetOpcode() != ALLOCA) {
             continue;
