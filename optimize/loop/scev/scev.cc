@@ -266,8 +266,9 @@ IcmpCond GetInveriseIcmpCond(IcmpCond cond) {
 
 // return {lowerbound, upperbound}
 std::pair<Operand,Operand> GetLoopBound(IcmpCond cond, Operand ub, AddSCEVExpr* IndVar) {
-    std::cerr<<cond<<" "<<ub<<" ";
     IndVar->PrintSCEVExpr();
+    std::cerr<<cond<<" "<<ub<<"\n";
+
     return {nullptr,nullptr};
 }
 
@@ -326,6 +327,12 @@ void SCEV::CheckSimpleForLoop() {
         is_simpleloop = false;
         return;
     }
+
+    if(scev1->len == 1 && scev2->len == 1){
+        is_simpleloop = false;
+        return;
+    }
+
     if(scev1->len == 1 && scev2->len == 2){
         std::swap(scev1, scev2);
         cond = GetInveriseIcmpCond(cond);

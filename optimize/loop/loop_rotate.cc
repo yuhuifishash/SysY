@@ -68,12 +68,22 @@ std::set<Instruction> CheckHeaderUseInLoopBody(CFG *C, NaturalLoop *L, int resul
     for (auto bb : L->loop_nodes) {
         if (bb == L->header) {
             for(auto I : bb->Instruction_list){
-                if(I->GetOpcode() != PHI){break;}
+                if(I->GetOpcode() != PHI){
+                    break;
+                }
+                // the phi from latch to header
+                // we assume the val is used in loopBody 
                 auto PhiI = (PhiInstruction*)I;
                 auto latch = *L->latches.begin();
                 auto val = PhiI->GetValOperand(latch->block_id);
-                
+                if(val->GetOperandType() == BasicOperand::REG){
+                    auto rval = (RegOperand*)val;
+                    if(rval->GetRegNo() == result_regno){
+                        res.insert(I);
+                    }
+                }
             }
+            continue;
         }
         for (auto I : bb->Instruction_list) {
             for (auto op : I->GetNonResultOperands()) {
