@@ -66,7 +66,7 @@ void IRgenZextI1toI32(LLVMBlock B, int src, int dst) {
 
 void IRgenGetElementptr(LLVMBlock B, LLVMType type, int result_reg, Operand ptr, std::vector<int> dims,
                         std::vector<Operand> indexs) {
-    B->InsertInstruction(1, new GetElementprtInstruction(type, new RegOperand(result_reg), ptr, dims, indexs));
+    B->InsertInstruction(1, new GetElementptrInstruction(type, new RegOperand(result_reg), ptr, dims, indexs));
 }
 
 void IRgenLoad(LLVMBlock B, LLVMType type, int result_reg, Operand ptr) {
@@ -297,7 +297,7 @@ void RetInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     }
 }
 
-std::pair<int, int> GetElementprtInstruction::GetConstIndexes() {
+std::pair<int, int> GetElementptrInstruction::GetConstIndexes() {
     int ans = 0;
     int Siz = 1;
 
@@ -328,12 +328,12 @@ int AllocaInstruction::GetAllocaSize() {
     return sz;
 }
 
-std::vector<Operand> GetElementprtInstruction::GetNonResultOperands() {
+std::vector<Operand> GetElementptrInstruction::GetNonResultOperands() {
     std::vector<Operand> ret(indexes);
     ret.push_back(ptrval);
     return ret;
 }
-void GetElementprtInstruction::SetNonResultOperands(std::vector<Operand> ops) {
+void GetElementptrInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     indexes = ops;
     indexes.pop_back();
     ptrval = ops[ops.size() - 1];
@@ -463,7 +463,7 @@ Instruction CallInstruction::CopyInstruction() {
 
 Instruction RetInstruction::CopyInstruction() { return nullptr; }
 
-Instruction GetElementprtInstruction::CopyInstruction() {
+Instruction GetElementptrInstruction::CopyInstruction() {
     Operand nresult = result->CopyOperand();
     Operand nptrval = ptrval->CopyOperand();
     std::vector<Operand> nindexes;
@@ -472,7 +472,7 @@ Instruction GetElementprtInstruction::CopyInstruction() {
         nindexes.push_back(nindex);
     }
 
-    return new GetElementprtInstruction(type, nresult, nptrval, dims, nindexes);
+    return new GetElementptrInstruction(type, nresult, nptrval, dims, nindexes);
 }
 
 Instruction FptosiInstruction::CopyInstruction() {
@@ -647,7 +647,7 @@ void RetInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void GetElementprtInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void GetElementptrInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())

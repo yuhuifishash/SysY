@@ -58,7 +58,9 @@ void EliminateDoubleBrUnCond(CFG *C) { std::cerr << "EliminateDoubleBrUnCond in 
  * such as %rx = phi [%ry, %L1], [%ry, %L3]
  * such as %rx = phi [5, %L5]
  */
-void EliminateUselessPhi(CFG *C) { std::cerr << "EliminateUselessPhi in SimplifyCFG is not implemented now\n"; }
+void EliminateUselessPhi(CFG *C) { 
+  // std::cerr << "EliminateUselessPhi in SimplifyCFG is not implemented now\n"; 
+}
 
 void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);

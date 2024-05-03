@@ -85,8 +85,9 @@ bool TailRecursiveEliminateCheck(CFG *C) {
     }
     // AllocaReg can't be use in call
     auto bb0 = (*C->block_map->begin()).second;
-    std::vector<int> AllocaReg;
-    std::map<int,int> AllocaMap;
+    int AllocaRegCnt=0;
+    std::unordered_map<int,int> AllocaReg;
+    std::unordered_map<int,int> GEPMap;
     for (auto I : bb0->Instruction_list) {
         if (I->GetOpcode() != ALLOCA) {
             continue;
@@ -95,40 +96,40 @@ bool TailRecursiveEliminateCheck(CFG *C) {
         if (AllocaI->GetDims().empty()) {
             continue;
         }
-        AllocaReg.push_back(AllocaI->GetResultRegNo());
+        AllocaReg[AllocaI->GetResultRegNo()]=++AllocaRegCnt;
+        // std::cout<<"asdads "<<AllocaI->GetResultRegNo()<<'\n';
     }
+
     // GETELEMENTPTR
-    Instruction LastI;
+    if(!AllocaRegCnt){return true;}
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            if (I->GetOpcode() != CALL || LastI->GetOpcode() != GETELEMENTPTR) {
-                LastI = I;
+            if (I->GetOpcode() != GETELEMENTPTR && I->GetOpcode() != CALL) {
                 continue;
             }
-            auto GetelementptrI = (GetElementprtInstruction *)LastI;
-            auto PtrReg = ((RegOperand *)GetelementptrI->GetPtrVal())->GetRegNo();
-            bool reg_to_check = 0;
-            for (auto reg : AllocaReg) {
-                if (PtrReg == reg) {
-                    reg_to_check = 1;
-                    break;
+            
+            if(I->GetOpcode() == GETELEMENTPTR){
+                auto GetelementptrI = (GetElementptrInstruction *)I;
+                auto PtrReg = ((RegOperand *)GetelementptrI->GetPtrVal())->GetRegNo();
+                auto ResultReg = GetelementptrI->GetResultRegNo();       
+                if (PtrReg == 0||AllocaReg.find(PtrReg)==AllocaReg.end()) {
+                    continue;
+                }
+                GEPMap[ResultReg]=PtrReg;
+            }else{
+                auto CallI = (CallInstruction *)I;
+                for(auto args:CallI->GetParameterList()){
+                    auto args_regno=((RegOperand*)args.second)->GetRegNo();
+                    // std::cout<<args_regno<<'\n';
+                    // if(CallI->GetFunctionName()=="DFS"){
+                    //     std::cout<<args_regno<<'\n';
+                    // }
+                    if(GEPMap.find(args_regno)!=GEPMap.end()){
+                        return false;
+                    }
                 }
             }
-            if (!reg_to_check) {
-                LastI = I;
-                continue;
-            }
-            auto GetelementptrResult = GetelementptrI->GetResultRegNo();
-            auto CallI = (CallInstruction *)I;
-            auto list_size = CallI->GetParameterList().size();
-            for (auto i = 0; i < list_size; i++) {
-                auto CallReg = ((RegOperand *)CallI->GetParameterList()[i].second)->GetRegNo();
-                if (CallReg == GetelementptrResult) {
-                    return false;
-                }
-            }
-
-            LastI = I;
+            
         }
     }
     return true;

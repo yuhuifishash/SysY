@@ -496,7 +496,7 @@ void RecursiveArrayInitIR(LLVMBlock block, const std::vector<int> dims, int arra
             init_val_reg = max_reg;
 
             int addr_reg = ++max_reg;
-            auto gep = new GetElementprtInstruction(Type2LLvm[ArrayType], new RegOperand(addr_reg),
+            auto gep = new GetElementptrInstruction(Type2LLvm[ArrayType], new RegOperand(addr_reg),
                                                     new RegOperand(arrayaddr_reg_no), dims);
             // pos, dims -> [][][]...
             // gep->pushidx()

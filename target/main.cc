@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);  // to do
         llvmIR.PassExecutor(FunctionInline);  // to do
 
-        llvmIR.PassExecutor(ScalarEvolution);    // to do
+        // llvmIR.PassExecutor(ScalarEvolution);    // to do
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

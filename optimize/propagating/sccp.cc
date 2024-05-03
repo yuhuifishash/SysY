@@ -324,7 +324,7 @@ int CallInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     return 1;
 }
 
-int GetElementprtInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
+int GetElementptrInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
     if (lattice.status == ConstLattice::VAR) {
         return 0;

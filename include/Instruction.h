@@ -746,7 +746,7 @@ Syntax:
 <result> = getelementptr inbounds <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
 <result> = getelementptr <ty>, <N x ptr> <ptrval>, [inrange] <vector index type> <idx>
 */
-class GetElementprtInstruction : public BasicInstruction {
+class GetElementptrInstruction : public BasicInstruction {
 private:
     enum LLVMType type;
     Operand result;
@@ -756,14 +756,14 @@ private:
     std::vector<Operand> indexes;
 
 public:
-    GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr) : type(typ), result(res), ptrval(ptr) {
+    GetElementptrInstruction(enum LLVMType typ, Operand res, Operand ptr) : type(typ), result(res), ptrval(ptr) {
         opcode = GETELEMENTPTR;
     }
-    GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr, std::vector<int> dim)
+    GetElementptrInstruction(enum LLVMType typ, Operand res, Operand ptr, std::vector<int> dim)
         : type(typ), result(res), ptrval(ptr), dims(dim) {
         opcode = GETELEMENTPTR;
     }
-    GetElementprtInstruction(enum LLVMType typ, Operand res, Operand ptr, std::vector<int> dim,
+    GetElementptrInstruction(enum LLVMType typ, Operand res, Operand ptr, std::vector<int> dim,
                              std::vector<Operand> index)
         : type(typ), result(res), ptrval(ptr), dims(dim), indexes(index) {
         opcode = GETELEMENTPTR;
