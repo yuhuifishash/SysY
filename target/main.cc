@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor( SimplifyCFG ); // to do
+        llvmIR.PassExecutor( SimplifyCFG ); // to do
 
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
@@ -145,29 +145,21 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
-         llvmIR.PassExecutor(LoopRotate);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // // llvmIR.PassExecutor( SimplifyCFG ); // to do
+        llvmIR.PassExecutor(LoopRotate);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor( SimplifyCFG ); // to do
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
 
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
-        llvmIR.PassExecutor(FunctionInline);  // to do
-        llvmIR.PassExecutor(FunctionInline);  // to do
+        // llvmIR.PassExecutor(FunctionInline);  // to do
 
         // llvmIR.PassExecutor(ScalarEvolution);    // to do
     }

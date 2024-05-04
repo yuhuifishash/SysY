@@ -1,3 +1,4 @@
+
 #include "../../include/cfg.h"
 #include <functional>
 /**
@@ -66,17 +67,20 @@ void EliminateDoubleBrUnCond(CFG *C) {
 // 	return UnionFindMap[RegToFind]=UnionFind(UnionFindMap[RegToFind],UnionFindMap);
 // }
 void EliminateUselessPhi(CFG *C) {
-    std::unordered_map<int,Operand> UnionFindMap;
+    std::unordered_map<int,int> UnionFindMap;
     std::set<Instruction> EraseSet;
+    std::vector<int> g;
     bool changed=true;
-    auto FuncdefI = C->function_def;
-    std::function<Operand(Operand)> UnionFind = [&](Operand RegToFind) -> Operand {
-        auto RegToFindNo=((RegOperand*)RegToFind)->GetRegNo();
-        // std::cout<<FuncdefI->GetFunctionName()<<" "<<RegToFind->GetFullName()<<'\n';
-        if(UnionFindMap[RegToFindNo]==RegToFind)return RegToFind;
-	    return UnionFindMap[RegToFindNo]=UnionFind(UnionFindMap[RegToFindNo]);
+    std::function<int(int)> UnionFind = [&](int RegToFind) -> int {
+        if(UnionFindMap[RegToFind]==RegToFind)return RegToFind;
+	    return UnionFindMap[RegToFind]=UnionFind(UnionFindMap[RegToFind]);
     };
+    // for(int i=0;i<=C->max_reg;++i){
+    //     UnionFindMap[i]=i;
+    // }
+    
     // init UnionFind
+    auto FuncdefI = C->function_def;
     // std::cout<<FuncdefI->GetFunctionName()<<'\n';
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
@@ -84,21 +88,12 @@ void EliminateUselessPhi(CFG *C) {
                 continue;
             }
             auto PhiI=(PhiInstruction*)I;
-            // if(FuncdefI->GetFunctionName()=="f"){
-            //     PhiI->PrintIR(std::cout);
-            // }
             auto NonResultOperands = PhiI->GetNonResultOperands();
-            auto ResultReg = PhiI->GetResultReg();
-            auto ResultRegNo=((RegOperand*)ResultReg)->GetRegNo();
-            UnionFindMap[ResultRegNo]=ResultReg;
+            auto ResultReg = PhiI->GetResultRegNo();
+            UnionFindMap[ResultReg]=ResultReg;
             for(u_int32_t i=0;i<NonResultOperands.size();++i){
-                auto NonResultReg=NonResultOperands[i];
-                if(NonResultReg->GetOperandType()!=BasicOperand::REG){
-                    continue;
-                }
-                // std::cout<<NonResultReg->GetFullName()<<" "<<NonResultReg->GetFullName()<<'\n';
-                auto NonResultRegNo=((RegOperand *)NonResultOperands[i])->GetRegNo();
-                UnionFindMap[NonResultRegNo]=NonResultReg;
+                auto NonResultReg=((RegOperand *)NonResultOperands[i])->GetRegNo();
+                UnionFindMap[NonResultReg]=NonResultReg;
             }
         }
     }
@@ -116,8 +111,7 @@ void EliminateUselessPhi(CFG *C) {
                 }
                 auto PhiI=(PhiInstruction*)I;
                 auto ResultOperands = PhiI->GetNonResultOperands();
-                auto ResultReg = PhiI->GetResultReg();
-                auto ResultRegNo = ((RegOperand *)ResultReg)->GetRegNo();
+                auto ResultReg = PhiI->GetResultRegNo();
                 bool NeedtoReleace=1;
                 for(u_int32_t i=1;i<ResultOperands.size();++i){
                     if(ResultOperands[i]->GetFullName()!=ResultOperands[i-1]->GetFullName()){
@@ -147,11 +141,10 @@ void EliminateUselessPhi(CFG *C) {
                     }else{
                         //example1
                         EraseSet.insert(I);
-                        auto Findfa=UnionFind(ResultOperands[0]);
+                        auto Findfa=UnionFind(((RegOperand *)ResultOperands[0])->GetRegNo());
                         auto Findson=UnionFind(ResultReg);
-                        auto FindsonNo = ((RegOperand *)Findson)->GetRegNo();
                         // std::cout<<Findfa<<" "<<Findson<<'\n';
-                        UnionFindMap[FindsonNo]=Findfa;
+                        UnionFindMap[Findson]=Findfa;
                     }
                 }
             }
@@ -175,19 +168,13 @@ void EliminateUselessPhi(CFG *C) {
                         continue;
                     }
                     auto NonResultOperandsno=((RegOperand *)NonResultOperands[i])->GetRegNo();
-                    if (UnionFindMap.find(NonResultOperandsno) == UnionFindMap.end() || UnionFindMap[NonResultOperandsno] == NonResultOperands[i]) {
+                    if (UnionFindMap.find(NonResultOperandsno) == UnionFindMap.end() || UnionFindMap[NonResultOperandsno] == NonResultOperandsno) {
                         continue;
                     }
                     Change=1;
                     auto Findfa=UnionFind(UnionFindMap[NonResultOperandsno]);
-                    auto FindfaNo=((RegOperand *)Findfa)->GetRegNo();
-                    // std::cout<<FindfaNo<<" "<<Findfa->GetFullName()<<'\n';
-                    // if(FindfaNo==0){
-                    //     std::cout<<Findfa->GetFullName()<<'\n';
-                    // }
-                    NonResultOperands[i]=new RegOperand(FindfaNo);
-                    // NonResultOperands[i]=Findfa;
-                    // std::cout<<NonResultOperandsno<<" "<<Findfa->GetFullName()<<" "<<NonResultOperands[i]->GetFullName()<<'\n';
+                    NonResultOperands[i]=new RegOperand(Findfa);
+                    // std::cout<<NonResultOperandsno<<" "<<UnionFindMap[NonResultOperandsno]<<" "<<NonResultOperands[i]->GetFullName()<<'\n';
                 }
                 if(Change){
                     I->SetNonResultOperands(NonResultOperands);
