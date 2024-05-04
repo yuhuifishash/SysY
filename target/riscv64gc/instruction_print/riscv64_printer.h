@@ -7,7 +7,7 @@ private:
 public:
     void emit();
     void printMachineIR();
-    RiscV64Printer(std::ostream &s, RiscV64Unit *printee) : MachinePrinter(s, printee) {}
+    RiscV64Printer(std::ostream &s, MachineUnit *printee) : MachinePrinter(s, printee) {}
 
     void printAsm(RiscV64Instruction *ins);
     void printMachineIR(RiscV64Instruction *ins);

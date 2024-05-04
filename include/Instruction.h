@@ -164,7 +164,7 @@ public:
             reg_no = -reg_no - 1;
         }
     }
-    void SetRegNo(int new_no) { reg_no = new_no; }
+    // void SetRegNo(int new_no) { reg_no = new_no; }
 
     static AutoCounter curRegNo;
     RegOperand() {

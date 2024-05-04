@@ -1,6 +1,11 @@
 #include "../include/ir.h"
 #include "../ir_gen/semant.h"
 #include "../parser/SysY_parser.tab.h"
+
+#include "./riscv64gc/riscv64.h"
+#include "./riscv64gc/instruction_select/riscv64_instSelect.h"
+#include "./riscv64gc/instruction_print/riscv64_printer.h"
+
 #include <assert.h>
 #include <cstdio>
 #include <cstring>
@@ -65,7 +70,8 @@ void FunctionInline(LLVMIR *IR);
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
 int main(int argc, char **argv) {
-    target = ARMV7;
+    // target = ARMV7;
+    target = RV64GC;
 
     FILE *fin = fopen(argv[file_in], "r");
     if (fin == NULL) {
@@ -170,8 +176,15 @@ int main(int argc, char **argv) {
         return 0;
     }
     if (strcmp(argv[step_tag], "-S") == 0) {
-        std::cerr << "-S is not implemented now\n";
-        assert(false);
+        // std::cerr << "-S is not implemented now\n";
+        // assert(false);
+        MachineUnit* m_unit = new RiscV64Unit();
+        MachineSelector* selector = new RiscV64Selector(m_unit,&llvmIR);
+        // Log("Begin InstSelect");
+        selector->SelectInstructionAndBuildCFG();
+        // Log("InstSelect Complete");
+        MachinePrinter* printer = new RiscV64Printer(fout,m_unit);
+        printer->emit();
     }
     fout.close();
     return 0;

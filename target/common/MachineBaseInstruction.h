@@ -58,11 +58,29 @@
 #endif
 #endif
 
+#ifndef Assert
+#define Assert(EXP)\
+do{\
+    if(!(EXP)){\
+        ERROR("Assertion failed: %s", #EXP);\
+    }\
+}while(0)
+#endif
+
 struct MachineDataType {
     enum { INT, FLOAT };
     enum { B32, B64, B128 };
     unsigned data_type;
     unsigned data_length;
+    MachineDataType(){}
+    MachineDataType(unsigned data_type, unsigned data_length) : data_type(data_type), data_length(data_length) {}
+    MachineDataType(const MachineDataType& other){
+        this->data_type = other.data_type;
+        this->data_length = other.data_length;
+    }
+    bool operator==(const MachineDataType&other)const{
+        return this->data_type == other.data_type && this->data_length == other.data_length;
+    }
     int getDataWidth() {
         switch (data_length) {
         case B32:
@@ -74,13 +92,26 @@ struct MachineDataType {
         }
         return 0;
     }
+    std::string toString(){
+        std::string ret;
+        if(data_type == INT) ret += 'i';
+        if(data_type == FLOAT) ret += 'f';
+        if(data_length == B32) ret += "32";
+        if(data_length == B64) ret += "64";
+        if(data_length == B128) ret += "128";
+        return ret;
+    }
 };
+
+extern MachineDataType INT32,INT64,INT128,FLOAT_32,FLOAT64,FLOAT128;
 
 struct Register {
 public:
     int reg_no;
     bool is_virtual;
     MachineDataType type;
+    Register(){}
+    Register(bool is_virtual,int reg_no,MachineDataType type):is_virtual(is_virtual),reg_no(reg_no),type(type){}
     int getDataWidth() { return type.getDataWidth(); }
     bool operator<(Register other) const {
         if (is_virtual != other.is_virtual)
@@ -104,20 +135,33 @@ struct MachineBaseOperand {
     enum { REG, IMMI, IMMF };
     int op_type;
     MachineBaseOperand(int op_type) : op_type(op_type) {}
+    virtual std::string toString() = 0;
 };
 
 struct MachineRegister : public MachineBaseOperand {
     Register reg;
-    MachineRegister(int reg_no) : MachineBaseOperand(MachineBaseOperand::REG) { reg.reg_no = reg_no; }
+    MachineRegister(Register reg) : MachineBaseOperand(MachineBaseOperand::REG),reg(reg) {}
+    std::string toString() {
+        if (reg.is_virtual)
+            return "%" + std::to_string(reg.reg_no);
+        else
+            return "phy_" + std::to_string(reg.reg_no);
+    }
 };
 
 struct MachineImmediateInt : public MachineBaseOperand {
     int imm32;
     MachineImmediateInt(int imm32) : MachineBaseOperand(MachineBaseOperand::IMMI), imm32(imm32) {}
+    std::string toString(){
+        return std::to_string(imm32);
+    }
 };
 struct MachineImmediateFloat : public MachineBaseOperand {
     float fimm32;
     MachineImmediateFloat(float fimm32) : MachineBaseOperand(MachineBaseOperand::IMMF), fimm32(fimm32) {}
+    std::string toString(){
+        return std::to_string(fimm32);
+    }
 };
 
 struct Label {
@@ -132,10 +176,12 @@ public:
     Label(int jmp, int seq) {
         this->jmp_label_id = jmp;
         this->seq_label_id = seq;
+        this->is_data_address = false;
     }
     Label(int jmp, bool is_data_address = false) {
         this->is_data_address = is_data_address;
-        this->jmp_label_id = jmp;
+        this->seq_label_id = 0;
+        this->mem_label_id = jmp;
     }
 };
 
@@ -164,7 +210,7 @@ public:
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
     MachinePhiInstruction(Register result) : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
     void pushPhiList(int label, Register reg) {
-        phi_list.push_back(std::make_pair(label, new MachineRegister(reg.reg_no)));
+        phi_list.push_back(std::make_pair(label, new MachineRegister(reg)));
     }
     void pushPhiList(int label, int imm32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateInt(imm32)));
@@ -189,5 +235,8 @@ public:
 public:
     MachineCopyInstruction(MachineBaseOperand *src, MachineBaseOperand *dst, MachineDataType copy_type)
         : copy_type(copy_type), src(src), dst(dst), MachineBaseInstruction(MachineBaseInstruction::COPY) {}
+    void output(std::ostream& s){
+        s << dst->toString() << " = "<< copy_type.toString() <<" COPY "<<src->toString()<<"\n";
+    }
 };
 #endif

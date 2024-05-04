@@ -140,6 +140,19 @@ public:
             };
         };
     };
+    Operand2(const Operand2& other){
+        if(other.type == IMM8M){
+            this->imm8m = other.imm8m;
+        }else if(other.type == RSHIFTR){
+            this->Rm = other.Rm;
+            this->shift_type = other.shift_type;
+            this->Rs = other.Rs;
+        }else if(other.type == RSHIFTI){
+            this->Rm = other.Rm;
+            this->shift_type = other.shift_type;
+            this->shift = other.shift;
+        }
+    }
     Operand2(int imm8m) {
         this->type = IMM8M;
         this->imm8m = imm8m;

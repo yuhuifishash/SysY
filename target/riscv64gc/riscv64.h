@@ -130,6 +130,10 @@ enum {
     RISCV_FCVT_L_D,
     RISCV_FCVT_LU_S,
     RISCV_FCVT_LU_D,
+
+    RISCV_LI,
+    // RISCV_GLOBAL_LOAD,
+    // RISCV_GLOBAL_STORE,
 };
 
 struct RvOpInfo {
@@ -142,83 +146,129 @@ struct RvOpInfo {
         J_type,
         R2_type,
         R4_type,
+        // GLOBAL_LOAD_type,
+        // GLOBAL_STORE_type,
     };
     int ins_formattype;
     char *name;
 };
 extern RvOpInfo OpTable[];
-struct RiscV64PhysicalRegisterDescriptor {
-    char *name;
-    enum {
-        x0,
-        x1,
-        x2,
-        x3,
-        x4,
-        x5,
-        x6,
-        x7,
-        x8,
-        x9,
-        x10,
-        x11,
-        x12,
-        x13,
-        x14,
-        x15,
-        x16,
-        x17,
-        x18,
-        x19,
-        x20,
-        x21,
-        x22,
-        x23,
-        x24,
-        x25,
-        x26,
-        x27,
-        x28,
-        x29,
-        x30,
-        x31,
-        f0,
-        f1,
-        f2,
-        f3,
-        f4,
-        f5,
-        f6,
-        f7,
-        f8,
-        f9,
-        f10,
-        f11,
-        f12,
-        f13,
-        f14,
-        f15,
-        f16,
-        f17,
-        f18,
-        f19,
-        f20,
-        f21,
-        f22,
-        f23,
-        f24,
-        f25,
-        f26,
-        f27,
-        f28,
-        f29,
-        f30,
-        f31,
-        INVALID,
-        spilled_in_memory,
-    };
+enum {
+    RISCV_x0,
+    RISCV_x1,
+    RISCV_x2,
+    RISCV_x3,
+    RISCV_x4,
+    RISCV_x5,
+    RISCV_x6,
+    RISCV_x7,
+    RISCV_x8,
+    RISCV_x9,
+    RISCV_x10,
+    RISCV_x11,
+    RISCV_x12,
+    RISCV_x13,
+    RISCV_x14,
+    RISCV_x15,
+    RISCV_x16,
+    RISCV_x17,
+    RISCV_x18,
+    RISCV_x19,
+    RISCV_x20,
+    RISCV_x21,
+    RISCV_x22,
+    RISCV_x23,
+    RISCV_x24,
+    RISCV_x25,
+    RISCV_x26,
+    RISCV_x27,
+    RISCV_x28,
+    RISCV_x29,
+    RISCV_x30,
+    RISCV_x31,
+    RISCV_f0,
+    RISCV_f1,
+    RISCV_f2,
+    RISCV_f3,
+    RISCV_f4,
+    RISCV_f5,
+    RISCV_f6,
+    RISCV_f7,
+    RISCV_f8,
+    RISCV_f9,
+    RISCV_f10,
+    RISCV_f11,
+    RISCV_f12,
+    RISCV_f13,
+    RISCV_f14,
+    RISCV_f15,
+    RISCV_f16,
+    RISCV_f17,
+    RISCV_f18,
+    RISCV_f19,
+    RISCV_f20,
+    RISCV_f21,
+    RISCV_f22,
+    RISCV_f23,
+    RISCV_f24,
+    RISCV_f25,
+    RISCV_f26,
+    RISCV_f27,
+    RISCV_f28,
+    RISCV_f29,
+    RISCV_f30,
+    RISCV_f31,
+    RISCV_INVALID,
+    RISCV_spilled_in_memory,
 };
-extern RiscV64PhysicalRegisterDescriptor RiscV64RegDescriptor[];
+
+static inline MachineDataType getRVRegType(int reg_no){
+    if(reg_no >= RISCV_x0 && reg_no <= RISCV_x31){
+        return MachineDataType(MachineDataType::INT,MachineDataType::B64);
+    }
+    if(reg_no >= RISCV_f0 && reg_no <= RISCV_f31){
+        return MachineDataType(MachineDataType::FLOAT,MachineDataType::B64);
+    }
+    ERROR("Unknown reg_no %d",reg_no);
+}
+
+struct RiscV64RegisterInfo {
+    char *name;
+};
+extern RiscV64RegisterInfo RiscV64Registers[];
+
+struct RiscVLabel : public Label{
+    std::string name;
+    bool is_hi;
+    RiscVLabel(int jmp,int seq):Label(jmp,seq),name(){}
+    RiscVLabel(int jmp):Label(jmp,false),name(){}
+    RiscVLabel(std::string name,bool is_hi):Label(0,0),name(name),is_hi(is_hi){
+        this->is_data_address = true;
+    }
+    RiscVLabel(const RiscVLabel& other):Label(0,0){
+        if(other.is_data_address){
+            this->is_data_address = other.is_data_address;
+            this->name = other.name;
+            this->is_hi = other.is_hi;
+        }else{
+            this->is_data_address = other.is_data_address;
+            this->print_label_id = other.print_label_id;
+            this->seq_label_id = other.seq_label_id;
+        } 
+    }
+    RiscVLabel operator=(const RiscVLabel& other){
+        if(other.is_data_address){
+            this->is_data_address = other.is_data_address;
+            this->name = other.name;
+            this->is_hi = other.is_hi;
+        }else{
+            this->is_data_address = other.is_data_address;
+            this->print_label_id = other.print_label_id;
+            this->seq_label_id = other.seq_label_id;
+        }
+        return *this;
+    }
+};
 
 class RiscV64Instruction : public MachineBaseInstruction {
 private:
@@ -227,7 +277,7 @@ private:
     bool use_label;
     union {
         int imm;
-        Label label;
+        RiscVLabel label;
     };
 
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
@@ -259,7 +309,7 @@ public:
     void setRs2(Register rs2) { this->rs2 = rs2; }
     void setRs3(Register rs3) { this->rs3 = rs3; }
     void setImm(int imm) { this->imm = imm; }
-    void setLabel(Label label) { this->label = label; }
+    void setLabel(RiscVLabel label) { this->label = label; }
     Register getRd() { return rd; }
     Register getRs1() { return rs1; }
     Register getRs2() { return rs2; }
@@ -267,7 +317,7 @@ public:
     void setUseLabel(bool use_label) { this->use_label = use_label; }
     bool getUseLabel() { return use_label; }
     int getImm() { return imm; }
-    Label getLabel() { return label; }
+    RiscVLabel getLabel() { return label; }
     int getOpcode() { return op; }
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
