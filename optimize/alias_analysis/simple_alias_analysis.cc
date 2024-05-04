@@ -333,7 +333,7 @@ void AliasAnalyser::SimpleAliasAnalysis(CFG *C) {
             for (auto I : BB->Instruction_list) {
                 // in SysY2022, only gep and phi will generate new phi operand
                 if (I->GetOpcode() == GETELEMENTPTR) {
-                    auto GEPI = (GetElementprtInstruction *)I;
+                    auto GEPI = (GetElementptrInstruction *)I;
                     auto addr = GEPI->GetPtrVal();
                     auto result_regno = GEPI->GetResultRegNo();
                     auto ptrop = addr->CopyOperand();

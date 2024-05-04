@@ -23,14 +23,10 @@ void mm(int n, int A[][N], int B[][N], int C[][N]){
                 continue;
             }
             j = 0;
-            //int tmp = C[i][j];
             while (j < n){
-                
                 C[i][j] = C[i][j] + A[i][k] * B[k][j];
                 j = j + 1;
-                //i*i;
             }
-            //C = tmp
             i = i + 1;
         }
         k = k + 1;

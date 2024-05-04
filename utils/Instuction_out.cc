@@ -476,7 +476,7 @@ Syntax:
 <result> = getelementptr inbounds <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
 <result> = getelementptr <ty>, <N x ptr> <ptrval>, [inrange] <vector index type> <idx>
 */
-void GetElementprtInstruction::PrintIR(std::ostream &s) {
+void GetElementptrInstruction::PrintIR(std::ostream &s) {
     s << result << " = getelementptr ";
     // print type
     if (dims.empty())

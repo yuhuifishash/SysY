@@ -15,7 +15,7 @@ void EliminateEmptyIndexGEP(CFG *C) {
             if (I->GetOpcode() != GETELEMENTPTR) {
                 continue;
             }
-            auto GetptrI = (GetElementprtInstruction *)I;
+            auto GetptrI = (GetElementptrInstruction *)I;
             if (!GetptrI->GetDims().empty() || !GetptrI->GetIndexes().empty()) {
                 continue;
             }
