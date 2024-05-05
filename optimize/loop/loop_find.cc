@@ -176,10 +176,10 @@ void LLVMIR::BuildLoopInfo() {
     for (auto [defI, cfg] : llvm_cfg) {
         cfg->BuildLoopInfo();
 
-        std::cerr<<defI->GetFunctionName()<<"  LoopInfo:\n";
-        for(auto loop:cfg->LoopForest.loop_set){
-            loop->PrintLoopDebugInfo();
-        }
+        // std::cerr<<defI->GetFunctionName()<<"  LoopInfo:\n";
+        // for(auto loop:cfg->LoopForest.loop_set){
+        //     loop->PrintLoopDebugInfo();
+        // }
     }
 }
 
