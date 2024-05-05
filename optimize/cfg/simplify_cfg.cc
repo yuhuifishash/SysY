@@ -222,7 +222,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
             // std::cout<<uid<<'\n';
             // std::cout<<uid<<" "<<G[uid].size()<<'\n';
         }
-        // puts("asdasde");
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
                 if(I->GetOpcode()==PHI){
@@ -264,7 +263,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
         }
         PhiMap.clear();
     }
-    // std::cout<<"asdasd\n";
     C->BuildCFG();
     C->BuildDominatorTree();
 }
