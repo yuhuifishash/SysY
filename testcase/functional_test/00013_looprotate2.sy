@@ -1,0 +1,53 @@
+int A[1024]={};
+void f(int t)
+{
+    putint(t);putch(10);
+    int i = 0;
+    while(i + 1 < 1024){
+        A[i+1] = A[i] + t;
+        i = i + 1;
+    }
+}
+
+int g()
+{
+    int S = 0;
+    int i = 0;
+    while(i < 1024){
+        S = S + A[i];
+        i = i + 1;
+    }
+    return S;
+}
+int main()
+{
+    int i = 0;
+    while(1){
+        f(i);
+        putint(g());putch(10);
+        putarray(1024,A);
+        i = i + 1;
+        if(i > 1024){break;}
+        i = i + 12;
+        f(i);
+        putint(g());putch(10);
+        putarray(1024,A);
+        i = i + 12;
+    }
+
+    i = 0;
+    while(1){
+        f(i);
+        putint(g());putch(10);
+        putarray(1024,A);
+        i = i + 1;
+        if(i > 1024){break;}
+        if(i > 64){break;}
+        i = i + 1;
+        f(i);
+        putint(g());putch(10);
+        putarray(1024,A);
+        i = i + 19;
+    }
+    return 0;
+}

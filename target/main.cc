@@ -2,9 +2,9 @@
 #include "../ir_gen/semant.h"
 #include "../parser/SysY_parser.tab.h"
 
-#include "./riscv64gc/riscv64.h"
-#include "./riscv64gc/instruction_select/riscv64_instSelect.h"
 #include "./riscv64gc/instruction_print/riscv64_printer.h"
+#include "./riscv64gc/instruction_select/riscv64_instSelect.h"
+#include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor( SimplifyCFG );
+        llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor( SimplifyCFG );
+        llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
@@ -178,12 +178,12 @@ int main(int argc, char **argv) {
     if (strcmp(argv[step_tag], "-S") == 0) {
         // std::cerr << "-S is not implemented now\n";
         // assert(false);
-        MachineUnit* m_unit = new RiscV64Unit();
-        MachineSelector* selector = new RiscV64Selector(m_unit,&llvmIR);
+        MachineUnit *m_unit = new RiscV64Unit();
+        MachineSelector *selector = new RiscV64Selector(m_unit, &llvmIR);
         // Log("Begin InstSelect");
         selector->SelectInstructionAndBuildCFG();
         // Log("InstSelect Complete");
-        MachinePrinter* printer = new RiscV64Printer(fout,m_unit);
+        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
     }
     fout.close();

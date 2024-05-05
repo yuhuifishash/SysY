@@ -12,7 +12,7 @@ class SCEVValue {
 public:
     // we only consider calculation of 2 invariant, if > 2, we consider it as invalid
     // if type == OTHER, the value is op1
-    // else, the value is op1 type op2 
+    // else, the value is op1 type op2
     Operand op1;
     LLVMIROpcode type;
     Operand op2;
@@ -29,29 +29,27 @@ class AddSCEVExpr {
 public:
     uint32_t len;
     SCEVValue st;
-    AddSCEVExpr* RecurExpr;
+    AddSCEVExpr *RecurExpr;
     enum SCEVExprType {
         Invariant = 1,
         AddRecurrences = 2,
-    }type;
+    } type;
     AddSCEVExpr() = default;
-    AddSCEVExpr(Operand d); //create invariant SCEVexpr
-    AddSCEVExpr(Operand s, SCEVExprType t, Operand d);             // create basic SCEVexpr
-    AddSCEVExpr(Operand s, SCEVExprType t, SCEVValue d);             // create basic SCEVexpr
+    AddSCEVExpr(Operand d);                                           // create invariant SCEVexpr
+    AddSCEVExpr(Operand s, SCEVExprType t, Operand d);                // create basic SCEVexpr
+    AddSCEVExpr(Operand s, SCEVExprType t, SCEVValue d);              // create basic SCEVexpr
     AddSCEVExpr(Operand s, SCEVExprType t, AddSCEVExpr *rec_expr);    // create Recurrence SCEVexpr
 
     void PrintSCEVExpr();
 };
 
-
 class SCEV {
 private:
-
 public:
     CFG *C;
     NaturalLoop *L;
 
-    std::set<int> InvariantSet;           //<RegNo>
+    std::set<int> InvariantSet;              //<RegNo>
     std::map<int, AddSCEVExpr *> SCEVMap;    //<RegNo, AddSCEVExpr>
 
     /*this indicates that the loop is the formal:
@@ -67,15 +65,13 @@ public:
     Operand upperbound;       // if is_simpleloop is true, this must be invariant i32
     Operand step;             // if is_simpleloop is true, this must be invariant i32
 
-    AddSCEVExpr* GetOperandSCEV(Operand op);
+    AddSCEVExpr *GetOperandSCEV(Operand op);
     void FindInvariantVar();
     void FindBasicIndVar();
     void FindRecurrences();
     void CheckSimpleForLoop();
 
-
     void PrintLoopSCEVInfo();
-
 
     bool SCEV_isI32Invariant(Operand op);
 
@@ -89,13 +85,11 @@ public:
             return nullptr
     */
     std::pair<Operand, LLVMIROpcode> FindBasicIndVarCycleVarDef(int st, int r2);    //(RegNO, RegNo)
-
-    
 };
 
-AddSCEVExpr* SCEVadd(AddSCEVExpr* a, AddSCEVExpr* b);
-AddSCEVExpr* SCEVsub(AddSCEVExpr* a, AddSCEVExpr* b);
-AddSCEVExpr* SCEVmul(AddSCEVExpr* a, AddSCEVExpr* b);
-AddSCEVExpr* SCEVneg(AddSCEVExpr* a);
+AddSCEVExpr *SCEVadd(AddSCEVExpr *a, AddSCEVExpr *b);
+AddSCEVExpr *SCEVsub(AddSCEVExpr *a, AddSCEVExpr *b);
+AddSCEVExpr *SCEVmul(AddSCEVExpr *a, AddSCEVExpr *b);
+AddSCEVExpr *SCEVneg(AddSCEVExpr *a);
 
 #endif

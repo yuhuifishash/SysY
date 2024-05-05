@@ -572,19 +572,19 @@ void FcmpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
-			this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
+            this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
 
 void PhiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
-    for (auto&label_pair : phi_list) {
-        auto&op1 = label_pair.first;
+    for (auto &label_pair : phi_list) {
+        auto &op1 = label_pair.first;
         if (op1->GetOperandType() == BasicOperand::REG) {
             auto op1_reg = (RegOperand *)op1;
             if (Rule.find(op1_reg->GetRegNo()) != Rule.end())
                 op1 = new RegOperand(Rule.find(op1_reg->GetRegNo())->second);
         }
-        auto&op2 = label_pair.second;
+        auto &op2 = label_pair.second;
         if (op2->GetOperandType() == BasicOperand::REG) {
             auto op2_reg = (RegOperand *)op2;
             if (Rule.find(op2_reg->GetRegNo()) != Rule.end())
@@ -594,7 +594,7 @@ void PhiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
-			this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
+            this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
 
@@ -602,7 +602,7 @@ void AllocaInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
-			this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
+            this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
 
@@ -610,7 +610,7 @@ void BrCondInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     if (cond->GetOperandType() == BasicOperand::REG) {
         auto cond_reg = (RegOperand *)cond;
         if (Rule.find(cond_reg->GetRegNo()) != Rule.end())
-			this->cond = new RegOperand(Rule.find(cond_reg->GetRegNo())->second);
+            this->cond = new RegOperand(Rule.find(cond_reg->GetRegNo())->second);
     }
 }
 
@@ -621,7 +621,7 @@ void GlobalVarDefineInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
 void GlobalStringConstInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
 
 void CallInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
-    for (auto&arg_pair : args) {
+    for (auto &arg_pair : args) {
         if (arg_pair.second->GetOperandType() == BasicOperand::REG) {
             auto op = (RegOperand *)arg_pair.second;
             if (Rule.find(op->GetRegNo()) != Rule.end())
@@ -632,7 +632,7 @@ void CallInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
         if (result->GetOperandType() == BasicOperand::REG) {
             auto result_reg = (RegOperand *)result;
             if (Rule.find(result_reg->GetRegNo()) != Rule.end())
-			this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
+                this->result = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
         }
     }
 }
@@ -658,7 +658,7 @@ void GetElementptrInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
             this->ptrval = new RegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
-    for (auto&idx_pair : indexes) {
+    for (auto &idx_pair : indexes) {
         if (idx_pair->GetOperandType() == BasicOperand::REG) {
             auto idx_reg = (RegOperand *)idx_pair;
             if (Rule.find(idx_reg->GetRegNo()) != Rule.end())
