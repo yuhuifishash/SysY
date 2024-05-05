@@ -52,8 +52,84 @@ void SimpleIfConversion(CFG *C) {}
     * this pass will be useful after sccp
     * you can use testcase 29_lone_line.sy to check
     * @param C the control flow graph of the function */
-void EliminateDoubleBrUnCond(CFG *C) { 
-  // std::cerr << "EliminateDoubleBrUnCond in SimplifyCFG is not implemented now\n"; 
+void EliminateDoubleBrUnCond(CFG *C) {
+    std::vector<std::vector<LLVMBlock>> &G=C->G;
+    std::vector<std::vector<LLVMBlock>> &invG=C->invG;
+    std::unordered_map<int,int> vsd;
+    std::unordered_map<int,int> PhiMap;
+    std::stack<LLVMBlock> bbstack;
+    bbstack.push(C->block_map->begin()->second);
+    // auto FuncdefI = C->function_def;
+    // FuncdefI->PrintIR(std::cout);
+    for(int i=0;i<=C->block_map->size();++i){
+        vsd[i]=0;
+    }
+    while(!bbstack.empty()){
+        auto bbu=bbstack.top();
+        auto uid=bbu->block_id;
+        bbstack.pop();
+        vsd[uid] = 1;
+        for (auto bbv : G[uid]) {
+            int vid=bbv->block_id;
+            // std::cout<<vid<<'\n';
+            if (vsd[vid] == 1) {
+                continue;
+            }
+            if(G[uid].size()==1&&invG[vid].size()==1){
+                // std::cout<<uid<<" "<<vid<<'\n';
+                // bbu->printIR(std::cout);
+                // bbv->printIR(std::cout);
+                PhiMap[vid]=uid;
+                //update edge from inv u
+                G[uid].clear();
+                for(int j=0;j<G[vid].size();++j){
+                    auto inv=G[vid][j];
+                    auto invid=inv->block_id;
+                    G[uid].push_back(inv);
+                    for(int i=0;i<G[invid].size();++i){
+                        if(invG[invid][i]==bbv){
+                            invG[invid][i]=bbu;
+                            break;
+                        }
+                    }
+                }
+                //merge u to v
+                bbu->Instruction_list.pop_back();
+                for(auto I : bbv->Instruction_list){
+                    bbu->InsertInstruction(1,I);
+                }
+                G[vid].clear();
+                invG[vid].clear();
+                bbv->Instruction_list.clear();
+                C->block_map->erase(vid);
+                bbstack.push(bbu);
+            }else{
+                bbstack.push(bbv);
+            }
+        }
+    }
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            if(I->GetOpcode()!=PHI){
+                continue;
+            }
+            auto PhiI=(PhiInstruction*)I;
+            auto ResultOperands = PhiI->GetPhiList();
+            for(u_int32_t i=0;i<ResultOperands.size();++i){
+                auto Labelop=(LabelOperand*)ResultOperands[i].first;
+                auto Labelopno=Labelop->GetLabelNo();
+                // if(FuncdefI->GetFunctionName()=="main"){
+                //     std::cout<<(LabelOperand*)ResultOperands[i].first<<" "<<Labelop->GetFullName()<<" "<<Labelopno<<" "<<PhiMap[Labelopno]<<'\n';
+                // }
+                if(PhiMap.find(Labelopno)==PhiMap.end()){
+                    continue;
+                }
+                Labelop->SetLabelNo(PhiMap[Labelopno]);
+            }
+        }
+    }
+    C->BuildCFG();
+    C->BuildDominatorTree();
 }
 
 /*
@@ -200,5 +276,5 @@ void EliminateUselessPhi(CFG *C) {
 
 void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);
-    // EliminateDoubleBrUnCond(C);
+    EliminateDoubleBrUnCond(C);
 }
