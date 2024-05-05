@@ -172,7 +172,7 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
     TODO("RV InstSelect");
 }
 
-template <> void RiscV64Selector::ConvertAndAppend<GetElementprtInstruction *>(GetElementprtInstruction *ins) {
+template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(GetElementptrInstruction *ins) {
     TODO("RV InstSelect");
 }
 
@@ -225,7 +225,7 @@ template<>void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst){
         ConvertAndAppend<SitofpInstruction *>((SitofpInstruction *)inst);
         break;
     case GETELEMENTPTR:
-        ConvertAndAppend<GetElementprtInstruction *>((GetElementprtInstruction *)inst);
+        ConvertAndAppend<GetElementptrInstruction *>((GetElementptrInstruction *)inst);
         break;
     case CALL:
         ConvertAndAppend<CallInstruction *>((CallInstruction *)inst);
