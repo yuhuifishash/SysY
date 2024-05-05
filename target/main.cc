@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor( SimplifyCFG ); // to do
+        llvmIR.PassExecutor( SimplifyCFG );
 
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor( SimplifyCFG ); // to do
+        llvmIR.PassExecutor( SimplifyCFG );
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);

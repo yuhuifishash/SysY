@@ -136,6 +136,10 @@ void NaturalLoop::LoopRotate(CFG *C) {
     if (exiting_nodes.find(header) == exiting_nodes.end()) {
         return;
     }
+    if (loop_nodes.size() == 1){
+        return;
+    }
+    
     auto exit = *exit_nodes.begin();
 
     // find header def, but use in other or header's phi
