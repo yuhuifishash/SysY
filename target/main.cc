@@ -152,18 +152,18 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor( SimplifyCFG );
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor( SimplifyCFG );
 
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor(LoopSimplify);
 
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(LoopInvariantCodeMotion);
+        // llvmIR.PassExecutor(SimpleAliasAnalysis);
+        // llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(SimpleCSE);
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         // llvmIR.PassExecutor(FunctionInline);  // to do
 
