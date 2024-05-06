@@ -40,7 +40,7 @@ public:
 
     void LoopRotate(CFG *C);
     void ConstantLoopFullyUnroll(CFG *C);
-    void SimpleForLoopUnroll(CFG* C);
+    void SimpleForLoopUnroll(CFG *C);
 
     void LoopStrengthReduce(CFG *C);
 

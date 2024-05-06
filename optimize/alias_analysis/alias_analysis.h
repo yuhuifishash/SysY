@@ -4,62 +4,12 @@
 #include "../../include/ir.h"
 #include <assert.h>
 
-// in SysY, we only need to analyse Arrays, so the algorithm is very simple
-
-class PtrRegMemInfo {
-public:
-    // if we do not know where the ptr points, the is_fullmem is true
-    // for example, the formal ptr( void f(int a[]), we can not know a's value )
-    // in SysY2022, the ptr can not points to global, so it is is_fullarraymem
-    bool is_fullmem = false;
-
-    // alloc in function, the array can not be used in other functions
-    bool is_local = true;
-
-    std::vector<Operand> PossiblePtrs;
-
-    // if the ptr op is new, return true.
-    // else, return false.
-    bool InsertNewPtrs(Operand op, std::map<int, PtrRegMemInfo> &ptrmap, CFG *C);
-    bool PushPossiblePtr(Operand op);
-
-    void PrintDebugInfo();
-};
-
-class FunctionMemRWInfo {
-public:
-    bool have_external_call = false;
-
-    std::vector<Operand> ReadPtrs;
-    std::vector<Operand> WritePtrs;
-
-    // if the ptr op is new, return true.
-    // else, return false.
-    bool InsertNewReadPtrs(Operand op);
-    bool InsertNewWritePtrs(Operand op);
-    bool InsertNewReadPtrs(std::vector<Operand> ops);
-    bool InsertNewWritePtrs(std::vector<Operand> ops);
-    bool MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwinfo, std::map<int, PtrRegMemInfo> &ptrmap);
-
-    bool isIndependent() { return (!have_external_call) && ReadPtrs.size() == 0 && WritePtrs.size() == 0; }
-    bool isNoSideEffect() { return (!have_external_call) && WritePtrs.size() == 0; }
-    bool isReadMem() { return ReadPtrs.size() != 0 || have_external_call; }
-    bool isWriteMem() { return WritePtrs.size() != 0 || have_external_call; }
-};
-
+// basic AliasAnalyser
 class AliasAnalyser {
-private:
-    std::map<CFG *, FunctionMemRWInfo> CFGMemRWMap;
-    std::map<CFG *, std::map<int, PtrRegMemInfo>> PtrRegMemMap;
+protected:
     LLVMIR *IR;
 
 public:
-    // TODO(): we need MemoryLocation to analysis more precious(maybe we need ScalarEvolution before)
-    enum {
-        ONLY_FULL_ARRAY = 0,    // r/w one element of array is considered as r/w full array
-        PARTIAL_ARRAY = 1,      // except call, r/w one element of array only be considered as one element
-    } analysis_type;
-
     enum AliasResult {
         NoAlias = 1,
         MayAlias = 2,    // may alias is useless now
@@ -75,29 +25,29 @@ public:
 
     void SetLLVMIR(LLVMIR *ir) { this->IR = ir; }
 
-    void SimpleAliasAnalysis();
-    void SimpleAliasAnalysis(CFG *C);    // simple_alias_analysis in single function
+    virtual void AliasAnalysis() = 0;
+    virtual void AliasAnalysis(CFG *C) = 0;    // alias_analysis in single function
 
     // return alias information of op1 and op2
     // the type of op1 and op2 maybe RegOperand or GlobalOperand
     //(op1 and op2 must be ptr)
-    AliasResult QueryAlias(Operand op1, Operand op2, CFG *C);
+    virtual AliasResult QueryAlias(Operand op1, Operand op2, CFG *C) = 0;
 
     // return modify/reference information of inst and op
     // return if the inst will read/write the op
     //(the op must be ptr)
-    ModRefResult QueryInstModRef(Instruction I, Operand op, CFG *C);
+    virtual ModRefResult QueryInstModRef(Instruction I, Operand op, CFG *C) = 0;
 
-    bool CFG_isReadMem(CFG *C) { return CFGMemRWMap[C].isReadMem(); }
-    bool CFG_isWriteMem(CFG *C) { return CFGMemRWMap[C].isWriteMem(); }
-    bool CFG_isIndependent(CFG *C) { return CFGMemRWMap[C].isIndependent(); }
-    bool CFG_isNoSideEffect(CFG *C) { return CFGMemRWMap[C].isNoSideEffect(); }
-    bool CFG_haveExternalCall(CFG *C) { return CFGMemRWMap[C].have_external_call; }
-    auto GetWritePtrs(CFG *C) { return CFGMemRWMap[C].WritePtrs; }
-    auto GetReadPtrs(CFG *C) { return CFGMemRWMap[C].ReadPtrs; }
+    virtual bool CFG_isReadMem(CFG *C) = 0;
+    virtual bool CFG_isWriteMem(CFG *C) = 0;
+    virtual bool CFG_isIndependent(CFG *C) = 0;
+    virtual bool CFG_isNoSideEffect(CFG *C) = 0;
+    virtual bool CFG_haveExternalCall(CFG *C) = 0;
+    virtual std::vector<Operand> GetWritePtrs(CFG *C) = 0;
+    virtual std::vector<Operand> GetReadPtrs(CFG *C) = 0;
 
-    void PrintAAResult(bool is_printptr);
-    void AAtest();
+    virtual void PrintAAResult(bool is_printptr) = 0;
+    virtual void AAtest() = 0;
 };
 
 #endif

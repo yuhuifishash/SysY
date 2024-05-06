@@ -271,19 +271,19 @@ IcmpCond GetInveriseIcmpCond(IcmpCond cond) {
     return IcmpCond::eq;
 }
 
-//return {is_simpleloop, forloop_info}
+// return {is_simpleloop, forloop_info}
 std::pair<bool, ForLoopInfo> GetLoopBound(IcmpCond cond, SCEVValue ub, AddSCEVExpr *IndVar) {
     // IndVar->PrintSCEVExpr();
     ForLoopInfo ans;
-    if(cond == ne || cond == eq){
-        return {false,ans};
+    if (cond == ne || cond == eq) {
+        return {false, ans};
     }
     ans.is_upperbound_closed = (cond == sle || cond == sge);
     ans.upperbound = ub;
     ans.lowerbound = IndVar->st;
     ans.step = IndVar->RecurExpr->st;
 
-    return {true,ans};
+    return {true, ans};
 }
 
 void SCEV::CheckSimpleForLoop() {
@@ -358,12 +358,12 @@ void SCEV::CheckSimpleForLoop() {
     // now we can use scev1 and scev2 to check the for loop
     // scev1   cond   scev2
 
-    auto [tag, info] = GetLoopBound(cond,scev2->st,scev1);
-    if(tag == false){
+    auto [tag, info] = GetLoopBound(cond, scev2->st, scev1);
+    if (tag == false) {
         is_simpleloop = false;
         return;
     }
-    
+
     forloop_info = info;
     is_simpleloop = true;
 
@@ -371,7 +371,6 @@ void SCEV::CheckSimpleForLoop() {
     // info.upperbound.PrintSCEVValue();std::cerr<<" ";
     // info.step.PrintSCEVValue();std::cerr<<" ";
     // std::cerr<<info.is_upperbound_closed<<"\n";
-    
 }
 
 void SCEV::PrintLoopSCEVInfo() {

@@ -1,8 +1,8 @@
-#include "alias_analysis.h"
+#include "simple_alias_analysis.h"
 #include <queue>
 
 extern std::map<std::string, CFG *> CFGMap;
-AliasAnalyser alias_analyser;
+AliasAnalyser *alias_analyser;
 
 PtrRegMemInfo GetPtrInfo(Operand ptr, std::map<int, PtrRegMemInfo> &ptrmap) {
     if (ptr->GetOperandType() == BasicOperand::REG) {
@@ -31,7 +31,7 @@ bool IsAlias(PtrRegMemInfo ptrinfo1, PtrRegMemInfo ptrinfo2) {
     return false;
 }
 
-AliasAnalyser::AliasResult AliasAnalyser::QueryAlias(Operand op1, Operand op2, CFG *C) {
+AliasAnalyser::AliasResult SimpleAliasAnalyser::QueryAlias(Operand op1, Operand op2, CFG *C) {
     auto ptrmap = PtrRegMemMap[C];
 
     auto ptrinfo1 = GetPtrInfo(op1, ptrmap);
@@ -43,7 +43,7 @@ AliasAnalyser::AliasResult AliasAnalyser::QueryAlias(Operand op1, Operand op2, C
     return NoAlias;
 }
 
-AliasAnalyser::ModRefResult AliasAnalyser::QueryInstModRef(Instruction I, Operand op, CFG *C) {
+AliasAnalyser::ModRefResult SimpleAliasAnalyser::QueryInstModRef(Instruction I, Operand op, CFG *C) {
     auto ptrmap = PtrRegMemMap[C];
 
     if (I->GetOpcode() == LOAD) {
@@ -240,11 +240,11 @@ bool FunctionMemRWInfo::MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwin
 
 //----------------------------------------
 // implementation of alias analysis
-void AliasAnalyser::SimpleAliasAnalysis() {
+void SimpleAliasAnalyser::AliasAnalysis() {
     PtrRegMemMap.clear();
     CFGMemRWMap.clear();
     for (auto [defI, cfg] : IR->llvm_cfg) {
-        SimpleAliasAnalysis(cfg);
+        AliasAnalysis(cfg);
     }
 
     // cache all the call inst of cfg
@@ -292,7 +292,7 @@ void AliasAnalyser::SimpleAliasAnalysis() {
 
 // analysis all the ptr operand in CFG* C
 // it will also analysis the read/write info of inst in C(but we do not consider call inst)
-void AliasAnalyser::SimpleAliasAnalysis(CFG *C) {
+void SimpleAliasAnalyser::AliasAnalysis(CFG *C) {
     std::map<int, PtrRegMemInfo> ptrmap;
     FunctionMemRWInfo rwinfo;
 
@@ -397,16 +397,16 @@ void AliasAnalyser::SimpleAliasAnalysis(CFG *C) {
 }
 
 void SimpleAliasAnalysis(LLVMIR *IR) {
-    alias_analyser.analysis_type = AliasAnalyser::ONLY_FULL_ARRAY;
-    alias_analyser.SetLLVMIR(IR);
-    alias_analyser.SimpleAliasAnalysis();
+    alias_analyser = new SimpleAliasAnalyser();
+    alias_analyser->SetLLVMIR(IR);
+    alias_analyser->AliasAnalysis();
 
     //------------------------test
     // alias_analyser.PrintAAResult(true);
     // alias_analyser.AAtest();
 }
 
-void AliasAnalyser::PrintAAResult(bool is_printptr) {
+void SimpleAliasAnalyser::PrintAAResult(bool is_printptr) {
     if (is_printptr) {
         for (auto [defI, cfg] : IR->llvm_cfg) {
             defI->PrintIR(std::cerr);
@@ -450,7 +450,7 @@ void PtrRegMemInfo::PrintDebugInfo() {
 std::string alias_status[4] = {"ERROR", "NoAlias", "MayAlias", "MustAlias"};
 std::string modref_status[4] = {"NoModRef", "Ref", "Mod", "ModRef"};
 
-void AliasAnalyser::AAtest() {
+void SimpleAliasAnalyser::AAtest() {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         defI->PrintIR(std::cerr);
         std::set<Operand> ptrset;

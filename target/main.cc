@@ -63,7 +63,7 @@ void LoopRotate(CFG *C);
 void LoopInvariantCodeMotion(CFG *C);
 void LoopClosedSSA(CFG *C);
 void ScalarEvolution(CFG *C);
-void ConstantLoopFullyUnroll(CFG* C);
+void ConstantLoopFullyUnroll(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);

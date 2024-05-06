@@ -47,8 +47,8 @@ class ForLoopInfo {
 public:
     SCEVValue lowerbound;
     SCEVValue upperbound;
-    SCEVValue step; 
-    bool is_upperbound_closed;// false -> (i < n)    true -> (i <= n)
+    SCEVValue step;
+    bool is_upperbound_closed;    // false -> (i < n)    true -> (i <= n)
 };
 
 class SCEV {
@@ -59,7 +59,6 @@ public:
 
     std::set<int> InvariantSet;              //<RegNo>
     std::map<int, AddSCEVExpr *> SCEVMap;    //<RegNo, AddSCEVExpr>
-
 
     /*this indicates that the loop is the formal:
     i = lowerbound
