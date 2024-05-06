@@ -43,6 +43,14 @@ public:
     void PrintSCEVExpr();
 };
 
+class ForLoopInfo {
+public:
+    SCEVValue lowerbound;
+    SCEVValue upperbound;
+    SCEVValue step; 
+    bool is_upperbound_closed;// false -> (i < n)    true -> (i <= n)
+};
+
 class SCEV {
 private:
 public:
@@ -52,18 +60,16 @@ public:
     std::set<int> InvariantSet;              //<RegNo>
     std::map<int, AddSCEVExpr *> SCEVMap;    //<RegNo, AddSCEVExpr>
 
+
     /*this indicates that the loop is the formal:
     i = lowerbound
     do{
         ......
         i += step
-    }while(i < upperbound)
+    }while(i <(<=)(>)(>=) upperbound)
     */
     bool is_simpleloop;
-    LLVMIROpcode step_way;    // we only consider ADD, SUB
-    Operand lowerbound;       // if is_simpleloop is true, this must be invariant i32
-    Operand upperbound;       // if is_simpleloop is true, this must be invariant i32
-    Operand step;             // if is_simpleloop is true, this must be invariant i32
+    ForLoopInfo forloop_info;
 
     AddSCEVExpr *GetOperandSCEV(Operand op);
     void FindInvariantVar();

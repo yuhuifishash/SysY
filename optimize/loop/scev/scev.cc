@@ -25,7 +25,7 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.FindBasicIndVar();
     scev.FindRecurrences();
 
-    scev.PrintLoopSCEVInfo();
+    // scev.PrintLoopSCEVInfo();
 
     scev.CheckSimpleForLoop();
 }
@@ -271,12 +271,19 @@ IcmpCond GetInveriseIcmpCond(IcmpCond cond) {
     return IcmpCond::eq;
 }
 
-// return {lowerbound, upperbound}
-std::pair<Operand, Operand> GetLoopBound(IcmpCond cond, Operand ub, AddSCEVExpr *IndVar) {
-    IndVar->PrintSCEVExpr();
-    std::cerr << cond << " " << ub << "\n";
+//return {is_simpleloop, forloop_info}
+std::pair<bool, ForLoopInfo> GetLoopBound(IcmpCond cond, SCEVValue ub, AddSCEVExpr *IndVar) {
+    // IndVar->PrintSCEVExpr();
+    ForLoopInfo ans;
+    if(cond == ne || cond == eq){
+        return {false,ans};
+    }
+    ans.is_upperbound_closed = (cond == sle || cond == sge);
+    ans.upperbound = ub;
+    ans.lowerbound = IndVar->st;
+    ans.step = IndVar->RecurExpr->st;
 
-    return {nullptr, nullptr};
+    return {true,ans};
 }
 
 void SCEV::CheckSimpleForLoop() {
@@ -348,15 +355,23 @@ void SCEV::CheckSimpleForLoop() {
     // scev2->PrintSCEVExpr();
 
     // assert(scev1->len == 2 && scev2->len == 1);
-    //  now we can use scev1 and scev2 to check the for loop
-    //  scev1   cond   scev2
+    // now we can use scev1 and scev2 to check the for loop
+    // scev1   cond   scev2
 
-    if (scev2->st.type != OTHER) {
+    auto [tag, info] = GetLoopBound(cond,scev2->st,scev1);
+    if(tag == false){
         is_simpleloop = false;
         return;
     }
+    
+    forloop_info = info;
+    is_simpleloop = true;
 
-    auto [lb, ub] = GetLoopBound(cond, scev2->st.op1, scev1);
+    // info.lowerbound.PrintSCEVValue();std::cerr<<" ";
+    // info.upperbound.PrintSCEVValue();std::cerr<<" ";
+    // info.step.PrintSCEVValue();std::cerr<<" ";
+    // std::cerr<<info.is_upperbound_closed<<"\n";
+    
 }
 
 void SCEV::PrintLoopSCEVInfo() {

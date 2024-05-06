@@ -39,6 +39,13 @@ public:
     void LCSSA(CFG *C);
 
     void LoopRotate(CFG *C);
+    void ConstantLoopFullyUnroll(CFG *C);
+    void SimpleForLoopUnroll(CFG* C);
+
+    void LoopStrengthReduce(CFG *C);
+
+    void LoopDataDependenceTest(CFG *C);
+    void LoopParallel(CFG *C);
 
     void PrintLoopDebugInfo();
 };
