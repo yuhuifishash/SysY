@@ -396,10 +396,9 @@ void SimpleCSEInit(CFG *C) {
     }
 }
 
-
 void SimpleCSE(CFG *C) {
-    for(auto [id,bb]:*C->block_map){
-        for(auto I:bb->Instruction_list){
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
         }
     }

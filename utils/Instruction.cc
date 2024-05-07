@@ -140,7 +140,6 @@ void PhiInstruction::ErasePhi(int label_id) {
 }
 
 Operand PhiInstruction::GetValOperand(int label_id) {
-    // PrintIR(std::cerr); std::cerr<<label_id<<"\n";
     for (auto [label, val] : phi_list) {
         if (((LabelOperand *)label)->GetLabelNo() == label_id) {
             return val;

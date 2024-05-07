@@ -52,10 +52,10 @@ private:
     std::map<CFG *, FunctionMemRWInfo> CFGMemRWMap;
     std::map<CFG *, std::map<int, PtrRegMemInfo>> PtrRegMemMap;
     void AliasAnalysis(CFG *C);    // simple_alias_analysis in single function
-    
+
 public:
     virtual void AliasAnalysis();
-    
+
     // return alias information of op1 and op2
     // the type of op1 and op2 maybe RegOperand or GlobalOperand
     //(op1 and op2 must be ptr)

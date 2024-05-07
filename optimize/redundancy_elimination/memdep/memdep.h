@@ -5,16 +5,16 @@
 class CFG;
 class LLVMIR;
 
-class MemoryDependenceAnalyser
-{
+class MemoryDependenceAnalyser {
 protected:
-    LLVMIR* IR;
+    LLVMIR *IR;
+
 public:
-    void SetIR(LLVMIR* ir) {this->IR = ir;}
+    void SetIR(LLVMIR *ir) { this->IR = ir; }
 
     // Instruction a,b may be load or store (each store will generate a new load)
-    virtual bool isLoadRedundant(Instruction a, Instruction b, CFG*) = 0;
-    
+    virtual bool isLoadRedundant(Instruction a, Instruction b, CFG *) = 0;
+
     virtual void MemoryDependenceAnalysis() = 0;
     virtual void MemDepTest() = 0;
 };

@@ -171,65 +171,65 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
 template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(GetElementptrInstruction *ins) {
     TODO("RV InstSelect");
     int product = 1;
-    for(auto size : ins->GetDims()){
+    for (auto size : ins->GetDims()) {
         product *= size;
     }
     int const_offset = 0;
     auto offset_reg = GetNewReg(INT32);
-    
+
     int offset_reg_assigned = 0;
-    for(int i=0;i<ins->GetIndexes().size();i++){
-        if(ins->GetIndexes()[i]->GetOperandType() == BasicOperand::IMMI32){
-            const_offset += (((ImmI32Operand*)ins->GetIndexes()[i])->GetIntImmVal()) * product;
-        }else{
-            if(product != 1){
+    for (int i = 0; i < ins->GetIndexes().size(); i++) {
+        if (ins->GetIndexes()[i]->GetOperandType() == BasicOperand::IMMI32) {
+            const_offset += (((ImmI32Operand *)ins->GetIndexes()[i])->GetIntImmVal()) * product;
+        } else {
+            if (product != 1) {
                 TODO("mul_str_redu");
-                if(offset_reg_assigned == 0){
+                if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
                     TODO("Add Instruction");
                     // cur_block->push_back();
-                }else{
+                } else {
                     TODO("Add Instruction");
                     // cur_block->push_back();
                 }
-            }else{
-                if(offset_reg_assigned == 0){
+            } else {
+                if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
                     TODO("Add Instruction");
                     // cur_block->push_back();
-                }else{
+                } else {
                     TODO("Add Instruction");
                     // cur_block->push_back();
                 }
             }
         }
-        if(i < ins->GetDims().size()){
+        if (i < ins->GetDims().size()) {
             product /= ins->GetDims()[i];
         }
     }
-    if(const_offset != 0){
-        if(offset_reg_assigned == 0){
+    if (const_offset != 0) {
+        if (offset_reg_assigned == 0) {
             offset_reg_assigned = 1;
             TODO("Add Instruction");
             // cur_block->push_back();
-        }else{
+        } else {
             TODO("Add Instruction");
             // cur_block->push_back();
         }
     }
-    if(ins->GetPtrVal()->GetOperandType() == BasicOperand::REG){
+    if (ins->GetPtrVal()->GetOperandType() == BasicOperand::REG) {
         TODO("RV InstSelect");
-    }else if(ins->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL){
+    } else if (ins->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL) {
         auto base_reg = GetNewReg(INT64);
-        if(offset_reg_assigned){
+        if (offset_reg_assigned) {
             TODO("RV InstSelect");
             // cur_block->push_back();
-        }else{
+        } else {
             // Load Address of Global
             TODO("Add Instruction");
             // cur_block->push_back();
         }
-    }else{
+    } else {
         ERROR("Unexpected OperandType");
     }
 }

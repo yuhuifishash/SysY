@@ -128,6 +128,7 @@ LLVMBlock CFG::NewBlock() {
 }
 
 LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock> &froms, LLVMBlock to) {
+    assert(froms.size() >= 1);
     auto midBB = NewBlock();
 
     for (auto I : to->Instruction_list) {

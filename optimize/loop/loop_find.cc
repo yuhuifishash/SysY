@@ -191,6 +191,7 @@ void NaturalLoop::PrintLoopDebugInfo() {
         std::cerr << nodes->block_id << " ";
     }
     std::cerr << "\n";
+    std::cerr << "preheader: " << preheader->block_id << "\n";
     std::cerr << "header: " << header->block_id << "\n";
     std::cerr << "latch: ";
     for (auto nodes : latches) {

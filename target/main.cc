@@ -67,7 +67,7 @@ void ConstantLoopFullyUnroll(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
-void SimpleMemoryDependenceAnalysis(LLVMIR* IR);
+void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        //llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
@@ -157,7 +157,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        //llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);

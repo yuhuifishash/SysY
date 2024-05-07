@@ -143,7 +143,8 @@ void NaturalLoop::LoopRotate(CFG *C) {
     if (loop_nodes.size() == 1) {
         return;
     }
-
+    auto latch = *latches.begin();
+    assert(latch->Instruction_list.back()->GetOpcode() == BR_UNCOND);
     auto exit = *exit_nodes.begin();
 
     std::map<int, Instruction> ResultMap;
@@ -156,7 +157,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
             }
         }
     }
-
     // find header def, but use in other or header's phi
     std::set<Instruction> HeaderDefLoopUseInsts;
     std::map<Instruction, std::set<Instruction>> HeaderUseMap;
@@ -229,9 +229,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
         }
         auto PhiI = (PhiInstruction *)I;
         auto val = PhiI->GetValOperand(header->block_id);
-        if (val->GetOperandType() != BasicOperand::REG) {
-            continue;
-        }
         // find the val operand in header
         bool is_find = false;
         // in header, the phi is %r = phi [%v1, %preheader],[%v2, %latch]
@@ -257,15 +254,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
                             new LabelOperand(CondBlock->block_id));
         }
     }
-
-    auto latch = *latches.begin();
-    if(latch->Instruction_list.back()->GetOpcode() == BR_COND){
-        return;
-    }
-    
-    assert(latch->Instruction_list.back()->GetOpcode() == BR_UNCOND);
     latch->Instruction_list.pop_back();
-
     std::map<int, Operand> RegValMap;
     // copy header to latch
     std::map<int, int> NewResultRegMap;
@@ -291,7 +280,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
             if (I->GetResultRegNo() != -1) {    // set new result RegOperand
                 NewResultRegMap[I->GetResultRegNo()] = ++C->max_reg;
             }
-
             auto nI = I->CopyInstruction();
             nI->ReplaceByMap(NewResultRegMap);
             latch->InsertInstruction(1, nI);
@@ -331,7 +319,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
             }
         }
     }
-
     // update phi instructions in exit(label header changes to latch)
     for (auto I : exit->Instruction_list) {
         if (I->GetOpcode() != PHI) {
@@ -339,9 +326,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
         }
         auto PhiI = (PhiInstruction *)I;
         auto val = PhiI->GetValOperand(header->block_id);
-        if (val->GetOperandType() != BasicOperand::REG) {
-            continue;
-        }
         // latch -> exit
         PhiI->SetNewFrom(header->block_id, latch->block_id);
         // find the val operand in header
@@ -373,7 +357,6 @@ void NaturalLoop::LoopRotate(CFG *C) {
             }
         }
     }
-
     // erase useless instructions in header
     for (auto it = header->Instruction_list.begin(); it != header->Instruction_list.end();) {
         auto I = *it;
