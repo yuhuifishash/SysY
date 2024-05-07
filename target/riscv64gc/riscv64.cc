@@ -251,7 +251,7 @@ struct RiscV64RegisterInfo RiscV64Registers[] = {
 std::vector<int> PhysicalRegisters::getValidRegs(LiveInterval interval) {
     if (interval.getReg().type.data_type == MachineDataType::INT) {
         return std::vector<int>({
-        RISCV_x0,  RISCV_x1,
+        RISCV_x1,
         RISCV_x2,  RISCV_x3,
         RISCV_x4,  RISCV_x5,
         RISCV_x6,  RISCV_x7,
