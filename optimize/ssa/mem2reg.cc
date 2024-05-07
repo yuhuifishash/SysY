@@ -333,14 +333,14 @@ void Mem2RegInit(CFG *C) {
                 auto StoreI = (StoreInstruction *)I;
                 auto val = StoreI->GetValue();
                 if (val->GetOperandType() == BasicOperand::IMMI32) {
-                    auto AI =
+                    auto ArithI =
                     new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
+                    bb->Instruction_list.push_back(ArithI);
                     StoreI->SetValue(new RegOperand(C->max_reg));
                 } else if (val->GetOperandType() == BasicOperand::IMMF32) {
-                    auto AI =
+                    auto ArithI =
                     new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
+                    bb->Instruction_list.push_back(ArithI);
                     StoreI->SetValue(new RegOperand(C->max_reg));
                 }
             }

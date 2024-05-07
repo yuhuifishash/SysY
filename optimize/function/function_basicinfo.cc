@@ -29,4 +29,6 @@ void CFG::BuildFunctionInfo() {
 
 void FunctionCallGraph::BuildCG(LLVMIR *IR) {}
 
+// in SysY2022, the cycle can only be generated with self-recursive
+// so all the cycle's size <= 1
 void FunctionCallGraph::BuildCGSCC() {}

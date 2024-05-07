@@ -269,35 +269,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
     return changed;
 }
 
-// for simplify, we can assume that all the store value are RegOperand in BasicBlockCSE
-void BasicBlockCSEInit(CFG *C) {
-    for (auto &[id, bb] : *C->block_map) {
-        auto tmp_list = bb->Instruction_list;
-        bb->Instruction_list.clear();
-        for (auto I : tmp_list) {
-            if (I->GetOpcode() == STORE) {
-                auto StoreI = (StoreInstruction *)I;
-                auto val = StoreI->GetValue();
-                if (val->GetOperandType() == BasicOperand::IMMI32) {
-                    auto AI =
-                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
-                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
-                    auto AI =
-                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
-                }
-            }
-            bb->Instruction_list.push_back(I);
-        }
-    }
-}
-
 void BasicBlockCSE(CFG *C) {
-
-    BasicBlockCSEInit(C);
     bool changed = true;
     while (changed) {
         changed = false;
@@ -398,7 +370,41 @@ void DomTreeWalkCSE(CFG *C) {
     }
 }
 
+// for simplify, we can assume that all the store value are RegOperand in SimpleCSE
+void SimpleCSEInit(CFG *C) {
+    for (auto &[id, bb] : *C->block_map) {
+        auto tmp_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for (auto I : tmp_list) {
+            if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
+                auto val = StoreI->GetValue();
+                if (val->GetOperandType() == BasicOperand::IMMI32) {
+                    auto ArithI =
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(ArithI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
+                    auto ArithI =
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(ArithI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                }
+            }
+            bb->Instruction_list.push_back(I);
+        }
+    }
+}
+
+
 void SimpleCSE(CFG *C) {
+    for(auto [id,bb]:*C->block_map){
+        for(auto I:bb->Instruction_list){
+            I->SetBlockID(id);
+        }
+    }
+
+    SimpleCSEInit(C);
     BasicBlockCSE(C);
     DomTreeWalkCSE(C);
 }
