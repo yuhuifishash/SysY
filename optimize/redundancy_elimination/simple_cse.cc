@@ -8,7 +8,7 @@ DomTreeWalkCSE will do dfs on the dominator tree to search common subexpression 
 */
 
 extern std::map<std::string, CFG *> CFGMap;
-extern AliasAnalyser alias_analyser;
+extern AliasAnalyser *alias_analyser;
 
 struct InstCSEInfo {
     int opcode;
@@ -85,7 +85,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
     auto cfg = CFGMap[CallI->GetFunctionName()];
 
     // have external call
-    if (alias_analyser.CFG_haveExternalCall(cfg)) {
+    if (alias_analyser->CFG_haveExternalCall(cfg)) {
         // for simple, we do not consider independent call there, this can be CSE in DomTreeWalkCSE
         // I->PrintIR(std::cerr);std::cerr<<"kill everything\n";
         LoadInstMap.clear();
@@ -100,7 +100,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         auto LoadI = (LoadInstruction *)(*it);
         auto ptr = LoadI->GetPointer();
 
-        auto result = alias_analyser.QueryInstModRef(I, ptr, C);
+        auto result = alias_analyser->QueryInstModRef(I, ptr, C);
         if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
             // I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
 
@@ -111,7 +111,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         }
     }
 
-    auto writeptrs = alias_analyser.GetWritePtrs(cfg);
+    auto writeptrs = alias_analyser->GetWritePtrs(cfg);
     std::vector<Operand> real_writeptrs;
     for (auto ptr : writeptrs) {
         if (ptr->GetOperandType() == BasicOperand::GLOBAL) {
@@ -132,7 +132,7 @@ void CallKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap,
         assert((*it)->GetOpcode() == CALL);
         bool is_needkill = false;
         for (auto ptr : real_writeptrs) {
-            if (alias_analyser.QueryInstModRef(*it, ptr, C) != AliasAnalyser::NoModRef) {
+            if (alias_analyser->QueryInstModRef(*it, ptr, C) != AliasAnalyser::NoModRef) {
                 is_needkill = true;
                 break;
             }
@@ -155,7 +155,7 @@ void StoreKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap
     auto ptr = ((StoreInstruction *)I)->GetPointer();
 
     for (auto it = LoadInstSet.begin(); it != LoadInstSet.end();) {
-        auto result = alias_analyser.QueryInstModRef(*it, ptr, C);
+        auto result = alias_analyser->QueryInstModRef(*it, ptr, C);
         if (result == AliasAnalyser::Ref) {    // if load instruction ref the ptr of store instruction
             // I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
 
@@ -167,7 +167,7 @@ void StoreKillReadMemInst(Instruction I, std::map<InstCSEInfo, int> &CallInstMap
     }
 
     for (auto it = CallInstSet.begin(); it != CallInstSet.end();) {
-        auto result = alias_analyser.QueryInstModRef(*it, ptr, C);
+        auto result = alias_analyser->QueryInstModRef(*it, ptr, C);
         if (result != AliasAnalyser::NoModRef) {
             // I->PrintIR(std::cerr);std::cerr<<"kill ";(*it)->PrintIR(std::cerr);
 
@@ -203,7 +203,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
                 continue;    // external call, clear all instructions
             }
             auto cfg = CFGMap[CallI->GetFunctionName()];
-            if (alias_analyser.CFG_isNoSideEffect(cfg)) {    // only read memory, we can CSE
+            if (alias_analyser->CFG_isNoSideEffect(cfg)) {    // only read memory, we can CSE
                 auto Info = GetCSEInfo(I);
                 auto CSEiter = CallInstMap.find(Info);
                 if (CSEiter != CallInstMap.end()) {
@@ -269,35 +269,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
     return changed;
 }
 
-// for simplify, we can assume that all the store value are RegOperand in BasicBlockCSE
-void BasicBlockCSEInit(CFG *C) {
-    for (auto &[id, bb] : *C->block_map) {
-        auto tmp_list = bb->Instruction_list;
-        bb->Instruction_list.clear();
-        for (auto I : tmp_list) {
-            if (I->GetOpcode() == STORE) {
-                auto StoreI = (StoreInstruction *)I;
-                auto val = StoreI->GetValue();
-                if (val->GetOperandType() == BasicOperand::IMMI32) {
-                    auto AI =
-                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
-                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
-                    auto AI =
-                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
-                    bb->Instruction_list.push_back(AI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
-                }
-            }
-            bb->Instruction_list.push_back(I);
-        }
-    }
-}
-
 void BasicBlockCSE(CFG *C) {
-
-    BasicBlockCSEInit(C);
     bool changed = true;
     while (changed) {
         changed = false;
@@ -340,7 +312,7 @@ void DomTreeWalkCSE(CFG *C) {
                     continue;
                 }
                 if (I->GetOpcode() == LOAD || I->GetOpcode() == STORE) {
-                    continue;    // we will consider memory instructions in gvn
+                    continue;
                 }
                 if (I->GetOpcode() == CALL) {
                     auto CallI = (CallInstruction *)I;
@@ -350,9 +322,9 @@ void DomTreeWalkCSE(CFG *C) {
 
                     auto cfg = CFGMap[CallI->GetFunctionName()];
                     // we only CSE independent call in this Pass
-                    if (!alias_analyser.CFG_isIndependent(cfg)) {
+                    if (!alias_analyser->CFG_isIndependent(cfg)) {
                         continue;
-                    }    // we will consider other call instructions in gvn
+                    }
                 }
 
                 auto Info = GetCSEInfo(I);
@@ -398,7 +370,40 @@ void DomTreeWalkCSE(CFG *C) {
     }
 }
 
+// for simplify, we can assume that all the store value are RegOperand in SimpleCSE
+void SimpleCSEInit(CFG *C) {
+    for (auto &[id, bb] : *C->block_map) {
+        auto tmp_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for (auto I : tmp_list) {
+            if (I->GetOpcode() == STORE) {
+                auto StoreI = (StoreInstruction *)I;
+                auto val = StoreI->GetValue();
+                if (val->GetOperandType() == BasicOperand::IMMI32) {
+                    auto ArithI =
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(ArithI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                } else if (val->GetOperandType() == BasicOperand::IMMF32) {
+                    auto ArithI =
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    bb->Instruction_list.push_back(ArithI);
+                    StoreI->SetValue(new RegOperand(C->max_reg));
+                }
+            }
+            bb->Instruction_list.push_back(I);
+        }
+    }
+}
+
+
 void SimpleCSE(CFG *C) {
+    for(auto [id,bb]:*C->block_map){
+        for(auto I:bb->Instruction_list){
+            I->SetBlockID(id);
+        }
+    }
+    SimpleCSEInit(C);
     BasicBlockCSE(C);
     DomTreeWalkCSE(C);
 }

@@ -20,6 +20,7 @@ SRCDIR += ./optimize/ssa
 SRCDIR += ./optimize/peephole
 SRCDIR += ./optimize/propagating
 SRCDIR += ./optimize/redundancy_elimination
+SRCDIR += ./optimize/redundancy_elimination/memdep
 SRCDIR += ./optimize/cfg
 SRCDIR += ./optimize/loop
 SRCDIR += ./optimize/loop/scev

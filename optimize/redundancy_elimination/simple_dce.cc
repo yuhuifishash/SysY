@@ -6,7 +6,7 @@ and in this function, we do not care about the useless function args.
 (it will not elimate useless loop, it can be elimated in adce.cc)
 */
 extern std::map<std::string, CFG *> CFGMap;
-extern AliasAnalyser alias_analyser;
+extern AliasAnalyser *alias_analyser;
 
 void SimpleDCE(CFG *C) {
     std::map<int, Instruction> ResultMap;
@@ -44,7 +44,7 @@ void SimpleDCE(CFG *C) {
                     continue;
                 }
                 auto target_cfg = CFGMap[CallI->GetFunctionName()];
-                if (!alias_analyser.CFG_isNoSideEffect(target_cfg)) {
+                if (!alias_analyser->CFG_isNoSideEffect(target_cfg)) {
                     continue;
                 }
             }

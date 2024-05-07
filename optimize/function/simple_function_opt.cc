@@ -85,9 +85,9 @@ bool TailRecursiveEliminateCheck(CFG *C) {
     }
     // AllocaReg can't be use in call
     auto bb0 = (*C->block_map->begin()).second;
-    int AllocaRegCnt=0;
-    std::unordered_map<int,int> AllocaReg;
-    std::unordered_map<int,int> GEPMap;
+    int AllocaRegCnt = 0;
+    std::unordered_map<int, int> AllocaReg;
+    std::unordered_map<int, int> GEPMap;
     for (auto I : bb0->Instruction_list) {
         if (I->GetOpcode() != ALLOCA) {
             continue;
@@ -96,40 +96,41 @@ bool TailRecursiveEliminateCheck(CFG *C) {
         if (AllocaI->GetDims().empty()) {
             continue;
         }
-        AllocaReg[AllocaI->GetResultRegNo()]=++AllocaRegCnt;
+        AllocaReg[AllocaI->GetResultRegNo()] = ++AllocaRegCnt;
         // std::cout<<"asdads "<<AllocaI->GetResultRegNo()<<'\n';
     }
 
     // GETELEMENTPTR
-    if(!AllocaRegCnt){return true;}
+    if (!AllocaRegCnt) {
+        return true;
+    }
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() != GETELEMENTPTR && I->GetOpcode() != CALL) {
                 continue;
             }
-            
-            if(I->GetOpcode() == GETELEMENTPTR){
+
+            if (I->GetOpcode() == GETELEMENTPTR) {
                 auto GetelementptrI = (GetElementptrInstruction *)I;
                 auto PtrReg = ((RegOperand *)GetelementptrI->GetPtrVal())->GetRegNo();
-                auto ResultReg = GetelementptrI->GetResultRegNo();       
-                if (PtrReg == 0||AllocaReg.find(PtrReg)==AllocaReg.end()) {
+                auto ResultReg = GetelementptrI->GetResultRegNo();
+                if (PtrReg == 0 || AllocaReg.find(PtrReg) == AllocaReg.end()) {
                     continue;
                 }
-                GEPMap[ResultReg]=PtrReg;
-            }else{
+                GEPMap[ResultReg] = PtrReg;
+            } else {
                 auto CallI = (CallInstruction *)I;
-                for(auto args:CallI->GetParameterList()){
-                    auto args_regno=((RegOperand*)args.second)->GetRegNo();
+                for (auto args : CallI->GetParameterList()) {
+                    auto args_regno = ((RegOperand *)args.second)->GetRegNo();
                     // std::cout<<args_regno<<'\n';
                     // if(CallI->GetFunctionName()=="DFS"){
                     //     std::cout<<args_regno<<'\n';
                     // }
-                    if(GEPMap.find(args_regno)!=GEPMap.end()){
+                    if (GEPMap.find(args_regno) != GEPMap.end()) {
                         return false;
                     }
                 }
             }
-            
         }
     }
     return true;

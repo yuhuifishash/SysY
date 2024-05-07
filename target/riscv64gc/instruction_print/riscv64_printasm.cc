@@ -3,7 +3,7 @@
 void RiscV64Printer::emit() {
     for (auto func : printee->functions) {
         current_func = func;
-        s << "\t.globl\t" << func->getFunctionName() << "\n"; 
+        s << "\t.globl\t" << func->getFunctionName() << "\n";
         s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
         for (auto block : func->blocks) {
@@ -18,7 +18,7 @@ void RiscV64Printer::emit() {
                     TODO("Machine PHI PrintAsm");
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     // TODO("Machine COPY PrintAsm");
-                    auto copy_ins = (MachineCopyInstruction*)ins;
+                    auto copy_ins = (MachineCopyInstruction *)ins;
                     copy_ins->output(s);
                 } else {
                     ERROR("Unexpected arch");
@@ -26,8 +26,7 @@ void RiscV64Printer::emit() {
             }
         }
     }
-    for(auto global : printee->global_def){
-
+    for (auto global : printee->global_def) {
     }
 }
 
@@ -52,10 +51,10 @@ template <> void RiscV64Printer::printRVfield<RiscVLabel *>(RiscVLabel *ins) {
         // Just an example
         // May change in future
         // s << ".LPIC" << ins->mem_label_id;
-        if(ins->is_hi){
-            s<<"%hi("<<ins->name<<")";
-        }else{
-            s<<"%lo("<<ins->name<<")";
+        if (ins->is_hi) {
+            s << "%hi(" << ins->name << ")";
+        } else {
+            s << "%lo(" << ins->name << ")";
         }
     } else {
         s << current_func->getFunctionName() << ins->jmp_label_id;
@@ -67,10 +66,10 @@ template <> void RiscV64Printer::printRVfield<RiscVLabel>(RiscVLabel ins) {
         // Just an example
         // May change in future
         // s << ".LPIC" << ins->mem_label_id;
-        if(ins.is_hi){
-            s<<"%hi("<<ins.name<<")";
-        }else{
-            s<<"%lo("<<ins.name<<")";
+        if (ins.is_hi) {
+            s << "%hi(" << ins.name << ")";
+        } else {
+            s << "%lo(" << ins.name << ")";
         }
     } else {
         s << current_func->getFunctionName() << ins.jmp_label_id;

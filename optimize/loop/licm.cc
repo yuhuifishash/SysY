@@ -5,7 +5,7 @@ extern std::map<std::string, CFG *> CFGMap;
 
 static std::map<int, bool> InvariantMap;    //<RegNo, is_invariant>
 static std::map<int, Instruction> ResultMap;
-extern AliasAnalyser alias_analyser;
+extern AliasAnalyser *alias_analyser;
 
 bool IsDomAllExitBB(CFG *cfg, LLVMBlock BB, NaturalLoop *L) {
     for (auto ExitBB : L->exit_nodes) {
@@ -27,13 +27,13 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
         return false;    // external call
     }
     auto targetcfg = CFGMap[CallI->GetFunctionName()];
-    if (!alias_analyser.CFG_isNoSideEffect(targetcfg)) {
+    if (!alias_analyser->CFG_isNoSideEffect(targetcfg)) {
         return false;    // write memory or IO, we can not motion
     }
 
     // TODO(): if the call instructions may throw exceptions, it must dominate all the exitBB
 
-    auto ReadPtrs = alias_analyser.GetReadPtrs(targetcfg);
+    auto ReadPtrs = alias_analyser->GetReadPtrs(targetcfg);
 
     // Get real read pointers
     std::vector<Operand> real_ReadPtrs;
@@ -54,7 +54,7 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
 
     for (auto WI : WriteInsts) {
         for (auto wptr : real_ReadPtrs) {
-            auto result = alias_analyser.QueryInstModRef(WI, wptr, C);
+            auto result = alias_analyser->QueryInstModRef(WI, wptr, C);
             if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
                 return false;
             }
@@ -66,7 +66,7 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
 bool isLoadInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction> WriteInsts) {
     auto ptr = ((LoadInstruction *)I)->GetPointer();
     for (auto WI : WriteInsts) {
-        auto result = alias_analyser.QueryInstModRef(WI, ptr, C);
+        auto result = alias_analyser->QueryInstModRef(WI, ptr, C);
         if (result == AliasAnalyser::Mod || result == AliasAnalyser::ModRef) {
             return false;
         }
@@ -162,7 +162,7 @@ std::vector<Instruction> GetLoopMemWriteInsts(CFG *C, NaturalLoop *L) {
                     continue;
                 }
                 auto targetcfg = CFGMap[CallI->GetFunctionName()];
-                if (alias_analyser.CFG_isWriteMem(targetcfg)) {
+                if (alias_analyser->CFG_isWriteMem(targetcfg)) {
                     res.push_back(I);
                 }
             }
@@ -245,7 +245,7 @@ loop of the pointer to use a temporary alloca'd variable.
 reference: LLVM   LICM.cpp
 */
 
-void BasicBlockCSE(CFG *C);
+void SimpleCSE(CFG *C);
 void Mem2Reg(CFG *C);
 
 void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
@@ -311,7 +311,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
             if (Insts.find(rwI) != Insts.end()) {
                 continue;
             }
-            auto res = alias_analyser.QueryInstModRef(rwI, ptr, C);
+            auto res = alias_analyser->QueryInstModRef(rwI, ptr, C);
             if (res != AliasAnalyser::NoModRef) {
                 can_licm = false;
                 break;
@@ -380,7 +380,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
             if (Insts.find(rwI) != Insts.end()) {
                 continue;
             }
-            auto res = alias_analyser.QueryInstModRef(rwI, ptr, C);
+            auto res = alias_analyser->QueryInstModRef(rwI, ptr, C);
             if (res != AliasAnalyser::NoModRef) {
                 can_licm = false;
                 break;
@@ -497,7 +497,7 @@ void LoopInvariantCodeMotion(CFG *C) {
         }
     }
 
-    BasicBlockCSE(C);
+    SimpleCSE(C);
 
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {

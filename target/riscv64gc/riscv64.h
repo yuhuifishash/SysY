@@ -222,14 +222,14 @@ enum {
     RISCV_spilled_in_memory,
 };
 
-static inline MachineDataType getRVRegType(int reg_no){
-    if(reg_no >= RISCV_x0 && reg_no <= RISCV_x31){
-        return MachineDataType(MachineDataType::INT,MachineDataType::B64);
+static inline MachineDataType getRVRegType(int reg_no) {
+    if (reg_no >= RISCV_x0 && reg_no <= RISCV_x31) {
+        return MachineDataType(MachineDataType::INT, MachineDataType::B64);
     }
-    if(reg_no >= RISCV_f0 && reg_no <= RISCV_f31){
-        return MachineDataType(MachineDataType::FLOAT,MachineDataType::B64);
+    if (reg_no >= RISCV_f0 && reg_no <= RISCV_f31) {
+        return MachineDataType(MachineDataType::FLOAT, MachineDataType::B64);
     }
-    ERROR("Unknown reg_no %d",reg_no);
+    ERROR("Unknown reg_no %d", reg_no);
 }
 
 struct RiscV64RegisterInfo {
@@ -237,31 +237,29 @@ struct RiscV64RegisterInfo {
 };
 extern RiscV64RegisterInfo RiscV64Registers[];
 
-struct RiscVLabel : public Label{
+struct RiscVLabel : public Label {
     std::string name;
     bool is_hi;
-    RiscVLabel(int jmp,int seq):Label(jmp,seq),name(){}
-    RiscVLabel(int jmp):Label(jmp,false),name(){}
-    RiscVLabel(std::string name,bool is_hi):Label(0,0),name(name),is_hi(is_hi){
-        this->is_data_address = true;
-    }
-    RiscVLabel(const RiscVLabel& other):Label(0,0){
-        if(other.is_data_address){
+    RiscVLabel(int jmp, int seq) : Label(jmp, seq), name() {}
+    RiscVLabel(int jmp) : Label(jmp, false), name() {}
+    RiscVLabel(std::string name, bool is_hi) : Label(0, 0), name(name), is_hi(is_hi) { this->is_data_address = true; }
+    RiscVLabel(const RiscVLabel &other) : Label(0, 0) {
+        if (other.is_data_address) {
             this->is_data_address = other.is_data_address;
             this->name = other.name;
             this->is_hi = other.is_hi;
-        }else{
+        } else {
             this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;
-        } 
+        }
     }
-    RiscVLabel operator=(const RiscVLabel& other){
-        if(other.is_data_address){
+    RiscVLabel operator=(const RiscVLabel &other) {
+        if (other.is_data_address) {
             this->is_data_address = other.is_data_address;
             this->name = other.name;
             this->is_hi = other.is_hi;
-        }else{
+        } else {
             this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;

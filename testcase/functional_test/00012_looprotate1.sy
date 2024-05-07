@@ -1,0 +1,66 @@
+int A[1024]={};
+int main()
+{
+    int n = getint();
+    int m = getint();
+    int cond = getint();
+
+    int i = 0;
+    int j = 0;
+    int S = 0;
+    while(1){
+        i = i + 4;
+        if(i + 4 > n/2){break;}
+        j = j + 8;
+        S = S + i + 4;
+        S = S + (i + 4)/2;
+        S = S + (j + 8)*3;
+        S = S + j;
+    }
+    putint(S);
+    putch(10);
+
+    i = 0;j = 0;S = 0;
+    while(i + 4 < n){
+        S = S + (i + 4);
+        putint(i);
+        putch(32);
+        S = S + i;
+        i = i + 4;
+    }putch(10);
+
+    putint(S);
+    putch(10);
+
+    i = 0;j = 0;S = 0;
+    int p = 12345;
+    while(i + 4 < n){
+        S = S + (i + 4);
+        while((j + 4) + (i + 4) < m){
+            S = S + (j + 4);
+            S = S + (i + 4);
+            if(i + 4 > cond && i + (j + 4) > cond){
+                S = S + (i + 4)*(j + 4) + cond;
+            }
+            S=S%p;
+            j = j + 4;
+        }
+        i = i + 4;
+    }
+    putint(S);
+    putch(10);
+
+    i = 0;j = 0;S = 0;
+    p = 184;
+    while(1){
+        putint(i);
+        putch(32);
+        A[i] = i*i%p;
+        if(A[i] > 154) {break;}
+        i = A[i];
+        i = i + 1;
+    }putch(10);
+    putarray(128,A);
+
+    return 0;
+}

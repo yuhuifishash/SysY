@@ -1,0 +1,67 @@
+int g(int i,int j,int k)
+{
+    return i+j+k;
+}
+int main()
+{
+    int i = 0;
+    int S = 0;
+    while(g(i,i,i) < 100 - 2*g(i,i,i)){
+        S = S + g(i,i,i);
+        i = i + 1;
+    }
+    putint(S);
+    putch(10);
+
+    i = 0;
+    S = 0;
+    while(g(i,i,i) < 100 - 2*(g(i,i,i) + (i+1))){
+        S = S + g(i,i,i);
+        i = i + 1;
+    }
+    putint(S);
+    putch(10);
+
+    i = 1;
+    S = 0;
+    while(g(i,i,i) < 100 - 2*g(i,i,i)){
+        S = S + g(i,i,i);
+        i = i + g(i,i,i);
+    }
+    putint(S);
+    putch(10);
+
+    i = 1;
+    S = 0;
+    while(g(i,i,i) < 100 - 2*(g(i,i,i) + i)){
+        S = S + g(i,i,i);
+        i = i + g(i,i,i);
+    }
+    putint(S);
+    putch(10);
+
+
+    i = 1;
+    S = 0;
+    while(g(i,i,i) < 100 - 2*g(i,i,i)){
+        S = S + g(i,i,i);
+        i = g(i,i,i);
+    }
+    putint(S);
+    putch(10);
+
+    i = 0;
+    S = 0;
+    while(1){
+        S = S + g(i,i,i) + (i + 1);
+        if(g(i,i,i) > 100 - 2*g(i,i,i)){
+            break;
+        }
+        i = i + 1;
+    }
+    putint(S);
+    putch(10);
+
+    
+    return 0;
+}

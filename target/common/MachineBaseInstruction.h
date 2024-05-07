@@ -59,12 +59,12 @@
 #endif
 
 #ifndef Assert
-#define Assert(EXP)\
-do{\
-    if(!(EXP)){\
-        ERROR("Assertion failed: %s", #EXP);\
-    }\
-}while(0)
+#define Assert(EXP)                                                                                                    \
+    do {                                                                                                               \
+        if (!(EXP)) {                                                                                                  \
+            ERROR("Assertion failed: %s", #EXP);                                                                       \
+        }                                                                                                              \
+    } while (0)
 #endif
 
 struct MachineDataType {
@@ -72,13 +72,13 @@ struct MachineDataType {
     enum { B32, B64, B128 };
     unsigned data_type;
     unsigned data_length;
-    MachineDataType(){}
+    MachineDataType() {}
     MachineDataType(unsigned data_type, unsigned data_length) : data_type(data_type), data_length(data_length) {}
-    MachineDataType(const MachineDataType& other){
+    MachineDataType(const MachineDataType &other) {
         this->data_type = other.data_type;
         this->data_length = other.data_length;
     }
-    bool operator==(const MachineDataType&other)const{
+    bool operator==(const MachineDataType &other) const {
         return this->data_type == other.data_type && this->data_length == other.data_length;
     }
     int getDataWidth() {
@@ -92,26 +92,31 @@ struct MachineDataType {
         }
         return 0;
     }
-    std::string toString(){
+    std::string toString() {
         std::string ret;
-        if(data_type == INT) ret += 'i';
-        if(data_type == FLOAT) ret += 'f';
-        if(data_length == B32) ret += "32";
-        if(data_length == B64) ret += "64";
-        if(data_length == B128) ret += "128";
+        if (data_type == INT)
+            ret += 'i';
+        if (data_type == FLOAT)
+            ret += 'f';
+        if (data_length == B32)
+            ret += "32";
+        if (data_length == B64)
+            ret += "64";
+        if (data_length == B128)
+            ret += "128";
         return ret;
     }
 };
 
-extern MachineDataType INT32,INT64,INT128,FLOAT_32,FLOAT64,FLOAT128;
+extern MachineDataType INT32, INT64, INT128, FLOAT_32, FLOAT64, FLOAT128;
 
 struct Register {
 public:
     int reg_no;
     bool is_virtual;
     MachineDataType type;
-    Register(){}
-    Register(bool is_virtual,int reg_no,MachineDataType type):is_virtual(is_virtual),reg_no(reg_no),type(type){}
+    Register() {}
+    Register(bool is_virtual, int reg_no, MachineDataType type) : is_virtual(is_virtual), reg_no(reg_no), type(type) {}
     int getDataWidth() { return type.getDataWidth(); }
     bool operator<(Register other) const {
         if (is_virtual != other.is_virtual)
@@ -140,7 +145,7 @@ struct MachineBaseOperand {
 
 struct MachineRegister : public MachineBaseOperand {
     Register reg;
-    MachineRegister(Register reg) : MachineBaseOperand(MachineBaseOperand::REG),reg(reg) {}
+    MachineRegister(Register reg) : MachineBaseOperand(MachineBaseOperand::REG), reg(reg) {}
     std::string toString() {
         if (reg.is_virtual)
             return "%" + std::to_string(reg.reg_no);
@@ -152,16 +157,12 @@ struct MachineRegister : public MachineBaseOperand {
 struct MachineImmediateInt : public MachineBaseOperand {
     int imm32;
     MachineImmediateInt(int imm32) : MachineBaseOperand(MachineBaseOperand::IMMI), imm32(imm32) {}
-    std::string toString(){
-        return std::to_string(imm32);
-    }
+    std::string toString() { return std::to_string(imm32); }
 };
 struct MachineImmediateFloat : public MachineBaseOperand {
     float fimm32;
     MachineImmediateFloat(float fimm32) : MachineBaseOperand(MachineBaseOperand::IMMF), fimm32(fimm32) {}
-    std::string toString(){
-        return std::to_string(fimm32);
-    }
+    std::string toString() { return std::to_string(fimm32); }
 };
 
 struct Label {
@@ -209,9 +210,7 @@ public:
     Register result;
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
     MachinePhiInstruction(Register result) : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
-    void pushPhiList(int label, Register reg) {
-        phi_list.push_back(std::make_pair(label, new MachineRegister(reg)));
-    }
+    void pushPhiList(int label, Register reg) { phi_list.push_back(std::make_pair(label, new MachineRegister(reg))); }
     void pushPhiList(int label, int imm32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateInt(imm32)));
     }
@@ -235,8 +234,8 @@ public:
 public:
     MachineCopyInstruction(MachineBaseOperand *src, MachineBaseOperand *dst, MachineDataType copy_type)
         : copy_type(copy_type), src(src), dst(dst), MachineBaseInstruction(MachineBaseInstruction::COPY) {}
-    void output(std::ostream& s){
-        s << dst->toString() << " = "<< copy_type.toString() <<" COPY "<<src->toString()<<"\n";
+    void output(std::ostream &s) {
+        s << dst->toString() << " = " << copy_type.toString() << " COPY " << src->toString() << "\n";
     }
 };
 #endif

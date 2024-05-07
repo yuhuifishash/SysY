@@ -1,23 +1,23 @@
 #include "machine.h"
 #include "assert.h"
 
-MachineDataType INT32(MachineDataType::INT,MachineDataType::B32);
-MachineDataType INT64(MachineDataType::INT,MachineDataType::B64);
-MachineDataType INT128(MachineDataType::INT,MachineDataType::B128);
+MachineDataType INT32(MachineDataType::INT, MachineDataType::B32);
+MachineDataType INT64(MachineDataType::INT, MachineDataType::B64);
+MachineDataType INT128(MachineDataType::INT, MachineDataType::B128);
 
-MachineDataType FLOAT_32(MachineDataType::FLOAT,MachineDataType::B32);
-MachineDataType FLOAT64(MachineDataType::FLOAT,MachineDataType::B64);
-MachineDataType FLOAT128(MachineDataType::FLOAT,MachineDataType::B128);
+MachineDataType FLOAT_32(MachineDataType::FLOAT, MachineDataType::B32);
+MachineDataType FLOAT64(MachineDataType::FLOAT, MachineDataType::B64);
+MachineDataType FLOAT128(MachineDataType::FLOAT, MachineDataType::B128);
 
 void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
     MachineCFGNode *node = new MachineCFGNode;
     node->Mblock = Mblk;
     block_map[id] = node;
-    if(G.size() < id + 1){
-        G.resize(id+1);
+    if (G.size() < id + 1) {
+        G.resize(id + 1);
     }
-    if(invG.size() < id + 1){
-        invG.resize(id+1);
+    if (invG.size() < id + 1) {
+        invG.resize(id + 1);
     }
 }
 
