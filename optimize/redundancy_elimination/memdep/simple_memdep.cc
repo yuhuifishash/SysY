@@ -152,5 +152,5 @@ void SimpleMemoryDependenceAnalysis(LLVMIR* IR) {
     memdep_analyser->MemoryDependenceAnalysis();
 
 
-    memdep_analyser->MemDepTest();
+    // memdep_analyser->MemDepTest();
 }

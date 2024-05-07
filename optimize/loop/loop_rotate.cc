@@ -259,6 +259,10 @@ void NaturalLoop::LoopRotate(CFG *C) {
     }
 
     auto latch = *latches.begin();
+    if(latch->Instruction_list.back()->GetOpcode() == BR_COND){
+        return;
+    }
+    
     assert(latch->Instruction_list.back()->GetOpcode() == BR_UNCOND);
     latch->Instruction_list.pop_back();
 

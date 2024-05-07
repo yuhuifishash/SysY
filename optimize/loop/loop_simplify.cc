@@ -49,19 +49,30 @@ void NaturalLoop::SingleLatchInsert(CFG *C) {
 void NaturalLoop::ExitInsert(CFG *C) {
     std::set<LLVMBlock> inloop_preblocks;
     std::map<LLVMBlock, LLVMBlock> exit_map;
+
     for (auto exit : exit_nodes) {
+        inloop_preblocks.clear();
         bool is_dom_exit = true;
+        //std::cerr<<exit->block_id<<"   ";
         for (auto preBB : C->GetPredecessor(exit)) {
             if (loop_nodes.find(preBB) != loop_nodes.end()) {
+                //std::cerr<<preBB->block_id<<" ";
                 inloop_preblocks.insert(preBB);
             } else {
                 is_dom_exit = false;
             }
-        }
+        }//std::cerr<<"\n";
 
         if (is_dom_exit) {
             continue;
         }
+        
+        // std::cerr<<"inloop_preblocks: ";
+        // for(auto bb:inloop_preblocks){
+        //     std::cerr<<bb->block_id<<" ";
+        // }std::cerr<<"   ";
+
+        // std::cerr<<"exit "<<exit->block_id<<"\n";
         auto new_exit = C->InsertTransferBlock(inloop_preblocks, exit);
         // update father loop's loop nodes
         auto now = this;
