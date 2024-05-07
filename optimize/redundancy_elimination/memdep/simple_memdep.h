@@ -18,4 +18,5 @@ public:
     */
     virtual bool isLoadRedundant(Instruction a, Instruction b, CFG* C);
     virtual void MemoryDependenceAnalysis() {} //simple memdep analyser does not need to preprocess
+    virtual void MemDepTest();
 };

@@ -67,6 +67,7 @@ void ConstantLoopFullyUnroll(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
+void SimpleMemoryDependenceAnalysis(LLVMIR* IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -144,6 +145,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
+
+        llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
 
         llvmIR.BuildLoopInfo();

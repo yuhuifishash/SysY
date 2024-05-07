@@ -16,6 +16,7 @@ public:
     virtual bool isLoadRedundant(Instruction a, Instruction b, CFG*) = 0;
     
     virtual void MemoryDependenceAnalysis() = 0;
+    virtual void MemDepTest() = 0;
 };
 
 #endif

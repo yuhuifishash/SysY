@@ -403,7 +403,6 @@ void SimpleCSE(CFG *C) {
             I->SetBlockID(id);
         }
     }
-
     SimpleCSEInit(C);
     BasicBlockCSE(C);
     DomTreeWalkCSE(C);
