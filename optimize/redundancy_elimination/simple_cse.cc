@@ -236,7 +236,7 @@ bool BasicBlockCSE(LLVMBlock bb, std::map<int, int> &reg_replace_map, std::set<I
                 val_regno = reg_replace_map[val_regno];
             }
 
-            auto LoadI = new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), new RegOperand(val_regno));
+            auto LoadI = new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), GetNewRegOperand(val_regno));
             auto Info = GetCSEInfo(LoadI);
             LoadInstSet.insert(LoadI);
             LoadInstMap.insert({Info, LoadI->GetResultRegNo()});
@@ -381,14 +381,14 @@ void SimpleCSEInit(CFG *C) {
                 auto val = StoreI->GetValue();
                 if (val->GetOperandType() == BasicOperand::IMMI32) {
                     auto ArithI =
-                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), GetNewRegOperand(++C->max_reg));
                     bb->Instruction_list.push_back(ArithI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
+                    StoreI->SetValue(GetNewRegOperand(C->max_reg));
                 } else if (val->GetOperandType() == BasicOperand::IMMF32) {
                     auto ArithI =
-                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), GetNewRegOperand(++C->max_reg));
                     bb->Instruction_list.push_back(ArithI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
+                    StoreI->SetValue(GetNewRegOperand(C->max_reg));
                 }
             }
             bb->Instruction_list.push_back(I);

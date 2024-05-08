@@ -136,22 +136,22 @@ LLVMBlock CFG::InsertTransferBlock(std::set<LLVMBlock> &froms, LLVMBlock to) {
             break;
         }
         auto PhiI = (PhiInstruction *)I;
-        auto midI = new PhiInstruction(PhiI->GetDataType(), new RegOperand(++max_reg));
+        auto midI = new PhiInstruction(PhiI->GetDataType(), GetNewRegOperand(++max_reg));
         for (auto from : froms) {
-            midI->InsertPhi(PhiI->GetValOperand(from->block_id), new LabelOperand(from->block_id));
+            midI->InsertPhi(PhiI->GetValOperand(from->block_id), GetNewLabelOperand(from->block_id));
             PhiI->ErasePhi(from->block_id);
         }
-        PhiI->InsertPhi(new RegOperand(max_reg), new LabelOperand(midBB->block_id));
+        PhiI->InsertPhi(GetNewRegOperand(max_reg), GetNewLabelOperand(midBB->block_id));
         midBB->InsertInstruction(1, midI);
     }
-    midBB->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(to->block_id)));
+    midBB->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(to->block_id)));
 
     for (auto from : froms) {
         assert(from->Instruction_list.size() >= 1);
         auto I = *(from->Instruction_list.end() - 1);
         if (I->GetOpcode() == BR_UNCOND) {
             auto BrUnCondI = (BrUncondInstruction *)I;
-            BrUnCondI->SetTarget(new LabelOperand(midBB->block_id));
+            BrUnCondI->SetTarget(GetNewLabelOperand(midBB->block_id));
         } else if (I->GetOpcode() == BR_COND) {
             auto BrCondI = (BrCondInstruction *)I;
             BrCondI->SetNewTarget(to->block_id, midBB->block_id);

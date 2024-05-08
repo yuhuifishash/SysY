@@ -302,7 +302,7 @@ void SimpleAliasAnalyser::AliasAnalysis(CFG *C) {
         if (param == LLVMType::PTR) {
             ptrmap[i].is_fullmem = true;
             ptrmap[i].is_local = false;
-            ptrmap[i].PossiblePtrs.push_back(new RegOperand(i));
+            ptrmap[i].PossiblePtrs.push_back(GetNewRegOperand(i));
         }
     }
     // add local array define
@@ -312,7 +312,7 @@ void SimpleAliasAnalyser::AliasAnalysis(CFG *C) {
             int DimSize = AllocaI->GetAllocaSize();
 
             int defreg = AllocaI->GetResultRegNo();
-            ptrmap[defreg].PossiblePtrs.push_back(new RegOperand(defreg));
+            ptrmap[defreg].PossiblePtrs.push_back(GetNewRegOperand(defreg));
         }
     }
 

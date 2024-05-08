@@ -132,9 +132,9 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         auto trueopno = trueop->GetLabelNo();
                         auto falseopno = falseop->GetLabelNo();
                         if (trueopno == vid) {
-                            endI->SetTrueLabel(new LabelOperand(uid));
+                            endI->SetTrueLabel(GetNewLabelOperand(uid));
                         } else {
-                            endI->SetFalseLabel(new LabelOperand(uid));
+                            endI->SetFalseLabel(GetNewLabelOperand(uid));
                         }
                         bbu->Instruction_list.push_back(endI);
                         PhiMap[vid] = uid;
@@ -201,9 +201,9 @@ void EliminateDoubleBrUnCond(CFG *C) {
                     auto trueopno = trueop->GetLabelNo();
                     auto falseopno = falseop->GetLabelNo();
                     if (trueopno == vid) {
-                        endI->SetTrueLabel(new LabelOperand(invid));
+                        endI->SetTrueLabel(GetNewLabelOperand(invid));
                     } else {
-                        endI->SetFalseLabel(new LabelOperand(invid));
+                        endI->SetFalseLabel(GetNewLabelOperand(invid));
                     }
                     bbu->Instruction_list.push_back(endI);
                     G[vid].clear();
@@ -249,13 +249,13 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         while (PhiMap.find(trueopno) != PhiMap.end()) {
                             trueopno = PhiMap[trueopno];
                         }
-                        brcondI->SetTrueLabel(new LabelOperand(trueopno));
+                        brcondI->SetTrueLabel(GetNewLabelOperand(trueopno));
                     }
                     if (PhiMap.find(falseopno) != PhiMap.end()) {
                         while (PhiMap.find(falseopno) != PhiMap.end()) {
                             falseopno = PhiMap[falseopno];
                         }
-                        brcondI->SetFalseLabel(new LabelOperand(falseopno));
+                        brcondI->SetFalseLabel(GetNewLabelOperand(falseopno));
                     }
                 } else if (I->GetOpcode() == BR_UNCOND) {
                     auto bruncondI = (BrUncondInstruction *)I;
@@ -267,7 +267,7 @@ void EliminateDoubleBrUnCond(CFG *C) {
                     while (PhiMap.find(Labelopno) != PhiMap.end()) {
                         Labelopno = PhiMap[Labelopno];
                     }
-                    bruncondI->SetTarget(new LabelOperand(Labelopno));
+                    bruncondI->SetTarget(GetNewLabelOperand(Labelopno));
                 }
             }
         }
@@ -303,10 +303,10 @@ void EliminateDoubleBrUnCond(CFG *C) {
                 auto trueopno=trueop->GetLabelNo();
                 auto falseopno=falseop->GetLabelNo();
                 if(NewMap.find(trueopno)!=NewMap.end()){
-                    brcondI->SetTrueLabel(new LabelOperand(NewMap[trueopno]));
+                    brcondI->SetTrueLabel(GetNewLabelOperand(NewMap[trueopno]));
                 }
                 if(NewMap.find(falseopno)!=NewMap.end()){
-                    brcondI->SetFalseLabel(new LabelOperand(NewMap[falseopno]));
+                    brcondI->SetFalseLabel(GetNewLabelOperand(NewMap[falseopno]));
                 }
             }else if(I->GetOpcode()==BR_UNCOND){
                 auto bruncondI=(BrUncondInstruction*)I;
@@ -315,7 +315,7 @@ void EliminateDoubleBrUnCond(CFG *C) {
                 if(NewMap.find(Labelopno)==NewMap.end()){
                     continue;
                 }
-                bruncondI->SetTarget(new LabelOperand(NewMap[Labelopno]));
+                bruncondI->SetTarget(GetNewLabelOperand(NewMap[Labelopno]));
             }
         }
     }
@@ -444,7 +444,7 @@ void EliminateUselessPhi(CFG *C) {
                     Change = 1;
                     auto Findfa = UnionFind(UnionFindMap[NonResultOperandsno]);
                     auto FindfaNo = ((RegOperand *)Findfa)->GetRegNo();
-                    NonResultOperands[i] = new RegOperand(FindfaNo);
+                    NonResultOperands[i] = GetNewRegOperand(FindfaNo);
                 }
                 if (Change) {
                     I->SetNonResultOperands(NonResultOperands);

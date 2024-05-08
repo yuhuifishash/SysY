@@ -145,16 +145,18 @@ public:
 // @register operand;%r+register No
 class RegOperand : public BasicOperand {
     int reg_no;
-
-public:
-    int GetRegNo() { return reg_no; }
     RegOperand(int RegNo) {
         this->operandType = REG;
         this->reg_no = RegNo;
     }
+public:
+    int GetRegNo() { return reg_no; }
+    
+    friend RegOperand* GetNewRegOperand(int RegNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+RegOperand* GetNewRegOperand(int RegNo);
 
 // @integer32 immediate
 class ImmI32Operand : public BasicOperand {
@@ -191,33 +193,37 @@ public:
 // @label %L+label No
 class LabelOperand : public BasicOperand {
     int label_no;
-
-public:
-    int GetLabelNo() { return label_no; }
-    void SetLabelNo(int label) { label_no = label; }
-
     LabelOperand(int LabelNo) {
         this->operandType = LABEL;
         this->label_no = LabelNo;
     }
+
+public:
+    int GetLabelNo() { return label_no; }
+
+    friend LabelOperand* GetNewLabelOperand(int LabelNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+
+LabelOperand* GetNewLabelOperand(int RegNo);
 
 // @global identifier @+name
 class GlobalOperand : public BasicOperand {
     std::string name;
-
-public:
-    std::string GetName() { return name; }
-
     GlobalOperand(std::string gloName) {
         this->operandType = GLOBAL;
         this->name = gloName;
     }
+public:
+    std::string GetName() { return name; }
+
+    friend GlobalOperand* GetNewGlobalOperand(std::string name);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+
+GlobalOperand* GetNewGlobalOperand(std::string name);
 
 class BasicInstruction;
 typedef BasicInstruction *Instruction;
@@ -436,7 +442,7 @@ public:
     Operand GetResultOp() { return result; }
     decltype(phi_list) &GetPhiList() { return phi_list; }
     Operand GetResultReg() { return result; }
-    void SetResultReg(int reg) { result = new RegOperand(reg); }
+    void SetResultReg(int reg) { result = GetNewRegOperand(reg); }
     PhiInstruction(enum LLVMType type, Operand result, decltype(phi_list) val_labels) {
         this->opcode = LLVMIROpcode::PHI;
         this->type = type;
@@ -735,7 +741,7 @@ public:
     // get_elementptr_Instruction(enum llvm_type typ,operand res,operand
     // ptr,std::vector<int>dim,std::vector<int>idx):type(typ),result(res),ptrval(ptr),dims(dim),indexes(idx){}
     void push_dim(int d) { dims.push_back(d); }
-    void push_idx_reg(int idx_reg_no) { indexes.push_back(new RegOperand(idx_reg_no)); }
+    void push_idx_reg(int idx_reg_no) { indexes.push_back(GetNewRegOperand(idx_reg_no)); }
     void push_idx_imm32(int imm_idx) { indexes.push_back(new ImmI32Operand(imm_idx)); }
     void push_index(Operand idx) { indexes.push_back(idx); }
 

@@ -39,8 +39,8 @@ void MakeFunctionOneExit(CFG *C) {
         load reg_type pointer reg
         ret reg
         */
-        auto ret_ptr = new RegOperand(++C->max_reg);
-        auto B_Retreg = new RegOperand(++C->max_reg);
+        auto ret_ptr = GetNewRegOperand(++C->max_reg);
+        auto B_Retreg = GetNewRegOperand(++C->max_reg);
         auto bb0 = C->block_map->begin()->second;
         auto AllocaI = new AllocaInstruction(ret_type, ret_ptr);
         bb0->InsertInstruction(0, AllocaI);
@@ -50,7 +50,7 @@ void MakeFunctionOneExit(CFG *C) {
             auto RetI = (RetInstruction *)bb->Instruction_list.back();
             bb->Instruction_list.pop_back();
             bb->InsertInstruction(1, new StoreInstruction(ret_type, ret_ptr, RetI->GetRetVal()));
-            bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
+            bb->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(B->block_id)));
         }
         B->InsertInstruction(1, new LoadInstruction(ret_type, ret_ptr, B_Retreg));
         B->InsertInstruction(1, new RetInstruction(ret_type, B_Retreg));
@@ -59,7 +59,7 @@ void MakeFunctionOneExit(CFG *C) {
             auto bb = OneExitqueue.front();
             OneExitqueue.pop();
             bb->Instruction_list.pop_back();
-            bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(B->block_id)));
+            bb->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(B->block_id)));
         }
         B->InsertInstruction(1, new RetInstruction(VOID, nullptr));
     }
@@ -177,7 +177,7 @@ void TailRecursiveEliminate(CFG *C) {
                     if (FuncdefI->formals[i] == PTR) {
                         NeedtoInsertPTR = 1;
                         if (PtrUsed.find(i) == PtrUsed.end()) {
-                            auto PtrReg = new RegOperand(++C->max_reg);
+                            auto PtrReg = GetNewRegOperand(++C->max_reg);
                             PtrUsed[i] = PtrReg;
                             // std::cout<<PtrReg->GetFullName()<<'\n';
                             // AllocaDeque.push_back(new AllocaInstruction(PTR, PtrReg));
@@ -218,7 +218,7 @@ void TailRecursiveEliminate(CFG *C) {
                             auto DefReg = FuncdefI->formals_reg[j];
                             if (ResultReg->GetFullName() == DefReg->GetFullName()) {
                                 NeedtoUpdate = 1;
-                                auto PtrReg = new RegOperand(++C->max_reg);
+                                auto PtrReg = GetNewRegOperand(++C->max_reg);
                                 bb->InsertInstruction(1, new LoadInstruction(PTR, PtrUsed[j], PtrReg));
                                 ResultOperands[i] = PtrReg;
                                 break;
@@ -303,7 +303,7 @@ void TailRecursiveEliminate(CFG *C) {
                                                    callI->GetParameterList()[i].second);
                 bb->InsertInstruction(1, storeI);
             }
-            bb->InsertInstruction(1, new BrUncondInstruction(new LabelOperand(1)));
+            bb->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(1)));
         }
     }
     // std::cout<<"HERE FUNCTION "<<FuncdefI->GetFunctionName()<<'\n';

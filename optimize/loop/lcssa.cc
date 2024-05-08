@@ -56,9 +56,9 @@ void NaturalLoop::LCSSA(CFG *C) {
 
     auto exit_bb = *exit_nodes.begin();
     for (auto v : vset) {
-        auto PhiI = new PhiInstruction(type_map[v], new RegOperand(++C->max_reg));
+        auto PhiI = new PhiInstruction(type_map[v], GetNewRegOperand(++C->max_reg));
         for (auto bb : C->GetPredecessor(*exit_nodes.begin())) {
-            PhiI->InsertPhi(new RegOperand(v), new LabelOperand(bb->block_id));
+            PhiI->InsertPhi(GetNewRegOperand(v), GetNewLabelOperand(bb->block_id));
         }
         // PhiI->PrintIR(std::cerr);
         exit_bb->InsertInstruction(0, PhiI);

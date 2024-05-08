@@ -107,9 +107,9 @@ void SolveHeaderUseInLoopBody(CFG *C, NaturalLoop *L, Instruction defI, int new_
     assert(defI->GetResultType() != VOID);
 
     int old_regno = defI->GetResultRegNo();
-    auto PhiI = new PhiInstruction(defI->GetResultType(), new RegOperand(++C->max_reg));
-    PhiI->InsertPhi(new RegOperand(old_regno), new LabelOperand(CondBlock->block_id));
-    PhiI->InsertPhi(new RegOperand(new_regno), new LabelOperand(latch->block_id));
+    auto PhiI = new PhiInstruction(defI->GetResultType(), GetNewRegOperand(++C->max_reg));
+    PhiI->InsertPhi(GetNewRegOperand(old_regno), GetNewLabelOperand(CondBlock->block_id));
+    PhiI->InsertPhi(GetNewRegOperand(new_regno), GetNewLabelOperand(latch->block_id));
     L->header->InsertInstruction(0, PhiI);
     // defI->PrintIR(std::cerr);
     // PhiI->PrintIR(std::cerr);
@@ -184,7 +184,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
         brI->SetNewTarget(header->block_id, CondBlock->block_id);
     } else if (I->GetOpcode() == BR_UNCOND) {
         auto brI = (BrUncondInstruction *)I;
-        brI->SetTarget(new LabelOperand(CondBlock->block_id));
+        brI->SetTarget(GetNewLabelOperand(CondBlock->block_id));
     }
 
     // Insert CondBlock Instruction
@@ -244,14 +244,14 @@ void NaturalLoop::LoopRotate(CFG *C) {
             // if find %r, then add phi in exit
             if (PhiI2->GetResultOp()->GetFullName() == val->GetFullName()) {
                 is_find = true;
-                PhiI->InsertPhi(PhiI2->GetValOperand(preheader->block_id), new LabelOperand(CondBlock->block_id));
+                PhiI->InsertPhi(PhiI2->GetValOperand(preheader->block_id), GetNewLabelOperand(CondBlock->block_id));
                 break;
             }
         }
         // can not find, just insert the header val operand
         if (is_find == false) {
             PhiI->InsertPhi(PhiI->GetValOperand(header->block_id)->CopyOperand(),
-                            new LabelOperand(CondBlock->block_id));
+                            GetNewLabelOperand(CondBlock->block_id));
         }
     }
     latch->Instruction_list.pop_back();
@@ -293,11 +293,11 @@ void NaturalLoop::LoopRotate(CFG *C) {
                 if (((LabelOperand *)nBrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id) {
                     body_label_id = ((LabelOperand *)nBrCondI->GetTrueLabel())->GetLabelNo();
                     nBrCondI->SetNewTarget(body_label_id, header->block_id);
-                    I = new BrUncondInstruction(new LabelOperand(body_label_id));
+                    I = new BrUncondInstruction(GetNewLabelOperand(body_label_id));
                 } else {
                     body_label_id = ((LabelOperand *)nBrCondI->GetFalseLabel())->GetLabelNo();
                     nBrCondI->SetNewTarget(body_label_id, header->block_id);
-                    I = new BrUncondInstruction(new LabelOperand(body_label_id));
+                    I = new BrUncondInstruction(GetNewLabelOperand(body_label_id));
                 }
             }
             // replace the operand of insts with RegValMap
@@ -352,7 +352,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             if (v->GetOperandType() == BasicOperand::REG) {
                 auto rv = (RegOperand *)v;
                 if (NewResultRegMap.find(rv->GetRegNo()) != NewResultRegMap.end()) {
-                    PhiI->SetValOperand(latch->block_id, new RegOperand(NewResultRegMap[rv->GetRegNo()]));
+                    PhiI->SetValOperand(latch->block_id, GetNewRegOperand(NewResultRegMap[rv->GetRegNo()]));
                 }
             }
         }

@@ -306,7 +306,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
     for (auto [ptr_regno, Insts] : InvariantPtrInstsMap) {
         // check if other instructions will read/write ptr_regno
         bool can_licm = true;
-        auto ptr = new RegOperand(ptr_regno);
+        auto ptr = GetNewRegOperand(ptr_regno);
         for (auto rwI : MemRwInsts) {
             if (Insts.find(rwI) != Insts.end()) {
                 continue;
@@ -329,16 +329,16 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // }
         // Get Type;
         int d = ++C->max_reg;
-        auto AllocaI = new AllocaInstruction(ptrTypeMap[ptr_regno], new RegOperand(d));
+        auto AllocaI = new AllocaInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(d));
         (*C->block_map)[0]->InsertInstruction(0, AllocaI);
         for (auto I : Insts) {
             if (I->GetOpcode() == LOAD) {
                 auto LoadI = (LoadInstruction *)I;
-                LoadI->SetPointer(new RegOperand(d));
+                LoadI->SetPointer(GetNewRegOperand(d));
                 MemRwInsts.erase(I);
             } else if (I->GetOpcode() == STORE) {
                 auto StoreI = (StoreInstruction *)I;
-                StoreI->SetPointer(new RegOperand(d));
+                StoreI->SetPointer(GetNewRegOperand(d));
                 MemRwInsts.erase(I);
             }
         }
@@ -347,9 +347,9 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         assert(endI->GetOpcode() == BR_UNCOND);
         L->preheader->Instruction_list.pop_back();
-        auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno], new RegOperand(ptr_regno), new RegOperand(++C->max_reg));
+        auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(ptr_regno), GetNewRegOperand(++C->max_reg));
         L->preheader->InsertInstruction(1, I1);
-        auto I2 = new StoreInstruction(ptrTypeMap[ptr_regno], new RegOperand(d), new RegOperand(C->max_reg));
+        auto I2 = new StoreInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(d), GetNewRegOperand(C->max_reg));
         L->preheader->InsertInstruction(1, I2);
         L->preheader->InsertInstruction(1, endI);
 
@@ -360,12 +360,12 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
                 continue;
             }
 
-            auto I3 = new LoadInstruction(ptrTypeMap[ptr_regno], new RegOperand(d), new RegOperand(++C->max_reg));
+            auto I3 = new LoadInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(d), GetNewRegOperand(++C->max_reg));
             it = exit->Instruction_list.insert(it, I3);
             ++it;
 
             auto I4 =
-            new StoreInstruction(ptrTypeMap[ptr_regno], new RegOperand(ptr_regno), new RegOperand(C->max_reg));
+            new StoreInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(ptr_regno), GetNewRegOperand(C->max_reg));
             it = exit->Instruction_list.insert(it, I4);
             break;
         }
@@ -375,7 +375,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // check if other instructions will read/write ptr_regno
         bool can_licm = true;
 
-        auto ptr = new GlobalOperand(global_name);
+        auto ptr = GetNewGlobalOperand(global_name);
         for (auto rwI : MemRwInsts) {
             if (Insts.find(rwI) != Insts.end()) {
                 continue;
@@ -398,16 +398,16 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // }
         // Get Type;
         int d = ++C->max_reg;
-        auto AllocaI = new AllocaInstruction(GlobalTypeMap[global_name], new RegOperand(d));
+        auto AllocaI = new AllocaInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d));
         (*C->block_map)[0]->InsertInstruction(0, AllocaI);
         for (auto I : Insts) {
             if (I->GetOpcode() == LOAD) {
                 auto LoadI = (LoadInstruction *)I;
-                LoadI->SetPointer(new RegOperand(d));
+                LoadI->SetPointer(GetNewRegOperand(d));
                 MemRwInsts.erase(I);
             } else if (I->GetOpcode() == STORE) {
                 auto StoreI = (StoreInstruction *)I;
-                StoreI->SetPointer(new RegOperand(d));
+                StoreI->SetPointer(GetNewRegOperand(d));
                 MemRwInsts.erase(I);
             }
         }
@@ -417,9 +417,9 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         L->preheader->Instruction_list.pop_back();
         auto I1 =
-        new LoadInstruction(GlobalTypeMap[global_name], new GlobalOperand(global_name), new RegOperand(++C->max_reg));
+        new LoadInstruction(GlobalTypeMap[global_name], GetNewGlobalOperand(global_name), GetNewRegOperand(++C->max_reg));
         L->preheader->InsertInstruction(1, I1);
-        auto I2 = new StoreInstruction(GlobalTypeMap[global_name], new RegOperand(d), new RegOperand(C->max_reg));
+        auto I2 = new StoreInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d), GetNewRegOperand(C->max_reg));
         L->preheader->InsertInstruction(1, I2);
         L->preheader->InsertInstruction(1, endI);
 
@@ -430,12 +430,12 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
                 continue;
             }
 
-            auto I3 = new LoadInstruction(GlobalTypeMap[global_name], new RegOperand(d), new RegOperand(++C->max_reg));
+            auto I3 = new LoadInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d), GetNewRegOperand(++C->max_reg));
             it = exit->Instruction_list.insert(it, I3);
             ++it;
 
-            auto I4 = new StoreInstruction(GlobalTypeMap[global_name], new GlobalOperand(global_name),
-                                           new RegOperand(C->max_reg));
+            auto I4 = new StoreInstruction(GlobalTypeMap[global_name], GetNewGlobalOperand(global_name),
+                                           GetNewRegOperand(C->max_reg));
             it = exit->Instruction_list.insert(it, I4);
             break;
         }
