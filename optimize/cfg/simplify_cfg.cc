@@ -60,11 +60,8 @@ void EliminateDoubleBrUnCond(CFG *C) {
     std::unordered_map<int, int> OtherPhiMap;
     std::stack<LLVMBlock> bbstack;
     bool changed = true;
-
-    // std::cerr<<G[6].size()<<'\n';
+    // auto FuncdefI = C->function_def;
     while (changed) {
-        auto FuncdefI = C->function_def;
-        // FuncdefI->PrintIR(std::cerr);
         changed = false;
         bbstack.push(C->block_map->begin()->second);
         for (auto [id, bb] : *C->block_map) {
@@ -73,58 +70,24 @@ void EliminateDoubleBrUnCond(CFG *C) {
         while (!bbstack.empty()) {
             auto bbu = bbstack.top();
             auto uid = bbu->block_id;
-            // std::cout<<uid<<" "<<bbstack.size()<<'\n';
-            // bbu->printIR(std::cerr);
             bbstack.pop();
             vsd[uid] = 1;
-            // bool needtocontinue=false;
-            // for(int i=0;i<G[uid].size();++i){
-            //     if(G[uid][i]==bbu){
-            //         needtocontinue=true;
-            //     }
-            // }
             for (auto bbv : G[uid]) {
                 int vid = bbv->block_id;
-                // std::cerr<<uid<<"->"<<vid<<'\n';
                 if (vsd[vid] == 1) {
                     continue;
                 }
                 if (uid == 0) {
                     bbstack.push(bbv);
                 }
-                // bbu->printIR(std::cerr);
-                // bbv->printIR(std::cerr);
-                // if(needtocontinue){
-                //     bbstack.push(bbv);
-                //     continue;
-                // }
-                // bool needtocontinuev=false;
-                // for(int i=0;i<G[vid].size();++i){
-                //     if(G[vid][i]==bbv){
-                //         needtocontinuev=true;
-                //     }
-                // }
-                // if(needtocontinuev){
-                //     continue;
-                // }
                 bool check1 = (G[uid].size() >= 1 && G[vid].size() >= 1 && G[uid][0] == bbv && G[vid][0] == bbu);
                 bool check2 = (G[uid].size() >= 1 && G[vid].size() > 1 && G[uid][0] == bbv && G[vid][1] == bbu);
                 bool check3 = (G[uid].size() > 1 && G[vid].size() >= 1 && G[uid][1] == bbv && G[vid][0] == bbu);
                 bool check4 = (G[uid].size() > 1 && G[vid].size() > 1);
-                bool check5 = (invG[vid].size() == 1);
-                check5 = 1;
-                bool check = (check5 && (!check4) && (check1 || check2 || check3));
-                // check=0;
-                // if(uid==5&&vid==6){
-                //     std::cerr<<uid<<" "<<vid<<" "<<G[uid].size()<<" "<<G[vid].size()<<'\n';
-                //     std::cerr<<check1<<" "<<check2<<" "<<check3<<" "<<check4<<" "<<check<<'\n';
-                // }
+                // bool check5 = (invG[vid].size() == 1);
+                // check5 = 1;
+                bool check = ((!check4) && (check1 || check2 || check3));
                 if (check) {
-                    // std::cerr<<uid<<" "<<vid<<'\n';
-                    // if(uid==2&&vid==3){
-                    //     bbu->printIR(std::cerr);
-                    //     bbv->printIR(std::cerr);
-                    // }
                     int x, y;    // x->v,y->u
                     if (check1) {
                         x = 0;
@@ -137,7 +100,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         y = 0;
                     }
                     if (G[vid].size() > 1) {
-                        // std::cerr<<uid<<" "<<vid<<" "<<G[vid].size()<<" "<<check4<<'\n';
                         changed |= true;
                         G[uid][x] = bbu;
                         auto inv = G[vid][y ^ 1];
@@ -162,11 +124,8 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         invG[vid].clear();
                         C->block_map->erase(vid);
                     } else if (bbv->Instruction_list.size() == 1 && bbv->Instruction_list.back()->GetOpcode() != RET) {
-                        // std::cerr<<uid<<" "<<vid<<" "<<invG[vid].size()<<" "<<check4<<'\n';
-                        // bbv->printIR(std::cerr);
                         changed |= true;
                         auto endI = (BrCondInstruction *)bbu->Instruction_list.back();
-                        // auto BrCondI=
                         bbu->Instruction_list.pop_back();
                         auto trueop = (LabelOperand *)endI->GetTrueLabel();
                         auto falseop = (LabelOperand *)endI->GetFalseLabel();
@@ -185,15 +144,7 @@ void EliminateDoubleBrUnCond(CFG *C) {
                     } else {
                         bbstack.push(bbv);
                     }
-                    // if(uid==2&&vid==3){
-                    //     puts("asdas");
-                    //     bbu->printIR(std::cerr);
-                    //     bbv->printIR(std::cerr);
-                    // }
                 } else if (G[uid].size() == 1 && invG[vid].size() == 1) {
-                    // std::cerr<<uid<<" "<<vid<<'\n';
-                    // bbu->printIR(std::cerr);
-                    // bbv->printIR(std::cerr);
                     changed |= true;
                     PhiMap[vid] = uid;
                     // update edge from inv u
@@ -221,26 +172,17 @@ void EliminateDoubleBrUnCond(CFG *C) {
                     bbstack.push(bbu);
                 } else if (G[uid].size() == 2 && invG[vid].size() == 1 && G[vid].size() == 1 &&
                            bbv->Instruction_list.size() == 1 && bbv->Instruction_list.back()->GetOpcode() != RET) {
-                    // if(G[uid][0]==bbu||G[uid][1]==bbu){
-                    //     bbstack.push(bbv);
-                    //     continue;
-                    // }
-
-                    // bbu->printIR(std::cerr);
-                    // bbv->printIR(std::cerr);
                     auto inv = G[vid][0];
                     auto invid = inv->block_id;
                     auto I = bbu->Instruction_list.back();
                     if (I->GetOpcode() == BR_COND &&
                         (((LabelOperand *)((BrCondInstruction *)I)->GetTrueLabel())->GetLabelNo() == invid ||
                          ((LabelOperand *)((BrCondInstruction *)I)->GetFalseLabel())->GetLabelNo() == invid)) {
-                        // if(inv->Instruction_list.front()->GetOpcode()==PHI){
                         bbstack.push(bbv);
                         continue;
                     }
                     changed |= true;
                     OtherPhiMap[vid] = uid;
-                    // std::cerr<<uid<<" "<<vid<<" "<<invid<<'\n';
                     PhiMap[vid] = invid;
                     if (G[uid][0] == bbv) {
                         G[uid][0] = inv;
@@ -268,21 +210,11 @@ void EliminateDoubleBrUnCond(CFG *C) {
                     invG[vid].clear();
                     bbv->Instruction_list.clear();
                     C->block_map->erase(vid);
-                    // bbstack.push(bbu);
-                    // bbu->printIR(std::cerr);
-                    // puts("-------------------");
-                    // bbu->printIR(std::cerr);
+                    bbstack.push(bbu);
                 } else {
                     bbstack.push(bbv);
                 }
-                // std::cerr<<uid<<" "<<vid<<" "<<G[uid].size()<<" "<<invG[vid].size()<<'\n';
-                // bbu->printIR(std::cerr);
-                // bbv->printIR(std::cerr);
-                // puts("-------------------");
             }
-            // bbu->printIR(std::cerr);
-            // std::cerr<<uid<<'\n';
-            // std::cerr<<uid<<" "<<G[uid].size()<<'\n';
         }
 
         for (auto [id, bb] : *C->block_map) {
@@ -336,68 +268,64 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         Labelopno = PhiMap[Labelopno];
                     }
                     bruncondI->SetTarget(new LabelOperand(Labelopno));
-                    // Labelop->SetLabelNo(Labelopno);
                 }
             }
         }
         OtherPhiMap.clear();
         PhiMap.clear();
     }
-    // int cnt=0;
-    // std::unordered_map<int,int> NewMap;
-    // for (auto [id, bb] : *C->block_map) {
-    //     NewMap[id] = cnt++;
-    // }
-    // for (auto [id, bb] : *C->block_map) {
-    //     for (auto I : bb->Instruction_list) {
-    //         if(I->GetOpcode()==PHI){
-    //             auto PhiI=(PhiInstruction*)I;
-    //             auto ResultOperands = PhiI->GetPhiList();
-    //             for(u_int32_t i=0;i<ResultOperands.size();++i){
-    //                 auto Labelop=(LabelOperand*)ResultOperands[i].first;
-    //                 auto oldop=Labelop->GetLabelNo();
-    //                 auto Labelopno=Labelop->GetLabelNo();
-    //                 if(NewMap.find(Labelopno)!=NewMap.end()){
-    //                     PhiI->SetNewFrom(oldop,NewMap[Labelopno]);
-    //                 }
-    //             }
-    //         }else if(I->GetOpcode()==BR_COND){
-    //             auto brcondI=(BrCondInstruction*)I;
-    //             auto trueop=(LabelOperand*)brcondI->GetTrueLabel();
-    //             auto falseop=(LabelOperand*)brcondI->GetFalseLabel();
-    //             auto trueopno=trueop->GetLabelNo();
-    //             auto falseopno=falseop->GetLabelNo();
-    //             if(NewMap.find(trueopno)!=NewMap.end()){
-    //                 brcondI->SetTrueLabel(new LabelOperand(NewMap[trueopno]));
-    //             }
-    //             if(NewMap.find(falseopno)!=NewMap.end()){
-    //                 brcondI->SetFalseLabel(new LabelOperand(NewMap[falseopno]));
-    //             }
-    //         }else if(I->GetOpcode()==BR_UNCOND){
-    //             auto bruncondI=(BrUncondInstruction*)I;
-    //             auto Labelop=(LabelOperand*)bruncondI->GetDestLabel();
-    //             auto Labelopno=Labelop->GetLabelNo();
-    //             if(NewMap.find(Labelopno)==NewMap.end()){
-    //                 continue;
-    //             }
-    //             bruncondI->SetTarget(new LabelOperand(NewMap[Labelopno]));
-    //         }
-    //     }
-    // }
-    // // std::cout<<C->block_map->size()<<'\n';
-    // std::map<int, LLVMBlock> new_block_map=*C->block_map;
-    // C->block_map->clear();
-    // for (auto [id, bb] : new_block_map) {
-
-    //     bb->block_id = NewMap[bb->block_id];
-    //     // std::cout<<id<<" "<<NewMap[id]<<'\n';
-    //     // C->block_map->erase(id);
-    //     C->block_map->insert(std::make_pair(NewMap[id],bb));
-    // }
-    // // std::cout<<new_block_map->size()<<'\n';
-    // // // delete C->block_map;
-    // // C->block_map=new_block_map;
-    // C->max_label = cnt;
+    int cnt=0;
+    std::unordered_map<int,int> NewMap;
+    for (auto [id, bb] : *C->block_map) {
+        NewMap[id] = cnt++;
+    }
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            if(I->GetOpcode()==PHI){
+                auto PhiI=(PhiInstruction*)I;
+                auto ResultOperands = PhiI->GetPhiList();
+                std::set<int> ReplaceSet;
+                for(u_int32_t i=0;i<ResultOperands.size();++i){
+                    auto Labelop=(LabelOperand*)ResultOperands[i].first;
+                    auto Labelopno=Labelop->GetLabelNo();
+                    if(NewMap.find(Labelopno)!=NewMap.end()){
+                        ReplaceSet.insert(Labelopno);
+                    }
+                }
+                for(auto it=ReplaceSet.begin();it!=ReplaceSet.end();++it){
+                    PhiI->SetNewFrom(*it,NewMap[*it]);
+                }
+                ReplaceSet.clear();
+            }else if(I->GetOpcode()==BR_COND){
+                auto brcondI=(BrCondInstruction*)I;
+                auto trueop=(LabelOperand*)brcondI->GetTrueLabel();
+                auto falseop=(LabelOperand*)brcondI->GetFalseLabel();
+                auto trueopno=trueop->GetLabelNo();
+                auto falseopno=falseop->GetLabelNo();
+                if(NewMap.find(trueopno)!=NewMap.end()){
+                    brcondI->SetTrueLabel(new LabelOperand(NewMap[trueopno]));
+                }
+                if(NewMap.find(falseopno)!=NewMap.end()){
+                    brcondI->SetFalseLabel(new LabelOperand(NewMap[falseopno]));
+                }
+            }else if(I->GetOpcode()==BR_UNCOND){
+                auto bruncondI=(BrUncondInstruction*)I;
+                auto Labelop=(LabelOperand*)bruncondI->GetDestLabel();
+                auto Labelopno=Labelop->GetLabelNo();
+                if(NewMap.find(Labelopno)==NewMap.end()){
+                    continue;
+                }
+                bruncondI->SetTarget(new LabelOperand(NewMap[Labelopno]));
+            }
+        }
+    }
+    std::map<int, LLVMBlock> new_block_map=*C->block_map;
+    C->block_map->clear();
+    for (auto [id, bb] : new_block_map) {
+        bb->block_id = NewMap[bb->block_id];
+        C->block_map->insert(std::make_pair(NewMap[id],bb));
+    }
+    C->max_label = cnt;
     C->BuildCFG();
     C->BuildDominatorTree();
 }
@@ -418,22 +346,17 @@ void EliminateUselessPhi(CFG *C) {
     auto FuncdefI = C->function_def;
     std::function<Operand(Operand)> UnionFind = [&](Operand RegToFind) -> Operand {
         auto RegToFindNo = ((RegOperand *)RegToFind)->GetRegNo();
-        // std::cerr<<FuncdefI->GetFunctionName()<<" "<<RegToFind->GetFullName()<<'\n';
         if (UnionFindMap[RegToFindNo] == RegToFind)
             return RegToFind;
         return UnionFindMap[RegToFindNo] = UnionFind(UnionFindMap[RegToFindNo]);
     };
     // init UnionFind
-    // std::cerr<<FuncdefI->GetFunctionName()<<'\n';
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() != PHI) {
                 continue;
             }
             auto PhiI = (PhiInstruction *)I;
-            // if(FuncdefI->GetFunctionName()=="f"){
-            //     PhiI->PrintIR(std::cerr);
-            // }
             auto NonResultOperands = PhiI->GetNonResultOperands();
             auto ResultReg = PhiI->GetResultReg();
             auto ResultRegNo = ((RegOperand *)ResultReg)->GetRegNo();
@@ -452,10 +375,6 @@ void EliminateUselessPhi(CFG *C) {
 
     while (changed) {
         changed = false;
-        // FuncdefI->PrintIR(std::cerr);
-        // if(FuncdefI->GetFunctionName()=="main"){
-        //     std::cerr<<"asdads\n";
-        // }
         for (auto [id, bb] : *C->block_map) {
             for (auto &I : bb->Instruction_list) {
                 if (I->GetOpcode() != PHI) {
@@ -469,10 +388,6 @@ void EliminateUselessPhi(CFG *C) {
                 for (u_int32_t i = 1; i < ResultOperands.size(); ++i) {
                     if (ResultOperands[i]->GetFullName() != ResultOperands[i - 1]->GetFullName()) {
                         NeedtoReleace = 0;
-                        // if(FuncdefI->GetFunctionName()=="func1"&&id==2){
-                        //     I->PrintIR(std::cerr);
-                        //     std::cerr<<ResultOperands[0]->GetFullName()<<" "<<ResultOperands[1]->GetFullName()<<'\n';
-                        // }
                         break;
                     }
                 }
@@ -481,8 +396,6 @@ void EliminateUselessPhi(CFG *C) {
                     changed |= true;
                     if (ResultOperands.size() == 1 && ResultOperands[0]->GetOperandType() != BasicOperand::REG) {
                         // example2
-                        //  std::cerr<<"example2:";
-                        //  I->PrintIR(std::cerr);
                         if (ResultOperands[0]->GetOperandType() == BasicOperand::IMMI32) {
                             I = new ArithmeticInstruction(
                             ADD, I32, new ImmI32Operand(0),
@@ -494,14 +407,12 @@ void EliminateUselessPhi(CFG *C) {
                             new ImmF32Operand(((ImmF32Operand *)ResultOperands[0])->GetFloatVal()),
                             PhiI->GetResultReg());
                         }
-                        // I->PrintIR(std::cerr);
                     } else {
                         // example1
                         EraseSet.insert(I);
                         auto Findfa = UnionFind(ResultOperands[0]);
                         auto Findson = UnionFind(ResultReg);
                         auto FindsonNo = ((RegOperand *)Findson)->GetRegNo();
-                        // std::cerr<<Findfa<<" "<<Findson<<'\n';
                         UnionFindMap[FindsonNo] = Findfa;
                     }
                 }
@@ -533,14 +444,7 @@ void EliminateUselessPhi(CFG *C) {
                     Change = 1;
                     auto Findfa = UnionFind(UnionFindMap[NonResultOperandsno]);
                     auto FindfaNo = ((RegOperand *)Findfa)->GetRegNo();
-                    // std::cerr<<FindfaNo<<" "<<Findfa->GetFullName()<<'\n';
-                    // if(FindfaNo==0){
-                    //     std::cerr<<Findfa->GetFullName()<<'\n';
-                    // }
                     NonResultOperands[i] = new RegOperand(FindfaNo);
-                    // NonResultOperands[i]=Findfa;
-                    // std::cerr<<NonResultOperandsno<<" "<<Findfa->GetFullName()<<"
-                    // "<<NonResultOperands[i]->GetFullName()<<'\n';
                 }
                 if (Change) {
                     I->SetNonResultOperands(NonResultOperands);
