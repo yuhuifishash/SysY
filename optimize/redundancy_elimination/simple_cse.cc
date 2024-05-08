@@ -1,5 +1,6 @@
 #include "../../include/cfg.h"
 #include "../alias_analysis/alias_analysis.h"
+#include "memdep/memdep.h"
 #include <functional>
 
 /*this pass will do some simple common subexpression elimination
@@ -9,6 +10,7 @@ DomTreeWalkCSE will do dfs on the dominator tree to search common subexpression 
 
 extern std::map<std::string, CFG *> CFGMap;
 extern AliasAnalyser *alias_analyser;
+extern MemoryDependenceAnalyser *memdep_analyser;
 
 struct InstCSEInfo {
     int opcode;
@@ -301,49 +303,85 @@ void BasicBlockCSE(CFG *C) {
 void DomTreeWalkCSE(CFG *C) {
     std::set<Instruction> EraseSet;
     std::map<InstCSEInfo, int> InstCSEMap;    //<inst_info, result_reg>
+    std::map<InstCSEInfo, std::vector<LoadInstruction*> > LoadCSEMap;
     std::map<int, int> reg_replace_map;
     bool changed = true;
 
     std::function<void(int)> dfs = [&](int bbid) {
-        for (auto v : C->DomTree.dom_tree[bbid]) {
-            std::set<InstCSEInfo> tmpcse_set;
-            for (auto I : v->Instruction_list) {
-                if (CSENotConsider(I) == false) {
-                    continue;
-                }
-                if (I->GetOpcode() == LOAD || I->GetOpcode() == STORE) {
-                    continue;
-                }
-                if (I->GetOpcode() == CALL) {
-                    auto CallI = (CallInstruction *)I;
-                    if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
-                        continue;    // external call
+        LLVMBlock now = (*C->block_map)[bbid];
+        std::set<InstCSEInfo> tmpcse_set;
+        std::map<InstCSEInfo, int> tmpload_num_map;
+        for (auto I : now->Instruction_list) {
+            if (CSENotConsider(I) == false) {
+                continue;
+            }
+            if (I->GetOpcode() == LOAD) {
+                auto LoadI = (LoadInstruction*)I;
+                auto info = GetCSEInfo(LoadI);
+                auto CSEiter = LoadCSEMap.find(info);
+                if (CSEiter != LoadCSEMap.end()) {
+                    bool is_cse = false;
+                    for(auto I2:LoadCSEMap[info]){
+                        // I->PrintIR(std::cerr);I2->PrintIR(std::cerr);
+                        if(memdep_analyser->isLoadSameMemory(I,I2,C) == true) {
+                            // I->PrintIR(std::cerr);
+                            EraseSet.insert(I);
+                            reg_replace_map[I->GetResultRegNo()] = I2->GetResultRegNo();
+                            changed |= true;
+                            is_cse = true;
+                            break;
+                        }
                     }
-
-                    auto cfg = CFGMap[CallI->GetFunctionName()];
-                    // we only CSE independent call in this Pass
-                    if (!alias_analyser->CFG_isIndependent(cfg)) {
+                    if(is_cse){
                         continue;
                     }
                 }
 
-                auto Info = GetCSEInfo(I);
-                auto CSEiter = InstCSEMap.find(Info);
-                if (CSEiter != InstCSEMap.end()) {
-                    // I->PrintIR(std::cerr);
-                    EraseSet.insert(I);
-                    reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
-                    changed |= true;
-                } else {
-                    InstCSEMap.insert({Info, I->GetResultRegNo()});
-                    tmpcse_set.insert(Info);
+                LoadCSEMap[info].push_back(LoadI);
+                tmpload_num_map[info] += 1;  
+                continue;
+            }
+            if (I->GetOpcode() == STORE) {// store will generate new load
+                continue;
+            }
+            if (I->GetOpcode() == CALL) {
+                auto CallI = (CallInstruction *)I;
+                if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+                    continue;    // external call
+                }
+                auto cfg = CFGMap[CallI->GetFunctionName()];
+                // we only CSE independent call in this Pass
+                if (!alias_analyser->CFG_isIndependent(cfg)) {
+                    continue;
                 }
             }
+            
+            //other instructions
+            auto Info = GetCSEInfo(I);
+            auto CSEiter = InstCSEMap.find(Info);
+            if (CSEiter != InstCSEMap.end()) {
+                // I->PrintIR(std::cerr);
+                EraseSet.insert(I);
+                reg_replace_map[I->GetResultRegNo()] = CSEiter->second;
+                changed |= true;
+            } else {
+                InstCSEMap.insert({Info, I->GetResultRegNo()});
+                tmpcse_set.insert(Info);
+            }
+        }
 
+        for (auto v : C->DomTree.dom_tree[bbid]) {
             dfs(v->block_id);
+        }
 
-            for (auto info : tmpcse_set) {
-                InstCSEMap.erase(info);
+        for (auto info : tmpcse_set) {
+            InstCSEMap.erase(info);
+        }
+
+        for (auto [info,num] : tmpload_num_map) {
+            int i = 0;
+            for(int i = 0; i < num; ++i){
+                LoadCSEMap[info].pop_back();
             }
         }
     };
@@ -397,12 +435,14 @@ void SimpleCSEInit(CFG *C) {
 }
 
 void SimpleCSE(CFG *C) {
+    SimpleCSEInit(C);
+
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
         }
     }
-    SimpleCSEInit(C);
+
     BasicBlockCSE(C);
     DomTreeWalkCSE(C);
 }

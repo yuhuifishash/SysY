@@ -1,4 +1,5 @@
 #include "memdep.h"
+#include <set>
 
 class SimpleMemDepAnalyser : public MemoryDependenceAnalyser {
 private:
@@ -7,7 +8,7 @@ private:
     memory location depend on?
 
     Reference: Compiler Optimizations for a Time-constrained Environment  Owen C. Anderson*/
-    std::vector<Instruction> GetLoadClobbers(Instruction I, CFG *C);
+    std::set<Instruction> GetLoadClobbers(Instruction I, CFG *C);
 
 public:
     /*
@@ -15,7 +16,7 @@ public:
 
     we assume all the instructions that have side_effect will write all the memory
     */
-    virtual bool isLoadRedundant(Instruction a, Instruction b, CFG *C);
+    virtual bool isLoadSameMemory(Instruction a, Instruction b, CFG *C);
     virtual void MemoryDependenceAnalysis() {}    // simple memdep analyser does not need to preprocess
     virtual void MemDepTest();
 };
