@@ -125,17 +125,6 @@ enum FcmpCond {
 
 // @float32 directly to Hex
 
-// @Counter: Count for Instruction,Reg,Labels
-// Can be reseted, public member of relevant class
-class AutoCounter {
-    int curCount;
-
-public:
-    AutoCounter() : curCount(0) {}
-    int GetCount() { return curCount; }
-    void ResetCount(int val = 0) { curCount = val; }
-    void Inc() { curCount++; }
-};
 class BasicOperand;
 typedef BasicOperand *Operand;
 // @operands in instruction
@@ -159,19 +148,6 @@ class RegOperand : public BasicOperand {
 
 public:
     int GetRegNo() { return reg_no; }
-    void ChangeRegNo() {
-        if (reg_no >= 0) {
-            reg_no = -reg_no - 1;
-        }
-    }
-    // void SetRegNo(int new_no) { reg_no = new_no; }
-
-    static AutoCounter curRegNo;
-    RegOperand() {
-        this->operandType = REG;
-        this->reg_no = curRegNo.GetCount();
-        curRegNo.Inc();
-    }
     RegOperand(int RegNo) {
         this->operandType = REG;
         this->reg_no = RegNo;
@@ -220,12 +196,6 @@ public:
     int GetLabelNo() { return label_no; }
     void SetLabelNo(int label) { label_no = label; }
 
-    static AutoCounter curLabelNo;
-    LabelOperand() {
-        this->operandType = LABEL;
-        this->label_no = curLabelNo.GetCount();
-        curLabelNo.Inc();
-    }
     LabelOperand(int LabelNo) {
         this->operandType = LABEL;
         this->label_no = LabelNo;
@@ -263,13 +233,7 @@ protected:
 public:
     int GetBlockID() { return BlockID; }
     void SetBlockID(int blockno) { BlockID = blockno; }
-    BasicInstruction() {
-        opcode = OTHER;
-        insNo = insNoCounter.GetCount();
-        insNoCounter.Inc();
-    }
     void SetInstructionNo(int new_no) { insNo = new_no; }
-    static AutoCounter insNoCounter;      // instruction No counter
     int GetOpcode() { return opcode; }    // one solution: convert to pointer of subclasses
 
     virtual LLVMType GetResultType() { return VOID; }

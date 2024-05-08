@@ -36,7 +36,7 @@ std::vector<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CF
             auto StoreI = (StoreInstruction *)tmpI;
             if (alias_analyser->QueryAlias(ptr, StoreI->GetPointer(), C) == AliasAnalyser::MustAlias) {
                 res.push_back(StoreI);
-                break;
+                return res;
             }
         } else if (tmpI->GetOpcode() == CALL) {
             auto CallI = (CallInstruction *)tmpI;
@@ -44,13 +44,13 @@ std::vector<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CF
 
             if (CFGMap.find(call_name) == CFGMap.end()) {    // external call
                 res.push_back(CallI);
-                break;
+                return res;
             }
 
             auto target_cfg = CFGMap[call_name];
             if (!alias_analyser->CFG_isNoSideEffect(target_cfg)) {    // may def memory
                 res.push_back(CallI);
-                break;
+                return res;
             }
         }
     }
@@ -75,6 +75,10 @@ std::vector<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CF
             auto tmpI = x->Instruction_list[i];
             if (tmpI->GetOpcode() == STORE) {
                 auto StoreI = (StoreInstruction *)tmpI;
+                if (alias_analyser->QueryAlias(ptr, StoreI->GetPointer(), C) == AliasAnalyser::MustAlias) {
+                    res.push_back(StoreI);
+                    break;
+                }
             } else if (tmpI->GetOpcode() == CALL) {
                 auto CallI = (CallInstruction *)tmpI;
                 auto call_name = CallI->GetFunctionName();
@@ -98,8 +102,12 @@ std::vector<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CF
             for (auto bb : C->GetPredecessor(x)) {
                 q.push(bb);
             }
+            continue;
         }
         // if reach BB0,  insert functiondef
+        if(x->block_id == 0){
+            res.push_back(C->function_def);
+        }
     }
 
     return res;
