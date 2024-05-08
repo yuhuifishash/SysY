@@ -300,10 +300,14 @@ void BasicBlockCSE(CFG *C) {
     }
 }
 
+
+
+
+
 void DomTreeWalkCSE(CFG *C) {
     std::set<Instruction> EraseSet;
     std::map<InstCSEInfo, int> InstCSEMap;    //<inst_info, result_reg>
-    std::map<InstCSEInfo, std::vector<LoadInstruction*> > LoadCSEMap;
+    std::map<InstCSEInfo, std::vector<Instruction> > LoadCSEMap;
     std::map<int, int> reg_replace_map;
     bool changed = true;
 
@@ -324,9 +328,23 @@ void DomTreeWalkCSE(CFG *C) {
                     for(auto I2:LoadCSEMap[info]){
                         // I->PrintIR(std::cerr);I2->PrintIR(std::cerr);
                         if(memdep_analyser->isLoadSameMemory(I,I2,C) == true) {
-                            // I->PrintIR(std::cerr);
                             EraseSet.insert(I);
-                            reg_replace_map[I->GetResultRegNo()] = I2->GetResultRegNo();
+                            if(I2->GetOpcode() == STORE){
+                                // I->PrintIR(std::cerr);
+                                auto StoreI2 = (StoreInstruction *)I2;
+                                int val_regno = ((RegOperand *)StoreI2->GetValue())->GetRegNo();
+                                if (reg_replace_map.find(val_regno) != reg_replace_map.end()) {
+                                    val_regno = reg_replace_map[val_regno];
+                                }
+                                reg_replace_map[I->GetResultRegNo()] = val_regno;
+
+                            } else if(I2->GetOpcode() == LOAD){
+
+                                reg_replace_map[I->GetResultRegNo()] = I2->GetResultRegNo();
+                            } else { // should not reach here
+                                assert(false);
+                            }
+
                             changed |= true;
                             is_cse = true;
                             break;
@@ -342,6 +360,18 @@ void DomTreeWalkCSE(CFG *C) {
                 continue;
             }
             if (I->GetOpcode() == STORE) {// store will generate new load
+                auto StoreI = (StoreInstruction *)I;
+                assert(StoreI->GetValue()->GetOperandType() == BasicOperand::REG);
+
+                int val_regno = ((RegOperand *)StoreI->GetValue())->GetRegNo();
+                if (reg_replace_map.find(val_regno) != reg_replace_map.end()) {
+                    val_regno = reg_replace_map[val_regno];
+                }
+
+                auto LoadI = new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), GetNewRegOperand(val_regno));
+                auto info = GetCSEInfo(LoadI);
+                LoadCSEMap[info].push_back(StoreI);
+                tmpload_num_map[info] += 1;  
                 continue;
             }
             if (I->GetOpcode() == CALL) {
