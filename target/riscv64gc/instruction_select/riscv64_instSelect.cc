@@ -8,7 +8,7 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
         ERROR("Unexpected data type");
     }
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
-        Lazy("Deal with alloca later");
+        // Lazy("Deal with alloca later");
 
         auto ptr_op = (RegOperand *)ins->GetPointer();
         auto rd_op = (RegOperand *)ins->GetResultOperand();
@@ -57,7 +57,7 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
     }
 
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
-        Lazy("Deal with alloca later");
+        // Lazy("Deal with alloca later");
         auto reg_ptr_op = (RegOperand*)ins->GetPointer();
 
         auto ptr_reg = GetllvmReg(reg_ptr_op->GetRegNo(),INT32);
@@ -153,14 +153,49 @@ template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUnco
 
 template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) { 
     Assert(ins->GetRetType() == VOID || ins->GetResult()->GetOperandType() == BasicOperand::REG);
+
+    int ireg_cnt = 0;
+    int freg_cnt = 0;
     // Parameters
-    for(auto arg : ins->GetParameterList()){
-        TODO("Parameters");
-        Lazy("Not tested");
+    for(auto [type,arg_op] : ins->GetParameterList()){
+        if(type == I32 || type == PTR){
+            if(ireg_cnt < 8){
+                if(arg_op->GetOperandType() == BasicOperand::REG){
+                    auto arg_regop = (RegOperand*)arg_op;
+                    auto arg_reg = GetllvmReg(arg_regop->GetRegNo(),INT32);
+                    auto arg_copy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0+ireg_cnt),arg_reg,INT32);
+                    cur_block->push_back(arg_copy_instr);
+                } else if(arg_op->GetOperandType() == BasicOperand::IMMI32){
+                    auto arg_immop = (ImmI32Operand*)arg_op;
+                    auto arg_imm = arg_immop->GetIntImmVal();
+                    auto arg_copy_instr = rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a0+ireg_cnt),arg_imm,INT32);
+                    cur_block->push_back(arg_copy_instr);
+                } else {
+                    ERROR("Unexpected Operand type");
+                }
+                ireg_cnt++;
+            }else{
+                TODO("More than 8 parameters");
+                Lazy("Not tested");
+            }
+        }else if(type == FLOAT32){
+            if(freg_cnt < 8){
+                TODO("Float Reg Parameters");
+                Lazy("Not tested");
+                freg_cnt++;
+            }else{
+                TODO("More than 8 parameters");
+                Lazy("Not tested");
+            }
+        }else{
+            ERROR("Unexpected parameter type %d",type);
+        }
     }
 
     // Call Label
     auto call_funcname = ins->GetFunctionName();
+    auto call_instr = rvconstructor->ConstructCall(RISCV_CALL,call_funcname);
+    cur_block->push_back(call_instr);
 
     // Return Value
     auto return_type = ins->GetRetType();
@@ -173,8 +208,6 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
         TODO("Insert float mov");
         Lazy("Not tested");
     }else if(return_type == VOID){
-        // Do nothing
-        Lazy("Not tested");
     }else{
         ERROR("Unexpected return type %d",return_type);
     }
@@ -184,45 +217,46 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
     if (ins->GetRetVal() != NULL) {
         if (ins->GetRetVal()->GetOperandType() == BasicOperand::REG) {
             if (ins->GetType() == FLOAT32) {
-                Lazy("Not tested");
-                auto retreg_val = (RegOperand *)ins->GetRetVal();
 
+                Lazy("Not tested");
+
+                auto retreg_val = (RegOperand *)ins->GetRetVal();
                 auto reg = GetllvmReg(retreg_val->GetRegNo(), FLOAT_32);
 
                 auto retcopy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_fa0),reg,FLOAT_32);
-
                 cur_block->push_back(retcopy_instr);
-            } else if (ins->GetType() == I32) {
-                auto retreg_val = (RegOperand *)ins->GetRetVal();
 
+            } else if (ins->GetType() == I32) {
+
+                auto retreg_val = (RegOperand *)ins->GetRetVal();
                 auto reg = GetllvmReg(retreg_val->GetRegNo(), INT32);
 
                 auto retcopy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0),reg,INT32);
-
                 cur_block->push_back(retcopy_instr);
+
             }
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMI32) {
+
             auto retimm_op = (ImmI32Operand *)ins->GetRetVal();
-            
             auto imm = retimm_op->GetIntImmVal();
 
             auto retcopy_instr = rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a0),imm,INT32);
-
             cur_block->push_back(retcopy_instr);
 
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMF32) {
+
             Lazy("Not tested");
+
             auto retimm_op = (ImmF32Operand *)ins->GetRetVal();
- 
             auto imm = retimm_op->GetFloatVal();
 
             auto retcopy_instr = rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0),imm,FLOAT_32);
-
             cur_block->push_back(retcopy_instr);
+
         }
     }
-    auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_ra),0);
 
+    auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_ra),0);
     cur_block->push_back(ret_instr);
 }
 
@@ -440,4 +474,4 @@ Register RiscV64Selector::GetllvmReg(int ir_reg, MachineDataType type) {
 Register RiscV64Selector::GetNewReg(MachineDataType type) {
     return cur_func->GetNewRegister(type.data_type, type.data_length);
 }
-Register RiscV64Selector::GetPhysicalReg(int reg_no) { return Register(false, reg_no, getRVRegType(reg_no)); }
+// Register RiscV64Selector::GetPhysicalReg(int reg_no) { return Register(false, reg_no, getRVRegType(reg_no)); }

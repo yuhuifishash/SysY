@@ -21,8 +21,10 @@ std::vector<Register *> RiscV64Instruction::GetReadReg() {
         return GetU_typeReadreg();
     case RvOpInfo::J_type:
         return GetJ_typeReadreg();
+    case RvOpInfo::CALL_type:
+        return GetCall_typeReadreg();
     }
-    assert(false);
+    ERROR("Unexpected insformat");
 }
 
 std::vector<Register *> RiscV64Instruction::GetWriteReg() {
@@ -43,8 +45,10 @@ std::vector<Register *> RiscV64Instruction::GetWriteReg() {
         return GetU_typeWritereg();
     case RvOpInfo::J_type:
         return GetJ_typeWritereg();
+    case RvOpInfo::CALL_type:
+        return GetCall_typeWritereg();
     }
-    assert(false);
+    ERROR("Unexpected insformat");
 }
 
 void RiscV64Function::MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target) {}
@@ -178,6 +182,7 @@ struct RvOpInfo OpTable[] = {
 [RISCV_FCVT_LU_D] = RvOpInfo{RvOpInfo::R2_type, "fcvt.lu.d"},
 
 [RISCV_LI] = RvOpInfo{RvOpInfo::U_type, "li"},
+[RISCV_CALL] = RvOpInfo{RvOpInfo::CALL_type, "call"},
 };
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
@@ -210,7 +215,7 @@ struct RiscV64RegisterInfo RiscV64Registers[] = {
 std::vector<int> PhysicalRegisters::getValidRegs(LiveInterval interval) {
     if (interval.getReg().type.data_type == MachineDataType::INT) {
         return std::vector<int>({
-        RISCV_x1,  RISCV_x2,  RISCV_x3,  RISCV_x4,  RISCV_x5,  RISCV_x6,  RISCV_x7,  RISCV_x8,
+        RISCV_x1,  RISCV_x2,  RISCV_x5,  RISCV_x6,  RISCV_x7,  RISCV_x8,
         RISCV_x9,  RISCV_x10, RISCV_x11, RISCV_x12, RISCV_x13, RISCV_x14, RISCV_x15, RISCV_x16,
         RISCV_x17, RISCV_x18, RISCV_x19, RISCV_x20, RISCV_x21, RISCV_x22, RISCV_x23, RISCV_x24,
         RISCV_x25, RISCV_x26, RISCV_x27, RISCV_x28, RISCV_x29, RISCV_x30, RISCV_x31,

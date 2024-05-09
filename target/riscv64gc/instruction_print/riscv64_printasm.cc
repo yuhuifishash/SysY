@@ -68,7 +68,10 @@ template <> void RiscV64Printer::printRVfield<MachineBaseOperand*>(MachineBaseOp
 
 template<>
 void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
-    s << OpTable[ins->getOpcode()].name << " ";
+    s << OpTable[ins->getOpcode()].name << "\t\t";
+    if(strlen(OpTable[ins->getOpcode()].name) <= 3){
+        s<<"\t";
+    }
     switch (OpTable[ins->getOpcode()].ins_formattype) {
     case RvOpInfo::R_type:
         printRVfield(ins->getRd());
@@ -160,6 +163,9 @@ void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
             s << ins->getImm();
         }
         s << "\n";
+        return;
+    case RvOpInfo::CALL_type:
+        s << ins->getLabel().name << "\n";
         return;
     }
     ERROR("Unexpected instruction format");

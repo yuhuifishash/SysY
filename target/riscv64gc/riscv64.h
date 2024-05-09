@@ -368,10 +368,12 @@ private:
     std::vector<Register *> GetB_typeWritereg() { return {}; }
     std::vector<Register *> GetU_typeWritereg() { return {&rd}; }
     std::vector<Register *> GetJ_typeWritereg() { return {&rd}; }
-    std::vector<Register *> GetCall_typeWritereg() { return {}; }
+    std::vector<Register *> GetCall_typeWritereg() { return {&rd}; }
 
-public:
+    friend class RiscV64InstructionConstructor;
+
     RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV) {}
+public:
     void setOpcode(int op, bool use_label) {
         this->op = op;
         this->use_label = use_label;
@@ -508,6 +510,14 @@ public:
         Assert(type.data_type == MachineDataType::FLOAT);
 
         MachineCopyInstruction* ret = new MachineCopyInstruction(new MachineImmediateFloat(src),new MachineRegister(dst),type);
+        return ret;
+    }
+    RiscV64Instruction* ConstructCall(int op,std::string funcname){
+        Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        ret->setRd(GetPhysicalReg(RISCV_ra));
+        ret->setLabel(RiscVLabel(funcname,false));
         return ret;
     }
 };

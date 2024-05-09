@@ -7,7 +7,7 @@ private:
     std::map<int, Register> llvm_rv_regtable;
     Register GetllvmReg(int, MachineDataType);
     Register GetNewReg(MachineDataType);
-    Register GetPhysicalReg(int);
+    // Register GetPhysicalReg(int);
 
 public:
     RiscV64Selector(MachineUnit *dest, LLVMIR *IR) : MachineSelector(dest, IR) {}

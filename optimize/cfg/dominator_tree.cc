@@ -146,7 +146,7 @@ void DominatorTree::BuildDominatorTree(bool reverse) {
 
 void DominatorTree::BuildPostDominatorTree() {
     // Log("Begin Build PostDomTree");
-    BuildDominatorTree(true);
+    // BuildDominatorTree(true);
     // Log("Original CFG");
     // for(int i=0; i< C->G.size();i++){
     //     for(auto j : C->G[i]){
