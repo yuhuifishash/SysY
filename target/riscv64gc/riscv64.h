@@ -244,23 +244,24 @@ struct RiscVLabel : public Label {
     RiscVLabel(int jmp) : Label(jmp, false), name() {}
     RiscVLabel(std::string name, bool is_hi) : Label(0, 0), name(name), is_hi(is_hi) { this->is_data_address = true; }
     RiscVLabel(const RiscVLabel &other) : Label(0, 0) {
+        this->is_data_address = other.is_data_address;
         if (other.is_data_address) {
-            this->is_data_address = other.is_data_address;
-            this->name = other.name;
+            std::string temp = other.name;
+            this->name = temp;
             this->is_hi = other.is_hi;
         } else {
-            this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;
         }
     }
     RiscVLabel operator=(const RiscVLabel &other) {
+        if(this == &other)return *this;
+        this->is_data_address = other.is_data_address;
         if (other.is_data_address) {
-            this->is_data_address = other.is_data_address;
-            this->name = other.name;
+            std::string temp = other.name;
+            this->name = temp;
             this->is_hi = other.is_hi;
         } else {
-            this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;
         }

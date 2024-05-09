@@ -222,5 +222,8 @@ std::vector<int> PhysicalRegisters::getValidRegs(LiveInterval interval) {
         RISCV_f16, RISCV_f17, RISCV_f18, RISCV_f19, RISCV_f20, RISCV_f21, RISCV_f22, RISCV_f23,
         RISCV_f24, RISCV_f25, RISCV_f26, RISCV_f27, RISCV_f28, RISCV_f29, RISCV_f30, RISCV_f31,
         });
+    } else {
+        ERROR("Unsupported Reg data type");
+        return std::vector<int>();
     }
 }
