@@ -1,5 +1,12 @@
 #include "riscv64_printer.h"
 #include <assert.h>
+
+bool isMemFormatOp(int opcode){
+    return opcode == RISCV_LB || opcode == RISCV_LBU || opcode == RISCV_LH || opcode == RISCV_LHU || opcode == RISCV_LW || opcode == RISCV_LWU || opcode == RISCV_LD
+    || opcode == RISCV_FLW || opcode == RISCV_FLD || opcode == RISCV_FSW || opcode == RISCV_FSD
+    ;
+}
+
 void RiscV64Printer::emit() {
     for (auto func : printee->functions) {
         current_func = func;
@@ -106,28 +113,37 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
     case RvOpInfo::I_type:
         printRVfield(ins->getRd());
         s << ",";
-        printRVfield(ins->getRs1());
-        s << ",";
-        if (ins->getUseLabel()) {
-            printRVfield(ins->getLabel());
-        } else {
-            s << ins->getImm();
+        if(!isMemFormatOp(ins->getOpcode())){
+            printRVfield(ins->getRs1());
+            s << ",";
+            if (ins->getUseLabel()) {
+                printRVfield(ins->getLabel());
+            } else {
+                s << ins->getImm();
+            }
+        }else{
+            if (ins->getUseLabel()) {
+                printRVfield(ins->getLabel());
+            } else {
+                s << ins->getImm();
+            }
+            s<<"(";
+            printRVfield(ins->getRs1());
+            s<<")";
         }
-        // s<<ins->getImm();
         s << "\n";
         return;
     case RvOpInfo::S_type:
         printRVfield(ins->getRs1());
-        s << ",";
-        printRVfield(ins->getRs2());
-        s << ",";
+        s<<",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
             s << ins->getImm();
         }
-        // s<<ins->getImm();
-        s << "\n";
+        s << "(";
+        printRVfield(ins->getRs2());
+        s << ")\n";
         return;
     case RvOpInfo::B_type:
         printRVfield(ins->getRs1());
@@ -139,7 +155,6 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
         } else {
             s << ins->getImm();
         }
-        // printRVfield(ins->getLabel());
         s << "\n";
         return;
     case RvOpInfo::U_type:
@@ -150,7 +165,6 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
         } else {
             s << ins->getImm();
         }
-        // s<<ins->getImm();
         s << "\n";
         return;
     case RvOpInfo::J_type:
@@ -161,11 +175,9 @@ void RiscV64Printer::printAsm(RiscV64Instruction *ins) {
         } else {
             s << ins->getImm();
         }
-        // printRVfield(ins->getLabel());
         s << "\n";
         return;
     }
     ERROR("Unexpected instruction format");
-    assert(false);
 }
 void RiscV64Printer::printMachineIR(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }

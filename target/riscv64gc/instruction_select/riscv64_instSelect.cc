@@ -4,26 +4,31 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
     if (ins->GetDataType() == FLOAT32) {
         TODO("RV InstSelect");
     } else if (ins->GetDataType() == I32) {
+    }else{
+        ERROR("Unexpected data type");
     }
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
-        TODO("RV InstSelect");
+        Lazy("Deal with alloca later");
+
+        auto ptr_op = (RegOperand *)ins->GetPointer();
+        auto rd_op = (RegOperand *)ins->GetResultOperand();
+
+        Register rd = GetllvmReg(rd_op->GetRegNo(),INT32);
+        Register ptr = GetllvmReg(ptr_op->GetRegNo(),INT32);
+
+        auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW,rd,ptr,0);
+        cur_block->push_back(lw_instr);
     } else if (ins->GetPointer()->GetOperandType() == BasicOperand::GLOBAL) {
         // lui %r0, %hi(x)
         // lw  %rd, %lo(x)(%r0)
         auto global_op = (GlobalOperand *)ins->GetPointer();
         auto rd_op = (RegOperand *)ins->GetResultOperand();
-        Register addr_hi = GetNewReg(INT64);
 
-        auto lui_instr = new RiscV64Instruction();
-        lui_instr->setOpcode(RISCV_LUI, true);
-        lui_instr->setRd(addr_hi);
-        lui_instr->setLabel(RiscVLabel(global_op->GetName(), true));
+        Register addr_hi = GetNewReg(INT32);
+        Register rd = GetllvmReg(rd_op->GetRegNo(),INT32);
 
-        auto lw_instr = new RiscV64Instruction();
-        lw_instr->setOpcode(RISCV_LW, true);
-        lw_instr->setRd(GetllvmReg(rd_op->GetRegNo(), INT32));
-        lw_instr->setLabel(RiscVLabel(global_op->GetName(), false));
-        lw_instr->setRs1(addr_hi);
+        auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI,addr_hi,RiscVLabel(global_op->GetName(), true));
+        auto lw_instr = rvconstructor->ConstructILabel(RISCV_LW,rd,addr_hi,RiscVLabel(global_op->GetName(),false));
 
         cur_block->push_back(lui_instr);
         cur_block->push_back(lw_instr);
@@ -31,16 +36,44 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInstruction *ins) {
-    TODO("RV InstSelect");
     if (ins->GetDataType() == FLOAT32) {
-
+        TODO("RV InstSelect");
     } else if (ins->GetDataType() == I32) {
+    } else{
+        ERROR("Unexpected data type");
     }
-    if (ins->GetValue()->GetOperandType() == BasicOperand::IMMI32) {
-    }
-    if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
 
+    Register value_reg;
+    if (ins->GetValue()->GetOperandType() == BasicOperand::IMMI32) {
+        auto val_imm = (ImmI32Operand*)ins->GetValue();
+
+        value_reg = GetNewReg(INT32);
+    }else if(ins->GetValue()->GetOperandType() == BasicOperand::REG){
+        auto val_reg = (RegOperand*)ins->GetValue();
+
+        value_reg = GetllvmReg(val_reg->GetRegNo(),INT32);
+    }else{
+        ERROR("Unexpected or unimplemented operand type");
+    }
+
+    if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
+        Lazy("Deal with alloca later");
+        auto reg_ptr_op = (RegOperand*)ins->GetPointer();
+
+        auto ptr_reg = GetllvmReg(reg_ptr_op->GetRegNo(),INT32);
+
+        auto store_instruction = rvconstructor->ConstructSImm(RISCV_SW,value_reg,ptr_reg,0);
+        cur_block->push_back(store_instruction);
     } else if (ins->GetPointer()->GetOperandType() == BasicOperand::GLOBAL) {
+        auto global_op = (GlobalOperand*)ins->GetPointer();
+        
+        auto addr_hi = GetNewReg(INT32);
+
+        auto lui_instruction = rvconstructor->ConstructULabel(RISCV_LUI,addr_hi,RiscVLabel(global_op->GetName(),true));
+        auto store_instruction = rvconstructor->ConstructSLabel(RISCV_SW,value_reg,addr_hi,RiscVLabel(global_op->GetName(),false));
+
+        cur_block->push_back(lui_instruction);
+        cur_block->push_back(store_instruction);
     }
 }
 
@@ -62,11 +95,12 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 auto *rs_op = (RegOperand *)ins->GetOperand1();
                 auto *i_op = (ImmI32Operand *)ins->GetOperand2();
 
-                auto addiw_instr = new RiscV64Instruction();
-                addiw_instr->setOpcode(RISCV_ADDIW, false);
-                addiw_instr->setRd(GetllvmReg(rd_op->GetRegNo(), INT32));
-                addiw_instr->setRs1(GetllvmReg(rs_op->GetRegNo(), INT32));
-                addiw_instr->setImm(i_op->GetIntImmVal());
+                auto rd = GetllvmReg(rd_op->GetRegNo(), INT32);
+                auto rs = GetllvmReg(rs_op->GetRegNo(), INT32);
+                auto imm = i_op->GetIntImmVal();
+
+                auto addiw_instr = rvconstructor->ConstructIImm(RISCV_ADDIW,rd,rs,imm);
+
                 cur_block->push_back(addiw_instr);
             }
             // Reg + Reg
@@ -77,11 +111,12 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 auto *rs_op = (RegOperand *)ins->GetOperand1();
                 auto *rt_op = (RegOperand *)ins->GetOperand2();
 
-                auto addw_instr = new RiscV64Instruction();
-                addw_instr->setOpcode(RISCV_ADDW, false);
-                addw_instr->setRd(GetllvmReg(rd_op->GetRegNo(), INT32));
-                addw_instr->setRs1(GetllvmReg(rs_op->GetRegNo(), INT32));
-                addw_instr->setRs2(GetllvmReg(rt_op->GetRegNo(), INT32));
+                auto rd = GetllvmReg(rd_op->GetRegNo(),INT32);
+                auto rs = GetllvmReg(rs_op->GetRegNo(),INT32);
+                auto rt = GetllvmReg(rt_op->GetRegNo(),INT32);
+
+                auto addw_instr = rvconstructor->ConstructR(RISCV_ADDW,rd,rs,rt);
+
                 cur_block->push_back(addw_instr);
             }
         } else {
@@ -105,17 +140,17 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUncondInstruction *ins) {
-    auto instr = new RiscV64Instruction();
-    instr->setOpcode(RISCV_JAL, true);
-    Log("setLabel");
-    instr->setLabel(RiscVLabel(((LabelOperand *)ins->GetDestLabel())->GetLabelNo()));
-    Log("setLabel_end");
-    instr->setRd(Register(false, RISCV_x0, getRVRegType(RISCV_x0)));
+    auto dest_label = RiscVLabel(((LabelOperand *)ins->GetDestLabel())->GetLabelNo());
 
-    cur_block->push_back(instr);
+    auto jal_instr = rvconstructor->ConstructJLabel(RISCV_JAL, GetPhysicalReg(RISCV_x0),dest_label);
+
+    cur_block->push_back(jal_instr);
 }
 
-template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) { TODO("RV InsSelect"); }
+template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) { 
+    Lazy("Implement me later");
+    // TODO("RV InsSelect"); 
+}
 
 template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruction *ins) {
     if (ins->GetRetVal() != NULL) {
@@ -123,38 +158,30 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
             if (ins->GetType() == FLOAT32) {
                 TODO("InsSelect: RV ret FloatReg");
             } else if (ins->GetType() == I32) {
-                // TODO("InsSelect: RV ret IntReg");
-                auto ret_val = (RegOperand *)ins->GetRetVal();
+                auto retreg_val = (RegOperand *)ins->GetRetVal();
 
-                // auto mv_instr = new RiscV64Instruction();
-                // mv_instr->setOpcode(RISCV_ADDIW,false);
-                // mv_instr->setImm(0);
-                // mv_instr->setRd(Register(false,RISCV_x10,getRVRegType(RISCV_x10)));
-                // mv_instr->setRs1(GetllvmReg(ret_val->GetRegNo(),INT32));
+                auto reg = GetllvmReg(retreg_val->GetRegNo(), INT32);
 
-                auto mv_instr = new MachineCopyInstruction(new MachineRegister(GetllvmReg(ret_val->GetRegNo(), INT32)),
+                auto mv_instr = new MachineCopyInstruction(new MachineRegister(reg),
                                                            new MachineRegister(GetPhysicalReg(RISCV_x10)), INT32);
 
                 cur_block->push_back(mv_instr);
             }
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMI32) {
-            auto ret_val = (ImmI32Operand *)ins->GetRetVal();
+            auto retimm_op = (ImmI32Operand *)ins->GetRetVal();
+            
+            auto imm = retimm_op->GetIntImmVal();
 
-            auto li_instr = new RiscV64Instruction();
-            li_instr->setOpcode(RISCV_LI, false);
-            li_instr->setImm(ret_val->GetIntImmVal());
-            li_instr->setRd(Register(false, RISCV_x10, getRVRegType(RISCV_x10)));
+            auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,GetPhysicalReg(RISCV_x10),imm);
+
             cur_block->push_back(li_instr);
 
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMF32) {
             TODO("InsSelect: RV ret FloatImm");
         }
     }
-    auto ret_instr = new RiscV64Instruction();
-    ret_instr->setOpcode(RISCV_JALR, false);
-    ret_instr->setImm(0);
-    ret_instr->setRd(Register(false, RISCV_x0, getRVRegType(RISCV_x0)));
-    ret_instr->setRs1(Register(false, RISCV_x1, getRVRegType(RISCV_x1)));
+    auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_x1),0);
+
     cur_block->push_back(ret_instr);
 }
 
@@ -169,13 +196,18 @@ template <> void RiscV64Selector::ConvertAndAppend<SitofpInstruction *>(SitofpIn
 template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstruction *ins) { TODO("RV InstSelect"); }
 
 template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(GetElementptrInstruction *ins) {
-    TODO("RV InstSelect");
+    // TODO("RV InstSelect");
+    Assert(ins->GetType() == I32);
+    auto global_op = (GlobalOperand*)ins->GetPtrVal();
+    auto result_op = (RegOperand*)ins->GetResult();
+
     int product = 1;
     for(auto size : ins->GetDims()){
         product *= size;
     }
     int const_offset = 0;
     auto offset_reg = GetNewReg(INT32);
+    auto result_reg = GetllvmReg(result_op->GetRegNo(),INT32);
     
     int offset_reg_assigned = 0;
     for(int i=0;i<ins->GetIndexes().size();i++){
@@ -196,6 +228,7 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
                 if(offset_reg_assigned == 0){
                     offset_reg_assigned = 1;
                     TODO("Add Instruction");
+                    // mov offset_reg,indexes[i]
                     // cur_block->push_back();
                 }else{
                     TODO("Add Instruction");
@@ -207,11 +240,17 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
             product /= ins->GetDims()[i];
         }
     }
+    ins->PrintIR(std::cerr);
+    Log("const_offset = %d",const_offset);
+    bool all_imm = false;
     if(const_offset != 0){
         if(offset_reg_assigned == 0){
             offset_reg_assigned = 1;
-            TODO("Add Instruction");
-            // cur_block->push_back();
+            all_imm = true;
+
+            auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,offset_reg,const_offset * 4);
+
+            cur_block->push_back(li_instr);
         }else{
             TODO("Add Instruction");
             // cur_block->push_back();
@@ -220,14 +259,33 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
     if(ins->GetPtrVal()->GetOperandType() == BasicOperand::REG){
         TODO("RV InstSelect");
     }else if(ins->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL){
-        auto base_reg = GetNewReg(INT64);
         if(offset_reg_assigned){
-            TODO("RV InstSelect");
-            // cur_block->push_back();
+            auto basehi_reg = GetNewReg(INT32);
+            auto basefull_reg = GetNewReg(INT32);
+            auto offsetfull_reg = GetNewReg(INT32);
+
+            auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI,basehi_reg,RiscVLabel(global_op->GetName(),true));
+            auto addi_instr = rvconstructor->ConstructILabel(RISCV_ADDI,basefull_reg,basehi_reg,RiscVLabel(global_op->GetName(),false));
+            auto sll_instr = rvconstructor->ConstructIImm(RISCV_SLLI,offsetfull_reg,offset_reg,2);
+            if(all_imm){
+                offsetfull_reg = offset_reg;
+            }
+            auto addoffset_instr = rvconstructor->ConstructR(RISCV_ADD,result_reg,basefull_reg,offsetfull_reg);
+
+            cur_block->push_back(lui_instr);
+            cur_block->push_back(addi_instr);
+            if(!all_imm){
+                cur_block->push_back(sll_instr);
+            }
+            cur_block->push_back(addoffset_instr);
         }else{
-            // Load Address of Global
-            TODO("Add Instruction");
-            // cur_block->push_back();
+            auto result_hi_reg = GetNewReg(INT32);
+
+            auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI,result_hi_reg,RiscVLabel(global_op->GetName(),true));
+            auto addi_instr = rvconstructor->ConstructILabel(RISCV_ADDI,result_reg,result_hi_reg,RiscVLabel(global_op->GetName(),false));
+
+            cur_block->push_back(lui_instr);
+            cur_block->push_back(addi_instr);
         }
     }else{
         ERROR("Unexpected OperandType");
@@ -316,7 +374,7 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
             cur_func->blocks.push_back(cur_block);
 
             for (auto instruction : block->Instruction_list) {
-                Log("Selecting Instruction");
+                // Log("Selecting Instruction");
                 ConvertAndAppend<Instruction>(instruction);
             }
         }

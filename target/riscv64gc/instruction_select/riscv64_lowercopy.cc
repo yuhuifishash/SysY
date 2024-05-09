@@ -28,11 +28,13 @@ void RiscV64LowerCopy::Execute() {
                     } else if (m_copy->src->op_type == MachineBaseOperand::REG) {
                         auto Reg = ((MachineRegister *)(m_copy->src))->reg;
                         if (Reg.type.data_type == MachineDataType::INT) {
-                            auto RV_copy = new RiscV64Instruction();
-                            RV_copy->setOpcode(RISCV_ADDI, false);
-                            RV_copy->setRd(((MachineRegister *)(m_copy->dst))->reg);
-                            RV_copy->setRs1(((MachineRegister *)(m_copy->src))->reg);
-                            RV_copy->setImm(0);
+                            auto src_reg = ((MachineRegister*)(m_copy)->dst)->reg;
+                            auto dst_reg = ((MachineRegister*)(m_copy)->src)->reg;
+
+                            auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI,src_reg,dst_reg,0);
+                            Lazy("Implement RiscV Int Reg Copy: How to replace instr");
+                            ins = copy_addi_ins;
+
                         } else if (Reg.type.data_type == MachineDataType::FLOAT) {
                             TODO("Implement RiscV Float Reg Copy");
                         } else {

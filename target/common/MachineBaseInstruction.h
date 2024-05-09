@@ -58,6 +58,13 @@
 #endif
 #endif
 
+#ifndef Lazy
+#define Lazy(str)\
+do{\
+    Log("\033[;31;1m%s\033[0m", str);\
+}while(0)
+#endif
+
 #ifndef Assert
 #define Assert(EXP)                                                                                                    \
     do {                                                                                                               \
