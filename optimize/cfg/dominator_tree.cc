@@ -155,6 +155,10 @@ void DominatorTree::BuildDominatorTree() {
     }
 }
 
+void DominatorTree::BuildPostDominatorTree() {
+    std::cerr<<"Build Post-Dominator Tree is not implemented now\n";
+}
+
 std::set<int> DominatorTree::GetDF(std::set<int> S) {
     DynamicBitset result(C->max_label + 1);
     for (auto node : S) {

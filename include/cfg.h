@@ -27,6 +27,7 @@ public:
     std::vector<std::vector<LLVMBlock>> G{};       // control flow graph
     std::vector<std::vector<LLVMBlock>> invG{};    // inverse control flow graph
     DominatorTree DomTree;
+    DominatorTree PostDomTree;
     FunctionBasicInfo FunctionInfo;
     NaturalLoopForest LoopForest;
 
@@ -34,6 +35,9 @@ public:
     void BuildDominatorTree() {
         DomTree.C = this;
         DomTree.BuildDominatorTree();
+
+        PostDomTree.C = this;
+        PostDomTree.BuildPostDominatorTree();
     }
     void BuildFunctionInfo();
     void BuildLoopInfo();
