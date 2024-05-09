@@ -22,7 +22,7 @@ public:
     std::vector<DynamicBitset> df;
     std::vector<DynamicBitset> atdom;
 
-    void BuildDominatorTree();               // build the dominator tree of CFG* C
+    void BuildDominatorTree(bool reverse = false);               // build the dominator tree of CFG* C
     void BuildPostDominatorTree();           // build the post-dominator tree of CFG* C
     std::set<int> GetDF(std::set<int> S);    // return DF(S)  S = {id1,id2,id3,...}
     std::set<int> GetDF(int id);             // return DF(id)

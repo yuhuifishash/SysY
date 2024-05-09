@@ -57,6 +57,16 @@
 #define Log(...)
 #endif
 #endif
+
+#ifndef Assert
+#define Assert(EXP)                                                                                                    \
+    do {                                                                                                               \
+        if (!(EXP)) {                                                                                                  \
+            ERROR("Assertion failed: %s", #EXP);                                                                       \
+        }                                                                                                              \
+    } while (0)
+#endif
+
 // @Instriction types
 enum LLVMIROpcode {
     OTHER = 0,

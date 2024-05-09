@@ -156,6 +156,7 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
     // Parameters
     for(auto arg : ins->GetParameterList()){
         TODO("Parameters");
+        Lazy("Not tested");
     }
 
     // Call Label
@@ -166,11 +167,14 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
     auto result_op = (RegOperand*)ins->GetResult();
     if(return_type == I32){
         TODO("Insert Copy");
+        Lazy("Not tested");
         // auto copy_ret_ins = ;
     }else if(return_type == FLOAT32){
         TODO("Insert float mov");
+        Lazy("Not tested");
     }else if(return_type == VOID){
         // Do nothing
+        Lazy("Not tested");
     }else{
         ERROR("Unexpected return type %d",return_type);
     }
