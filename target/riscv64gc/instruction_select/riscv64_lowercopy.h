@@ -4,6 +4,7 @@
 class RiscV64LowerCopy : public MachinePass {
 protected:
 public:
+    RiscV64LowerCopy(MachineUnit* m_unit):MachinePass(m_unit){}
     void Execute();
 };
 #endif

@@ -99,9 +99,13 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 auto rs = GetllvmReg(rs_op->GetRegNo(), INT32);
                 auto imm = i_op->GetIntImmVal();
 
-                auto addiw_instr = rvconstructor->ConstructIImm(RISCV_ADDIW,rd,rs,imm);
-
-                cur_block->push_back(addiw_instr);
+                if(imm != 0){
+                    auto addiw_instr = rvconstructor->ConstructIImm(RISCV_ADDIW,rd,rs,imm);
+                    cur_block->push_back(addiw_instr);
+                }else{
+                    auto copy_instr = rvconstructor->ConstructCopyReg(rd,rs,INT32);
+                    cur_block->push_back(copy_instr);
+                }
             }
             // Reg + Reg
             if (ins->GetOperand1()->GetOperandType() == BasicOperand::REG &&
@@ -148,39 +152,72 @@ template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUnco
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) { 
-    Lazy("Implement me later");
-    // TODO("RV InsSelect"); 
+    Assert(ins->GetRetType() == VOID || ins->GetResult()->GetOperandType() == BasicOperand::REG);
+    // Parameters
+    for(auto arg : ins->GetParameterList()){
+        TODO("Parameters");
+    }
+
+    // Call Label
+    auto call_funcname = ins->GetFunctionName();
+
+    // Return Value
+    auto return_type = ins->GetRetType();
+    auto result_op = (RegOperand*)ins->GetResult();
+    if(return_type == I32){
+        TODO("Insert Copy");
+        // auto copy_ret_ins = ;
+    }else if(return_type == FLOAT32){
+        TODO("Insert float mov");
+    }else if(return_type == VOID){
+        // Do nothing
+    }else{
+        ERROR("Unexpected return type %d",return_type);
+    }
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruction *ins) {
     if (ins->GetRetVal() != NULL) {
         if (ins->GetRetVal()->GetOperandType() == BasicOperand::REG) {
             if (ins->GetType() == FLOAT32) {
-                TODO("InsSelect: RV ret FloatReg");
+                Lazy("Not tested");
+                auto retreg_val = (RegOperand *)ins->GetRetVal();
+
+                auto reg = GetllvmReg(retreg_val->GetRegNo(), FLOAT_32);
+
+                auto retcopy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_fa0),reg,FLOAT_32);
+
+                cur_block->push_back(retcopy_instr);
             } else if (ins->GetType() == I32) {
                 auto retreg_val = (RegOperand *)ins->GetRetVal();
 
                 auto reg = GetllvmReg(retreg_val->GetRegNo(), INT32);
 
-                auto mv_instr = new MachineCopyInstruction(new MachineRegister(reg),
-                                                           new MachineRegister(GetPhysicalReg(RISCV_x10)), INT32);
+                auto retcopy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0),reg,INT32);
 
-                cur_block->push_back(mv_instr);
+                cur_block->push_back(retcopy_instr);
             }
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMI32) {
             auto retimm_op = (ImmI32Operand *)ins->GetRetVal();
             
             auto imm = retimm_op->GetIntImmVal();
 
-            auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,GetPhysicalReg(RISCV_x10),imm);
+            auto retcopy_instr = rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a0),imm,INT32);
 
-            cur_block->push_back(li_instr);
+            cur_block->push_back(retcopy_instr);
 
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMF32) {
-            TODO("InsSelect: RV ret FloatImm");
+            Lazy("Not tested");
+            auto retimm_op = (ImmF32Operand *)ins->GetRetVal();
+ 
+            auto imm = retimm_op->GetFloatVal();
+
+            auto retcopy_instr = rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0),imm,FLOAT_32);
+
+            cur_block->push_back(retcopy_instr);
         }
     }
-    auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_x1),0);
+    auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_ra),0);
 
     cur_block->push_back(ret_instr);
 }
@@ -240,15 +277,16 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
             product /= ins->GetDims()[i];
         }
     }
-    ins->PrintIR(std::cerr);
-    Log("const_offset = %d",const_offset);
+    // ins->PrintIR(std::cerr);
+    // Log("const_offset = %d",const_offset);
     bool all_imm = false;
     if (const_offset != 0) {
         if (offset_reg_assigned == 0) {
             offset_reg_assigned = 1;
             all_imm = true;
 
-            auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,offset_reg,const_offset * 4);
+            // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,offset_reg,const_offset * 4);
+            auto li_instr = rvconstructor->ConstructCopyRegImmI(offset_reg,const_offset * 4,INT32);
 
             cur_block->push_back(li_instr);
         } else {
@@ -378,11 +416,9 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 ConvertAndAppend<Instruction>(instruction);
             }
         }
-        Log("After Convert, Building CFG");
         for (int i = 0; i < cfg->G.size(); i++) {
             const auto &arcs = cfg->G[i];
             for (auto arc : arcs) {
-                Log("Making Edge Between %d,%d", i, arc->block_id);
                 cur_mcfg->MakeEdge(i, arc->block_id);
             }
         }

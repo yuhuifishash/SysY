@@ -38,7 +38,7 @@ BINARY ?= $(BIN_DIR)/$(NAME)
 CC = clang++
 LD = clang++
 INCLUDES = $(addprefix -I, $(SRCDIR))
-CFLAGS += -O2 -MMD -std=c++17 $(INCLUDES)
+CFLAGS += -O2 -g -MMD -std=c++17 $(INCLUDES)
 
 # SRCS = $(shell find . -name "*.cc")
 # OBJS = $(SRCS:%.cc=$(OBJDIR)/%.o)
@@ -52,7 +52,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,test,run,perf
+.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,test,run,perf,gdb
 
 SysYc : $(BINARY)
 
@@ -73,6 +73,9 @@ run : $(BINARY)
 
 perf : $(BINARY)
 	./SysY_performance.sh $(STAGE) $(ARCH)
+
+gdb : $(BINARY)
+	./SysY_gdb_single.sh $(CASE).sy $(STAGE) $(OFLAG)
 
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l

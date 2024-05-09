@@ -3,36 +3,29 @@
 void RiscV64LowerCopy::Execute() {
     for (auto function : unit->functions) {
         auto block_it = function->getMachineCFG()->getSeqScanIterator();
+        block_it->open();
         while (block_it->hasNext()) {
             auto block = block_it->next()->Mblock;
             for (auto &ins : *block) {
                 if (ins->arch == MachineBaseInstruction::COPY) {
                     auto m_copy = (MachineCopyInstruction *)ins;
-                    assert(m_copy->dst->op_type == MachineBaseOperand::REG);
-                    if (m_copy->src->op_type == MachineBaseOperand::IMMI) {
-                        int i32_imm = ((MachineImmediateInt *)(m_copy->src))->imm32;
+                    Assert(m_copy->GetDst()->op_type == MachineBaseOperand::REG);
+                    if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMI) {
+                        // If here should use lui&addi,see: https://zhuanlan.zhihu.com/p/374235855
+                        auto src_immi = (MachineImmediateInt *)m_copy->GetSrc();
+                        auto dst_reg = (MachineRegister*)m_copy->GetDst();
 
-                        auto RV_lui = new RiscV64Instruction();
-                        auto RV_addi = new RiscV64Instruction();
-
-                        RV_lui->setOpcode(RISCV_LUI, false);
-                        RV_lui->setRd(((MachineRegister *)(m_copy->dst))->reg);
-                        RV_lui->setImm((i32_imm + 0x800) &
-                                       0xFFFFF000);    // Reference: https://zhuanlan.zhihu.com/p/374235855
-
-                        RV_addi->setOpcode(RISCV_ADDI, false);
-                        RV_addi->setRd(((MachineRegister *)(m_copy->dst))->reg);
-                        RV_addi->setImm(i32_imm & 0xFFFFF000);
-                    } else if (m_copy->src->op_type == MachineBaseOperand::IMMF) {
+                        auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
+                        ins = li_instr;
+                    } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMF) {
                         TODO("Implement RiscV Float Imm Copy");
-                    } else if (m_copy->src->op_type == MachineBaseOperand::REG) {
-                        auto Reg = ((MachineRegister *)(m_copy->src))->reg;
+                    } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::REG) {
+                        auto Reg = ((MachineRegister *)(m_copy->GetSrc()))->reg;
                         if (Reg.type.data_type == MachineDataType::INT) {
-                            auto src_reg = ((MachineRegister*)(m_copy)->dst)->reg;
-                            auto dst_reg = ((MachineRegister*)(m_copy)->src)->reg;
+                            auto dst_reg = ((MachineRegister*)(m_copy)->GetDst())->reg;
+                            auto src_reg = ((MachineRegister*)(m_copy)->GetSrc())->reg;
 
-                            auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI,src_reg,dst_reg,0);
-                            Lazy("Implement RiscV Int Reg Copy: How to replace instr");
+                            auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI,dst_reg,src_reg,0);
                             ins = copy_addi_ins;
 
                         } else if (Reg.type.data_type == MachineDataType::FLOAT) {

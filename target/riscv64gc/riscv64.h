@@ -132,8 +132,7 @@ enum {
     RISCV_FCVT_LU_D,
 
     RISCV_LI,
-    // RISCV_GLOBAL_LOAD,
-    // RISCV_GLOBAL_STORE,
+    RISCV_CALL,
 };
 
 struct RvOpInfo {
@@ -146,8 +145,7 @@ struct RvOpInfo {
         J_type,
         R2_type,
         R4_type,
-        // GLOBAL_LOAD_type,
-        // GLOBAL_STORE_type,
+        CALL_type,
     };
     int ins_formattype;
     char *name;
@@ -221,16 +219,90 @@ enum {
     RISCV_INVALID,
     RISCV_spilled_in_memory,
 };
+enum{
+    RISCV_ra = RISCV_x1,
+    RISCV_sp = RISCV_x2,
+    RISCV_gp = RISCV_x3,
+    RISCV_tp = RISCV_x4,
+    RISCV_t0 = RISCV_x5,
+    RISCV_t1 = RISCV_x6,
+    RISCV_t2 = RISCV_x7,
+    RISCV_s0 = RISCV_x8,
+    RISCV_s1 = RISCV_x9,
+    RISCV_a0 = RISCV_x10,
+    RISCV_a1 = RISCV_x11,
+    RISCV_a2 = RISCV_x12,
+    RISCV_a3 = RISCV_x13,
+    RISCV_a4 = RISCV_x14,
+    RISCV_a5 = RISCV_x15,
+    RISCV_a6 = RISCV_x16,
+    RISCV_a7 = RISCV_x17,
+    RISCV_s2 = RISCV_x18,
+    RISCV_s3 = RISCV_x19,
+    RISCV_s4 = RISCV_x20,
+    RISCV_s5 = RISCV_x21,
+    RISCV_s6 = RISCV_x22,
+    RISCV_s7 = RISCV_x23,
+    RISCV_s8 = RISCV_x24,
+    RISCV_s9 = RISCV_x25,
+    RISCV_s10 = RISCV_x26,
+    RISCV_s11 = RISCV_x27,
+    RISCV_t3 = RISCV_x28,
+    RISCV_t4 = RISCV_x29,
+    RISCV_t5 = RISCV_x30,
+    RISCV_t6 = RISCV_x31,
+};
+
+enum {
+    RISCV_fp = RISCV_x8,
+};
+
+enum {
+    RISCV_ft0 = RISCV_f0,
+    RISCV_ft1 = RISCV_f1,
+    RISCV_ft2 = RISCV_f2,
+    RISCV_ft3 = RISCV_f3,
+    RISCV_ft4 = RISCV_f4,
+    RISCV_ft5 = RISCV_f5,
+    RISCV_ft6 = RISCV_f6,
+    RISCV_ft7 = RISCV_f7,
+    RISCV_fs0 = RISCV_f8,
+    RISCV_fs1 = RISCV_f9,
+    RISCV_fa0 = RISCV_f10,
+    RISCV_fa1 = RISCV_f11,
+    RISCV_fa2 = RISCV_f12,
+    RISCV_fa3 = RISCV_f13,
+    RISCV_fa4 = RISCV_f14,
+    RISCV_fa5 = RISCV_f15,
+    RISCV_fa6 = RISCV_f16,
+    RISCV_fa7 = RISCV_f17,
+    RISCV_fs2 = RISCV_f18,
+    RISCV_fs3 = RISCV_f19,
+    RISCV_fs4 = RISCV_f20,
+    RISCV_fs5 = RISCV_f21,
+    RISCV_fs6 = RISCV_f22,
+    RISCV_fs7 = RISCV_f23,
+    RISCV_fs8 = RISCV_f24,
+    RISCV_fs9 = RISCV_f25,
+    RISCV_fs10 = RISCV_f26,
+    RISCV_fs11 = RISCV_f27,
+    RISCV_ft8 = RISCV_f28,
+    RISCV_ft9 = RISCV_f29,
+    RISCV_ft10 = RISCV_f30,
+    RISCV_ft11 = RISCV_f31,
+};
 
 static inline MachineDataType getRVRegType(int reg_no) {
     if (reg_no >= RISCV_x0 && reg_no <= RISCV_x31) {
-        return MachineDataType(MachineDataType::INT, MachineDataType::B64);
+        return INT32;
     }
     if (reg_no >= RISCV_f0 && reg_no <= RISCV_f31) {
-        return MachineDataType(MachineDataType::FLOAT, MachineDataType::B64);
+        return FLOAT_32;
     }
     ERROR("Unknown reg_no %d", reg_no);
 }
+
+static inline Register GetPhysicalReg(int reg_no) { return Register(false, reg_no, getRVRegType(reg_no)); }
 
 struct RiscV64RegisterInfo {
     char *name;
@@ -240,6 +312,7 @@ extern RiscV64RegisterInfo RiscV64Registers[];
 struct RiscVLabel : public Label {
     std::string name;
     bool is_hi;
+    RiscVLabel() : Label(0,0),name(),is_hi(false){}
     RiscVLabel(int jmp, int seq) : Label(jmp, seq), name() {}
     RiscVLabel(int jmp) : Label(jmp, false), name() {}
     RiscVLabel(std::string name, bool is_hi) : Label(0, 0), name(name), is_hi(is_hi) { this->is_data_address = true; }
@@ -274,10 +347,8 @@ private:
     int op;
     Register rd, rs1, rs2, rs3;
     bool use_label;
-    union {
-        int imm;
-        RiscVLabel label;
-    };
+    int imm;
+    RiscVLabel label;
 
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
@@ -287,6 +358,7 @@ private:
     std::vector<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetU_typeReadreg() { return {}; }
     std::vector<Register *> GetJ_typeReadreg() { return {}; }
+    std::vector<Register *> GetCall_typeReadreg() { return {}; }
 
     std::vector<Register *> GetR_typeWritereg() { return {&rd}; }
     std::vector<Register *> GetR2_typeWritereg() { return {&rd}; }
@@ -296,6 +368,7 @@ private:
     std::vector<Register *> GetB_typeWritereg() { return {}; }
     std::vector<Register *> GetU_typeWritereg() { return {&rd}; }
     std::vector<Register *> GetJ_typeWritereg() { return {&rd}; }
+    std::vector<Register *> GetCall_typeWritereg() { return {}; }
 
 public:
     RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV) {}
@@ -414,6 +487,27 @@ public:
         Assert(OpTable[op].ins_formattype == RvOpInfo::J_type);
         ret->setRd(rd);
         ret->setLabel(label);
+        return ret;
+    }
+    MachineCopyInstruction* ConstructCopyReg(Register dst,Register src,MachineDataType type){
+        Assert(dst.type == src.type);
+        Assert(dst.type == type);
+        
+        MachineCopyInstruction* ret = new MachineCopyInstruction(new MachineRegister(src),new MachineRegister(dst),type);
+        return ret;
+    }
+    MachineCopyInstruction* ConstructCopyRegImmI(Register dst,int src,MachineDataType type){
+        Assert(dst.type == type);
+        Assert(type.data_type == MachineDataType::INT);
+
+        MachineCopyInstruction* ret = new MachineCopyInstruction(new MachineImmediateInt(src),new MachineRegister(dst),type);
+        return ret;
+    }
+    MachineCopyInstruction* ConstructCopyRegImmF(Register dst,float src,MachineDataType type){
+        Assert(dst.type == type);
+        Assert(type.data_type == MachineDataType::FLOAT);
+
+        MachineCopyInstruction* ret = new MachineCopyInstruction(new MachineImmediateFloat(src),new MachineRegister(dst),type);
         return ret;
     }
 };

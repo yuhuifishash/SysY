@@ -4,6 +4,7 @@
 
 #include "./riscv64gc/instruction_print/riscv64_printer.h"
 #include "./riscv64gc/instruction_select/riscv64_instSelect.h"
+#include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
@@ -181,13 +182,11 @@ int main(int argc, char **argv) {
         return 0;
     }
     if (strcmp(argv[step_tag], "-S") == 0) {
-        // std::cerr << "-S is not implemented now\n";
-        // assert(false);
         MachineUnit *m_unit = new RiscV64Unit();
-        MachineSelector *selector = new RiscV64Selector(m_unit, &llvmIR);
-        // Log("Begin InstSelect");
-        selector->SelectInstructionAndBuildCFG();
-        // Log("InstSelect Complete");
+
+        RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        RiscV64LowerCopy(m_unit).Execute();
+
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
     }

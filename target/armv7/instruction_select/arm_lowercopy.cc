@@ -8,6 +8,7 @@ void ArmLowerCopy::Execute() {
             for (auto &ins : *block) {
                 if (ins->arch == MachineBaseInstruction::COPY) {
                     auto m_copy = (MachineCopyInstruction *)ins;
+                    /*
                     assert(m_copy->dst->op_type == MachineBaseOperand::REG);
                     if (m_copy->src->op_type == MachineBaseOperand::IMMI) {
                         // ins = new
@@ -21,6 +22,7 @@ void ArmLowerCopy::Execute() {
                     } else {
                         TODO("Unexpected MachineBaseOperand");
                     }
+                    */
                 }
             }
         }

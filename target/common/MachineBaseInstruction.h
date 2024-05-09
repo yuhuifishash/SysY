@@ -240,10 +240,11 @@ public:
 };
 // %x: type = COPY type %y: type
 class MachineCopyInstruction : public MachineBaseInstruction {
-public:
+private:
     MachineDataType copy_type;
     MachineBaseOperand *src;
     MachineBaseOperand *dst;
+public:
     std::vector<Register *> GetReadReg() {
         if (src->op_type == MachineBaseOperand::REG)
             return std::vector<Register *>({&(((MachineRegister *)src)->reg)});
@@ -254,11 +255,13 @@ public:
         return std::vector<Register *>({&(((MachineRegister *)src)->reg)});
     }
 
-public:
     MachineCopyInstruction(MachineBaseOperand *src, MachineBaseOperand *dst, MachineDataType copy_type)
         : copy_type(copy_type), src(src), dst(dst), MachineBaseInstruction(MachineBaseInstruction::COPY) {}
     void output(std::ostream &s) {
         s << dst->toString() << " = " << copy_type.toString() << " COPY " << src->toString() << "\n";
     }
+    MachineBaseOperand* GetSrc(){return src;}
+    MachineBaseOperand* GetDst(){return dst;}
+    MachineDataType GetCopyType(){return copy_type;}
 };
 #endif
