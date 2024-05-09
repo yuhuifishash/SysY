@@ -67,7 +67,7 @@ void ConstantLoopFullyUnroll(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
-void SimpleMemoryDependenceAnalysis(LLVMIR* IR);
+void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 

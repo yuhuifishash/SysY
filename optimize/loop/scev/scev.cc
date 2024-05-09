@@ -182,7 +182,7 @@ void SCEV::FindBasicIndVar() {
     }
     // create loop invariant
     for (auto r : InvariantSet) {
-        SCEVMap[r] = new AddSCEVExpr(new RegOperand(r));
+        SCEVMap[r] = new AddSCEVExpr(GetNewRegOperand(r));
     }
 }
 

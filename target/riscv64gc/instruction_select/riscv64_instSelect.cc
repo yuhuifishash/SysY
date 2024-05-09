@@ -202,64 +202,64 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
     auto result_op = (RegOperand*)ins->GetResult();
 
     int product = 1;
-    for(auto size : ins->GetDims()){
+    for (auto size : ins->GetDims()) {
         product *= size;
     }
     int const_offset = 0;
     auto offset_reg = GetNewReg(INT32);
     auto result_reg = GetllvmReg(result_op->GetRegNo(),INT32);
-    
+
     int offset_reg_assigned = 0;
-    for(int i=0;i<ins->GetIndexes().size();i++){
-        if(ins->GetIndexes()[i]->GetOperandType() == BasicOperand::IMMI32){
-            const_offset += (((ImmI32Operand*)ins->GetIndexes()[i])->GetIntImmVal()) * product;
-        }else{
-            if(product != 1){
+    for (int i = 0; i < ins->GetIndexes().size(); i++) {
+        if (ins->GetIndexes()[i]->GetOperandType() == BasicOperand::IMMI32) {
+            const_offset += (((ImmI32Operand *)ins->GetIndexes()[i])->GetIntImmVal()) * product;
+        } else {
+            if (product != 1) {
                 TODO("mul_str_redu");
-                if(offset_reg_assigned == 0){
+                if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
                     TODO("Add Instruction");
                     // cur_block->push_back();
-                }else{
+                } else {
                     TODO("Add Instruction");
                     // cur_block->push_back();
                 }
-            }else{
-                if(offset_reg_assigned == 0){
+            } else {
+                if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
                     TODO("Add Instruction");
                     // mov offset_reg,indexes[i]
                     // cur_block->push_back();
-                }else{
+                } else {
                     TODO("Add Instruction");
                     // cur_block->push_back();
                 }
             }
         }
-        if(i < ins->GetDims().size()){
+        if (i < ins->GetDims().size()) {
             product /= ins->GetDims()[i];
         }
     }
     ins->PrintIR(std::cerr);
     Log("const_offset = %d",const_offset);
     bool all_imm = false;
-    if(const_offset != 0){
-        if(offset_reg_assigned == 0){
+    if (const_offset != 0) {
+        if (offset_reg_assigned == 0) {
             offset_reg_assigned = 1;
             all_imm = true;
 
             auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,offset_reg,const_offset * 4);
 
             cur_block->push_back(li_instr);
-        }else{
+        } else {
             TODO("Add Instruction");
             // cur_block->push_back();
         }
     }
-    if(ins->GetPtrVal()->GetOperandType() == BasicOperand::REG){
+    if (ins->GetPtrVal()->GetOperandType() == BasicOperand::REG) {
         TODO("RV InstSelect");
-    }else if(ins->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL){
-        if(offset_reg_assigned){
+    } else if (ins->GetPtrVal()->GetOperandType() == BasicOperand::GLOBAL) {
+        if (offset_reg_assigned) {
             auto basehi_reg = GetNewReg(INT32);
             auto basefull_reg = GetNewReg(INT32);
             auto offsetfull_reg = GetNewReg(INT32);
@@ -278,7 +278,7 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
                 cur_block->push_back(sll_instr);
             }
             cur_block->push_back(addoffset_instr);
-        }else{
+        } else {
             auto result_hi_reg = GetNewReg(INT32);
 
             auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI,result_hi_reg,RiscVLabel(global_op->GetName(),true));
@@ -287,7 +287,7 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
             cur_block->push_back(lui_instr);
             cur_block->push_back(addi_instr);
         }
-    }else{
+    } else {
         ERROR("Unexpected OperandType");
     }
 }

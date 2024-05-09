@@ -67,6 +67,7 @@ void IRgenAlloca(LLVMBlock B, LLVMType type, int reg);
 void IRgenAllocaArray(LLVMBlock B, LLVMType type, int reg, std::vector<int> dims);
 
 void IRgenTypeConverse(LLVMBlock B, Type::ty type_src, Type::ty type_dst, int src);
+RegOperand* GetNewRegOperand(int RegNo);
 
 void BasicBlock::InsertInstruction(int pos, Instruction Ins) {
     assert(pos == 0 || pos == 1);
@@ -222,7 +223,7 @@ void Lval::codeIR() {
     if (dims != nullptr) {
         for (auto d : *dims) {
             d->codeIR();
-            arrayindexs.push_back(new RegOperand(max_reg));
+            arrayindexs.push_back(GetNewRegOperand(max_reg));
         }
     }
     Operand ptr_operand;
@@ -230,11 +231,11 @@ void Lval::codeIR() {
     bool formal_array_tag = false;
     int alloca_reg = irgen_table.symbol_table.lookup(name);
     if (alloca_reg != -1) {    // local, use var's alloca_reg
-        ptr_operand = new RegOperand(alloca_reg);
+        ptr_operand = GetNewRegOperand(alloca_reg);
         lval_attribute = irgen_table.RegTable[alloca_reg];
         formal_array_tag = irgen_table.FormalArrayTable[alloca_reg];
     } else {    // global, use var's name
-        ptr_operand = new GlobalOperand(name->get_string());
+        ptr_operand = GetNewGlobalOperand(name->get_string());
         lval_attribute = semant_table.GlobalTable[name];
     }
 
@@ -247,7 +248,7 @@ void Lval::codeIR() {
             arrayindexs.insert(arrayindexs.begin(), new ImmI32Operand(0));
             IRgenGetElementptr(B, lltype, ++max_reg, ptr_operand, lval_attribute.dims, arrayindexs);
         }
-        ptr_operand = new RegOperand(max_reg);    // final address of ptr
+        ptr_operand = GetNewRegOperand(max_reg);    // final address of ptr
     }
 
     // store the ptr_operand in ptr, if this lval is left value, we can use this to get the address
@@ -277,7 +278,7 @@ void Func_call::codeIR() {
             auto fparam = (*fparams)[i];
             param->codeIR();
             IRgenTypeConverse(B, param->attribute.T.type, fparam->attribute.T.type, max_reg);
-            args.push_back({Type2LLvm[fparam->attribute.T.type], new RegOperand(max_reg)});
+            args.push_back({Type2LLvm[fparam->attribute.T.type], GetNewRegOperand(max_reg)});
         }
         if (return_type == Type::VOID) {
             IRgenCallVoid(B, ret_type, args, name->get_string());
@@ -329,7 +330,7 @@ void assign_stmt::codeIR() {
     lval->codeIR();
     exp->codeIR();
     IRgenTypeConverse(B, exp->attribute.T.type, lval->attribute.T.type, max_reg);
-    IRgenStore(B, Type2LLvm[lval->attribute.T.type], new RegOperand(max_reg), ((Lval *)lval)->ptr);
+    IRgenStore(B, Type2LLvm[lval->attribute.T.type], GetNewRegOperand(max_reg), ((Lval *)lval)->ptr);
 }
 
 void expr_stmt::codeIR() { exp->codeIR(); }
@@ -496,8 +497,8 @@ void RecursiveArrayInitIR(LLVMBlock block, const std::vector<int> dims, int arra
             init_val_reg = max_reg;
 
             int addr_reg = ++max_reg;
-            auto gep = new GetElementptrInstruction(Type2LLvm[ArrayType], new RegOperand(addr_reg),
-                                                    new RegOperand(arrayaddr_reg_no), dims);
+            auto gep = new GetElementptrInstruction(Type2LLvm[ArrayType], GetNewRegOperand(addr_reg),
+                                                    GetNewRegOperand(arrayaddr_reg_no), dims);
             // pos, dims -> [][][]...
             // gep->pushidx()
             gep->push_idx_imm32(0);
@@ -508,7 +509,7 @@ void RecursiveArrayInitIR(LLVMBlock block, const std::vector<int> dims, int arra
             // %addr_reg = getelementptr i32, ptr %arrayaddr_reg_no, i32 0, i32 ...
             block->InsertInstruction(1, gep);
             // store i32 %init_val_reg,ptr %addr_reg
-            IRgenStore(block, Type2LLvm[ArrayType], new RegOperand(init_val_reg), new RegOperand(addr_reg));
+            IRgenStore(block, Type2LLvm[ArrayType], GetNewRegOperand(init_val_reg), GetNewRegOperand(addr_reg));
             pos++;
         } else {
             int max_subBlock_sz = 0;
@@ -546,7 +547,7 @@ void VarDecl::codeIR() {
                 }
 
                 CallInstruction *memsetCall = new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
-                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
+                memsetCall->push_back_Parameter(PTR, GetNewRegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));
                 memsetCall->push_back_Parameter(I1, new ImmI32Operand(0));
@@ -565,18 +566,18 @@ void VarDecl::codeIR() {
                 Expression initExp = init->GetExp();
                 initExp->codeIR();
                 IRgenTypeConverse(InitB, initExp->attribute.T.type, type_decl, max_reg);
-                val_operand = new RegOperand(max_reg);
+                val_operand = GetNewRegOperand(max_reg);
             } else {    // we consume that no init will be 0 by default
                 if (type_decl == Type::INT) {
                     IRgenArithmeticI32ImmAll(InitB, LLVMIROpcode::ADD, 0, 0, ++max_reg);
-                    val_operand = new RegOperand(max_reg);
+                    val_operand = GetNewRegOperand(max_reg);
                 } else if (type_decl == Type::FLOAT) {
                     IRgenArithmeticF32ImmAll(InitB, LLVMIROpcode::FADD, 0, 0, ++max_reg);
-                    val_operand = new RegOperand(max_reg);
+                    val_operand = GetNewRegOperand(max_reg);
                 }
             }
             // store the value
-            IRgenStore(InitB, Type2LLvm[type_decl], val_operand, new RegOperand(alloca_reg));
+            IRgenStore(InitB, Type2LLvm[type_decl], val_operand, GetNewRegOperand(alloca_reg));
         }
     }
 }
@@ -608,7 +609,7 @@ void ConstDecl::codeIR() {
                 }
 
                 CallInstruction *memsetCall = new CallInstruction(VOID, nullptr, std::string("llvm.memset.p0.i32"));
-                memsetCall->push_back_Parameter(PTR, new RegOperand(alloca_reg));    // array address
+                memsetCall->push_back_Parameter(PTR, GetNewRegOperand(alloca_reg));    // array address
                 memsetCall->push_back_Parameter(I8, new ImmI32Operand(0));
                 memsetCall->push_back_Parameter(I32, new ImmI32Operand(array_sz * sizeof(int)));
                 memsetCall->push_back_Parameter(I1, new ImmI32Operand(0));
@@ -626,9 +627,9 @@ void ConstDecl::codeIR() {
             Expression initExp = init->GetExp();
             initExp->codeIR();
             IRgenTypeConverse(InitB, initExp->attribute.T.type, type_decl, max_reg);
-            val_operand = new RegOperand(max_reg);
+            val_operand = GetNewRegOperand(max_reg);
 
-            IRgenStore(InitB, Type2LLvm[type_decl], val_operand, new RegOperand(alloca_reg));
+            IRgenStore(InitB, Type2LLvm[type_decl], val_operand, GetNewRegOperand(alloca_reg));
         }
     }
 }
@@ -691,7 +692,7 @@ void __FuncDef::codeIR() {
         } else {    // formal is not array
             FuncDefIns->InsertFormal(lltype);
             IRgenAlloca(B, lltype, ++max_reg);
-            IRgenStore(B, lltype, new RegOperand(i), new RegOperand(max_reg));
+            IRgenStore(B, lltype, GetNewRegOperand(i), GetNewRegOperand(max_reg));
             irgen_table.symbol_table.add_Symbol(formal->name, max_reg);
             irgen_table.RegTable[max_reg] = val;
         }

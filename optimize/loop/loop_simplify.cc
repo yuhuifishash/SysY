@@ -1,5 +1,6 @@
 #include "../../include/cfg.h"
 #include <assert.h>
+#include <functional>
 
 void EliminateUselessPhi(CFG *C);
 void LoopSimplify(CFG *C) {
@@ -7,32 +8,39 @@ void LoopSimplify(CFG *C) {
         bb->comment = "";
     }
 
-    for (auto loop : C->LoopForest.loop_set) {
-        loop->LoopSimplify(C);
-        // loop->PrintLoopDebugInfo();
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+                                                                             NaturalLoop *L) {
+        L->LoopSimplify(C);
+        for (auto lv : loop_forest.loopG[L->loop_id]) {
+            dfs(C, loop_forest, lv);
+        }
+    };
+
+    for (auto l : C->LoopForest.loop_set) {
+        if (l->fa_loop == nullptr) {
+            dfs(C, C->LoopForest, l);
+        }
     }
+
     EliminateUselessPhi(C);
     C->BuildDominatorTree();
+
     // for(auto loop:C->LoopForest.loop_set){
     //     loop->LoopSimplifyCheck(C);
     // }
 }
 
 void NaturalLoop::LoopSimplify(CFG *C) {
-    SingleLatchInsert(C);
     AddPreheader(C);
     ExitInsert(C);
+    SingleLatchInsert(C);
 }
 
 void NaturalLoop::SingleLatchInsert(CFG *C) {
     assert(latches.size() >= 1);
-    if (latches.size() == 1) {
-        (*latches.begin())->comment = (*latches.begin())->comment + "  latch" + std::to_string(loop_id);
-        return;
-    }
 
     auto new_latch = C->InsertTransferBlock(latches, header);
-    new_latch->comment = "latch" + std::to_string(loop_id);
+    // new_latch->comment = "latch" + std::to_string(loop_id);
     latches.clear();
     latches.insert(new_latch);
     loop_nodes.insert(new_latch);
@@ -47,14 +55,19 @@ void NaturalLoop::SingleLatchInsert(CFG *C) {
 }
 
 void NaturalLoop::ExitInsert(CFG *C) {
+    exit_nodes.clear();
+    exiting_nodes.clear();
+    FindExitNodes(C);
+
     std::set<LLVMBlock> inloop_preblocks;
     std::map<LLVMBlock, LLVMBlock> exit_map;
     for (auto exit : exit_nodes) {
+        inloop_preblocks.clear();
         bool is_dom_exit = true;
         for (auto preBB : C->GetPredecessor(exit)) {
             if (loop_nodes.find(preBB) != loop_nodes.end()) {
-                inloop_preblocks.insert(preBB);
-            } else {
+                inloop_preblocks.insert(preBB);    // in loop
+            } else {                               // out of loop
                 is_dom_exit = false;
             }
         }
@@ -63,16 +76,19 @@ void NaturalLoop::ExitInsert(CFG *C) {
             continue;
         }
         auto new_exit = C->InsertTransferBlock(inloop_preblocks, exit);
-        // update father loop's loop nodes
-        auto now = this;
 
+        auto now = this;
         while (now->fa_loop != nullptr) {
             now = now->fa_loop;
+
             if (now->loop_nodes.find(exit) != now->loop_nodes.end()) {
                 now->loop_nodes.insert(new_exit);
             }
-        }
 
+            now->exit_nodes.clear();
+            now->exiting_nodes.clear();
+            now->FindExitNodes(C);
+        }
         exit_map[exit] = new_exit;
     }
 
@@ -80,13 +96,9 @@ void NaturalLoop::ExitInsert(CFG *C) {
         exit_nodes.erase(pre);
         exit_nodes.insert(now);
     }
-    // if(!exit_map.empty()){
-    //     PrintLoopDebugInfo();
-    // }
 }
 
 void NaturalLoop::AddPreheader(CFG *C) {
-
     std::set<LLVMBlock> outloop_preblocks;
     for (auto preBB : C->GetPredecessor(header)) {
         if (loop_nodes.find(preBB) == loop_nodes.end()) {
@@ -94,7 +106,6 @@ void NaturalLoop::AddPreheader(CFG *C) {
         }
     }
     assert(outloop_preblocks.size() >= 1);
-
     if (outloop_preblocks.size() == 1) {
         auto preBB = *(outloop_preblocks.begin());
         // BB0 should not be preheader,
@@ -107,9 +118,7 @@ void NaturalLoop::AddPreheader(CFG *C) {
     }
 
     auto new_pre = C->InsertTransferBlock(outloop_preblocks, header);
-    // new_pre->comment = "preheader" + std::to_string(loop_id);
     preheader = new_pre;
-    // std::cerr<<"add preheader "<<preheader->block_id<<"\n";
 
     // update father loop's loop nodes
     auto now = this;

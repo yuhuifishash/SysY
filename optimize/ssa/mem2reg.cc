@@ -174,7 +174,7 @@ void InsertPhi(CFG *C) {
             for (auto BB_Y : C->DomTree.GetDF(BB_X)) {
                 // std::cout<<v<<" "<<BB_X<<" "<<BB_Y<<"\n";
                 if (F.find(BB_Y) == F.end()) {
-                    PhiInstruction *PhiI = new PhiInstruction(type, new RegOperand(++C->max_reg));
+                    PhiInstruction *PhiI = new PhiInstruction(type, GetNewRegOperand(++C->max_reg));
                     (*C->block_map)[BB_Y]->InsertInstruction(0, PhiI);
                     phi_map[PhiI] = v;
                     F.insert(BB_Y);
@@ -278,7 +278,7 @@ void VarRename(CFG *C) {
                         continue;
                     }
                     // 为 phi 添加前驱块到当前块的边
-                    PhiI->InsertPhi(new RegOperand(IncomingVals[v]), new LabelOperand(BB));
+                    PhiI->InsertPhi(GetNewRegOperand(IncomingVals[v]), GetNewLabelOperand(BB));
                 }
             }
         }
@@ -334,14 +334,14 @@ void Mem2RegInit(CFG *C) {
                 auto val = StoreI->GetValue();
                 if (val->GetOperandType() == BasicOperand::IMMI32) {
                     auto ArithI =
-                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), new RegOperand(++C->max_reg));
+                    new ArithmeticInstruction(ADD, I32, val, new ImmI32Operand(0), GetNewRegOperand(++C->max_reg));
                     bb->Instruction_list.push_back(ArithI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
+                    StoreI->SetValue(GetNewRegOperand(C->max_reg));
                 } else if (val->GetOperandType() == BasicOperand::IMMF32) {
                     auto ArithI =
-                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), new RegOperand(++C->max_reg));
+                    new ArithmeticInstruction(FADD, FLOAT32, val, new ImmF32Operand(0), GetNewRegOperand(++C->max_reg));
                     bb->Instruction_list.push_back(ArithI);
-                    StoreI->SetValue(new RegOperand(C->max_reg));
+                    StoreI->SetValue(GetNewRegOperand(C->max_reg));
                 }
             }
             bb->Instruction_list.push_back(I);

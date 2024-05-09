@@ -125,17 +125,6 @@ enum FcmpCond {
 
 // @float32 directly to Hex
 
-// @Counter: Count for Instruction,Reg,Labels
-// Can be reseted, public member of relevant class
-class AutoCounter {
-    int curCount;
-
-public:
-    AutoCounter() : curCount(0) {}
-    int GetCount() { return curCount; }
-    void ResetCount(int val = 0) { curCount = val; }
-    void Inc() { curCount++; }
-};
 class BasicOperand;
 typedef BasicOperand *Operand;
 // @operands in instruction
@@ -156,29 +145,18 @@ public:
 // @register operand;%r+register No
 class RegOperand : public BasicOperand {
     int reg_no;
-
-public:
-    int GetRegNo() { return reg_no; }
-    void ChangeRegNo() {
-        if (reg_no >= 0) {
-            reg_no = -reg_no - 1;
-        }
-    }
-    // void SetRegNo(int new_no) { reg_no = new_no; }
-
-    static AutoCounter curRegNo;
-    RegOperand() {
-        this->operandType = REG;
-        this->reg_no = curRegNo.GetCount();
-        curRegNo.Inc();
-    }
     RegOperand(int RegNo) {
         this->operandType = REG;
         this->reg_no = RegNo;
     }
+public:
+    int GetRegNo() { return reg_no; }
+    
+    friend RegOperand* GetNewRegOperand(int RegNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+RegOperand* GetNewRegOperand(int RegNo);
 
 // @integer32 immediate
 class ImmI32Operand : public BasicOperand {
@@ -215,39 +193,37 @@ public:
 // @label %L+label No
 class LabelOperand : public BasicOperand {
     int label_no;
-
-public:
-    int GetLabelNo() { return label_no; }
-    void SetLabelNo(int label) { label_no = label; }
-
-    static AutoCounter curLabelNo;
-    LabelOperand() {
-        this->operandType = LABEL;
-        this->label_no = curLabelNo.GetCount();
-        curLabelNo.Inc();
-    }
     LabelOperand(int LabelNo) {
         this->operandType = LABEL;
         this->label_no = LabelNo;
     }
+
+public:
+    int GetLabelNo() { return label_no; }
+
+    friend LabelOperand* GetNewLabelOperand(int LabelNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+
+LabelOperand* GetNewLabelOperand(int RegNo);
 
 // @global identifier @+name
 class GlobalOperand : public BasicOperand {
     std::string name;
-
-public:
-    std::string GetName() { return name; }
-
     GlobalOperand(std::string gloName) {
         this->operandType = GLOBAL;
         this->name = gloName;
     }
+public:
+    std::string GetName() { return name; }
+
+    friend GlobalOperand* GetNewGlobalOperand(std::string name);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
+
+GlobalOperand* GetNewGlobalOperand(std::string name);
 
 class BasicInstruction;
 typedef BasicInstruction *Instruction;
@@ -263,13 +239,7 @@ protected:
 public:
     int GetBlockID() { return BlockID; }
     void SetBlockID(int blockno) { BlockID = blockno; }
-    BasicInstruction() {
-        opcode = OTHER;
-        insNo = insNoCounter.GetCount();
-        insNoCounter.Inc();
-    }
     void SetInstructionNo(int new_no) { insNo = new_no; }
-    static AutoCounter insNoCounter;      // instruction No counter
     int GetOpcode() { return opcode; }    // one solution: convert to pointer of subclasses
 
     virtual LLVMType GetResultType() { return VOID; }
@@ -472,7 +442,7 @@ public:
     Operand GetResultOp() { return result; }
     decltype(phi_list) &GetPhiList() { return phi_list; }
     Operand GetResultReg() { return result; }
-    void SetResultReg(int reg) { result = new RegOperand(reg); }
+    void SetResultReg(int reg) { result = GetNewRegOperand(reg); }
     PhiInstruction(enum LLVMType type, Operand result, decltype(phi_list) val_labels) {
         this->opcode = LLVMIROpcode::PHI;
         this->type = type;
@@ -771,7 +741,7 @@ public:
     // get_elementptr_Instruction(enum llvm_type typ,operand res,operand
     // ptr,std::vector<int>dim,std::vector<int>idx):type(typ),result(res),ptrval(ptr),dims(dim),indexes(idx){}
     void push_dim(int d) { dims.push_back(d); }
-    void push_idx_reg(int idx_reg_no) { indexes.push_back(new RegOperand(idx_reg_no)); }
+    void push_idx_reg(int idx_reg_no) { indexes.push_back(GetNewRegOperand(idx_reg_no)); }
     void push_idx_imm32(int imm_idx) { indexes.push_back(new ImmI32Operand(imm_idx)); }
     void push_index(Operand idx) { indexes.push_back(idx); }
 

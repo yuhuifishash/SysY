@@ -2,9 +2,6 @@
 #include "../include/basic_block.h"
 #include "../include/ir.h"
 #include <sstream>
-AutoCounter BasicInstruction::insNoCounter;
-AutoCounter RegOperand::curRegNo;
-AutoCounter LabelOperand::curLabelNo;
 
 CFG *current_CFG;
 extern int output_Physical_reg;
