@@ -16,7 +16,7 @@ void LLVMIR::BuildFunctionInfo() {
 
 /* this function will only care about single function.
    so after call this function, some information is wrong.(because the call inst)
-   you should call LLVMIR::BuildFunctionInfo instead to get the true function information.
+   should call LLVMIR::BuildFunctionInfo instead to get the true function information.
 */
 void CFG::BuildFunctionInfo() {
     FunctionInfo.bb_number = block_map->size();

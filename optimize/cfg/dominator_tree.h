@@ -2,7 +2,6 @@
 #define DOMINATOR_TREE_H
 #include "../../include/basic_block.h"
 #include "../../include/dynamic_bitset.h"
-// #include <bitset>
 #include <set>
 #include <vector>
 
@@ -24,6 +23,7 @@ public:
     std::vector<DynamicBitset> atdom;
 
     void BuildDominatorTree();               // build the dominator tree of CFG* C
+    void BuildPostDominatorTree();           // build the post-dominator tree of CFG* C
     std::set<int> GetDF(std::set<int> S);    // return DF(S)  S = {id1,id2,id3,...}
     std::set<int> GetDF(int id);             // return DF(id)
     bool IsDominate(int id1, int id2);       // if blockid1 dominate blockid2, return true, else return false
