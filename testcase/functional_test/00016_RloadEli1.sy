@@ -1,0 +1,72 @@
+int d1 = 13, d2 = 15, d3 = 23;
+int A1[100] = {}, A2[100] = {}, A3[100] = {};
+int main()
+{
+    if(d1){
+        d2 = d1 + d2 + d3;
+        if(d2){
+            d3 = d3 + d2;
+        }
+    }
+    
+    A3[33] = 13;
+    if(d1){
+        A1[33] = 51;
+    }else{
+        A2[33] = 76;
+        A1[33] = -2;
+        if(d2){
+            A2[33] = 56;
+        }
+        A2[33] = A2[33] + A1[33];
+    }
+    d1 = d1 + A1[33] + A2[33] + A3[33];
+
+    putint(d1);putch(10);
+    putint(d2);putch(10);
+    putint(d3);putch(10);
+
+    int i = 0;
+    while(i < 50){
+        i = i + 1;
+        A1[i] = A1[i] + d1*i;
+        int j = 0;
+        while(j < 50){
+            j = j + 1;
+            A1[j] = d1*i;//we can cse d1
+        }
+        A1[i] = A1[i] + A1[j];
+    }
+
+    d2 = d1 + A1[i];
+    i = 0;
+    while(i < 50){
+        i = i + 1;
+        A2[i] = A2[i] + d1*i;
+        int j = 0;
+        while(j < 50){
+            j = j + 1;
+            A1[j] = d1*i;
+        }
+        A2[i] = A2[i] + A1[j];//we can cse A2[i] and A1[j]
+    }
+    i = 0;
+    while(i + 1 < 50){
+        i = i + 1;
+        A2[i] = A1[i] + A2[i] + d1*i;
+        int j = 0;
+        while(j + 1 < 50){
+            j = j + 1;
+            A2[j] = A2[j] + d1*i;
+        }
+        A2[i] = A1[i] + A2[i];//we can only cse A1[i],  we can not cse A2
+    }
+
+
+    putint(d1);putch(10);
+    putint(d2);putch(10);
+    putint(d3);putch(10);
+    putarray(100,A1);
+    putarray(100,A2);
+    putarray(100,A3);
+}

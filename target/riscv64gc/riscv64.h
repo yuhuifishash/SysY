@@ -244,23 +244,24 @@ struct RiscVLabel : public Label {
     RiscVLabel(int jmp) : Label(jmp, false), name() {}
     RiscVLabel(std::string name, bool is_hi) : Label(0, 0), name(name), is_hi(is_hi) { this->is_data_address = true; }
     RiscVLabel(const RiscVLabel &other) : Label(0, 0) {
+        this->is_data_address = other.is_data_address;
         if (other.is_data_address) {
-            this->is_data_address = other.is_data_address;
-            this->name = other.name;
+            std::string temp = other.name;
+            this->name = temp;
             this->is_hi = other.is_hi;
         } else {
-            this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;
         }
     }
     RiscVLabel operator=(const RiscVLabel &other) {
+        if(this == &other)return *this;
+        this->is_data_address = other.is_data_address;
         if (other.is_data_address) {
-            this->is_data_address = other.is_data_address;
-            this->name = other.name;
+            std::string temp = other.name;
+            this->name = temp;
             this->is_hi = other.is_hi;
         } else {
-            this->is_data_address = other.is_data_address;
             this->print_label_id = other.print_label_id;
             this->seq_label_id = other.seq_label_id;
         }
@@ -320,6 +321,104 @@ public:
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
 };
+
+class RiscV64InstructionConstructor{
+    RiscV64InstructionConstructor() {}
+    static RiscV64InstructionConstructor instance;
+public:
+    static RiscV64InstructionConstructor* GetConstructor(){return &instance;}
+    RiscV64Instruction* ConstructR(int op,Register Rd,Register Rs1,Register Rs2){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::R_type);
+        ret->setRd(Rd);
+        ret->setRs1(Rs1);
+        ret->setRs2(Rs2);
+        return ret;
+    }
+    RiscV64Instruction* ConstructR2(int op,Register Rd,Register Rs1){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::R2_type);
+        ret->setRd(Rd);
+        ret->setRs1(Rs1);
+        return ret;
+    }
+    RiscV64Instruction* ConstructR4(int op,Register Rd,Register Rs1,Register Rs2,Register Rs3){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::R4_type);
+        ret->setRd(Rd);
+        ret->setRs1(Rs1);
+        ret->setRs2(Rs2);
+        ret->setRs3(Rs3);
+        return ret;
+    }
+    RiscV64Instruction* ConstructIImm(int op,Register Rd,Register Rs1,int imm){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::I_type);
+        ret->setRd(Rd);
+        ret->setRs1(Rs1);
+        ret->setImm(imm);
+        return ret;
+    }
+    RiscV64Instruction* ConstructILabel(int op,Register Rd,Register Rs1,RiscVLabel label){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::I_type);
+        ret->setRd(Rd);
+        ret->setRs1(Rs1);
+        ret->setLabel(label);
+        return ret;
+    }
+    RiscV64Instruction* ConstructSImm(int op,Register value,Register ptr,int imm){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::S_type);
+        ret->setRs1(value);
+        ret->setRs2(ptr);
+        ret->setImm(imm);
+        return ret;
+    }
+    RiscV64Instruction* ConstructSLabel(int op,Register value,Register ptr,RiscVLabel label){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::S_type);
+        ret->setRs1(value);
+        ret->setRs2(ptr);
+        ret->setLabel(label);
+        return ret;
+    
+    }
+    RiscV64Instruction* ConstructB();
+    RiscV64Instruction* ConstructUImm(int op,Register Rd,int imm){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,false);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::U_type);
+        ret->setRd(Rd);
+        ret->setImm(imm);
+        return ret;
+    }
+    RiscV64Instruction* ConstructULabel(int op,Register Rd,RiscVLabel label){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::U_type);
+        ret->setRd(Rd);
+        ret->setLabel(label);
+        return ret;
+    }
+    RiscV64Instruction* ConstructJLabel(int op,Register rd,RiscVLabel label){
+        RiscV64Instruction* ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::J_type);
+        ret->setRd(rd);
+        ret->setLabel(label);
+        return ret;
+    }
+};
+extern RiscV64InstructionConstructor* rvconstructor;
+
 #include "../common/machine_instruction_structures/machine.h"
 class RiscV64Function;
 class RiscV64Unit;

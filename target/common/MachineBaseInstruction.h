@@ -58,6 +58,13 @@
 #endif
 #endif
 
+#ifndef Lazy
+#define Lazy(str)\
+do{\
+    Log("\033[;31;1m%s\033[0m", str);\
+}while(0)
+#endif
+
 #ifndef Assert
 #define Assert(EXP)                                                                                                    \
     do {                                                                                                               \
@@ -73,11 +80,16 @@ struct MachineDataType {
     unsigned data_type;
     unsigned data_length;
     MachineDataType() {}
-    MachineDataType(unsigned data_type, unsigned data_length) : data_type(data_type), data_length(data_length) {}
-    MachineDataType(const MachineDataType &other) {
+    MachineDataType(const MachineDataType &other){
         this->data_type = other.data_type;
         this->data_length = other.data_length;
     }
+    MachineDataType operator=(const MachineDataType& other){
+        this->data_type = other.data_type;
+        this->data_length = other.data_length;
+        return *this;
+    }
+    MachineDataType(unsigned data_type, unsigned data_length) : data_type(data_type), data_length(data_length) {}
     bool operator==(const MachineDataType &other) const {
         return this->data_type == other.data_type && this->data_length == other.data_length;
     }
@@ -118,6 +130,17 @@ public:
     Register() {}
     Register(bool is_virtual, int reg_no, MachineDataType type) : is_virtual(is_virtual), reg_no(reg_no), type(type) {}
     int getDataWidth() { return type.getDataWidth(); }
+    Register(const Register& other){
+        this->is_virtual = other.is_virtual;
+        this->reg_no = other.reg_no;
+        this->type = other.type;
+    }
+    Register operator=(const Register& other){
+        this->is_virtual = other.is_virtual;
+        this->reg_no = other.reg_no;
+        this->type = other.type;
+        return *this;
+    }
     bool operator<(Register other) const {
         if (is_virtual != other.is_virtual)
             return is_virtual < other.is_virtual;

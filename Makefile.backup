@@ -28,52 +28,21 @@ SRCDIR += ./optimize/function
 SRCDIR += ./optimize/alias_analysis
 SRCDIR += ./utils
 
-NAME = SysYc
-BIN_DIR ?= ./bin
-OBJDIR ?= ./obj
-BINARY ?= $(BIN_DIR)/$(NAME)
 
-.DEFAULT_GOAL = SysYc
+OBJDIR := ./obj
 
-CC = clang++
-LD = clang++
-INCLUDES = $(addprefix -I, $(SRCDIR))
-CFLAGS += -O2 -MMD -std=c++17 $(INCLUDES)
-
-# SRCS = $(shell find . -name "*.cc")
-# OBJS = $(SRCS:%.cc=$(OBJDIR)/%.o)
+INCS := $(foreach dir,${SRCDIR},-I${dir})
 SRCS := $(foreach dir,$(SRCDIR),$(wildcard $(dir)/*.cc))
 OBJS := $(patsubst %.cc,$(OBJDIR)/%.o,$(SRCS))
 
+SysYc : ${OBJS}
+	clang++ $(OBJS) -o bin/SysYc -O2 -std=c++17
+
 $(OBJDIR)/%.o : %.cc
-	@echo + CC $<
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS)  -c -o $@ $<
+	mkdir -p $(dir $@)
+	clang++ -c $< -o $@ -O2 -std=c++17
 
--include $(OBJS:.o=.d)
-
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,test,run,perf
-
-SysYc : $(BINARY)
-
-$(BINARY): $(OBJS)
-	@echo + LD $@
-	@$(LD) $(OBJS) -o bin/SysYc -O2 -std=c++17
-
-CASE ?= dummy
-STAGE ?= S
-OFLAG ?= O1
-ARCH ?= armv7
-
-test : $(BINARY)
-	./SysY_test_single.sh $(CASE).sy $(STAGE) $(OFLAG)
-
-run : $(BINARY)
-	./SysY_test.sh $(STAGE) $(OFLAG) $(ARCH)
-
-perf : $(BINARY)
-	./SysY_performance.sh $(STAGE) $(ARCH)
-
+.PHONY : clean-obj,clean-all,lexer,parser,format
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
 
