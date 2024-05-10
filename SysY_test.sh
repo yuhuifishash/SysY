@@ -84,7 +84,38 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
     done
     echo AsmArmv7Test:${score}/${score_all}
 elif [ $1 == 'S' ] && [ $3 == 'rv64gc' ] ; then
-    echo "S rv64gc is not implenmented now"
+    score=0
+    score_all=0
+    pwdin=testcase/functional_test
+    pwdout=test_output/functional_testAsm
+    rm -rf ${pwdout}/*
+    for file in ${pwdin}/*.sy
+    do
+        score_all=`expr ${score_all} + 1`
+        var=${file%.*}
+        bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.s \-${optimize_flag}
+        riscv64-unknown-linux-gnu-gcc ${pwdout}/${var##*/}.s -c -static -march=armv7
+        riscv64-unknown-linux-gnu-gcc -static ${var##*/}.o lib/libsysy.a
+        rm -rf ${var##*/}.o
+        mv a.out ${pwdout}/${var##*/}
+        if [ -f "${pwdin}/${var##*/}.in" ];then
+            timeout 30 qemu-riscv64 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        else
+            timeout 30 qemu-riscv64 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            echo $? >> ${pwdout}/${var##*/}.out
+        fi
+        diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
+        if [ $? == 0 ];then
+            echo -e "\033[0;32;1m" Accept "\033[0;37;1m" ${var##*/}
+            rm ${pwdout}/${var##*/}.out
+            score=`expr ${score} + 1`
+        else
+            echo -e "\033[0;31;1m" Wrong answer "\033[0;37;1m" on ${var##*/}
+        fi
+        rm ${pwdout}/${var##*/}
+    done
+    echo RiscV64gcTest:${score}/${score_all}
 else
     echo "step arguments is invalid"
 fi

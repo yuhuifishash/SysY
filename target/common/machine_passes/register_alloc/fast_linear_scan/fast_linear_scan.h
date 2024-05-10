@@ -3,7 +3,7 @@
 #include "../basic_register_allocation.h"
 
 bool IntervalsPrioCmp(LiveInterval a, LiveInterval b);
-class FastLinearScan : RegisterAllocation {
+class FastLinearScan : public RegisterAllocation {
 private:
     // All States here, like queue
     std::priority_queue<LiveInterval, std::vector<LiveInterval>, decltype(IntervalsPrioCmp) *> unalloc_queue;
@@ -13,7 +13,7 @@ protected:
     bool DoAllocInCurrentFunc();
 
 public:
-    FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy) {}
+    FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy);
 };
 
 #endif

@@ -11,7 +11,7 @@ private:
         int end;
         bool inside(int pos) const { return begin <= pos && pos < end; }
         bool operator&(const struct LiveSegment &that) const {
-            return this->inside(that.begin) || this->inside(that.end);
+            return this->inside(that.begin) || this->inside(that.end-1) || that.inside(this->begin) || that.inside(this->end-1);
         }
         bool operator==(const struct LiveSegment &that) const {
             return this->begin == that.begin && this->end == that.end;
@@ -28,6 +28,9 @@ public:
     bool operator&(const LiveInterval &that) const {
         // TODO : Judge if *this and that overlapped
         // Assume Segments are sorted
+        
+        if(segments.empty() || that.segments.empty()) return false;
+        Log("\n[%d,%d) & [%d,%d)",segments[0].begin,segments[0].end,that.segments[0].begin,that.segments[0].end);
         auto it = segments.begin();
         auto jt = that.segments.begin();
         while (1) {
@@ -60,12 +63,12 @@ public:
         return ret;
     }
     Register getReg() { return reg; }
-    LiveInterval() {}    // Temp
-    LiveInterval(Register reg) : reg(reg) {}
+    LiveInterval() : reference_count(0){}    // Temp
+    LiveInterval(Register reg) : reg(reg),reference_count(0){}
 
     // Needs to be implemented (?)
-    void PushFront(int begin, int end) { segments.push_front({begin = begin, end = end}); }
-    void SetMostBegin(int begin) { segments[0].begin = begin; }
+    void PushFront(int begin, int end) { Log("PushFront %d %d",begin,end);segments.push_front({begin = begin, end = end}); }
+    void SetMostBegin(int begin) {Log("SetBegin %d",begin); segments[0].begin = begin; }
 
     decltype(segments.begin()) begin() { return segments.begin(); }
     decltype(segments.end()) end() { return segments.end(); }

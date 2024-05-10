@@ -226,13 +226,16 @@ public:
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {
+private:
+    Register result;
+    std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
 public:
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
 
-    Register result;
-    std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
     MachinePhiInstruction(Register result) : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
+    Register GetResult(){return result;}
+    std::vector<std::pair<int, MachineBaseOperand*>> GetPhiList(){return phi_list;}
     void pushPhiList(int label, Register reg) { phi_list.push_back(std::make_pair(label, new MachineRegister(reg))); }
     void pushPhiList(int label, int imm32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateInt(imm32)));
@@ -252,7 +255,7 @@ public:
     }
     std::vector<Register *> GetWriteReg() {
         assert(dst->op_type == MachineBaseOperand::REG);
-        return std::vector<Register *>({&(((MachineRegister *)src)->reg)});
+        return std::vector<Register *>({&(((MachineRegister *)dst)->reg)});
     }
 
     MachineCopyInstruction(MachineBaseOperand *src, MachineBaseOperand *dst, MachineDataType copy_type)

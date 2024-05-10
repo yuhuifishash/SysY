@@ -1,5 +1,12 @@
 #include "basic_register_allocation.h"
 
+void VirtualRegisterRewrite::Execute() {
+    for(auto func : unit->functions){
+        current_func = func;
+        ExecuteInFunc();
+    }
+}
+
 void VirtualRegisterRewrite::ExecuteInFunc() {
     auto func = current_func;
     auto block_it = func->getMachineCFG()->getSeqScanIterator();
@@ -8,7 +15,12 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
         auto block = block_it->next()->Mblock;
         for (auto it = block->begin(); it != block->end(); ++it) {
             auto ins = *it;
+            // Log("%d",ins->getNumber());
             for (auto reg : ins->GetReadReg()) {
+                if(reg->is_virtual == false){
+                    Assert(alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
+                    continue;
+                }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
                     TODO("Implement VirtualRegisterRewrite Read Spill Code Gen");
@@ -21,6 +33,11 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                 }
             }
             for (auto reg : ins->GetWriteReg()) {
+                // Log("Write %d %d",reg->is_virtual,reg->reg_no);
+                if(reg->is_virtual == false){
+                    Assert(alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
+                    continue;
+                }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
                     TODO("Implement VirtualRegisterRewrite Write Spill Code Gen");

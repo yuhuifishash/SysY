@@ -547,6 +547,10 @@ class RiscV64Unit : public MachineUnit {};
 class RiscV64Register : public PhysicalRegisters {
 protected:
     std::vector<int> getValidRegs(LiveInterval interval);
+public:
+    RiscV64Register(){
+        phy_occupied.resize(64);
+    }
 };
 
 #endif

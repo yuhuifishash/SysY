@@ -6,6 +6,7 @@
 #include "./riscv64gc/instruction_select/riscv64_instSelect.h"
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/riscv64.h"
+#include "./common/machine_passes/register_alloc/fast_linear_scan/fast_linear_scan.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -183,8 +184,10 @@ int main(int argc, char **argv) {
     }
     if (strcmp(argv[step_tag], "-S") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();
+        RiscV64Register regs;
 
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        FastLinearScan(m_unit, &regs).Execute();
         RiscV64LowerCopy(m_unit).Execute();
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);

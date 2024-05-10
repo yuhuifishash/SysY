@@ -1,10 +1,15 @@
 #include "fast_linear_scan.h"
 bool IntervalsPrioCmp(LiveInterval a, LiveInterval b) { return a.begin()->begin > b.begin()->begin; }
+FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy),unalloc_queue(IntervalsPrioCmp) {}
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;
     for (auto interval : intervals) {
-        unalloc_queue.push(interval.second);
+        if(interval.first.is_virtual){
+            unalloc_queue.push(interval.second);
+        }else{
+            phy_regs->OccupyReg(interval.first.reg_no, interval.second);
+        }
     }
     while (!unalloc_queue.empty()) {
         auto interval = unalloc_queue.top();

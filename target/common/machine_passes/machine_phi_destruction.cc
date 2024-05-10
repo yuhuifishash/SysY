@@ -24,7 +24,7 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                     break;
                 }
                 auto phi_Ins = (MachinePhiInstruction *)ins;
-                for (auto [phi_labelid, phi_operand] : phi_Ins->phi_list) {
+                for (auto [phi_labelid, phi_operand] : phi_Ins->GetPhiList()) {
                     // Insert to Parallel Copy List
                     TODO("Insert to Parallel Copy List");
                 }

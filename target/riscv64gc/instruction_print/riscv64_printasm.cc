@@ -180,6 +180,20 @@ void RiscV64Printer::printAsm<MachineCopyInstruction*>(MachineCopyInstruction *i
 }
 
 template<>
+void RiscV64Printer::printAsm<MachinePhiInstruction*>(MachinePhiInstruction *ins) {
+    Lazy("Phi Output");
+    printRVfield(ins->GetResult());
+    s<<" = "<<ins->GetResult().type.toString()<<" PHI ";
+    for(auto [label,op] : ins->GetPhiList()){
+        s<<"[";
+        s<<label<<",";
+        printRVfield(op);
+        s<<"] ";
+    }
+    s<<"\n";
+}
+
+template<>
 void RiscV64Printer::printMachineIR<RiscV64Instruction*>(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }
 
 void RiscV64Printer::emit() {
@@ -193,11 +207,10 @@ void RiscV64Printer::emit() {
             cur_block = block;
             for (auto ins : *block) {
                 s << "\t";
-
                 if (ins->arch == MachineBaseInstruction::RiscV) {
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
-                    TODO("Machine PHI PrintAsm");
+                    printAsm((MachinePhiInstruction*)ins);
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     printAsm((MachineCopyInstruction *)ins);
                 } else {
@@ -207,5 +220,46 @@ void RiscV64Printer::emit() {
         }
     }
     for (auto global : printee->global_def) {
+        if(global->GetOpcode() == GLOBAL_VAR){
+            auto global_ins = (GlobalVarDefineInstruction*)global;
+            s<<global_ins->name<<":\n";
+            if(global_ins->type == I32){
+                if(global_ins->arval.dims.empty()){
+                    if(global_ins->init_val != nullptr){
+                        Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMI32);
+                        auto imm_op = (ImmI32Operand*)global_ins->init_val;
+                        s<<"\t.word\t"<<imm_op->GetIntImmVal()<<"\n";
+                    }else{
+                        s<<"\t.word\t0\n";
+                    }
+                }else{
+                    int zero_cum = 0;
+                    for(auto val : global_ins->arval.IntInitVals){
+                        if(val == 0){
+                            zero_cum += 4;
+                        }else{
+                            if(zero_cum != 0){
+                                s<<"\t.zero\t"<<zero_cum<<"\n";
+                                zero_cum = 0;
+                            }
+                            s<<"\t.word\t"<<val<<"\n";
+                        }
+                    }
+                    if(zero_cum != 0){
+                        s<<"\t.zero\t"<<zero_cum<<"\n";
+                        zero_cum = 0;
+                    }
+                }
+            }else if(global_ins->type == FLOAT32){
+                TODO("Global Float DEF");
+            }
+        }else if(global->GetOpcode() == GLOBAL_STR){
+            auto str_ins = (GlobalStringConstInstruction*)global;
+            TODO("GLOBAL STR CONST");
+            Lazy("Not tested");
+            s<<"\t.asciz\t"<<"\""<<str_ins->str_val<<"\""<<"\n";
+        }else{
+            ERROR("Unexpected global define instruction");
+        }
     }
 }

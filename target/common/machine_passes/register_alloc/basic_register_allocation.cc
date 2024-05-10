@@ -6,6 +6,18 @@ void RegisterAllocation::Execute() {
         UpdateIntervalsInCurrentFunc();
         DoAllocInCurrentFunc();
     }
+    Log("Alloc Result:");
+    for(auto pair : alloc_result){
+        auto func = pair.first;
+        auto map = pair.second;
+        Log("Func: %s",func->getFunctionName().c_str());
+        for(auto alloc_pair: map){
+            auto reg = alloc_pair.first;
+            auto result = alloc_pair.second;
+            std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
+        }
+    }
+    VirtualRegisterRewrite(unit,alloc_result).Execute();
 }
 
 void InstructionNumber::Execute() {
@@ -15,6 +27,7 @@ void InstructionNumber::Execute() {
         // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
         // changed
         auto it = func->getMachineCFG()->getBFSIterator();
+        it->open();
         while (it->hasNext()) {
             auto mcfg_node = it->next();
             auto mblock = mcfg_node->Mblock;
@@ -48,6 +61,10 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
 
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
+            if(intervals.find(reg) == intervals.end()){
+                intervals[reg] = LiveInterval(reg);
+                Log("OUT");
+            }
             // Extend or add new Range
             if (last_use.find(reg) == last_use.end()) {
                 // No previous Use, New Range
@@ -62,15 +79,23 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
             auto ins = *reverse_it;
             if (ins->arch == MachineBaseInstruction::COPY) {
                 // Update copy_sources
+                Log("COPY");
                 for (auto reg_w : ins->GetWriteReg()) {
                     for (auto reg_r : ins->GetReadReg()) {
                         copy_sources[*reg_w].push_back(*reg_r);
                     }
                 }
+            }else if(ins->arch == MachineBaseInstruction::RiscV){
+                Log("RV");
             }
             for (auto reg : ins->GetWriteReg()) {
                 // Update last_def of reg
                 last_def[*reg] = ins->getNumber();
+                Log("WRITE %d %d",reg->is_virtual,reg->reg_no);
+            
+                if(intervals.find(*reg) == intervals.end()){
+                    intervals[*reg] = LiveInterval(*reg);
+                }
 
                 // Have Last Use, Cut Range
                 if (last_use.find(*reg) != last_use.end()) {
@@ -81,17 +106,35 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
             }
             for (auto reg : ins->GetReadReg()) {
                 // Update last_use of reg
-                last_use[*reg] = ins->getNumber();
+                Log("READ %d %d",reg->is_virtual,reg->reg_no);
+                if(intervals.find(*reg) == intervals.end()){
+                    intervals[*reg] = LiveInterval(*reg);
+                }
 
-                if (last_use.find(*reg) != last_use.end() || last_def[*reg] == last_use[*reg]) {
+                if (last_use.find(*reg) != last_use.end() /*|| (last_def[*reg] == last_use[*reg])*/) {
                     // Have Last Use, Extend Range
                     intervals[*reg].SetMostBegin(mblock->getBlockInNumber());
                 } else {
                     // No Last Use, New Range
                     intervals[*reg].PushFront(mblock->getBlockInNumber(), ins->getNumber());
                 }
+                last_use[*reg] = ins->getNumber();
+
                 intervals[*reg].IncreaseReferenceCount(1);
             }
         }
+    }
+    
+    Log("Check Intervals");
+    for(auto interval_pair : intervals){
+        auto reg = interval_pair.first;
+        auto interval = interval_pair.second;
+        std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+        for(auto seg : interval){
+            std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+        }
+        std::cerr<<"Reg: "<<interval.getReg().is_virtual<<interval.getReg().reg_no;
+        std::cerr<<"Ref: "<<interval.getReferenceCount();
+        std::cerr<<"\n";
     }
 }

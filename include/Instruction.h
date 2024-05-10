@@ -94,7 +94,9 @@ enum LLVMIROpcode {
     FPTOSI = 24,
     GETELEMENTPTR = 25,
     CALL = 26,
-    SITOFP = 27
+    SITOFP = 27,
+    GLOBAL_VAR = 28,
+    GLOBAL_STR = 29,
 };
 
 // @Operand datatypes
@@ -600,9 +602,13 @@ public:
     Operand init_val;
     VarAttribute arval;
     GlobalVarDefineInstruction(std::string nam, enum LLVMType typ, Operand i_val)
-        : name(nam), type(typ), init_val(i_val) {}
+        : name(nam), type(typ), init_val(i_val) {
+            this->opcode = LLVMIROpcode::GLOBAL_VAR;
+        }
     GlobalVarDefineInstruction(std::string nam, enum LLVMType typ, VarAttribute v)
-        : name(nam), type(typ), arval(v), init_val{nullptr} {}
+        : name(nam), type(typ), arval(v), init_val{nullptr} {
+            this->opcode = LLVMIROpcode::GLOBAL_VAR;
+        }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
 
@@ -618,7 +624,9 @@ class GlobalStringConstInstruction : public BasicInstruction {
 public:
     std::string str_val;
     std::string str_name;
-    GlobalStringConstInstruction(std::string strval, std::string strname) : str_val(strval), str_name(strname) {}
+    GlobalStringConstInstruction(std::string strval, std::string strname) : str_val(strval), str_name(strname) {
+            this->opcode = LLVMIROpcode::GLOBAL_STR;
+    }
 
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
