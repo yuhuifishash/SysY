@@ -83,7 +83,16 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             // Imm + Imm
             if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 &&
                 ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
-                TODO("IMM+IMM");
+                auto *imm1_op = (ImmI32Operand*)ins->GetOperand1();
+                auto *imm2_op = (ImmI32Operand*)ins->GetOperand2();
+                auto *rd_op = (RegOperand*)ins->GetResultOperand();
+
+                auto imm1 = imm1_op->GetIntImmVal();
+                auto imm2 = imm2_op->GetIntImmVal();
+                auto rd = GetllvmReg(rd_op->GetRegNo(),INT32);
+
+                auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(rd,imm1+imm2,INT32);
+                cur_block->push_back(copy_imm_instr);
             }
             // Reg + Imm
             // May Generate COPY

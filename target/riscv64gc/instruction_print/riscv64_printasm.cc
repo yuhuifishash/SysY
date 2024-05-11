@@ -197,9 +197,10 @@ template<>
 void RiscV64Printer::printMachineIR<RiscV64Instruction*>(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }
 
 void RiscV64Printer::emit() {
+    s << "\t.globl main\n";
     for (auto func : printee->functions) {
         current_func = func;
-        s << "\t.globl\t" << func->getFunctionName() << "\n";
+        // s << "\t.globl\t" << func->getFunctionName() << "\n";
         s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
         for (auto block : func->blocks) {

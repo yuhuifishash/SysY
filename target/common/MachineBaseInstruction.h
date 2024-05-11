@@ -58,11 +58,18 @@
 #endif
 #endif
 
+#define ENABLE_LOG
+#ifdef ENABLE_LOG
 #ifndef Lazy
 #define Lazy(str)\
 do{\
     Log("\033[;31;1m%s\033[0m", str);\
 }while(0)
+#endif
+#else
+#ifndef Lazy
+#define Lazy(str)
+#endif
 #endif
 
 #ifndef Assert

@@ -215,10 +215,10 @@ struct RiscV64RegisterInfo RiscV64Registers[] = {
 std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
     if (interval.getReg().type.data_type == MachineDataType::INT) {
         return std::vector<int>({
-        RISCV_x1,  RISCV_x2,  RISCV_x5,  RISCV_x6,  RISCV_x7,  RISCV_x8,
-        RISCV_x9,  RISCV_x10, RISCV_x11, RISCV_x12, RISCV_x13, RISCV_x14, RISCV_x15, RISCV_x16,
-        RISCV_x17, RISCV_x18, RISCV_x19, RISCV_x20, RISCV_x21, RISCV_x22, RISCV_x23, RISCV_x24,
-        RISCV_x25, RISCV_x26, RISCV_x27, RISCV_x28, RISCV_x29, RISCV_x30, RISCV_x31,
+        RISCV_t0,RISCV_t1,RISCV_t2,RISCV_t3,RISCV_t4,RISCV_t5,RISCV_t6,
+        RISCV_a0,RISCV_a1,RISCV_a2,RISCV_a3,RISCV_a4,RISCV_a5,RISCV_a6,RISCV_a7,
+        RISCV_s0,RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
+        RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
         });
     } else if (interval.getReg().type.data_type == MachineDataType::FLOAT) {
         return std::vector<int>({

@@ -14,7 +14,7 @@ void RegisterAllocation::Execute() {
         for(auto alloc_pair: map){
             auto reg = alloc_pair.first;
             auto result = alloc_pair.second;
-            std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
+            // std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
         }
     }
     VirtualRegisterRewrite(unit,alloc_result).Execute();
@@ -125,16 +125,16 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         }
     }
     
-    Log("Check Intervals");
-    for(auto interval_pair : intervals){
-        auto reg = interval_pair.first;
-        auto interval = interval_pair.second;
-        std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
-        for(auto seg : interval){
-            std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
-        }
-        std::cerr<<"Reg: "<<interval.getReg().is_virtual<<interval.getReg().reg_no;
-        std::cerr<<"Ref: "<<interval.getReferenceCount();
-        std::cerr<<"\n";
-    }
+    // Log("Check Intervals");
+    // for(auto interval_pair : intervals){
+    //     auto reg = interval_pair.first;
+    //     auto interval = interval_pair.second;
+    //     std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+    //     for(auto seg : interval){
+    //         std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+    //     }
+    //     std::cerr<<"Reg: "<<interval.getReg().is_virtual<<interval.getReg().reg_no;
+    //     std::cerr<<"Ref: "<<interval.getReferenceCount();
+    //     std::cerr<<"\n";
+    // }
 }

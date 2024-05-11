@@ -5,6 +5,7 @@ test_output/example/*.out
 test_output/example/*.out.ll
 test_output/example/*.out.s
 test_output/functional_testAsm/*.s
+test_output/functional_testAsm/*.out
 test_output/functional_testIR/*.ll
 test_output/performance_testAsm/*.s
 test_output/performance_testIR/*.ll

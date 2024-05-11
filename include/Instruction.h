@@ -22,6 +22,8 @@
     } while (0)
 #endif
 
+#define ENABLE_TODO
+#ifdef ENABLE_TODO
 #ifndef TODO
 #define TODO(...)                                                                                                      \
     do {                                                                                                               \
@@ -36,6 +38,11 @@
         std::cerr << "\033[0m";                                                                                        \
         assert(false);                                                                                                 \
     } while (0)
+#endif
+#else
+#ifndef TODO
+#define TODO(...)
+#endif
 #endif
 
 #define ENABLE_LOG
