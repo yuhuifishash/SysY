@@ -163,6 +163,11 @@ template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUnco
 template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) { 
     Assert(ins->GetRetType() == VOID || ins->GetResult()->GetOperandType() == BasicOperand::REG);
 
+    // Save ra
+    auto ra_saver_reg = GetNewReg(INT32);
+    auto ra_save_copy_instr = rvconstructor->ConstructCopyReg(ra_saver_reg,GetPhysicalReg(RISCV_ra),INT32);
+    cur_block->push_back(ra_save_copy_instr);
+
     int ireg_cnt = 0;
     int freg_cnt = 0;
     // Parameters
@@ -220,6 +225,10 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
     }else{
         ERROR("Unexpected return type %d",return_type);
     }
+
+    // Restore ra
+    auto ra_restore_copy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_ra),ra_saver_reg,INT32);
+    cur_block->push_back(ra_restore_copy_instr);
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruction *ins) {
