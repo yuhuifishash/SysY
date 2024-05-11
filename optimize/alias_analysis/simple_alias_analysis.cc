@@ -21,10 +21,36 @@ bool IsAlias(PtrRegMemInfo ptrinfo1, PtrRegMemInfo ptrinfo2) {
     if (ptrinfo1.is_fullmem || ptrinfo2.is_fullmem) {
         return true;
     }
+
     for (auto p1 : ptrinfo1.PossiblePtrs) {
         for (auto p2 : ptrinfo2.PossiblePtrs) {
             if (p1->GetFullName() == p2->GetFullName()) {
                 return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool SimpleAliasAnalyser::IsSamePtrWithDiffConstIndex(Operand p1, Operand p2, CFG* C) {
+    if(p1->GetOperandType() == BasicOperand::REG && p2->GetOperandType() == BasicOperand::REG){
+        auto r1 = ((RegOperand*)p1)->GetRegNo();
+        auto r2 = ((RegOperand*)p2)->GetRegNo();
+        auto ResultMap = CFGResultMap[C];
+        auto I1 = ResultMap[r1];
+        auto I2 = ResultMap[r2];
+        if(I1 != nullptr && I2 != nullptr && I1->GetOpcode() == GETELEMENTPTR && I2->GetOpcode() == GETELEMENTPTR){
+            auto gepI1 = (GetElementptrInstruction*)I1;
+            auto gepI2 = (GetElementptrInstruction*)I2;
+            auto ptr = gepI1->GetPtrVal();
+            auto ptr2 = gepI2->GetPtrVal();
+            if(ptr == ptr2){
+                auto [index1,sz1] = gepI1->GetConstIndexes();
+                auto [index2,sz2] = gepI2->GetConstIndexes();
+                //constant index, and different, we assume they are NoAlias
+                if(index1 != -1 && index2 != -1 && index1 != index2) {
+                    return true;
+                }
             }
         }
     }
@@ -37,6 +63,12 @@ AliasAnalyser::AliasResult SimpleAliasAnalyser::QueryAlias(Operand op1, Operand 
     auto ptrinfo1 = GetPtrInfo(op1, ptrmap);
     auto ptrinfo2 = GetPtrInfo(op2, ptrmap);
 
+    if(ptrinfo1.PossiblePtrs.size() == 1 && ptrinfo2.PossiblePtrs.size() == 1){
+        if(IsSamePtrWithDiffConstIndex(op1,op2,C)){
+            return NoAlias;
+        }
+    }
+
     if (IsAlias(ptrinfo1, ptrinfo2)) {
         return MustAlias;
     }
@@ -45,18 +77,31 @@ AliasAnalyser::AliasResult SimpleAliasAnalyser::QueryAlias(Operand op1, Operand 
 
 AliasAnalyser::ModRefResult SimpleAliasAnalyser::QueryInstModRef(Instruction I, Operand op, CFG *C) {
     auto ptrmap = PtrRegMemMap[C];
-
     if (I->GetOpcode() == LOAD) {
         auto ptr = ((LoadInstruction *)I)->GetPointer();
         auto ptrinfo1 = GetPtrInfo(ptr, ptrmap);
         auto ptrinfo2 = GetPtrInfo(op, ptrmap);
+
+        if(ptrinfo1.PossiblePtrs.size() == 1 && ptrinfo2.PossiblePtrs.size() == 1){
+            if(IsSamePtrWithDiffConstIndex(ptr,op,C)){
+                return NoModRef;
+            }
+        }
+
         if (IsAlias(ptrinfo1, ptrinfo2)) {
             return ModRefResult::Ref;
         }
     } else if (I->GetOpcode() == STORE) {
-        auto ptr = ((LoadInstruction *)I)->GetPointer();
+        auto ptr = ((StoreInstruction *)I)->GetPointer();
         auto ptrinfo1 = GetPtrInfo(ptr, ptrmap);
         auto ptrinfo2 = GetPtrInfo(op, ptrmap);
+
+        if(ptrinfo1.PossiblePtrs.size() == 1 && ptrinfo2.PossiblePtrs.size() == 1){
+            if(IsSamePtrWithDiffConstIndex(ptr,op,C)){
+                return NoModRef;
+            }
+        }
+    
         if (IsAlias(ptrinfo1, ptrinfo2)) {
             return ModRefResult::Mod;
         }
@@ -241,6 +286,18 @@ bool FunctionMemRWInfo::MergeCall(CallInstruction *CallI, FunctionMemRWInfo rwin
 //----------------------------------------
 // implementation of alias analysis
 void SimpleAliasAnalyser::AliasAnalysis() {
+    CFGResultMap.clear();
+    for(auto [defI,cfg]:IR->llvm_cfg){
+        for (auto [id, bb] : *cfg->block_map) {
+            for (auto I : bb->Instruction_list) {
+                int v = I->GetResultRegNo();
+                if (v != -1) {    // result exists
+                    CFGResultMap[cfg][v] = I;
+                }
+            }
+        }
+    }
+
     PtrRegMemMap.clear();
     CFGMemRWMap.clear();
     for (auto [defI, cfg] : IR->llvm_cfg) {
@@ -397,6 +454,7 @@ void SimpleAliasAnalyser::AliasAnalysis(CFG *C) {
 }
 
 void SimpleAliasAnalysis(LLVMIR *IR) {
+
     alias_analyser = new SimpleAliasAnalyser();
     alias_analyser->SetLLVMIR(IR);
     alias_analyser->AliasAnalysis();
