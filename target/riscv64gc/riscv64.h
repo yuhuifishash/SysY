@@ -520,6 +520,9 @@ public:
         ret->setLabel(RiscVLabel(funcname,false));
         return ret;
     }
+    MachineComment* ConstructComment(std::string comment){
+        return new MachineComment(comment);
+    }
 };
 extern RiscV64InstructionConstructor* rvconstructor;
 

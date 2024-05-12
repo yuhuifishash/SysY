@@ -5,9 +5,10 @@
 class RiscV64Selector : public MachineSelector {
 private:
     std::map<int, Register> llvm_rv_regtable;
+    std::map<int, int> llvm_rv_allocas;
+    int cur_offset;
     Register GetllvmReg(int, MachineDataType);
     Register GetNewReg(MachineDataType, bool save_across_call = false);
-    // Register GetPhysicalReg(int);
 
 public:
     RiscV64Selector(MachineUnit *dest, LLVMIR *IR) : MachineSelector(dest, IR) {}

@@ -224,7 +224,7 @@ public:
 
 class MachineBaseInstruction {
 public:
-    enum { ARM = 0, RiscV, PHI, COPY };
+    enum { ARM = 0, RiscV, PHI, COPY, COMMENT };
     const int arch;
 
 private:
@@ -236,6 +236,16 @@ public:
     MachineBaseInstruction(int arch) : arch(arch) {}
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
+};
+
+class MachineComment : public MachineBaseInstruction{
+private:
+    std::string comment;
+public:
+    MachineComment(std::string comment) : MachineBaseInstruction(MachineBaseInstruction::COMMENT), comment(comment) {}
+    virtual std::vector<Register *> GetReadReg(){return std::vector<Register*>();}
+    virtual std::vector<Register *> GetWriteReg(){return std::vector<Register*>();}
+    std::string GetComment(){return comment;}
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {

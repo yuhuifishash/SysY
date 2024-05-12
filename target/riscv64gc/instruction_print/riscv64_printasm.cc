@@ -186,8 +186,8 @@ void RiscV64Printer::printAsm<MachinePhiInstruction*>(MachinePhiInstruction *ins
     s<<" = "<<ins->GetResult().type.toString()<<" PHI ";
     for(auto [label,op] : ins->GetPhiList()){
         s<<"[";
-        s<<label<<",";
         printRVfield(op);
+        s<<",%L"<<label;
         s<<"] ";
     }
     s<<"\n";
@@ -197,7 +197,7 @@ template<>
 void RiscV64Printer::printMachineIR<RiscV64Instruction*>(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }
 
 void RiscV64Printer::emit() {
-    s << "\t.globl main\n";
+    s << "\t.text\n\t.globl main\n";
     for (auto func : printee->functions) {
         current_func = func;
         // s << "\t.globl\t" << func->getFunctionName() << "\n";
@@ -214,12 +214,15 @@ void RiscV64Printer::emit() {
                     printAsm((MachinePhiInstruction*)ins);
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     printAsm((MachineCopyInstruction *)ins);
+                }else if(ins->arch == MachineBaseInstruction::COMMENT){
+                    s<<"# "<<((MachineComment*)ins)->GetComment();
                 } else {
                     ERROR("Unexpected arch");
                 }
             }
         }
     }
+    s<<"\t.data\n";
     for (auto global : printee->global_def) {
         if(global->GetOpcode() == GLOBAL_VAR){
             auto global_ins = (GlobalVarDefineInstruction*)global;
