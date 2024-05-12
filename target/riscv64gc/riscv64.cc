@@ -223,9 +223,9 @@ std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
             });
         }else{
             return std::vector<int>({
-                RISCV_s0,
                 RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
                 RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
+                RISCV_s0,
             });
         }
     } else if (interval.getReg().type.data_type == MachineDataType::FLOAT) {

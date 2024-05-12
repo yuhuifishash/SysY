@@ -25,6 +25,8 @@ if [ $step == "llvm" ] ; then
     bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out.ll \-${optimize_flag}
 elif [ $step == "S" ] ; then
     bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out.s \-${optimize_flag}
+elif [ $step == "select" ] ; then
+    bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out.select \-${optimize_flag}
 else 
     bin/SysYc ${pwdin}/${input} \-$step -o ${pwdout}/${input}.out \-${optimize_flag}
 fi

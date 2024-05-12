@@ -18,7 +18,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
             // Log("%d",ins->getNumber());
             for (auto reg : ins->GetReadReg()) {
                 if(reg->is_virtual == false){
-                    Assert(alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
+                    Assert(alloc_result.find(func) == alloc_result.end() || alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
                     continue;
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
@@ -35,7 +35,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
             for (auto reg : ins->GetWriteReg()) {
                 // Log("Write %d %d",reg->is_virtual,reg->reg_no);
                 if(reg->is_virtual == false){
-                    Assert(alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
+                    Assert(alloc_result.find(func) == alloc_result.end() || alloc_result.find(func)->second.find(*reg) == alloc_result.find(func)->second.end());
                     continue;
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;

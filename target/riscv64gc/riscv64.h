@@ -512,11 +512,11 @@ public:
         MachineCopyInstruction* ret = new MachineCopyInstruction(new MachineImmediateFloat(src),new MachineRegister(dst),type);
         return ret;
     }
-    RiscV64Instruction* ConstructCall(int op,std::string funcname){
+    RiscV64Instruction* ConstructCall(int op,std::string funcname,int phy_rd){
         Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
         RiscV64Instruction* ret = new RiscV64Instruction();
         ret->setOpcode(op,true);
-        ret->setRd(GetPhysicalReg(RISCV_ra));
+        ret->setRd(GetPhysicalReg(phy_rd));
         ret->setLabel(RiscVLabel(funcname,false));
         return ret;
     }

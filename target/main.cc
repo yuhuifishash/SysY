@@ -193,6 +193,17 @@ int main(int argc, char **argv) {
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
     }
+    if (strcmp(argv[step_tag], "-select") == 0) {
+        MachineUnit *m_unit = new RiscV64Unit();
+        RiscV64Register regs;
+
+        RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        // FastLinearScan(m_unit, &regs).Execute();
+        // RiscV64LowerCopy(m_unit).Execute();
+
+        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
+        printer->emit();
+    }
     fout.close();
     return 0;
 }

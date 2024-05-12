@@ -20,24 +20,29 @@ private:
 
 protected:
     void AllocPhyReg(MachineFunction *mfun, Register vreg, int phyreg) {
+        Assert(vreg.is_virtual);
         alloc_result[mfun][vreg].in_mem = false;
         alloc_result[mfun][vreg].phy_reg_no = phyreg;
     }
     void AllocStack(MachineFunction *mfun, Register vreg, int offset) {
+        Assert(vreg.is_virtual);
         alloc_result[mfun][vreg].in_mem = true;
         alloc_result[mfun][vreg].stack_offset = offset;
     }
     void swapAllocResult(MachineFunction *mfun, Register v1, Register v2) {
+        Assert(v1.is_virtual && v2.is_virtual);
         AllocResult tmp = alloc_result[mfun][v1];
         alloc_result[mfun][v1] = alloc_result[mfun][v2];
         alloc_result[mfun][v2] = tmp;
     }
     int getAllocResultInReg(MachineFunction *mfun, Register vreg) {
-        assert(alloc_result[mfun][vreg].in_mem == false);
+        Assert(alloc_result[mfun][vreg].in_mem == false);
+        Assert(vreg.is_virtual);
         return alloc_result[mfun][vreg].phy_reg_no;
     }
     int getAllocResultInMem(MachineFunction *mfun, Register vreg) {
-        assert(alloc_result[mfun][vreg].in_mem == true);
+        Assert(alloc_result[mfun][vreg].in_mem == true);
+        Assert(vreg.is_virtual);
         return alloc_result[mfun][vreg].stack_offset;
     }
 

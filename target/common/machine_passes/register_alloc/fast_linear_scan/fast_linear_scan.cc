@@ -4,10 +4,13 @@ FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy) : Regi
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;
+    // Log("FastLinearScan: %s",mfun->getFunctionName().c_str());
     for (auto interval : intervals) {
+        Assert(interval.first == interval.second.getReg());
         if(interval.first.is_virtual){
             unalloc_queue.push(interval.second);
         }else{
+            // Log("Pre Occupy Physical Reg %d",interval.first.reg_no);
             phy_regs->OccupyReg(interval.first.reg_no, interval.second);
         }
     }

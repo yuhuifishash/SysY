@@ -48,6 +48,9 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
         auto val_imm = (ImmI32Operand*)ins->GetValue();
 
         value_reg = GetNewReg(INT32);
+
+        auto imm_copy_ins = rvconstructor->ConstructCopyRegImmI(value_reg,val_imm->GetIntImmVal(),INT32);
+        cur_block->push_back(imm_copy_ins);
     }else if(ins->GetValue()->GetOperandType() == BasicOperand::REG){
         auto val_reg = (RegOperand*)ins->GetValue();
 
@@ -208,20 +211,23 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
 
     // Call Label
     auto call_funcname = ins->GetFunctionName();
-    auto call_instr = rvconstructor->ConstructCall(RISCV_CALL,call_funcname);
-    cur_block->push_back(call_instr);
 
     // Return Value
     auto return_type = ins->GetRetType();
     auto result_op = (RegOperand*)ins->GetResult();
     if(return_type == I32){
-        TODO("Insert Copy");
-        Lazy("Not tested");
-        // auto copy_ret_ins = ;
+        // TODO("Insert Copy");
+        // Lazy("Not tested");
+        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL,call_funcname,RISCV_a0);
+        cur_block->push_back(call_instr);
+        auto copy_ret_ins = rvconstructor->ConstructCopyReg(GetllvmReg(result_op->GetRegNo(),INT32),GetPhysicalReg(RISCV_a0),INT32);
+        cur_block->push_back(copy_ret_ins);
     }else if(return_type == FLOAT32){
         TODO("Insert float mov");
         Lazy("Not tested");
     }else if(return_type == VOID){
+        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL,call_funcname,RISCV_x0);
+        cur_block->push_back(call_instr);
     }else{
         ERROR("Unexpected return type %d",return_type);
     }

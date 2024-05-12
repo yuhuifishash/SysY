@@ -52,7 +52,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,asm,grade,perf,gdb,run,gdbasm
+.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm
 
 SysYc : $(BINARY)
 
@@ -66,7 +66,7 @@ OFLAG ?= O1
 ARCH ?= rv64gc
 # OPTION ?= -p
 
-asm : $(BINARY)
+compile : $(BINARY)
 	./SysY_test_single.sh $(CASE).sy $(STAGE) $(OFLAG)
 
 grade : $(BINARY)
@@ -78,10 +78,10 @@ perf : $(BINARY)
 gdb : $(BINARY)
 	./SysY_gdb_single.sh $(CASE).sy $(STAGE) $(OFLAG)
 
-run : asm
+run : compile
 	./SysY_qemurun_single.sh $(CASE) $(ARCH) $(OPTION)
 
-gdbasm : asm
+gdbasm : compile
 	./SysY_qemugdb_single.sh $(CASE) $(ARCH)
 
 
