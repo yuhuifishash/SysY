@@ -303,7 +303,7 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
     cur_block->push_back(restore_ra_instr);
 
     // restore sp
-    auto add_sp_instr = rvconstructor->ConstructComment("Should add sp here\n");
+    auto add_sp_instr = rvconstructor->ConstructComment("TODO: Should add sp here\n");
 
     // return
     auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0),GetPhysicalReg(RISCV_ra),0);
