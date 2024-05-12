@@ -133,19 +133,22 @@ struct Register {
 public:
     int reg_no;
     bool is_virtual;
+    bool save_across_call;
     MachineDataType type;
     Register() {}
-    Register(bool is_virtual, int reg_no, MachineDataType type) : is_virtual(is_virtual), reg_no(reg_no), type(type) {}
+    Register(bool is_virtual, int reg_no, MachineDataType type,bool save = false) : is_virtual(is_virtual), reg_no(reg_no), type(type), save_across_call(save){}
     int getDataWidth() { return type.getDataWidth(); }
     Register(const Register& other){
         this->is_virtual = other.is_virtual;
         this->reg_no = other.reg_no;
         this->type = other.type;
+        this->save_across_call = other.save_across_call;
     }
     Register operator=(const Register& other){
         this->is_virtual = other.is_virtual;
         this->reg_no = other.reg_no;
         this->type = other.type;
+        this->save_across_call = other.save_across_call;
         return *this;
     }
     bool operator<(Register other) const {
@@ -157,11 +160,14 @@ public:
             return type.data_type < other.type.data_type;
         if (type.data_length != other.type.data_length)
             return type.data_length < other.type.data_length;
+        if (save_across_call != other.save_across_call){
+            return save_across_call < other.save_across_call;
+        }
         return false;
     }
     bool operator==(Register other) const {
         return reg_no == other.reg_no && is_virtual == other.is_virtual && type.data_type == other.type.data_type &&
-               type.data_length == other.type.data_length;
+               type.data_length == other.type.data_length && save_across_call == other.save_across_call;
     }
 };
 

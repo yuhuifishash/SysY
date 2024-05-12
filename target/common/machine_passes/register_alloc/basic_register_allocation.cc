@@ -6,17 +6,17 @@ void RegisterAllocation::Execute() {
         UpdateIntervalsInCurrentFunc();
         DoAllocInCurrentFunc();
     }
-    Log("Alloc Result:");
-    for(auto pair : alloc_result){
-        auto func = pair.first;
-        auto map = pair.second;
-        Log("Func: %s",func->getFunctionName().c_str());
-        for(auto alloc_pair: map){
-            auto reg = alloc_pair.first;
-            auto result = alloc_pair.second;
-            // std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
-        }
-    }
+    // Log("Alloc Result:");
+    // for(auto pair : alloc_result){
+    //     auto func = pair.first;
+    //     auto map = pair.second;
+    //     Log("Func: %s",func->getFunctionName().c_str());
+    //     for(auto alloc_pair: map){
+    //         auto reg = alloc_pair.first;
+    //         auto result = alloc_pair.second;
+    //         // std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
+    //     }
+    // }
     VirtualRegisterRewrite(unit,alloc_result).Execute();
 }
 
@@ -79,19 +79,19 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
             auto ins = *reverse_it;
             if (ins->arch == MachineBaseInstruction::COPY) {
                 // Update copy_sources
-                Log("COPY");
+                // Log("COPY");
                 for (auto reg_w : ins->GetWriteReg()) {
                     for (auto reg_r : ins->GetReadReg()) {
                         copy_sources[*reg_w].push_back(*reg_r);
                     }
                 }
             }else if(ins->arch == MachineBaseInstruction::RiscV){
-                Log("RV");
+                // Log("RV");
             }
             for (auto reg : ins->GetWriteReg()) {
                 // Update last_def of reg
                 last_def[*reg] = ins->getNumber();
-                Log("WRITE %d %d",reg->is_virtual,reg->reg_no);
+                // Log("WRITE %d %d",reg->is_virtual,reg->reg_no);
             
                 if(intervals.find(*reg) == intervals.end()){
                     intervals[*reg] = LiveInterval(*reg);
@@ -106,7 +106,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
             }
             for (auto reg : ins->GetReadReg()) {
                 // Update last_use of reg
-                Log("READ %d %d",reg->is_virtual,reg->reg_no);
+                // Log("READ %d %d",reg->is_virtual,reg->reg_no);
                 if(intervals.find(*reg) == intervals.end()){
                     intervals[*reg] = LiveInterval(*reg);
                 }

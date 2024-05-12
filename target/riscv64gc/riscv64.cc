@@ -214,12 +214,20 @@ struct RiscV64RegisterInfo RiscV64Registers[] = {
 
 std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
     if (interval.getReg().type.data_type == MachineDataType::INT) {
-        return std::vector<int>({
-        RISCV_t0,RISCV_t1,RISCV_t2,RISCV_t3,RISCV_t4,RISCV_t5,RISCV_t6,
-        RISCV_a0,RISCV_a1,RISCV_a2,RISCV_a3,RISCV_a4,RISCV_a5,RISCV_a6,RISCV_a7,
-        RISCV_s0,RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
-        RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
-        });
+        if(interval.getReg().save_across_call == false){
+            return std::vector<int>({
+            RISCV_t0,RISCV_t1,RISCV_t2,RISCV_t3,RISCV_t4,RISCV_t5,RISCV_t6,
+            RISCV_a0,RISCV_a1,RISCV_a2,RISCV_a3,RISCV_a4,RISCV_a5,RISCV_a6,RISCV_a7,
+            RISCV_s0,RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
+            RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
+            });
+        }else{
+            return std::vector<int>({
+                RISCV_s0,
+                RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
+                RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
+            });
+        }
     } else if (interval.getReg().type.data_type == MachineDataType::FLOAT) {
         return std::vector<int>({
         RISCV_f0,  RISCV_f1,  RISCV_f2,  RISCV_f3,  RISCV_f4,  RISCV_f5,  RISCV_f6,  RISCV_f7,

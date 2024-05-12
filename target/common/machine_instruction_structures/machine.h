@@ -51,7 +51,7 @@ public:
     std::vector<MachineBlock *> blocks{};
 
 public:
-    Register GetNewRegister(int regtype, int regwidth);
+    Register GetNewRegister(int regtype, int regwidth, bool save_across_call = false);
 
 protected:
     // Only change branch instruction, don't change cfg or phi instruction

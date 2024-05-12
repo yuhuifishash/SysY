@@ -164,7 +164,7 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
     Assert(ins->GetRetType() == VOID || ins->GetResult()->GetOperandType() == BasicOperand::REG);
 
     // Save ra
-    auto ra_saver_reg = GetNewReg(INT32);
+    auto ra_saver_reg = GetNewReg(INT32,true);
     auto ra_save_copy_instr = rvconstructor->ConstructCopyReg(ra_saver_reg,GetPhysicalReg(RISCV_ra),INT32);
     cur_block->push_back(ra_save_copy_instr);
 
@@ -489,7 +489,7 @@ Register RiscV64Selector::GetllvmReg(int ir_reg, MachineDataType type) {
     Assert(llvm_rv_regtable[ir_reg].type == type);
     return llvm_rv_regtable[ir_reg];
 }
-Register RiscV64Selector::GetNewReg(MachineDataType type) {
-    return cur_func->GetNewRegister(type.data_type, type.data_length);
+Register RiscV64Selector::GetNewReg(MachineDataType type,bool save_across_call) {
+    return cur_func->GetNewRegister(type.data_type, type.data_length,save_across_call);
 }
 // Register RiscV64Selector::GetPhysicalReg(int reg_no) { return Register(false, reg_no, getRVRegType(reg_no)); }

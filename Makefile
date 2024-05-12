@@ -52,7 +52,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,test,run,perf,gdb
+.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,asm,grade,perf,gdb,run,gdbasm
 
 SysYc : $(BINARY)
 
@@ -63,12 +63,13 @@ $(BINARY): $(OBJS)
 CASE ?= dummy
 STAGE ?= S
 OFLAG ?= O1
-ARCH ?= armv7
+ARCH ?= rv64gc
+# OPTION ?= -p
 
-test : $(BINARY)
+asm : $(BINARY)
 	./SysY_test_single.sh $(CASE).sy $(STAGE) $(OFLAG)
 
-run : $(BINARY)
+grade : $(BINARY)
 	./SysY_test.sh $(STAGE) $(OFLAG) $(ARCH)
 
 perf : $(BINARY)
@@ -76,6 +77,13 @@ perf : $(BINARY)
 
 gdb : $(BINARY)
 	./SysY_gdb_single.sh $(CASE).sy $(STAGE) $(OFLAG)
+
+run : asm
+	./SysY_qemurun_single.sh $(CASE) $(ARCH) $(OPTION)
+
+gdbasm : asm
+	./SysY_qemugdb_single.sh $(CASE) $(ARCH)
+
 
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l

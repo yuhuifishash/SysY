@@ -2,6 +2,7 @@ obj/
 bin/
 .vscode/
 test_output/example/*.out
+test_output/example/*.output
 test_output/example/*.out.ll
 test_output/example/*.out.s
 test_output/functional_testAsm/*.s
