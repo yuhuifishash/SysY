@@ -107,6 +107,8 @@ void CFG::BuildCFG() {
             G[id].push_back((*block_map)[target_falseblock_no]);
             invG[target_trueblock_no].push_back(bb);
             invG[target_falseblock_no].push_back(bb);
+        } else if (lastIns->GetOpcode() == RET) {
+            ret_block = bb;
         }
     }
 }

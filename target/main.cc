@@ -135,12 +135,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
-
+        
         llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimplifyCFG);
 
+        llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
 
