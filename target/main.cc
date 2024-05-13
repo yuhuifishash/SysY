@@ -175,7 +175,12 @@ int main(int argc, char **argv) {
 
         // llvmIR.PassExecutor(FunctionInline);  // to do
 
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor(LoopSimplify);
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         // llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopClosedSSA);
         // llvmIR.PassExecutor(ConstantLoopFullyUnroll);
     }
 

@@ -25,7 +25,7 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.FindBasicIndVar();
     scev.FindRecurrences();
 
-    // scev.PrintLoopSCEVInfo();
+    scev.PrintLoopSCEVInfo();
 
     scev.CheckSimpleForLoop();
 }
@@ -300,16 +300,26 @@ void SCEV::CheckSimpleForLoop() {
     auto exit = *L->exit_nodes.begin();
     auto exiting = *L->exiting_nodes.begin();
     auto latch = *L->latches.begin();
-    if (exiting != latch) {
+
+    bool is_latch_eq_exiting = (exiting == latch);
+    for (auto v: C->GetSuccessor(exiting)){
+        if(v == latch && latch->Instruction_list.size() == 1){
+            is_latch_eq_exiting = true;
+        }
+    }
+
+    if(!is_latch_eq_exiting){
+        is_simpleloop = false;
         return;
     }
-    auto I = *(latch->Instruction_list.end() - 2);
+
+    auto I = *(exiting->Instruction_list.end() - 2);
     if (I->GetOpcode() == FCMP) {
         is_simpleloop = false;
         return;
     }
     assert(I->GetOpcode() == ICMP);
-    auto I2 = *(latch->Instruction_list.end() - 1);
+    auto I2 = *(exiting->Instruction_list.end() - 1);
     assert(I2->GetOpcode() == BR_COND);
     auto BrCondI = (BrCondInstruction *)I2;
 
