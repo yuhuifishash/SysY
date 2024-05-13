@@ -17,20 +17,13 @@ public:
     bool may_throwexceptions = false;
 };
 
-class CFGSCC {
-public:
-    std::set<CFG *> CFGSet;
-};
-
 // class for FunctionCallGraph
 class FunctionCallGraph {
 public:
     CFG *MainCFG;    // entry of the program
     std::unordered_map<CFG *, std::vector<CFG *>> CG;
-    std::unordered_map<CFGSCC *, std::vector<CFGSCC *>> CGSCC;
 
     void BuildCG(LLVMIR *IR);
-    void BuildCGSCC();
 };
 
 #endif
