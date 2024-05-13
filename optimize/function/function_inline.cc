@@ -9,8 +9,6 @@ void SimplifyCFG(CFG *C);
 extern std::map<std::string, CFG *> CFGMap;
 
 // we process function call in bottom-up order(CallGraphSCC)
-// in one SCC, we only inline several calls(the code size should not become to large)
-// if one node's call is a node in SCC, we will not inline this call(f -> SCC)
 // in SysY2022, the SCC's size <= 1, so we only need to consider self-recursive
 // after each iterations, we need to use SCCP, SimplifyCFG, InstSimplify, InstCombine to optimize the cfg
 /*
@@ -50,4 +48,6 @@ extern std::map<std::string, CFG *> CFGMap;
 */
 
 
-void FunctionInline(LLVMIR *IR) {}
+void FunctionInline(LLVMIR *IR) {
+    
+}

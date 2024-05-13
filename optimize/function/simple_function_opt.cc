@@ -22,7 +22,9 @@ void MakeFunctionOneExit(CFG *C) {
         ret_type = RetI->GetType();
         OneExitqueue.push(bb);
     }
+    
     if (ret_cnt <= 1) {
+        C->ret_block = OneExitqueue.front();
         if (!OneExitqueue.empty()) {
             OneExitqueue.pop();
         }
