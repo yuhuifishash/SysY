@@ -1,7 +1,7 @@
 #include "riscv64.h"
 #include <assert.h>
 RiscV64InstructionConstructor RiscV64InstructionConstructor::instance;
-RiscV64InstructionConstructor* rvconstructor = RiscV64InstructionConstructor::GetConstructor();
+RiscV64InstructionConstructor *rvconstructor = RiscV64InstructionConstructor::GetConstructor();
 
 std::vector<Register *> RiscV64Instruction::GetReadReg() {
     switch (OpTable[op].ins_formattype) {
@@ -188,44 +188,52 @@ struct RvOpInfo OpTable[] = {
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"
 struct RiscV64RegisterInfo RiscV64Registers[] = {
-[RISCV_x0] = {"x0"},   [RISCV_x1] = {"ra"},           [RISCV_x2] = {"sp"},
-[RISCV_x3] = {"gp"},   [RISCV_x4] = {"tp"},           [RISCV_x5] = {"t0"},
-[RISCV_x6] = {"t1"},   [RISCV_x7] = {"t2"},           [RISCV_x8] = {"fp"},
-[RISCV_x9] = {"s1"},   [RISCV_x10] = {"a0"},         [RISCV_x11] = {"a1"},
-[RISCV_x12] = {"a2"}, [RISCV_x13] = {"a3"},         [RISCV_x14] = {"a4"},
-[RISCV_x15] = {"a5"}, [RISCV_x16] = {"a6"},         [RISCV_x17] = {"a7"},
-[RISCV_x18] = {"s2"}, [RISCV_x19] = {"s3"},         [RISCV_x20] = {"s4"},
-[RISCV_x21] = {"s5"}, [RISCV_x22] = {"s6"},         [RISCV_x23] = {"s7"},
-[RISCV_x24] = {"s8"}, [RISCV_x25] = {"s9"},         [RISCV_x26] = {"s10"},
-[RISCV_x27] = {"s11"}, [RISCV_x28] = {"t3"},         [RISCV_x29] = {"t4"},
-[RISCV_x30] = {"t5"}, [RISCV_x31] = {"t6"},         [RISCV_f0] = {"ft0"},
-[RISCV_f1] = {"ft1"},   [RISCV_f2] = {"ft2"},           [RISCV_f3] = {"ft3"},
-[RISCV_f4] = {"ft4"},   [RISCV_f5] = {"ft5"},           [RISCV_f6] = {"ft6"},
-[RISCV_f7] = {"ft7"},   [RISCV_f8] = {"fs0"},           [RISCV_f9] = {"fs1"},
-[RISCV_f10] = {"fa0"}, [RISCV_f11] = {"fa1"},         [RISCV_f12] = {"fa2"},
-[RISCV_f13] = {"fa3"}, [RISCV_f14] = {"fa4"},         [RISCV_f15] = {"fa5"},
-[RISCV_f16] = {"fa6"}, [RISCV_f17] = {"fa7"},         [RISCV_f18] = {"fs2"},
-[RISCV_f19] = {"fs3"}, [RISCV_f20] = {"fs4"},         [RISCV_f21] = {"fs5"},
-[RISCV_f22] = {"fs6"}, [RISCV_f23] = {"fs7"},         [RISCV_f24] = {"fs8"},
-[RISCV_f25] = {"fs9"}, [RISCV_f26] = {"fs10"},         [RISCV_f27] = {"fs11"},
-[RISCV_f28] = {"ft8"}, [RISCV_f29] = {"ft9"},         [RISCV_f30] = {"ft10"},
+[RISCV_x0] = {"x0"},    [RISCV_x1] = {"ra"},           [RISCV_x2] = {"sp"},
+[RISCV_x3] = {"gp"},    [RISCV_x4] = {"tp"},           [RISCV_x5] = {"t0"},
+[RISCV_x6] = {"t1"},    [RISCV_x7] = {"t2"},           [RISCV_x8] = {"fp"},
+[RISCV_x9] = {"s1"},    [RISCV_x10] = {"a0"},          [RISCV_x11] = {"a1"},
+[RISCV_x12] = {"a2"},   [RISCV_x13] = {"a3"},          [RISCV_x14] = {"a4"},
+[RISCV_x15] = {"a5"},   [RISCV_x16] = {"a6"},          [RISCV_x17] = {"a7"},
+[RISCV_x18] = {"s2"},   [RISCV_x19] = {"s3"},          [RISCV_x20] = {"s4"},
+[RISCV_x21] = {"s5"},   [RISCV_x22] = {"s6"},          [RISCV_x23] = {"s7"},
+[RISCV_x24] = {"s8"},   [RISCV_x25] = {"s9"},          [RISCV_x26] = {"s10"},
+[RISCV_x27] = {"s11"},  [RISCV_x28] = {"t3"},          [RISCV_x29] = {"t4"},
+[RISCV_x30] = {"t5"},   [RISCV_x31] = {"t6"},          [RISCV_f0] = {"ft0"},
+[RISCV_f1] = {"ft1"},   [RISCV_f2] = {"ft2"},          [RISCV_f3] = {"ft3"},
+[RISCV_f4] = {"ft4"},   [RISCV_f5] = {"ft5"},          [RISCV_f6] = {"ft6"},
+[RISCV_f7] = {"ft7"},   [RISCV_f8] = {"fs0"},          [RISCV_f9] = {"fs1"},
+[RISCV_f10] = {"fa0"},  [RISCV_f11] = {"fa1"},         [RISCV_f12] = {"fa2"},
+[RISCV_f13] = {"fa3"},  [RISCV_f14] = {"fa4"},         [RISCV_f15] = {"fa5"},
+[RISCV_f16] = {"fa6"},  [RISCV_f17] = {"fa7"},         [RISCV_f18] = {"fs2"},
+[RISCV_f19] = {"fs3"},  [RISCV_f20] = {"fs4"},         [RISCV_f21] = {"fs5"},
+[RISCV_f22] = {"fs6"},  [RISCV_f23] = {"fs7"},         [RISCV_f24] = {"fs8"},
+[RISCV_f25] = {"fs9"},  [RISCV_f26] = {"fs10"},        [RISCV_f27] = {"fs11"},
+[RISCV_f28] = {"ft8"},  [RISCV_f29] = {"ft9"},         [RISCV_f30] = {"ft10"},
 [RISCV_f31] = {"ft11"}, [RISCV_INVALID] = {"INVALID"}, [RISCV_spilled_in_memory] = {"spilled_in_memory"},
 };
 
 std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
     if (interval.getReg().type.data_type == MachineDataType::INT) {
-        if(interval.getReg().save_across_call == false){
+        if (interval.getReg().save_across_call == false) {
             return std::vector<int>({
-            RISCV_t0,RISCV_t1,RISCV_t2,RISCV_t3,RISCV_t4,RISCV_t5,RISCV_t6,
-            RISCV_a0,RISCV_a1,RISCV_a2,RISCV_a3,RISCV_a4,RISCV_a5,RISCV_a6,RISCV_a7,
-            RISCV_s0,RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
-            RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
+            RISCV_t0, RISCV_t1, RISCV_t2, RISCV_t3, RISCV_t4, RISCV_t5, RISCV_t6, RISCV_a0,  RISCV_a1,
+            RISCV_a2, RISCV_a3, RISCV_a4, RISCV_a5, RISCV_a6, RISCV_a7, RISCV_s0, RISCV_s1,  RISCV_s2,
+            RISCV_s3, RISCV_s4, RISCV_s5, RISCV_s6, RISCV_s7, RISCV_s8, RISCV_s9, RISCV_s10, RISCV_s11,
             });
-        }else{
+        } else {
             return std::vector<int>({
-                RISCV_s1,RISCV_s2,RISCV_s3,RISCV_s4,RISCV_s5,RISCV_s6,RISCV_s7,
-                RISCV_s8,RISCV_s9,RISCV_s10,RISCV_s11,
-                RISCV_s0,
+            RISCV_s1,
+            RISCV_s2,
+            RISCV_s3,
+            RISCV_s4,
+            RISCV_s5,
+            RISCV_s6,
+            RISCV_s7,
+            RISCV_s8,
+            RISCV_s9,
+            RISCV_s10,
+            RISCV_s11,
+            RISCV_s0,
             });
         }
     } else if (interval.getReg().type.data_type == MachineDataType::FLOAT) {

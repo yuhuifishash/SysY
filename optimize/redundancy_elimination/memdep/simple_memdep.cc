@@ -106,7 +106,7 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
         }
 
         // if reach BB0,  insert functiondef
-        if(x->block_id == 0 && !is_find){
+        if (x->block_id == 0 && !is_find) {
             res.insert(C->function_def);
         }
     }
@@ -115,18 +115,18 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
 }
 
 bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C) {
-    auto mem1 = GetLoadClobbers(a,C);
-    auto mem2 = GetLoadClobbers(b,C);
-    
-    if(mem1.size() != mem2.size()){
+    auto mem1 = GetLoadClobbers(a, C);
+    auto mem2 = GetLoadClobbers(b, C);
+
+    if (mem1.size() != mem2.size()) {
         return false;
     }
-    for(auto I:mem1){
-        if(mem2.find(I) == mem2.end()){
+    for (auto I : mem1) {
+        if (mem2.find(I) == mem2.end()) {
             return false;
         }
     }
-    return true; 
+    return true;
 }
 
 void SimpleMemDepAnalyser::MemDepTest() {
@@ -161,16 +161,14 @@ void SimpleMemDepAnalyser::MemDepTest() {
                 }
             }
         }
-        for(auto I1:LoadSet){
-            for(auto I2:LoadSet){
+        for (auto I1 : LoadSet) {
+            for (auto I2 : LoadSet) {
                 I1->PrintIR(std::cerr);
                 I2->PrintIR(std::cerr);
-                std::cerr<<isLoadSameMemory(I1,I2,cfg)<<"\n";
+                std::cerr << isLoadSameMemory(I1, I2, cfg) << "\n";
             }
         }
     }
-
-    
 }
 
 void SimpleMemoryDependenceAnalysis(LLVMIR *IR) {

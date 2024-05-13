@@ -51,9 +51,10 @@ class SimpleAliasAnalyser : public AliasAnalyser {
 private:
     std::map<CFG *, FunctionMemRWInfo> CFGMemRWMap;
     std::map<CFG *, std::map<int, PtrRegMemInfo>> PtrRegMemMap;
-    std::map<CFG*, std::map<int, Instruction>> CFGResultMap;
+    std::map<CFG *, std::map<int, Instruction>> CFGResultMap;
     void AliasAnalysis(CFG *C);    // simple_alias_analysis in single function
-    bool IsSamePtrWithDiffConstIndex(Operand p1, Operand p2, CFG* C);
+    bool IsSamePtrWithDiffConstIndex(Operand p1, Operand p2, CFG *C);
+
 public:
     virtual void AliasAnalysis();
 

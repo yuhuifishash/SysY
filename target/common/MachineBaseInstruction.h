@@ -61,10 +61,10 @@
 #define ENABLE_LOG
 #ifdef ENABLE_LOG
 #ifndef Lazy
-#define Lazy(str)\
-do{\
-    Log("\033[;31;1m%s\033[0m", str);\
-}while(0)
+#define Lazy(str)                                                                                                      \
+    do {                                                                                                               \
+        Log("\033[;31;1m%s\033[0m", str);                                                                              \
+    } while (0)
 #endif
 #else
 #ifndef Lazy
@@ -87,11 +87,11 @@ struct MachineDataType {
     unsigned data_type;
     unsigned data_length;
     MachineDataType() {}
-    MachineDataType(const MachineDataType &other){
+    MachineDataType(const MachineDataType &other) {
         this->data_type = other.data_type;
         this->data_length = other.data_length;
     }
-    MachineDataType operator=(const MachineDataType& other){
+    MachineDataType operator=(const MachineDataType &other) {
         this->data_type = other.data_type;
         this->data_length = other.data_length;
         return *this;
@@ -136,15 +136,16 @@ public:
     bool save_across_call;
     MachineDataType type;
     Register() {}
-    Register(bool is_virtual, int reg_no, MachineDataType type,bool save = false) : is_virtual(is_virtual), reg_no(reg_no), type(type), save_across_call(save){}
+    Register(bool is_virtual, int reg_no, MachineDataType type, bool save = false)
+        : is_virtual(is_virtual), reg_no(reg_no), type(type), save_across_call(save) {}
     int getDataWidth() { return type.getDataWidth(); }
-    Register(const Register& other){
+    Register(const Register &other) {
         this->is_virtual = other.is_virtual;
         this->reg_no = other.reg_no;
         this->type = other.type;
         this->save_across_call = other.save_across_call;
     }
-    Register operator=(const Register& other){
+    Register operator=(const Register &other) {
         this->is_virtual = other.is_virtual;
         this->reg_no = other.reg_no;
         this->type = other.type;
@@ -160,7 +161,7 @@ public:
             return type.data_type < other.type.data_type;
         if (type.data_length != other.type.data_length)
             return type.data_length < other.type.data_length;
-        if (save_across_call != other.save_across_call){
+        if (save_across_call != other.save_across_call) {
             return save_across_call < other.save_across_call;
         }
         return false;
@@ -238,27 +239,29 @@ public:
     virtual std::vector<Register *> GetWriteReg() = 0;
 };
 
-class MachineComment : public MachineBaseInstruction{
+class MachineComment : public MachineBaseInstruction {
 private:
     std::string comment;
+
 public:
     MachineComment(std::string comment) : MachineBaseInstruction(MachineBaseInstruction::COMMENT), comment(comment) {}
-    virtual std::vector<Register *> GetReadReg(){return std::vector<Register*>();}
-    virtual std::vector<Register *> GetWriteReg(){return std::vector<Register*>();}
-    std::string GetComment(){return comment;}
+    virtual std::vector<Register *> GetReadReg() { return std::vector<Register *>(); }
+    virtual std::vector<Register *> GetWriteReg() { return std::vector<Register *>(); }
+    std::string GetComment() { return comment; }
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {
 private:
     Register result;
     std::vector<std::pair<int, MachineBaseOperand *>> phi_list;
+
 public:
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
 
     MachinePhiInstruction(Register result) : result(result), MachineBaseInstruction(MachineBaseInstruction::PHI) {}
-    Register GetResult(){return result;}
-    std::vector<std::pair<int, MachineBaseOperand*>> GetPhiList(){return phi_list;}
+    Register GetResult() { return result; }
+    std::vector<std::pair<int, MachineBaseOperand *>> GetPhiList() { return phi_list; }
     void pushPhiList(int label, Register reg) { phi_list.push_back(std::make_pair(label, new MachineRegister(reg))); }
     void pushPhiList(int label, int imm32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateInt(imm32)));
@@ -270,6 +273,7 @@ private:
     MachineDataType copy_type;
     MachineBaseOperand *src;
     MachineBaseOperand *dst;
+
 public:
     std::vector<Register *> GetReadReg() {
         if (src->op_type == MachineBaseOperand::REG)
@@ -286,8 +290,8 @@ public:
     void output(std::ostream &s) {
         s << dst->toString() << " = " << copy_type.toString() << " COPY " << src->toString() << "\n";
     }
-    MachineBaseOperand* GetSrc(){return src;}
-    MachineBaseOperand* GetDst(){return dst;}
-    MachineDataType GetCopyType(){return copy_type;}
+    MachineBaseOperand *GetSrc() { return src; }
+    MachineBaseOperand *GetDst() { return dst; }
+    MachineDataType GetCopyType() { return copy_type; }
 };
 #endif

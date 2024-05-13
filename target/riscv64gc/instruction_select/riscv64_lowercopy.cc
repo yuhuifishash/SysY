@@ -13,7 +13,7 @@ void RiscV64LowerCopy::Execute() {
                     if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMI) {
                         // If here should use lui&addi,see: https://zhuanlan.zhihu.com/p/374235855
                         auto src_immi = (MachineImmediateInt *)m_copy->GetSrc();
-                        auto dst_reg = (MachineRegister*)m_copy->GetDst();
+                        auto dst_reg = (MachineRegister *)m_copy->GetDst();
 
                         auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
                         ins = li_instr;
@@ -22,10 +22,10 @@ void RiscV64LowerCopy::Execute() {
                     } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::REG) {
                         auto Reg = ((MachineRegister *)(m_copy->GetSrc()))->reg;
                         if (Reg.type.data_type == MachineDataType::INT) {
-                            auto dst_reg = ((MachineRegister*)(m_copy)->GetDst())->reg;
-                            auto src_reg = ((MachineRegister*)(m_copy)->GetSrc())->reg;
+                            auto dst_reg = ((MachineRegister *)(m_copy)->GetDst())->reg;
+                            auto src_reg = ((MachineRegister *)(m_copy)->GetSrc())->reg;
 
-                            auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI,dst_reg,src_reg,0);
+                            auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI, dst_reg, src_reg, 0);
                             ins = copy_addi_ins;
 
                         } else if (Reg.type.data_type == MachineDataType::FLOAT) {

@@ -9,8 +9,8 @@ public:
     void printMachineIR();
     RiscV64Printer(std::ostream &s, MachineUnit *printee) : MachinePrinter(s, printee) {}
 
-    template<class INSPTR>void printAsm(INSPTR ins);
-    template<class INSPTR>void printMachineIR(INSPTR ins);
+    template <class INSPTR> void printAsm(INSPTR ins);
+    template <class INSPTR> void printMachineIR(INSPTR ins);
 
     template <class FIELDORPTR> void printRVfield(FIELDORPTR);
 };

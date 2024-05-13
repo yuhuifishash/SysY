@@ -168,14 +168,15 @@ class RegOperand : public BasicOperand {
         this->operandType = REG;
         this->reg_no = RegNo;
     }
+
 public:
     int GetRegNo() { return reg_no; }
-    
-    friend RegOperand* GetNewRegOperand(int RegNo);
+
+    friend RegOperand *GetNewRegOperand(int RegNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
-RegOperand* GetNewRegOperand(int RegNo);
+RegOperand *GetNewRegOperand(int RegNo);
 
 // @integer32 immediate
 class ImmI32Operand : public BasicOperand {
@@ -220,12 +221,12 @@ class LabelOperand : public BasicOperand {
 public:
     int GetLabelNo() { return label_no; }
 
-    friend LabelOperand* GetNewLabelOperand(int LabelNo);
+    friend LabelOperand *GetNewLabelOperand(int LabelNo);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
 
-LabelOperand* GetNewLabelOperand(int RegNo);
+LabelOperand *GetNewLabelOperand(int RegNo);
 
 // @global identifier @+name
 class GlobalOperand : public BasicOperand {
@@ -234,15 +235,16 @@ class GlobalOperand : public BasicOperand {
         this->operandType = GLOBAL;
         this->name = gloName;
     }
+
 public:
     std::string GetName() { return name; }
 
-    friend GlobalOperand* GetNewGlobalOperand(std::string name);
+    friend GlobalOperand *GetNewGlobalOperand(std::string name);
     virtual std::string GetFullName();
     virtual Operand CopyOperand();
 };
 
-GlobalOperand* GetNewGlobalOperand(std::string name);
+GlobalOperand *GetNewGlobalOperand(std::string name);
 
 class BasicInstruction;
 typedef BasicInstruction *Instruction;
@@ -610,12 +612,12 @@ public:
     VarAttribute arval;
     GlobalVarDefineInstruction(std::string nam, enum LLVMType typ, Operand i_val)
         : name(nam), type(typ), init_val(i_val) {
-            this->opcode = LLVMIROpcode::GLOBAL_VAR;
-        }
+        this->opcode = LLVMIROpcode::GLOBAL_VAR;
+    }
     GlobalVarDefineInstruction(std::string nam, enum LLVMType typ, VarAttribute v)
         : name(nam), type(typ), arval(v), init_val{nullptr} {
-            this->opcode = LLVMIROpcode::GLOBAL_VAR;
-        }
+        this->opcode = LLVMIROpcode::GLOBAL_VAR;
+    }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
 
@@ -632,7 +634,7 @@ public:
     std::string str_val;
     std::string str_name;
     GlobalStringConstInstruction(std::string strval, std::string strname) : str_val(strval), str_name(strname) {
-            this->opcode = LLVMIROpcode::GLOBAL_STR;
+        this->opcode = LLVMIROpcode::GLOBAL_STR;
     }
 
     virtual void PrintIR(std::ostream &s);

@@ -274,56 +274,56 @@ void EliminateDoubleBrUnCond(CFG *C) {
         OtherPhiMap.clear();
         PhiMap.clear();
     }
-    int cnt=0;
-    std::unordered_map<int,int> NewMap;
+    int cnt = 0;
+    std::unordered_map<int, int> NewMap;
     for (auto [id, bb] : *C->block_map) {
         NewMap[id] = cnt++;
     }
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            if(I->GetOpcode()==PHI){
-                auto PhiI=(PhiInstruction*)I;
+            if (I->GetOpcode() == PHI) {
+                auto PhiI = (PhiInstruction *)I;
                 auto ResultOperands = PhiI->GetPhiList();
                 std::set<int> ReplaceSet;
-                for(u_int32_t i=0;i<ResultOperands.size();++i){
-                    auto Labelop=(LabelOperand*)ResultOperands[i].first;
-                    auto Labelopno=Labelop->GetLabelNo();
-                    if(NewMap.find(Labelopno)!=NewMap.end()){
+                for (u_int32_t i = 0; i < ResultOperands.size(); ++i) {
+                    auto Labelop = (LabelOperand *)ResultOperands[i].first;
+                    auto Labelopno = Labelop->GetLabelNo();
+                    if (NewMap.find(Labelopno) != NewMap.end()) {
                         ReplaceSet.insert(Labelopno);
                     }
                 }
-                for(auto it=ReplaceSet.begin();it!=ReplaceSet.end();++it){
-                    PhiI->SetNewFrom(*it,NewMap[*it]);
+                for (auto it = ReplaceSet.begin(); it != ReplaceSet.end(); ++it) {
+                    PhiI->SetNewFrom(*it, NewMap[*it]);
                 }
                 ReplaceSet.clear();
-            }else if(I->GetOpcode()==BR_COND){
-                auto brcondI=(BrCondInstruction*)I;
-                auto trueop=(LabelOperand*)brcondI->GetTrueLabel();
-                auto falseop=(LabelOperand*)brcondI->GetFalseLabel();
-                auto trueopno=trueop->GetLabelNo();
-                auto falseopno=falseop->GetLabelNo();
-                if(NewMap.find(trueopno)!=NewMap.end()){
+            } else if (I->GetOpcode() == BR_COND) {
+                auto brcondI = (BrCondInstruction *)I;
+                auto trueop = (LabelOperand *)brcondI->GetTrueLabel();
+                auto falseop = (LabelOperand *)brcondI->GetFalseLabel();
+                auto trueopno = trueop->GetLabelNo();
+                auto falseopno = falseop->GetLabelNo();
+                if (NewMap.find(trueopno) != NewMap.end()) {
                     brcondI->SetTrueLabel(GetNewLabelOperand(NewMap[trueopno]));
                 }
-                if(NewMap.find(falseopno)!=NewMap.end()){
+                if (NewMap.find(falseopno) != NewMap.end()) {
                     brcondI->SetFalseLabel(GetNewLabelOperand(NewMap[falseopno]));
                 }
-            }else if(I->GetOpcode()==BR_UNCOND){
-                auto bruncondI=(BrUncondInstruction*)I;
-                auto Labelop=(LabelOperand*)bruncondI->GetDestLabel();
-                auto Labelopno=Labelop->GetLabelNo();
-                if(NewMap.find(Labelopno)==NewMap.end()){
+            } else if (I->GetOpcode() == BR_UNCOND) {
+                auto bruncondI = (BrUncondInstruction *)I;
+                auto Labelop = (LabelOperand *)bruncondI->GetDestLabel();
+                auto Labelopno = Labelop->GetLabelNo();
+                if (NewMap.find(Labelopno) == NewMap.end()) {
                     continue;
                 }
                 bruncondI->SetTarget(GetNewLabelOperand(NewMap[Labelopno]));
             }
         }
     }
-    std::map<int, LLVMBlock> new_block_map=*C->block_map;
+    std::map<int, LLVMBlock> new_block_map = *C->block_map;
     C->block_map->clear();
     for (auto [id, bb] : new_block_map) {
         bb->block_id = NewMap[bb->block_id];
-        C->block_map->insert(std::make_pair(NewMap[id],bb));
+        C->block_map->insert(std::make_pair(NewMap[id], bb));
     }
     C->max_label = cnt;
     C->BuildCFG();

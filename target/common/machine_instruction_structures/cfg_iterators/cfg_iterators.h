@@ -22,7 +22,7 @@ private:
     decltype(cache.rbegin()) current_pos;
 
 public:
-    ReverseIterator(Iterator *child) : Iterator(child->getMachineCFG()),child(child) {}
+    ReverseIterator(Iterator *child) : Iterator(child->getMachineCFG()), child(child) {}
     void open();
     MachineCFGNode *next();
     bool hasNext();

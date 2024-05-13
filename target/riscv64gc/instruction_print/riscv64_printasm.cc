@@ -1,10 +1,10 @@
 #include "riscv64_printer.h"
 #include <assert.h>
 
-bool isMemFormatOp(int opcode){
-    return opcode == RISCV_LB || opcode == RISCV_LBU || opcode == RISCV_LH || opcode == RISCV_LHU || opcode == RISCV_LW || opcode == RISCV_LWU || opcode == RISCV_LD
-    || opcode == RISCV_FLW || opcode == RISCV_FLD || opcode == RISCV_FSW || opcode == RISCV_FSD
-    ;
+bool isMemFormatOp(int opcode) {
+    return opcode == RISCV_LB || opcode == RISCV_LBU || opcode == RISCV_LH || opcode == RISCV_LHU ||
+           opcode == RISCV_LW || opcode == RISCV_LWU || opcode == RISCV_LD || opcode == RISCV_FLW ||
+           opcode == RISCV_FLD || opcode == RISCV_FSW || opcode == RISCV_FSD;
 }
 
 template <> void RiscV64Printer::printRVfield<Register *>(Register *printee) {
@@ -53,24 +53,23 @@ template <> void RiscV64Printer::printRVfield<RiscVLabel>(RiscVLabel ins) {
     }
 }
 
-template <> void RiscV64Printer::printRVfield<MachineBaseOperand*>(MachineBaseOperand* op){
-    if(op->op_type == MachineBaseOperand::REG){
-        auto reg_op = (MachineRegister*)op;
+template <> void RiscV64Printer::printRVfield<MachineBaseOperand *>(MachineBaseOperand *op) {
+    if (op->op_type == MachineBaseOperand::REG) {
+        auto reg_op = (MachineRegister *)op;
         printRVfield(reg_op->reg);
-    }else if(op->op_type == MachineBaseOperand::IMMI){
-        auto immi_op = (MachineImmediateInt*)op;
+    } else if (op->op_type == MachineBaseOperand::IMMI) {
+        auto immi_op = (MachineImmediateInt *)op;
         s << immi_op->imm32;
-    }else if(op->op_type == MachineBaseOperand::IMMF){
-        auto immf_op = (MachineImmediateFloat*)op;
+    } else if (op->op_type == MachineBaseOperand::IMMF) {
+        auto immf_op = (MachineImmediateFloat *)op;
         s << immf_op->fimm32;
     }
 }
 
-template<>
-void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
+template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instruction *ins) {
     s << OpTable[ins->getOpcode()].name << "\t\t";
-    if(strlen(OpTable[ins->getOpcode()].name) <= 3){
-        s<<"\t";
+    if (strlen(OpTable[ins->getOpcode()].name) <= 3) {
+        s << "\t";
     }
     switch (OpTable[ins->getOpcode()].ins_formattype) {
     case RvOpInfo::R_type:
@@ -100,7 +99,7 @@ void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
     case RvOpInfo::I_type:
         printRVfield(ins->getRd());
         s << ",";
-        if(!isMemFormatOp(ins->getOpcode())){
+        if (!isMemFormatOp(ins->getOpcode())) {
             printRVfield(ins->getRs1());
             s << ",";
             if (ins->getUseLabel()) {
@@ -108,21 +107,21 @@ void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
             } else {
                 s << ins->getImm();
             }
-        }else{
+        } else {
             if (ins->getUseLabel()) {
                 printRVfield(ins->getLabel());
             } else {
                 s << ins->getImm();
             }
-            s<<"(";
+            s << "(";
             printRVfield(ins->getRs1());
-            s<<")";
+            s << ")";
         }
         s << "\n";
         return;
     case RvOpInfo::S_type:
         printRVfield(ins->getRs1());
-        s<<",";
+        s << ",";
         if (ins->getUseLabel()) {
             printRVfield(ins->getLabel());
         } else {
@@ -171,30 +170,29 @@ void RiscV64Printer::printAsm<RiscV64Instruction*>(RiscV64Instruction *ins) {
     ERROR("Unexpected instruction format");
 }
 
-template<>
-void RiscV64Printer::printAsm<MachineCopyInstruction*>(MachineCopyInstruction *ins) {
+template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyInstruction *ins) {
     printRVfield(ins->GetDst());
     s << " = COPY ";
     printRVfield(ins->GetSrc());
-    s << ", "<<ins->GetCopyType().toString()<<"\n";
+    s << ", " << ins->GetCopyType().toString() << "\n";
 }
 
-template<>
-void RiscV64Printer::printAsm<MachinePhiInstruction*>(MachinePhiInstruction *ins) {
+template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {
     Lazy("Phi Output");
     printRVfield(ins->GetResult());
-    s<<" = "<<ins->GetResult().type.toString()<<" PHI ";
-    for(auto [label,op] : ins->GetPhiList()){
-        s<<"[";
+    s << " = " << ins->GetResult().type.toString() << " PHI ";
+    for (auto [label, op] : ins->GetPhiList()) {
+        s << "[";
         printRVfield(op);
-        s<<",%L"<<label;
-        s<<"] ";
+        s << ",%L" << label;
+        s << "] ";
     }
-    s<<"\n";
+    s << "\n";
 }
 
-template<>
-void RiscV64Printer::printMachineIR<RiscV64Instruction*>(RiscV64Instruction *ins) { TODO("Implement RiscV64Instruction::printMachineIR"); }
+template <> void RiscV64Printer::printMachineIR<RiscV64Instruction *>(RiscV64Instruction *ins) {
+    TODO("Implement RiscV64Instruction::printMachineIR");
+}
 
 void RiscV64Printer::emit() {
     s << "\t.text\n\t.globl main\n";
@@ -211,58 +209,60 @@ void RiscV64Printer::emit() {
                 if (ins->arch == MachineBaseInstruction::RiscV) {
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
-                    printAsm((MachinePhiInstruction*)ins);
+                    printAsm((MachinePhiInstruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     printAsm((MachineCopyInstruction *)ins);
-                }else if(ins->arch == MachineBaseInstruction::COMMENT){
-                    s<<"# "<<((MachineComment*)ins)->GetComment();
+                } else if (ins->arch == MachineBaseInstruction::COMMENT) {
+                    s << "# " << ((MachineComment *)ins)->GetComment();
                 } else {
                     ERROR("Unexpected arch");
                 }
             }
         }
     }
-    s<<"\t.data\n";
+    s << "\t.data\n";
     for (auto global : printee->global_def) {
-        if(global->GetOpcode() == GLOBAL_VAR){
-            auto global_ins = (GlobalVarDefineInstruction*)global;
-            s<<global_ins->name<<":\n";
-            if(global_ins->type == I32){
-                if(global_ins->arval.dims.empty()){
-                    if(global_ins->init_val != nullptr){
+        if (global->GetOpcode() == GLOBAL_VAR) {
+            auto global_ins = (GlobalVarDefineInstruction *)global;
+            s << global_ins->name << ":\n";
+            if (global_ins->type == I32) {
+                if (global_ins->arval.dims.empty()) {
+                    if (global_ins->init_val != nullptr) {
                         Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMI32);
-                        auto imm_op = (ImmI32Operand*)global_ins->init_val;
-                        s<<"\t.word\t"<<imm_op->GetIntImmVal()<<"\n";
-                    }else{
-                        s<<"\t.word\t0\n";
+                        auto imm_op = (ImmI32Operand *)global_ins->init_val;
+                        s << "\t.word\t" << imm_op->GetIntImmVal() << "\n";
+                    } else {
+                        s << "\t.word\t0\n";
                     }
-                }else{
+                } else {
                     int zero_cum = 0;
-                    for(auto val : global_ins->arval.IntInitVals){
-                        if(val == 0){
+                    for (auto val : global_ins->arval.IntInitVals) {
+                        if (val == 0) {
                             zero_cum += 4;
-                        }else{
-                            if(zero_cum != 0){
-                                s<<"\t.zero\t"<<zero_cum<<"\n";
+                        } else {
+                            if (zero_cum != 0) {
+                                s << "\t.zero\t" << zero_cum << "\n";
                                 zero_cum = 0;
                             }
-                            s<<"\t.word\t"<<val<<"\n";
+                            s << "\t.word\t" << val << "\n";
                         }
                     }
-                    if(zero_cum != 0){
-                        s<<"\t.zero\t"<<zero_cum<<"\n";
+                    if (zero_cum != 0) {
+                        s << "\t.zero\t" << zero_cum << "\n";
                         zero_cum = 0;
                     }
                 }
-            }else if(global_ins->type == FLOAT32){
+            } else if (global_ins->type == FLOAT32) {
                 TODO("Global Float DEF");
             }
-        }else if(global->GetOpcode() == GLOBAL_STR){
-            auto str_ins = (GlobalStringConstInstruction*)global;
+        } else if (global->GetOpcode() == GLOBAL_STR) {
+            auto str_ins = (GlobalStringConstInstruction *)global;
             TODO("GLOBAL STR CONST");
             Lazy("Not tested");
-            s<<"\t.asciz\t"<<"\""<<str_ins->str_val<<"\""<<"\n";
-        }else{
+            s << "\t.asciz\t"
+              << "\"" << str_ins->str_val << "\""
+              << "\n";
+        } else {
             ERROR("Unexpected global define instruction");
         }
     }

@@ -300,14 +300,10 @@ void BasicBlockCSE(CFG *C) {
     }
 }
 
-
-
-
-
 void DomTreeWalkCSE(CFG *C) {
     std::set<Instruction> EraseSet;
     std::map<InstCSEInfo, int> InstCSEMap;    //<inst_info, result_reg>
-    std::map<InstCSEInfo, std::vector<Instruction> > LoadCSEMap;
+    std::map<InstCSEInfo, std::vector<Instruction>> LoadCSEMap;
     std::map<int, int> reg_replace_map;
     bool changed = true;
 
@@ -320,16 +316,16 @@ void DomTreeWalkCSE(CFG *C) {
                 continue;
             }
             if (I->GetOpcode() == LOAD) {
-                auto LoadI = (LoadInstruction*)I;
+                auto LoadI = (LoadInstruction *)I;
                 auto info = GetCSEInfo(LoadI);
                 auto CSEiter = LoadCSEMap.find(info);
                 if (CSEiter != LoadCSEMap.end()) {
                     bool is_cse = false;
-                    for(auto I2:LoadCSEMap[info]){
+                    for (auto I2 : LoadCSEMap[info]) {
                         // I->PrintIR(std::cerr);I2->PrintIR(std::cerr);
-                        if(memdep_analyser->isLoadSameMemory(I,I2,C) == true) {
+                        if (memdep_analyser->isLoadSameMemory(I, I2, C) == true) {
                             EraseSet.insert(I);
-                            if(I2->GetOpcode() == STORE){
+                            if (I2->GetOpcode() == STORE) {
                                 // I->PrintIR(std::cerr);
                                 auto StoreI2 = (StoreInstruction *)I2;
                                 int val_regno = ((RegOperand *)StoreI2->GetValue())->GetRegNo();
@@ -338,10 +334,10 @@ void DomTreeWalkCSE(CFG *C) {
                                 }
                                 reg_replace_map[I->GetResultRegNo()] = val_regno;
 
-                            } else if(I2->GetOpcode() == LOAD){
+                            } else if (I2->GetOpcode() == LOAD) {
 
                                 reg_replace_map[I->GetResultRegNo()] = I2->GetResultRegNo();
-                            } else { // should not reach here
+                            } else {    // should not reach here
                                 assert(false);
                             }
 
@@ -350,16 +346,16 @@ void DomTreeWalkCSE(CFG *C) {
                             break;
                         }
                     }
-                    if(is_cse){
+                    if (is_cse) {
                         continue;
                     }
                 }
 
                 LoadCSEMap[info].push_back(LoadI);
-                tmpload_num_map[info] += 1;  
+                tmpload_num_map[info] += 1;
                 continue;
             }
-            if (I->GetOpcode() == STORE) {// store will generate new load
+            if (I->GetOpcode() == STORE) {    // store will generate new load
                 auto StoreI = (StoreInstruction *)I;
                 assert(StoreI->GetValue()->GetOperandType() == BasicOperand::REG);
 
@@ -368,10 +364,11 @@ void DomTreeWalkCSE(CFG *C) {
                     val_regno = reg_replace_map[val_regno];
                 }
 
-                auto LoadI = new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), GetNewRegOperand(val_regno));
+                auto LoadI =
+                new LoadInstruction(StoreI->GetDataType(), StoreI->GetPointer(), GetNewRegOperand(val_regno));
                 auto info = GetCSEInfo(LoadI);
                 LoadCSEMap[info].push_back(StoreI);
-                tmpload_num_map[info] += 1;  
+                tmpload_num_map[info] += 1;
                 continue;
             }
             if (I->GetOpcode() == CALL) {
@@ -385,8 +382,8 @@ void DomTreeWalkCSE(CFG *C) {
                     continue;
                 }
             }
-            
-            //other instructions
+
+            // other instructions
             auto Info = GetCSEInfo(I);
             auto CSEiter = InstCSEMap.find(Info);
             if (CSEiter != InstCSEMap.end()) {
@@ -408,9 +405,9 @@ void DomTreeWalkCSE(CFG *C) {
             InstCSEMap.erase(info);
         }
 
-        for (auto [info,num] : tmpload_num_map) {
+        for (auto [info, num] : tmpload_num_map) {
             int i = 0;
-            for(int i = 0; i < num; ++i){
+            for (int i = 0; i < num; ++i) {
                 LoadCSEMap[info].pop_back();
             }
         }

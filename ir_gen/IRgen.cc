@@ -67,7 +67,7 @@ void IRgenAlloca(LLVMBlock B, LLVMType type, int reg);
 void IRgenAllocaArray(LLVMBlock B, LLVMType type, int reg, std::vector<int> dims);
 
 void IRgenTypeConverse(LLVMBlock B, Type::ty type_src, Type::ty type_dst, int src);
-RegOperand* GetNewRegOperand(int RegNo);
+RegOperand *GetNewRegOperand(int RegNo);
 
 void BasicBlock::InsertInstruction(int pos, Instruction Ins) {
     assert(pos == 0 || pos == 1);

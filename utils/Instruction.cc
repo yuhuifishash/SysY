@@ -3,47 +3,46 @@
 #include <assert.h>
 #include <unordered_map>
 
-static std::unordered_map<int, RegOperand*> RegOperandMap;
-static std::map<int, LabelOperand*> LabelOperandMap;
-static std::map<std::string, GlobalOperand*> GlobalOperandMap;
+static std::unordered_map<int, RegOperand *> RegOperandMap;
+static std::map<int, LabelOperand *> LabelOperandMap;
+static std::map<std::string, GlobalOperand *> GlobalOperandMap;
 
-RegOperand* GetNewRegOperand(int RegNo) {
+RegOperand *GetNewRegOperand(int RegNo) {
     auto it = RegOperandMap.find(RegNo);
-    if(it == RegOperandMap.end()){
+    if (it == RegOperandMap.end()) {
         auto R = new RegOperand(RegNo);
         RegOperandMap[RegNo] = R;
         return R;
-    }else{
+    } else {
         return it->second;
     }
 }
 
-LabelOperand* GetNewLabelOperand(int LabelNo) {
+LabelOperand *GetNewLabelOperand(int LabelNo) {
     auto it = LabelOperandMap.find(LabelNo);
-    if(it == LabelOperandMap.end()){
+    if (it == LabelOperandMap.end()) {
         auto L = new LabelOperand(LabelNo);
         LabelOperandMap[LabelNo] = L;
         return L;
-    }else{
+    } else {
         return it->second;
     }
 }
 
-GlobalOperand* GetNewGlobalOperand(std::string name) {
+GlobalOperand *GetNewGlobalOperand(std::string name) {
     auto it = GlobalOperandMap.find(name);
-    if(it == GlobalOperandMap.end()){
+    if (it == GlobalOperandMap.end()) {
         auto G = new GlobalOperand(name);
         GlobalOperandMap[name] = G;
         return G;
-    }else{
+    } else {
         return it->second;
     }
 }
 
-
 void IRgenArithmeticI32(LLVMBlock B, LLVMIROpcode opcode, int reg1, int reg2, int result_reg) {
-    B->InsertInstruction(1, new ArithmeticInstruction(opcode, LLVMType::I32, GetNewRegOperand(reg1), GetNewRegOperand(reg2),
-                                                      GetNewRegOperand(result_reg)));
+    B->InsertInstruction(1, new ArithmeticInstruction(opcode, LLVMType::I32, GetNewRegOperand(reg1),
+                                                      GetNewRegOperand(reg2), GetNewRegOperand(result_reg)));
 }
 
 void IRgenArithmeticF32(LLVMBlock B, LLVMIROpcode opcode, int reg1, int reg2, int result_reg) {
@@ -77,8 +76,8 @@ void IRgenIcmp(LLVMBlock B, IcmpCond cmp_op, int reg1, int reg2, int result_reg)
 }
 
 void IRgenFcmp(LLVMBlock B, FcmpCond cmp_op, int reg1, int reg2, int result_reg) {
-    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, GetNewRegOperand(reg1), GetNewRegOperand(reg2), cmp_op,
-                                                GetNewRegOperand(result_reg)));
+    B->InsertInstruction(1, new FcmpInstruction(LLVMType::FLOAT32, GetNewRegOperand(reg1), GetNewRegOperand(reg2),
+                                                cmp_op, GetNewRegOperand(result_reg)));
 }
 
 void IRgenIcmpImmRight(LLVMBlock B, IcmpCond cmp_op, int reg1, int val2, int result_reg) {
@@ -100,7 +99,8 @@ void IRgenSitofp(LLVMBlock B, int src, int dst) {
 }
 
 void IRgenZextI1toI32(LLVMBlock B, int src, int dst) {
-    B->InsertInstruction(1, new ZextInstruction(LLVMType::I32, GetNewRegOperand(dst), LLVMType::I1, GetNewRegOperand(src)));
+    B->InsertInstruction(
+    1, new ZextInstruction(LLVMType::I32, GetNewRegOperand(dst), LLVMType::I1, GetNewRegOperand(src)));
 }
 
 void IRgenGetElementptr(LLVMBlock B, LLVMType type, int result_reg, Operand ptr, std::vector<int> dims,
@@ -156,8 +156,8 @@ void IRgenBRUnCond(LLVMBlock B, int dst_label) {
 }
 
 void IRgenBrCond(LLVMBlock B, int cond_reg, int true_label, int false_label) {
-    B->InsertInstruction(
-    1, new BrCondInstruction(GetNewRegOperand(cond_reg), GetNewLabelOperand(true_label), GetNewLabelOperand(false_label)));
+    B->InsertInstruction(1, new BrCondInstruction(GetNewRegOperand(cond_reg), GetNewLabelOperand(true_label),
+                                                  GetNewLabelOperand(false_label)));
 }
 
 void IRgenAlloca(LLVMBlock B, LLVMType type, int reg) {
@@ -211,7 +211,7 @@ void BrCondInstruction::SetNewTarget(int oldlabel, int newlabel) {
     auto f_target = (LabelOperand *)GetFalseLabel();
     if (t_target->GetLabelNo() == oldlabel) {
         trueLabel = GetNewLabelOperand(newlabel);
-        
+
     } else if (f_target->GetLabelNo() == oldlabel) {
         falseLabel = GetNewLabelOperand(newlabel);
     } else {

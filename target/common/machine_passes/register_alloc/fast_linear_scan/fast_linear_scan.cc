@@ -1,15 +1,16 @@
 #include "fast_linear_scan.h"
 bool IntervalsPrioCmp(LiveInterval a, LiveInterval b) { return a.begin()->begin > b.begin()->begin; }
-FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy),unalloc_queue(IntervalsPrioCmp) {}
+FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy)
+    : RegisterAllocation(unit, phy), unalloc_queue(IntervalsPrioCmp) {}
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;
     // Log("FastLinearScan: %s",mfun->getFunctionName().c_str());
     for (auto interval : intervals) {
         Assert(interval.first == interval.second.getReg());
-        if(interval.first.is_virtual){
+        if (interval.first.is_virtual) {
             unalloc_queue.push(interval.second);
-        }else{
+        } else {
             // Log("Pre Occupy Physical Reg %d",interval.first.reg_no);
             phy_regs->OccupyReg(interval.first.reg_no, interval.second);
         }

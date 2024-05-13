@@ -1,8 +1,8 @@
 #include "physical_register.h"
 bool PhysicalRegisters::OccupyReg(int phy_id, LiveInterval interval) {
-    if(interval.begin() != interval.end()){
+    if (interval.begin() != interval.end()) {
         // Log("\nOccupyReg Phy=%d, interval 1st seg=%d, %d",phy_id,interval.begin()->begin,interval.begin()->end);
-    }else{
+    } else {
         // Log("\nOccupyReg Phy=%d, empty",phy_id);
     }
     phy_occupied[phy_id].push_back(interval);
@@ -51,7 +51,7 @@ int PhysicalRegisters::getIdleReg(LiveInterval interval) {
                     // Log("\n->Fail");
                     ok = false;
                     break;
-                }else{
+                } else {
                     // Log("\n->Success");
                 }
             }

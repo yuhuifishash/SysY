@@ -2,11 +2,11 @@
 #include "../ir_gen/semant.h"
 #include "../parser/SysY_parser.tab.h"
 
+#include "./common/machine_passes/register_alloc/fast_linear_scan/fast_linear_scan.h"
 #include "./riscv64gc/instruction_print/riscv64_printer.h"
 #include "./riscv64gc/instruction_select/riscv64_instSelect.h"
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/riscv64.h"
-#include "./common/machine_passes/register_alloc/fast_linear_scan/fast_linear_scan.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -170,6 +170,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
+        llvmIR.PassExecutor(SimplifyCFG);
 
         // llvmIR.PassExecutor(FunctionInline);  // to do
 

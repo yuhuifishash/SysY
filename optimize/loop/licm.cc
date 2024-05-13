@@ -347,7 +347,8 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         assert(endI->GetOpcode() == BR_UNCOND);
         L->preheader->Instruction_list.pop_back();
-        auto I1 = new LoadInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(ptr_regno), GetNewRegOperand(++C->max_reg));
+        auto I1 =
+        new LoadInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(ptr_regno), GetNewRegOperand(++C->max_reg));
         L->preheader->InsertInstruction(1, I1);
         auto I2 = new StoreInstruction(ptrTypeMap[ptr_regno], GetNewRegOperand(d), GetNewRegOperand(C->max_reg));
         L->preheader->InsertInstruction(1, I2);
@@ -416,8 +417,8 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         // remove end instructions temporarily to accelerate instruction inserting
         auto endI = *(L->preheader->Instruction_list.end() - 1);
         L->preheader->Instruction_list.pop_back();
-        auto I1 =
-        new LoadInstruction(GlobalTypeMap[global_name], GetNewGlobalOperand(global_name), GetNewRegOperand(++C->max_reg));
+        auto I1 = new LoadInstruction(GlobalTypeMap[global_name], GetNewGlobalOperand(global_name),
+                                      GetNewRegOperand(++C->max_reg));
         L->preheader->InsertInstruction(1, I1);
         auto I2 = new StoreInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d), GetNewRegOperand(C->max_reg));
         L->preheader->InsertInstruction(1, I2);
@@ -430,7 +431,8 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
                 continue;
             }
 
-            auto I3 = new LoadInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d), GetNewRegOperand(++C->max_reg));
+            auto I3 =
+            new LoadInstruction(GlobalTypeMap[global_name], GetNewRegOperand(d), GetNewRegOperand(++C->max_reg));
             it = exit->Instruction_list.insert(it, I3);
             ++it;
 

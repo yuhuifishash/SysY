@@ -19,10 +19,10 @@ void dfs_postorder(int cur, const std::vector<std::vector<LLVMBlock>> &G, std::v
 }
 
 void DominatorTree::BuildDominatorTree(bool reverse) {
-    auto const * G = &(C->G);
-    auto const * invG = &(C->invG);
+    auto const *G = &(C->G);
+    auto const *invG = &(C->invG);
     auto begin_id = 0;
-    if(reverse){
+    if (reverse) {
         auto temp = G;
         G = invG;
         invG = temp;
@@ -56,7 +56,7 @@ void DominatorTree::BuildDominatorTree(bool reverse) {
     atdom[begin_id].setbit(begin_id, 1);
     for (int i = 0; i <= C->max_label; i++) {
         for (int j = 0; j <= C->max_label; j++) {
-            if(i != begin_id){
+            if (i != begin_id) {
                 atdom[i].setbit(j, 1);
                 // atdom[i][j] = 1;
             }
