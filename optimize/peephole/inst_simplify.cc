@@ -71,7 +71,9 @@ I->ReplaceByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Usefu
 
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
+        // Log("B%d bb_addr=%d",id,bb);
         for (auto I : bb->Instruction_list) {
+            // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);
         }
     }
