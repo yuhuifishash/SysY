@@ -2,7 +2,16 @@
 case=$1
 arch=$2
 pwdasm=test_output/example
-./SysY_as.sh ${case} ${arch}
+
+# gdb for generated asm code
+# Example:
+# ./SysY_qemugdb_single.sh DFS rv64gc
+
+# Should exist test_output/example/DFS.sy.out.s
+
+# Will automatically break at main
+
+./SysY_asm2exe.sh ${case} ${arch}
 if [ $arch == "armv7" ] ; then
     echo "TODO: run armv7"
 elif [ $arch == "rv64gc" ] ; then

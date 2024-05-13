@@ -3,7 +3,20 @@ case=$1
 arch=$2
 option=$3
 pwdasm=test_output/example
-./SysY_as.sh ${case} ${arch}
+
+# Run generated asm code
+# Example:
+# ./SysY_qemurun_single.sh DFS rv64gc
+# ./SysY_qemurun_single.sh DFS rv64gc -f
+# ./SysY_qemurun_single.sh DFS rv64gc -p
+# ./SysY_qemurun_single.sh DFS rv64gc -fp
+
+# Should exist test_output/example/DFS.sy.out.s
+# -f: no std output
+# -p: preserve generated ELF (don't delete ELF file)
+# output will always be saved at test_output/example/DFS.output
+
+./SysY_asm2exe.sh ${case} ${arch}
 if [ $arch == "armv7" ] ; then
     echo "TODO: run armv7"
 elif [ $arch == "rv64gc" ] ; then

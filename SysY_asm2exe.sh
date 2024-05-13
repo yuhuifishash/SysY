@@ -2,6 +2,12 @@
 case=$1
 arch=$2
 pwdasm=test_output/example
+
+# Example:
+# ./SysY_asm2exe.sh DFS rv64gc
+# Should exist testoutput/example/DFS.sy.out.s
+# ELF file : test_output/example/DFS
+
 if [ $arch == "armv7" ] ; then
     echo "TODO: as armv7"
 elif [ $arch == "rv64gc" ] ; then
