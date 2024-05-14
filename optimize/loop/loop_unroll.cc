@@ -84,10 +84,22 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     int inst_number = 0;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
+        for(auto I:bb->Instruction_list){
+            if(I->GetOpcode() == CALL){
+                return false;
+            }
+        }
     }
-    if (iterations * inst_number > 2048) {
+    if (iterations * inst_number > 1024) {
         return false;
     }
+
+    int all_inst_number = 0;
+    for (auto [id,bb]:*C->block_map){
+        all_inst_number += bb->Instruction_list.size();
+    }
+    if(all_inst_number >= 2048){return false;}
+
     // now we can fully unroll the loop
     std::cerr<<"constant loop unroll  "<<lb<<" "<<ub<<" "<<d<<" "<<info.cond<<" "<<iterations<<"\n";
     

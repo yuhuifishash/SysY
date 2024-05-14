@@ -1,0 +1,27 @@
+int main()
+{
+	int i1=0,i2=0,i3=0,i4=0;
+	int S = 0;
+	while(i1 < 33){
+		i2 = 0;
+		while(i2 < 23){
+			i3 = 0;
+			while(i3 < 17){
+				i4 = 0;
+				while(i4 < 10){
+					S = S + i4;
+					i4 = i4 + 1;
+				}
+				i3 = i3 + 2;
+			}
+			i2 = i2 + 3;
+		}
+		i1 = i1 + 4;
+	}
+	putint(i1);putch(10);
+	putint(i2);putch(10);
+	putint(i3);putch(10);
+	putint(i4);putch(10);
+	putint(S);putch(10);
+	return 0;
+}
