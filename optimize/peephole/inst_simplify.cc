@@ -1,6 +1,5 @@
 #include "../../include/cfg.h"
 
-
 /**
  * this function will elimate getelementptr instruction with empty index
  * you can see testcase output 081_exgcd.ll as a example

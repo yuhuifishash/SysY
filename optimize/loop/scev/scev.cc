@@ -25,7 +25,7 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.FindBasicIndVar();
     scev.FindRecurrences();
 
-    //scev.PrintLoopSCEVInfo();
+    // scev.PrintLoopSCEVInfo();
 
     scev.CheckSimpleForLoop();
 }
@@ -303,13 +303,13 @@ void SCEV::CheckSimpleForLoop() {
     auto latch = *L->latches.begin();
 
     bool is_latch_eq_exiting = (exiting == latch);
-    for (auto v: C->GetSuccessor(exiting)){
-        if(v == latch && latch->Instruction_list.size() == 1){
+    for (auto v : C->GetSuccessor(exiting)) {
+        if (v == latch && latch->Instruction_list.size() == 1) {
             is_latch_eq_exiting = true;
         }
     }
 
-    if(!is_latch_eq_exiting){
+    if (!is_latch_eq_exiting) {
         is_simpleloop = false;
         return;
     }

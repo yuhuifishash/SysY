@@ -752,35 +752,32 @@ void ZextInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     }
 }
 
-
 void PhiInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
-    for(auto &[label,val]:phi_list){
-        auto l = (LabelOperand*)label;
-        if(Rule.find(l->GetLabelNo()) != Rule.end()){
+    for (auto &[label, val] : phi_list) {
+        auto l = (LabelOperand *)label;
+        if (Rule.find(l->GetLabelNo()) != Rule.end()) {
             label = GetNewLabelOperand(Rule.find(l->GetLabelNo())->second);
         }
     }
 }
 
 void BrCondInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
-    auto true_label = (LabelOperand*)this->trueLabel;
-    auto false_label = (LabelOperand*)this->falseLabel;
+    auto true_label = (LabelOperand *)this->trueLabel;
+    auto false_label = (LabelOperand *)this->falseLabel;
 
-    if(Rule.find(true_label->GetLabelNo()) != Rule.end()){
+    if (Rule.find(true_label->GetLabelNo()) != Rule.end()) {
         trueLabel = GetNewLabelOperand(Rule.find(true_label->GetLabelNo())->second);
     }
 
-    if(Rule.find(false_label->GetLabelNo()) != Rule.end()){
+    if (Rule.find(false_label->GetLabelNo()) != Rule.end()) {
         falseLabel = GetNewLabelOperand(Rule.find(false_label->GetLabelNo())->second);
     }
 }
 
 void BrUncondInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
-    auto dest_label = (LabelOperand*)this->destLabel;
+    auto dest_label = (LabelOperand *)this->destLabel;
 
-    if(Rule.find(dest_label->GetLabelNo()) != Rule.end()){
+    if (Rule.find(dest_label->GetLabelNo()) != Rule.end()) {
         destLabel = GetNewLabelOperand(Rule.find(dest_label->GetLabelNo())->second);
     }
 }
-
-

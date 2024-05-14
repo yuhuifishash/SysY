@@ -114,6 +114,11 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
     return res;
 }
 
+std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, CFG *C) {
+
+    return std::set<Instruction>{};
+}
+
 bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C) {
     auto mem1 = GetLoadClobbers(a, C);
     auto mem2 = GetLoadClobbers(b, C);
@@ -128,6 +133,8 @@ bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C
     }
     return true;
 }
+
+bool SimpleMemDepAnalyser::isStoreDead(Instruction a, Instruction b) { return false; }
 
 void SimpleMemDepAnalyser::MemDepTest() {
     for (auto [defI, cfg] : IR->llvm_cfg) {

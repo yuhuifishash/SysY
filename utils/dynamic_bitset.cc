@@ -1,5 +1,7 @@
 #include "../include/dynamic_bitset.h"
 #include <assert.h>
+#include <iostream>
+
 int DynamicBitset::count() {
     assert(bit_width);
     int result = 0;

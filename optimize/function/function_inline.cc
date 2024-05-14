@@ -33,7 +33,7 @@ extern std::map<std::string, CFG *> CFGMap;
             }
 
             for(auto t : call v in now){ //other situations
-                if(inline t is better) {   
+                if(inline t is better) {
                     inline t -> now;
                 }
             }
@@ -47,7 +47,4 @@ extern std::map<std::string, CFG *> CFGMap;
     }
 */
 
-
-void FunctionInline(LLVMIR *IR) {
-    
-}
+void FunctionInline(LLVMIR *IR) {}

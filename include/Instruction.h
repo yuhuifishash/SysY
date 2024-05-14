@@ -306,7 +306,7 @@ public:
     int GetUseRegNo() { return ((RegOperand *)pointer)->GetRegNo(); }
     Operand GetResultReg() { return result; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -340,7 +340,7 @@ public:
     Operand GetResultReg() { return nullptr; }
     int GetDefRegNo() { return ((RegOperand *)pointer)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -379,7 +379,7 @@ public:
     virtual int isArithmetic() { return 1; }
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -415,7 +415,7 @@ public:
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     Operand GetResultReg() { return result; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -451,7 +451,7 @@ public:
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     Operand GetResultReg() { return result; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -533,7 +533,7 @@ public:
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     int GetAllocaSize();
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>{}; }
     void SetNonResultOperands(std::vector<Operand> ops) {}
     virtual Instruction CopyInstruction();
@@ -634,7 +634,7 @@ public:
     int GetResultRegNo() { return -1; }
 
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>{}; }
     Operand GetResultReg() { return NULL; }
     void SetNonResultOperands(std::vector<Operand> ops) {}
@@ -654,7 +654,7 @@ public:
     int GetResultRegNo() { return -1; }
 
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>(); }
     Operand GetResultReg() { return NULL; }
     void SetNonResultOperands(std::vector<Operand> ops) {}
@@ -712,7 +712,7 @@ public:
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo();
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -746,7 +746,7 @@ public:
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -802,7 +802,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -830,7 +830,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops) {}
     virtual Instruction CopyInstruction() { return nullptr; }
@@ -858,7 +858,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops) {}
     virtual Instruction CopyInstruction() { return nullptr; }
@@ -879,7 +879,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -900,7 +900,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
@@ -925,7 +925,7 @@ public:
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule){}
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
     virtual Instruction CopyInstruction();
