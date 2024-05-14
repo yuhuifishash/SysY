@@ -48,6 +48,7 @@ public:
     SCEVValue lowerbound;
     SCEVValue upperbound;
     SCEVValue step;
+    IcmpCond cond;
     bool is_upperbound_closed;    // false -> (i < n)    true -> (i <= n)
 };
 

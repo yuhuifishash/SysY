@@ -25,7 +25,7 @@ void NaturalLoop::ScalarEvolution(CFG *C) {
     scev.FindBasicIndVar();
     scev.FindRecurrences();
 
-    scev.PrintLoopSCEVInfo();
+    //scev.PrintLoopSCEVInfo();
 
     scev.CheckSimpleForLoop();
 }
@@ -282,6 +282,7 @@ std::pair<bool, ForLoopInfo> GetLoopBound(IcmpCond cond, SCEVValue ub, AddSCEVEx
     ans.upperbound = ub;
     ans.lowerbound = IndVar->st;
     ans.step = IndVar->RecurExpr->st;
+    ans.cond = cond;
 
     return {true, ans};
 }

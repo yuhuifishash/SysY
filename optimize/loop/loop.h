@@ -39,7 +39,7 @@ public:
     void LCSSA(CFG *C);
 
     void LoopRotate(CFG *C);
-    void ConstantLoopFullyUnroll(CFG *C);
+    bool ConstantLoopFullyUnroll(CFG *C);
     void SimpleForLoopUnroll(CFG *C);
 
     void LoopStrengthReduce(CFG *C);
