@@ -2,7 +2,7 @@
 #include <functional>
 
 // this pass will fully unroll the loop with constant iterations and small size(<= 3BB)
-// the loop's instructions after unrolling <= 4096
+// the loop's instructions after unrolling <= 2048
 void ConstantLoopFullyUnroll(CFG *C) {
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
@@ -50,7 +50,7 @@ void NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
     }
-    if (iterations * inst_number > 4096) {
+    if (iterations * inst_number > 2048) {
         return;
     }
     // now we can fully unroll the loop
@@ -79,42 +79,102 @@ void NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     // step.2 unroll the loop, first copy all the loop
     // we need to erase edge (exiting -> exit) and (latch -> header)
     // add edge (latch -> next header)
-    // erase the phi (preheader -> next header)
+    // update the phi (preheader -> next header)
     // we also need to update LCSSAVarReplaceMap
     
     LLVMBlock old_header = header;
     LLVMBlock old_exiting = exiting;
     LLVMBlock old_latch = *latches.begin();
+    LLVMBlock old_preheader = preheader;
     std::set<LLVMBlock> old_loop_nodes = loop_nodes;
-    TODO("LoopUnroll Not Implemented");
-
-    while(1) {
+    //TODO("LoopUnroll Not Implemented");
+    int i = 0;
+    while(i < 3) {
         std::map<int, int> RegReplaceMap;
+        std::map<int, int> LabelReplaceMap;
         LLVMBlock new_header = nullptr;
         LLVMBlock new_exiting = nullptr;
         LLVMBlock new_latch = nullptr;
+
         std::set<LLVMBlock> new_loop_nodes;
+        
         for(auto bb:old_loop_nodes){
             LLVMBlock newbb = C->NewBlock();
-            new_loop_nodes.insert(bb);
+            new_loop_nodes.insert(newbb);
+            LabelReplaceMap[bb->block_id] = newbb->block_id;
+
+            if(bb == old_header){new_header = newbb;}
+            if(bb == old_exiting){new_exiting = newbb;}
+            if(bb == old_latch){new_latch = newbb;}
 
             for(auto I:bb->Instruction_list){
                 auto nI = I->CopyInstruction();
-                
+                int res_regno = I->GetResultRegNo();
+                if(res_regno != -1){
+                    RegReplaceMap[res_regno] = ++C->max_reg;
+                }
+                nI->ReplaceRegByMap(RegReplaceMap);
+                newbb->Instruction_list.push_back(nI);
             }
         }
 
-        // erase edge (exiting -> exit) and (latch -> header) (if exists)
+        LLVMBlock new_preheader = old_latch;
 
+        for(auto bb:new_loop_nodes){
+            for(auto I:bb->Instruction_list){
+                I->ReplaceLabelByMap(LabelReplaceMap);
+                I->ReplaceRegByMap(RegReplaceMap);
+            }
+        }
+        // erase edge (old_exiting -> exit) and (old_latch -> old_header) (if exists)
+        auto exiting_endI = *(old_exiting->Instruction_list.end() - 1);
+        if(exiting_endI->GetOpcode() == BR_COND){
+            auto BrCondI = (BrCondInstruction*)exiting_endI;
+            if(((LabelOperand*)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id){
+                exiting_endI = new BrUncondInstruction(BrCondI->GetFalseLabel());
 
-        // add edge (old_latch -> new_header)
+                old_exiting->Instruction_list.pop_back();
+                old_exiting->Instruction_list.push_back(exiting_endI);
+            }else if(((LabelOperand*)BrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id){
+                exiting_endI = new BrUncondInstruction(BrCondI->GetTrueLabel());
 
+                old_exiting->Instruction_list.pop_back();
+                old_exiting->Instruction_list.push_back(exiting_endI);
+            }else{
+                assert(false);
+            }
+        }
+        // because of LoopSimplify   latch's end Instruction must be BrUnCond
+        auto latch_endI = *(old_latch->Instruction_list.end() - 1);
+        assert(latch_endI->GetOpcode() == BR_UNCOND);
 
-        // erase the phi (preheader -> next header) (if exists)
+        // add edge (old_latch -> new_header) and change the val
+        for(auto I:old_header->Instruction_list){
+            if(I->GetOpcode() != PHI){break;}
+            auto PhiI = (PhiInstruction*)I;
+            PhiI->ErasePhi(old_latch->block_id);
+        }
+
+        latch_endI = new BrUncondInstruction(GetNewLabelOperand(new_header->block_id));
+        old_latch->Instruction_list.pop_back();
+        old_latch->Instruction_list.push_back(latch_endI);
+
+        for(auto I:new_header->Instruction_list){
+            if(I->GetOpcode() != PHI){break;}
+            auto PhiI = (PhiInstruction*)I;
+            PhiI->SetNewFrom(old_preheader->block_id, old_latch->block_id);
+        }
         
+
+        old_header = new_header;
+        old_exiting = new_exiting;
+        old_latch = new_latch;
+        old_preheader = new_preheader;
+        old_loop_nodes = new_loop_nodes;
+        i = i + 1;
     }
 
-    // step.3 the last loop iteration, we can't erase the edge(exiting -> exit)
+    // step.3 the last loop iteration, we can't erase the edge(exiting -> exit), so we should add it
     // we also need to update LCSSAVarReplaceMap
 
     // step.4 erase the phi from preheader in loop header

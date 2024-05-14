@@ -202,8 +202,10 @@ void PhiInstruction::SetNewFrom(int old_id, int new_id) {
     for (auto &[label, v] : phi_list) {
         if (((LabelOperand *)label)->GetLabelNo() == old_id) {
             label = GetNewLabelOperand(new_id);
+            return;
         }
     }
+    assert(false);
 }
 
 void BrCondInstruction::SetNewTarget(int oldlabel, int newlabel) {
@@ -536,7 +538,7 @@ Instruction ZextInstruction::CopyInstruction() {
     return new ZextInstruction(to_type, nresult, from_type, nvalue);
 }
 
-void LoadInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void LoadInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (pointer->GetOperandType() == BasicOperand::REG) {
         auto pointer_reg = (RegOperand *)pointer;
         if (Rule.find(pointer_reg->GetRegNo()) != Rule.end())
@@ -549,7 +551,7 @@ void LoadInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void StoreInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void StoreInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (pointer->GetOperandType() == BasicOperand::REG) {
         auto pointer_reg = (RegOperand *)pointer;
         if (Rule.find(pointer_reg->GetRegNo()) != Rule.end())
@@ -562,7 +564,7 @@ void StoreInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void ArithmeticInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void ArithmeticInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (op2->GetOperandType() == BasicOperand::REG) {
         auto op2_reg = (RegOperand *)op2;
         if (Rule.find(op2_reg->GetRegNo()) != Rule.end())
@@ -580,7 +582,7 @@ void ArithmeticInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void IcmpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void IcmpInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (op2->GetOperandType() == BasicOperand::REG) {
         auto op2_reg = (RegOperand *)op2;
         if (Rule.find(op2_reg->GetRegNo()) != Rule.end())
@@ -598,7 +600,7 @@ void IcmpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void FcmpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void FcmpInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (op2->GetOperandType() == BasicOperand::REG) {
         auto op2_reg = (RegOperand *)op2;
         if (Rule.find(op2_reg->GetRegNo()) != Rule.end())
@@ -616,7 +618,7 @@ void FcmpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void PhiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void PhiInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     for (auto &label_pair : phi_list) {
         auto &op1 = label_pair.first;
         if (op1->GetOperandType() == BasicOperand::REG) {
@@ -638,7 +640,7 @@ void PhiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void AllocaInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void AllocaInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
@@ -646,7 +648,7 @@ void AllocaInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void BrCondInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void BrCondInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (cond->GetOperandType() == BasicOperand::REG) {
         auto cond_reg = (RegOperand *)cond;
         if (Rule.find(cond_reg->GetRegNo()) != Rule.end())
@@ -654,13 +656,13 @@ void BrCondInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void BrUncondInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
+void BrUncondInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
-void GlobalVarDefineInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
+void GlobalVarDefineInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
-void GlobalStringConstInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
+void GlobalStringConstInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
-void CallInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void CallInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     for (auto &arg_pair : args) {
         if (arg_pair.second->GetOperandType() == BasicOperand::REG) {
             auto op = (RegOperand *)arg_pair.second;
@@ -677,7 +679,7 @@ void CallInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void RetInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void RetInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (ret_val != NULL) {
         if (ret_val->GetOperandType() == BasicOperand::REG) {
             auto result_reg = (RegOperand *)ret_val;
@@ -687,7 +689,7 @@ void RetInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void GetElementptrInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void GetElementptrInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
@@ -707,11 +709,11 @@ void GetElementptrInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void FunctionDefineInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
+void FunctionDefineInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
-void FunctionDeclareInstruction::ReplaceByMap(const std::map<int, int> &Rule) {}
+void FunctionDeclareInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
-void FptosiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void FptosiInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
@@ -724,7 +726,7 @@ void FptosiInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void SitofpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void SitofpInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
@@ -737,7 +739,7 @@ void SitofpInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
     }
 }
 
-void ZextInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
+void ZextInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
@@ -749,3 +751,36 @@ void ZextInstruction::ReplaceByMap(const std::map<int, int> &Rule) {
             value = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
+
+
+void PhiInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
+    for(auto &[label,val]:phi_list){
+        auto l = (LabelOperand*)label;
+        if(Rule.find(l->GetLabelNo()) != Rule.end()){
+            label = GetNewLabelOperand(Rule.find(l->GetLabelNo())->second);
+        }
+    }
+}
+
+void BrCondInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
+    auto true_label = (LabelOperand*)this->trueLabel;
+    auto false_label = (LabelOperand*)this->falseLabel;
+
+    if(Rule.find(true_label->GetLabelNo()) != Rule.end()){
+        trueLabel = GetNewLabelOperand(Rule.find(true_label->GetLabelNo())->second);
+    }
+
+    if(Rule.find(false_label->GetLabelNo()) != Rule.end()){
+        falseLabel = GetNewLabelOperand(Rule.find(false_label->GetLabelNo())->second);
+    }
+}
+
+void BrUncondInstruction::ReplaceLabelByMap(const std::map<int, int> &Rule) {
+    auto dest_label = (LabelOperand*)this->destLabel;
+
+    if(Rule.find(dest_label->GetLabelNo()) != Rule.end()){
+        destLabel = GetNewLabelOperand(Rule.find(dest_label->GetLabelNo())->second);
+    }
+}
+
+

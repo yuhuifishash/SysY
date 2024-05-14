@@ -116,7 +116,7 @@ void SolveHeaderUseInLoopBody(CFG *C, NaturalLoop *L, Instruction defI, int new_
     std::map<int, int> replace_map;
     replace_map[old_regno] = C->max_reg;
     for (auto I : useinsts) {
-        I->ReplaceByMap(replace_map);
+        I->ReplaceRegByMap(replace_map);
     }
 }
 
@@ -204,7 +204,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
             PhiI->SetResultReg(++C->max_reg);
             RegReplaceMap[I->GetResultRegNo()] = C->max_reg;
         } else {    // not phi, change its' operands
-            nI->ReplaceByMap(RegReplaceMap);
+            nI->ReplaceRegByMap(RegReplaceMap);
         }
         // br_uncond is impossible (because preheader->header  and  latch->header)
         assert(nI->GetOpcode() != BR_UNCOND);
@@ -281,7 +281,7 @@ void NaturalLoop::LoopRotate(CFG *C) {
                 NewResultRegMap[I->GetResultRegNo()] = ++C->max_reg;
             }
             auto nI = I->CopyInstruction();
-            nI->ReplaceByMap(NewResultRegMap);
+            nI->ReplaceRegByMap(NewResultRegMap);
             latch->InsertInstruction(1, nI);
             // br_uncond is impossible
             assert(nI->GetOpcode() != BR_UNCOND);

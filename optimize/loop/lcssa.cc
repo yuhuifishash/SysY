@@ -73,7 +73,7 @@ void NaturalLoop::LCSSA(CFG *C) {
             if (I->GetOpcode() == PHI && bb == *this->exit_nodes.begin()) {
                 continue;    // the phi in exit_nodes, we assume the var is used in the loop
             }
-            I->ReplaceByMap(ReplaceMap);
+            I->ReplaceRegByMap(ReplaceMap);
         }
     }
 }

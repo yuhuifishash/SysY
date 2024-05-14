@@ -313,7 +313,7 @@ void VarRename(CFG *C) {
     for (auto B1 : *C->block_map) {
         for (auto I : B1.second->Instruction_list) {
             // replace mem2reg_map
-            I->ReplaceByMap(mem2reg_map);
+            I->ReplaceRegByMap(mem2reg_map);
         }
     }
 

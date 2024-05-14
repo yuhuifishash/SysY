@@ -6,7 +6,7 @@
  * you can see testcase output 081_exgcd.ll as a example
  * the instruction you will elimate will be %rx = getelementptr type, ptr %ry
  * you need to replace all the use of %rx to %ry and delete the instruction
- * ReplaceByMap function in file instruction.h will be useful
+ * ReplaceRegByMap function in file instruction.h will be useful
  * @param C the control flow graph of the function */
 void EliminateEmptyIndexGEP(CFG *C) {
     std::map<int, int> reg_replace_map;
@@ -39,7 +39,7 @@ void EliminateEmptyIndexGEP(CFG *C) {
     }
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            I->ReplaceByMap(reg_replace_map);
+            I->ReplaceRegByMap(reg_replace_map);
         }
     }
     reg_replace_map.clear();
@@ -66,7 +66,7 @@ void I32ConstantSimplify(Instruction I) {
 %rx = 1 * %ry(replace all the use of %rx with %ry)
 %rx = %ry / 1(replace all the use of %rx with %ry)
 
-I->ReplaceByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
+I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
 */
 
 void InstSimplify(CFG *C) {

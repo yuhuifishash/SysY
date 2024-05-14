@@ -293,7 +293,7 @@ void BasicBlockCSE(CFG *C) {
         }
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
-                I->ReplaceByMap(reg_replace_map);
+                I->ReplaceRegByMap(reg_replace_map);
             }
         }
         // std::cerr<<"------------------------------\n\n";
@@ -429,7 +429,7 @@ void DomTreeWalkCSE(CFG *C) {
         }
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
-                I->ReplaceByMap(reg_replace_map);
+                I->ReplaceRegByMap(reg_replace_map);
             }
         }
     }
