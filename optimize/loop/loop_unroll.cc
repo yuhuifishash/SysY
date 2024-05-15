@@ -275,11 +275,13 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     return true;
 }
 
-// this pass will unroll other for-loop without constant iterations
+// this pass will unroll other for-loop without constant iterations (only the loop without nesting)
 /*
 for(int i = l; i < u; i += 1){ BB }
 
 for(int i = l; i + 4 < u; i += 4){ BB } BB,BB,......(<= 4times)
+
+(u - l)/4  (u - l)%4
 */
 
 void SimpleForLoopUnroll(CFG *C) {}

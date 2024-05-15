@@ -46,6 +46,15 @@ void EliminateEmptyIndexGEP(CFG *C) {
     // std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
 }
 
+/*TODO():eliminate the instructions like
+%rx = 0 + %ry(replace all the use of %rx with %ry)
+%rx = %ry - 0(replace all the use of %rx with %ry)
+%rx = 1 * %ry(replace all the use of %rx with %ry)
+%rx = %ry / 1(replace all the use of %rx with %ry)
+
+I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
+*/
+
 /*
 %r1 = add i32 4,%r0 will be transformed to %r1 = add i32 %r0,4
 */
@@ -60,17 +69,8 @@ void I32ConstantSimplify(Instruction I) {
 
 // TODO():{sub X, X},{Mul 0, X} is represented as 0 + 0
 
-/*TODO():eliminate the instructions like
-%rx = 0 + %ry(replace all the use of %rx with %ry)
-%rx = 1 * %ry(replace all the use of %rx with %ry)
-%rx = %ry / 1(replace all the use of %rx with %ry)
-
-I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
-*/
-
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
-        // Log("B%d bb_addr=%d",id,bb);
         for (auto I : bb->Instruction_list) {
             // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);

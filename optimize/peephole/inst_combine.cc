@@ -49,12 +49,13 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
 
     bool changed = false;
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
-        changed |= EliminateDoubleI32Add(*begin, *it);
+        changed |= EliminateDoubleI32AddSub(*begin, *it);
     }
     return changed;
 }
 
-bool EliminateDoubleI32Add(Instruction a, Instruction b) {
+bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
+    // TODO(): combine sub
     if (a->GetOpcode() != ADD || b->GetOpcode() != ADD) {
         return false;
     }
