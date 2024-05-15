@@ -10,7 +10,7 @@ extern std::map<std::string, CFG *> CFGMap;
 
 // we process function call in bottom-up order(CallGraphSCC)
 // in SysY2022, the SCC's size <= 1, so we only need to consider self-recursive
-// after each iterations, we need to use SCCP, SimplifyCFG, InstSimplify, InstCombine to optimize the cfg
+// after each iterations, we need to use SCCP, SimplifyCFG to optimize the cfg
 /*
     InlineDFS(CFG* now) {
 
@@ -42,8 +42,6 @@ extern std::map<std::string, CFG *> CFGMap;
 
         SCCP(now);
         SimplifyCFG(now);
-        InstCimplify(now);
-        InstCombine(now);
     }
 */
 
