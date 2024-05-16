@@ -406,7 +406,6 @@ void DomTreeWalkCSE(CFG *C) {
         }
 
         for (auto [info, num] : tmpload_num_map) {
-            int i = 0;
             for (int i = 0; i < num; ++i) {
                 LoadCSEMap[info].pop_back();
             }

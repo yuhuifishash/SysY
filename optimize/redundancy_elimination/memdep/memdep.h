@@ -16,7 +16,10 @@ public:
     virtual bool isLoadSameMemory(Instruction a, Instruction b, CFG *) = 0;
 
     // a and b must be store instructions
-    virtual bool isStoreDead(Instruction a, Instruction b) = 0;
+    virtual bool isStoreBeUsedSame(Instruction a, Instruction b, CFG *C) = 0;
+
+    // a must be store instructions
+    virtual bool isStoreNotUsed(Instruction a, CFG *C) = 0;
 
     virtual void MemoryDependenceAnalysis() = 0;
     virtual void MemDepTest() = 0;

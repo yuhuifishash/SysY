@@ -42,6 +42,7 @@ public:
     virtual bool CFG_isIndependent(CFG *C) = 0;
     virtual bool CFG_isNoSideEffect(CFG *C) = 0;
     virtual bool CFG_haveExternalCall(CFG *C) = 0;
+    virtual bool is_localptrs(CFG *C, Operand ptr) = 0;
     virtual std::vector<Operand> GetWritePtrs(CFG *C) = 0;
     virtual std::vector<Operand> GetReadPtrs(CFG *C) = 0;
 

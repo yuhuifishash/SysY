@@ -350,6 +350,7 @@ void Mem2RegInit(CFG *C) {
 }
 
 void Mem2Reg(CFG *C) {
+    C->BuildDominatorTree();
     Mem2RegInit(C);
     InsertPhi(C);
     VarRename(C);
