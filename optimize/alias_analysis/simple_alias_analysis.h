@@ -74,8 +74,8 @@ public:
     virtual bool CFG_isNoSideEffect(CFG *C) { return CFGMemRWMap[C].isNoSideEffect(); }
     virtual bool CFG_haveExternalCall(CFG *C) { return CFGMemRWMap[C].have_external_call; }
     virtual bool is_localptrs(CFG *C, Operand ptr) {
-        if(ptr->GetOperandType() == BasicOperand::REG){
-            auto regno = ((RegOperand*)ptr)->GetRegNo();
+        if (ptr->GetOperandType() == BasicOperand::REG) {
+            auto regno = ((RegOperand *)ptr)->GetRegNo();
             return PtrRegMemMap[C][regno].is_local;
         }
         return false;

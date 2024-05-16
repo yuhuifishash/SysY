@@ -60,7 +60,7 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
     for (auto bb : C->GetPredecessor(IBB)) {
         q.push(bb);
     }
-    
+
     if (IBB->block_id == 0 && q.empty()) {
         res.insert(C->function_def);
         return res;
@@ -120,7 +120,7 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
 }
 
 std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, CFG *C) {
-    
+
     std::set<Instruction> res;
 
     assert(I->GetOpcode() == STORE);
@@ -136,9 +136,9 @@ std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, 
             Iindex = i;
             break;
         }
-    }   
+    }
     assert(Iindex != -1);
-    
+
     for (int i = Iindex; i < IBB->Instruction_list.size(); ++i) {
         auto tmpI = IBB->Instruction_list[i];
         if (tmpI->GetOpcode() == LOAD) {
@@ -169,7 +169,7 @@ std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, 
         q.push(bb);
     }
 
-    if(IBB->block_id == C->ret_block->block_id && q.empty()){
+    if (IBB->block_id == C->ret_block->block_id && q.empty()) {
         res.insert(*(C->ret_block->Instruction_list.end() - 1));
         return res;
     }
@@ -254,17 +254,17 @@ bool SimpleMemDepAnalyser::isStoreBeUsedSame(Instruction a, Instruction b, CFG *
             return false;
         }
     }
-    return true; 
+    return true;
 }
 
 bool SimpleMemDepAnalyser::isStoreNotUsed(Instruction a, CFG *C) {
 
     auto mem1 = GetStorePostClobbers(a, C);
-    if(mem1.size() != 1){
+    if (mem1.size() != 1) {
         return false;
     }
     auto ClobberI = *mem1.begin();
-    if(ClobberI->GetOpcode() == RET){
+    if (ClobberI->GetOpcode() == RET) {
         return true;
     }
     return false;

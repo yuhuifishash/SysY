@@ -271,7 +271,6 @@ IcmpCond GetSwapIcmpCond(IcmpCond cond) {
     return IcmpCond::eq;
 }
 
-
 IcmpCond GetInverseIcmpCond(IcmpCond cond) {
     if (cond == IcmpCond::eq) {
         return IcmpCond::ne;
@@ -390,7 +389,7 @@ void SCEV::CheckSimpleForLoop() {
     // assert(scev1->len == 2 && scev2->len == 1);
     // now we can use scev1 and scev2 to check the for loop
     // scev1   cond   scev2
-    if(((LabelOperand*)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
+    if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
         cond = GetInverseIcmpCond(cond);
     }
 
