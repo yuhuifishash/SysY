@@ -53,11 +53,61 @@ extern std::unordered_map<CFG *, std::unordered_map<CFG *,CallInstruction*>> CGC
     }
 */
 
-void InlineCFG(CFG *uCFG,CFG *vCFG,BasicBlock *FBB,BasicBlock *EndBB){
-
-}
-
-void InlineCFG(CFG *uCFG,CFG *vCFG,BasicBlock *FBB,BasicBlock *EndBB,std::map<int,int> &reg_replace_map,std::map<int,int> &label_replace_map,std::vector<std::pair<Operand,Operand>> Phi_vec){
+void InlineCFG(CFG *uCFG,CFG *vCFG,BasicBlock *StartBB,BasicBlock *EndBB,std::map<int,int> &reg_replace_map,std::map<int,int> &label_replace_map,Operand *NewResultOperand){
+    label_replace_map[0]=StartBB->block_id;
+    for(auto [id, bb]:*vCFG->block_map){
+        if(bb->block_id==0){
+            continue;
+        }
+        auto newbb=uCFG->NewBlock();
+        label_replace_map[bb->block_id]=newbb->block_id;
+    }
+    auto nowBlockMap=*uCFG->block_map;
+    for(auto [id, bb]:*vCFG->block_map){
+        auto nowbb_id=label_replace_map[id];
+        auto nowbb=(BasicBlock*)nowBlockMap[nowbb_id];
+        for(auto I : bb->Instruction_list){
+            if(I->GetOpcode()==RET){
+                nowbb->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(EndBB->block_id)));
+                continue;
+            }
+            auto nowI=I->CopyInstruction();
+            nowI->ReplaceLabelByMap(label_replace_map);
+            auto use_ops=nowI->GetNonResultOperands();
+            for(auto &op:use_ops){
+                if(op->GetOperandType()!=BasicOperand::REG){
+                    continue;
+                }
+                auto RegOp=(RegOperand*)op;
+                auto RegNo=RegOp->GetRegNo();
+                if(reg_replace_map.find(RegNo)==reg_replace_map.end()){
+                    auto newNo=++uCFG->max_reg;
+                    op=GetNewRegOperand(newNo);
+                    reg_replace_map[RegNo]=newNo;
+                }
+            }
+            auto ResultReg=(RegOperand*)nowI->GetResultReg();
+            auto ResultRegNo=ResultReg->GetRegNo();
+            if(ResultRegNo==-1){
+                auto newNo=++uCFG->max_reg;
+                GetNewRegOperand(newNo);
+                reg_replace_map[ResultRegNo]=newNo;
+            }
+            nowI->ReplaceRegByMap(reg_replace_map);
+            nowbb->InsertInstruction(1,nowI);
+        }
+    }
+    auto retBB=(BasicBlock*)vCFG->ret_block;
+    auto RetI=retBB->Instruction_list.back();
+    auto RetResult=RetI->GetResultReg();
+    if(RetResult!=NULL){
+        if(RetResult->GetOperandType()==BasicOperand::REG){
+            auto oldRegNo=((RegOperand*)RetResult)->GetRegNo();
+            *NewResultOperand=GetNewRegOperand(reg_replace_map[oldRegNo]);
+        }else{
+            *NewResultOperand=RetResult;
+        }
+    }
 
 }
 void InlineCFG(CFG *uCFG,CFG *vCFG){
@@ -65,27 +115,31 @@ void InlineCFG(CFG *uCFG,CFG *vCFG){
     std::map<int,int> label_replace_map;
     std::vector<std::pair<Operand,Operand>> Phi_vec;
     std::set<Instruction> EraseSet;
-    auto FBB=(BasicBlock)*uCFG->NewBlock();
+    auto StartBB=(BasicBlock)*uCFG->NewBlock();
     auto EndBB=(BasicBlock)*uCFG->NewBlock();
-    auto FBB_id=uCFG->max_label-1;
+    auto StartBB_id=uCFG->max_label-1;
     auto EndBB_id=uCFG->max_label;
     int formal_regno = -1;
     auto nowI=CGCallI[uCFG][vCFG];
     auto CallI=(CallInstruction *)nowI;
+    Operand *NewResultOperand;
     for(auto formal:CallI->GetParameterList()){
         ++formal_regno;
         reg_replace_map[formal_regno] = ((RegOperand*)formal.second)->GetRegNo();
     }
-    InlineCFG(uCFG,vCFG,&FBB,&EndBB);
+    InlineCFG(uCFG,vCFG,&StartBB,&EndBB,reg_replace_map,label_replace_map,NewResultOperand);
     if(CallI->GetResultRegNo()!=-1){
-        EndBB.InsertInstruction(1,new PhiInstruction(CallI->GetResultType(),CallI->GetResult(),Phi_vec));
+        if(CallI->GetResultType()==I32){
+            EndBB.InsertInstruction(1,new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),(ImmI32Operand*)NewResultOperand,CallI->GetResultReg()));
+        }else{
+            EndBB.InsertInstruction(1,new ArithmeticInstruction(FADD,FLOAT32,new ImmF32Operand(0),(ImmF32Operand*)NewResultOperand,CallI->GetResultReg()));
+        }
     }
-    auto FBB_label=GetNewLabelOperand(FBB_id);
+    auto StartBB_label=GetNewLabelOperand(StartBB_id);
     auto BlockMap=*uCFG->block_map;
     auto uCFG_BBid=nowI->GetBlockID();
     auto bb=*BlockMap[uCFG_BBid];
     bool begin_endBBInstruction=false;
-    // I=new BrUncondInstruction();
     for (auto I : bb.Instruction_list) {
         if(!begin_endBBInstruction&&I!=nowI){
             continue;
@@ -97,6 +151,7 @@ void InlineCFG(CFG *uCFG,CFG *vCFG){
         EndBB.InsertInstruction(1,I);
         EraseSet.insert(I);
     }
+    label_replace_map[bb.block_id]=EndBB.block_id;
     for(auto nextBB:uCFG->G[uCFG_BBid]){
         for(auto I : nextBB->Instruction_list){
             if(I->GetOpcode()!=PHI){
@@ -145,7 +200,6 @@ void InlineDFS(CFG *uCFG){
         }
     }
     if(fcallgraph.CGNum[uCFG].find(uCFG)!=fcallgraph.CGNum[uCFG].end()){
-
         auto fst_reg=InlineInstructionNum*uCFG->max_reg;
         while(uCFG->max_reg<fst_reg){
             auto map_size=fcallgraph.CGNum[uCFG][uCFG];

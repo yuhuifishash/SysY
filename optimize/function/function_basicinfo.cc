@@ -2,7 +2,7 @@
 #include "../../include/ir.h"
 
 extern std::map<std::string, CFG *> CFGMap;
-static std::unordered_map<CFG *, std::unordered_map<CFG *,Instruction *>> CGCallI;
+std::unordered_map<CFG *, std::unordered_map<CFG *,Instruction *>> CGCallI;
 FunctionCallGraph fcallgraph;
 
 void LLVMIR::BuildFunctionInfo() {
