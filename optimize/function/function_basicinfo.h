@@ -22,7 +22,8 @@ class FunctionCallGraph {
 public:
     CFG *MainCFG;    // entry of the program
     std::unordered_map<CFG *, std::vector<CFG *>> CG;
-    std::unordered_map<CFG *, std::vector<int>> CGNum;
+    std::unordered_map<CFG *, std::unordered_map<CFG *,int>> CGNum;
+    
     // std::unordered_map<std::pair<CFG *,CFG *>, int> CGNum;
 
     void BuildCG(LLVMIR *IR);

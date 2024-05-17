@@ -2,7 +2,7 @@
 #include "../../include/ir.h"
 
 extern std::map<std::string, CFG *> CFGMap;
-static std::map<CFG *, std::vector<CallInstruction *>> CallInstList;
+static std::unordered_map<CFG *, std::unordered_map<CFG *,Instruction *>> CGCallI;
 FunctionCallGraph fcallgraph;
 
 void LLVMIR::BuildFunctionInfo() {
@@ -42,37 +42,24 @@ void FunctionCallGraph::BuildCG(LLVMIR *IR) {
                     continue;
                 }
                 auto CallI = (CallInstruction *)I;
-                if (CallInstList.find(CFG) == CallInstList.end()) {
-                    CallInstList[CFG] = {CallI};
-                } else {
-                    CallInstList[CFG].push_back(CallI);
-                }
                 // std::cerr<<"asdasd\n";
                 auto vFuncName = CallI->GetFunctionName();
                 if (CFGMap.find(vFuncName) == CFGMap.end()) {
                     continue;
                 }
-
                 auto vCFG = CFGMap[vFuncName];
+                CGCallI[CFG][vCFG]=&I;
                 // auto uvpair = std::make_pair(CFG,vCFG);
+                // auto
                 if (CGNum.find(CFG) == CGNum.end()) {
-                    CGNum[CFG].push_back(1);
+                    // CGNum[CFG].push_back(1);
+                    CGNum[CFG][vCFG]=1;
                     CG[CFG].push_back(vCFG);
-                } else {
-                    auto vVec = CG[CFG];
-                    auto vec_size = vVec.size();
-                    bool v_find = false;
-                    for (uint32_t i = 0; i < vec_size; ++i) {
-                        if (vVec[i] == vCFG) {
-                            v_find = true;
-                            CGNum[CFG][i]++;
-                            break;
-                        }
-                    }
-                    if (!v_find) {
-                        CG[CFG].push_back(vCFG);
-                        CGNum[CFG].push_back(1);
-                    }
+                } else if(CGNum[CFG].find(vCFG)==CGNum[CFG].end()){
+                    CGNum[CFG][vCFG]=1;
+                    CG[CFG].push_back(vCFG);
+                }else {
+                    CGNum[CFG][vCFG]++;
                 }
             }
         }
