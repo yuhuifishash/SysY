@@ -251,7 +251,27 @@ void SCEV::FindRecurrences() {
     }
 }
 
-IcmpCond GetInveriseIcmpCond(IcmpCond cond) {
+IcmpCond GetSwapIcmpCond(IcmpCond cond) {
+    if (cond == IcmpCond::eq) {
+        return IcmpCond::eq;
+    } else if (cond == IcmpCond::ne) {
+        return IcmpCond::ne;
+    } else if (cond == IcmpCond::sle) {
+        return IcmpCond::sge;
+    } else if (cond == IcmpCond::sgt) {
+        return IcmpCond::slt;
+    } else if (cond == IcmpCond::slt) {
+        return IcmpCond::sgt;
+    } else if (cond == IcmpCond::sge) {
+        return IcmpCond::sle;
+    }
+
+    // should not reach here
+    assert(false);
+    return IcmpCond::eq;
+}
+
+IcmpCond GetInverseIcmpCond(IcmpCond cond) {
     if (cond == IcmpCond::eq) {
         return IcmpCond::ne;
     } else if (cond == IcmpCond::ne) {
@@ -278,6 +298,7 @@ std::pair<bool, ForLoopInfo> GetLoopBound(IcmpCond cond, SCEVValue ub, AddSCEVEx
     if (cond == ne || cond == eq) {
         return {false, ans};
     }
+
     ans.is_upperbound_closed = (cond == sle || cond == sge);
     ans.upperbound = ub;
     ans.lowerbound = IndVar->st;
@@ -360,7 +381,7 @@ void SCEV::CheckSimpleForLoop() {
 
     if (scev1->len == 1 && scev2->len == 2) {
         std::swap(scev1, scev2);
-        cond = GetInveriseIcmpCond(cond);
+        cond = GetSwapIcmpCond(cond);
     }
     // scev1->PrintSCEVExpr();
     // scev2->PrintSCEVExpr();
@@ -368,6 +389,9 @@ void SCEV::CheckSimpleForLoop() {
     // assert(scev1->len == 2 && scev2->len == 1);
     // now we can use scev1 and scev2 to check the for loop
     // scev1   cond   scev2
+    if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
+        cond = GetInverseIcmpCond(cond);
+    }
 
     auto [tag, info] = GetLoopBound(cond, scev2->st, scev1);
     if (tag == false) {

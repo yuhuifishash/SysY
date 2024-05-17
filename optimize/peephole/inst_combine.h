@@ -17,4 +17,5 @@ bool EliminateDoubleI32AddSub(Instruction a, Instruction b);
 // TODO(): transform %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
 
 // TODO(): transform %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
+
 #endif

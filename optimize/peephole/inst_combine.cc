@@ -65,7 +65,8 @@ bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
     auto opa2 = Ia->GetOperand2();
     auto opb2 = Ib->GetOperand2();
 
-    /*resulta = add i32 opa1,   opa2(const i32)
+    /*
+      resulta = add i32 opa1,   opa2(const i32)
       resultb = add i32 resulta,opb2(const i32)
     */
     if (opa2->GetOperandType() == BasicOperand::IMMI32 && opb2->GetOperandType() == BasicOperand::IMMI32) {

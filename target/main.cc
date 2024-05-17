@@ -66,6 +66,7 @@ void LoopInvariantCodeMotion(CFG *C);
 void LoopClosedSSA(CFG *C);
 void ScalarEvolution(CFG *C);
 void ConstantLoopFullyUnroll(CFG *C);
+void SimpleDSE(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -136,7 +137,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
-        llvmIR.BuildDominatorTree();
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
@@ -150,6 +150,7 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
+        llvmIR.PassExecutor(SimpleDSE);
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
@@ -175,20 +176,20 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(SimpleDCE);
 
-        // llvmIR.PassExecutor(FunctionInline);  // to do
+        // // llvmIR.PassExecutor(FunctionInline);  // to do
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         // repeat 5 times
-        //  for(int i = 0; i < 5; ++i){
-        //      llvmIR.BuildLoopInfo();
-        //      llvmIR.PassExecutor(LoopSimplify);
-        //      llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        //      llvmIR.PassExecutor(ScalarEvolution);
-        //      llvmIR.PassExecutor(LoopClosedSSA);
-        //      llvmIR.PassExecutor(ConstantLoopFullyUnroll);
-        //      llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        //      llvmIR.PassExecutor(SimplifyCFG);
+        // for(int i = 0; i < 5; ++i){
+        //     llvmIR.BuildLoopInfo();
+        //     llvmIR.PassExecutor(LoopSimplify);
+        //     llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        //     llvmIR.PassExecutor(ScalarEvolution);
+        //     llvmIR.PassExecutor(LoopClosedSSA);
+        //     llvmIR.PassExecutor(ConstantLoopFullyUnroll);
+        //     llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        //     llvmIR.PassExecutor(SimplifyCFG);
 
         //     llvmIR.PassExecutor(SimpleAliasAnalysis);
         //     llvmIR.PassExecutor(SimpleCSE);
@@ -201,6 +202,8 @@ int main(int argc, char **argv) {
         //     llvmIR.PassExecutor(InstCombine);
         //     llvmIR.PassExecutor(SimpleDCE);
         // }
+        // llvmIR.PassExecutor(SimpleDSE);
+        // llvmIR.PassExecutor(SimpleDCE);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
