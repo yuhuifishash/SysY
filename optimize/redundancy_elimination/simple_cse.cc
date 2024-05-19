@@ -325,6 +325,9 @@ void DomTreeWalkCSE(CFG *C) {
                         // I->PrintIR(std::cerr);I2->PrintIR(std::cerr);
                         if (memdep_analyser->isLoadSameMemory(I, I2, C) == true) {
                             EraseSet.insert(I);
+                            // I->PrintIR(std::cerr);
+                            // I2->PrintIR(std::cerr);
+                            // std::cerr<<"-----------------------------\n";
                             if (I2->GetOpcode() == STORE) {
                                 // I->PrintIR(std::cerr);
                                 auto StoreI2 = (StoreInstruction *)I2;
@@ -472,3 +475,20 @@ void SimpleCSE(CFG *C) {
     BasicBlockCSE(C);
     DomTreeWalkCSE(C);
 }
+
+
+
+
+// Debug--------------------------------
+void OnlyBasicBlockCSE(CFG *C) {
+    SimpleCSEInit(C);
+
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            I->SetBlockID(id);
+        }
+    }
+
+    BasicBlockCSE(C);
+}
+// Debug--------------------------------

@@ -2,10 +2,17 @@
 #include "../../include/ir.h"
 
 extern std::map<std::string, CFG *> CFGMap;
-std::unordered_map<CFG *, std::unordered_map<CFG *,Instruction *>> CGCallI;
+
 FunctionCallGraph fcallgraph;
 
 void LLVMIR::BuildFunctionInfo() {
+    for (auto [defI, cfg] : this->llvm_cfg) {
+        for (auto [id, bb] : *cfg->block_map) {
+            for (auto I : bb->Instruction_list) {
+                I->SetBlockID(id);
+            }
+        }
+    }
     for (auto [defI, cfg] : llvm_cfg) {
         cfg->BuildFunctionInfo();
     }
@@ -29,40 +36,71 @@ void CFG::BuildFunctionInfo() {
 }
 
 void FunctionCallGraph::BuildCG(LLVMIR *IR) {
+    CGINum.clear();
+    CGCallI.clear();
+    CGNum.clear();
+    CG.clear();
     MainCFG = CFGMap["main"];
     for (auto [FuncDefI, CFG] : IR->llvm_cfg) {
+        // CFG->function_def->PrintIR(std::cerr);
+        // puts("_____________________");
         auto FuncName = FuncDefI->GetFunctionName();
         if (CFGMap.find(FuncName) == CFGMap.end()) {
             continue;
         }
+        CGINum[CFG]=0;
         for (auto [id, bb] : *CFG->block_map) {
-            for (auto I : bb->Instruction_list) {
-                // for (auto CallI : CallInstList[CFG]) {
+            for (auto it = --bb->Instruction_list.end();;--it){
+                auto I=*it;
+                CGINum[CFG]++;
                 if (I->GetOpcode() != CALL) {
+                    if(it==bb->Instruction_list.begin()){
+                        break;
+                    }
                     continue;
                 }
                 auto CallI = (CallInstruction *)I;
-                // std::cerr<<"asdasd\n";
                 auto vFuncName = CallI->GetFunctionName();
                 if (CFGMap.find(vFuncName) == CFGMap.end()) {
+                    if(it==bb->Instruction_list.begin()){
+                        break;
+                    }
                     continue;
                 }
                 auto vCFG = CFGMap[vFuncName];
-                CGCallI[CFG][vCFG]=&I;
-                // auto uvpair = std::make_pair(CFG,vCFG);
-                // auto
+                // vCFG->function_def->PrintIR(std::cerr);
+                // I->PrintIR(std::cerr);
+                CGCallI[CFG][vCFG].push_back(I);
+                CallIuidMap[I]=Calluid++;
+                // I->PrintIR(std::cerr);
+                // auto ASDI=*CGCallI[CFG][vCFG][0];
+                // std::cerr<<CGCallI[CFG][vCFG].size()<<'\n';
+                // ASDI->PrintIR(std::cerr);
                 if (CGNum.find(CFG) == CGNum.end()) {
-                    // CGNum[CFG].push_back(1);
                     CGNum[CFG][vCFG]=1;
                     CG[CFG].push_back(vCFG);
                 } else if(CGNum[CFG].find(vCFG)==CGNum[CFG].end()){
                     CGNum[CFG][vCFG]=1;
                     CG[CFG].push_back(vCFG);
-                }else {
+                } else {
+                    // CFG->function_def->PrintIR(std::cerr);
+                    // vCFG->function_def->PrintIR(std::cerr);
                     CGNum[CFG][vCFG]++;
+                    // std::cerr<<CGINum[CFG]<<" "<<CGINum[vCFG]<<" "<<CGNum[CFG][vCFG]<<'\n';
+                }
+                if(it==bb->Instruction_list.begin()){
+                    break;
                 }
             }
         }
+        // puts("*---------------*");
+        // CFG->function_def->PrintIR(std::cerr);
+        // for(auto vCFG:CG[CFG]){
+        //     auto I=CGCallI[CFG][vCFG][0];
+        //     vCFG->function_def->PrintIR(std::cerr);
+        //     I->PrintIR(std::cerr);
+        // }
+        // puts("*********************");
         // std::cerr<<FuncName<<" : ";
         // for(auto v:CG[CFG]){
         //     std::cerr<<v->function_def->GetFunctionName()<<" ";

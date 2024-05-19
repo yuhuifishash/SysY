@@ -103,8 +103,8 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     }
 
     // now we can fully unroll the loop
-    std::cerr << "constant loop unroll  " << lb << " " << ub << " " << d << " " << info.cond << " " << iterations
-              << "\n";
+    // std::cerr << "constant loop unroll  " << lb << " " << ub << " " << d << " " << info.cond << " " << iterations
+    //           << "\n";
 
     // step.1 we need to find the lcssa variable in loop exit
     assert(exit_nodes.size() == 1);
