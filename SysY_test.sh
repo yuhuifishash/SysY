@@ -28,7 +28,7 @@ if [ $1 == 'llvm' ] ; then
         score_all=`expr ${score_all} + 1`
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.ll \-${optimize_flag}
-        clang-15 ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w
+        clang ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w
         clang -static ${pwdout}/${var##*/}.o lib/libsysy_x86.a
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
