@@ -154,6 +154,9 @@ std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG* C) 
         }
         to_id2s.insert(x);
         vis[x] = 1;
+        if(x == id1){
+            continue;
+        }
         for(auto v:C->GetPredecessor(x)){
             q.push(v->block_id);
         }
