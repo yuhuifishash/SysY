@@ -379,38 +379,6 @@ bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C
     return true;
 }
 
-bool SimpleMemDepAnalyser::CanReach(Instruction I1, Instruction I2, CFG *C) {
-    auto bb1_id = I1->GetBlockID();
-    auto bb2_id = I2->GetBlockID();
-    if (bb1_id == bb2_id) {
-        return false;
-    }
-
-    std::vector<int> vis;
-    std::queue<int> q;
-
-    vis.resize(C->max_label + 1);
-    q.push(bb1_id);
-
-    while (!q.empty()) {
-        auto x = q.front();
-        q.pop();
-        if (x == bb2_id) {
-            // std::cerr<<"Can Reach \n";
-            return true;
-        }
-        if (vis[x]) {
-            continue;
-        }
-        vis[x] = true;
-
-        for (auto bb : C->GetSuccessor(x)) {
-            q.push(bb->block_id);
-        }
-    }
-    return false;
-}
-
 bool SimpleMemDepAnalyser::isStoreBeUsedSame(Instruction a, Instruction b, CFG *C) {
     auto mem1 = GetStorePostClobbers(a, C);
     auto mem2 = GetStorePostClobbers(b, C);
@@ -421,22 +389,6 @@ bool SimpleMemDepAnalyser::isStoreBeUsedSame(Instruction a, Instruction b, CFG *
 
     for (auto I : mem1) {
         if (mem2.find(I) == mem2.end()) {
-            return false;
-        }
-    }
-
-    int id1 = a->GetBlockID();
-    int id2 = b->GetBlockID();
-    if(id1 != id2){
-        if(C->PostDomTree.IsDominate(id1,id2)){
-            if(CanReach(a,b,C)){
-                return false;
-            }
-        }else if(C->PostDomTree.IsDominate(id2,id1)){
-            if(CanReach(b,a,C)){
-                return false;
-            }
-        }else if(CanReach(a,b,C) || CanReach(b,a,C)){
             return false;
         }
     }

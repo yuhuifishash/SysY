@@ -44,6 +44,40 @@ void BasicBlockDSE(CFG *C) {
     }
 }
 
+// I1 Post-dom I2
+// if after execute I1, may execute I2, return true;
+bool CanReach(Instruction I1, Instruction I2, CFG *C) {
+    auto bb1_id = I1->GetBlockID();
+    auto bb2_id = I2->GetBlockID();
+    if (bb1_id == bb2_id) {
+        return false;
+    }
+
+    std::vector<int> vis;
+    std::queue<int> q;
+
+    vis.resize(C->max_label + 1);
+    q.push(bb1_id);
+
+    while (!q.empty()) {
+        auto x = q.front();
+        q.pop();
+        if (x == bb2_id) {
+            // std::cerr<<"Can Reach \n";
+            return true;
+        }
+        if (vis[x]) {
+            continue;
+        }
+        vis[x] = true;
+
+        for (auto bb : C->GetSuccessor(x)) {
+            q.push(bb->block_id);
+        }
+    }
+    return false;
+}
+
 // dead store elimination, post-dominator tree traversal
 void PostDomTreeWalkDSE(CFG *C) {
     std::set<Instruction> EraseSet;
@@ -60,7 +94,7 @@ void PostDomTreeWalkDSE(CFG *C) {
                 auto ptr = StoreI->GetPointer();
                 if (storeptrs_map.find(ptr) != storeptrs_map.end()) {
                     for (auto oldI : storeptrs_map[ptr]) {
-                        if (memdep_analyser->isStoreBeUsedSame(I, oldI, C)) {
+                        if (memdep_analyser->isStoreBeUsedSame(I, oldI, C) && !CanReach(I,oldI,C)) {
                             EraseSet.insert(I);
                             is_dse = true;
                             // std::cerr<<"post dom-tree DSE  "; I->PrintIR(std::cerr);

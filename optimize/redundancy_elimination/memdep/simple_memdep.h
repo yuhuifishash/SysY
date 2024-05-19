@@ -13,10 +13,6 @@ private:
     // I must be store, return all the load instructions that may load the memory that I stores to.
     std::set<Instruction> GetStorePostClobbers(Instruction I, CFG *C);
 
-    // I1 Post-dom I2
-    // if after execute I1, may execute I2, return true;
-    bool CanReach(Instruction I1, Instruction I2, CFG *C);
-
     // I1 Dom I2
     // if all the path from I1 -> I2 have no store alias the ptr of I1, return true
     bool IsNoStore(Instruction I1, Instruction I2, CFG *C);
