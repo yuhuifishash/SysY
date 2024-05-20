@@ -129,5 +129,7 @@ example:
 %ry1 = gep [100x[100xi32]] , ptr @x, i32 0, i32 %r1, i32 %r2
 %r3 = add %r1, 2 (dead code)
 %ry2 = gep i32, ptr %ry1, i32 200
+
+the implementation is very trivial, only dfs the DomTree
 */
 void GEPStrengthReduce(CFG *C) {}

@@ -1,5 +1,8 @@
-#include "inst_combine.h"
 #include "../../include/cfg.h"
+
+bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin);
+bool EliminateDoubleI32AddSub(Instruction a, Instruction b);
+bool EliminateSubEq(Instruction a, Instruction b);
 
 void InstCombine(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -24,6 +27,15 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
     return changed;
 }
 
+
+/*  a :  %r1 = %r0 +/- c1
+    b :  %r2 = %r1 +/- c2
+
+    will be transformed to
+
+    a :  %r1 = %r0 +/- c1
+    b :  %r2 = %r0 +/- (c1+c2)
+*/
 bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
     // TODO(): combine sub
     if (a->GetOpcode() != ADD || b->GetOpcode() != ADD) {
@@ -61,4 +73,19 @@ bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
     }
 
     return false;
+}
+
+// TODO():
+// %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
+// %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
+bool EliminateSubEq(Instruction a, Instruction b) {
+    return false;
+}
+
+
+// TODO():
+// %r = a*b + a  ->  %r = a*(b + 1)
+// %r = a*b + b  ->  %r = b*(a + 1)
+bool EliminateSameMulAdd(Instruction a, Instruction b) {
+
 }

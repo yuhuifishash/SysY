@@ -42,6 +42,7 @@ public:
     bool ConstantLoopFullyUnroll(CFG *C);
     void SimpleForLoopUnroll(CFG *C);
 
+    void LoopIdomRecognize(CFG *C);
     void LoopStrengthReduce(CFG *C);
 
     void LoopDataDependenceTest(CFG *C);

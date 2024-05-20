@@ -279,9 +279,9 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
 /*
 for(int i = l; i < u; i += 1){ BB }
 
-for(int i = l; i + 4 < u; i += 4){ BB } BB,BB,......(<= 4times)
-
-(u - l)/4  (u - l)%4
+int i = l
+for(; i + 4 < u; i += 4){ BB }
+for(; i < u; i += 1){ BB }
 */
 
 void SimpleForLoopUnroll(CFG *C) {}

@@ -347,7 +347,6 @@ bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
 bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C) {
     auto mem1 = GetLoadClobbers(a, C);
     auto mem2 = GetLoadClobbers(b, C);
-    ;
 
     if (mem1.size() != mem2.size()) {
         return false;
