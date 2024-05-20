@@ -119,7 +119,7 @@ std::set<Instruction> SimpleMemDepAnalyser::GetLoadClobbers(Instruction I, CFG *
     return res;
 }
 
-std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG* C) {
+std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG *C) {
     std::set<int> ans;
     assert(id1 != id2);
     std::set<int> id1_tos, to_id2s;
@@ -129,15 +129,15 @@ std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG* C) 
     vis.resize(C->max_label + 1);
     q.push(id1);
 
-    while(!q.empty()){
+    while (!q.empty()) {
         int x = q.front();
         q.pop();
-        if(vis[x]){
+        if (vis[x]) {
             continue;
         }
         id1_tos.insert(x);
         vis[x] = 1;
-        for(auto v:C->GetSuccessor(x)){
+        for (auto v : C->GetSuccessor(x)) {
             q.push(v->block_id);
         }
     }
@@ -146,24 +146,24 @@ std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG* C) 
     vis.resize(C->max_label + 1);
     q.push(id2);
 
-    while(!q.empty()){
+    while (!q.empty()) {
         int x = q.front();
         q.pop();
-        if(vis[x]){
+        if (vis[x]) {
             continue;
         }
         to_id2s.insert(x);
         vis[x] = 1;
-        if(x == id1){
+        if (x == id1) {
             continue;
         }
-        for(auto v:C->GetPredecessor(x)){
+        for (auto v : C->GetPredecessor(x)) {
             q.push(v->block_id);
         }
     }
 
-    for(int i = 0; i <= C->max_label; ++i){
-        if(id1_tos.find(i) != id1_tos.end() && to_id2s.find(i) != to_id2s.end()){
+    for (int i = 0; i <= C->max_label; ++i) {
+        if (id1_tos.find(i) != id1_tos.end() && to_id2s.find(i) != to_id2s.end()) {
             ans.insert(i);
         }
     }
@@ -278,8 +278,6 @@ std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, 
     return res;
 }
 
-
-
 bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
     Operand ptr;
     if (I1->GetOpcode() == LOAD) {
@@ -288,13 +286,13 @@ bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
         ptr = ((StoreInstruction *)I1)->GetPointer();
     }
     auto blocks = GetAllBlockInPath(I1->GetBlockID(), I2->GetBlockID(), C);
-    if(blocks.size() == 0){
+    if (blocks.size() == 0) {
         return false;
     }
-    for(auto id:blocks){
+    for (auto id : blocks) {
         auto bb = (*C->block_map)[id];
         int st = 0, ed = bb->Instruction_list.size();
-        if(id == I1->GetBlockID()){
+        if (id == I1->GetBlockID()) {
             int Iindex = -1;
             auto IBB = (*C->block_map)[I1->GetBlockID()];
             for (int i = IBB->Instruction_list.size() - 1; i >= 0; --i) {
@@ -306,7 +304,7 @@ bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
             }
             assert(Iindex != -1);
             st = Iindex + 1;
-        }else if(id == I2->GetBlockID()){
+        } else if (id == I2->GetBlockID()) {
             int Iindex = -1;
             auto IBB = (*C->block_map)[I2->GetBlockID()];
             for (int i = IBB->Instruction_list.size() - 1; i >= 0; --i) {
@@ -320,7 +318,7 @@ bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
             ed = Iindex;
         }
 
-        for(int i = st; i < ed; ++i){
+        for (int i = st; i < ed; ++i) {
             auto I = bb->Instruction_list[i];
             if (I->GetOpcode() == STORE) {
                 auto StoreI = (StoreInstruction *)I;
@@ -348,7 +346,8 @@ bool SimpleMemDepAnalyser::IsNoStore(Instruction I1, Instruction I2, CFG *C) {
 
 bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C) {
     auto mem1 = GetLoadClobbers(a, C);
-    auto mem2 = GetLoadClobbers(b, C);;
+    auto mem2 = GetLoadClobbers(b, C);
+    ;
 
     if (mem1.size() != mem2.size()) {
         return false;
@@ -363,13 +362,13 @@ bool SimpleMemDepAnalyser::isLoadSameMemory(Instruction a, Instruction b, CFG *C
     int id1 = a->GetBlockID();
     int id2 = b->GetBlockID();
     if (mem1.size() > 1 && id1 != id2) {
-        
-        if(C->DomTree.IsDominate(id1,id2)){
-            if(IsNoStore(a,b,C)){
+
+        if (C->DomTree.IsDominate(id1, id2)) {
+            if (IsNoStore(a, b, C)) {
                 return true;
             }
-        }else if(C->DomTree.IsDominate(id2,id1)){
-            if(IsNoStore(b,a,C)){
+        } else if (C->DomTree.IsDominate(id2, id1)) {
+            if (IsNoStore(b, a, C)) {
                 return true;
             }
         }

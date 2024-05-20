@@ -94,7 +94,7 @@ void PostDomTreeWalkDSE(CFG *C) {
                 auto ptr = StoreI->GetPointer();
                 if (storeptrs_map.find(ptr) != storeptrs_map.end()) {
                     for (auto oldI : storeptrs_map[ptr]) {
-                        if (memdep_analyser->isStoreBeUsedSame(I, oldI, C) && !CanReach(I,oldI,C)) {
+                        if (memdep_analyser->isStoreBeUsedSame(I, oldI, C) && !CanReach(I, oldI, C)) {
                             EraseSet.insert(I);
                             is_dse = true;
                             // std::cerr<<"post dom-tree DSE  "; I->PrintIR(std::cerr);

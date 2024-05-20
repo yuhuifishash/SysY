@@ -17,8 +17,8 @@ private:
     // if all the path from I1 -> I2 have no store alias the ptr of I1, return true
     bool IsNoStore(Instruction I1, Instruction I2, CFG *C);
 
-    //get all the block in all the path from id1 -> id2
-    std::set<int> GetAllBlockInPath(int id1, int id2, CFG* C);
+    // get all the block in all the path from id1 -> id2
+    std::set<int> GetAllBlockInPath(int id1, int id2, CFG *C);
 
 public:
     /*

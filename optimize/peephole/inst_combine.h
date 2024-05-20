@@ -14,8 +14,8 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
 */
 bool EliminateDoubleI32AddSub(Instruction a, Instruction b);
 
-// TODO(): transform %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
-
-// TODO(): transform %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
+// transform %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
+// transform %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
+bool EliminateSubEq(Instruction a, Instruction b);
 
 #endif

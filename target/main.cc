@@ -181,12 +181,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
 
         llvmIR.BuildFunctionInfo();
-        llvmIR.PassExecutor(FunctionInline);  // to do
+        llvmIR.PassExecutor(FunctionInline);    // to do
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         // repeat 5 times
-        for(int i = 0; i < 5; ++i){
+        for (int i = 0; i < 5; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);

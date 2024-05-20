@@ -12,12 +12,12 @@ RegOperand *GetNewRegOperand(int RegNo) {
     // std::cerr<<RegNo<<'\n';
     if (it == RegOperandMap.end()) {
         auto R = new RegOperand(RegNo);
-        
+
         RegOperandMap[RegNo] = R;
         return R;
     } else {
         // if(RegNo==7){
-            // std::cerr<<"HERE:"<<it->second->GetFullName()<<'\n';
+        // std::cerr<<"HERE:"<<it->second->GetFullName()<<'\n';
         // }
         // std::cerr<<"HEEEEE\n";
         return it->second;
@@ -483,13 +483,13 @@ Instruction PhiInstruction::CopyInstruction() {
     return new PhiInstruction(type, nresult, nval_labels);
 }
 
-Instruction AllocaInstruction::CopyInstruction() { 
+Instruction AllocaInstruction::CopyInstruction() {
     Operand nresult = result->CopyOperand();
     std::vector<int> ndims;
-    for(auto dimint:dims){
+    for (auto dimint : dims) {
         ndims.push_back(dimint);
     }
-    return new AllocaInstruction(type,ndims,nresult); 
+    return new AllocaInstruction(type, ndims, nresult);
 }
 
 Instruction BrCondInstruction::CopyInstruction() {
@@ -516,9 +516,7 @@ Instruction CallInstruction::CopyInstruction() {
     return new CallInstruction(ret_type, nresult, name, nargs);
 }
 
-Instruction RetInstruction::CopyInstruction() {
-    return new RetInstruction(ret_type,ret_val); 
-}
+Instruction RetInstruction::CopyInstruction() { return new RetInstruction(ret_type, ret_val); }
 
 Instruction GetElementptrInstruction::CopyInstruction() {
     Operand nresult = result->CopyOperand();
