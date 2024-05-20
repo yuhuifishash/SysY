@@ -53,7 +53,7 @@ SysYc *.sy -S -o *.s (-O1)
 void OnlyBasicBlockCSE(CFG *C);
 // Debug--------------------------------
 
-void EliminateSimpleConstInstructions(CFG *C);
+void GlobalConstReplace(CFG *C);
 void MakeFunctionOneExit(CFG *C);
 void Mem2Reg(CFG *);
 void SparseConditionalConstantPropagation(CFG *C);
@@ -71,10 +71,14 @@ void LoopClosedSSA(CFG *C);
 void ScalarEvolution(CFG *C);
 void ConstantLoopFullyUnroll(CFG *C);
 void SimpleDSE(CFG *C);
+void EliminateSimpleConstArrayValue(CFG *C);
+void GEPStrengthReduce(CFG *C);
+void AggressiveDeadCodeElimination(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
 void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
+void FindNoWriteStaticGlobal(LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -136,13 +140,15 @@ int main(int argc, char **argv) {
     bool optimize_flag =
     (argc == 6 && (strcmp(argv[optimize_tag], "-O1") == 0 || strcmp(argv[optimize_tag], "-O2") == 0));
     if (optimize_flag) {
-        llvmIR.PassExecutor(EliminateSimpleConstInstructions);
+        // llvmIR.PassExecutor(FindNoWriteStaticGlobal); //TODO()
+        llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor(EliminateSimpleConstArrayValue); //TODO()
 
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
@@ -151,6 +157,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
@@ -209,6 +216,8 @@ int main(int argc, char **argv) {
         }
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
+
+        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

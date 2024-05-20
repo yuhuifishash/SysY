@@ -27,15 +27,14 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
     return changed;
 }
 
+// c1 and c2 is const
+// %r = (a + c1) + c2  ->  %r = a + (c1 + c2)
+// %r = (a - c1) + c2  ->  %r = a + (c2 - c1)
+// %r = (a + c1) - c2  ->  %r = a + (c1 - c2)
+// %r = (a - c1) - c2  ->  %r = a + (-c1 - c2)
 
-/*  a :  %r1 = %r0 +/- c1
-    b :  %r2 = %r1 +/- c2
-
-    will be transformed to
-
-    a :  %r1 = %r0 +/- c1
-    b :  %r2 = %r0 +/- (c1+c2)
-*/
+// a must be i32
+// (+/- c1 +/- c2) can not overflow
 bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
     // TODO(): combine sub
     if (a->GetOpcode() != ADD || b->GetOpcode() != ADD) {
@@ -79,6 +78,7 @@ bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
 // %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
 // %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
 bool EliminateSubEq(Instruction a, Instruction b) {
+    TODO("EliminateSubEq");
     return false;
 }
 
@@ -87,5 +87,6 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 // %r = a*b + a  ->  %r = a*(b + 1)
 // %r = a*b + b  ->  %r = b*(a + 1)
 bool EliminateSameMulAdd(Instruction a, Instruction b) {
-
+    TODO("EliminateSameMulAdd");
+    return false;
 }
