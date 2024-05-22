@@ -8,7 +8,7 @@ void LoopIdomRecognize(CFG *C) {}
 /*
 c is loop invariant
 p is const
-S = S0 (S0 must > 0)
+S = S0 (S0 must >= 0)
 i = l
 do{
     S += c;

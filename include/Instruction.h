@@ -791,6 +791,7 @@ public:
     Operand GetResultReg() { return result; }
     enum LLVMType GetType() { return type; }
     Operand GetResult() { return result; }
+    void SetResult(Operand op) {result = op;}
     Operand GetPtrVal() { return ptrval; }
     std::vector<int> GetDims() { return dims; }
     std::vector<Operand> GetIndexes() { return indexes; }

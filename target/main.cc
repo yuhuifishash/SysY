@@ -74,6 +74,8 @@ void SimpleDSE(CFG *C);
 void EliminateSimpleConstArrayValue(CFG *C);
 void GEPStrengthReduce(CFG *C);
 void AggressiveDeadCodeElimination(CFG *C);
+void LoopIdomRecognize(CFG *C);
+void LoopGepStrengthReduce(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -209,6 +211,7 @@ int main(int argc, char **argv) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(LoopInvariantCodeMotion);
+            // llvmIR.PassExecutor(LoopIdomRecognize); //todo
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
             llvmIR.PassExecutor(SimplifyCFG);
             llvmIR.PassExecutor(InstCombine);
@@ -218,6 +221,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
 
         // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
+        llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopGepStrengthReduce);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

@@ -43,7 +43,7 @@ public:
     void SimpleForLoopUnroll(CFG *C);
 
     void LoopIdomRecognize(CFG *C);
-    void LoopStrengthReduce(CFG *C);
+    void LoopGepStrengthReduce(CFG *C);
 
     void LoopDataDependenceTest(CFG *C);
     void LoopParallel(CFG *C);
