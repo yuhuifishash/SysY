@@ -49,9 +49,6 @@ void PrintLexerResult(std::ostream &s, char *yytext, YYSTYPE yylval, int token, 
 SysYc *.sy -S -o *.s (-O1)
 */
 
-// Debug--------------------------------
-void OnlyBasicBlockCSE(CFG *C);
-// Debug--------------------------------
 
 void GlobalConstReplace(CFG *C);
 void MakeFunctionOneExit(CFG *C);
@@ -76,6 +73,7 @@ void GEPStrengthReduce(CFG *C);
 void AggressiveDeadCodeElimination(CFG *C);
 void LoopIdomRecognize(CFG *C);
 void LoopGepStrengthReduce(CFG *C);
+void OnlyBasicBlockCSE(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -162,7 +160,7 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
-        llvmIR.PassExecutor(SimpleCSE);
+        llvmIR.PassExecutor(OnlyBasicBlockCSE);
         llvmIR.PassExecutor(SimpleDSE);
 
         llvmIR.BuildLoopInfo();
@@ -226,7 +224,9 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopGepStrengthReduce);
+        llvmIR.PassExecutor(LoopGepStrengthReduce);
+        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SimplifyCFG);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

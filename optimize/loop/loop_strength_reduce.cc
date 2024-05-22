@@ -2,7 +2,10 @@
 #include "scev/scev_expr.h"
 #include <functional>
 
+static std::set<Instruction> NewGepSet;
+
 void LoopGepStrengthReduce(CFG *C) {
+    NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
@@ -75,14 +78,16 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     */
     assert(latches.size() == 1);
     auto latch = *latches.begin();
-    std::cerr<<latch->block_id<<"\n";
+    // std::cerr<<latch->block_id<<"\n";
     for(auto bb:loop_nodes){
         for(auto &I:bb->Instruction_list){
             if(I->GetOpcode() != GETELEMENTPTR){
                 continue;
             }
             if(!C->IsDominate(bb->block_id,latch->block_id)){
-                continue;
+                if(NewGepSet.find(I) == NewGepSet.end()){
+                    continue;
+                }
             }
             auto GEPI = (GetElementptrInstruction*)I;
             bool isReduceBetter = false;
@@ -143,7 +148,8 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             bool isInitReduce = true;
             for(auto index:GEPI->GetIndexes()){
                 if(index->GetOperandType() == BasicOperand::IMMI32){
-                    InitGEPI->push_idx_imm32(0);
+                    auto imm = ((ImmI32Operand*)index)->GetIntImmVal();
+                    InitGEPI->push_idx_imm32(imm);
                 }else if(index->GetOperandType() == BasicOperand::REG){
                     auto R = (RegOperand*)index;
                     auto val = scev.SCEVMap[R->GetRegNo()];
@@ -169,9 +175,10 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             }
 
             if(StepVal.type == OTHER){ 
-                GEPI->PrintIR(std::cerr);
+                std::cerr<<"LoopStrengthInLoop Header = "<<header->block_id<<"\n\n";
+                std::cerr<<"LoopStrengthReduce:Row  ";GEPI->PrintIR(std::cerr);
                 // now we only consider single step and initval
-                InitGEPI->PrintIR(std::cerr);
+                std::cerr<<"LoopStrengthReduce:PreHeader  ";InitGEPI->PrintIR(std::cerr);
 
                 // we add initVal to preheader
                 auto tmpI = preheader->Instruction_list.back();
@@ -179,11 +186,12 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 preheader->Instruction_list.pop_back();
                 preheader->Instruction_list.push_back(InitGEPI);
                 preheader->Instruction_list.push_back(tmpI);
+                NewGepSet.insert(InitGEPI);
                 
                 // then we add induction change to latch
                 auto LatchGEPI = new GetElementptrInstruction(GEPI->GetType(),GetNewRegOperand(++C->max_reg),GEPI->GetResult());
                 LatchGEPI->push_index(StepVal.op1);
-                LatchGEPI->PrintIR(std::cerr);
+                std::cerr<<"LoopStrengthReduce:Latch  " ;LatchGEPI->PrintIR(std::cerr);
 
                 tmpI = latch->Instruction_list.back();
                 assert(tmpI->GetOpcode() == BR_UNCOND);
@@ -196,7 +204,7 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 PhiI->InsertPhi(InitGEPI->GetResult(), GetNewLabelOperand(preheader->block_id));
                 PhiI->InsertPhi(LatchGEPI->GetResult(), GetNewLabelOperand(latch->block_id));
                 header->InsertInstruction(0,PhiI);
-                PhiI->PrintIR(std::cerr); 
+                std::cerr<<"LoopStrengthReduce:Header  ";PhiI->PrintIR(std::cerr); 
 
                 //Set GEPI's result to new Reg, then it will be eliminate in DCE
                 I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),GetNewRegOperand(++C->max_reg));

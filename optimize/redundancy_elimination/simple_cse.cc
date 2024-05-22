@@ -476,7 +476,6 @@ void SimpleCSE(CFG *C) {
     DomTreeWalkCSE(C);
 }
 
-// Debug--------------------------------
 void OnlyBasicBlockCSE(CFG *C) {
     SimpleCSEInit(C);
 
@@ -488,4 +487,3 @@ void OnlyBasicBlockCSE(CFG *C) {
 
     BasicBlockCSE(C);
 }
-// Debug--------------------------------
