@@ -3,8 +3,6 @@
 
 void LoopIdomRecognize(CFG *C) {}
 
-
-
 /*
 c is loop invariant
 p is const
@@ -19,10 +17,7 @@ do{
 S = S0 + 1ll*(u-l)*c%p
 */
 
-void ReduceSimpleAddMod(CFG *C, NaturalLoop* L) {
-
-}
-
+void ReduceSimpleAddMod(CFG *C, NaturalLoop *L) {}
 
 /*
 c is loop invariant
@@ -35,11 +30,6 @@ do{
 -----------------------------------------
 S = S0 + (u-l)*c
 */
-void ReduceSimpleAdd(CFG *C) {
-
-}
-
-
-
+void ReduceSimpleAdd(CFG *C) {}
 
 void NaturalLoop::LoopIdomRecognize(CFG *C) {}

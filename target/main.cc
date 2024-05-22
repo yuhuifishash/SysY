@@ -49,7 +49,6 @@ void PrintLexerResult(std::ostream &s, char *yytext, YYSTYPE yylval, int token, 
 SysYc *.sy -S -o *.s (-O1)
 */
 
-
 void GlobalConstReplace(CFG *C);
 void MakeFunctionOneExit(CFG *C);
 void Mem2Reg(CFG *);

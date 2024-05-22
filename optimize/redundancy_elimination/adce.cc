@@ -4,6 +4,4 @@
 (such as useless loop)
 */
 
-void AggressiveDeadCodeElimination(CFG *C) {
-    TODO("AggressiveDeadCodeElimination");
-}
+void AggressiveDeadCodeElimination(CFG *C) { TODO("AggressiveDeadCodeElimination"); }

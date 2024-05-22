@@ -82,7 +82,6 @@ bool EliminateSubEq(Instruction a, Instruction b) {
     return false;
 }
 
-
 // TODO():
 // %r = a*b + a  ->  %r = a*(b + 1)
 // %r = a*b + b  ->  %r = b*(a + 1)

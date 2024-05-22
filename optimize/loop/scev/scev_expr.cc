@@ -31,14 +31,14 @@ SCEVValue SCEVValue::operator+(SCEVValue b) {
     }
 
     if (type != OTHER && b.type == OTHER) {
-        if(b.op1->GetOperandType() == BasicOperand::IMMI32){
+        if (b.op1->GetOperandType() == BasicOperand::IMMI32) {
             auto imm1 = ((ImmI32Operand *)b.op1)->GetIntImmVal();
-            if(imm1 == 0){
-                return {op1,type,op2};
+            if (imm1 == 0) {
+                return {op1, type, op2};
             }
         }
 
-        if (type != ADD){
+        if (type != ADD) {
             return {nullptr, OTHER, nullptr};
         }
 
@@ -56,13 +56,13 @@ SCEVValue SCEVValue::operator+(SCEVValue b) {
     }
 
     if (type == OTHER && b.type != OTHER) {
-        if(op1->GetOperandType() == BasicOperand::IMMI32){
+        if (op1->GetOperandType() == BasicOperand::IMMI32) {
             auto imm1 = ((ImmI32Operand *)op1)->GetIntImmVal();
-            if(imm1 == 0){
+            if (imm1 == 0) {
                 return b;
             }
         }
-        if (b.type != ADD){
+        if (b.type != ADD) {
             return {nullptr, OTHER, nullptr};
         }
         if (op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32) {
@@ -162,7 +162,7 @@ SCEVValue SCEVValue::operator*(SCEVValue b) {
     }
 
     if (type != OTHER && b.type == OTHER) {
-        if (type != MUL){
+        if (type != MUL) {
             return {nullptr, OTHER, nullptr};
         }
         if (op2->GetOperandType() == BasicOperand::IMMI32 && b.op1->GetOperandType() == BasicOperand::IMMI32) {
@@ -179,7 +179,7 @@ SCEVValue SCEVValue::operator*(SCEVValue b) {
     }
 
     if (type == OTHER && b.type != OTHER) {
-        if (type != MUL){
+        if (type != MUL) {
             return {nullptr, OTHER, nullptr};
         }
         if (op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32) {

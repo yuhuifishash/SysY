@@ -4,9 +4,7 @@ extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
 
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
-void FindNoWriteStaticGlobal(LLVMIR *IR) {
-    TODO("FindNoWriteStaticGlobal");
-}
+void FindNoWriteStaticGlobal(LLVMIR *IR) { TODO("FindNoWriteStaticGlobal"); }
 
 void GlobalConstReplace(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -35,9 +33,7 @@ void GlobalConstReplace(CFG *C) {
 }
 
 // GEPindex is const and ArrayDefine is const, we need not to load.
-void EliminateSimpleConstArrayValue(CFG *C) {
-    TODO("EliminateSimpleConstArrayValue");
-}
+void EliminateSimpleConstArrayValue(CFG *C) { TODO("EliminateSimpleConstArrayValue"); }
 
 /**
  * this function will eliminate getelementptr instruction with empty index
@@ -91,9 +87,7 @@ void EliminateEmptyIndexGEP(CFG *C) {
 
 I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
 */
-void SrcEqResultInstEliminate(CFG *C) {
-    TODO("SrcEqResultInstEliminate");
-}
+void SrcEqResultInstEliminate(CFG *C) { TODO("SrcEqResultInstEliminate"); }
 
 /*
 %r1 = add i32 4,%r0 will be transformed to %r1 = add i32 %r0,4
@@ -108,9 +102,7 @@ void I32ConstantSimplify(Instruction I) {
 }
 
 // {sub X, X},{Mul 0, X} is represented as 0 + 0
-void ZeroResultSimplify(Instruction I) {
-    TODO("ZeroResultSimplify");
-}
+void ZeroResultSimplify(Instruction I) { TODO("ZeroResultSimplify"); }
 
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -135,6 +127,4 @@ example:
 
 the implementation is very trivial, only dfs the DomTree
 */
-void GEPStrengthReduce(CFG *C) {
-    TODO("GEPStrengthReduce");
-}
+void GEPStrengthReduce(CFG *C) { TODO("GEPStrengthReduce"); }
