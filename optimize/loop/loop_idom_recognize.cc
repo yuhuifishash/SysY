@@ -46,7 +46,7 @@ do{
     j = j + 1;
 }while(j < n)
 -------------------------------
-if(j < n)
+if(j < min(i,n))
 do{
     something;
     j = j + 1;
