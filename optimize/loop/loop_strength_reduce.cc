@@ -4,7 +4,27 @@
 
 static std::set<Instruction> NewGepSet;
 
+
+/*
+non-zero index at end of GEP(only one)
+%r0 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r2
+%r1 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r3
+
+scevmap: %r2 {%x+c1,+,512}   %r3 {%x+c2,+,512}
+c1 and c2 are constant
+so we can use %r0 to get %r1
+then %r3 may be useless
+*/
+void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop* L) {
+
+}
+
+
+
 void LoopGepStrengthReduce(CFG *C) {
+    for(auto l : C->LoopForest.loop_set){
+        LoopBasicBlockGEPStrengthReduce(C,l);
+    }
     NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
@@ -57,6 +77,23 @@ SCEVValue GetGEPStep(GetElementptrInstruction *GEPI, std::vector<SCEVValue> valu
     }
     // res.PrintSCEVValue();
     return res;
+}
+
+/*
+non-zero index at end of GEP(only one)
+%r0 = GEP [10000xi32], ptr @G, i32 0, i32 %r1
+secvmap: %r1 -> {%x+%y,+,%z}
+preheader:
+    %st = GEP [10000xi32], ptr @G, i32 0, i32 %x+%y
+header:
+    %r0 = phi [%st, %preheader], [%n, %latch]
+latch:
+    %n = GEP i32, ptr %ry, i32 %z
+
+then we need to update ScalarEvolution on father loop
+*/
+void SingleGEPStrengthReduce(CFG *C) {
+
 }
 
 void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
@@ -144,7 +181,6 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             auto InitGEPI = new GetElementptrInstruction(GEPI->GetType(), GetNewRegOperand(++C->max_reg),
                                                          GEPI->GetPtrVal(), GEPI->GetDims());
 
-            bool isInitReduce = true;
             for (auto index : GEPI->GetIndexes()) {
                 if (index->GetOperandType() == BasicOperand::IMMI32) {
                     auto imm = ((ImmI32Operand *)index)->GetIntImmVal();
@@ -152,16 +188,18 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 } else if (index->GetOperandType() == BasicOperand::REG) {
                     auto R = (RegOperand *)index;
                     auto val = scev.SCEVMap[R->GetRegNo()];
-                    if (val->len == 1) {
+                    if (val->len <= 2) {
                         if (val->st.type != OTHER) {
-                            isInitReduce = false;
-                            break;
-                        }
-                        InitGEPI->push_index(val->st.op1);
-                    } else if (val->len == 2) {
-                        if (val->st.type != OTHER) {
-                            isInitReduce = false;
-                            break;
+                            std::cerr<<"InitGEPI Generate New ArithI "; val->PrintSCEVExpr();
+                            auto ArithI = new ArithmeticInstruction(val->st.type,I32,val->st.op1,
+                                                                                             val->st.op2, GetNewRegOperand(++C->max_reg));
+                            auto tmpI = preheader->Instruction_list.back();
+                            assert(tmpI->GetOpcode() == BR_UNCOND);
+                            preheader->Instruction_list.pop_back();
+                            preheader->Instruction_list.push_back(ArithI);
+                            preheader->Instruction_list.push_back(tmpI);
+                            InitGEPI->push_index(ArithI->GetResultReg());
+                            continue;
                         }
                         InitGEPI->push_index(val->st.op1);
                     } else {    // should not reach here
@@ -169,17 +207,13 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                     }
                 }
             }
-            if (!isInitReduce) {
-                continue;
-            }
-
+            // now we only consider single step
             if (StepVal.type == OTHER) {
-                std::cerr << "LoopStrengthInLoop Header = " << header->block_id << "\n\n";
-                std::cerr << "LoopStrengthReduce:Row  ";
-                GEPI->PrintIR(std::cerr);
-                // now we only consider single step and initval
-                std::cerr << "LoopStrengthReduce:PreHeader  ";
-                InitGEPI->PrintIR(std::cerr);
+                // std::cerr << "LoopStrengthInLoop Header = " << header->block_id << "\n\n";
+                // std::cerr << "LoopStrengthReduce:Row  ";
+                // GEPI->PrintIR(std::cerr);
+                // std::cerr << "LoopStrengthReduce:PreHeader  ";
+                // InitGEPI->PrintIR(std::cerr);
 
                 // we add initVal to preheader
                 auto tmpI = preheader->Instruction_list.back();
@@ -193,8 +227,8 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 auto LatchGEPI =
                 new GetElementptrInstruction(GEPI->GetType(), GetNewRegOperand(++C->max_reg), GEPI->GetResult());
                 LatchGEPI->push_index(StepVal.op1);
-                std::cerr << "LoopStrengthReduce:Latch  ";
-                LatchGEPI->PrintIR(std::cerr);
+                // std::cerr << "LoopStrengthReduce:Latch  ";
+                // LatchGEPI->PrintIR(std::cerr);
 
                 tmpI = latch->Instruction_list.back();
                 assert(tmpI->GetOpcode() == BR_UNCOND);
@@ -207,9 +241,9 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 PhiI->InsertPhi(InitGEPI->GetResult(), GetNewLabelOperand(preheader->block_id));
                 PhiI->InsertPhi(LatchGEPI->GetResult(), GetNewLabelOperand(latch->block_id));
                 header->InsertInstruction(0, PhiI);
-                std::cerr << "LoopStrengthReduce:Header  ";
-                PhiI->PrintIR(std::cerr);
-
+                // std::cerr << "LoopStrengthReduce:Header  ";
+                // PhiI->PrintIR(std::cerr);
+                // std::cerr << "\n";
                 // Set GEPI's result to new Reg, then it will be eliminate in DCE
                 I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
                                               GetNewRegOperand(++C->max_reg));
