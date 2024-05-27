@@ -34,7 +34,7 @@ template <> void RiscV64Printer::printRVfield<RiscVLabel *>(RiscVLabel *ins) {
             s << "%lo(" << ins->name << ")";
         }
     } else {
-        s << current_func->getFunctionName() << ins->jmp_label_id;
+        s << "." << current_func->getFunctionName() << ins->jmp_label_id;
     }
 }
 
@@ -49,7 +49,7 @@ template <> void RiscV64Printer::printRVfield<RiscVLabel>(RiscVLabel ins) {
             s << "%lo(" << ins.name << ")";
         }
     } else {
-        s << current_func->getFunctionName() << ins.jmp_label_id;
+        s << "." << current_func->getFunctionName() << ins.jmp_label_id;
     }
 }
 
@@ -202,7 +202,7 @@ void RiscV64Printer::emit() {
         s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
         for (auto block : func->blocks) {
-            s << func->getFunctionName() << block->getLabelId() << ":\n";
+            s << "." << func->getFunctionName() << block->getLabelId() << ":\n";
             cur_block = block;
             for (auto ins : *block) {
                 s << "\t";
