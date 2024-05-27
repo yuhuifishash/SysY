@@ -4,9 +4,9 @@
 void LoopIdomRecognize(CFG *C) {}
 
 /*
-c is loop invariant
-p is const
-S = S0 (S0 must >= 0)
+c is positive const
+p is positive const
+S = 0
 i = l
 do{
     S += c;
@@ -30,6 +30,30 @@ do{
 -----------------------------------------
 S = S0 + (u-l)*c
 */
-void ReduceSimpleAdd(CFG *C) {}
+void ReduceSimpleAdd(CFG *C, NaturalLoop *L) {}
+
+
+/*
+i is invariant
+j is only used for loop iteration
+if(j < n)
+do{
+    if (i < j){ //j >= i
+        j = j + 1;
+        continue;
+    }
+    something;
+    j = j + 1;
+}while(j < n)
+-------------------------------
+if(j < min(i,n))
+do{
+    something;
+    j = j + 1;
+}while (j < min(i,n)) // min(i,n) can be motion
+*/
+void LoopUselessContinue2Break(CFG *C, NaturalLoop *L) {
+
+}
 
 void NaturalLoop::LoopIdomRecognize(CFG *C) {}
