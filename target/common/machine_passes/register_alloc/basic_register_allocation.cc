@@ -59,12 +59,13 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<"Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
+        // 
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
             if (intervals.find(reg) == intervals.end()) {
                 intervals[reg] = LiveInterval(reg);
-                Log("OUT");
+                // std::cerr<<("OUT")<<reg.is_virtual<<" "<<reg.reg_no<<"\n";
             }
             // Extend or add new Range
             if (last_use.find(reg) == last_use.end()) {
@@ -74,6 +75,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 // Have previous Use, Extend Range
                 intervals[reg].SetMostBegin(mblock->getBlockInNumber());
             }
+            last_use[reg] = mblock->getBlockOutNumber();
         }
         for (auto reverse_it = mcfg_node->Mblock->ReverseBegin(); reverse_it != mcfg_node->Mblock->ReverseEnd();
              ++reverse_it) {
@@ -126,7 +128,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         }
     }
 
-    // Log("Check Intervals");
+    // Log("Check Intervals %s",mfun->getFunctionName().c_str());
     // for(auto interval_pair : intervals){
     //     auto reg = interval_pair.first;
     //     auto interval = interval_pair.second;
@@ -134,7 +136,6 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
     //     for(auto seg : interval){
     //         std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
     //     }
-    //     std::cerr<<"Reg: "<<interval.getReg().is_virtual<<interval.getReg().reg_no;
     //     std::cerr<<"Ref: "<<interval.getReferenceCount();
     //     std::cerr<<"\n";
     // }

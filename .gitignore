@@ -9,3 +9,4 @@ test_output/performance_testIR/*
 testcase/performance/*.in
 testcase/performance/*.out
 testcase/example/*
+ztemp/*

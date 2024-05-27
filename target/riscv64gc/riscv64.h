@@ -133,6 +133,11 @@ enum {
 
     RISCV_LI,
     RISCV_CALL,
+
+    RISCV_BGT,
+    RISCV_BLE,
+    RISCV_BGTU,
+    RISCV_BLEU,
 };
 
 struct RvOpInfo {
@@ -373,7 +378,7 @@ private:
 
     friend class RiscV64InstructionConstructor;
 
-    RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV) {}
+    RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV), imm(0), use_label(false) {}
 
 public:
     void setOpcode(int op, bool use_label) {
@@ -468,7 +473,15 @@ public:
         ret->setLabel(label);
         return ret;
     }
-    RiscV64Instruction *ConstructB();
+    RiscV64Instruction *ConstructBLabel(int op, Register Rs1, Register Rs2, RiscVLabel label){
+        RiscV64Instruction * ret = new RiscV64Instruction();
+        ret->setOpcode(op,true);
+        Assert(OpTable[op].ins_formattype == RvOpInfo::B_type);
+        ret->setRs1(Rs1);
+        ret->setRs2(Rs2);
+        ret->setLabel(label);
+        return ret;
+    }
     RiscV64Instruction *ConstructUImm(int op, Register Rd, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
         ret->setOpcode(op, false);

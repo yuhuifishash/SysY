@@ -10,6 +10,16 @@ private:
     Register GetllvmReg(int, MachineDataType);
     Register GetNewReg(MachineDataType, bool save_across_call = false);
 
+    // struct LastCmpInfo{
+    //     Register cmp_result,cmp_op1,cmp_op2;
+    //     int cmp_cond;
+    //     int cmp_type;
+    //     enum{NONE,ICMP,FCMP};
+    //     LastCmpInfo():cmp_type(NONE){}
+    // };
+
+    std::map<Register,Instruction> cmp_context;
+
 public:
     RiscV64Selector(MachineUnit *dest, LLVMIR *IR) : MachineSelector(dest, IR) {}
     void SelectInstructionAndBuildCFG();

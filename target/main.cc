@@ -6,6 +6,8 @@
 #include "./riscv64gc/instruction_print/riscv64_printer.h"
 #include "./riscv64gc/instruction_select/riscv64_instSelect.h"
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
+#include "./riscv64gc/instruction_select/riscv64_lowerframe.h"
+#include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
 #include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
@@ -238,6 +240,8 @@ int main(int argc, char **argv) {
         RiscV64Register regs;
 
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        RiscV64LowerFrame(m_unit).Execute();
+        RiscV64LowerImm(m_unit).Execute();
         FastLinearScan(m_unit, &regs).Execute();
         RiscV64LowerCopy(m_unit).Execute();
 
@@ -249,6 +253,8 @@ int main(int argc, char **argv) {
         RiscV64Register regs;
 
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        RiscV64LowerFrame(m_unit).Execute();
+        RiscV64LowerImm(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();
         // RiscV64LowerCopy(m_unit).Execute();
 

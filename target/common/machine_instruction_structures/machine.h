@@ -7,11 +7,12 @@ class MachineFunction;
 class MachineBlock;
 class MachineUnit;
 class MachineCFG;
+#include <list>
 
 class MachineBlock {
 private:
     int label_id;
-    std::deque<MachineBaseInstruction *> instructions;
+    std::list<MachineBaseInstruction *> instructions;
 
 private:
     MachineFunction *parent;
@@ -26,8 +27,10 @@ public:
     auto end() { return instructions.end(); }
     void push_back(MachineBaseInstruction *ins) { instructions.push_back(ins); }
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
-    int getBlockInNumber() { return instructions[0]->getNumber(); }
-    int getBlockOutNumber() { return instructions[instructions.size() - 1]->getNumber(); }
+    void pop_back() { instructions.pop_back(); }
+    void pop_front() { instructions.pop_front(); }
+    int getBlockInNumber() { return (*(instructions.begin()))->getNumber(); }
+    int getBlockOutNumber() { return (*(instructions.rbegin()))->getNumber(); }
     MachineBlock(int id) : label_id(id) {}
 };
 
@@ -36,8 +39,16 @@ private:
     std::string func_name;
     MachineUnit *parent;
     MachineCFG *mcfg;
+    int stack_sz;
+    std::vector<Register>parameters;
 
 public:
+    const decltype(parameters)& GetParameters() {return parameters;}
+    void AddParameter(Register reg) { parameters.push_back(reg); }
+    void SetStackSize(int sz) { stack_sz = sz; }
+    void AddStackSize(int sz) { stack_sz += sz; }
+    int GetStackSize() { return ((stack_sz+15)/16)*16; }
+    int GetRaOffsetToSp() { return stack_sz - 8; }
     MachineCFG *getMachineCFG() { return mcfg; }
     MachineUnit *getParentMachineUnit() { return parent; }
     std::string getFunctionName() { return func_name; }
