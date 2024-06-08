@@ -12,6 +12,8 @@ extern FunctionCallGraph fcallgraph;
 // extern std::unordered_map<CFG *, std::unordered_map<CFG *,std::vector<Instruction>>> fcallgraph.CGCallI;
 // extern std::unordered_map<CFG *,size_t> fcallgraph.CGINum;
 static std::unordered_map<CFG *, bool> CFGvis;
+static std::unordered_map<Instruction, bool> reinlinecallI;
+static bool is_reinline=false;
 
 // we process function call in bottom-up order(CallGraphSCC)
 // in SysY2022, the SCC's size <= 1, so we only need to consider self-recursive
@@ -57,37 +59,35 @@ static std::unordered_map<CFG *, bool> CFGvis;
 
 Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std::map<int, int> &reg_replace_map,
                   std::map<int, int> &label_replace_map) {
+    // return 
     label_replace_map[0] = StartBB->block_id;
     for (auto [id, bb] : *vCFG->block_map) {
-        if (id == 0) {
+        if (id == 0 || bb->Instruction_list.empty()) {
             continue;
         }
         auto newbb = uCFG->NewBlock();
         label_replace_map[bb->block_id] = newbb->block_id;
     }
-    // auto nowBlockMap=uCFG->block_map;
 
     for (auto [id, bb] : *vCFG->block_map) {
         auto nowbb_id = label_replace_map[id];
         auto nowbb = (*uCFG->block_map)[nowbb_id];
-        // bb->printIR(std::cerr);
-        // puts("----------");
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() == RET) {
                 auto newI = new BrUncondInstruction(GetNewLabelOperand(EndBB->block_id));
                 nowbb->InsertInstruction(1, newI);
                 continue;
             }
-            // if(I->GetOpcode()==ALLOCA){
-            //     continue;
-            // }
-
-            auto nowI = I->CopyInstruction();
+            Instruction nowI;
+            if(is_reinline){
+                // if deal with self-inline, to better compare callintruction and lower down the space, 
+                // take I as newI in uCFG
+                nowI=I;
+            }else{
+                nowI = I->CopyInstruction();
+            }
             nowI->ReplaceLabelByMap(label_replace_map);
 
-            if (nowI->GetOpcode() == CALL) {
-                fcallgraph.CallIuidMap[nowI] = fcallgraph.CallIuidMap[I];
-            }
             auto use_ops = nowI->GetNonResultOperands();
             for (auto &op : use_ops) {
                 if (op->GetOperandType() != BasicOperand::REG) {
@@ -104,10 +104,7 @@ Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std:
             }
 
             auto ResultReg = (RegOperand *)nowI->GetResultReg();
-            // if(I->GetOpcode()==PHI){
-            //     I->PrintIR(std::cerr);
-            //     nowI->PrintIR(std::cerr);
-            // }
+
             if (ResultReg != NULL && reg_replace_map.find(ResultReg->GetRegNo()) == reg_replace_map.end()) {
                 auto ResultRegNo = ResultReg->GetRegNo();
                 int newNo = ++uCFG->max_reg;
@@ -116,23 +113,16 @@ Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std:
             }
             nowI->ReplaceRegByMap(reg_replace_map);
             nowbb->InsertInstruction(1, nowI);
-            // nowI->PrintIR(std::cerr);
-            // std::cerr<<"::::::::::::";
-            // nowbb->printIR(std::cerr);
+            nowI->SetBlockID(nowbb_id);
         }
     }
     auto retBB = (BasicBlock *)vCFG->ret_block;
     auto RetI = (RetInstruction *)retBB->Instruction_list.back();
     auto RetResult = RetI->GetRetVal();
-    // std::cerr<<RetResult->GetFullName()<<'\n';
-    // RetI->PrintIR(std::cerr);
+    
     if (RetResult != NULL) {
         if (RetResult->GetOperandType() == BasicOperand::REG) {
             auto oldRegNo = ((RegOperand *)RetResult)->GetRegNo();
-            // std::cerr<<oldRegNo<<" "<<reg_replace_map[oldRegNo]<<'\n';
-            // auto op=GetNewRegOperand(reg_replace_map[oldRegNo]);
-            // std::cerr<<"HERE:"<<op.GetFullName()<<'\n';
-            // *NewResultOperand=op;
             return GetNewRegOperand(reg_replace_map[oldRegNo]);
         }
         return RetResult;
@@ -150,13 +140,9 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     int formal_regno = -1;
     auto CallI = (CallInstruction *)fcallgraph.CGCallI[uCFG][vCFG][CallINo];
     auto BlockMap = *uCFG->block_map;
-    // std::cerr<<"HRE   "<<CallI<<" "<<CallI->GetBlockID()<<'\n';
-    // CallI->PrintIR(std::cerr);
-    // puts("ASD");
     auto uCFG_BBid = CallI->GetBlockID();
     auto oldbb = BlockMap[uCFG_BBid];
-    // CallI->PrintIR(std::cerr);
-    // oldbb->printIR(std::cerr);
+    
     for (auto formal : CallI->GetParameterList()) {
         ++formal_regno;
         if (formal.second->GetOperandType() == BasicOperand::IMMI32) {
@@ -193,11 +179,8 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             reg_replace_map[formal_regno] = ((RegOperand *)formal.second)->GetRegNo();
         }
     }
-    // puts("AAAAAAAAAa");
-    Operand NewResultOperand = InlineCFG(uCFG, vCFG, StartBB, EndBB, reg_replace_map, label_replace_map);
-    // puts("DDDDDDDDD");
-    // StartBB->printIR(std::cerr);
 
+    Operand NewResultOperand = InlineCFG(uCFG, vCFG, StartBB, EndBB, reg_replace_map, label_replace_map);
     auto vfirstlabelno = label_replace_map[0];
     auto uAllocaBB = (BasicBlock *)BlockMap[vfirstlabelno];
     for (auto I : uAllocaBB->Instruction_list) {
@@ -231,17 +214,14 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
         }
         fcallgraph.CGINum[uCFG]++;
     }
-
+    
     auto StartBB_label = GetNewLabelOperand(StartBB_id);
     BrUncondInstruction *newBrI;
     auto oldbb_it = oldbb->Instruction_list.begin();
     bool EndbbBegin = false;
     for (auto it = oldbb->Instruction_list.begin(); it != oldbb->Instruction_list.end(); ++it) {
         auto I = *it;
-        // if(I->GetOpcode()==CALL&&fcallgraph.CallIuidMap.find(I)!=fcallgraph.CallIuidMap.end()&&fcallgraph.CallIuidMap[I]==fcallgraph.CallIuidMap[fcallgraph.CGCallI[uCFG][vCFG][CallINo]]){
         if (!EndbbBegin && I == CallI) {
-            // I->PrintIR(std::cerr);
-            // std::cerr<<I<<" "<<fcallgraph.CGCallI[uCFG][vCFG][CallINo]<<" "<<CallI<<'\n';
             EndbbBegin = true;
             newBrI = new BrUncondInstruction(StartBB_label);
             newBrI->SetBlockID(oldbb->block_id);
@@ -251,15 +231,10 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             EndBB->InsertInstruction(1, I);
         }
     }
-    // puts("----------------------------");
-    // EndBB->printIR(std::cerr);
-    // puts("----------------------------");
     while (oldbb_it != oldbb->Instruction_list.end()) {
         oldbb->Instruction_list.pop_back();
     }
-    // oldbb->printIR(std::cerr);
     oldbb->InsertInstruction(1, newBrI);
-    // oldbb->printIR(std::cerr);
     label_replace_map.clear();
     label_replace_map[oldbb->block_id] = EndBB->block_id;
     for (auto nextBB : uCFG->G[uCFG_BBid]) {
@@ -271,21 +246,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             PhiI->ReplaceLabelByMap(label_replace_map);
         }
     }
-    // puts("HRERE");
-    // uCFG->function_def->PrintIR(std::cerr);
-    // vCFG->function_def->PrintIR(std::cerr);
-    // oldbb->printIR(std::cerr);
-    // puts("::::::::::::::::::");
-    // StartBB->printIR(std::cerr);
-    // puts("::::::::::::::::::");
-    // EndBB->printIR(std::cerr);
-    // puts("::::::::::::::::::;;;;");
-    // uCFG->function_def->PrintIR(std::cerr);
-    // for(auto [xid,xbb]:*uCFG->block_map){
-    //     xbb->printIR(std::cerr);
-    //     puts("----------------------");
-    // }
-    // puts("<<<<<<<<<<<<<-------------------------->>>>>>>>>>>>>");
+    label_replace_map.clear();
 }
 #define LeftInlineInstructionNum 50
 #define RightInlineInstructionNum
@@ -298,9 +259,49 @@ bool IsInlineBetter(CFG *uCFG, CFG *vCFG) {
             break;
         }
     }
+    flag3 &= uCFG!=vCFG;
     bool flag1 = fcallgraph.CGINum[vCFG] <= 30;
     bool flag2 = fcallgraph.CGINum[uCFG] + fcallgraph.CGINum[vCFG] <= 200;
     return flag1 || flag2 || flag3;
+}
+CFG* CopyCFG(CFG *uCFG){
+    CFG *vCFG=new CFG;
+    auto max_label=uCFG->max_label;
+    auto func_def=uCFG->function_def;
+    auto newFuncDef=new FunctionDefineInstruction(func_def->GetReturnType(),"CopyInlineFunc");
+    vCFG->function_def=newFuncDef;
+    vCFG->block_map=new std::map<int, LLVMBlock>;
+    vCFG->max_label=-1;
+    int lastid=-1;
+    for(auto [id,bb]:*uCFG->block_map){
+        LLVMBlock new_block;
+        while(id!=lastid){
+            lastid++;
+            new_block=vCFG->NewBlock();
+        }
+        lastid=id;
+        for(auto I:bb->Instruction_list){
+            auto newI=I->CopyInstruction();
+            new_block->InsertInstruction(1,newI);
+            newI->SetBlockID(id);
+            if(newI->GetOpcode()==RET){
+                vCFG->ret_block=new_block;
+            }
+            if(newI->GetOpcode()==CALL){
+                auto CallI=(CallInstruction*)newI;
+                if(CallI->GetFunctionName()==uCFG->function_def->GetFunctionName()){
+                    fcallgraph.CGNum[uCFG][uCFG]++;
+                    reinlinecallI[CallI]=true;
+                    fcallgraph.CGCallI[uCFG][uCFG].push_back(CallI);
+                }
+            }
+        }
+    }
+    vCFG->max_reg=uCFG->max_reg;
+    fcallgraph.CG[uCFG].push_back(vCFG);
+    fcallgraph.CGNum[uCFG][vCFG]=1;
+    fcallgraph.CGINum[vCFG]=fcallgraph.CGINum[uCFG];
+    return vCFG;
 }
 void InlineDFS(CFG *uCFG) {
     if (CFGvis.find(uCFG) != CFGvis.end()) {
@@ -323,32 +324,35 @@ void InlineDFS(CFG *uCFG) {
             }
             InlineCFG(uCFG, vCFG, i);
             fcallgraph.CGINum[uCFG] += fcallgraph.CGINum[vCFG];
-            uCFG->BuildCFG();    // optimize here
+            uCFG->BuildCFG();
         }
     }
-    // std::cerr<<"-->";
-    // if(fcallgraph.CG.find(uCFG)!=fcallgraph.CG.end()&&fcallgraph.CGNum[uCFG].find(uCFG)!=fcallgraph.CGNum[uCFG].end()){
-    //     // std::cerr<<"-->"<<fcallgraph.CG[uCFG].size();
-    //     while(IsInlineBetter(uCFG,uCFG)){
-    //         auto map_size=fcallgraph.CGNum[uCFG][uCFG];
-    //         for(uint32_t i=0;i<map_size;++i){
-    //             if(!IsInlineBetter(uCFG,uCFG)){
-    //                 break;
-    //             }
-
-    //             InlineCFG(uCFG,uCFG,i);
-    //             fcallgraph.CGINum[uCFG]+=fcallgraph.CGINum[uCFG];
-    //             uCFG->BuildCFG();//optimize here
-    //         }
-    //     }
-    // }
-
-    // uCFG->function_def->PrintIR(std::cerr);
-    // for(auto [xid,xbb]:*uCFG->block_map){
-    //     xbb->printIR(std::cerr);
-    //     puts("----------------------");
-    // }
-    // puts("<<<<<<<<<<<<<-------------------------->>>>>>>>>>>>>");
+    if(fcallgraph.CG.find(uCFG)!=fcallgraph.CG.end()&&fcallgraph.CGNum[uCFG].find(uCFG)!=fcallgraph.CGNum[uCFG].end()){
+        int i=0;
+        while(IsInlineBetter(uCFG,uCFG)){
+            is_reinline=true;
+            auto vCFG=CopyCFG(uCFG);
+            auto oldI=(CallInstruction*)fcallgraph.CGCallI[uCFG][uCFG][i];
+            auto CallI=(CallInstruction*)oldI->CopyInstruction();
+            CallI->SetFunctionName(vCFG->function_def->GetFunctionName());
+            CallI->SetBlockID(oldI->GetBlockID());
+            fcallgraph.CGCallI[uCFG][uCFG][i]=CallI;
+            oldI->SetFunctionName(vCFG->function_def->GetFunctionName());
+            auto block_map=uCFG->block_map;
+            auto oldbb=(*block_map)[oldI->GetBlockID()];
+            fcallgraph.CGCallI[uCFG][vCFG].push_back(oldI);
+            
+            InlineCFG(uCFG,vCFG,0);
+            
+            fcallgraph.CGINum[uCFG]+=fcallgraph.CGINum[vCFG];
+            fcallgraph.CG[uCFG].pop_back();
+            fcallgraph.CGNum[uCFG][vCFG]=0;
+            fcallgraph.CGCallI[uCFG][vCFG].pop_back();
+            uCFG->BuildCFG();
+            i++;
+        }
+        is_reinline=false;
+    }
     uCFG->BuildCFG();
     uCFG->BuildDominatorTree();
     SparseConditionalConstantPropagation(uCFG);
@@ -357,18 +361,9 @@ void InlineDFS(CFG *uCFG) {
         for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
         }
-    }    // optimize here
+    }
 }
 void FunctionInline(LLVMIR *IR) {
-    // puts("Start");
-    // puts("::::::::::::::::::;;;;");
-    // fcallgraph.MainCFG->function_def->PrintIR(std::cerr);
-    // for(auto [xid,xbb]:*fcallgraph.MainCFG->block_map){
-    //     xbb->printIR(std::cerr);
-    //     puts("----------------------");
-    // }
-    // puts("<<<<<<<<<<<<<-------------------------->>>>>>>>>>>>>");
     InlineDFS(fcallgraph.MainCFG);
-    // std::cerr<<"FINISH\n";
     // BuildCG();
 }

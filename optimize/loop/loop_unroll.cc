@@ -286,4 +286,4 @@ for(; i < u; i += 1){ BB }
 
 void SimpleForLoopUnroll(CFG *C) {}
 
-void NaturalLoop::SimpleForLoopUnroll(CFG *C) {}
+bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {}

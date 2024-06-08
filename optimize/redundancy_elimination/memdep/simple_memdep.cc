@@ -170,6 +170,37 @@ std::set<int> SimpleMemDepAnalyser::GetAllBlockInPath(int id1, int id2, CFG *C) 
     return ans;
 }
 
+bool SimpleMemDepAnalyser::IsExternalCallReadPtr(CallInstruction* I, Operand ptr, CFG* C) {
+    auto n = I->GetFunctionName();
+    if(n == "getint" || n == "getch" || n == "getfloat"){
+        return false;
+    }
+    if(n == "getarray" || n == "getfarray" || n == "putint"){
+        return false;
+    }
+    if(n == "putint" || n == "putch" || n == "putfloat"){
+        return false;
+    }
+    if(n == "_sysy_starttime" || n == "_sysy_stoptime"){
+        return false;
+    }
+    if(n == "llvm.memset.p0.i32"){
+        return false;
+    }
+    if(n == "putarray" || n == "putfarray"){
+        assert(I->GetParameterList().size() == 2);
+        auto arg2 = I->GetParameterList()[1].second;
+        assert(arg2->GetOperandType() == BasicOperand::REG);
+        auto res = alias_analyser->QueryAlias(ptr,arg2,C);
+        if(res == AliasAnalyser::MustAlias){
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+
+
 std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, CFG *C) {
 
     std::set<Instruction> res;
@@ -203,6 +234,9 @@ std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, 
             auto call_name = CallI->GetFunctionName();
 
             if (CFGMap.find(call_name) == CFGMap.end()) {    // external call
+                if(!IsExternalCallReadPtr(CallI,ptr,C)){
+                    continue;
+                }
                 res.insert(CallI);
                 return res;
             }
@@ -250,6 +284,9 @@ std::set<Instruction> SimpleMemDepAnalyser::GetStorePostClobbers(Instruction I, 
                 auto call_name = CallI->GetFunctionName();
 
                 if (CFGMap.find(call_name) == CFGMap.end()) {    // external call
+                    if(!IsExternalCallReadPtr(CallI,ptr,C)){
+                        continue;
+                    }
                     res.insert(CallI);
                     is_find = true;
                     break;
