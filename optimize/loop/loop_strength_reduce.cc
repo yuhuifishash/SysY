@@ -6,6 +6,26 @@ static std::set<Instruction> NewGepSet;
 
 
 /*
+while{
+    if(){
+        a[i][j] = 54;
+    }else{
+        a[i][j] = 32;
+    }
+}
+-------------------------will become
+while{
+    int tmp = a[i][j];
+    if(){}
+    else(){}
+}
+*/
+void LoopGEPMotion(CFG *C, NaturalLoop* L) {
+
+}
+
+
+/*
 non-zero index at end of GEP(only one)
 %r0 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r2
 %r1 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r3
@@ -25,6 +45,10 @@ void LoopGepStrengthReduce(CFG *C) {
     for(auto l : C->LoopForest.loop_set){
         LoopBasicBlockGEPStrengthReduce(C,l);
     }
+    for(auto l : C->LoopForest.loop_set){
+        LoopGEPMotion(C,l);
+    }
+
     NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
@@ -93,7 +117,7 @@ latch:
 then we need to update ScalarEvolution on father loop
 */
 void SingleGEPStrengthReduce(CFG *C) {
-
+    
 }
 
 void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
@@ -150,6 +174,7 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                     assert(false);
                 }
             }
+
             if (isReduceBetter == false || is_induction == false) {
                 continue;
             }

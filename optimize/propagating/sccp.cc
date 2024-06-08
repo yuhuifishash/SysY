@@ -169,7 +169,7 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
         return 0;
     }
 
-    if (op1_lattice_status == ConstLattice::VAR || op2_lattice_status == ConstLattice::VAR) {
+    if (op1_lattice_status == ConstLattice::VAR || op2_lattice_status == ConstLattice::VAR || op3 != nullptr) {
         lattice.status = ConstLattice::VAR;
         return 1;
     }
@@ -193,6 +193,14 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
             lattice.vals.I32Val = op1_lattice_i32val / op2_lattice_i32val;
         } else if (opcode == MOD) {
             lattice.vals.I32Val = op1_lattice_i32val % op2_lattice_i32val;
+        } else if (opcode == UMAX) {
+            lattice.vals.I32Val = std::max((uint32_t)op1_lattice_i32val,(uint32_t)op2_lattice_i32val);
+        } else if (opcode == UMIN) {
+            lattice.vals.I32Val = std::min((uint32_t)op1_lattice_i32val,(uint32_t)op2_lattice_i32val);
+        } else if (opcode == SMAX) {
+            lattice.vals.I32Val = std::max(op1_lattice_i32val,op2_lattice_i32val);
+        } else if (opcode == SMIN) {
+            lattice.vals.I32Val = std::min(op1_lattice_i32val,op2_lattice_i32val);
         } else {    // should not reach here
             assert(false);
         }

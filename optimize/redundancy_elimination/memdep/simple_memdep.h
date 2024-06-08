@@ -20,6 +20,8 @@ private:
     // get all the block in all the path from id1 -> id2
     std::set<int> GetAllBlockInPath(int id1, int id2, CFG *C);
 
+    bool IsExternalCallReadPtr(CallInstruction* I, Operand ptr, CFG* C);
+
 public:
     /*
     Instruction a,b may be load or store (each store will generate a new load)
