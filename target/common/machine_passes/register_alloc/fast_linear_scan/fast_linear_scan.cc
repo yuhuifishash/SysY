@@ -5,7 +5,8 @@ FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy)
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;
-    // Log("FastLinearScan: %s",mfun->getFunctionName().c_str());
+    PRINT("FastLinearScan: %s", mfun->getFunctionName().c_str());
+    // std::cerr<<"FastLinearScan: "<<mfun->getFunctionName()<<"\n";
     for (auto interval : intervals) {
         Assert(interval.first == interval.second.getReg());
         if (interval.first.is_virtual) {

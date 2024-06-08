@@ -6,7 +6,8 @@ void RiscV64LowerCopy::Execute() {
         block_it->open();
         while (block_it->hasNext()) {
             auto block = block_it->next()->Mblock;
-            for (auto &ins : *block) {
+            for(auto it = block->begin(); it != block->end(); ++it){
+                auto& ins = *it;
                 if (ins->arch == MachineBaseInstruction::COPY) {
                     auto m_copy = (MachineCopyInstruction *)ins;
                     Assert(m_copy->GetDst()->op_type == MachineBaseOperand::REG);
@@ -17,7 +18,11 @@ void RiscV64LowerCopy::Execute() {
 
                         auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
                         ins = li_instr;
+                        // it = block->erase(it);
+                        // block->insert(it, li_instr);
+                        // --it;
                     } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMF) {
+                        ERROR("Shouldn't reach here");
                         TODO("Implement RiscV Float Imm Copy");
                     } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::REG) {
                         auto Reg = ((MachineRegister *)(m_copy->GetSrc()))->reg;
@@ -27,9 +32,20 @@ void RiscV64LowerCopy::Execute() {
 
                             auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI, dst_reg, src_reg, 0);
                             ins = copy_addi_ins;
+                            // it = block->erase(it);
+                            // block->insert(it, copy_addi_ins);
+                            // --it;
 
                         } else if (Reg.type.data_type == MachineDataType::FLOAT) {
-                            TODO("Implement RiscV Float Reg Copy");
+                            auto dst_reg = ((MachineRegister*)(m_copy)->GetDst())->reg;
+                            auto src_reg = ((MachineRegister*)(m_copy)->GetSrc())->reg;
+
+                            auto load_x0_ins = rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg, GetPhysicalReg(RISCV_x0));
+                            auto copy = rvconstructor->ConstructR(RISCV_FADD_S, dst_reg, src_reg, dst_reg);
+                            it = block->erase(it);
+                            block->insert(it,load_x0_ins);
+                            block->insert(it,copy);
+                            --it;
                         } else {
                             ERROR("Unknown Machine Data Type");
                         }

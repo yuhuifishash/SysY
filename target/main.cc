@@ -244,6 +244,7 @@ int main(int argc, char **argv) {
         RiscV64LowerImm(m_unit).Execute();
         FastLinearScan(m_unit, &regs).Execute();
         RiscV64LowerCopy(m_unit).Execute();
+        RiscV64LowerStack(m_unit).Execute();
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();

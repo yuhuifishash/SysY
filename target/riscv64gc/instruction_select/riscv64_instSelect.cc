@@ -2,30 +2,36 @@
 #include <sstream>
 
 template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstruction *ins) {
-    if (ins->GetDataType() == FLOAT32) {
-        TODO("RV InstSelect");
-    } else if (ins->GetDataType() == I32) {
-    } else {
-        ERROR("Unexpected data type");
-    }
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
         // Lazy("Deal with alloca later");
 
         auto ptr_op = (RegOperand *)ins->GetPointer();
         auto rd_op = (RegOperand *)ins->GetResultOperand();
 
-        Register rd = GetllvmReg(rd_op->GetRegNo(), INT32);
-
-        if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
-            Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);
-
-            auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW, rd, ptr, 0);
-            cur_block->push_back(lw_instr);
-        } else {
-            auto sp_offset = llvm_rv_allocas[ptr_op->GetRegNo()];
-
-            auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW, rd, GetPhysicalReg(RISCV_sp), sp_offset);
-            cur_block->push_back(lw_instr);
+        if(ins->GetDataType() == I32){
+            Register rd = GetllvmReg(rd_op->GetRegNo(), INT32);
+            if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
+                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW, rd, ptr, 0);
+                cur_block->push_back(lw_instr);
+            } else {
+                auto sp_offset = llvm_rv_allocas[ptr_op->GetRegNo()];
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW, rd, GetPhysicalReg(RISCV_sp), sp_offset);
+                cur_block->push_back(lw_instr);
+            }
+        }else if(ins->GetDataType() == FLOAT32){
+            Register rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+            if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
+                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_FLW, rd, ptr, 0);
+                cur_block->push_back(lw_instr);
+            } else {
+                auto sp_offset = llvm_rv_allocas[ptr_op->GetRegNo()];
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_FLW, rd, GetPhysicalReg(RISCV_sp), sp_offset);
+                cur_block->push_back(lw_instr);
+            }
+        }else{
+            ERROR("Unexpected data type");
         }
 
     } else if (ins->GetPointer()->GetOperandType() == BasicOperand::GLOBAL) {
@@ -35,24 +41,30 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
         auto rd_op = (RegOperand *)ins->GetResultOperand();
 
         Register addr_hi = GetNewReg(INT32);
-        Register rd = GetllvmReg(rd_op->GetRegNo(), INT32);
 
-        auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
-        auto lw_instr = rvconstructor->ConstructILabel(RISCV_LW, rd, addr_hi, RiscVLabel(global_op->GetName(), false));
+        if(ins->GetDataType() == I32){
+            Register rd = GetllvmReg(rd_op->GetRegNo(), INT32);
 
-        cur_block->push_back(lui_instr);
-        cur_block->push_back(lw_instr);
+            auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
+            auto lw_instr = rvconstructor->ConstructILabel(RISCV_LW, rd, addr_hi, RiscVLabel(global_op->GetName(), false));
+
+            cur_block->push_back(lui_instr);
+            cur_block->push_back(lw_instr);
+        }else if(ins->GetDataType() == FLOAT32){
+            Register rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+
+            auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
+            auto lw_instr = rvconstructor->ConstructILabel(RISCV_FLW, rd, addr_hi, RiscVLabel(global_op->GetName(),false));
+
+            cur_block->push_back(lui_instr);
+            cur_block->push_back(lw_instr);
+        }else{
+            ERROR("Unexpected data type");
+        }
     }
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInstruction *ins) {
-    if (ins->GetDataType() == FLOAT32) {
-        TODO("RV InstSelect");
-    } else if (ins->GetDataType() == I32) {
-    } else {
-        ERROR("Unexpected data type");
-    }
-
     Register value_reg;
     if (ins->GetValue()->GetOperandType() == BasicOperand::IMMI32) {
         auto val_imm = (ImmI32Operand *)ins->GetValue();
@@ -64,8 +76,26 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
 
     } else if (ins->GetValue()->GetOperandType() == BasicOperand::REG) {
         auto val_reg = (RegOperand *)ins->GetValue();
+        if(ins->GetDataType() == I32){
+            value_reg = GetllvmReg(val_reg->GetRegNo(), INT32);
+        }else if(ins->GetDataType() == FLOAT32){
+            value_reg = GetllvmReg(val_reg->GetRegNo(), FLOAT_32);
+        }else{
+            ERROR("Unexpected data type");
+        }
+    } else if (ins->GetValue()->GetOperandType() == BasicOperand::IMMF32){
+        Log("Deal with float immediate On store");
+        auto val_imm = (ImmF32Operand*)ins->GetValue();
 
-        value_reg = GetllvmReg(val_reg->GetRegNo(), INT32);
+        value_reg = GetNewReg(FLOAT_32);
+
+        // auto imm_copy_ins = rvconstructor->ConstructCopyRegImmF(value_reg, val_imm->GetFloatVal(), FLOAT_32);
+        float val = val_imm->GetFloatVal();
+
+        auto inter_reg = GetNewReg(INT32);
+        cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+        cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,value_reg,inter_reg));
+        // cur_block->push_back(imm_copy_ins);
     } else {
         ERROR("Unexpected or unimplemented operand type");
     }
@@ -74,17 +104,34 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
         // Lazy("Deal with alloca later");
         auto reg_ptr_op = (RegOperand *)ins->GetPointer();
 
-        if (llvm_rv_allocas.find(reg_ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
-            auto ptr_reg = GetllvmReg(reg_ptr_op->GetRegNo(), INT32);
+        if(ins->GetDataType() == I32){
+            if (llvm_rv_allocas.find(reg_ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
+                auto ptr_reg = GetllvmReg(reg_ptr_op->GetRegNo(), INT32);
 
-            auto store_instruction = rvconstructor->ConstructSImm(RISCV_SW, value_reg, ptr_reg, 0);
-            cur_block->push_back(store_instruction);
-        } else {
-            auto sp_offset = llvm_rv_allocas[reg_ptr_op->GetRegNo()];
+                auto store_instruction = rvconstructor->ConstructSImm(RISCV_SW, value_reg, ptr_reg, 0);
+                cur_block->push_back(store_instruction);
+            } else {
+                auto sp_offset = llvm_rv_allocas[reg_ptr_op->GetRegNo()];
 
-            auto store_instruction =
-            rvconstructor->ConstructSImm(RISCV_SW, value_reg, GetPhysicalReg(RISCV_sp), sp_offset);
-            cur_block->push_back(store_instruction);
+                auto store_instruction =
+                rvconstructor->ConstructSImm(RISCV_SW, value_reg, GetPhysicalReg(RISCV_sp), sp_offset);
+                cur_block->push_back(store_instruction);
+            }
+        } else if(ins->GetDataType() == FLOAT32){
+            if (llvm_rv_allocas.find(reg_ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
+                auto ptr_reg = GetllvmReg(reg_ptr_op->GetRegNo(), INT32);
+
+                auto store_instruction = rvconstructor->ConstructSImm(RISCV_FSW, value_reg, ptr_reg, 0);
+                cur_block->push_back(store_instruction);
+            } else {
+                auto sp_offset = llvm_rv_allocas[reg_ptr_op->GetRegNo()];
+
+                auto store_instruction =
+                rvconstructor->ConstructSImm(RISCV_FSW, value_reg, GetPhysicalReg(RISCV_sp), sp_offset);
+                cur_block->push_back(store_instruction);
+            }
+        }else{
+            ERROR("Unexpected data type");
         }
 
     } else if (ins->GetPointer()->GetOperandType() == BasicOperand::GLOBAL) {
@@ -94,11 +141,19 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
 
         auto lui_instruction =
         rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
-        auto store_instruction =
-        rvconstructor->ConstructSLabel(RISCV_SW, value_reg, addr_hi, RiscVLabel(global_op->GetName(), false));
-
         cur_block->push_back(lui_instruction);
-        cur_block->push_back(store_instruction);
+
+        if(ins->GetDataType() == I32){
+            auto store_instruction =
+            rvconstructor->ConstructSLabel(RISCV_SW, value_reg, addr_hi, RiscVLabel(global_op->GetName(), false));
+            cur_block->push_back(store_instruction);
+        }else if(ins->GetDataType() == FLOAT32){
+            auto store_instruction =
+            rvconstructor->ConstructSLabel(RISCV_FSW, value_reg, addr_hi, RiscVLabel(global_op->GetName(), false));
+            cur_block->push_back(store_instruction);
+        }else{
+            ERROR("Unexpected data type");
+        }
     }
 }
 
@@ -319,52 +374,240 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             auto rem_instr = rvconstructor->ConstructR(RISCV_REMW,rd,rem1,rem2);
             cur_block->push_back(rem_instr);
         }
+    }else if(ins->GetOpcode() == FADD){
+        if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32 &&
+           ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            auto *rd_op = (RegOperand *)ins->GetResultOperand();
+            auto *imm1_op = (ImmF32Operand *)ins->GetOperand1();
+            auto *imm2_op = (ImmF32Operand *)ins->GetOperand2();
+
+            auto imm1 = imm1_op->GetFloatVal();
+            auto imm2 = imm2_op->GetFloatVal();
+            auto rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(rd, imm1-imm2,FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
+            float val = imm1+imm2;
+
+            auto inter_reg = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,rd,inter_reg));
+        }else{
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            Register rd = GetllvmReg(((RegOperand*)ins->GetResultOperand())->GetRegNo(),FLOAT_32);
+            Register fadd1,fadd2;
+            if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32){
+                fadd1 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub1,((ImmF32Operand*)ins->GetOperand1())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand1())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fadd1,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand1()->GetOperandType() == BasicOperand::REG){
+                fadd1 = GetllvmReg(((RegOperand*)ins->GetOperand1())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            if(ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+                fadd2 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub2,((ImmF32Operand*)ins->GetOperand2())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand2())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fadd2,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand2()->GetOperandType() == BasicOperand::REG){
+                fadd2 = GetllvmReg(((RegOperand*)ins->GetOperand2())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            auto fadd_instr = rvconstructor->ConstructR(RISCV_FADD_S,rd,fadd1,fadd2);
+            cur_block->push_back(fadd_instr);
+        }
+    }else if(ins->GetOpcode() == FSUB){
+        if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32 &&
+           ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            auto *rd_op = (RegOperand *)ins->GetResultOperand();
+            auto *imm1_op = (ImmF32Operand *)ins->GetOperand1();
+            auto *imm2_op = (ImmF32Operand *)ins->GetOperand2();
+
+            auto imm1 = imm1_op->GetFloatVal();
+            auto imm2 = imm2_op->GetFloatVal();
+            auto rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(rd, imm1-imm2,FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
+            float val = imm1-imm2;
+
+            auto inter_reg = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,rd,inter_reg));
+        }else{
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            Register rd = GetllvmReg(((RegOperand*)ins->GetResultOperand())->GetRegNo(),FLOAT_32);
+            Register fsub1,fsub2;
+            if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32){
+                fsub1 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub1,((ImmF32Operand*)ins->GetOperand1())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand1())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub1,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand1()->GetOperandType() == BasicOperand::REG){
+                fsub1 = GetllvmReg(((RegOperand*)ins->GetOperand1())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            if(ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+                fsub2 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub2,((ImmF32Operand*)ins->GetOperand2())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand2())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub2,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand2()->GetOperandType() == BasicOperand::REG){
+                fsub2 = GetllvmReg(((RegOperand*)ins->GetOperand2())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            auto fsub_instr = rvconstructor->ConstructR(RISCV_FSUB_S,rd,fsub1,fsub2);
+            cur_block->push_back(fsub_instr);
+        }
+    }else if(ins->GetOpcode() == FMUL){
+        if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32 &&
+           ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            auto *rd_op = (RegOperand *)ins->GetResultOperand();
+            auto *imm1_op = (ImmF32Operand *)ins->GetOperand1();
+            auto *imm2_op = (ImmF32Operand *)ins->GetOperand2();
+
+            auto imm1 = imm1_op->GetFloatVal();
+            auto imm2 = imm2_op->GetFloatVal();
+            auto rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(rd, imm1-imm2,FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
+            float val = imm1*imm2;
+
+            auto inter_reg = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,rd,inter_reg));
+        }else{
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            Register rd = GetllvmReg(((RegOperand*)ins->GetResultOperand())->GetRegNo(),FLOAT_32);
+            Register fsub1,fsub2;
+            if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32){
+                fsub1 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub1,((ImmF32Operand*)ins->GetOperand1())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand1())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub1,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand1()->GetOperandType() == BasicOperand::REG){
+                fsub1 = GetllvmReg(((RegOperand*)ins->GetOperand1())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            if(ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+                fsub2 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub2,((ImmF32Operand*)ins->GetOperand2())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand2())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub2,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand2()->GetOperandType() == BasicOperand::REG){
+                fsub2 = GetllvmReg(((RegOperand*)ins->GetOperand2())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            auto fsub_instr = rvconstructor->ConstructR(RISCV_FMUL_S,rd,fsub1,fsub2);
+            cur_block->push_back(fsub_instr);
+        }
+    }else if(ins->GetOpcode() == FDIV){
+        if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32 &&
+           ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            auto *rd_op = (RegOperand *)ins->GetResultOperand();
+            auto *imm1_op = (ImmF32Operand *)ins->GetOperand1();
+            auto *imm2_op = (ImmF32Operand *)ins->GetOperand2();
+
+            auto imm1 = imm1_op->GetFloatVal();
+            auto imm2 = imm2_op->GetFloatVal();
+            auto rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
+
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(rd, imm1-imm2,FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
+            float val = imm1/imm2;
+
+            auto inter_reg = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,rd,inter_reg));
+        }else{
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            Register rd = GetllvmReg(((RegOperand*)ins->GetResultOperand())->GetRegNo(),FLOAT_32);
+            Register fsub1,fsub2;
+            if(ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32){
+                fsub1 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub1,((ImmF32Operand*)ins->GetOperand1())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand1())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub1,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand1()->GetOperandType() == BasicOperand::REG){
+                fsub1 = GetllvmReg(((RegOperand*)ins->GetOperand1())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            if(ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32){
+                fsub2 = GetNewReg(FLOAT_32);
+                // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(fsub2,((ImmF32Operand*)ins->GetOperand2())->GetFloatVal(),FLOAT_32);
+                float val = ((ImmF32Operand*)ins->GetOperand2())->GetFloatVal();
+
+                auto inter_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(inter_reg,*(int*)&val,INT32));
+                cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,fsub2,inter_reg));
+                // cur_block->push_back(copy_imm_instr);
+            }else if(ins->GetOperand2()->GetOperandType() == BasicOperand::REG){
+                fsub2 = GetllvmReg(((RegOperand*)ins->GetOperand2())->GetRegNo(),FLOAT_32);
+            }else{
+                ERROR("Unexpected op type");
+            }
+            auto fsub_instr = rvconstructor->ConstructR(RISCV_FDIV_S,rd,fsub1,fsub2);
+            cur_block->push_back(fsub_instr);
+        }
     }else{
         Log("RV InstSelect For Opcode %d", ins->GetOpcode());
     }
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<IcmpInstruction *>(IcmpInstruction *ins) {
-    // TODO("RV InstSelect");
-    // Log("RV InstSelect");
-    // Lazy("Testing RV InstSelect");
-    // struct LastCmpInfo cmpInfo;
-
-    // cmpInfo.cmp_type = LastCmpInfo::ICMP;
-    // cmpInfo.cmp_cond = ins->GetCompareCondition();
-
     Assert(ins->GetResult()->GetOperandType() == BasicOperand::REG);
     auto res_op = (RegOperand *)ins->GetResult();
     auto res_reg = GetllvmReg(res_op->GetRegNo(), INT32);
-    // cmpInfo.cmp_result = GetllvmReg(res_op->GetRegNo(), INT32);
-
-    // auto cmp_op1 = ins->GetOp1();
-    // auto cmp_op2 = ins->GetOp2();
-
-    // if(cmp_op1->GetOperandType() == BasicOperand::REG){
-    //     auto cmp_reg1 = (RegOperand *)cmp_op1;
-    //     cmpInfo.cmp_op1 = GetllvmReg(cmp_reg1->GetRegNo(),INT32);
-    // }else{
-    //     auto cmp_imm1 = (ImmI32Operand *)cmp_op1;
-    //     auto imm_reg1 = GetNewReg(INT32);
-    //     auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(imm_reg1,cmp_imm1->GetIntImmVal(),INT32);
-    //     cur_block->push_back(copy_imm_instr);
-    //     cmpInfo.cmp_op1 = imm_reg1;
-    // }
-    // if(cmp_op2->GetOperandType() == BasicOperand::REG){
-    //     auto cmp_reg2 = (RegOperand *)cmp_op2;
-    //     cmpInfo.cmp_op2 = GetllvmReg(cmp_reg2->GetRegNo(),INT32);
-    // }else{
-    //     auto cmp_imm2 = (ImmI32Operand*)cmp_op2;
-    //     auto imm_reg2 = GetNewReg(INT32);
-    //     auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(imm_reg2,cmp_imm2->GetIntImmVal(),INT32);
-    //     cur_block->push_back(copy_imm_instr);
-    //     cmpInfo.cmp_op2 = imm_reg2;
-    // }
     cmp_context[res_reg] = ins;
 }
 
-template <> void RiscV64Selector::ConvertAndAppend<FcmpInstruction *>(FcmpInstruction *ins) { TODO("RV InstSelect"); }
+template <> void RiscV64Selector::ConvertAndAppend<FcmpInstruction *>(FcmpInstruction *ins) {
+    Assert(ins->GetResult()->GetOperandType() == BasicOperand::REG);
+    auto res_op = (RegOperand *)ins->GetResult();
+    auto res_reg = GetllvmReg(res_op->GetRegNo(), INT32);
+    cmp_context[res_reg] = ins;
+}
 
 template <> void RiscV64Selector::ConvertAndAppend<AllocaInstruction *>(AllocaInstruction *ins) {
     // TODO("RV InstSelect");
@@ -386,7 +629,7 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
     auto cmp_ins = cmp_context[br_reg];
     // Assert(br_reg == cmpInfo.cmp_result);
     int opcode;
-    Register cmp_op1,cmp_op2;
+    Register cmp_rd,cmp_op1,cmp_op2;
     if(cmp_ins->GetOpcode() == ICMP){
         auto icmp_ins = (IcmpInstruction*)cmp_ins;
         if(icmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG){
@@ -443,7 +686,67 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
         ERROR("Unexpected ICMP cond");
         }
     }else if(cmp_ins->GetOpcode() == FCMP){
-        TODO("FCMP+BR");
+        auto fcmp_ins = (FcmpInstruction*)cmp_ins;
+        if(fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG){
+            cmp_op1 = GetllvmReg(((RegOperand*)fcmp_ins->GetOp1())->GetRegNo(),FLOAT_32);
+        }else if(fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMF32){
+            cmp_op1 = GetNewReg(FLOAT_32);
+            auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(cmp_op1,((ImmF32Operand*)fcmp_ins->GetOp1())->GetFloatVal(),FLOAT_32);
+            cur_block->push_back(copy_imm_instr);
+        }else{
+            ERROR("Unexpected FCMP op1 type");
+        }
+        if(fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::REG){
+            cmp_op2 = GetllvmReg(((RegOperand*)fcmp_ins->GetOp2())->GetRegNo(),FLOAT_32);
+        }else if(fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMF32){
+            cmp_op2 = GetNewReg(FLOAT_32);
+            auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(cmp_op2,((ImmF32Operand*)fcmp_ins->GetOp2())->GetFloatVal(),FLOAT_32);
+            cur_block->push_back(copy_imm_instr);
+        }else{
+            ERROR("Unexpected FCMP op2 type");
+        }
+        cmp_rd = GetNewReg(INT32);
+        switch(fcmp_ins->GetCompareCondition()){
+        case OEQ:
+        case UEQ:
+        // FEQ.S
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, cmp_rd,cmp_op1,cmp_op2));
+        opcode = RISCV_BNE;
+        break;
+        case OGT:
+        case UGT:
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, cmp_rd,cmp_op2,cmp_op1));
+        opcode = RISCV_BNE;
+        break;
+        case OGE:
+        case UGE:
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, cmp_rd,cmp_op2,cmp_op1));
+        opcode = RISCV_BNE;
+        break;
+        case OLT:
+        case ULT:
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, cmp_rd,cmp_op1,cmp_op2));
+        opcode = RISCV_BNE;
+        break;
+        case OLE:
+        case ULE:
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, cmp_rd,cmp_op1,cmp_op2));
+        opcode = RISCV_BNE;
+        break;
+        case ONE:
+        case UNE:
+        cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, cmp_rd,cmp_op1,cmp_op2));
+        opcode = RISCV_BEQ;
+        break;
+        case ORD:
+        case UNO:
+        case TRUE:
+        case FALSE:
+        default:
+        ERROR("Unexpected FCMP cond");
+        }
+        cmp_op1 = cmp_rd;
+        cmp_op2 = GetPhysicalReg(RISCV_x0);
     }else{
         ERROR("No Cmp Before Br");
     }
@@ -497,8 +800,21 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
             }
         } else if (type == FLOAT32) {
             if (freg_cnt < 8) {
-                TODO("Float Reg Parameters");
-                Lazy("Not tested");
+                // TODO("Float Reg Parameters");
+                // Lazy("Not tested");
+                if(arg_op->GetOperandType() == BasicOperand::REG){
+                    auto arg_regop = (RegOperand*)arg_op;
+                    auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), FLOAT_32);
+                    auto arg_copy_instr = rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_fa0 + freg_cnt), arg_reg, FLOAT_32);
+                    cur_block->push_back(arg_copy_instr);
+                }else if(arg_op->GetOperandType() == BasicOperand::IMMF32){
+                    auto arg_immop = (ImmF32Operand*)arg_op;
+                    auto arg_imm = arg_immop->GetFloatVal();
+                    auto arg_copy_instr = rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0 + ireg_cnt), arg_imm, FLOAT_32);
+                    cur_block->push_back(arg_copy_instr);
+                }else{
+                    ERROR("Unexpected Operand type");
+                }
                 freg_cnt++;
             } else {
                 TODO("More than 8 parameters");
@@ -517,16 +833,21 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
     auto result_op = (RegOperand *)ins->GetResult();
     if (return_type == I32) {
         // TODO("Insert Copy");
-        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL, call_funcname, RISCV_a0);
+        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL, call_funcname);
         cur_block->push_back(call_instr);
         auto copy_ret_ins =
         rvconstructor->ConstructCopyReg(GetllvmReg(result_op->GetRegNo(), INT32), GetPhysicalReg(RISCV_a0), INT32);
         cur_block->push_back(copy_ret_ins);
     } else if (return_type == FLOAT32) {
-        TODO("Insert float mov");
-        Lazy("Not tested");
+        // TODO("Insert float mov");
+        // Lazy("Not tested");
+        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL, call_funcname);
+        cur_block->push_back(call_instr);
+        auto copy_ret_ins =
+        rvconstructor->ConstructCopyReg(GetllvmReg(result_op->GetRegNo(), FLOAT_32), GetPhysicalReg(RISCV_fa0), FLOAT_32);
+        cur_block->push_back(copy_ret_ins);
     } else if (return_type == VOID) {
-        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL, call_funcname, RISCV_x0);
+        auto call_instr = rvconstructor->ConstructCall(RISCV_CALL, call_funcname);
         cur_block->push_back(call_instr);
     } else {
         ERROR("Unexpected return type %d", return_type);
@@ -538,7 +859,7 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
         if (ins->GetRetVal()->GetOperandType() == BasicOperand::REG) {
             if (ins->GetType() == FLOAT32) {
 
-                Lazy("Not tested");
+                // Lazy("Not tested");
 
                 auto retreg_val = (RegOperand *)ins->GetRetVal();
                 auto reg = GetllvmReg(retreg_val->GetRegNo(), FLOAT_32);
@@ -564,7 +885,7 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
 
         } else if (ins->GetRetVal()->GetOperandType() == BasicOperand::IMMF32) {
 
-            Lazy("Not tested");
+            // Lazy("Not tested");
 
             auto retimm_op = (ImmF32Operand *)ins->GetRetVal();
             auto imm = retimm_op->GetFloatVal();
@@ -587,11 +908,39 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<FptosiInstruction *>(FptosiInstruction *ins) {
-    TODO("RV InstSelect");
+    auto src_op = ins->GetSrc();
+    Assert(ins->GetResultReg()->GetOperandType() == BasicOperand::REG);
+    auto dst_op = (RegOperand*)ins->GetResultReg();
+    if(src_op->GetOperandType() == BasicOperand::REG){
+        auto regf = (RegOperand*)src_op;
+        // FMV.X.W
+        auto fmv = rvconstructor->ConstructR2(RISCV_FMV_X_W, GetllvmReg(dst_op->GetRegNo(),INT32), GetllvmReg(regf->GetRegNo(),FLOAT_32));
+        cur_block->push_back(fmv);
+    }else if(src_op->GetOperandType() == BasicOperand::IMMF32){
+        auto immf = (ImmF32Operand*)src_op;
+        auto copyI = rvconstructor->ConstructCopyRegImmI(GetllvmReg(dst_op->GetRegNo(),INT32), immf->GetFloatVal(),INT32);
+        cur_block->push_back(copyI);
+    }else{
+        ERROR("Unexpected Fptosi src type");
+    }
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<SitofpInstruction *>(SitofpInstruction *ins) {
-    TODO("RV InstSelect");
+    auto src_op = ins->GetSrc();
+    Assert(ins->GetResultReg()->GetOperandType() == BasicOperand::REG);
+    auto dst_op = (RegOperand*)ins->GetResultReg();
+    if(src_op->GetOperandType() == BasicOperand::REG){
+        auto regi = (RegOperand*)src_op;
+        // FMV.W.X
+        auto fmv = rvconstructor->ConstructR2(RISCV_FMV_W_X, GetllvmReg(dst_op->GetRegNo(),FLOAT_32), GetllvmReg(regi->GetRegNo(),INT32));
+        cur_block->push_back(fmv);
+    }else if(src_op->GetOperandType() == BasicOperand::IMMI32){
+        auto immi = (ImmI32Operand*)src_op;
+        auto copyF = rvconstructor->ConstructCopyRegImmF(GetllvmReg(dst_op->GetRegNo(),FLOAT_32),immi->GetIntImmVal(),FLOAT_32);
+        cur_block->push_back(copyF);
+    }else{
+        ERROR("Unexpected Sitofp src type");
+    }
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstruction *ins) { 
@@ -647,7 +996,7 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
 
 template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(GetElementptrInstruction *ins) {
     // TODO("RV InstSelect");
-    Assert(ins->GetType() == I32);
+    // Assert(ins->GetType() == I32);
     auto global_op = (GlobalOperand *)ins->GetPtrVal();
     auto result_op = (RegOperand *)ins->GetResult();
 
@@ -935,7 +1284,8 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
             }
         }
         // +8 for save(ra)
-        cur_func->SetStackSize(cur_offset+8);
+        // +12*8 for save(s0-s11)
+        cur_func->SetStackSize(cur_offset+12*8+8);
         for (int i = 0; i < cfg->G.size(); i++) {
             const auto &arcs = cfg->G[i];
             for (auto arc : arcs) {
