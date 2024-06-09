@@ -39,18 +39,19 @@ public:
         if (segments.empty() || that.segments.empty())
             return false;
         // Log("\n[%d,%d) & [%d,%d)",segments[0].begin,segments[0].end,that.segments[0].begin,that.segments[0].end);
+        // std::cerr<<"\n["<<segments[0].begin<<","<<segments[0].end<<") & ["<<that.segments;
         auto it = segments.begin();
         auto jt = that.segments.begin();
         while (1) {
             if (*it & *jt) {
                 return true;
             }
-            if (it->end >= jt->begin) {
+            if (it->end <= jt->begin) {
                 ++it;
                 if (it == segments.end()) {
                     return false;
                 }
-            } else if (jt->end >= it->begin) {
+            } else if (jt->end <= it->begin) {
                 ++jt;
                 if (jt == that.segments.end()) {
                     return false;
@@ -82,6 +83,16 @@ public:
     void SetMostBegin(int begin) {
         // Log("SetBegin %d",begin);
         segments[0].begin = begin;
+    }
+
+    void Print(){
+        PRINT("%d %d ",reg.is_virtual,reg.reg_no);
+        // std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+        for(auto seg:segments){
+            PRINT("[%d,%d) ",seg.begin,seg.end);
+            // std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+        }
+        PRINT("\n");
     }
 
     decltype(segments.begin()) begin() { return segments.begin(); }

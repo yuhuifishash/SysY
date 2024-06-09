@@ -896,6 +896,7 @@ public:
         this->opcode = FPTOSI;
     }
     Operand GetResultReg() { return result; }
+    Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
@@ -917,6 +918,7 @@ public:
         this->opcode = SITOFP;
     }
     Operand GetResultReg() { return result; }
+    Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);

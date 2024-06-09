@@ -42,17 +42,22 @@ bool PhysicalRegisters::ReleaseMem(int offset, int size, LiveInterval interval) 
 }
 
 int PhysicalRegisters::getIdleReg(LiveInterval interval) {
+    PRINT("\nVreg: ");
+    interval.Print();
     for (auto i : getValidRegs(interval)) {
         int ok = true;
         for (auto conflict_j : getAliasRegs(i)) {
             for (auto other_interval : phy_occupied[conflict_j]) {
-                // Log("\nTry Phy %d",i);
+                PRINT("\nTry Phy %d",i);
+                // std::cerr<<"\nTry Phy "<<i<<"\n";
+                PRINT("Othe: ");
+                other_interval.Print();
                 if (interval & other_interval) {
-                    // Log("\n->Fail");
+                    PRINT("\n->Fail\n");
                     ok = false;
                     break;
                 } else {
-                    // Log("\n->Success");
+                    PRINT("\n->Success\n");
                 }
             }
         }

@@ -18,6 +18,8 @@ private:
     MachineFunction *parent;
 
 public:
+    auto erase(decltype(instructions.begin())it) {return instructions.erase(it);}
+    auto insert(decltype(instructions.begin())it,MachineBaseInstruction *ins) {return instructions.insert(it,ins);}
     auto getParent() { return parent; }
     void setParent(MachineFunction *parent) { this->parent = parent; }
     auto getLabelId() { return label_id; }
