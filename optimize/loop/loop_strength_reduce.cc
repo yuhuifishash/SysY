@@ -92,8 +92,8 @@ latch:
 
 then we need to update ScalarEvolution on father loop
 */
-void SingleGEPStrengthReduce(CFG *C) {
-
+bool SingleGEPStrengthReduce(CFG *C, Instruction I) {
+    return false;
 }
 
 void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
@@ -149,6 +149,9 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 } else {    // should not reach here
                     assert(false);
                 }
+            }
+            if (SingleGEPStrengthReduce(C,I)){
+                continue;
             }
             if (isReduceBetter == false || is_induction == false) {
                 continue;

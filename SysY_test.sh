@@ -62,7 +62,7 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.s \-${optimize_flag}
         arm-linux-gnueabihf-gcc ${pwdout}/${var##*/}.s -c -static -march=armv7
-        arm-linux-gnueabihf-gcc -static ${var##*/}.o lib/libsysy.a
+        arm-linux-gnueabihf-gcc -static ${var##*/}.o lib/libsysy_armv7.a
         rm -rf ${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
