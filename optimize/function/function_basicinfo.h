@@ -22,11 +22,11 @@ public:
 class FunctionCallGraph {
 public:
     CFG *MainCFG;    // entry of the program
-    std::unordered_map<CFG *, std::vector<CFG *>> CG;
-    std::unordered_map<CFG *, std::unordered_map<CFG *, int>> CGNum;
-    std::unordered_map<CFG *, std::unordered_map<CFG *, std::vector<Instruction>>> CGCallI;
-    std::unordered_map<CFG *, size_t> CGINum;
-    std::unordered_map<Instruction, int> CallIuidMap;
+    std::unordered_map<CFG *, std::vector<CFG *>> CG;   // CG graph
+    std::unordered_map<CFG *, std::unordered_map<CFG *, int>> CGNum;    // CallNum
+    std::unordered_map<CFG *, std::unordered_map<CFG *, std::vector<Instruction>>> CGCallI; // CallI
+    std::unordered_map<CFG *, size_t> CGINum; // the Intruction num of CFG
+    // std::unordered_map<Instruction, int> CallIuidMap;
     int Calluid{0};
 
     void BuildCG(LLVMIR *IR);

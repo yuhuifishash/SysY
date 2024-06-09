@@ -247,13 +247,53 @@ void RiscV64Printer::emit() {
                             s << "\t.word\t" << val << "\n";
                         }
                     }
+                    if(global_ins->arval.IntInitVals.empty()){
+                        int prod = 1;
+                        for(auto dim : global_ins->arval.dims){
+                            prod *= dim;
+                        }
+                        s<<"\t.zero\t"<<prod*4<<"\n";
+                    }
                     if (zero_cum != 0) {
                         s << "\t.zero\t" << zero_cum << "\n";
                         zero_cum = 0;
                     }
                 }
             } else if (global_ins->type == FLOAT32) {
-                TODO("Global Float DEF");
+                if (global_ins->arval.dims.empty()) {
+                    if (global_ins->init_val != nullptr) {
+                        Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMF32);
+                        auto imm_op = (ImmF32Operand *)global_ins->init_val;
+                        auto immf = imm_op->GetFloatVal();
+                        s << "\t.word\t" << *(int*)&immf << "\n";
+                    } else {
+                        s << "\t.word\t0\n";
+                    }
+                } else {
+                    int zero_cum = 0;
+                    for (auto val : global_ins->arval.FloatInitVals) {
+                        if (val == 0) {
+                            zero_cum += 4;
+                        } else {
+                            if (zero_cum != 0) {
+                                s << "\t.zero\t" << zero_cum << "\n";
+                                zero_cum = 0;
+                            }
+                            s << "\t.word\t" << *(int*)&val << "\n";
+                        }
+                    }
+                    if(global_ins->arval.FloatInitVals.empty()){
+                        int prod = 1;
+                        for(auto dim : global_ins->arval.dims){
+                            prod *= dim;
+                        }
+                        s<<"\t.zero\t"<<prod*4<<"\n";
+                    }
+                    if (zero_cum != 0) {
+                        s << "\t.zero\t" << zero_cum << "\n";
+                        zero_cum = 0;
+                    }
+                }
             }
         } else if (global->GetOpcode() == GLOBAL_STR) {
             auto str_ins = (GlobalStringConstInstruction *)global;

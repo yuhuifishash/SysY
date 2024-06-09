@@ -80,6 +80,7 @@ void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
 void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 void FindNoWriteStaticGlobal(LLVMIR *IR);
+void AddParallelLib(LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -182,6 +183,8 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
+        // TODO():GVN/GCM
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         llvmIR.PassExecutor(SimplifyCFG);
@@ -189,9 +192,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
 
         llvmIR.BuildFunctionInfo();
-        llvmIR.PassExecutor(FunctionInline);    // to do
-
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(FunctionInline);
 
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
@@ -201,16 +202,20 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(ScalarEvolution);
             llvmIR.PassExecutor(LoopClosedSSA);
             llvmIR.PassExecutor(ConstantLoopFullyUnroll);
+
+
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
             llvmIR.PassExecutor(SimplifyCFG);
 
             llvmIR.PassExecutor(SimpleAliasAnalysis);
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
+
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(LoopInvariantCodeMotion);
-            // llvmIR.PassExecutor(LoopIdomRecognize); //todo
+
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
             llvmIR.PassExecutor(SimplifyCFG);
             llvmIR.PassExecutor(InstCombine);
@@ -219,10 +224,23 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
+        // TODO():GVN/GCM
+
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(LoopIdomRecognize);
+
         // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(AddParallelLib);
 
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopGepStrengthReduce);
@@ -244,6 +262,7 @@ int main(int argc, char **argv) {
         RiscV64LowerImm(m_unit).Execute();
         FastLinearScan(m_unit, &regs).Execute();
         RiscV64LowerCopy(m_unit).Execute();
+        RiscV64LowerStack(m_unit).Execute();
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();

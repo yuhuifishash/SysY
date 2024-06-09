@@ -104,6 +104,11 @@ enum LLVMIROpcode {
     SITOFP = 27,
     GLOBAL_VAR = 28,
     GLOBAL_STR = 29,
+    LL_ADDMOD = 30,
+    UMIN = 31,
+    UMAX = 32,
+    SMIN = 33,
+    SMAX = 34,
 };
 
 // @Operand datatypes
@@ -355,6 +360,7 @@ class ArithmeticInstruction : public BasicInstruction {
     enum LLVMType type;
     Operand op1;
     Operand op2;
+    Operand op3;
     Operand result;
 
 public:
@@ -370,6 +376,16 @@ public:
         this->opcode = opcode;
         this->op1 = op1;
         this->op2 = op2;
+        this->op3 = nullptr;
+        this->result = result;
+        this->type = type;
+    }
+
+    ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand op3, Operand result) {
+        this->opcode = opcode;
+        this->op1 = op1;
+        this->op2 = op2;
+        this->op3 = op3;
         this->result = result;
         this->type = type;
     }
@@ -704,6 +720,7 @@ public:
     Operand GetResult() { return result; }
     Operand GetResultReg() { return result; }
     std::string GetFunctionName() { return name; }
+    void SetFunctionName(std::string new_name) {name=new_name;}
     std::vector<std::pair<enum LLVMType, Operand>> GetParameterList() { return args; }
     void push_back_Parameter(std::pair<enum LLVMType, Operand> newPara) { args.push_back(newPara); }
     void push_back_Parameter(enum LLVMType type, Operand val) { args.push_back(std::make_pair(type, val)); }
@@ -787,6 +804,7 @@ public:
     void push_idx_reg(int idx_reg_no) { indexes.push_back(GetNewRegOperand(idx_reg_no)); }
     void push_idx_imm32(int imm_idx) { indexes.push_back(new ImmI32Operand(imm_idx)); }
     void push_index(Operand idx) { indexes.push_back(idx); }
+    void change_index(int i, Operand op) {indexes[i] = op;}
 
     Operand GetResultReg() { return result; }
     enum LLVMType GetType() { return type; }
@@ -844,13 +862,14 @@ class FunctionDeclareInstruction : public BasicInstruction {
 private:
     enum LLVMType return_type;
     std::string Func_name;
-
+    bool is_more_args = false;
 public:
     Operand GetResultReg() { return NULL; }
     std::vector<enum LLVMType> formals;
-    FunctionDeclareInstruction(enum LLVMType t, std::string n) {
+    FunctionDeclareInstruction(enum LLVMType t, std::string n, bool is_more = false) {
         return_type = t;
         Func_name = n;
+        is_more_args = is_more;
     }
     void InsertFormal(enum LLVMType t) { formals.push_back(t); }
     enum LLVMType GetReturnType() { return return_type; }
@@ -877,6 +896,7 @@ public:
         this->opcode = FPTOSI;
     }
     Operand GetResultReg() { return result; }
+    Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
@@ -898,6 +918,7 @@ public:
         this->opcode = SITOFP;
     }
     Operand GetResultReg() { return result; }
+    Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);

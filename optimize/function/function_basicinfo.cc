@@ -42,8 +42,6 @@ void FunctionCallGraph::BuildCG(LLVMIR *IR) {
     CG.clear();
     MainCFG = CFGMap["main"];
     for (auto [FuncDefI, CFG] : IR->llvm_cfg) {
-        // CFG->function_def->PrintIR(std::cerr);
-        // puts("_____________________");
         auto FuncName = FuncDefI->GetFunctionName();
         if (CFGMap.find(FuncName) == CFGMap.end()) {
             continue;
@@ -68,14 +66,8 @@ void FunctionCallGraph::BuildCG(LLVMIR *IR) {
                     continue;
                 }
                 auto vCFG = CFGMap[vFuncName];
-                // vCFG->function_def->PrintIR(std::cerr);
-                // I->PrintIR(std::cerr);
                 CGCallI[CFG][vCFG].push_back(I);
-                CallIuidMap[I] = Calluid++;
-                // I->PrintIR(std::cerr);
-                // auto ASDI=*CGCallI[CFG][vCFG][0];
-                // std::cerr<<CGCallI[CFG][vCFG].size()<<'\n';
-                // ASDI->PrintIR(std::cerr);
+                // CallIuidMap[I] = Calluid++;
                 if (CGNum.find(CFG) == CGNum.end()) {
                     CGNum[CFG][vCFG] = 1;
                     CG[CFG].push_back(vCFG);
@@ -83,10 +75,7 @@ void FunctionCallGraph::BuildCG(LLVMIR *IR) {
                     CGNum[CFG][vCFG] = 1;
                     CG[CFG].push_back(vCFG);
                 } else {
-                    // CFG->function_def->PrintIR(std::cerr);
-                    // vCFG->function_def->PrintIR(std::cerr);
                     CGNum[CFG][vCFG]++;
-                    // std::cerr<<CGINum[CFG]<<" "<<CGINum[vCFG]<<" "<<CGNum[CFG][vCFG]<<'\n';
                 }
                 if (it == bb->Instruction_list.begin()) {
                     break;

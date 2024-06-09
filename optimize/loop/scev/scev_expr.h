@@ -23,6 +23,7 @@ public:
     SCEVValue operator-();
 
     void PrintSCEVValue();
+    Instruction GenerateValueInst(CFG* C);
 };
 
 class AddSCEVExpr {

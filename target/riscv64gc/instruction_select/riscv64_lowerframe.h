@@ -9,4 +9,10 @@ public:
     void Execute();
 };
 
+class RiscV64LowerStack : public MachinePass {
+public:
+    RiscV64LowerStack(MachineUnit* unit) : MachinePass(unit) {}
+    void Execute();
+};
+
 #endif // RISCV64_LOWERFRAME_H

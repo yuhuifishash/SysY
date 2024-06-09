@@ -4,7 +4,6 @@
 
 static std::set<Instruction> NewGepSet;
 
-
 /*
 non-zero index at end of GEP(only one)
 %r0 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r2
@@ -16,7 +15,7 @@ so we can use %r0 to get %r1
 then %r3 may be useless
 */
 void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop* L) {
-
+    
 }
 
 
@@ -25,6 +24,7 @@ void LoopGepStrengthReduce(CFG *C) {
     for(auto l : C->LoopForest.loop_set){
         LoopBasicBlockGEPStrengthReduce(C,l);
     }
+
     NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {

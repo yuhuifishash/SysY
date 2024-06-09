@@ -1,5 +1,14 @@
 #include "scev_expr.h"
+#include "../../../include/cfg.h"
 #include <assert.h>
+
+Instruction SCEVValue::GenerateValueInst(CFG* C) {
+    if(type == OTHER){
+        return new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(0),GetNewRegOperand(++C->max_reg));
+    }else{
+        return new ArithmeticInstruction(type,I32,op1,op2,GetNewRegOperand(++C->max_reg));
+    }
+}
 
 SCEVValue SCEVValue::operator-() {
     if (type != OTHER) {
