@@ -804,6 +804,7 @@ public:
     void push_idx_reg(int idx_reg_no) { indexes.push_back(GetNewRegOperand(idx_reg_no)); }
     void push_idx_imm32(int imm_idx) { indexes.push_back(new ImmI32Operand(imm_idx)); }
     void push_index(Operand idx) { indexes.push_back(idx); }
+    void change_index(int i, Operand op) {indexes[i] = op;}
 
     Operand GetResultReg() { return result; }
     enum LLVMType GetType() { return type; }

@@ -72,6 +72,6 @@ bool NaturalLoop::LoopParallel(CFG *C) {
     }
 
     //no data dependence, now we can parallel
-    
 
-}
+    return false;
+}   
