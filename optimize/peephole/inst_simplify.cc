@@ -3,6 +3,7 @@
 extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
 
+// TODO():FindNoWriteStaticGlobal
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
 void FindNoWriteStaticGlobal(LLVMIR *IR) { TODO("FindNoWriteStaticGlobal"); }
 
@@ -32,6 +33,7 @@ void GlobalConstReplace(CFG *C) {
     }
 }
 
+// TODO():EliminateSimpleConstArrayValue
 // GEPindex is const and ArrayDefine is const, we need not to load.
 void EliminateSimpleConstArrayValue(CFG *C) { TODO("EliminateSimpleConstArrayValue"); }
 
@@ -79,6 +81,7 @@ void EliminateEmptyIndexGEP(CFG *C) {
     // std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
 }
 
+//TODO():SrcEqResultInstEliminate
 /*eliminate the instructions like
 %rx = %ry + 0(replace all the use of %rx with %ry) %ry must be i32
 %rx = %ry - 0(replace all the use of %rx with %ry) %ry can be i32 or float
@@ -101,6 +104,7 @@ void I32ConstantSimplify(Instruction I) {
     }
 }
 
+//TODO():ZeroResultSimplify
 // {sub X, X},{Mul 0, X} is represented as 0 + 0
 void ZeroResultSimplify(Instruction I) { TODO("ZeroResultSimplify"); }
 
@@ -113,6 +117,7 @@ void InstSimplify(CFG *C) {
     }
 }
 
+//TODO():GEPStrengthReduce
 /*
 example:
 %ry1 = gep [100x[100xi32]], ptr @x, i32 0, i32 %r1, i32 %r2

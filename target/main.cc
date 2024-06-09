@@ -183,6 +183,8 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
+        // TODO():GVN/GCM
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         llvmIR.PassExecutor(SimplifyCFG);
@@ -221,6 +223,8 @@ int main(int argc, char **argv) {
         }
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
+
+        // TODO():GVN/GCM
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
