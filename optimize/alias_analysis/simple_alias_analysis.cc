@@ -42,7 +42,7 @@ bool SimpleAliasAnalyser::IsSamePtrWithDiffConstIndex(Operand p1, Operand p2, CF
         if (I1 != nullptr && I2 != nullptr && I1->GetOpcode() == GETELEMENTPTR && I2->GetOpcode() == GETELEMENTPTR) {
             auto gepI1 = (GetElementptrInstruction *)I1;
             auto gepI2 = (GetElementptrInstruction *)I2;
-            if(gepI1->GetIndexes().size() != gepI2->GetIndexes().size()){
+            if (gepI1->GetIndexes().size() != gepI2->GetIndexes().size()) {
                 return false;
             }
             auto ptr = gepI1->GetPtrVal();
@@ -50,7 +50,7 @@ bool SimpleAliasAnalyser::IsSamePtrWithDiffConstIndex(Operand p1, Operand p2, CF
             if (ptr == ptr2) {
                 auto [index1, sz1] = gepI1->GetConstIndexes();
                 auto [index2, sz2] = gepI2->GetConstIndexes();
-                
+
                 // constant index, and different, we assume they are NoAlias
                 if (index1 != -1 && index2 != -1 && index1 != index2) {
                     return true;

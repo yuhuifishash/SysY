@@ -375,47 +375,24 @@ private:
     std::vector<Register *> GetB_typeWritereg() { return {}; }
     std::vector<Register *> GetU_typeWritereg() { return {&rd}; }
     std::vector<Register *> GetJ_typeWritereg() { return {&rd}; }
-    std::vector<Register *> GetCall_typeWritereg() { return {
+    std::vector<Register *> GetCall_typeWritereg() {
+        return {
         &RISCVregs[RISCV_ra],
 
-        &RISCVregs[RISCV_t0],
-        &RISCVregs[RISCV_t1],
-        &RISCVregs[RISCV_t2],
-        &RISCVregs[RISCV_t3],
-        &RISCVregs[RISCV_t4],
-        &RISCVregs[RISCV_t5],
-        &RISCVregs[RISCV_t6],
+        &RISCVregs[RISCV_t0],  &RISCVregs[RISCV_t1],  &RISCVregs[RISCV_t2],   &RISCVregs[RISCV_t3],
+        &RISCVregs[RISCV_t4],  &RISCVregs[RISCV_t5],  &RISCVregs[RISCV_t6],
 
-        &RISCVregs[RISCV_a0],
-        &RISCVregs[RISCV_a1],
-        &RISCVregs[RISCV_a2],
-        &RISCVregs[RISCV_a3],
-        &RISCVregs[RISCV_a4],
-        &RISCVregs[RISCV_a5],
-        &RISCVregs[RISCV_a6],
-        &RISCVregs[RISCV_a7],
+        &RISCVregs[RISCV_a0],  &RISCVregs[RISCV_a1],  &RISCVregs[RISCV_a2],   &RISCVregs[RISCV_a3],
+        &RISCVregs[RISCV_a4],  &RISCVregs[RISCV_a5],  &RISCVregs[RISCV_a6],   &RISCVregs[RISCV_a7],
 
-        &RISCVregs[RISCV_ft0],
-        &RISCVregs[RISCV_ft1],
-        &RISCVregs[RISCV_ft2],
-        &RISCVregs[RISCV_ft3],
-        &RISCVregs[RISCV_ft4],
-        &RISCVregs[RISCV_ft5],
-        &RISCVregs[RISCV_ft6],
-        &RISCVregs[RISCV_ft7],
-        &RISCVregs[RISCV_ft8],
-        &RISCVregs[RISCV_ft9],
-        &RISCVregs[RISCV_ft10],
-        &RISCVregs[RISCV_ft11],
+        &RISCVregs[RISCV_ft0], &RISCVregs[RISCV_ft1], &RISCVregs[RISCV_ft2],  &RISCVregs[RISCV_ft3],
+        &RISCVregs[RISCV_ft4], &RISCVregs[RISCV_ft5], &RISCVregs[RISCV_ft6],  &RISCVregs[RISCV_ft7],
+        &RISCVregs[RISCV_ft8], &RISCVregs[RISCV_ft9], &RISCVregs[RISCV_ft10], &RISCVregs[RISCV_ft11],
 
-        &RISCVregs[RISCV_fa0],
-        &RISCVregs[RISCV_fa1],
-        &RISCVregs[RISCV_fa2],
-        &RISCVregs[RISCV_fa3],
-        &RISCVregs[RISCV_fa4],
-        &RISCVregs[RISCV_fa5],
-        &RISCVregs[RISCV_fa6],
-        &RISCVregs[RISCV_fa7],}; }
+        &RISCVregs[RISCV_fa0], &RISCVregs[RISCV_fa1], &RISCVregs[RISCV_fa2],  &RISCVregs[RISCV_fa3],
+        &RISCVregs[RISCV_fa4], &RISCVregs[RISCV_fa5], &RISCVregs[RISCV_fa6],  &RISCVregs[RISCV_fa7],
+        };
+    }
 
     friend class RiscV64InstructionConstructor;
 
@@ -514,9 +491,9 @@ public:
         ret->setLabel(label);
         return ret;
     }
-    RiscV64Instruction *ConstructBLabel(int op, Register Rs1, Register Rs2, RiscVLabel label){
-        RiscV64Instruction * ret = new RiscV64Instruction();
-        ret->setOpcode(op,true);
+    RiscV64Instruction *ConstructBLabel(int op, Register Rs1, Register Rs2, RiscVLabel label) {
+        RiscV64Instruction *ret = new RiscV64Instruction();
+        ret->setOpcode(op, true);
         Assert(OpTable[op].ins_formattype == RvOpInfo::B_type);
         ret->setRs1(Rs1);
         ret->setRs2(Rs2);
@@ -571,7 +548,7 @@ public:
         new MachineCopyInstruction(new MachineImmediateFloat(src), new MachineRegister(dst), type);
         return ret;
     }
-    RiscV64Instruction *ConstructCall(int op, std::string funcname/*, int phy_rd*/) {
+    RiscV64Instruction *ConstructCall(int op, std::string funcname /*, int phy_rd*/) {
         Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
         RiscV64Instruction *ret = new RiscV64Instruction();
         ret->setOpcode(op, true);

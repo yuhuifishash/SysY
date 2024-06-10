@@ -3,9 +3,9 @@
 
 #include "../riscv64.h"
 
-class RiscV64LowerImm : public MachinePass{
+class RiscV64LowerImm : public MachinePass {
 public:
-    RiscV64LowerImm(MachineUnit* unit) : MachinePass(unit) {}
+    RiscV64LowerImm(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
 

@@ -9,11 +9,11 @@
 // #define ENABLE_PRINT
 #ifdef ENABLE_PRINT
 #ifndef PRINT
-#define PRINT(...)\
-    do {\
-        char message[256];\
-        sprintf(message,__VA_ARGS__);\
-        std::cerr<<message<<"\n";\
+#define PRINT(...)                                                                                                     \
+    do {                                                                                                               \
+        char message[256];                                                                                             \
+        sprintf(message, __VA_ARGS__);                                                                                 \
+        std::cerr << message << "\n";                                                                                  \
     } while (0)
 #endif
 #else

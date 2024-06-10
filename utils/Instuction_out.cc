@@ -216,20 +216,20 @@ void StoreInstruction::PrintIR(std::ostream &s) {
     s << "store " << type << " " << value << ", ptr " << pointer << "\n";
 }
 void ArithmeticInstruction::PrintIR(std::ostream &s) {
-    if(opcode == LL_ADDMOD){
-        s << result << " = call i32 @___llvm_ll_add_mod(i32 "<<op1<<",i32 "<<op2<<",i32 "<<op3<<")\n" ;
+    if (opcode == LL_ADDMOD) {
+        s << result << " = call i32 @___llvm_ll_add_mod(i32 " << op1 << ",i32 " << op2 << ",i32 " << op3 << ")\n";
         return;
-    }else if(opcode == UMIN){
-        s << result << " = call i32 @llvm.umin.i32(i32 "<<op1<<",i32 "<<op2<<")\n" ;
+    } else if (opcode == UMIN) {
+        s << result << " = call i32 @llvm.umin.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    }else if(opcode == UMAX){
-        s << result << " = call i32 @llvm.umax.i32(i32 "<<op1<<",i32 "<<op2<<")\n" ;
+    } else if (opcode == UMAX) {
+        s << result << " = call i32 @llvm.umax.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    }else if(opcode == SMIN){
-        s << result << " = call i32 @llvm.smin.i32(i32 "<<op1<<",i32 "<<op2<<")\n" ;
+    } else if (opcode == SMIN) {
+        s << result << " = call i32 @llvm.smin.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    }else if(opcode == SMAX){
-        s << result << " = call i32 @llvm.smax.i32(i32 "<<op1<<",i32 "<<op2<<")\n" ;
+    } else if (opcode == SMAX) {
+        s << result << " = call i32 @llvm.smax.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
     }
     s << result << " = " << opcode << " " << type << " " << op1 << "," << op2 << "\n";
@@ -298,7 +298,7 @@ void FunctionDeclareInstruction::PrintIR(std::ostream &s) {
             s << ",";
         }
     }
-    if(is_more_args){
+    if (is_more_args) {
         s << ", ...";
     }
     s << ")\n";

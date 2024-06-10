@@ -247,12 +247,12 @@ void RiscV64Printer::emit() {
                             s << "\t.word\t" << val << "\n";
                         }
                     }
-                    if(global_ins->arval.IntInitVals.empty()){
+                    if (global_ins->arval.IntInitVals.empty()) {
                         int prod = 1;
-                        for(auto dim : global_ins->arval.dims){
+                        for (auto dim : global_ins->arval.dims) {
                             prod *= dim;
                         }
-                        s<<"\t.zero\t"<<prod*4<<"\n";
+                        s << "\t.zero\t" << prod * 4 << "\n";
                     }
                     if (zero_cum != 0) {
                         s << "\t.zero\t" << zero_cum << "\n";
@@ -265,7 +265,7 @@ void RiscV64Printer::emit() {
                         Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMF32);
                         auto imm_op = (ImmF32Operand *)global_ins->init_val;
                         auto immf = imm_op->GetFloatVal();
-                        s << "\t.word\t" << *(int*)&immf << "\n";
+                        s << "\t.word\t" << *(int *)&immf << "\n";
                     } else {
                         s << "\t.word\t0\n";
                     }
@@ -279,15 +279,15 @@ void RiscV64Printer::emit() {
                                 s << "\t.zero\t" << zero_cum << "\n";
                                 zero_cum = 0;
                             }
-                            s << "\t.word\t" << *(int*)&val << "\n";
+                            s << "\t.word\t" << *(int *)&val << "\n";
                         }
                     }
-                    if(global_ins->arval.FloatInitVals.empty()){
+                    if (global_ins->arval.FloatInitVals.empty()) {
                         int prod = 1;
-                        for(auto dim : global_ins->arval.dims){
+                        for (auto dim : global_ins->arval.dims) {
                             prod *= dim;
                         }
-                        s<<"\t.zero\t"<<prod*4<<"\n";
+                        s << "\t.zero\t" << prod * 4 << "\n";
                     }
                     if (zero_cum != 0) {
                         s << "\t.zero\t" << zero_cum << "\n";

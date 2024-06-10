@@ -81,9 +81,9 @@ void EliminateEmptyIndexGEP(CFG *C) {
     // std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
 }
 
-//TODO():SrcEqResultInstEliminate
+// TODO():SrcEqResultInstEliminate
 /*eliminate the instructions like
-%rx = %ry + 0(replace all the use of %rx with %ry) %ry must be i32
+%rx = %ry + 0(replace all the use of %rx with %ry) %ry can be i32 or float
 %rx = %ry - 0(replace all the use of %rx with %ry) %ry can be i32 or float
 %rx = %ry * 1(replace all the use of %rx with %ry) %ry can be i32 or float
 %rx = %ry / 1(replace all the use of %rx with %ry) %ry can be i32 or float
@@ -104,8 +104,8 @@ void I32ConstantSimplify(Instruction I) {
     }
 }
 
-//TODO():ZeroResultSimplify
-// {sub X, X},{Mul 0, X} is represented as 0 + 0
+// TODO():ZeroResultSimplify
+//  {sub X, X},{Mul 0, X} is represented as 0 + 0
 void ZeroResultSimplify(Instruction I) { TODO("ZeroResultSimplify"); }
 
 void InstSimplify(CFG *C) {
@@ -117,7 +117,7 @@ void InstSimplify(CFG *C) {
     }
 }
 
-//TODO():GEPStrengthReduce
+// TODO():GEPStrengthReduce
 /*
 example:
 %ry1 = gep [100x[100xi32]], ptr @x, i32 0, i32 %r1, i32 %r2
