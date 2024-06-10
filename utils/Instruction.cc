@@ -448,10 +448,15 @@ Instruction StoreInstruction::CopyInstruction() {
 }
 
 Instruction ArithmeticInstruction::CopyInstruction() {
+    
     Operand nop1 = op1->CopyOperand();
     Operand nop2 = op2->CopyOperand();
     Operand nresult = result->CopyOperand();
-    return new ArithmeticInstruction(opcode, type, nop1, nop2, nresult);
+    if(op3 == nullptr){
+        return new ArithmeticInstruction(opcode, type, nop1, nop2, nresult);
+    }  
+    Operand nop3 = op3->CopyOperand();
+    return new ArithmeticInstruction(opcode, type, nop1, nop2, nop3, nresult);
 }
 
 Instruction IcmpInstruction::CopyInstruction() {

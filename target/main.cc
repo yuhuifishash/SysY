@@ -234,6 +234,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopIdomRecognize);
 
         // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
+        llvmIR.BuildFunctionInfo();
+        llvmIR.PassExecutor(FunctionInline);
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);

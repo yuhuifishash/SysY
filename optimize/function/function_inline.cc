@@ -82,12 +82,11 @@ Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std:
             if(is_reinline){
                 // if deal with self-inline, to better compare callintruction and lower down the space, 
                 // take I as newI in uCFG
-                nowI=I;
+                nowI = I;
             }else{
                 nowI = I->CopyInstruction();
             }
             nowI->ReplaceLabelByMap(label_replace_map);
-
             auto use_ops = nowI->GetNonResultOperands();
             for (auto &op : use_ops) {
                 if (op->GetOperandType() != BasicOperand::REG) {
@@ -95,7 +94,6 @@ Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std:
                 }
                 auto RegOp = (RegOperand *)op;
                 auto RegNo = RegOp->GetRegNo();
-                // if(RegOp->GetFullName())
                 if (reg_replace_map.find(RegNo) == reg_replace_map.end()) {
                     auto newNo = ++uCFG->max_reg;
                     op = GetNewRegOperand(newNo);
@@ -111,9 +109,11 @@ Operand InlineCFG(CFG *uCFG, CFG *vCFG, LLVMBlock StartBB, LLVMBlock EndBB, std:
                 auto newReg = GetNewRegOperand(newNo);
                 reg_replace_map[ResultRegNo] = newNo;
             }
+            
             nowI->ReplaceRegByMap(reg_replace_map);
             nowbb->InsertInstruction(1, nowI);
             nowI->SetBlockID(nowbb_id);
+            
         }
     }
     auto retBB = (BasicBlock *)vCFG->ret_block;
@@ -142,7 +142,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     auto BlockMap = *uCFG->block_map;
     auto uCFG_BBid = CallI->GetBlockID();
     auto oldbb = BlockMap[uCFG_BBid];
-    
+
     for (auto formal : CallI->GetParameterList()) {
         ++formal_regno;
         if (formal.second->GetOperandType() == BasicOperand::IMMI32) {
@@ -181,14 +181,13 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     }
 
     Operand NewResultOperand = InlineCFG(uCFG, vCFG, StartBB, EndBB, reg_replace_map, label_replace_map);
+
     auto vfirstlabelno = label_replace_map[0];
     auto uAllocaBB = (BasicBlock *)BlockMap[vfirstlabelno];
     for (auto I : uAllocaBB->Instruction_list) {
-        // I->PrintIR(std::cerr);
         if (I->GetOpcode() != ALLOCA) {
             continue;
         }
-        // I->PrintIR(std::cerr);
         BlockMap[0]->InsertInstruction(0, I);
         EraseSet.insert(I);
     }
@@ -221,7 +220,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     bool EndbbBegin = false;
     for (auto it = oldbb->Instruction_list.begin(); it != oldbb->Instruction_list.end(); ++it) {
         auto I = *it;
-        if (!EndbbBegin && I == CallI) {
+        if (!EndbbBegin && I == CallI){
             EndbbBegin = true;
             newBrI = new BrUncondInstruction(StartBB_label);
             newBrI->SetBlockID(oldbb->block_id);
@@ -247,6 +246,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
         }
     }
     label_replace_map.clear();
+
 }
 #define LeftInlineInstructionNum 50
 #define RightInlineInstructionNum
@@ -268,7 +268,7 @@ CFG* CopyCFG(CFG *uCFG){
     CFG *vCFG=new CFG;
     auto max_label=uCFG->max_label;
     auto func_def=uCFG->function_def;
-    auto newFuncDef=new FunctionDefineInstruction(func_def->GetReturnType(),"CopyInlineFunc");
+    auto newFuncDef=new FunctionDefineInstruction(func_def->GetReturnType(),".....CopyInlineFunc");
     vCFG->function_def=newFuncDef;
     vCFG->block_map=new std::map<int, LLVMBlock>;
     vCFG->max_label=-1;
@@ -287,7 +287,7 @@ CFG* CopyCFG(CFG *uCFG){
             if(newI->GetOpcode()==RET){
                 vCFG->ret_block=new_block;
             }
-            if(newI->GetOpcode()==CALL){
+            if(newI->GetOpcode()==CALL && CFGMap.find(((CallInstruction*)newI)->GetFunctionName()) != CFGMap.end()){
                 auto CallI=(CallInstruction*)newI;
                 if(CallI->GetFunctionName()==uCFG->function_def->GetFunctionName()){
                     fcallgraph.CGNum[uCFG][uCFG]++;
@@ -308,6 +308,7 @@ void InlineDFS(CFG *uCFG) {
         return;
     }
     CFGvis[uCFG] = true;
+    
     for (auto vCFG : fcallgraph.CG[uCFG]) {
         if (uCFG == vCFG) {
             continue;
@@ -327,6 +328,7 @@ void InlineDFS(CFG *uCFG) {
             uCFG->BuildCFG();
         }
     }
+    
     if(fcallgraph.CG.find(uCFG)!=fcallgraph.CG.end()&&fcallgraph.CGNum[uCFG].find(uCFG)!=fcallgraph.CGNum[uCFG].end()){
         int i=0;
         while(IsInlineBetter(uCFG,uCFG)){
@@ -353,6 +355,7 @@ void InlineDFS(CFG *uCFG) {
         }
         is_reinline=false;
     }
+    
     uCFG->BuildCFG();
     uCFG->BuildDominatorTree();
     SparseConditionalConstantPropagation(uCFG);
@@ -362,8 +365,16 @@ void InlineDFS(CFG *uCFG) {
             I->SetBlockID(id);
         }
     }
+    
 }
 void FunctionInline(LLVMIR *IR) {
+    // CFGvis.clear();
+    // puts("HEREH0");
+    CFGvis.clear();
+    reinlinecallI.clear();
+    is_reinline=false;
+    // puts("HEREH1");
     InlineDFS(fcallgraph.MainCFG);
+
     // BuildCG();
 }

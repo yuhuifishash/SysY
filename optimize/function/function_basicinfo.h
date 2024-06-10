@@ -27,7 +27,6 @@ public:
     std::unordered_map<CFG *, std::unordered_map<CFG *, std::vector<Instruction>>> CGCallI; // CallI
     std::unordered_map<CFG *, size_t> CGINum; // the Intruction num of CFG
     // std::unordered_map<Instruction, int> CallIuidMap;
-    int Calluid{0};
 
     void BuildCG(LLVMIR *IR);
 };

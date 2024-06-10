@@ -125,6 +125,10 @@ static bool LoopReduceSimpleAddMod(CFG *C, NaturalLoop *L) {
     auto latch = *L->latches.begin();
     assert(L->exiting_nodes.size() == 1);
     auto exiting = *L->exiting_nodes.begin();
+
+    if(latch->Instruction_list.size() >= 2){
+        return false;
+    }
     
     assert(C->IsDominate(L->preheader->block_id, exit->block_id));
 
@@ -238,7 +242,11 @@ static bool LoopReduceSimpleAddMod(CFG *C, NaturalLoop *L) {
     auto ResI = new ArithmeticInstruction(LL_ADDMOD,I32,iterations,addop2,modop2,LCSSAI->GetResultReg());
     exit->Instruction_list.pop_front();
     exit->Instruction_list.push_front(ResI);
+    L->header->Instruction_list.clear();
+    latch->Instruction_list.clear();
 
+    L->header->Instruction_list.push_back(new BrUncondInstruction(GetNewLabelOperand(latch->block_id)));
+    latch->Instruction_list.push_back(new BrUncondInstruction(GetNewLabelOperand(exit->block_id)));
     return true;
 }
 
@@ -447,7 +455,7 @@ do{
 }while (j < min(i,n)) // min(i,n) can be motion
 */
 static bool LoopUselessContinue2Break(CFG *C, NaturalLoop *L) {
-    
+
     return false;
 }
 
