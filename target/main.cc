@@ -75,6 +75,7 @@ void AggressiveDeadCodeElimination(CFG *C);
 void LoopIdomRecognize(CFG *C);
 void LoopGepStrengthReduce(CFG *C);
 void OnlyBasicBlockCSE(CFG *C);
+void LoopParallel(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -243,6 +244,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(AddParallelLib);
+        llvmIR.PassExecutor(LoopParallel);
 
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopGepStrengthReduce);

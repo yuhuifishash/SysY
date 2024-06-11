@@ -3,15 +3,9 @@
 #include <functional>
 
 void AddParallelLib(LLVMIR* IR) {
-    auto IsParallelBetterI = new FunctionDeclareInstruction(I32,"___is_parallel_loop_better");
     auto ThreadCreateI_111 = new FunctionDeclareInstruction(VOID,"___parallel_loop_constant_111",true);
     auto ThreadCreateI_101 = new FunctionDeclareInstruction(VOID,"___parallel_loop_constant_101",true);
     auto ThreadCreateI_000 = new FunctionDeclareInstruction(VOID,"___parallel_loop_constant_000",true);
-
-    IsParallelBetterI->InsertFormal(I32);
-    IsParallelBetterI->InsertFormal(I32);
-    IsParallelBetterI->InsertFormal(I32);
-    IsParallelBetterI->InsertFormal(I32);
 
     ThreadCreateI_111->InsertFormal(PTR);
     ThreadCreateI_111->InsertFormal(PTR);
@@ -33,7 +27,6 @@ void AddParallelLib(LLVMIR* IR) {
     ThreadCreateI_000->InsertFormal(I32);
     ThreadCreateI_000->InsertFormal(I32);
 
-    IR->function_declare.push_back(IsParallelBetterI);
     IR->function_declare.push_back(ThreadCreateI_111);
     IR->function_declare.push_back(ThreadCreateI_101);
     IR->function_declare.push_back(ThreadCreateI_000);
