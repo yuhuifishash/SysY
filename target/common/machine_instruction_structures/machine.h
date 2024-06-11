@@ -18,8 +18,8 @@ private:
     MachineFunction *parent;
 
 public:
-    auto erase(decltype(instructions.begin())it) {return instructions.erase(it);}
-    auto insert(decltype(instructions.begin())it,MachineBaseInstruction *ins) {return instructions.insert(it,ins);}
+    auto erase(decltype(instructions.begin()) it) { return instructions.erase(it); }
+    auto insert(decltype(instructions.begin()) it, MachineBaseInstruction *ins) { return instructions.insert(it, ins); }
     auto getParent() { return parent; }
     void setParent(MachineFunction *parent) { this->parent = parent; }
     auto getLabelId() { return label_id; }
@@ -42,14 +42,14 @@ private:
     MachineUnit *parent;
     MachineCFG *mcfg;
     int stack_sz;
-    std::vector<Register>parameters;
+    std::vector<Register> parameters;
 
 public:
-    const decltype(parameters)& GetParameters() {return parameters;}
+    const decltype(parameters) &GetParameters() { return parameters; }
     void AddParameter(Register reg) { parameters.push_back(reg); }
     void SetStackSize(int sz) { stack_sz = sz; }
     void AddStackSize(int sz) { stack_sz += sz; }
-    int GetStackSize() { return ((stack_sz+15)/16)*16; }
+    int GetStackSize() { return ((stack_sz + 15) / 16) * 16; }
     int GetRaOffsetToSp() { return stack_sz - 8; }
     MachineCFG *getMachineCFG() { return mcfg; }
     MachineUnit *getParentMachineUnit() { return parent; }
