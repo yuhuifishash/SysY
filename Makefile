@@ -84,10 +84,6 @@ run : compile
 gdbasm : compile
 	./SysY_qemugdb_single.sh $(CASE) $(ARCH)
 
-submit :
-	rm -rf submit
-	mkdir submit
-
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
 
