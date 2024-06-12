@@ -5,14 +5,14 @@
 
 class RiscV64LowerFrame : public MachinePass {
 public:
-    RiscV64LowerFrame(MachineUnit* unit) : MachinePass(unit) {}
+    RiscV64LowerFrame(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
 
 class RiscV64LowerStack : public MachinePass {
 public:
-    RiscV64LowerStack(MachineUnit* unit) : MachinePass(unit) {}
+    RiscV64LowerStack(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
 
-#endif // RISCV64_LOWERFRAME_H
+#endif    // RISCV64_LOWERFRAME_H

@@ -59,8 +59,9 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
-        // 
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<"
+        // "<<mblock->getBlockOutNumber()<<"\n";
+        //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
             if (intervals.find(reg) == intervals.end()) {

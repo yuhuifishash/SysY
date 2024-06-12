@@ -29,7 +29,7 @@ if [ $1 == 'llvm' ] ; then
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.ll \-${optimize_flag}
         clang ${pwdout}/${var##*/}.ll -c -o ${pwdout}/${var##*/}.o -w
-        clang -static ${pwdout}/${var##*/}.o lib/libsysy_x86.a lib/libsysy_calculate.a
+        clang -static ${pwdout}/${var##*/}.o lib/libsysy_x86.a lib/libcalculate_x86.a
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
@@ -62,7 +62,7 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.s \-${optimize_flag}
         arm-linux-gnueabihf-gcc ${pwdout}/${var##*/}.s -c -static -march=armv7
-        arm-linux-gnueabihf-gcc -static ${var##*/}.o lib/libsysy.a
+        arm-linux-gnueabihf-gcc -static ${var##*/}.o lib/libsysy_armv7.a
         rm -rf ${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then

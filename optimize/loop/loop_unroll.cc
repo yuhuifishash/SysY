@@ -275,15 +275,27 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     return true;
 }
 
+
+
+
+
 // this pass will unroll other for-loop without constant iterations (only the loop without nesting)
+// the step of loop must be constant
 /*
 for(int i = l; i < u; i += 1){ BB }
 
 int i = l
 for(; i + 4 < u; i += 4){ BB }
 for(; i < u; i += 1){ BB }
+
+if the loop is reduce-operations like +,min,add
+we will make S to S1,S2,S3,S4 (only i32)
 */
 
 void SimpleForLoopUnroll(CFG *C) {}
+
+
+//only consider loop with one node
+static bool ReduceLoopCheckAndUnroll(CFG *C, NaturalLoop* L) {}
 
 bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {}

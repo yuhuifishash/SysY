@@ -48,7 +48,7 @@ int PhysicalRegisters::getIdleReg(LiveInterval interval) {
         int ok = true;
         for (auto conflict_j : getAliasRegs(i)) {
             for (auto other_interval : phy_occupied[conflict_j]) {
-                PRINT("\nTry Phy %d",i);
+                PRINT("\nTry Phy %d", i);
                 // std::cerr<<"\nTry Phy "<<i<<"\n";
                 PRINT("Othe: ");
                 other_interval.Print();

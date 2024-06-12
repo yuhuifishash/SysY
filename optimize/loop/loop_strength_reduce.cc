@@ -4,27 +4,6 @@
 
 static std::set<Instruction> NewGepSet;
 
-
-/*
-while{
-    if(){
-        a[i][j] = 54;
-    }else{
-        a[i][j] = 32;
-    }
-}
--------------------------will become
-while{
-    int tmp = a[i][j];
-    if(){}
-    else(){}
-}
-*/
-void LoopGEPMotion(CFG *C, NaturalLoop* L) {
-
-}
-
-
 /*
 non-zero index at end of GEP(only one)
 %r0 = getelementptr [100 x i32], ptr @g, i32 0, i32 %r2
@@ -35,18 +14,11 @@ c1 and c2 are constant
 so we can use %r0 to get %r1
 then %r3 may be useless
 */
-void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop* L) {
-
-}
-
-
+void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop *L) {}
 
 void LoopGepStrengthReduce(CFG *C) {
-    for(auto l : C->LoopForest.loop_set){
-        LoopBasicBlockGEPStrengthReduce(C,l);
-    }
-    for(auto l : C->LoopForest.loop_set){
-        LoopGEPMotion(C,l);
+    for (auto l : C->LoopForest.loop_set) {
+        LoopBasicBlockGEPStrengthReduce(C, l);
     }
 
     NewGepSet.clear();
@@ -116,9 +88,7 @@ latch:
 
 then we need to update ScalarEvolution on father loop
 */
-void SingleGEPStrengthReduce(CFG *C) {
-    
-}
+bool SingleGEPStrengthReduce(CFG *C, Instruction I) { return false; }
 
 void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     // first we try to reduce GEP (non zero indexs >= 2) .
@@ -174,7 +144,9 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                     assert(false);
                 }
             }
-
+            if (SingleGEPStrengthReduce(C, I)) {
+                continue;
+            }
             if (isReduceBetter == false || is_induction == false) {
                 continue;
             }
@@ -215,9 +187,10 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                     auto val = scev.SCEVMap[R->GetRegNo()];
                     if (val->len <= 2) {
                         if (val->st.type != OTHER) {
-                            std::cerr<<"InitGEPI Generate New ArithI "; val->PrintSCEVExpr();
-                            auto ArithI = new ArithmeticInstruction(val->st.type,I32,val->st.op1,
-                                                                                             val->st.op2, GetNewRegOperand(++C->max_reg));
+                            std::cerr << "InitGEPI Generate New ArithI ";
+                            val->PrintSCEVExpr();
+                            auto ArithI = new ArithmeticInstruction(val->st.type, I32, val->st.op1, val->st.op2,
+                                                                    GetNewRegOperand(++C->max_reg));
                             auto tmpI = preheader->Instruction_list.back();
                             assert(tmpI->GetOpcode() == BR_UNCOND);
                             preheader->Instruction_list.pop_back();

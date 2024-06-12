@@ -85,11 +85,11 @@ public:
         segments[0].begin = begin;
     }
 
-    void Print(){
-        PRINT("%d %d ",reg.is_virtual,reg.reg_no);
+    void Print() {
+        PRINT("%d %d ", reg.is_virtual, reg.reg_no);
         // std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
-        for(auto seg:segments){
-            PRINT("[%d,%d) ",seg.begin,seg.end);
+        for (auto seg : segments) {
+            PRINT("[%d,%d) ", seg.begin, seg.end);
             // std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
         }
         PRINT("\n");

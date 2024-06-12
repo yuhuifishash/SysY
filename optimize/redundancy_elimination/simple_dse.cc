@@ -145,7 +145,7 @@ void EliminateNotUsedStore(CFG *C) {
             }
             auto StoreI = (StoreInstruction *)I;
             auto ptr = StoreI->GetPointer();
-            //in SysY2022, all the globals are static, so we can erase useless globals store
+            // in SysY2022, all the globals are static, so we can erase useless globals store
             if (alias_analyser->is_localptrs(C, ptr) || C->function_def->GetFunctionName() == "main") {
                 if (memdep_analyser->isStoreNotUsed(I, C)) {
                     // std::cerr<<"not used local store "; I->PrintIR(std::cerr);

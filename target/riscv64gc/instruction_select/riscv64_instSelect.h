@@ -18,7 +18,7 @@ private:
     //     LastCmpInfo():cmp_type(NONE){}
     // };
 
-    std::map<Register,Instruction> cmp_context;
+    std::map<Register, Instruction> cmp_context;
 
 public:
     RiscV64Selector(MachineUnit *dest, LLVMIR *IR) : MachineSelector(dest, IR) {}

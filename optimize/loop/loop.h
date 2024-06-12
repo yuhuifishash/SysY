@@ -47,8 +47,16 @@ public:
 
     void LoopGepStrengthReduce(CFG *C);
 
-    bool LoopDataDependenceTest(CFG *C);
+    bool LoopCarriedDependenceTest(CFG *C);
     bool LoopParallel(CFG *C);
+
+    enum LoopDepResult{
+        NONE = 0,
+        FLOW = 1,
+        ANTI = 2,
+        ANY = 3,
+    };
+    LoopDepResult CheckDependenceResult(Instruction I1, Instruction I2);
 
     void PrintLoopDebugInfo();
 };

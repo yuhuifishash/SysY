@@ -381,7 +381,8 @@ public:
         this->type = type;
     }
 
-    ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand op3, Operand result) {
+    ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand op3,
+                          Operand result) {
         this->opcode = opcode;
         this->op1 = op1;
         this->op2 = op2;
@@ -720,7 +721,7 @@ public:
     Operand GetResult() { return result; }
     Operand GetResultReg() { return result; }
     std::string GetFunctionName() { return name; }
-    void SetFunctionName(std::string new_name) {name=new_name;}
+    void SetFunctionName(std::string new_name) { name = new_name; }
     std::vector<std::pair<enum LLVMType, Operand>> GetParameterList() { return args; }
     void push_back_Parameter(std::pair<enum LLVMType, Operand> newPara) { args.push_back(newPara); }
     void push_back_Parameter(enum LLVMType type, Operand val) { args.push_back(std::make_pair(type, val)); }
@@ -804,6 +805,7 @@ public:
     void push_idx_reg(int idx_reg_no) { indexes.push_back(GetNewRegOperand(idx_reg_no)); }
     void push_idx_imm32(int imm_idx) { indexes.push_back(new ImmI32Operand(imm_idx)); }
     void push_index(Operand idx) { indexes.push_back(idx); }
+    void change_index(int i, Operand op) { indexes[i] = op; }
 
     Operand GetResultReg() { return result; }
     enum LLVMType GetType() { return type; }
@@ -862,6 +864,7 @@ private:
     enum LLVMType return_type;
     std::string Func_name;
     bool is_more_args = false;
+
 public:
     Operand GetResultReg() { return NULL; }
     std::vector<enum LLVMType> formals;
