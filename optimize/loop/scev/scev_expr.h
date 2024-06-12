@@ -21,6 +21,7 @@ public:
     SCEVValue operator-(SCEVValue b);
     SCEVValue operator*(SCEVValue b);
     SCEVValue operator-();
+    bool operator==(SCEVValue b);
 
     void PrintSCEVValue();
     Instruction GenerateValueInst(CFG *C);

@@ -56,6 +56,7 @@ public:
         ANTI = 2,
         ANY = 3,
     };
+    //I1 and I2 must be GEP
     LoopDepResult CheckDependenceResult(Instruction I1, Instruction I2);
 
     void PrintLoopDebugInfo();

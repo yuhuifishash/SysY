@@ -174,7 +174,6 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             if (StepVal.op1 == nullptr) {
                 continue;
             }
-
             auto InitGEPI = new GetElementptrInstruction(GEPI->GetType(), GetNewRegOperand(++C->max_reg),
                                                          GEPI->GetPtrVal(), GEPI->GetDims());
 

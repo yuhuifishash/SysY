@@ -244,10 +244,10 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(AddParallelLib);
         llvmIR.PassExecutor(LoopParallel);
 
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopGepStrengthReduce);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);
+        // llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopGepStrengthReduce);
+        // llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(SimplifyCFG);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
