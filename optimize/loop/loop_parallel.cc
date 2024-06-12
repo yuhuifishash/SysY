@@ -32,9 +32,11 @@ void AddParallelLib(LLVMIR* IR) {
     IR->function_declare.push_back(ThreadCreateI_000);
 }
 
-bool StoreLoadDisJoint_LoopCheck(NaturalLoop *L, CFG *C) { return false; }
 
-bool NaturalLoop::LoopDataDependenceTest(CFG *C) { return false; }
+bool NaturalLoop::LoopDataDependenceTest(CFG *C) {
+    
+    return false; 
+}
 
 void LoopParallel(CFG *C) {
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
@@ -60,6 +62,7 @@ bool NaturalLoop::LoopParallel(CFG *C) {
     }
 
     // no data dependence, now we can parallel
+
 
     return false;
 }
