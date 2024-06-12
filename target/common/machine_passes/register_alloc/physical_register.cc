@@ -23,6 +23,9 @@ bool PhysicalRegisters::ReleaseReg(int phy_id, LiveInterval interval) {
 bool PhysicalRegisters::OccupyMem(int offset, int size, LiveInterval interval) {
     size /= 4;
     for (int i = offset; i < offset + size; i++) {
+        while(i >= mem_occupied.size()){
+            mem_occupied.push_back({});
+        }
         mem_occupied[i].push_back(interval);
     }
     return true;

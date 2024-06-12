@@ -587,6 +587,7 @@ protected:
 
 public:
     RiscV64Register() { phy_occupied.resize(64); }
+    void clear(){phy_occupied.clear(); Assert(phy_occupied.empty());phy_occupied.resize(64);}
 };
 
 #endif

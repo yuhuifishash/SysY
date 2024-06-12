@@ -8,18 +8,25 @@ void RiscV64LowerFrame::Execute() {
             if (b->getLabelId() == 0) {
                 int i32_cnt = 0;
                 int f32_cnt = 0;
+                int para_offset = 0;
                 for (auto para : func->GetParameters()) {
                     if (para.type.data_type == INT32.data_type) {
-                        b->push_front(rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_a0 + i32_cnt), INT32));
+                        if(i32_cnt < 8){
+                            b->push_front(rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_a0 + i32_cnt), INT32));
+                        }
                         if (i32_cnt >= 8) {
-                            TODO("INT Parameter in stack");
+                            b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            para_offset += 8;
                         }
                         i32_cnt++;
                     } else if (para.type.data_type == FLOAT_32.data_type) {
-                        b->push_front(
-                        rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_fa0 + f32_cnt), FLOAT_32));
+                        if(f32_cnt < 8){
+                            b->push_front(
+                            rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_fa0 + f32_cnt), FLOAT_32));
+                        }
                         if (f32_cnt >= 8) {
-                            TODO("FLOAT Parameter in stack");
+                            b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            para_offset += 8;
                         }
                         f32_cnt++;
                     } else {
@@ -67,6 +74,32 @@ void RiscV64LowerStack::Execute() {
                                                                GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 88));
                     b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_s11),
                                                                GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 96));
+
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs0),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 104));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs1),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 112));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs2),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 120));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs3),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 128));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs4),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 136));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs5),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 144));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs6),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 152));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs7),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 160));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs8),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 168));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs9),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 176));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs10),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 184));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs11),
+                                                               GetPhysicalReg(RISCV_sp), func->GetRaOffsetToSp() - 192));
+
                     b->push_front(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                GetPhysicalReg(RISCV_sp),
                                                                -func->GetStackSize()));    // sub sp
@@ -103,6 +136,31 @@ void RiscV64LowerStack::Execute() {
                                                                GetPhysicalReg(RISCV_sp), 2032 - 8 - 88));
                     b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_s11),
                                                                GetPhysicalReg(RISCV_sp), 2032 - 8 - 96));
+
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs0),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 104));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs1),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 112));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs2),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 120));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs3),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 128));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs4),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 136));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs5),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 144));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs6),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 152));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs7),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 160));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs8),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 168));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs9),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 176));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs10),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 184));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(RISCV_fs11),
+                                                               GetPhysicalReg(RISCV_sp), 2032 - 8 - 192));
                     b->push_front(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                GetPhysicalReg(RISCV_sp), -2032));
                 }
@@ -155,6 +213,43 @@ void RiscV64LowerStack::Execute() {
                             b->push_back(rvconstructor->ConstructIImm(RISCV_LD, GetPhysicalReg(RISCV_s11),
                                                                       GetPhysicalReg(RISCV_sp),
                                                                       func->GetRaOffsetToSp() - 8 * 12));
+                            b->push_back(rvconstructor->ConstructIImm(
+                                                                    RISCV_FLD, GetPhysicalReg(RISCV_fs0), 
+                                                                    GetPhysicalReg(RISCV_sp), 
+                                                                    func->GetRaOffsetToSp() - 8 * 13));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs1),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 14));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs2),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 15));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs3),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 16));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs4),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 17));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs5),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 18));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs6),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 19));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs7),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 20));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs8),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 21));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs9),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 22));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs10),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 23));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs11),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      func->GetRaOffsetToSp() - 8 * 24));
                             b->push_back(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                       GetPhysicalReg(RISCV_sp), func->GetStackSize()));
                         } else {
@@ -191,6 +286,43 @@ void RiscV64LowerStack::Execute() {
                                                                       GetPhysicalReg(RISCV_sp), 2032 - 8 - 8 * 11));
                             b->push_back(rvconstructor->ConstructIImm(RISCV_LD, GetPhysicalReg(RISCV_s11),
                                                                       GetPhysicalReg(RISCV_sp), 2032 - 8 - 8 * 12));
+                            b->push_back(rvconstructor->ConstructIImm(
+                                                                    RISCV_FLD, GetPhysicalReg(RISCV_fs0), 
+                                                                    GetPhysicalReg(RISCV_sp), 
+                                                                    2032 - 8 - 8 * 13));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs1),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 14));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs2),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 15));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs3),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 16));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs4),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 17));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs5),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 18));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs6),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 19));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs7),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 20));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs8),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 21));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs9),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 22));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs10),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 23));
+                            b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(RISCV_fs11),
+                                                                      GetPhysicalReg(RISCV_sp),
+                                                                      2032 - 8 - 8 * 24));
                             b->push_back(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                       GetPhysicalReg(RISCV_sp), 2032));
                         }

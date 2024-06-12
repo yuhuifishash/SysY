@@ -84,6 +84,9 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRd());
         s << ",";
         printRVfield(ins->getRs1());
+        if(ins->getOpcode() == RISCV_FCVT_W_S || ins->getOpcode() == RISCV_FCVT_WU_S){
+            s << ",rtz";
+        }
         s << "\n";
         return;
     case RvOpInfo::R4_type:

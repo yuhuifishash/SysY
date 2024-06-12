@@ -7,6 +7,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
     auto mfun = current_func;
     PRINT("FastLinearScan: %s", mfun->getFunctionName().c_str());
     // std::cerr<<"FastLinearScan: "<<mfun->getFunctionName()<<"\n";
+    phy_regs->clear();
     for (auto interval : intervals) {
         Assert(interval.first == interval.second.getReg());
         if (interval.first.is_virtual) {

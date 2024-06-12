@@ -16,6 +16,10 @@ protected:
     virtual std::vector<int> getAliasRegs(int phy_id);
 
 public:
+    virtual void clear(){
+        phy_occupied.clear();
+        mem_occupied.clear();
+    }
     virtual bool OccupyReg(int phy_id, LiveInterval interval);
     virtual bool ReleaseReg(int phy_id, LiveInterval interval);
 

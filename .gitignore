@@ -10,3 +10,4 @@ testcase/performance/*.in
 testcase/performance/*.out
 testcase/example/*
 ztemp/*
+submit/*

@@ -52,7 +52,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm
+.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm,submit
 
 SysYc : $(BINARY)
 
@@ -84,6 +84,9 @@ run : compile
 gdbasm : compile
 	./SysY_qemugdb_single.sh $(CASE) $(ARCH)
 
+submit :
+	rm -rf submit
+	mkdir submit
 
 lexer:lexer/SysY_lexer.l
 	flex -o lexer/SysY_lexer.cc lexer/SysY_lexer.l
