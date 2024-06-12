@@ -14,10 +14,18 @@ auto CalculatedDefAndUse(CFG *C) {
     for (auto [id, BB] : *C->block_map) {
         for (auto I : BB->Instruction_list) {
             if (I->GetOpcode() == STORE) {
-                defs[((StoreInstruction *)I)->GetDefRegNo()].insert(id);
-                def_num[((StoreInstruction *)I)->GetDefRegNo()]++;
+                auto StoreI = (StoreInstruction*)I;
+                if(StoreI->GetPointer()->GetOperandType() == BasicOperand::GLOBAL){
+                    continue;
+                }
+                defs[StoreI->GetDefRegNo()].insert(id);
+                def_num[StoreI->GetDefRegNo()]++;
             } else if (I->GetOpcode() == LOAD) {
-                uses[((LoadInstruction *)I)->GetUseRegNo()].insert(id);
+                auto LoadI = (LoadInstruction*)I;
+                if(LoadI->GetPointer()->GetOperandType() == BasicOperand::GLOBAL){
+                    continue;
+                }
+                uses[LoadI->GetUseRegNo()].insert(id);
             }
         }
     }

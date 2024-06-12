@@ -3,6 +3,7 @@
 #include "../alias_analysis/alias_analysis.h"
 #include <functional>
 
+extern std::map<std::string, CFG *> CFGMap;
 extern AliasAnalyser *alias_analyser;
 
 void AddParallelLib(LLVMIR* IR) {
@@ -36,6 +37,47 @@ void AddParallelLib(LLVMIR* IR) {
 }
 
 NaturalLoop::LoopDepResult NaturalLoop::CheckDependenceResult(Instruction I1, Instruction I2){ 
+    assert(I1->GetOpcode() == GETELEMENTPTR);
+    assert(I2->GetOpcode() == GETELEMENTPTR);
+
+    auto GEPI1 = (GetElementptrInstruction*)I1;
+    auto GEPI2 = (GetElementptrInstruction*)I2;
+
+    auto ptr1 = GEPI1->GetPtrVal(), ptr2 = GEPI2->GetPtrVal();
+    if(ptr1 != ptr2){
+        return ANY;
+    }
+    auto idxes1 = GEPI1->GetIndexes();
+    auto idxes2 = GEPI2->GetIndexes();
+    if(idxes1.size() != idxes2.size()){
+        return ANY;
+    }
+
+    for(int i = 0; i < idxes1.size(); ++i){
+        auto idx1 = idxes1[i];
+        auto idx2 = idxes2[i];
+        if(idx1->GetOperandType() == BasicOperand::REG && idx2->GetOperandType() == BasicOperand::REG){
+            auto r1 = ((RegOperand*)idx1)->GetRegNo();
+            auto r2 = ((RegOperand*)idx2)->GetRegNo();
+            if(scev.SCEVMap.find(r1) == scev.SCEVMap.end()){
+                continue;
+            }
+            if(scev.SCEVMap.find(r2) == scev.SCEVMap.end()){
+                continue;
+            }
+            auto scev1 = scev.SCEVMap[r1];
+            auto scev2 = scev.SCEVMap[r2];
+
+            if(scev1->len != 2 || scev2->len !=2 ){
+                continue;
+            }
+            auto step1 = scev1->RecurExpr->st, step2 = scev2->RecurExpr->st;
+            auto st1 = scev1->st, st2 = scev2->st;
+            if(st1 == st2 && step1 == step2){
+                return NONE;
+            }
+        }
+    }
     return ANY;
 }
 
@@ -64,6 +106,15 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
                 LoadList.push_back((LoadInstruction*)I);
             }else if(I->GetOpcode() == STORE){
                 StoreList.push_back((StoreInstruction*)I);
+            }else if(I->GetOpcode() == CALL){
+                auto CallI = (CallInstruction *)I;
+                if (CFGMap.find(CallI->GetFunctionName()) == CFGMap.end()) {
+                    return false;    // external call
+                }
+                auto targetcfg = CFGMap[CallI->GetFunctionName()];
+                if (!alias_analyser->CFG_isIndependent(targetcfg)) {
+                    return false;   // may r/w memory, we can not parallel
+                }
             }
         }
     }
@@ -74,6 +125,9 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
             auto ptr2 = StoreI->GetPointer();
             if(alias_analyser->QueryAlias(ptr1,ptr2,C) != AliasAnalyser::NoAlias){
                 //alias, may generate dependency
+                if(ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL){
+                    return false;
+                }
                 auto GEPI1 = ResultMap[((RegOperand*)ptr1)->GetRegNo()];
                 auto GEPI2 = ResultMap[((RegOperand*)ptr2)->GetRegNo()];
                 auto result = CheckDependenceResult(GEPI1,GEPI2);
@@ -109,8 +163,32 @@ bool NaturalLoop::LoopParallel(CFG *C) {
     if (!LoopCarriedDependenceTest(C)) {
         return false;
     }
+    // no data dependence
 
-    // no data dependence, now we can parallel
+    // now check the phi cnt in header
+    int phi_cnt = 0;
+    for(auto I:header->Instruction_list){
+        if(I->GetOpcode() == PHI){
+            ++phi_cnt;
+        }else{
+            break;
+        }
+    }
+    if(phi_cnt > 1){
+        // TODO(): reduction operator (+,min,max)
+        return false;
+    }
+
+    //now we can parallel the loop
+    std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
+
+    //add dynamic parallel check
+    
+
+    //transform loop to function
+
+
+    //add parallel function
 
 
     return false;
