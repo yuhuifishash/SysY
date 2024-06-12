@@ -1013,28 +1013,35 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
         if (ins->GetIndexes()[i]->GetOperandType() == BasicOperand::IMMI32) {
             const_offset += (((ImmI32Operand *)ins->GetIndexes()[i])->GetIntImmVal()) * product;
         } else {
+            auto index_op = (RegOperand *)ins->GetIndexes()[i];
+            auto index_reg = GetllvmReg(index_op->GetRegNo(), INT32);
             if (product != 1) {
-                TODO("mul_str_redu");
+                auto this_inc = GetNewReg(INT32);
+                // this_inc = indexes[i] * product
+                auto product_reg = GetNewReg(INT32);
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(product_reg, product, INT32));
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL,this_inc,index_reg,product_reg));
                 if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
-                    TODO("Add Instruction");
-                    // cur_block->push_back();
+                    // offset = this_inc
+                    cur_block->push_back(rvconstructor->ConstructCopyReg(offset_reg,this_inc,INT32));
                 } else {
-                    TODO("Add Instruction");
-                    // cur_block->push_back();
+                    auto new_offset = GetNewReg(INT32);
+                    // offset += this_inc
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_ADD,new_offset,offset_reg,this_inc));
+                    offset_reg = new_offset;
                 }
             } else {
                 if (offset_reg_assigned == 0) {
                     offset_reg_assigned = 1;
-                    // TODO("Add Instruction");
-                    // mov offset_reg,indexes[i]
-                    auto index_op = (RegOperand *)ins->GetIndexes()[i];
-                    auto index_reg = GetllvmReg(index_op->GetRegNo(), INT32);
+                    // offset_reg = indexes[i]
                     auto offset_reg_set_instr = rvconstructor->ConstructCopyReg(offset_reg, index_reg, INT32);
                     cur_block->push_back(offset_reg_set_instr);
                 } else {
-                    TODO("Add Instruction");
-                    // cur_block->push_back();
+                    auto new_offset = GetNewReg(INT32);
+                    // offset += indexes[i]
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_ADD,new_offset,offset_reg,index_reg));
+                    offset_reg = new_offset;
                 }
             }
         }
@@ -1055,8 +1062,10 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
 
             cur_block->push_back(li_instr);
         } else {
-            TODO("Add Instruction");
-            // cur_block->push_back();
+            // TODO("Add Instruction");
+            auto new_offset = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ADDI,new_offset,offset_reg,const_offset));
+            offset_reg = new_offset;
         }
     }
     if (ins->GetPtrVal()->GetOperandType() == BasicOperand::REG) {
