@@ -708,9 +708,13 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
             cmp_op1 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp1())->GetRegNo(), FLOAT_32);
         } else if (fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMF32) {
             cmp_op1 = GetNewReg(FLOAT_32);
-            auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(
-            cmp_op1, ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal(), FLOAT_32);
-            cur_block->push_back(copy_imm_instr);
+            auto cmp_oppre = GetNewReg(INT32);
+            float float_val = ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre,*(int*)&float_val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,cmp_op1,cmp_oppre));
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(
+            // cmp_op1, ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal(), FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
         } else {
             ERROR("Unexpected FCMP op1 type");
         }
@@ -718,9 +722,13 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
             cmp_op2 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp2())->GetRegNo(), FLOAT_32);
         } else if (fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMF32) {
             cmp_op2 = GetNewReg(FLOAT_32);
-            auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(
-            cmp_op2, ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal(), FLOAT_32);
-            cur_block->push_back(copy_imm_instr);
+            auto cmp_oppre = GetNewReg(INT32);
+            float float_val = ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre,*(int*)&float_val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,cmp_op2,cmp_oppre));
+            // auto copy_imm_instr = rvconstructor->ConstructCopyRegImmF(
+            // cmp_op2, ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal(), FLOAT_32);
+            // cur_block->push_back(copy_imm_instr);
         } else {
             ERROR("Unexpected FCMP op2 type");
         }
@@ -859,9 +867,12 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                 } else if (arg_op->GetOperandType() == BasicOperand::IMMF32) {
                     auto arg_immop = (ImmF32Operand *)arg_op;
                     auto arg_imm = arg_immop->GetFloatVal();
-                    auto arg_copy_instr =
-                    rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0 + ireg_cnt), arg_imm, FLOAT_32);
-                    cur_block->push_back(arg_copy_instr);
+                    // auto arg_copy_instr =
+                    // rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0 + freg_cnt), arg_imm, FLOAT_32);
+                    // cur_block->push_back(arg_copy_instr);
+                    auto imm_reg = GetNewReg(INT32);
+                    cur_block->push_back(rvconstructor->ConstructCopyRegImmI(imm_reg,*(int*)&arg_imm,INT32));
+                    cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,GetPhysicalReg(RISCV_fa0 + freg_cnt),imm_reg));
                 } else {
                     ERROR("Unexpected Operand type");
                 }
@@ -987,8 +998,11 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
             auto retimm_op = (ImmF32Operand *)ins->GetRetVal();
             auto imm = retimm_op->GetFloatVal();
 
-            auto retcopy_instr = rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0), imm, FLOAT_32);
-            cur_block->push_back(retcopy_instr);
+            // auto retcopy_instr = rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0), imm, FLOAT_32);
+            // cur_block->push_back(retcopy_instr);
+            auto imm_reg = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(imm_reg,*(int*)&imm,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X, GetPhysicalReg(RISCV_fa0), imm_reg));
         }
     }
     // restore ra
@@ -1052,12 +1066,12 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
     Assert(cmp_ins != nullptr);
     auto result_reg = GetllvmReg(((RegOperand *)ins->GetDst())->GetRegNo(), INT32);
 
-    int opcode;
     if (cmp_ins->GetOpcode() == ICMP) {
         auto icmp_ins = (IcmpInstruction *)cmp_ins;
         auto op1 = icmp_ins->GetOp1();
         auto op2 = icmp_ins->GetOp2();
         auto cur_cond = icmp_ins->GetCompareCondition();
+        Register reg_1,reg_2;
         if(op1->GetOperandType() == BasicOperand::IMMI32){
             auto t = op1;
             op1 = op2;
@@ -1119,25 +1133,79 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
             return;
         }
         if(op2->GetOperandType() == BasicOperand::IMMI32){
+            Assert(op1->GetOperandType() == BasicOperand::REG);
+            auto op1_reg = GetllvmReg(((RegOperand*)op1)->GetRegNo(),INT32);
             if(((ImmI32Operand*)op2)->GetIntImmVal() == 0){
-
+                auto not_reg = GetNewReg(INT32);
+                switch(cur_cond){
+                    case eq:
+                    cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SLTIU,result_reg,op1_reg,1));
+                    return;
+                    case ne:
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_SLTU,result_reg,GetPhysicalReg(RISCV_x0),op1_reg));
+                    return;
+                    case sgt:
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,result_reg,GetPhysicalReg(RISCV_x0),op1_reg));
+                    return;
+                    case sge:// sgez ~ not sltz
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,not_reg,op1_reg,GetPhysicalReg(RISCV_x0)));
+                    cur_block->push_back(rvconstructor->ConstructIImm(RISCV_XORI,result_reg,not_reg,1));
+                    return;
+                    case slt:
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,result_reg,op1_reg,GetPhysicalReg(RISCV_x0)));
+                    return;
+                    case sle:// slez ~ not sgtz
+                    cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,not_reg,GetPhysicalReg(RISCV_x0),op1_reg));
+                    cur_block->push_back(rvconstructor->ConstructIImm(RISCV_XORI,result_reg,not_reg,1));
+                    return;
+                    case ugt:
+                    case uge:
+                    case ult:
+                    case ule:
+                    default:
+                    ERROR("Unexpected ICMP cond");
+                }
             }else if(cur_cond == slt){
-
+                int op2_imm = ((ImmI32Operand*)op2)->GetIntImmVal();
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SLTI,result_reg,op1_reg,op2_imm));
+                return;
+            }else if(cur_cond == ult){
+                int op2_imm = ((ImmI32Operand*)op2)->GetIntImmVal();
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SLTIU,result_reg,op1_reg,op2_imm));
+                return;
             }
+            reg_2 = GetNewReg(INT32);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(reg_2, ((ImmI32Operand*)op2)->GetIntImmVal(),INT32));
         }
+        Assert(op1->GetOperandType() == BasicOperand::REG);
+        reg_1 = GetllvmReg(((RegOperand*)op1)->GetRegNo(),INT32);
+        if(op2->GetOperandType() == BasicOperand::REG){
+            reg_2 = GetllvmReg(((RegOperand*)op2)->GetRegNo(),INT32);
+        }
+        auto mid_reg = GetNewReg(INT32);
         switch (cur_cond) {
         case eq:
-            break;
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SUBW,mid_reg,reg_1,reg_2));
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SLTIU,result_reg,mid_reg,1));
+            return;
         case ne:
-            break;
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SUBW,mid_reg,reg_1,reg_2));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SLTU,result_reg,GetPhysicalReg(RISCV_x0),mid_reg));
+            return;
         case sgt:
-            break;
-        case sge:
-            break;
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,result_reg,reg_2,reg_1));
+            return;
+        case sge:// reg_1 >= reg_2 <==> not reg_1 < reg_2
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,mid_reg,reg_1,reg_2));
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_XORI,result_reg,mid_reg,1));
+            return;
         case slt:
-            break;
-        case sle:
-            break;
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,result_reg,reg_1,reg_2));
+            return;
+        case sle:// 2 < 1  2 >= 1 1 <= 2 
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SLT,mid_reg,reg_2,reg_1));
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_XORI,result_reg,mid_reg,1));
+            return;
         case ugt:
         case uge:
         case ult:
@@ -1146,7 +1214,63 @@ template <> void RiscV64Selector::ConvertAndAppend<ZextInstruction *>(ZextInstru
             ERROR("Unexpected ICMP cond");
         }
     } else if (cmp_ins->GetOpcode() == FCMP) {
-        TODO("FCMP+BR");
+        auto fcmp_ins = (FcmpInstruction *)cmp_ins;
+        Register cmp_op1,cmp_op2;
+        if (fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG) {
+            cmp_op1 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp1())->GetRegNo(), FLOAT_32);
+        } else if (fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMF32) {
+            cmp_op1 = GetNewReg(FLOAT_32);
+            auto cmp_oppre = GetNewReg(INT32);
+            float float_val = ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre,*(int*)&float_val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,cmp_op1,cmp_oppre));
+        } else {
+            ERROR("Unexpected FCMP op1 type");
+        }
+        if (fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::REG) {
+            cmp_op2 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp2())->GetRegNo(), FLOAT_32);
+        } else if (fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMF32) {
+            cmp_op2 = GetNewReg(FLOAT_32);
+            auto cmp_oppre = GetNewReg(INT32);
+            float float_val = ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre,*(int*)&float_val,INT32));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X,cmp_op2,cmp_oppre));
+        } else {
+            ERROR("Unexpected FCMP op2 type");
+        }
+        switch (fcmp_ins->GetCompareCondition()) {
+        case OEQ:
+        case UEQ:
+            // FEQ.S
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, result_reg, cmp_op1, cmp_op2));
+            break;
+        case OGT:
+        case UGT:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, result_reg, cmp_op2, cmp_op1));
+            break;
+        case OGE:
+        case UGE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, result_reg, cmp_op2, cmp_op1));
+            break;
+        case OLT:
+        case ULT:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, result_reg, cmp_op1, cmp_op2));
+            break;
+        case OLE:
+        case ULE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, result_reg, cmp_op1, cmp_op2));
+            break;
+        case ONE:
+        case UNE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, result_reg, cmp_op1, cmp_op2));
+            break;
+        case ORD:
+        case UNO:
+        case TRUE:
+        case FALSE:
+        default:
+            ERROR("Unexpected FCMP cond");
+        }
     } else {
         ERROR("Unexpected ins Before zext");
     }

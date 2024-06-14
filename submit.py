@@ -6,6 +6,11 @@ import re
 if __name__ == '__main__':
     if not os.path.exists('submit'):
         os.mkdir('submit')
+    else:
+        for file_name in os.listdir('submit'):
+            remove_path = os.path.join('submit',file_name)
+            if os.path.isfile(remove_path):
+                os.remove(remove_path)
     for dir in os.walk('.'):
         if not dir[0].endswith('submit'):
             for file in dir[2]:
