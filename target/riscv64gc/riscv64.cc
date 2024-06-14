@@ -276,3 +276,26 @@ std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
         return std::vector<int>();
     }
 }
+
+Register RiscV64Spiller::GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type){
+    auto read_mid_reg = function->GetNewRegister(type.data_type,type.data_length);
+    // missing lowerimm
+    // missing stack size adjust
+    if(type == INT32){
+        cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,read_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert load
+    } else if(type == FLOAT_32){
+        cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLD,read_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));
+    }
+    return read_mid_reg;
+}
+
+Register RiscV64Spiller::GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type){
+    auto write_mid_reg = function->GetNewRegister(type.data_type,type.data_length);
+    if(type == INT32){
+        cur_block->insert(++it,rvconstructor->ConstructSImm(RISCV_SD,write_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert store
+    } else if(type == FLOAT_32){
+        cur_block->insert(++it,rvconstructor->ConstructSImm(RISCV_FSD,write_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert store
+    }
+    --it;
+    return write_mid_reg;
+}

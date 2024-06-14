@@ -2,6 +2,7 @@
 #define RISCV64_H
 #include "../common/MachineBaseInstruction.h"
 #include "../common/machine_passes/register_alloc/physical_register.h"
+#include "../common/machine_passes/register_alloc/basic_register_allocation.h"
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"
@@ -588,6 +589,12 @@ protected:
 public:
     RiscV64Register() { phy_occupied.resize(64); }
     void clear(){phy_occupied.clear(); Assert(phy_occupied.empty());phy_occupied.resize(64);}
+};
+
+class RiscV64Spiller : public SpillCodeGen{
+private:
+    Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type);
+    Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type);
 };
 
 #endif

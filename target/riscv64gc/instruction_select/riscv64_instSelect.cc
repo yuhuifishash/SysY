@@ -11,7 +11,7 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
         if (ins->GetDataType() == I32) {
             Register rd = GetllvmReg(rd_op->GetRegNo(), INT32);
             if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
-                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);
+                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);// INT64 HERE
                 auto lw_instr = rvconstructor->ConstructIImm(RISCV_LW, rd, ptr, 0);
                 cur_block->push_back(lw_instr);
             } else {
@@ -22,7 +22,7 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
         } else if (ins->GetDataType() == FLOAT32) {
             Register rd = GetllvmReg(rd_op->GetRegNo(), FLOAT_32);
             if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
-                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);
+                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT32);// INT64 HERE
                 auto lw_instr = rvconstructor->ConstructIImm(RISCV_FLW, rd, ptr, 0);
                 cur_block->push_back(lw_instr);
             } else {
@@ -1568,6 +1568,7 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 // cur_block->push_back(rvconstructor->ConstructComment("TODO: Should save ra here\n"));
                 // cur_block->push_back(
                 // rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_ra), GetPhysicalReg(RISCV_sp), 0));
+                // cur_block->push_back(rvconstructor->ConstructCall(RISCV_CALL,"__pthread_test_call"));
             }
             for (auto instruction : block->Instruction_list) {
                 // Log("Selecting Instruction");

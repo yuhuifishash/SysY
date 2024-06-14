@@ -258,11 +258,12 @@ int main(int argc, char **argv) {
     if (strcmp(argv[step_tag], "-S") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();
         RiscV64Register regs;
+        RiscV64Spiller spiller;
 
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
         RiscV64LowerFrame(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
-        FastLinearScan(m_unit, &regs).Execute();
+        FastLinearScan(m_unit, &regs, &spiller).Execute();
         RiscV64LowerCopy(m_unit).Execute();
         RiscV64LowerStack(m_unit).Execute();
 

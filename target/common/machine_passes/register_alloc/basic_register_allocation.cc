@@ -1,11 +1,31 @@
 #include "basic_register_allocation.h"
 void RegisterAllocation::Execute() {
     InstructionNumber(unit).Execute();
-    for (auto func : unit->functions) {
-        current_func = func;
-        UpdateIntervalsInCurrentFunc();
-        DoAllocInCurrentFunc();
+    for (auto func : unit->functions){
+        not_allocated_funcs.push(func);
     }
+    int iterations = 0;
+    while(!not_allocated_funcs.empty()){
+        current_func = not_allocated_funcs.front();
+        not_allocated_funcs.pop();
+        UpdateIntervalsInCurrentFunc();
+        if(DoAllocInCurrentFunc()){
+            // Generate Spill Code
+            // TODO("Spill Code Example");
+            spiller->ExecuteInFunc(current_func,&alloc_result[current_func]);
+            not_allocated_funcs.push(current_func);
+            InstructionNumber(unit).ExecuteInFunc(current_func);
+            iterations++;
+            if(iterations >= 50){
+                ERROR("Too much iterations, Something Wrong");
+            }
+        }
+    }
+    // for (auto func : unit->functions) {
+    //     current_func = func;
+    //     UpdateIntervalsInCurrentFunc();
+    //     DoAllocInCurrentFunc();
+    // }
     // Log("Alloc Result:");
     // for(auto pair : alloc_result){
     //     auto func = pair.first;
@@ -39,6 +59,22 @@ void InstructionNumber::Execute() {
         }
     }
 }
+void InstructionNumber::ExecuteInFunc(MachineFunction* func){
+    int count_begin = 1;
+    current_func = func;
+    // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
+    // changed
+    auto it = func->getMachineCFG()->getBFSIterator();
+    it->open();
+    while (it->hasNext()) {
+        auto mcfg_node = it->next();
+        auto mblock = mcfg_node->Mblock;
+        // Update instruction number
+        for (auto ins : *mblock) {
+            ins->setNumber(count_begin++);
+        }
+    }
+}
 
 void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
     intervals.clear();
@@ -59,8 +95,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<"
-        // "<<mblock->getBlockOutNumber()<<"\n";
+        std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
         //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
