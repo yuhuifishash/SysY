@@ -13,7 +13,7 @@ protected:
     bool DoAllocInCurrentFunc();
 
 public:
-    FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy);
+    FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy,SpillCodeGen* spiller);
 };
 
 #endif

@@ -51,6 +51,7 @@ public:
     void AddStackSize(int sz) { stack_sz += sz; }
     int GetStackSize() { return ((stack_sz + 15) / 16) * 16; }
     int GetRaOffsetToSp() { return stack_sz - 8; }
+    int GetStackOffset() {return stack_sz;}
     MachineCFG *getMachineCFG() { return mcfg; }
     MachineUnit *getParentMachineUnit() { return parent; }
     std::string getFunctionName() { return func_name; }

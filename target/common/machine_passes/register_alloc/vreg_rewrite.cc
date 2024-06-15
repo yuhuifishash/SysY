@@ -24,7 +24,8 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
-                    TODO("Implement VirtualRegisterRewrite Read Spill Code Gen");
+                    // TODO("Implement VirtualRegisterRewrite Read Spill Code Gen");
+                    ERROR("Shouldn't reach here");
                     // new_load_reg = GetNewReg();
                     // insertasmBeforeins("load new_load_reg = [fp,mem_offset]")
                     // for(oldreg& : ins->GetReadReg()) if(oldreg==reg) oldreg=new_load_reg
@@ -42,13 +43,43 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
-                    TODO("Implement VirtualRegisterRewrite Write Spill Code Gen");
+                    // TODO("Implement VirtualRegisterRewrite Write Spill Code Gen");
+                    ERROR("Shouldn't reach here");
                     // new_store_reg = GetNewReg();
                     // for(oldreg& : ins->GetWriteReg()) if(oldreg==reg) oldreg=new_store_reg
                     // insertasmAfterins("store new_store_reg , [fp,mem_offset]")
                 } else {
                     reg->is_virtual = false;
                     reg->reg_no = result.phy_reg_no;
+                }
+            }
+        }
+    }
+}
+
+void SpillCodeGen::ExecuteInFunc(MachineFunction* function,std::map<Register, AllocResult> *alloc_result){
+    this->function = function;
+    this->alloc_result = alloc_result;
+    auto block_it = function->getMachineCFG()->getSeqScanIterator();
+    block_it->open();
+    while(block_it->hasNext()){
+        cur_block = block_it->next()->Mblock;
+        for(auto it = cur_block->begin(); it != cur_block->end(); ++it){
+            auto ins = *it;
+            for(auto reg : ins->GetReadReg()){
+                if(reg->is_virtual == false) continue;
+                auto result = alloc_result->find(*reg)->second;
+                if(result.in_mem == true){
+                    // Spill Code Gen
+                    *reg = GenerateReadCode(it,result.stack_offset,reg->type);
+                }
+            }
+            for(auto reg : ins->GetWriteReg()){
+                if(reg->is_virtual == false)continue;
+                auto result = alloc_result->find(*reg)->second;
+                if(result.in_mem == true){
+                    // Spill Code Gen
+                    *reg = GenerateWriteCode(it,result.stack_offset,reg->type);
                 }
             }
         }

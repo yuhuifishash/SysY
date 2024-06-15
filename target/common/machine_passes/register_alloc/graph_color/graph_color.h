@@ -20,6 +20,6 @@ protected:
     bool DoAllocInCurrentFunc();
 
 public:
-    GraphColor(MachineUnit *unit, PhysicalRegisters *phy) : RegisterAllocation(unit, phy) {}
+    GraphColor(MachineUnit *unit, PhysicalRegisters *phy, SpillCodeGen *spiller) : RegisterAllocation(unit, phy,spiller) {}
 };
 #endif

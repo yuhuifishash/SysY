@@ -14,10 +14,13 @@ struct AllocResult {
     };
 };
 
+class SpillCodeGen;
+
 class RegisterAllocation : public MachinePass {
 private:
     void UpdateIntervalsInCurrentFunc();
-
+    std::queue<MachineFunction*> not_allocated_funcs;
+    SpillCodeGen *spiller;
 protected:
     void AllocPhyReg(MachineFunction *mfun, Register vreg, int phyreg) {
         Assert(vreg.is_virtual);
@@ -57,7 +60,7 @@ protected:
     std::map<MachineFunction *, std::map<Register, AllocResult>> alloc_result;
 
 public:
-    RegisterAllocation(MachineUnit *unit, PhysicalRegisters *phy) : MachinePass(unit), phy_regs(phy) {}
+    RegisterAllocation(MachineUnit *unit, PhysicalRegisters *phy,SpillCodeGen* spiller) : MachinePass(unit), phy_regs(phy), spiller(spiller) {}
     void Execute();
 };
 
@@ -65,6 +68,7 @@ class InstructionNumber : public MachinePass {
 public:
     InstructionNumber(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
+    void ExecuteInFunc(MachineFunction* func);
 };
 
 class VirtualRegisterRewrite : public MachinePass {
@@ -77,6 +81,19 @@ public:
         : MachinePass(unit), alloc_result(alloc_result) {}
     void Execute();
     void ExecuteInFunc();
+};
+
+class SpillCodeGen{
+private:
+    std::map<Register, AllocResult> *alloc_result;
+    virtual Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
+    virtual Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
+protected:
+    MachineFunction* function;
+    MachineBlock* cur_block;
+public:
+    // SpillCodeGen(MachineFunction* function,std::map<Register, AllocResult> *alloc_result) : alloc_result(alloc_result), function(function) {}
+    void ExecuteInFunc(MachineFunction* function,std::map<Register, AllocResult> *alloc_result);
 };
 
 #endif
