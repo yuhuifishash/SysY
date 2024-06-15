@@ -46,7 +46,7 @@ void BasicBlockDSE(CFG *C) {
 
 // I1 Post-dom I2
 // if after execute I1, may execute I2, return true;
-bool CanReach(Instruction I1, Instruction I2, CFG *C) {
+static bool CanReach(Instruction I1, Instruction I2, CFG *C) {
     auto bb1_id = I1->GetBlockID();
     auto bb2_id = I2->GetBlockID();
     if (bb1_id == bb2_id) {

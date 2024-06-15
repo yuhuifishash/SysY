@@ -180,7 +180,7 @@ bool NaturalLoop::LoopParallel(CFG *C) {
     }
 
     //now we can parallel the loop
-    std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
+    // std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
 
     //add dynamic parallel check
     

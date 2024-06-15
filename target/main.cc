@@ -76,6 +76,8 @@ void LoopIdomRecognize(CFG *C);
 void LoopGepStrengthReduce(CFG *C);
 void OnlyBasicBlockCSE(CFG *C);
 void LoopParallel(CFG *C);
+void LoopFusion(CFG *C);
+void BranchCSE(CFG* C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -175,18 +177,21 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimplifyCFG);
+        
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
-
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
+        llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
-        // TODO():GVN/GCM
-
+        llvmIR.PassExecutor(BranchCSE);
+        
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstCombine);
@@ -220,6 +225,7 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(InstCombine);
             llvmIR.PassExecutor(SimpleDCE);
         }
+        llvmIR.PassExecutor(BranchCSE);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
@@ -235,14 +241,21 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
+
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(AddParallelLib);
-        llvmIR.PassExecutor(LoopParallel);
+        llvmIR.PassExecutor(LoopFusion);
+
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor(LoopSimplify);
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor(LoopClosedSSA);
+        // llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(AddParallelLib);
+        // llvmIR.PassExecutor(LoopParallel);
 
         // llvmIR.PassExecutor(ScalarEvolution);
         // llvmIR.PassExecutor(LoopGepStrengthReduce);

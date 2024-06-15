@@ -34,8 +34,7 @@ struct InstCSEInfo {
     }
 };
 
-// memory instructions and special instructions will return false
-InstCSEInfo GetCSEInfo(Instruction I) {
+static InstCSEInfo GetCSEInfo(Instruction I) {
     InstCSEInfo ans;
     ans.opcode = I->GetOpcode();
 
@@ -62,6 +61,7 @@ InstCSEInfo GetCSEInfo(Instruction I) {
     return ans;
 }
 
+// memory instructions and special instructions will return false
 bool CSENotConsider(Instruction I) {
     if (I->GetOpcode() == PHI || I->GetOpcode() == BR_COND || I->GetOpcode() == BR_UNCOND || I->GetOpcode() == ALLOCA ||
         I->GetOpcode() == RET || I->GetOpcode() == ICMP || I->GetOpcode() == FCMP) {
