@@ -1025,6 +1025,7 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
 
     // return
     auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0), GetPhysicalReg(RISCV_ra), 0);
+    ret_instr->setRetUsea0(true);
     cur_block->push_back(ret_instr);
 }
 

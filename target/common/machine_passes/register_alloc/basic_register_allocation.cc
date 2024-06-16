@@ -110,8 +110,9 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 // No previous Use, New Range
                 intervals[reg].PushFront(mblock->getBlockInNumber(), mblock->getBlockOutNumber());
             } else {
-                // Have previous Use, Extend Range
-                intervals[reg].SetMostBegin(mblock->getBlockInNumber());
+                // Have previous Use, No Extend Range
+                // intervals[reg].SetMostBegin(mblock->getBlockInNumber());
+                intervals[reg].PushFront(mblock->getBlockInNumber(), mblock->getBlockOutNumber());
             }
             last_use[reg] = mblock->getBlockOutNumber();
         }
@@ -157,7 +158,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
 
                 if (last_use.find(*reg) != last_use.end() /*|| (last_def[*reg] == last_use[*reg])*/) {
                     // Have Last Use, Extend Range
-                    intervals[*reg].SetMostBegin(mblock->getBlockInNumber());
+                    // intervals[*reg].SetMostBegin(mblock->getBlockInNumber());
                 } else {
                     // No Last Use, New Range
                     intervals[*reg].PushFront(mblock->getBlockInNumber(), ins->getNumber());
@@ -167,6 +168,8 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 intervals[*reg].IncreaseReferenceCount(1);
             }
         }
+        last_use.clear();
+        last_def.clear();
     }
 
     // Log("Check Intervals %s",mfun->getFunctionName().c_str());

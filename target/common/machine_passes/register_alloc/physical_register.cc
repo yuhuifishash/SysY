@@ -134,7 +134,7 @@ std::vector<LiveInterval> PhysicalRegisters::getConflictIntervals(LiveInterval i
     std::vector<LiveInterval> result;
     for (auto phy_intervals : phy_occupied) {
         for (auto other_interval : phy_intervals) {
-            if (interval & other_interval) {
+            if (interval.getReg().type == other_interval.getReg().type && (interval & other_interval)) {
                 result.push_back(other_interval);
             }
         }
