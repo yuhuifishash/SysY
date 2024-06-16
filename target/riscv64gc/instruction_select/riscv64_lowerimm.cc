@@ -13,14 +13,14 @@ void RiscV64LowerImm::Execute() {
                         continue;
                     if (cur_rvins->getUseLabel() == true)
                         continue;
-                    if(cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_SW || cur_rvins->getOpcode() == RISCV_FLW || cur_rvins->getOpcode() == RISCV_FSW){
+                    if(cur_rvins->getOpcode() == RISCV_LD || cur_rvins->getOpcode() == RISCV_SD || cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_SW || cur_rvins->getOpcode() == RISCV_FLW || cur_rvins->getOpcode() == RISCV_FSW){
                     // if (OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::I_type||OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::S_type) {
                         it = block->erase(it);
-                        auto imm_reg = current_func->GetNewRegister(INT32.data_type,INT32.data_length);
-                        auto addr_reg = current_func->GetNewRegister(INT32.data_type,INT32.data_length);
-                        block->insert(it, rvconstructor->ConstructCopyRegImmI(imm_reg,cur_rvins->getImm(),INT32));
+                        auto imm_reg = current_func->GetNewRegister(INT64.data_type,INT64.data_length);
+                        auto addr_reg = current_func->GetNewRegister(INT64.data_type,INT64.data_length);
+                        block->insert(it, rvconstructor->ConstructCopyRegImmI(imm_reg,cur_rvins->getImm(),INT64));
                         Register addrbase_reg;
-                        if(cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_FLW){
+                        if(cur_rvins->getOpcode() == RISCV_LD || cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_FLW){
                             addrbase_reg = cur_rvins->getRs1();
                             cur_rvins->setRs1(addr_reg);
                         }else{
@@ -34,8 +34,8 @@ void RiscV64LowerImm::Execute() {
                     // }
                     }else if(OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::I_type){
                         it = block->erase(it);
-                        auto imm_reg = current_func->GetNewRegister(INT32.data_type,INT32.data_length);
-                        block->insert(it,rvconstructor->ConstructCopyRegImmI(imm_reg,cur_rvins->getImm(),INT32));
+                        auto imm_reg = current_func->GetNewRegister(INT64.data_type,INT64.data_length);
+                        block->insert(it,rvconstructor->ConstructCopyRegImmI(imm_reg,cur_rvins->getImm(),INT64));
                         cur_rvins->setRs2(imm_reg);
                         cur_rvins->setImm(0);
                         switch(cur_rvins->getOpcode()){

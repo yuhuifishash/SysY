@@ -217,17 +217,17 @@ struct RiscV64RegisterInfo RiscV64Registers[] = {
 [RISCV_f31] = {"ft11"}, [RISCV_INVALID] = {"INVALID"}, [RISCV_spilled_in_memory] = {"spilled_in_memory"},
 };
 Register RISCVregs[] = {
-Register(false, RISCV_x0, INT32),     Register(false, RISCV_x1, INT32),     Register(false, RISCV_x2, INT32),
-Register(false, RISCV_x3, INT32),     Register(false, RISCV_x4, INT32),     Register(false, RISCV_x5, INT32),
-Register(false, RISCV_x6, INT32),     Register(false, RISCV_x7, INT32),     Register(false, RISCV_x8, INT32),
-Register(false, RISCV_x9, INT32),     Register(false, RISCV_x10, INT32),    Register(false, RISCV_x11, INT32),
-Register(false, RISCV_x12, INT32),    Register(false, RISCV_x13, INT32),    Register(false, RISCV_x14, INT32),
-Register(false, RISCV_x15, INT32),    Register(false, RISCV_x16, INT32),    Register(false, RISCV_x17, INT32),
-Register(false, RISCV_x18, INT32),    Register(false, RISCV_x19, INT32),    Register(false, RISCV_x20, INT32),
-Register(false, RISCV_x21, INT32),    Register(false, RISCV_x22, INT32),    Register(false, RISCV_x23, INT32),
-Register(false, RISCV_x24, INT32),    Register(false, RISCV_x25, INT32),    Register(false, RISCV_x26, INT32),
-Register(false, RISCV_x27, INT32),    Register(false, RISCV_x28, INT32),    Register(false, RISCV_x29, INT32),
-Register(false, RISCV_x30, INT32),    Register(false, RISCV_x31, INT32),    Register(false, RISCV_f0, FLOAT_32),
+Register(false, RISCV_x0, INT64),     Register(false, RISCV_x1, INT64),     Register(false, RISCV_x2, INT64),
+Register(false, RISCV_x3, INT64),     Register(false, RISCV_x4, INT64),     Register(false, RISCV_x5, INT64),
+Register(false, RISCV_x6, INT64),     Register(false, RISCV_x7, INT64),     Register(false, RISCV_x8, INT64),
+Register(false, RISCV_x9, INT64),     Register(false, RISCV_x10, INT64),    Register(false, RISCV_x11, INT64),
+Register(false, RISCV_x12, INT64),    Register(false, RISCV_x13, INT64),    Register(false, RISCV_x14, INT64),
+Register(false, RISCV_x15, INT64),    Register(false, RISCV_x16, INT64),    Register(false, RISCV_x17, INT64),
+Register(false, RISCV_x18, INT64),    Register(false, RISCV_x19, INT64),    Register(false, RISCV_x20, INT64),
+Register(false, RISCV_x21, INT64),    Register(false, RISCV_x22, INT64),    Register(false, RISCV_x23, INT64),
+Register(false, RISCV_x24, INT64),    Register(false, RISCV_x25, INT64),    Register(false, RISCV_x26, INT64),
+Register(false, RISCV_x27, INT64),    Register(false, RISCV_x28, INT64),    Register(false, RISCV_x29, INT64),
+Register(false, RISCV_x30, INT64),    Register(false, RISCV_x31, INT64),    Register(false, RISCV_f0, FLOAT_32),
 Register(false, RISCV_f1, FLOAT_32),  Register(false, RISCV_f2, FLOAT_32),  Register(false, RISCV_f3, FLOAT_32),
 Register(false, RISCV_f4, FLOAT_32),  Register(false, RISCV_f5, FLOAT_32),  Register(false, RISCV_f6, FLOAT_32),
 Register(false, RISCV_f7, FLOAT_32),  Register(false, RISCV_f8, FLOAT_32),  Register(false, RISCV_f9, FLOAT_32),
@@ -247,6 +247,7 @@ std::vector<int> RiscV64Register::getValidRegs(LiveInterval interval) {
             RISCV_t0, RISCV_t1, RISCV_t2, RISCV_t3, RISCV_t4, RISCV_t5, RISCV_t6, RISCV_a0,  RISCV_a1,
             RISCV_a2, RISCV_a3, RISCV_a4, RISCV_a5, RISCV_a6, RISCV_a7, RISCV_s0, RISCV_s1,  RISCV_s2,
             RISCV_s3, RISCV_s4, RISCV_s5, RISCV_s6, RISCV_s7, RISCV_s8, RISCV_s9, RISCV_s10, RISCV_s11,
+            RISCV_ra,
             });
         } else {
             return std::vector<int>({
@@ -281,20 +282,49 @@ Register RiscV64Spiller::GenerateReadCode(std::list<MachineBaseInstruction *>::i
     auto read_mid_reg = function->GetNewRegister(type.data_type,type.data_length);
     // missing lowerimm
     // missing stack size adjust
-    if(type == INT32){
-        cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,read_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert load
-    } else if(type == FLOAT_32){
-        cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLD,read_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));
+    int offset = raw_stk_offset + function->GetStackOffset();
+    cur_block->insert(it,rvconstructor->ConstructComment("Read Spill\n"));
+    if(offset <= 2047 && offset >= -2048){
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,read_mid_reg,GetPhysicalReg(RISCV_sp),offset));// insert load
+        } else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLW,read_mid_reg,GetPhysicalReg(RISCV_sp),offset));
+        }
+    }else{
+        auto imm_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        auto offset_mid_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        cur_block->insert(it,rvconstructor->ConstructUImm(RISCV_LI,imm_reg,offset));
+        cur_block->insert(it,rvconstructor->ConstructR(RISCV_ADD,offset_mid_reg,GetPhysicalReg(RISCV_sp),imm_reg));
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,read_mid_reg,offset_mid_reg,0));
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLW,read_mid_reg,offset_mid_reg,0));
+        }
     }
     return read_mid_reg;
 }
 
 Register RiscV64Spiller::GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type){
     auto write_mid_reg = function->GetNewRegister(type.data_type,type.data_length);
-    if(type == INT32){
-        cur_block->insert(++it,rvconstructor->ConstructSImm(RISCV_SD,write_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert store
-    } else if(type == FLOAT_32){
-        cur_block->insert(++it,rvconstructor->ConstructSImm(RISCV_FSD,write_mid_reg,GetPhysicalReg(RISCV_sp),raw_stk_offset+function->GetStackOffset()));// insert store
+    int offset = raw_stk_offset + function->GetStackOffset();
+    ++it;
+    cur_block->insert(it,rvconstructor->ConstructComment("Write Spill\n"));
+    if(offset <= 2047 && offset >= -2048){
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_SD,write_mid_reg,GetPhysicalReg(RISCV_sp),offset));// insert store
+        } else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_FSW,write_mid_reg,GetPhysicalReg(RISCV_sp),offset));// insert store
+        }
+    }else{
+        auto imm_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        auto offset_mid_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        cur_block->insert(it,rvconstructor->ConstructUImm(RISCV_LI,imm_reg,offset));
+        cur_block->insert(it,rvconstructor->ConstructR(RISCV_ADD,offset_mid_reg,GetPhysicalReg(RISCV_sp),imm_reg));
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_SD,write_mid_reg,offset_mid_reg,0));
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_FSW,write_mid_reg,offset_mid_reg,0));
+        }
     }
     --it;
     return write_mid_reg;

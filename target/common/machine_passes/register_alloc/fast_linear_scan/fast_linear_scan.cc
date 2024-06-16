@@ -20,7 +20,19 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
     while (!unalloc_queue.empty()) {
         auto interval = unalloc_queue.top();
         auto cur_vreg = interval.getReg();
-        int phy_reg_id = phy_regs->getIdleReg(interval);
+        std::vector<int> prefered_regs;
+        for(auto reg : copy_sources[cur_vreg]){
+            if(reg.is_virtual){
+                if(alloc_result[mfun].find(reg) != alloc_result[mfun].end()){
+                    if(alloc_result[mfun][reg].in_mem == false){
+                        prefered_regs.push_back(alloc_result[mfun][reg].phy_reg_no);
+                    }
+                }
+            }else{
+                prefered_regs.push_back(reg.reg_no);
+            }
+        }
+        int phy_reg_id = phy_regs->getIdleReg(interval,prefered_regs);
         if (phy_reg_id >= 0) {
             phy_regs->OccupyReg(phy_reg_id, interval);
             AllocPhyReg(mfun, cur_vreg, phy_reg_id);

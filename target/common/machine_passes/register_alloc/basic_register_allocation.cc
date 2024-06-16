@@ -7,18 +7,20 @@ void RegisterAllocation::Execute() {
     int iterations = 0;
     while(!not_allocated_funcs.empty()){
         current_func = not_allocated_funcs.front();
+        alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
         if(DoAllocInCurrentFunc()){
             // Generate Spill Code
             // TODO("Spill Code Example");
             spiller->ExecuteInFunc(current_func,&alloc_result[current_func]);
+            current_func->AddStackSize(phy_regs->getSpillSize());
             not_allocated_funcs.push(current_func);
             InstructionNumber(unit).ExecuteInFunc(current_func);
             iterations++;
-            if(iterations >= 50){
-                ERROR("Too much iterations, Something Wrong");
-            }
+            // if(iterations >= 50){
+            //     ERROR("Too much iterations, Something Wrong");
+            // }
         }
     }
     // for (auto func : unit->functions) {
@@ -95,7 +97,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
         //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {

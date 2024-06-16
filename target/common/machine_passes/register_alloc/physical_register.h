@@ -26,11 +26,13 @@ public:
     virtual bool OccupyMem(int offset, int size, LiveInterval interval);
     virtual bool ReleaseMem(int offset, int size, LiveInterval interval);
 
-    virtual int getIdleReg(LiveInterval interval);
+    virtual int getIdleReg(LiveInterval interval,std::vector<int>preferd_regs = {});
     virtual int getIdleMem(LiveInterval interval);
 
     virtual int swapRegspill(int p_reg1, LiveInterval interval1, int offset_spill2, int size, LiveInterval interval2);
     virtual std::vector<LiveInterval> getConflictIntervals(LiveInterval interval);
+
+    int getSpillSize(){return mem_occupied.size() * 4;}
 };
 
 #endif

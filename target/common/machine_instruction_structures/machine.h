@@ -41,14 +41,23 @@ private:
     std::string func_name;
     MachineUnit *parent;
     MachineCFG *mcfg;
-    int stack_sz;
     std::vector<Register> parameters;
-
+protected:
+    int stack_sz;
+    int para_sz;
 public:
     const decltype(parameters) &GetParameters() { return parameters; }
     void AddParameter(Register reg) { parameters.push_back(reg); }
     void SetStackSize(int sz) { stack_sz = sz; }
-    void AddStackSize(int sz) { stack_sz += sz; }
+    void UpdateParaSize(int parasz) {
+        if(parasz > para_sz){
+            para_sz = parasz;
+        }
+    }
+    int GetParaSize(){
+        return para_sz;
+    }
+    virtual void AddStackSize(int sz) { stack_sz += sz; }
     int GetStackSize() { return ((stack_sz + 15) / 16) * 16; }
     int GetRaOffsetToSp() { return stack_sz - 8; }
     int GetStackOffset() {return stack_sz;}
@@ -96,7 +105,7 @@ public:
     MachineBlock *InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id);
 
 public:
-    MachineFunction(std::string name) : func_name(name) {}
+    MachineFunction(std::string name) : func_name(name), stack_sz(0), para_sz(0) {}
 };
 
 class MachineUnit {

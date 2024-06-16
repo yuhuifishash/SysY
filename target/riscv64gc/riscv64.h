@@ -300,7 +300,8 @@ enum {
 
 static inline MachineDataType getRVRegType(int reg_no) {
     if (reg_no >= RISCV_x0 && reg_no <= RISCV_x31) {
-        return INT32;
+        // return INT32;
+        return INT64;
     }
     if (reg_no >= RISCV_f0 && reg_no <= RISCV_f31) {
         return FLOAT_32;
@@ -358,15 +359,29 @@ private:
     int imm;
     RiscVLabel label;
 
+    int callireg_num;
+    int callfreg_num;
+
+    int ret_usea0;
+
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
     std::vector<Register *> GetR4_typeReadreg() { return {&rs1, &rs2, &rs3}; }
-    std::vector<Register *> GetI_typeReadreg() { return {&rs1}; }
+    std::vector<Register *> GetI_typeReadreg() { if(ret_usea0){return {&rs1,&RISCVregs[RISCV_a0]};}else {return {&rs1};} }
     std::vector<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetU_typeReadreg() { return {}; }
     std::vector<Register *> GetJ_typeReadreg() { return {}; }
-    std::vector<Register *> GetCall_typeReadreg() { return {}; }
+    std::vector<Register *> GetCall_typeReadreg() {
+        std::vector<Register *> ret;
+        for(int i=0;i<callireg_num;i++){
+            ret.push_back(&RISCVregs[RISCV_a0+i]);
+        }
+        for(int i=0;i<callfreg_num;i++){
+            ret.push_back(&RISCVregs[RISCV_fa0+i]);
+        }
+        return ret;
+    }
 
     std::vector<Register *> GetR_typeWritereg() { return {&rd}; }
     std::vector<Register *> GetR2_typeWritereg() { return {&rd}; }
@@ -410,6 +425,15 @@ public:
     void setRs3(Register rs3) { this->rs3 = rs3; }
     void setImm(int imm) { this->imm = imm; }
     void setLabel(RiscVLabel label) { this->label = label; }
+    void setCalliregNum(int n){
+        callireg_num = n;
+    }
+    void setCallfregNum(int n){
+        callfreg_num = n;
+    }
+    void setRetUsea0(int use){
+        ret_usea0 = use;
+    }
     Register getRd() { return rd; }
     Register getRs1() { return rs1; }
     Register getRs2() { return rs2; }
@@ -549,11 +573,13 @@ public:
         new MachineCopyInstruction(new MachineImmediateFloat(src), new MachineRegister(dst), type);
         return ret;
     }
-    RiscV64Instruction *ConstructCall(int op, std::string funcname /*, int phy_rd*/) {
+    RiscV64Instruction *ConstructCall(int op, std::string funcname, int iregnum, int fregnum) {
         Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
         RiscV64Instruction *ret = new RiscV64Instruction();
         ret->setOpcode(op, true);
         // ret->setRd(GetPhysicalReg(phy_rd));
+        ret->setCalliregNum(iregnum);
+        ret->setCallfregNum(fregnum);
         ret->setLabel(RiscVLabel(funcname, false));
         return ret;
     }
@@ -579,6 +605,29 @@ protected:
     void MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target);
     void YankBranchInstructionToNewBlock(int original_block_id, int new_block);
     void AppendUncondBranchInstructionToNewBlock(int new_block, int br_target);
+private:
+    std::vector<RiscV64Instruction*> stackparameterlist;
+    std::vector<RiscV64Instruction*> allocalist;
+public:
+    void AddStackSize(int sz){
+        int pre_sz = GetStackSize();
+        stack_sz += sz;
+        int after_sz = GetStackSize();
+        for(auto ins : stackparameterlist){
+            ins->setImm(ins->getImm() - pre_sz + after_sz);
+        }
+    }
+    void AddParameterSize(int sz){
+        for(auto ins : allocalist){
+            ins->setImm(ins->getImm() + sz);
+        }
+    }
+    void AddStkParaIns(RiscV64Instruction* ins){
+        stackparameterlist.push_back(ins);
+    }
+    void AddAllocaIns(RiscV64Instruction* ins){
+        allocalist.push_back(ins);
+    }
 };
 class RiscV64Unit : public MachineUnit {};
 
@@ -588,7 +637,7 @@ protected:
 
 public:
     RiscV64Register() { phy_occupied.resize(64); }
-    void clear(){phy_occupied.clear(); Assert(phy_occupied.empty());phy_occupied.resize(64);}
+    void clear(){phy_occupied.clear(); Assert(phy_occupied.empty());phy_occupied.resize(64);mem_occupied.clear();Assert(mem_occupied.empty());}
 };
 
 class RiscV64Spiller : public SpillCodeGen{

@@ -71,7 +71,7 @@ void SpillCodeGen::ExecuteInFunc(MachineFunction* function,std::map<Register, Al
                 auto result = alloc_result->find(*reg)->second;
                 if(result.in_mem == true){
                     // Spill Code Gen
-                    *reg = GenerateReadCode(it,result.stack_offset,reg->type);
+                    *reg = GenerateReadCode(it,result.stack_offset*4,reg->type);
                 }
             }
             for(auto reg : ins->GetWriteReg()){
@@ -79,7 +79,7 @@ void SpillCodeGen::ExecuteInFunc(MachineFunction* function,std::map<Register, Al
                 auto result = alloc_result->find(*reg)->second;
                 if(result.in_mem == true){
                     // Spill Code Gen
-                    *reg = GenerateWriteCode(it,result.stack_offset,reg->type);
+                    *reg = GenerateWriteCode(it,result.stack_offset*4,reg->type);
                 }
             }
         }
