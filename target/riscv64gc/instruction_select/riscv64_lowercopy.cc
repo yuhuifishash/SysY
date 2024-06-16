@@ -35,8 +35,8 @@ void RiscV64LowerCopy::Execute() {
                             // ins = copy_addi_ins;
                             it = block->erase(it);
                             if(dst_reg == src_reg){
-                                std::string comment = "Elimated Self Copy ";
-                                block->insert(it, rvconstructor->ConstructComment(comment + RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
+                                // std::string comment = "Elimated Self Copy ";
+                                // block->insert(it, rvconstructor->ConstructComment(comment + RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
                             }else{
                                 block->insert(it, copy_addi_ins);
                             }
@@ -51,8 +51,8 @@ void RiscV64LowerCopy::Execute() {
                             auto copy = rvconstructor->ConstructR(RISCV_FADD_S, dst_reg, src_reg, dst_reg);
                             it = block->erase(it);
                             if(dst_reg == src_reg){
-                                std::string comment = "Elimated Self Copy ";
-                                block->insert(it, rvconstructor->ConstructComment(comment + RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
+                                // std::string comment = "Elimated Self Copy ";
+                                // block->insert(it, rvconstructor->ConstructComment(comment + RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
                             }else{
                                 block->insert(it, load_x0_ins);
                                 block->insert(it, copy);

@@ -329,3 +329,46 @@ Register RiscV64Spiller::GenerateWriteCode(std::list<MachineBaseInstruction *>::
     --it;
     return write_mid_reg;
 }
+
+void RiscV64Spiller::GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type){
+    int offset = raw_stk_offset + function->GetStackOffset();
+    cur_block->insert(it,rvconstructor->ConstructComment("Write Spill\n"));
+    if(offset <= 2047 && offset >= -2048){
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_SD,reg,GetPhysicalReg(RISCV_sp),offset));// insert store
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_FSW,reg,GetPhysicalReg(RISCV_sp),offset));// insert store
+        }
+    }else{
+        auto imm_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        auto offset_mid_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        cur_block->insert(it,rvconstructor->ConstructUImm(RISCV_LI,imm_reg,offset));
+        cur_block->insert(it,rvconstructor->ConstructR(RISCV_ADD,offset_mid_reg,GetPhysicalReg(RISCV_sp),imm_reg));
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_SD,reg,offset_mid_reg,0));
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructSImm(RISCV_FSW,reg,offset_mid_reg,0));
+        }
+    }
+}
+void RiscV64Spiller::GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type){
+    int offset = raw_stk_offset + function->GetStackOffset();
+    cur_block->insert(it,rvconstructor->ConstructComment("Read Spill\n"));
+    if(offset <= 2047 && offset >= -2048){
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,reg,GetPhysicalReg(RISCV_sp),offset));// insert load
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLW,reg,GetPhysicalReg(RISCV_sp),offset));// insert load
+        }
+    }else{
+        auto imm_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        auto offset_mid_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+        cur_block->insert(it,rvconstructor->ConstructUImm(RISCV_LI,imm_reg,offset));
+        cur_block->insert(it,rvconstructor->ConstructR(RISCV_ADD,offset_mid_reg,GetPhysicalReg(RISCV_sp),imm_reg));
+        if(type == INT64){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_LD,reg,offset_mid_reg,0));
+        }else if(type == FLOAT_32){
+            cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLW,reg,offset_mid_reg,0));
+        }
+    }
+}

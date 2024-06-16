@@ -24,11 +24,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
-                    // TODO("Implement VirtualRegisterRewrite Read Spill Code Gen");
                     ERROR("Shouldn't reach here");
-                    // new_load_reg = GetNewReg();
-                    // insertasmBeforeins("load new_load_reg = [fp,mem_offset]")
-                    // for(oldreg& : ins->GetReadReg()) if(oldreg==reg) oldreg=new_load_reg
                 } else {
                     reg->is_virtual = false;
                     reg->reg_no = result.phy_reg_no;
@@ -43,11 +39,7 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
                 }
                 auto result = alloc_result.find(func)->second.find(*reg)->second;
                 if (result.in_mem == true) {
-                    // TODO("Implement VirtualRegisterRewrite Write Spill Code Gen");
                     ERROR("Shouldn't reach here");
-                    // new_store_reg = GetNewReg();
-                    // for(oldreg& : ins->GetWriteReg()) if(oldreg==reg) oldreg=new_store_reg
-                    // insertasmAfterins("store new_store_reg , [fp,mem_offset]")
                 } else {
                     reg->is_virtual = false;
                     reg->reg_no = result.phy_reg_no;
@@ -66,6 +58,36 @@ void SpillCodeGen::ExecuteInFunc(MachineFunction* function,std::map<Register, Al
         cur_block = block_it->next()->Mblock;
         for(auto it = cur_block->begin(); it != cur_block->end(); ++it){
             auto ins = *it;
+            if(ins->arch == MachineBaseInstruction::COPY){
+                auto copy_ins = (MachineCopyInstruction*)ins;
+                if(!copy_ins->GetReadReg().empty() && !copy_ins->GetWriteReg().empty()){
+                    auto src = copy_ins->GetReadReg()[0];
+                    auto dst = copy_ins->GetWriteReg()[0];
+                    AllocResult src_p,dst_p;
+                    if(src->is_virtual == true){
+                        src_p = alloc_result->find(*src)->second;
+                    }
+                    if(dst->is_virtual == true){
+                        dst_p = alloc_result->find(*dst)->second;
+                    }
+                    if(src_p.in_mem == true && dst_p.in_mem == true){
+                        it = cur_block->erase(it);
+                        auto mid_reg = function->GetNewRegister(src->type.data_type,src->type.data_length);
+                        GenerateCopyFromStackCode(it,src_p.stack_offset*4,mid_reg,src->type);
+                        GenerateCopyToStackCode(it,dst_p.stack_offset*4,mid_reg,src->type);
+                        --it;
+                    }else if(src_p.in_mem == true){
+                        it = cur_block->erase(it);
+                        GenerateCopyFromStackCode(it,src_p.stack_offset*4,*dst,src->type);
+                        --it;
+                    }else if(dst_p.in_mem == true){
+                        it = cur_block->erase(it);
+                        GenerateCopyToStackCode(it,dst_p.stack_offset*4,*src,src->type);
+                        --it;
+                    }
+                    continue;
+                }
+            }
             for(auto reg : ins->GetReadReg()){
                 if(reg->is_virtual == false) continue;
                 auto result = alloc_result->find(*reg)->second;

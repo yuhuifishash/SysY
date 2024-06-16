@@ -12,6 +12,13 @@ struct AllocResult {
         int phy_reg_no;
         int stack_offset;
     };
+    AllocResult():in_mem(false){
+        phy_reg_no = 0;
+    }
+    AllocResult(const struct AllocResult &other) {
+        in_mem = other.in_mem;
+        phy_reg_no = other.phy_reg_no;
+    }
 };
 
 class SpillCodeGen;
@@ -88,6 +95,8 @@ private:
     std::map<Register, AllocResult> *alloc_result;
     virtual Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
     virtual Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
+    virtual void GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type) = 0;
+    virtual void GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type) = 0;
 protected:
     MachineFunction* function;
     MachineBlock* cur_block;

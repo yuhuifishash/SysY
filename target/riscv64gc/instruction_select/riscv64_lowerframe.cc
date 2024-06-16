@@ -1,7 +1,6 @@
 #include "riscv64_lowerframe.h"
 
 constexpr int save_regids[] = {
-    RISCV_ra,
     RISCV_s0,
     RISCV_s1,
     RISCV_s2,
@@ -26,6 +25,7 @@ constexpr int save_regids[] = {
     RISCV_fs9,
     RISCV_fs10,
     RISCV_fs11,
+    RISCV_ra,
 };
 constexpr int saveregnum = 25;
 
@@ -134,7 +134,7 @@ void RiscV64LowerStack::Execute() {
                                                             GetPhysicalReg(RISCV_sp), stacksz_reg));
                     b->push_front(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                 }
-                b->push_front(rvconstructor->ConstructComment("Lowerframe: save ra, sub sp\n"));
+                b->push_front(rvconstructor->ConstructComment("Lowerstack: sub sp\n"));
             }
             auto last_ins = *(b->ReverseBegin());
             Assert(last_ins->arch == MachineBaseInstruction::RiscV);
@@ -144,7 +144,7 @@ void RiscV64LowerStack::Execute() {
                     if (riscv_last_ins->getRs1() == GetPhysicalReg(RISCV_ra)) {
                         Assert(riscv_last_ins->getImm() == 0);
                         b->pop_back();
-                        b->push_back(rvconstructor->ConstructComment("Lowerframe: restore ra, add sp\n"));
+                        b->push_back(rvconstructor->ConstructComment("Lowerstack: add sp\n"));
                         if (func->GetStackSize() <= 2032) {
                             b->push_back(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                       GetPhysicalReg(RISCV_sp), func->GetStackSize()));
