@@ -248,19 +248,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopFusion);
-
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor(LoopSimplify);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(LoopClosedSSA);
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(AddParallelLib);
-        // llvmIR.PassExecutor(LoopParallel);
-
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopGepStrengthReduce);
-        // llvmIR.PassExecutor(SimpleDCE);
-        // llvmIR.PassExecutor(SimplifyCFG);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
