@@ -273,19 +273,22 @@ int main(int argc, char **argv) {
         RiscV64Register regs;
         RiscV64Spiller spiller;
 
-        std::cerr<<"Select\n";
+        // std::cerr<<"Select\n";
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
-        std::cerr<<"LowerFrame\n";
+        // std::cerr<<"LowerFrame\n";
         RiscV64LowerFrame(m_unit).Execute();
-        std::cerr<<"LowerImm\n";
+        // std::cerr<<"LowerImm\n";
         RiscV64LowerImm(m_unit).Execute();
-        std::cerr<<"Alloc\n";
+        // std::cerr<<"PhiDestruction\n";
+        MachinePhiDestruction(m_unit).Execute();
+        RiscV64LowerFImmCopy(m_unit).Execute();
+        // std::cerr<<"Alloc\n";
         FastLinearScan(m_unit, &regs, &spiller).Execute();
-        std::cerr<<"LowerCopy\n";
+        // std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();
-        std::cerr<<"LowerStack\n";
+        // std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
-        std::cerr<<"End\n";
+        // std::cerr<<"End\n";
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
@@ -297,6 +300,7 @@ int main(int argc, char **argv) {
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
         RiscV64LowerFrame(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
+        MachinePhiDestruction(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();
         // RiscV64LowerCopy(m_unit).Execute();
 

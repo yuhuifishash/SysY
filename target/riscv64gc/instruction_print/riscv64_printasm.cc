@@ -181,7 +181,8 @@ template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyI
 }
 
 template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {
-    Lazy("Phi Output");
+    // Lazy("Phi Output");
+	s<<"# ";
     printRVfield(ins->GetResult());
     s << " = " << ins->GetResult().type.toString() << " PHI ";
     for (auto [label, op] : ins->GetPhiList()) {

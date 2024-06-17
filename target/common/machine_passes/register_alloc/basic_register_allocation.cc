@@ -1,20 +1,20 @@
 #include "basic_register_allocation.h"
 void RegisterAllocation::Execute() {
-    std::cerr<<"InstructionNumber"<<std::endl;
+    // std::cerr<<"InstructionNumber"<<std::endl;
     InstructionNumber(unit).Execute();
     for (auto func : unit->functions){
         not_allocated_funcs.push(func);
     }
     int iterations = 0;
     while(!not_allocated_funcs.empty()){
-        std::cerr<<"Func: "<<current_func->getFunctionName()<<std::endl;
+        // std::cerr<<"Func: "<<current_func->getFunctionName()<<std::endl;
         current_func = not_allocated_funcs.front();
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
-        std::cerr<<"Doing Alloc:"<<std::endl;
+        // std::cerr<<"Doing Alloc:"<<std::endl;
         if(DoAllocInCurrentFunc()){
-            std::cerr<<"Spilling"<<std::endl;
+            // std::cerr<<"Spilling"<<std::endl;
             // Generate Spill Code
             // TODO("Spill Code Example");
             spiller->ExecuteInFunc(current_func,&alloc_result[current_func]);
@@ -26,7 +26,7 @@ void RegisterAllocation::Execute() {
             //     break;
             // }
         }
-        std::cerr<<"Iter "<<iterations<<std::endl;
+        // std::cerr<<"Iter "<<iterations<<std::endl;
     }
     // for (auto func : unit->functions) {
     //     current_func = func;

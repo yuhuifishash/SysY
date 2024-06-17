@@ -13,11 +13,13 @@ void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
     MachineCFGNode *node = new MachineCFGNode;
     node->Mblock = Mblk;
     block_map[id] = node;
-    if (G.size() < id + 1) {
-        G.resize(id + 1);
+    while (G.size() < id + 1) {
+        G.push_back({});
+        // G.resize(id + 1);
     }
-    if (invG.size() < id + 1) {
-        invG.resize(id + 1);
+    while (invG.size() < id + 1) {
+        invG.push_back({});
+        // invG.resize(id + 1);
     }
 }
 
@@ -25,6 +27,8 @@ void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
 void MachineCFG::MakeEdge(int edg_begin, int edg_end) {
     Assert(block_map.find(edg_begin) != block_map.end());
     Assert(block_map.find(edg_end) != block_map.end());
+    Assert(block_map[edg_begin] != nullptr);
+    Assert(block_map[edg_end] != nullptr);
     G[edg_begin].push_back(block_map[edg_end]);
     invG[edg_end].push_back(block_map[edg_begin]);
 }
@@ -67,8 +71,21 @@ MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::ve
     return nullptr;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, int end) {
-    TODO("Implement InsertNewBranchOnlyBlockBetweenEdge");
-    return nullptr;
+    // TODO("Implement InsertNewBranchOnlyBlockBetweenEdge");
+    // New Block
+    auto new_block = InitNewBlock();
+    auto mid = new_block->getLabelId();
+    // Change Edge
+    mcfg->RemoveEdge(begin,end);
+    mcfg->MakeEdge(begin,mid);
+    mcfg->MakeEdge(mid,end);
+    // Redirect Branch
+    MoveOnePredecessorBranchTargetToNewBlock(begin,end,mid);
+    // Insert Branch in new block
+    AppendUncondBranchInstructionToNewBlock(mid,end);
+    // Redirect Phi
+    RedirectPhiNodePredecessor(end,begin,mid);
+    return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) {
     TODO("Implement InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(Not sure if it's used)");
@@ -78,8 +95,26 @@ MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSucc
     TODO("Implement InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(Not sure if it's used)");
     return nullptr;
 }
-void RedirectPhiNodePredecessor(int phi_block, int old_predecessor, int new_predecessor) {
+void MachineFunction::RedirectPhiNodePredecessor(int phi_block, int old_predecessor, int new_predecessor) {
     // in phi_block, find all phi_instructions containing <label old_predecessor> in phi instruction
     // then replace <label old_predecessor> to <label new_predecessor>
-    TODO("Implement RedirectPhiNodePredecessor");
+    // TODO("Implement RedirectPhiNodePredecessor");
+    auto block = mcfg->GetNodeByBlockId(phi_block)->Mblock;
+    for(auto ins : *block){
+        if(ins->arch != MachineBaseInstruction::PHI)break;
+        auto mphi = (MachinePhiInstruction*)ins;
+        for(auto& phi_pair : mphi->GetPhiList()){
+            if(phi_pair.first == old_predecessor){
+                phi_pair.first = new_predecessor;
+            }
+        }
+    }
+}
+MachineBlock* MachineFunction::InitNewBlock(){
+    int new_id = ++max_exist_label;
+    MachineBlock* new_block = block_factory->CreateBlock(new_id);
+    new_block->setParent(this);
+    blocks.push_back(new_block);
+    mcfg->AssignEmptyNode(new_id,new_block);
+    return new_block;
 }

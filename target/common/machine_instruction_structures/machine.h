@@ -12,12 +12,19 @@ class MachineCFG;
 class MachineBlock {
 private:
     int label_id;
+protected:
     std::list<MachineBaseInstruction *> instructions;
-
+private:
+    std::map<Register, MachineBaseOperand*> parallel_copy_list;// mov second to first
 private:
     MachineFunction *parent;
 
 public:
+    virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
+    void InsertParallelCopyList(Register dst,MachineBaseOperand*src){
+        parallel_copy_list[dst] = src;
+    }
+    decltype(parallel_copy_list)& GetParallelCopyList(){ return parallel_copy_list; }
     auto erase(decltype(instructions.begin()) it) { return instructions.erase(it); }
     auto insert(decltype(instructions.begin()) it, MachineBaseInstruction *ins) { return instructions.insert(it, ins); }
     auto getParent() { return parent; }
@@ -36,16 +43,26 @@ public:
     MachineBlock(int id) : label_id(id) {}
 };
 
+class MachineBlockFactory{
+public:
+    virtual MachineBlock* CreateBlock(int id) = 0;
+};
+
 class MachineFunction {
 private:
     std::string func_name;
     MachineUnit *parent;
-    MachineCFG *mcfg;
     std::vector<Register> parameters;
+    int max_exist_label;
+    MachineBlockFactory* block_factory;
 protected:
     int stack_sz;
     int para_sz;
+    MachineCFG *mcfg;
 public:
+    void UpdateMaxLabel(int labelid){
+        max_exist_label = max_exist_label > labelid ? max_exist_label : labelid;
+    }
     const decltype(parameters) &GetParameters() { return parameters; }
     void AddParameter(Register reg) { parameters.push_back(reg); }
     void SetStackSize(int sz) { stack_sz = sz; }
@@ -93,6 +110,8 @@ protected:
     // Arch-irrelevant
     void RedirectPhiNodePredecessor(int phi_block, int old_predecessor, int new_predecessor);
 
+    MachineBlock * InitNewBlock();
+
 public:
     // Not implemented by now
     // Not only CFG but also instructions need to be changed
@@ -105,7 +124,7 @@ public:
     MachineBlock *InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id);
 
 public:
-    MachineFunction(std::string name) : func_name(name), stack_sz(0), para_sz(0) {}
+    MachineFunction(std::string name, MachineBlockFactory* blockfactory) : func_name(name), stack_sz(0), para_sz(0), block_factory(blockfactory), max_exist_label(0) {}
 };
 
 class MachineUnit {
@@ -134,7 +153,7 @@ public:
 
     MachineCFGNode *GetNodeByBlockId(int id) { return block_map[id]; }
     std::vector<MachineCFGNode *> GetSuccessorsByBlockId(int id) { return G[id]; }
-    std::vector<MachineCFGNode *> GetPredecessorsByBlockId(int id) { return G[id]; }
+    std::vector<MachineCFGNode *> GetPredecessorsByBlockId(int id) { return invG[id]; }
 
 private:
     class Iterator {

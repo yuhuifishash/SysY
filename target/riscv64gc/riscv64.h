@@ -594,11 +594,19 @@ class RiscV64Unit;
 class RiscV64Block : public MachineBlock {
 public:
     RiscV64Block(int id) : MachineBlock(id) {}
+    std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt();
 };
+
+class RiscV64BlockFactory : public MachineBlockFactory{
+public:
+    MachineBlock* CreateBlock(int id){
+        return new RiscV64Block(id);
+    }
+};
+
 class RiscV64Function : public MachineFunction {
 public:
-    RiscV64Function(std::string name) : MachineFunction(name) {}
-
+    RiscV64Function(std::string name) : MachineFunction(name,new RiscV64BlockFactory()) {}
 protected:
     void InitializeNewVirtualRegister(int vregno);
     void MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target);

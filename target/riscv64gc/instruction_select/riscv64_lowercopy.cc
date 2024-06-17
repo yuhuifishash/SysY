@@ -69,3 +69,29 @@ void RiscV64LowerCopy::Execute() {
         }
     }
 }
+void RiscV64LowerFImmCopy::Execute() {
+    for (auto function : unit->functions) {
+        auto block_it = function->getMachineCFG()->getSeqScanIterator();
+        block_it->open();
+        while (block_it->hasNext()) {
+            auto block = block_it->next()->Mblock;
+            for (auto it = block->begin(); it != block->end(); ++it) {
+                auto &ins = *it;
+                if (ins->arch == MachineBaseInstruction::COPY) {
+                    auto m_copy = (MachineCopyInstruction *)ins;
+                    Assert(m_copy->GetDst()->op_type == MachineBaseOperand::REG);
+                    if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMF) {
+                        auto src_immf = (MachineImmediateFloat *)m_copy->GetSrc();
+                        auto dst_reg = (MachineRegister *)m_copy->GetDst();
+                        it = block->erase(it);
+                        auto immf = src_immf->fimm32;
+                        auto mid_reg = function->GetNewRegister(INT64.data_type,INT64.data_length);
+                        block->insert(it,rvconstructor->ConstructCopyRegImmI(mid_reg,*(int*)&immf,INT64));
+                        block->insert(it,rvconstructor->ConstructR2(RISCV_FMV_W_X,dst_reg->reg,mid_reg));
+                        --it;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -51,10 +51,52 @@ std::vector<Register *> RiscV64Instruction::GetWriteReg() {
     ERROR("Unexpected insformat");
 }
 
-void RiscV64Function::MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target) {}
-void RiscV64Function::MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target) {}
-void RiscV64Function::YankBranchInstructionToNewBlock(int original_block_id, int new_block) {}
-void RiscV64Function::AppendUncondBranchInstructionToNewBlock(int new_block, int br_target) {}
+void RiscV64Function::MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target) {
+    TODO("Branch Target Set");
+}
+void RiscV64Function::MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target) {
+    auto preblock = mcfg->GetNodeByBlockId(pre)->Mblock;
+    bool jal_gotcha = false;
+    for (auto it = preblock->ReverseBegin();it != preblock->ReverseEnd();++it) {
+        auto ins = *it;
+        if(ins->arch == MachineBaseInstruction::COMMENT || ins->arch == MachineBaseInstruction::PHI){
+            continue;
+        }
+        if(ins->arch == MachineBaseInstruction::COPY){
+            if(jal_gotcha){
+                break;
+            }
+            continue;
+        }
+        auto rvins = (RiscV64Instruction*)ins;
+        if (rvins->getOpcode() == RISCV_JALR){
+            break;
+        }
+        if (rvins->getOpcode() == RISCV_JAL){
+            if(rvins->getLabel().jmp_label_id == original_target){
+                rvins->setLabel(RiscVLabel(new_target));
+            }
+            jal_gotcha = true;
+        }
+        if(OpTable[rvins->getOpcode()].ins_formattype == RvOpInfo::B_type){
+            if(rvins->getLabel().jmp_label_id == original_target){
+                rvins->setLabel(RiscVLabel(new_target,rvins->getLabel().seq_label_id));
+            }else if(rvins->getLabel().seq_label_id == original_target){
+                rvins->setLabel(RiscVLabel(rvins->getLabel().jmp_label_id,new_target));
+            }
+            break;
+        }else if(jal_gotcha){
+            break;
+        }
+    }
+}
+void RiscV64Function::YankBranchInstructionToNewBlock(int original_block_id, int new_block) {
+    TODO("Branch Target Set");
+}
+void RiscV64Function::AppendUncondBranchInstructionToNewBlock(int new_block, int br_target) {
+    auto newblock = mcfg->GetNodeByBlockId(new_block)->Mblock;
+    newblock->push_back(rvconstructor->ConstructJLabel(RISCV_JAL, GetPhysicalReg(RISCV_x0),RiscVLabel(br_target)));
+}
 
 struct RvOpInfo OpTable[] = {
 [RISCV_SLL] = RvOpInfo{RvOpInfo::R_type, "sll"},
@@ -371,4 +413,32 @@ void RiscV64Spiller::GenerateCopyFromStackCode(std::list<MachineBaseInstruction 
             cur_block->insert(it,rvconstructor->ConstructIImm(RISCV_FLW,reg,offset_mid_reg,0));
         }
     }
+}
+
+std::list<MachineBaseInstruction*>::iterator RiscV64Block::getInsertBeforeBrIt(){
+    auto it = --instructions.end();
+    auto jal_pos = it;
+    for(auto it = --instructions.end();it != instructions.begin();--it){
+        if((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI){
+            continue;
+        }
+        if((*it)->arch != MachineBaseInstruction::RiscV){
+            return jal_pos;
+        }
+        // Assert((*it)->arch == MachineBaseInstruction::RiscV);
+        auto rvlast = (RiscV64Instruction*)(*it);
+        if(rvlast->getOpcode() == RISCV_JALR){
+            return it;
+        }
+        if(rvlast->getOpcode() == RISCV_JAL){
+            jal_pos = it;
+            continue;
+        }
+        if(OpTable[rvlast->getOpcode()].ins_formattype == RvOpInfo::B_type){
+            return it;
+        }else{
+            return jal_pos;
+        }
+    }
+    return it;
 }

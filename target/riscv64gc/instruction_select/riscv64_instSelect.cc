@@ -88,7 +88,7 @@ template <> void RiscV64Selector::ConvertAndAppend<StoreInstruction *>(StoreInst
             ERROR("Unexpected data type");
         }
     } else if (ins->GetValue()->GetOperandType() == BasicOperand::IMMF32) {
-        Log("Deal with float immediate On store");
+        // Log("Deal with float immediate On store");
         auto val_imm = (ImmF32Operand *)ins->GetValue();
 
         value_reg = GetNewReg(FLOAT_32);
@@ -217,6 +217,28 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 auto addw_instr = rvconstructor->ConstructR(RISCV_ADDW, rd, rs, rt);
 
                 cur_block->push_back(addw_instr);
+            }
+            // Imm + Reg
+            // May Generate COPY
+            if (ins->GetOperand2()->GetOperandType() == BasicOperand::REG &&
+                ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32) {
+                Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+
+                auto *rd_op = (RegOperand *)ins->GetResultOperand();
+                auto *rs_op = (RegOperand *)ins->GetOperand2();
+                auto *i_op = (ImmI32Operand *)ins->GetOperand1();
+
+                auto rd = GetllvmReg(rd_op->GetRegNo(), INT64);
+                auto rs = GetllvmReg(rs_op->GetRegNo(), INT64);
+                auto imm = i_op->GetIntImmVal();
+
+                if (imm != 0) {
+                    auto addiw_instr = rvconstructor->ConstructIImm(RISCV_ADDIW, rd, rs, imm);
+                    cur_block->push_back(addiw_instr);
+                } else {
+                    auto copy_instr = rvconstructor->ConstructCopyReg(rd, rs, INT64);
+                    cur_block->push_back(copy_instr);
+                }
             }
         } else {
             TODO("RV InstSelect For DataType %d", ins->GetDataType());
@@ -813,25 +835,46 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
         Assert(ins->GetParameterList().size() == 4);
         Assert(ins->GetParameterList()[0].second->GetOperandType() == BasicOperand::REG);
         Assert(ins->GetParameterList()[1].second->GetOperandType() == BasicOperand::IMMI32);
-        Assert(ins->GetParameterList()[2].second->GetOperandType() == BasicOperand::IMMI32);
+        // Assert(ins->GetParameterList()[2].second->GetOperandType() == BasicOperand::IMMI32);
         Assert(ins->GetParameterList()[3].second->GetOperandType() == BasicOperand::IMMI32);
 
-        int ptrreg_no = ((RegOperand*)ins->GetParameterList()[0].second)->GetRegNo();
-        int arr_sz = ((ImmI32Operand*)ins->GetParameterList()[2].second)->GetIntImmVal();
-
         // parameter 0
-        if(llvm_rv_allocas.find(ptrreg_no) == llvm_rv_allocas.end()){
-            cur_block->push_back(rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0),GetllvmReg(ptrreg_no,INT64),INT64));
-        }else{
-            auto sp_offset = llvm_rv_allocas[ptrreg_no];
-            auto ld_alloca = rvconstructor->ConstructIImm(RISCV_ADDI,GetPhysicalReg(RISCV_a0),GetPhysicalReg(RISCV_sp),sp_offset);
-            ((RiscV64Function*)cur_func)->AddAllocaIns(ld_alloca);
-            cur_block->push_back(ld_alloca);
+        {
+            int ptrreg_no = ((RegOperand*)ins->GetParameterList()[0].second)->GetRegNo();
+            if(llvm_rv_allocas.find(ptrreg_no) == llvm_rv_allocas.end()){
+                cur_block->push_back(rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0),GetllvmReg(ptrreg_no,INT64),INT64));
+            }else{
+                auto sp_offset = llvm_rv_allocas[ptrreg_no];
+                auto ld_alloca = rvconstructor->ConstructIImm(RISCV_ADDI,GetPhysicalReg(RISCV_a0),GetPhysicalReg(RISCV_sp),sp_offset);
+                ((RiscV64Function*)cur_func)->AddAllocaIns(ld_alloca);
+                cur_block->push_back(ld_alloca);
+            }
         }
 
-        // parameters 1,2
-        cur_block->push_back(rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a1),0,INT64));
-        cur_block->push_back(rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a2),arr_sz,INT64));
+        // parameters 1
+        {
+            auto imm_op = (ImmI32Operand*)(ins->GetParameterList()[1].second);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a1),imm_op->GetIntImmVal(),INT64));
+        }
+
+        // paramters 2
+        {
+            if(ins->GetParameterList()[2].second->GetOperandType() == BasicOperand::IMMI32){
+                int arr_sz = ((ImmI32Operand*)ins->GetParameterList()[2].second)->GetIntImmVal();
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a2),arr_sz,INT64));
+            }else{
+                int sizereg_no = ((RegOperand*)ins->GetParameterList()[2].second)->GetRegNo();
+                if(llvm_rv_allocas.find(sizereg_no) == llvm_rv_allocas.end()){
+                    cur_block->push_back(rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a2),GetllvmReg(sizereg_no,INT64),INT64));
+                }else{
+                    auto sp_offset = llvm_rv_allocas[sizereg_no];
+                    auto ld_alloca = rvconstructor->ConstructIImm(RISCV_ADDI,GetPhysicalReg(RISCV_a2),GetPhysicalReg(RISCV_sp),sp_offset);
+                    ((RiscV64Function*)cur_func)->AddAllocaIns(ld_alloca);
+                    cur_block->push_back(ld_alloca);
+                }
+            }
+        }
+
         // call
         cur_block->push_back(rvconstructor->ConstructCall(RISCV_CALL,"memset",3,0));
         return;
@@ -1442,7 +1485,12 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
 template <> void RiscV64Selector::ConvertAndAppend<PhiInstruction *>(PhiInstruction *ins) {
     Assert(ins->GetResultOp()->GetOperandType() == BasicOperand::REG);
     auto res_op = (RegOperand *)ins->GetResultOp();
-    auto result_reg = GetllvmReg(res_op->GetRegNo(), INT64);
+    Register result_reg;
+    if(ins->GetDataType() == I32 || ins->GetDataType() == PTR){
+        result_reg = GetllvmReg(res_op->GetRegNo(), INT64);
+    }else if(ins->GetDataType() == FLOAT32){
+        result_reg = GetllvmReg(res_op->GetRegNo(), FLOAT_32);
+    }
     auto m_phi = new MachinePhiInstruction(result_reg);
     for (auto [label, val] : ins->GetPhiList()) {
         Assert(label->GetOperandType() == BasicOperand::LABEL);
@@ -1452,7 +1500,7 @@ template <> void RiscV64Selector::ConvertAndAppend<PhiInstruction *>(PhiInstruct
             auto val_reg = GetllvmReg(reg_op->GetRegNo(), INT64);
             m_phi->pushPhiList(label_op->GetLabelNo(), val_reg);
         } else if (val->GetOperandType() == BasicOperand::REG && ins->GetDataType() == FLOAT32) {
-            Lazy("Not tested");
+            // Lazy("Not tested");
             auto reg_op = (RegOperand *)val;
             auto val_reg = GetllvmReg(reg_op->GetRegNo(), FLOAT_32);
             m_phi->pushPhiList(label_op->GetLabelNo(), val_reg);
@@ -1460,8 +1508,14 @@ template <> void RiscV64Selector::ConvertAndAppend<PhiInstruction *>(PhiInstruct
             auto immi_op = (ImmI32Operand *)val;
             m_phi->pushPhiList(label_op->GetLabelNo(), immi_op->GetIntImmVal());
         } else if (val->GetOperandType() == BasicOperand::IMMF32) {
-            TODO("Phi for float");
-        } else {
+            // TODO("Phi for float");
+            auto immf_op = (ImmF32Operand *)val;
+            m_phi->pushPhiList(label_op->GetLabelNo(), immf_op->GetFloatVal());
+        } else  if(val->GetOperandType() == BasicOperand::REG && ins->GetDataType() == PTR){
+            auto reg_op = (RegOperand*)val;
+            auto val_reg = GetllvmReg(reg_op->GetRegNo(), INT64);
+            m_phi->pushPhiList(label_op->GetLabelNo(), val_reg);
+        }else{
             ERROR("Unexpected OperandType");
         }
     }
@@ -1568,30 +1622,16 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
             cur_block = new RiscV64Block(id);
 
             cur_mcfg->AssignEmptyNode(id, cur_block);
+            cur_func->UpdateMaxLabel(id);
 
             cur_block->setParent(cur_func);
             cur_func->blocks.push_back(cur_block);
 
-            if (id == 0) {
-                // sub sp
-                // cur_block->push_back();
-
-                // Lazy("Sub sp at beginning of function");
-                // cur_block->push_back(rvconstructor->ConstructComment("TODO: Should sub sp here\n"));
-
-                // save ra
-                // cur_block->push_back(rvconstructor->ConstructComment("TODO: Should save ra here\n"));
-                // cur_block->push_back(
-                // rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_ra), GetPhysicalReg(RISCV_sp), 0));
-                // cur_block->push_back(rvconstructor->ConstructCall(RISCV_CALL,"__pthread_test_call"));
-            }
             for (auto instruction : block->Instruction_list) {
                 // Log("Selecting Instruction");
                 ConvertAndAppend<Instruction>(instruction);
             }
         }
-        // +8 for save(ra)
-        // +12*8 for save(s0-s11)
         cur_func->SetStackSize(cur_offset + cur_func->GetParaSize());
         ((RiscV64Function*)cur_func)->AddParameterSize(cur_func->GetParaSize());
         for (int i = 0; i < cfg->G.size(); i++) {

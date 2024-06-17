@@ -11,11 +11,22 @@ class ArmUnit;
 class ArmBlock : public MachineBlock {
 public:
     ArmBlock(int id) : MachineBlock(id) {}
+    std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt(){
+        TODO("Instruction iterator to insert before branch");
+        return instructions.end();
+    }
+};
+
+class ArmBlockFactory : public MachineBlockFactory{
+public:
+    MachineBlock* CreateBlock(int id) {
+        return new ArmBlock(id);
+    }
 };
 
 class ArmFunction : public MachineFunction {
 public:
-    ArmFunction(std::string name) : MachineFunction(name) {}
+    ArmFunction(std::string name) : MachineFunction(name,new ArmBlockFactory()) {}
 
 protected:
     void InitializeNewVirtualRegister(int vregno);

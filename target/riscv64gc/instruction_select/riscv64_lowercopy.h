@@ -7,4 +7,10 @@ public:
     RiscV64LowerCopy(MachineUnit *m_unit) : MachinePass(m_unit) {}
     void Execute();
 };
+class RiscV64LowerFImmCopy : public MachinePass {
+protected:
+public:
+    RiscV64LowerFImmCopy(MachineUnit *m_unit) : MachinePass(m_unit) {}
+    void Execute();
+};
 #endif
