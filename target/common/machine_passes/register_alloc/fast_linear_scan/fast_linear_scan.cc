@@ -19,6 +19,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
     }
     while (!unalloc_queue.empty()) {
         auto interval = unalloc_queue.top();
+        unalloc_queue.pop();
         auto cur_vreg = interval.getReg();
         std::vector<int> prefered_regs;
         for(auto reg : copy_sources[cur_vreg]){
@@ -41,6 +42,8 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
 
             int mem = phy_regs->getIdleMem(interval);
             phy_regs->OccupyMem(mem, cur_vreg.getDataWidth(), interval);
+            // volatile int mem_ = mem;
+            // volatile int mem__ = mem_+current_func->GetStackOffset();
             AllocStack(mfun, cur_vreg, mem);
 
             double spill_weight = CalculateSpillWeight(interval);
@@ -57,9 +60,13 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
                 phy_regs->swapRegspill(getAllocResultInReg(mfun, spill_interval.getReg()), spill_interval, mem,
                                        cur_vreg.getDataWidth(), interval);
                 swapAllocResult(mfun, interval.getReg(), spill_interval.getReg());
+                // alloc_result[mfun].erase(spill_interval.getReg());
+                // unalloc_queue.push(spill_interval);
+                int spill_mem = phy_regs->getIdleMem(spill_interval);
+                phy_regs->OccupyMem(spill_mem, spill_interval.getReg().getDataWidth(), spill_interval);
+                AllocStack(mfun,spill_interval.getReg(),spill_mem);
             }
         }
-        unalloc_queue.pop();
     }
     return spilled;
 }

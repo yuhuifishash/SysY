@@ -93,6 +93,7 @@ int PhysicalRegisters::getIdleReg(LiveInterval interval,std::vector<int> preferd
 }
 int PhysicalRegisters::getIdleMem(LiveInterval interval) {
     std::vector<bool> ok;
+    ok.resize(mem_occupied.size(), true);
     for (int i = 0; i < mem_occupied.size(); i++) {
         ok[i] = true;
         for (auto other_interval : mem_occupied[i]) {
@@ -126,7 +127,7 @@ int PhysicalRegisters::swapRegspill(int p_reg1, LiveInterval interval1, int offs
     // 3. 分配寄存器p_reg1;
     OccupyReg(p_reg1, interval2);
     // 4. 分配内存offset_spill2
-    OccupyMem(getIdleMem(interval1), size, interval1);
+    // OccupyMem(getIdleMem(interval1), size, interval1);
     return 0;
 }
 

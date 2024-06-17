@@ -38,7 +38,7 @@ BINARY ?= $(BIN_DIR)/$(NAME)
 CC = clang++
 LD = clang++
 INCLUDES = $(addprefix -I, $(SRCDIR))
-CFLAGS += -O2 -g -MMD -std=c++17 $(INCLUDES)
+CFLAGS += -O2 -g -MMD -std=c++20 $(INCLUDES)
 
 # SRCS = $(shell find . -name "*.cc")
 # OBJS = $(SRCS:%.cc=$(OBJDIR)/%.o)

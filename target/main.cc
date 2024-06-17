@@ -273,12 +273,19 @@ int main(int argc, char **argv) {
         RiscV64Register regs;
         RiscV64Spiller spiller;
 
+        std::cerr<<"Select\n";
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        std::cerr<<"LowerFrame\n";
         RiscV64LowerFrame(m_unit).Execute();
+        std::cerr<<"LowerImm\n";
         RiscV64LowerImm(m_unit).Execute();
+        std::cerr<<"Alloc\n";
         FastLinearScan(m_unit, &regs, &spiller).Execute();
+        std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();
+        std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
+        std::cerr<<"End\n";
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
