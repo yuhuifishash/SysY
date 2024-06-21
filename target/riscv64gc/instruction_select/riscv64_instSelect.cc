@@ -634,6 +634,43 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             auto fsub_instr = rvconstructor->ConstructR(RISCV_FDIV_S, rd, fsub1, fsub2);
             cur_block->push_back(fsub_instr);
         }
+    } else if (ins->GetOpcode() == LL_ADDMOD) {
+        auto op1 = ins->GetOperand1();
+        auto op2 = ins->GetOperand2();
+        auto op3 = ins->GetOperand3();
+        auto result_op = ins->GetResultOperand();
+        Assert(result_op->GetOperandType() == BasicOperand::REG);
+        auto result_reg = GetllvmReg(((RegOperand*)result_op)->GetRegNo(),INT64);
+        if(op1->GetOperandType() == BasicOperand::IMMI32 && op2->GetOperandType() == BasicOperand::IMMI32 && op3->GetOperandType() == BasicOperand::IMMI32){
+            long long val1 = ((ImmI32Operand*)op1)->GetIntImmVal();
+            long long val2 = ((ImmI32Operand*)op2)->GetIntImmVal();
+            long long val3 = ((ImmI32Operand*)op3)->GetIntImmVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg,(val1+val2)%val3,INT64));
+        }else{
+            Register op_reg[3];
+            Operand op[] = {op1,op2,op3};
+            Register middle_reg = GetNewReg(INT64);
+            for(int i=0;i<3;i++){
+                if(op[i]->GetOperandType() == BasicOperand::IMMI32){
+                    op_reg[i] = GetNewReg(INT64);
+                    cur_block->push_back(rvconstructor->ConstructCopyRegImmI(op_reg[i],((ImmI32Operand*)op[i])->GetIntImmVal(),INT64));
+                }else if(op[i]->GetOperandType() == BasicOperand::REG){
+                    op_reg[i] = GetllvmReg(((RegOperand*)op[i])->GetRegNo(),INT64);
+                }else{
+                    ERROR("Unexpected Operand Type");
+                }
+            }
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_ADD,middle_reg,op_reg[0],op_reg[1]));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW,result_reg,middle_reg,op_reg[2]));
+        }
+    } else if (ins->GetOpcode() == UMIN) {
+        TODO("UMIN");
+    } else if (ins->GetOpcode() == UMAX) {
+        TODO("UMAX");
+    } else if (ins->GetOpcode() == SMIN) {
+        TODO("SMIN");
+    } else if (ins->GetOpcode() == SMAX) {
+        TODO("SMAX");
     } else {
         Log("RV InstSelect For Opcode %d", ins->GetOpcode());
     }
@@ -1394,7 +1431,6 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
             offset_reg_assigned = 1;
             all_imm = true;
 
-            // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI,offset_reg,const_offset * 4);
             auto li_instr = rvconstructor->ConstructCopyRegImmI(offset_reg, const_offset * 4, INT64);
 
             cur_block->push_back(li_instr);
@@ -1544,6 +1580,11 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
     case MOD:
     case XOR:
     case SHL:
+    case LL_ADDMOD:
+    case UMIN:
+    case UMAX:
+    case SMIN:
+    case SMAX:
         ConvertAndAppend<ArithmeticInstruction *>((ArithmeticInstruction *)inst);
         break;
     case ICMP:

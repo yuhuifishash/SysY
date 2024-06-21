@@ -328,33 +328,33 @@ void InlineDFS(CFG *uCFG) {
         }
     }
 
-    if (fcallgraph.CG.find(uCFG) != fcallgraph.CG.end() &&
-        fcallgraph.CGNum[uCFG].find(uCFG) != fcallgraph.CGNum[uCFG].end()) {
-        int i = 0;
-        while (IsInlineBetter(uCFG, uCFG)) {
-            is_reinline = true;
-            auto vCFG = CopyCFG(uCFG);
-            auto oldI = (CallInstruction *)fcallgraph.CGCallI[uCFG][uCFG][i];
-            auto CallI = (CallInstruction *)oldI->CopyInstruction();
-            CallI->SetFunctionName(vCFG->function_def->GetFunctionName());
-            CallI->SetBlockID(oldI->GetBlockID());
-            fcallgraph.CGCallI[uCFG][uCFG][i] = CallI;
-            oldI->SetFunctionName(vCFG->function_def->GetFunctionName());
-            auto block_map = uCFG->block_map;
-            auto oldbb = (*block_map)[oldI->GetBlockID()];
-            fcallgraph.CGCallI[uCFG][vCFG].push_back(oldI);
+    // if (fcallgraph.CG.find(uCFG) != fcallgraph.CG.end() &&
+    //     fcallgraph.CGNum[uCFG].find(uCFG) != fcallgraph.CGNum[uCFG].end()) {
+    //     int i = 0;
+    //     while (IsInlineBetter(uCFG, uCFG)) {
+    //         is_reinline = true;
+    //         auto vCFG = CopyCFG(uCFG);
+    //         auto oldI = (CallInstruction *)fcallgraph.CGCallI[uCFG][uCFG][i];
+    //         auto CallI = (CallInstruction *)oldI->CopyInstruction();
+    //         CallI->SetFunctionName(vCFG->function_def->GetFunctionName());
+    //         CallI->SetBlockID(oldI->GetBlockID());
+    //         fcallgraph.CGCallI[uCFG][uCFG][i] = CallI;
+    //         oldI->SetFunctionName(vCFG->function_def->GetFunctionName());
+    //         auto block_map = uCFG->block_map;
+    //         auto oldbb = (*block_map)[oldI->GetBlockID()];
+    //         fcallgraph.CGCallI[uCFG][vCFG].push_back(oldI);
 
-            InlineCFG(uCFG, vCFG, 0);
+    //         InlineCFG(uCFG, vCFG, 0);
 
-            fcallgraph.CGINum[uCFG] += fcallgraph.CGINum[vCFG];
-            fcallgraph.CG[uCFG].pop_back();
-            fcallgraph.CGNum[uCFG][vCFG] = 0;
-            fcallgraph.CGCallI[uCFG][vCFG].pop_back();
-            uCFG->BuildCFG();
-            i++;
-        }
-        is_reinline = false;
-    }
+    //         fcallgraph.CGINum[uCFG] += fcallgraph.CGINum[vCFG];
+    //         fcallgraph.CG[uCFG].pop_back();
+    //         fcallgraph.CGNum[uCFG][vCFG] = 0;
+    //         fcallgraph.CGCallI[uCFG][vCFG].pop_back();
+    //         uCFG->BuildCFG();
+    //         i++;
+    //     }
+    //     is_reinline = false;
+    // }
 
     uCFG->BuildCFG();
     uCFG->BuildDominatorTree();

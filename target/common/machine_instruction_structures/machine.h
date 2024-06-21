@@ -92,6 +92,7 @@ public:
 
 public:
     Register GetNewRegister(int regtype, int regwidth, bool save_across_call = false);
+    Register GetNewReg(MachineDataType type);
 
 protected:
     // Only change branch instruction, don't change cfg or phi instruction

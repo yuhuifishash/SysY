@@ -66,6 +66,10 @@ Register MachineFunction::GetNewRegister(int regtype, int reglength, bool save_a
     return new_reg;
 }
 
+Register MachineFunction::GetNewReg(MachineDataType type) {
+    return GetNewRegister(type.data_type, type.data_length);
+}
+
 MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::vector<int> succ) {
     TODO("Implement CreateNewEmptyBlock(Not sure if it's used)");
     return nullptr;

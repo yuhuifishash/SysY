@@ -265,6 +265,7 @@ int main(int argc, char **argv) {
         // std::cerr<<"LowerFrame\n";
         RiscV64LowerFrame(m_unit).Execute();
         // std::cerr<<"LowerImm\n";
+        RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         // std::cerr<<"PhiDestruction\n";
         MachinePhiDestruction(m_unit).Execute();
@@ -286,6 +287,7 @@ int main(int argc, char **argv) {
 
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
         RiscV64LowerFrame(m_unit).Execute();
+        RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         MachinePhiDestruction(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();

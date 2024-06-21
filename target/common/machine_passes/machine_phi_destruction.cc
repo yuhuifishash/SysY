@@ -32,7 +32,8 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                                                                                     block->getLabelId());
             }
         }
-        for (auto ins : *block) {
+        for (auto it = block->begin();it != block->end();++it) {
+            auto ins = *it;
             if(ins->arch == MachineBaseInstruction::COMMENT){
                 continue;
             }
@@ -40,6 +41,8 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                 break;
             }
             auto phi_Ins = (MachinePhiInstruction *)ins;
+            it = block->erase(it);
+            --it;
             for (auto [phi_labelid, phi_operand] : phi_Ins->GetPhiList()) {
                 Assert(phi_operand != nullptr);
                 // Insert to Parallel Copy List

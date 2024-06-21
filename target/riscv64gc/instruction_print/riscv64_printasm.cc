@@ -1,6 +1,9 @@
 #include "riscv64_printer.h"
 #include <assert.h>
 
+const bool print_comment = true;
+// const bool print_comment = false;
+
 bool isMemFormatOp(int opcode) {
     return opcode == RISCV_LB || opcode == RISCV_LBU || opcode == RISCV_LH || opcode == RISCV_LHU ||
            opcode == RISCV_LW || opcode == RISCV_LWU || opcode == RISCV_LD || opcode == RISCV_FLW ||
@@ -209,15 +212,22 @@ void RiscV64Printer::emit() {
             s << "." << func->getFunctionName() << block->getLabelId() << ":\n";
             cur_block = block;
             for (auto ins : *block) {
-                s << "\t";
                 if (ins->arch == MachineBaseInstruction::RiscV) {
+                	s << "\t";
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
-                    printAsm((MachinePhiInstruction *)ins);
+					if (::print_comment) {
+                		s << "\t";
+      	            	printAsm((MachinePhiInstruction *)ins);
+					}
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
+                	s << "\t";
                     printAsm((MachineCopyInstruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::COMMENT) {
-                    s << "# " << ((MachineComment *)ins)->GetComment();
+					if (::print_comment) {
+                		s << "\t";
+     	            	s << "# " << ((MachineComment *)ins)->GetComment();
+					}
                 } else {
                     ERROR("Unexpected arch");
                 }

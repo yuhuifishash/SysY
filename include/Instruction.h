@@ -367,6 +367,7 @@ public:
     enum LLVMType GetDataType() { return type; }
     Operand GetOperand1() { return op1; }
     Operand GetOperand2() { return op2; }
+    Operand GetOperand3() { return op3; }
     Operand GetResultOperand() { return result; }
     Operand GetResultReg() { return result; }
     void SetOperand1(Operand op) { op1 = op; }
