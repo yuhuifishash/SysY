@@ -645,7 +645,7 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             long long val1 = ((ImmI32Operand*)op1)->GetIntImmVal();
             long long val2 = ((ImmI32Operand*)op2)->GetIntImmVal();
             long long val3 = ((ImmI32Operand*)op3)->GetIntImmVal();
-            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg,(val1+val2)%val3,INT64));
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg,(val1*val2)%val3,INT64));
         }else{
             Register op_reg[3];
             Operand op[] = {op1,op2,op3};
@@ -660,7 +660,11 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                     ERROR("Unexpected Operand Type");
                 }
             }
-            cur_block->push_back(rvconstructor->ConstructR(RISCV_ADD,middle_reg,op_reg[0],op_reg[1]));
+            Register mod1_reg = GetNewReg(INT64);
+            Register mod2_reg = GetNewReg(INT64);
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW,mod1_reg,op_reg[0],op_reg[2]));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW,mod2_reg,op_reg[1],op_reg[2]));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL,middle_reg,mod1_reg,mod2_reg));
             cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW,result_reg,middle_reg,op_reg[2]));
         }
     } else if (ins->GetOpcode() == UMIN) {

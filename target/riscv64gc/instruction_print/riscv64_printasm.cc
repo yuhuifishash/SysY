@@ -208,11 +208,35 @@ void RiscV64Printer::emit() {
         // s << "\t.globl\t" << func->getFunctionName() << "\n";
         s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
-        for (auto block : func->blocks) {
-            s << "." << func->getFunctionName() << block->getLabelId() << ":\n";
-            cur_block = block;
-            for (auto ins : *block) {
+		// auto block = func->blocks[0];
+		std::map<int,int> vsd;
+		std::stack<int> stack;
+		stack.push(0);
+		while(!stack.empty()){
+			int block_id = stack.top();
+			vsd[block_id] = 1;
+			stack.pop();
+			auto block = func->getMachineCFG()->GetNodeByBlockId(block_id)->Mblock;
+            s << "." << func->getFunctionName() << block_id << ":\n";
+			cur_block = block;
+			for(auto ins : *block){
                 if (ins->arch == MachineBaseInstruction::RiscV) {
+					auto cur_rvins = (RiscV64Instruction *)ins;
+					if (OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::B_type) {
+						auto dest_label = cur_rvins->getLabel().jmp_label_id;
+						if(vsd.find(dest_label) == vsd.end()) {
+							vsd[dest_label] = 1;
+							stack.push(dest_label);
+						}
+					}
+					if (cur_rvins->getOpcode() == RISCV_JAL && cur_rvins->getUseLabel() == true && cur_rvins->getRd() == GetPhysicalReg(RISCV_x0)) {
+						auto dest_label = cur_rvins->getLabel().jmp_label_id;
+						if (vsd.find(dest_label) == vsd.end()) {
+							vsd[dest_label] = 1;
+							stack.push(dest_label);
+							continue;
+						}
+					}
                 	s << "\t";
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
@@ -231,8 +255,8 @@ void RiscV64Printer::emit() {
                 } else {
                     ERROR("Unexpected arch");
                 }
-            }
-        }
+			}
+		}
     }
     s << "\t.data\n";
     for (auto global : printee->global_def) {
