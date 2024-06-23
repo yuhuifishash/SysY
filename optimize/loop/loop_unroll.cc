@@ -275,10 +275,6 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     return true;
 }
 
-
-
-
-
 // this pass will unroll other for-loop without constant iterations (only the loop without nesting)
 // the step of loop must be constant
 /*
@@ -294,8 +290,7 @@ we will make S to S1,S2,S3,S4 (only i32)
 
 void SimpleForLoopUnroll(CFG *C) {}
 
-
-//only consider loop with one node
-static bool ReduceLoopCheckAndUnroll(CFG *C, NaturalLoop* L) {}
+// only consider loop with one node
+static bool ReduceLoopCheckAndUnroll(CFG *C, NaturalLoop *L) {}
 
 bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {}

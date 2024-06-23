@@ -71,6 +71,7 @@ public:
         Symbol stoptime = id_table.add_id("_sysy_stoptime");
         FunctionTable[stoptime] =
         new __FuncDef(Type::VOID, stoptime, new std::vector<FuncFParam>{new __FuncFParam(Type::INT)}, nullptr);
+
         for (auto F : FunctionTable) {
             F.second->TypeCheck();
         }

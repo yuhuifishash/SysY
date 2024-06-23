@@ -87,7 +87,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRd());
         s << ",";
         printRVfield(ins->getRs1());
-        if(ins->getOpcode() == RISCV_FCVT_W_S || ins->getOpcode() == RISCV_FCVT_WU_S){
+        if (ins->getOpcode() == RISCV_FCVT_W_S || ins->getOpcode() == RISCV_FCVT_WU_S) {
             s << ",rtz";
         }
         s << "\n";
@@ -185,7 +185,7 @@ template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyI
 
 template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {
     // Lazy("Phi Output");
-	s<<"# ";
+    s << "# ";
     printRVfield(ins->GetResult());
     s << " = " << ins->GetResult().type.toString() << " PHI ";
     for (auto [label, op] : ins->GetPhiList()) {
@@ -208,55 +208,56 @@ void RiscV64Printer::emit() {
         // s << "\t.globl\t" << func->getFunctionName() << "\n";
         s << func->getFunctionName() << ":\n";
         // May use iterator instead of directly accessing vector<blocks> in future
-		// auto block = func->blocks[0];
-		std::map<int,int> vsd;
-		std::stack<int> stack;
-		stack.push(0);
-		while(!stack.empty()){
-			int block_id = stack.top();
-			vsd[block_id] = 1;
-			stack.pop();
-			auto block = func->getMachineCFG()->GetNodeByBlockId(block_id)->Mblock;
+        // auto block = func->blocks[0];
+        std::map<int, int> vsd;
+        std::stack<int> stack;
+        stack.push(0);
+        while (!stack.empty()) {
+            int block_id = stack.top();
+            vsd[block_id] = 1;
+            stack.pop();
+            auto block = func->getMachineCFG()->GetNodeByBlockId(block_id)->Mblock;
             s << "." << func->getFunctionName() << block_id << ":\n";
-			cur_block = block;
-			for(auto ins : *block){
+            cur_block = block;
+            for (auto ins : *block) {
                 if (ins->arch == MachineBaseInstruction::RiscV) {
-					auto cur_rvins = (RiscV64Instruction *)ins;
-					if (OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::B_type) {
-						auto dest_label = cur_rvins->getLabel().jmp_label_id;
-						if(vsd.find(dest_label) == vsd.end()) {
-							vsd[dest_label] = 1;
-							stack.push(dest_label);
-						}
-					}
-					if (cur_rvins->getOpcode() == RISCV_JAL && cur_rvins->getUseLabel() == true && cur_rvins->getRd() == GetPhysicalReg(RISCV_x0)) {
-						auto dest_label = cur_rvins->getLabel().jmp_label_id;
-						if (vsd.find(dest_label) == vsd.end()) {
-							vsd[dest_label] = 1;
-							stack.push(dest_label);
-							continue;
-						}
-					}
-                	s << "\t";
+                    auto cur_rvins = (RiscV64Instruction *)ins;
+                    if (OpTable[cur_rvins->getOpcode()].ins_formattype == RvOpInfo::B_type) {
+                        auto dest_label = cur_rvins->getLabel().jmp_label_id;
+                        if (vsd.find(dest_label) == vsd.end()) {
+                            vsd[dest_label] = 1;
+                            stack.push(dest_label);
+                        }
+                    }
+                    if (cur_rvins->getOpcode() == RISCV_JAL && cur_rvins->getUseLabel() == true &&
+                        cur_rvins->getRd() == GetPhysicalReg(RISCV_x0)) {
+                        auto dest_label = cur_rvins->getLabel().jmp_label_id;
+                        if (vsd.find(dest_label) == vsd.end()) {
+                            vsd[dest_label] = 1;
+                            stack.push(dest_label);
+                            continue;
+                        }
+                    }
+                    s << "\t";
                     printAsm((RiscV64Instruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
-					if (::print_comment) {
-                		s << "\t";
-      	            	printAsm((MachinePhiInstruction *)ins);
-					}
+                    if (::print_comment) {
+                        s << "\t";
+                        printAsm((MachinePhiInstruction *)ins);
+                    }
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
-                	s << "\t";
+                    s << "\t";
                     printAsm((MachineCopyInstruction *)ins);
                 } else if (ins->arch == MachineBaseInstruction::COMMENT) {
-					if (::print_comment) {
-                		s << "\t";
-     	            	s << "# " << ((MachineComment *)ins)->GetComment();
-					}
+                    if (::print_comment) {
+                        s << "\t";
+                        s << "# " << ((MachineComment *)ins)->GetComment();
+                    }
                 } else {
                     ERROR("Unexpected arch");
                 }
-			}
-		}
+            }
+        }
     }
     s << "\t.data\n";
     for (auto global : printee->global_def) {
@@ -344,7 +345,7 @@ void RiscV64Printer::emit() {
             ERROR("Unexpected global define instruction");
         }
     }
-    s<< "\n\n	.attribute stack_align, 16\n\
+    s << "\n\n	.attribute stack_align, 16\n\
 	.text\n\
 	.align	1\n\
 	.globl	__pthread_test_callee\n\
@@ -1357,7 +1358,7 @@ ___parallel_loop_constant_100:\n\
 	addi	sp,sp,512\n\
 	jr	ra\n\
 	.size	___parallel_loop_constant_100, .-___parallel_loop_constant_100\n";
-//     s<<"	.option nopic\n\
+    //     s<<"	.option nopic\n\
 // 	.attribute unaligned_access, 0\n\
 // 	.attribute stack_align, 16\n\
 // 	.text\n\
@@ -1401,5 +1402,4 @@ ___parallel_loop_constant_100:\n\
 // 	jr	ra\n\
 // 	.size	__pthread_test_call, .-__pthread_test_call\n\
 // 	.align	1";
-    
 }

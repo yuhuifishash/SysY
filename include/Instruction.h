@@ -14,9 +14,9 @@
         std::cerr << "\033[;31;1m";                                                                                    \
         std::cerr << "ERROR: ";                                                                                        \
         std::cerr << "\033[0;37;1m";                                                                                   \
-        std::cerr << message << std::endl;                                                                                  \
+        std::cerr << message << std::endl;                                                                             \
         std::cerr << "\033[0;33;1m";                                                                                   \
-        std::cerr << "File: \033[4;37;1m" << __FILE__ << ":" << __LINE__ <<std::endl;                                      \
+        std::cerr << "File: \033[4;37;1m" << __FILE__ << ":" << __LINE__ << std::endl;                                 \
         std::cerr << "\033[0m";                                                                                        \
         assert(false);                                                                                                 \
     } while (0)
@@ -32,9 +32,9 @@
         std::cerr << "\033[;34;1m";                                                                                    \
         std::cerr << "TODO: ";                                                                                         \
         std::cerr << "\033[0;37;1m";                                                                                   \
-        std::cerr << message <<std::endl;                                                                                  \
+        std::cerr << message << std::endl;                                                                             \
         std::cerr << "\033[0;33;1m";                                                                                   \
-        std::cerr << "File: \033[4;37;1m" << __FILE__ << ":" << __LINE__ <<std::endl;                                      \
+        std::cerr << "File: \033[4;37;1m" << __FILE__ << ":" << __LINE__ << std::endl;                                 \
         std::cerr << "\033[0m";                                                                                        \
         assert(false);                                                                                                 \
     } while (0)
@@ -55,7 +55,7 @@
         std::cerr << "\033[;35;1m[\033[4;33;1m" << __FILE__ << ":" << __LINE__ << "\033[;35;1m "                       \
                   << __PRETTY_FUNCTION__ << "]";                                                                       \
         std::cerr << "\033[0;37;1m ";                                                                                  \
-        std::cerr << message <<std::endl;                                                                                  \
+        std::cerr << message << std::endl;                                                                             \
         std::cerr << "\033[0m";                                                                                        \
     } while (0)
 #endif

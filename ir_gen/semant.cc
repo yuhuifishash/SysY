@@ -670,11 +670,10 @@ void __FuncFParam::TypeCheck() {
 
 void __FuncDef::TypeCheck() {
     semant_table.symbol_table.enter_scope();
-
-    if (semant_table.FunctionTable.find(name) != semant_table.FunctionTable.end()) {
-        error_msgs.push_back("multilpe difinitions of functions " + name->get_string() + " in line " +
-                             std::to_string(line_number) + "\n");
-    }
+    // if (semant_table.FunctionTable.find(name) != semant_table.FunctionTable.end()) {
+    //     error_msgs.push_back("multilpe difinitions of functions " + name->get_string() + " in line " +
+    //                          std::to_string(line_number) + "\n");
+    // }
     if (name->get_string() == "main") {
         MainTag = true;
     }

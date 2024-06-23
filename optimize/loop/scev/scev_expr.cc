@@ -11,42 +11,42 @@ Instruction SCEVValue::GenerateValueInst(CFG *C) {
 }
 
 bool SCEVValue::operator==(SCEVValue b) {
-    if(op1->GetOperandType() != b.op1->GetOperandType()){
+    if (op1->GetOperandType() != b.op1->GetOperandType()) {
         return false;
     }
-    if(type != b.type){
+    if (type != b.type) {
         return false;
     }
 
-    if(type == OTHER){
+    if (type == OTHER) {
         assert(op1->GetOperandType() != BasicOperand::IMMF32);
-        if(op1->GetOperandType() == BasicOperand::IMMI32){
-            auto imm1 = ((ImmI32Operand*)op1)->GetIntImmVal();
-            auto b_imm1 = ((ImmI32Operand*)b.op1)->GetIntImmVal();
+        if (op1->GetOperandType() == BasicOperand::IMMI32) {
+            auto imm1 = ((ImmI32Operand *)op1)->GetIntImmVal();
+            auto b_imm1 = ((ImmI32Operand *)b.op1)->GetIntImmVal();
             return imm1 == b_imm1;
-        }else{
+        } else {
             return op1 == b.op1;
         }
     }
 
-    if(op2->GetOperandType() != b.op2->GetOperandType()){
+    if (op2->GetOperandType() != b.op2->GetOperandType()) {
         return false;
     }
-    
+
     bool eq1 = false, eq2 = false;
-    if(op1->GetOperandType() == BasicOperand::IMMI32){
-        auto imm1 = ((ImmI32Operand*)op1)->GetIntImmVal();
-        auto b_imm1 = ((ImmI32Operand*)b.op1)->GetIntImmVal();
+    if (op1->GetOperandType() == BasicOperand::IMMI32) {
+        auto imm1 = ((ImmI32Operand *)op1)->GetIntImmVal();
+        auto b_imm1 = ((ImmI32Operand *)b.op1)->GetIntImmVal();
         eq1 = (imm1 == b_imm1);
-    }else{
+    } else {
         eq1 = (op1 == b.op1);
     }
 
-    if(op2->GetOperandType() == BasicOperand::IMMI32){
-        auto imm2 = ((ImmI32Operand*)op2)->GetIntImmVal();
-        auto b_imm2 = ((ImmI32Operand*)b.op2)->GetIntImmVal();
+    if (op2->GetOperandType() == BasicOperand::IMMI32) {
+        auto imm2 = ((ImmI32Operand *)op2)->GetIntImmVal();
+        auto b_imm2 = ((ImmI32Operand *)b.op2)->GetIntImmVal();
         eq2 = (imm2 == b_imm2);
-    }else{
+    } else {
         eq2 = (op2 == b.op2);
     }
     return eq1 && eq2;

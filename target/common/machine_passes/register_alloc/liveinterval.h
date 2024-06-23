@@ -11,8 +11,8 @@ private:
         int end;
         bool inside(int pos) const { return begin <= pos && pos < end; }
         bool operator&(const struct LiveSegment &that) const {
-            return this->inside(that.begin) || this->inside(that.end - 1>that.begin ? that.end - 1 : that.begin) || that.inside(this->begin) ||
-                   that.inside(this->end - 1>this->begin?this->end-1:this->begin);
+            return this->inside(that.begin) || this->inside(that.end - 1 > that.begin ? that.end - 1 : that.begin) ||
+                   that.inside(this->begin) || that.inside(this->end - 1 > this->begin ? this->end - 1 : this->begin);
         }
         bool operator==(const struct LiveSegment &that) const {
             return this->begin == that.begin && this->end == that.end;

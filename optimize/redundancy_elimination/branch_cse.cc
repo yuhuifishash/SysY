@@ -12,7 +12,7 @@ struct CmpInstCSEInfo {
         if (cond != x.cond) {
             return cond < x.cond;
         }
-        
+
         if (operand_list.size() != x.operand_list.size()) {
             return operand_list.size() < x.operand_list.size();
         }
@@ -39,12 +39,12 @@ static CmpInstCSEInfo GetCSEInfo(Instruction I) {
     }
 
     if (I->GetOpcode() == ICMP) {
-        auto IcmpI = (IcmpInstruction*)I;
+        auto IcmpI = (IcmpInstruction *)I;
         ans.cond = IcmpI->GetCompareCondition();
     }
 
     if (I->GetOpcode() == FCMP) {
-        auto FcmpI = (FcmpInstruction*)I;
+        auto FcmpI = (FcmpInstruction *)I;
         ans.cond = FcmpI->GetCompareCondition();
     }
 
@@ -65,7 +65,7 @@ static CmpInstCSEInfo GetCSEInfo(Instruction I) {
     return ans;
 }
 
-//can bb1 -> bb2 ?
+// can bb1 -> bb2 ?
 static bool CanReach(int bb1_id, int bb2_id, CFG *C) {
     std::vector<int> vis;
     std::queue<int> q;
@@ -92,49 +92,51 @@ static bool CanReach(int bb1_id, int bb2_id, CFG *C) {
     return false;
 }
 
-static bool CanJump(bool isleft, int x1_id, int x2_id, CFG* C) {
-    //x1 dominate x2
+static bool CanJump(bool isleft, int x1_id, int x2_id, CFG *C) {
+    // x1 dominate x2
     auto x1 = (*C->block_map)[x1_id];
     auto x2 = (*C->block_map)[x2_id];
-    auto BrI1 = (BrCondInstruction*)(*(x1->Instruction_list.end() - 1));
-    auto xT = (*C->block_map)[((LabelOperand*)BrI1->GetTrueLabel())->GetLabelNo()];
-    auto xF = (*C->block_map)[((LabelOperand*)BrI1->GetFalseLabel())->GetLabelNo()];
-    if(isleft){
-        if(!CanReach(xT->block_id,x2->block_id,C) && CanReach(xF->block_id,x2->block_id,C)){
-            //this means x2 never reach it's TrueLabel
+    auto BrI1 = (BrCondInstruction *)(*(x1->Instruction_list.end() - 1));
+    auto xT = (*C->block_map)[((LabelOperand *)BrI1->GetTrueLabel())->GetLabelNo()];
+    auto xF = (*C->block_map)[((LabelOperand *)BrI1->GetFalseLabel())->GetLabelNo()];
+    if (isleft) {
+        if (!CanReach(xT->block_id, x2->block_id, C) && CanReach(xF->block_id, x2->block_id, C)) {
+            // this means x2 never reach it's TrueLabel
             auto tmpI1 = *(x2->Instruction_list.end() - 1);
             auto tmpI2 = *(x2->Instruction_list.end() - 2);
             x2->Instruction_list.pop_back();
             x2->Instruction_list.pop_back();
-            auto IcmpI = new IcmpInstruction(I32,new ImmI32Operand(0),new ImmI32Operand(1),eq,tmpI2->GetResultReg());
-            x2->InsertInstruction(1,IcmpI);
-            x2->InsertInstruction(1,tmpI1);
+            auto IcmpI =
+            new IcmpInstruction(I32, new ImmI32Operand(0), new ImmI32Operand(1), eq, tmpI2->GetResultReg());
+            x2->InsertInstruction(1, IcmpI);
+            x2->InsertInstruction(1, tmpI1);
             return true;
         }
-    }else{
-        if(CanReach(xT->block_id,x2->block_id,C) && !CanReach(xF->block_id,x2->block_id,C)){
-            //this means x2 never reach it's FalseLabel
+    } else {
+        if (CanReach(xT->block_id, x2->block_id, C) && !CanReach(xF->block_id, x2->block_id, C)) {
+            // this means x2 never reach it's FalseLabel
             auto tmpI1 = *(x2->Instruction_list.end() - 1);
             auto tmpI2 = *(x2->Instruction_list.end() - 2);
             x2->Instruction_list.pop_back();
             x2->Instruction_list.pop_back();
-            auto IcmpI = new IcmpInstruction(I32,new ImmI32Operand(1),new ImmI32Operand(1),eq,tmpI2->GetResultReg());
-            x2->InsertInstruction(1,IcmpI);
-            x2->InsertInstruction(1,tmpI1);
+            auto IcmpI =
+            new IcmpInstruction(I32, new ImmI32Operand(1), new ImmI32Operand(1), eq, tmpI2->GetResultReg());
+            x2->InsertInstruction(1, IcmpI);
+            x2->InsertInstruction(1, tmpI1);
             return true;
         }
     }
     return false;
 }
 
-static bool BlockDefNoUseCheck(CFG* C, int bb_id, int st_id) {
+static bool BlockDefNoUseCheck(CFG *C, int bb_id, int st_id) {
     auto bb = (*C->block_map)[bb_id];
     std::set<Operand> defs;
-    for(auto I:bb->Instruction_list){
-        if(I->GetOpcode() == PHI){
+    for (auto I : bb->Instruction_list) {
+        if (I->GetOpcode() == PHI) {
             return false;
-        } else{
-            if(I->GetResultReg() != nullptr){
+        } else {
+            if (I->GetResultReg() != nullptr) {
                 defs.insert(I->GetResultReg());
             }
         }
@@ -152,13 +154,13 @@ static bool BlockDefNoUseCheck(CFG* C, int bb_id, int st_id) {
             continue;
         }
         vis[x] = true;
-        if(x == bb_id){
+        if (x == bb_id) {
             continue;
         }
         auto bbx = (*C->block_map)[x];
-        for(auto I:bbx->Instruction_list){
-            for(auto op:I->GetNonResultOperands()){
-                if(defs.find(op) != defs.end()){
+        for (auto I : bbx->Instruction_list) {
+            for (auto op : I->GetNonResultOperands()) {
+                if (defs.find(op) != defs.end()) {
                     return false;
                 }
             }
@@ -171,95 +173,97 @@ static bool BlockDefNoUseCheck(CFG* C, int bb_id, int st_id) {
     return true;
 }
 
-static bool EmptyBlockJumping(CFG* C) {
+static bool EmptyBlockJumping(CFG *C) {
     bool flag = false;
     auto b = (*C->block_map)[0];
-    for(auto [id,bb]:*C->block_map){
-        if(bb->Instruction_list.size() < 2){
+    for (auto [id, bb] : *C->block_map) {
+        if (bb->Instruction_list.size() < 2) {
             continue;
         }
-        Operand op1_1,op1_2;
+        Operand op1_1, op1_2;
         int cond1 = 0;
         auto I = *(bb->Instruction_list.end() - 2);
-        
-        if(I->GetOpcode() == ICMP){
-            auto IcmpI = (IcmpInstruction*)I;
+
+        if (I->GetOpcode() == ICMP) {
+            auto IcmpI = (IcmpInstruction *)I;
             op1_1 = IcmpI->GetOp1();
             op1_2 = IcmpI->GetOp2();
             cond1 = IcmpI->GetCompareCondition();
-        }else if(I->GetOpcode() == FCMP) {
-            auto FcmpI = (FcmpInstruction*)I;
+        } else if (I->GetOpcode() == FCMP) {
+            auto FcmpI = (FcmpInstruction *)I;
             op1_1 = FcmpI->GetOp1();
             op1_2 = FcmpI->GetOp2();
             cond1 = FcmpI->GetCompareCondition();
-        }else{
+        } else {
             continue;
         }
-        
-        for(auto bb2:C->GetSuccessor(id)){
-            if(!C->IsDominate(bb->block_id,bb2->block_id)){
+
+        for (auto bb2 : C->GetSuccessor(id)) {
+            if (!C->IsDominate(bb->block_id, bb2->block_id)) {
                 continue;
             }
-            if(bb2 == bb){
+            if (bb2 == bb) {
                 continue;
             }
-            if(bb2->Instruction_list.size() < 2){
+            if (bb2->Instruction_list.size() < 2) {
                 continue;
             }
-            Operand op2_1,op2_2;
+            Operand op2_1, op2_2;
             int cond2 = 0;
             auto I2 = *(bb2->Instruction_list.end() - 2);
-            if(I->GetOpcode() != I2->GetOpcode()){
+            if (I->GetOpcode() != I2->GetOpcode()) {
                 continue;
             }
-            if(I2->GetOpcode() == ICMP){
-                auto IcmpI2 = (IcmpInstruction*)I2;
+            if (I2->GetOpcode() == ICMP) {
+                auto IcmpI2 = (IcmpInstruction *)I2;
                 op2_1 = IcmpI2->GetOp1();
                 op2_2 = IcmpI2->GetOp2();
                 cond2 = IcmpI2->GetCompareCondition();
-            }else if(I2->GetOpcode() == FCMP) {
-                auto FcmpI2 = (FcmpInstruction*)I2;
+            } else if (I2->GetOpcode() == FCMP) {
+                auto FcmpI2 = (FcmpInstruction *)I2;
                 op2_1 = FcmpI2->GetOp1();
                 op2_2 = FcmpI2->GetOp2();
                 cond2 = FcmpI2->GetCompareCondition();
-            }else{
+            } else {
                 continue;
             }
 
-            if(op1_1->GetFullName() != op2_1->GetFullName()){
+            if (op1_1->GetFullName() != op2_1->GetFullName()) {
                 continue;
             }
-            if(op1_2->GetFullName() != op2_2->GetFullName()){
+            if (op1_2->GetFullName() != op2_2->GetFullName()) {
                 continue;
             }
-            if(cond1 != cond2){
+            if (cond1 != cond2) {
                 continue;
             }
 
-            auto brI1 = (BrCondInstruction*)(bb->Instruction_list.back());
-            auto brI2 = (BrCondInstruction*)(bb2->Instruction_list.back());  
+            auto brI1 = (BrCondInstruction *)(bb->Instruction_list.back());
+            auto brI2 = (BrCondInstruction *)(bb2->Instruction_list.back());
 
-            if(((LabelOperand*)brI1->GetTrueLabel())->GetLabelNo() == bb2->block_id){
-                if(!BlockDefNoUseCheck(C,bb2->block_id,((LabelOperand*)brI2->GetTrueLabel())->GetLabelNo())){
+            if (((LabelOperand *)brI1->GetTrueLabel())->GetLabelNo() == bb2->block_id) {
+                if (!BlockDefNoUseCheck(C, bb2->block_id, ((LabelOperand *)brI2->GetTrueLabel())->GetLabelNo())) {
                     continue;
                 }
-                brI1->SetTrueLabel(((LabelOperand*)brI2->GetTrueLabel()));
+                brI1->SetTrueLabel(((LabelOperand *)brI2->GetTrueLabel()));
                 bb2->Instruction_list.pop_back();
                 bb2->Instruction_list.pop_back();
-                auto NIcmpI2 = new IcmpInstruction(I32,new ImmI32Operand(1),new ImmI32Operand(0),eq,I2->GetResultReg());
-                bb2->InsertInstruction(1,NIcmpI2);
-                bb2->InsertInstruction(1,brI2);
+                auto NIcmpI2 =
+                new IcmpInstruction(I32, new ImmI32Operand(1), new ImmI32Operand(0), eq, I2->GetResultReg());
+                bb2->InsertInstruction(1, NIcmpI2);
+                bb2->InsertInstruction(1, brI2);
                 flag = true;
-            }else{
-                if(!BlockDefNoUseCheck(C,bb2->block_id,((LabelOperand*)brI2->GetFalseLabel())->GetLabelNo())){
+            } else {
+                if (!BlockDefNoUseCheck(C, bb2->block_id, ((LabelOperand *)brI2->GetFalseLabel())->GetLabelNo())) {
                     continue;
                 }
-                brI1->SetFalseLabel(((LabelOperand*)brI2->GetFalseLabel()));
+                brI1->SetFalseLabel(((LabelOperand *)brI2->GetFalseLabel()));
                 bb2->Instruction_list.pop_back();
                 bb2->Instruction_list.pop_back();
-                auto NIcmpI2 = new IcmpInstruction(I32,new ImmI32Operand(1),new ImmI32Operand(1),eq,I2->GetResultReg());
-                bb2->InsertInstruction(1,NIcmpI2);
-                bb2->InsertInstruction(1,brI2);
+                auto NIcmpI2 =
+                new IcmpInstruction(I32, new ImmI32Operand(1), new ImmI32Operand(1), eq, I2->GetResultReg());
+                bb2->InsertInstruction(1, NIcmpI2);
+                bb2->InsertInstruction(1, brI2);
                 flag = true;
             }
         }
@@ -267,43 +271,44 @@ static bool EmptyBlockJumping(CFG* C) {
     return flag;
 }
 
-//we assume the next instruction of icmp(fcmp) is brcond
-void BranchCSE(CFG* C) {
+// we assume the next instruction of icmp(fcmp) is brcond
+void BranchCSE(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
         }
     }
-    std::map<CmpInstCSEInfo,std::vector<Instruction>> CmpMap;
+    std::map<CmpInstCSEInfo, std::vector<Instruction>> CmpMap;
     bool changed = true;
 
     std::function<void(int)> dfs = [&](int nowid) {
         LLVMBlock now = (*C->block_map)[nowid];
         std::set<CmpInstCSEInfo> tmpcse_set;
-        if(now->Instruction_list.size() >= 2){
+        if (now->Instruction_list.size() >= 2) {
             auto I = *(now->Instruction_list.end() - 2);
-            if(I->GetOpcode() == FCMP || I->GetOpcode() == ICMP){
+            if (I->GetOpcode() == FCMP || I->GetOpcode() == ICMP) {
                 auto info = GetCSEInfo(I);
                 bool isConstCmp = false;
-                if(I->GetOpcode() == ICMP){
-                    auto IcmpI = (IcmpInstruction*)I;
-                    if(IcmpI->GetOp1()->GetOperandType() == BasicOperand::IMMI32 && IcmpI->GetOp2()->GetOperandType() == BasicOperand::IMMI32){
+                if (I->GetOpcode() == ICMP) {
+                    auto IcmpI = (IcmpInstruction *)I;
+                    if (IcmpI->GetOp1()->GetOperandType() == BasicOperand::IMMI32 &&
+                        IcmpI->GetOp2()->GetOperandType() == BasicOperand::IMMI32) {
                         isConstCmp = true;
                     }
                 }
                 bool isCSE = false;
-                if(!isConstCmp && CmpMap.find(info) != CmpMap.end()){
-                    for(auto I2:CmpMap[info]){
-                        if(CanJump(1,I2->GetBlockID(),I->GetBlockID(),C)){
+                if (!isConstCmp && CmpMap.find(info) != CmpMap.end()) {
+                    for (auto I2 : CmpMap[info]) {
+                        if (CanJump(1, I2->GetBlockID(), I->GetBlockID(), C)) {
                             isCSE = true;
                             break;
-                        }else if(CanJump(0,I2->GetBlockID(),I->GetBlockID(),C)){
+                        } else if (CanJump(0, I2->GetBlockID(), I->GetBlockID(), C)) {
                             isCSE = true;
                             break;
                         }
                     }
                 }
-                if(!isCSE && !isConstCmp){
+                if (!isCSE && !isConstCmp) {
                     CmpMap[info].push_back(I);
                 }
             }
@@ -313,7 +318,7 @@ void BranchCSE(CFG* C) {
             dfs(v->block_id);
         }
 
-        for (auto info:tmpcse_set){
+        for (auto info : tmpcse_set) {
             CmpMap[info].pop_back();
         }
     };
@@ -327,5 +332,4 @@ void BranchCSE(CFG* C) {
         C->BuildCFG();
         C->BuildDominatorTree();
     }
-
 }

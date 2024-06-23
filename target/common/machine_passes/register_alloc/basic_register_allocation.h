@@ -12,9 +12,7 @@ struct AllocResult {
         int phy_reg_no;
         int stack_offset;
     };
-    AllocResult():in_mem(false){
-        phy_reg_no = 0;
-    }
+    AllocResult() : in_mem(false) { phy_reg_no = 0; }
     AllocResult(const struct AllocResult &other) {
         in_mem = other.in_mem;
         phy_reg_no = other.phy_reg_no;
@@ -26,8 +24,9 @@ class SpillCodeGen;
 class RegisterAllocation : public MachinePass {
 private:
     void UpdateIntervalsInCurrentFunc();
-    std::queue<MachineFunction*> not_allocated_funcs;
+    std::queue<MachineFunction *> not_allocated_funcs;
     SpillCodeGen *spiller;
+
 protected:
     void AllocPhyReg(MachineFunction *mfun, Register vreg, int phyreg) {
         Assert(vreg.is_virtual);
@@ -67,7 +66,8 @@ protected:
     std::map<MachineFunction *, std::map<Register, AllocResult>> alloc_result;
 
 public:
-    RegisterAllocation(MachineUnit *unit, PhysicalRegisters *phy,SpillCodeGen* spiller) : MachinePass(unit), phy_regs(phy), spiller(spiller) {}
+    RegisterAllocation(MachineUnit *unit, PhysicalRegisters *phy, SpillCodeGen *spiller)
+        : MachinePass(unit), phy_regs(phy), spiller(spiller) {}
     void Execute();
 };
 
@@ -75,7 +75,7 @@ class InstructionNumber : public MachinePass {
 public:
     InstructionNumber(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
-    void ExecuteInFunc(MachineFunction* func);
+    void ExecuteInFunc(MachineFunction *func);
 };
 
 class VirtualRegisterRewrite : public MachinePass {
@@ -90,19 +90,26 @@ public:
     void ExecuteInFunc();
 };
 
-class SpillCodeGen{
+class SpillCodeGen {
 private:
     std::map<Register, AllocResult> *alloc_result;
-    virtual Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
-    virtual Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type) = 0;
-    virtual void GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type) = 0;
-    virtual void GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type) = 0;
+    virtual Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                                      MachineDataType type) = 0;
+    virtual Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                                       MachineDataType type) = 0;
+    virtual void GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                                         Register reg, MachineDataType type) = 0;
+    virtual void GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                                           Register reg, MachineDataType type) = 0;
+
 protected:
-    MachineFunction* function;
-    MachineBlock* cur_block;
+    MachineFunction *function;
+    MachineBlock *cur_block;
+
 public:
-    // SpillCodeGen(MachineFunction* function,std::map<Register, AllocResult> *alloc_result) : alloc_result(alloc_result), function(function) {}
-    void ExecuteInFunc(MachineFunction* function,std::map<Register, AllocResult> *alloc_result);
+    // SpillCodeGen(MachineFunction* function,std::map<Register, AllocResult> *alloc_result) :
+    // alloc_result(alloc_result), function(function) {}
+    void ExecuteInFunc(MachineFunction *function, std::map<Register, AllocResult> *alloc_result);
 };
 
 #endif

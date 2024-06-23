@@ -11,7 +11,7 @@ public:
 
 class RiscV64AlgStrenghReduce : public MachinePass {
 public:
-    RiscV64AlgStrenghReduce(MachineUnit* unit) : MachinePass(unit) {}
+    RiscV64AlgStrenghReduce(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
 

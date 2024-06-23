@@ -77,7 +77,7 @@ void LoopGepStrengthReduce(CFG *C);
 void OnlyBasicBlockCSE(CFG *C);
 void LoopParallel(CFG *C);
 void LoopFusion(CFG *C);
-void BranchCSE(CFG* C);
+void BranchCSE(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -177,7 +177,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimplifyCFG);
-        
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
@@ -189,7 +188,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(BranchCSE);
-        
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         // TODO():GVN/GCM
 
@@ -248,6 +247,19 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopFusion);
+
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(AddParallelLib);
+        llvmIR.PassExecutor(LoopParallel);
+
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(LoopGepStrengthReduce);
+        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SimplifyCFG);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

@@ -50,13 +50,13 @@ public:
     bool LoopCarriedDependenceTest(CFG *C);
     bool LoopParallel(CFG *C);
 
-    enum LoopDepResult{
+    enum LoopDepResult {
         NONE = 0,
         FLOW = 1,
         ANTI = 2,
         ANY = 3,
     };
-    //I1 and I2 must be GEP
+    // I1 and I2 must be GEP
     LoopDepResult CheckDependenceResult(Instruction I1, Instruction I2);
 
     void PrintLoopDebugInfo();

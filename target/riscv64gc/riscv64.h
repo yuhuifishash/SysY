@@ -1,8 +1,8 @@
 #ifndef RISCV64_H
 #define RISCV64_H
 #include "../common/MachineBaseInstruction.h"
-#include "../common/machine_passes/register_alloc/physical_register.h"
 #include "../common/machine_passes/register_alloc/basic_register_allocation.h"
+#include "../common/machine_passes/register_alloc/physical_register.h"
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"
@@ -367,18 +367,24 @@ private:
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
     std::vector<Register *> GetR4_typeReadreg() { return {&rs1, &rs2, &rs3}; }
-    std::vector<Register *> GetI_typeReadreg() { if(ret_usea0){return {&rs1,&RISCVregs[RISCV_a0]};}else {return {&rs1};} }
+    std::vector<Register *> GetI_typeReadreg() {
+        if (ret_usea0) {
+            return {&rs1, &RISCVregs[RISCV_a0]};
+        } else {
+            return {&rs1};
+        }
+    }
     std::vector<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetU_typeReadreg() { return {}; }
     std::vector<Register *> GetJ_typeReadreg() { return {}; }
     std::vector<Register *> GetCall_typeReadreg() {
         std::vector<Register *> ret;
-        for(int i=0;i<callireg_num;i++){
-            ret.push_back(&RISCVregs[RISCV_a0+i]);
+        for (int i = 0; i < callireg_num; i++) {
+            ret.push_back(&RISCVregs[RISCV_a0 + i]);
         }
-        for(int i=0;i<callfreg_num;i++){
-            ret.push_back(&RISCVregs[RISCV_fa0+i]);
+        for (int i = 0; i < callfreg_num; i++) {
+            ret.push_back(&RISCVregs[RISCV_fa0 + i]);
         }
         return ret;
     }
@@ -425,15 +431,9 @@ public:
     void setRs3(Register rs3) { this->rs3 = rs3; }
     void setImm(int imm) { this->imm = imm; }
     void setLabel(RiscVLabel label) { this->label = label; }
-    void setCalliregNum(int n){
-        callireg_num = n;
-    }
-    void setCallfregNum(int n){
-        callfreg_num = n;
-    }
-    void setRetUsea0(int use){
-        ret_usea0 = use;
-    }
+    void setCalliregNum(int n) { callireg_num = n; }
+    void setCallfregNum(int n) { callfreg_num = n; }
+    void setRetUsea0(int use) { ret_usea0 = use; }
     Register getRd() { return rd; }
     Register getRs1() { return rs1; }
     Register getRs2() { return rs2; }
@@ -597,45 +597,42 @@ public:
     std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt();
 };
 
-class RiscV64BlockFactory : public MachineBlockFactory{
+class RiscV64BlockFactory : public MachineBlockFactory {
 public:
-    MachineBlock* CreateBlock(int id){
-        return new RiscV64Block(id);
-    }
+    MachineBlock *CreateBlock(int id) { return new RiscV64Block(id); }
 };
 
 class RiscV64Function : public MachineFunction {
 public:
-    RiscV64Function(std::string name) : MachineFunction(name,new RiscV64BlockFactory()) {}
+    RiscV64Function(std::string name) : MachineFunction(name, new RiscV64BlockFactory()) {}
+
 protected:
     void InitializeNewVirtualRegister(int vregno);
     void MoveAllPredecessorsBranchTargetToNewBlock(int original_target, int new_target);
     void MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target);
     void YankBranchInstructionToNewBlock(int original_block_id, int new_block);
     void AppendUncondBranchInstructionToNewBlock(int new_block, int br_target);
+
 private:
-    std::vector<RiscV64Instruction*> stackparameterlist;
-    std::vector<RiscV64Instruction*> allocalist;
+    std::vector<RiscV64Instruction *> stackparameterlist;
+    std::vector<RiscV64Instruction *> allocalist;
+
 public:
-    void AddStackSize(int sz){
+    void AddStackSize(int sz) {
         int pre_sz = GetStackSize();
         stack_sz += sz;
         int after_sz = GetStackSize();
-        for(auto ins : stackparameterlist){
+        for (auto ins : stackparameterlist) {
             ins->setImm(ins->getImm() - pre_sz + after_sz);
         }
     }
-    void AddParameterSize(int sz){
-        for(auto ins : allocalist){
+    void AddParameterSize(int sz) {
+        for (auto ins : allocalist) {
             ins->setImm(ins->getImm() + sz);
         }
     }
-    void AddStkParaIns(RiscV64Instruction* ins){
-        stackparameterlist.push_back(ins);
-    }
-    void AddAllocaIns(RiscV64Instruction* ins){
-        allocalist.push_back(ins);
-    }
+    void AddStkParaIns(RiscV64Instruction *ins) { stackparameterlist.push_back(ins); }
+    void AddAllocaIns(RiscV64Instruction *ins) { allocalist.push_back(ins); }
 };
 class RiscV64Unit : public MachineUnit {};
 
@@ -645,15 +642,25 @@ protected:
 
 public:
     RiscV64Register() { phy_occupied.resize(64); }
-    void clear(){phy_occupied.clear(); Assert(phy_occupied.empty());phy_occupied.resize(64);mem_occupied.clear();Assert(mem_occupied.empty());}
+    void clear() {
+        phy_occupied.clear();
+        Assert(phy_occupied.empty());
+        phy_occupied.resize(64);
+        mem_occupied.clear();
+        Assert(mem_occupied.empty());
+    }
 };
 
-class RiscV64Spiller : public SpillCodeGen{
+class RiscV64Spiller : public SpillCodeGen {
 private:
-    Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type);
-    Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,MachineDataType type);
-    void GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type);
-    void GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator&it,int raw_stk_offset,Register reg,MachineDataType type);
+    Register GenerateReadCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                              MachineDataType type);
+    Register GenerateWriteCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
+                               MachineDataType type);
+    void GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset, Register reg,
+                                 MachineDataType type);
+    void GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset, Register reg,
+                                   MachineDataType type);
 };
 
 #endif

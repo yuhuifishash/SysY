@@ -27,18 +27,16 @@ template <class T> std::set<T> SetDiff(const std::set<T> &a, const std::set<T> &
     return ret;
 }
 
-std::vector<Register *> MachinePhiInstruction::GetReadReg() { 
-    std::vector<Register *>ret;
+std::vector<Register *> MachinePhiInstruction::GetReadReg() {
+    std::vector<Register *> ret;
     for (auto [label, op] : phi_list) {
-        if(op->op_type == MachineBaseOperand::REG) {
-            ret.push_back(&(((MachineRegister*)op)->reg));
+        if (op->op_type == MachineBaseOperand::REG) {
+            ret.push_back(&(((MachineRegister *)op)->reg));
         }
     }
     return ret;
 }
-std::vector<Register *> MachinePhiInstruction::GetWriteReg() {
-    return std::vector<Register*>({&result});
-}
+std::vector<Register *> MachinePhiInstruction::GetWriteReg() { return std::vector<Register *>({&result}); }
 
 void Liveness::UpdateDefUse() {
     DEF.clear();

@@ -66,9 +66,7 @@ Register MachineFunction::GetNewRegister(int regtype, int reglength, bool save_a
     return new_reg;
 }
 
-Register MachineFunction::GetNewReg(MachineDataType type) {
-    return GetNewRegister(type.data_type, type.data_length);
-}
+Register MachineFunction::GetNewReg(MachineDataType type) { return GetNewRegister(type.data_type, type.data_length); }
 
 MachineBlock *MachineFunction::CreateNewEmptyBlock(std::vector<int> pre, std::vector<int> succ) {
     TODO("Implement CreateNewEmptyBlock(Not sure if it's used)");
@@ -80,15 +78,15 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, in
     auto new_block = InitNewBlock();
     auto mid = new_block->getLabelId();
     // Change Edge
-    mcfg->RemoveEdge(begin,end);
-    mcfg->MakeEdge(begin,mid);
-    mcfg->MakeEdge(mid,end);
+    mcfg->RemoveEdge(begin, end);
+    mcfg->MakeEdge(begin, mid);
+    mcfg->MakeEdge(mid, end);
     // Redirect Branch
-    MoveOnePredecessorBranchTargetToNewBlock(begin,end,mid);
+    MoveOnePredecessorBranchTargetToNewBlock(begin, end, mid);
     // Insert Branch in new block
-    AppendUncondBranchInstructionToNewBlock(mid,end);
+    AppendUncondBranchInstructionToNewBlock(mid, end);
     // Redirect Phi
-    RedirectPhiNodePredecessor(end,begin,mid);
+    RedirectPhiNodePredecessor(end, begin, mid);
     return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) {
@@ -104,21 +102,22 @@ void MachineFunction::RedirectPhiNodePredecessor(int phi_block, int old_predeces
     // then replace <label old_predecessor> to <label new_predecessor>
     // TODO("Implement RedirectPhiNodePredecessor");
     auto block = mcfg->GetNodeByBlockId(phi_block)->Mblock;
-    for(auto ins : *block){
-        if(ins->arch != MachineBaseInstruction::PHI)break;
-        auto mphi = (MachinePhiInstruction*)ins;
-        for(auto& phi_pair : mphi->GetPhiList()){
-            if(phi_pair.first == old_predecessor){
+    for (auto ins : *block) {
+        if (ins->arch != MachineBaseInstruction::PHI)
+            break;
+        auto mphi = (MachinePhiInstruction *)ins;
+        for (auto &phi_pair : mphi->GetPhiList()) {
+            if (phi_pair.first == old_predecessor) {
                 phi_pair.first = new_predecessor;
             }
         }
     }
 }
-MachineBlock* MachineFunction::InitNewBlock(){
+MachineBlock *MachineFunction::InitNewBlock() {
     int new_id = ++max_exist_label;
-    MachineBlock* new_block = block_factory->CreateBlock(new_id);
+    MachineBlock *new_block = block_factory->CreateBlock(new_id);
     new_block->setParent(this);
     blocks.push_back(new_block);
-    mcfg->AssignEmptyNode(new_id,new_block);
+    mcfg->AssignEmptyNode(new_id, new_block);
     return new_block;
 }

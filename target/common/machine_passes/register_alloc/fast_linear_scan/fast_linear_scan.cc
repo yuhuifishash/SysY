@@ -1,6 +1,6 @@
 #include "fast_linear_scan.h"
 bool IntervalsPrioCmp(LiveInterval a, LiveInterval b) { return a.begin()->begin > b.begin()->begin; }
-FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy, SpillCodeGen* spiller)
+FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy, SpillCodeGen *spiller)
     : RegisterAllocation(unit, phy, spiller), unalloc_queue(IntervalsPrioCmp) {}
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
@@ -22,18 +22,18 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
         unalloc_queue.pop();
         auto cur_vreg = interval.getReg();
         std::vector<int> prefered_regs;
-        for(auto reg : copy_sources[cur_vreg]){
-            if(reg.is_virtual){
-                if(alloc_result[mfun].find(reg) != alloc_result[mfun].end()){
-                    if(alloc_result[mfun][reg].in_mem == false){
+        for (auto reg : copy_sources[cur_vreg]) {
+            if (reg.is_virtual) {
+                if (alloc_result[mfun].find(reg) != alloc_result[mfun].end()) {
+                    if (alloc_result[mfun][reg].in_mem == false) {
                         prefered_regs.push_back(alloc_result[mfun][reg].phy_reg_no);
                     }
                 }
-            }else{
+            } else {
                 prefered_regs.push_back(reg.reg_no);
             }
         }
-        int phy_reg_id = phy_regs->getIdleReg(interval,prefered_regs);
+        int phy_reg_id = phy_regs->getIdleReg(interval, prefered_regs);
         if (phy_reg_id >= 0) {
             phy_regs->OccupyReg(phy_reg_id, interval);
             AllocPhyReg(mfun, cur_vreg, phy_reg_id);
@@ -64,7 +64,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
                 // unalloc_queue.push(spill_interval);
                 int spill_mem = phy_regs->getIdleMem(spill_interval);
                 phy_regs->OccupyMem(spill_mem, spill_interval.getReg().getDataWidth(), spill_interval);
-                AllocStack(mfun,spill_interval.getReg(),spill_mem);
+                AllocStack(mfun, spill_interval.getReg(), spill_mem);
             }
         }
     }

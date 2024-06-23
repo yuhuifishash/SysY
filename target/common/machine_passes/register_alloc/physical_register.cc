@@ -23,7 +23,7 @@ bool PhysicalRegisters::ReleaseReg(int phy_id, LiveInterval interval) {
 bool PhysicalRegisters::OccupyMem(int offset, int size, LiveInterval interval) {
     size /= 4;
     for (int i = offset; i < offset + size; i++) {
-        while(i >= mem_occupied.size()){
+        while (i >= mem_occupied.size()) {
             mem_occupied.push_back({});
         }
         mem_occupied[i].push_back(interval);
@@ -44,7 +44,7 @@ bool PhysicalRegisters::ReleaseMem(int offset, int size, LiveInterval interval) 
     return true;
 }
 
-int PhysicalRegisters::getIdleReg(LiveInterval interval,std::vector<int> preferd_regs) {
+int PhysicalRegisters::getIdleReg(LiveInterval interval, std::vector<int> preferd_regs) {
     PRINT("\nVreg: ");
     interval.Print();
     for (auto i : preferd_regs) {
@@ -68,7 +68,7 @@ int PhysicalRegisters::getIdleReg(LiveInterval interval,std::vector<int> preferd
             return i;
         }
     }
-    for(auto i : getValidRegs(interval)){
+    for (auto i : getValidRegs(interval)) {
         int ok = true;
         for (auto conflict_j : getAliasRegs(i)) {
             for (auto other_interval : phy_occupied[conflict_j]) {

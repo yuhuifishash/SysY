@@ -2,22 +2,22 @@
 void RegisterAllocation::Execute() {
     // std::cerr<<"InstructionNumber"<<std::endl;
     InstructionNumber(unit).Execute();
-    for (auto func : unit->functions){
+    for (auto func : unit->functions) {
         not_allocated_funcs.push(func);
     }
     int iterations = 0;
-    while(!not_allocated_funcs.empty()){
+    while (!not_allocated_funcs.empty()) {
         // std::cerr<<"Func: "<<current_func->getFunctionName()<<std::endl;
         current_func = not_allocated_funcs.front();
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
         // std::cerr<<"Doing Alloc:"<<std::endl;
-        if(DoAllocInCurrentFunc()){
+        if (DoAllocInCurrentFunc()) {
             // std::cerr<<"Spilling"<<std::endl;
             // Generate Spill Code
             // TODO("Spill Code Example");
-            spiller->ExecuteInFunc(current_func,&alloc_result[current_func]);
+            spiller->ExecuteInFunc(current_func, &alloc_result[current_func]);
             current_func->AddStackSize(phy_regs->getSpillSize());
             not_allocated_funcs.push(current_func);
             InstructionNumber(unit).ExecuteInFunc(current_func);
@@ -66,7 +66,7 @@ void InstructionNumber::Execute() {
         }
     }
 }
-void InstructionNumber::ExecuteInFunc(MachineFunction* func){
+void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
     int count_begin = 1;
     current_func = func;
     // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
@@ -102,7 +102,8 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<"
+        // "<<mblock->getBlockOutNumber()<<"\n";
         //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
