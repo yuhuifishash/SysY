@@ -24,6 +24,7 @@ class SpillCodeGen;
 class RegisterAllocation : public MachinePass {
 private:
     void UpdateIntervalsInCurrentFunc();
+    virtual void CoalesceInCurrentFunc() = 0;
     std::queue<MachineFunction *> not_allocated_funcs;
     SpillCodeGen *spiller;
 

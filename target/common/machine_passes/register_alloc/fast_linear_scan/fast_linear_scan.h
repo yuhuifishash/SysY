@@ -8,7 +8,7 @@ private:
     // All States here, like queue
     std::priority_queue<LiveInterval, std::vector<LiveInterval>, decltype(IntervalsPrioCmp) *> unalloc_queue;
     double CalculateSpillWeight(LiveInterval);
-
+    void CoalesceInCurrentFunc();
 protected:
     bool DoAllocInCurrentFunc();
 

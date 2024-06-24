@@ -18,7 +18,7 @@ private:
             return this->begin == that.begin && this->end == that.end;
         }
     };
-    std::deque<LiveSegment> segments{};
+    std::list<LiveSegment> segments{};
     int reference_count;
 
 public:
@@ -31,6 +31,35 @@ public:
             return false;
         }
         return reg == that.reg;    // && segments == that.segments;
+    }
+    LiveInterval operator | (const LiveInterval &that) const{
+        LiveInterval ret(this->reg);
+        ret.reference_count = this->reference_count + that.reference_count - 2;
+        auto it = segments.begin();
+        auto jt = that.segments.begin();
+        while (1) {
+            if (it == segments.end() && jt == that.segments.end()) {
+                break;
+            }
+            if (it == segments.end()) {
+                ret.segments.push_back(*jt);
+                ++jt;
+                continue;
+            }
+            if (jt == that.segments.end()) {
+                ret.segments.push_back(*it);
+                ++it;
+                continue;
+            }
+            if (it->begin < jt->begin) {
+                ret.segments.push_back(*it);
+                ++it;
+            } else {
+                ret.segments.push_back(*jt);
+                ++jt;
+            }
+        }
+        return ret;
     }
     bool operator&(const LiveInterval &that) const {
         // TODO : Judge if *this and that overlapped
@@ -82,7 +111,8 @@ public:
     }
     void SetMostBegin(int begin) {
         // Log("SetBegin %d",begin);
-        segments[0].begin = begin;
+        segments.begin()->begin = begin;
+        // segments[0].begin = begin;
     }
 
     void Print() {

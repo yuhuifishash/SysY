@@ -12,6 +12,7 @@ void RegisterAllocation::Execute() {
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
+        // CoalesceInCurrentFunc();
         // std::cerr<<"Doing Alloc:"<<std::endl;
         if (DoAllocInCurrentFunc()) {
             // std::cerr<<"Spilling"<<std::endl;
@@ -131,6 +132,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 for (auto reg_w : ins->GetWriteReg()) {
                     for (auto reg_r : ins->GetReadReg()) {
                         copy_sources[*reg_w].push_back(*reg_r);
+                        copy_sources[*reg_r].push_back(*reg_w);
                     }
                 }
             } else if (ins->arch == MachineBaseInstruction::RiscV) {

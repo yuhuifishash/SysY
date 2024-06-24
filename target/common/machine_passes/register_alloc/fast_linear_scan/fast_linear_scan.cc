@@ -73,3 +73,45 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
 double FastLinearScan::CalculateSpillWeight(LiveInterval interval) {
     return (double)interval.getReferenceCount() / interval.getIntervalLen();
 }
+
+static Register findroot(std::map<Register,Register>&coal_result,Register vreg) {
+    Register ret = vreg;
+    while(!(ret == coal_result[ret])) {
+        ret = coal_result[ret];
+    }
+    return coal_result[vreg] = ret;
+}
+
+void FastLinearScan::CoalesceInCurrentFunc() {
+    std::map<Register,Register> coal_result;
+    for (auto [reg,interval] : intervals) {
+        if(reg.is_virtual == false)continue;
+        coal_result[reg] = reg;
+    }
+    for (auto [reg,interval] : intervals) {
+        if(reg.is_virtual == false)continue;
+        for(auto other : copy_sources[reg]){
+            if(other.is_virtual == false)continue;
+            Assert(coal_result.find(reg) != coal_result.end());
+            Assert(coal_result.find(other) != coal_result.end());
+            auto root_reg = ::findroot(coal_result,reg);
+            auto other_root_reg = ::findroot(coal_result,other);
+            if(root_reg == other_root_reg)continue;
+            if(intervals[root_reg] & intervals[other_root_reg])continue;
+            intervals[root_reg] = intervals[root_reg] | intervals[other_root_reg];
+            coal_result[other_root_reg] = root_reg;
+        }
+    }
+    for (auto block : current_func->blocks) {
+        for (auto ins : *block) {
+            for (auto reg : ins->GetReadReg()) {
+                if (reg->is_virtual == false) continue; 
+                *reg = ::findroot(coal_result,*reg);
+            }
+            for (auto reg : ins->GetWriteReg()) {
+                if (reg->is_virtual == false) continue; 
+                *reg = ::findroot(coal_result,*reg);
+            }
+        }
+    }
+}
