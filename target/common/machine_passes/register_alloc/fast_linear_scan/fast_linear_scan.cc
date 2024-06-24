@@ -98,8 +98,11 @@ void FastLinearScan::CoalesceInCurrentFunc() {
             auto other_root_reg = ::findroot(coal_result,other);
             if(root_reg == other_root_reg)continue;
             if(intervals[root_reg] & intervals[other_root_reg])continue;
+            // double spillweight_ratio = CalculateSpillWeight(root_reg) / CalculateSpillWeight(other_root_reg);
+            // if (spillweight_ratio >= 2.0 || spillweight_ratio <= 0.5)continue;
             intervals[root_reg] = intervals[root_reg] | intervals[other_root_reg];
             coal_result[other_root_reg] = root_reg;
+            intervals.erase(other_root_reg);
         }
     }
     for (auto block : current_func->blocks) {
@@ -114,4 +117,16 @@ void FastLinearScan::CoalesceInCurrentFunc() {
             }
         }
     }
+    // std::cerr<<"Check Intervals "<<current_func->getFunctionName().c_str()<<" After Coalesce"<<std::endl;
+    // for(auto interval_pair : intervals){
+    //     auto reg = interval_pair.first;
+    //     auto interval = interval_pair.second;
+    //     std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+    //     for(auto seg : interval){
+    //         std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+    //     }
+    //     std::cerr<<"Ref: "<<interval.getReferenceCount();
+    //     std::cerr<<"\n";
+    // }
+    // std::cerr<<"\n";
 }

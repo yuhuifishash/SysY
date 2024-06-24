@@ -107,8 +107,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<"
-        // "<<mblock->getBlockOutNumber()<<"\n";
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
         //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
@@ -184,7 +183,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         last_def.clear();
     }
 
-    // Log("Check Intervals %s",mfun->getFunctionName().c_str());
+    // std::cerr<<"Check Intervals "<<mfun->getFunctionName().c_str()<<" Before Coalesce"<<std::endl;
     // for(auto interval_pair : intervals){
     //     auto reg = interval_pair.first;
     //     auto interval = interval_pair.second;
@@ -195,4 +194,5 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
     //     std::cerr<<"Ref: "<<interval.getReferenceCount();
     //     std::cerr<<"\n";
     // }
+    // std::cerr<<"\n";
 }
