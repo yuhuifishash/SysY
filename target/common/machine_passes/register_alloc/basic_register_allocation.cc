@@ -62,7 +62,9 @@ void InstructionNumber::Execute() {
             auto mblock = mcfg_node->Mblock;
             // Update instruction number
             for (auto ins : *mblock) {
-                ins->setNumber(count_begin++);
+                if (ins->arch != MachineBaseInstruction::COMMENT) {
+                    ins->setNumber(count_begin++);
+                }
             }
         }
     }
@@ -79,7 +81,9 @@ void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
         auto mblock = mcfg_node->Mblock;
         // Update instruction number
         for (auto ins : *mblock) {
-            ins->setNumber(count_begin++);
+            if (ins->arch != MachineBaseInstruction::COMMENT) {
+                ins->setNumber(count_begin++);
+            }
         }
     }
 }

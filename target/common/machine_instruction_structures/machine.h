@@ -38,8 +38,25 @@ public:
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
     void pop_back() { instructions.pop_back(); }
     void pop_front() { instructions.pop_front(); }
-    int getBlockInNumber() { return (*(instructions.begin()))->getNumber(); }
-    int getBlockOutNumber() { return (*(instructions.rbegin()))->getNumber(); }
+    int getBlockInNumber() { 
+        for (auto ins : instructions) {
+            if (ins->arch != MachineBaseInstruction::COMMENT) {
+                return ins->getNumber();
+            }
+        }
+        ERROR("Empty block");
+        // return (*(instructions.begin()))->getNumber();
+    }
+    int getBlockOutNumber() { 
+        for (auto it = instructions.rbegin(); it != instructions.rend(); ++it){
+            auto ins = *it;
+            if (ins->arch != MachineBaseInstruction::COMMENT) {
+                return ins->getNumber();
+            }
+        }
+        ERROR("Empty block");
+        // return (*(instructions.rbegin()))->getNumber(); 
+    }
     MachineBlock(int id) : label_id(id) {}
 };
 
