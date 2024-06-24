@@ -142,6 +142,13 @@ static bool BlockDefNoUseCheck(CFG *C, int bb_id, int st_id) {
         }
     }
 
+    auto bb2 = (*C->block_map)[st_id];
+    for (auto I : bb2->Instruction_list) {
+        if(I->GetOpcode() == PHI) {
+            return false;
+        }
+    }
+
     std::vector<int> vis;
     std::queue<int> q;
     vis.resize(C->max_label + 1);
@@ -237,7 +244,6 @@ static bool EmptyBlockJumping(CFG *C) {
             if (cond1 != cond2) {
                 continue;
             }
-
             auto brI1 = (BrCondInstruction *)(bb->Instruction_list.back());
             auto brI2 = (BrCondInstruction *)(bb2->Instruction_list.back());
 

@@ -140,6 +140,9 @@ void NaturalLoop::LoopRotate(CFG *C) {
     if (exiting_nodes.find(header) == exiting_nodes.end()) {
         return;
     }
+    if (exiting_nodes.size() > 1) {
+        return;
+    }
     if (loop_nodes.size() == 1) {
         return;
     }

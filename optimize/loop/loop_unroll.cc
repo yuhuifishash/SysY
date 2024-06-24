@@ -284,7 +284,7 @@ int i = l
 for(; i + 4 < u; i += 4){ BB }
 for(; i < u; i += 1){ BB }
 
-if the loop is reduce-operations like +,min,add
+if the loop is reduce-operations like +,min,max
 we will make S to S1,S2,S3,S4 (only i32)
 */
 
