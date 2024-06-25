@@ -27,10 +27,10 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
             // for(auto successor : current_func->getMachineCFG()->GetSuccessorsByBlockId(block->getLabelId())){
             //     Assert(successor != nullptr);
             // }
-            if (current_func->getMachineCFG()->GetSuccessorsByBlockId(predecessor->Mblock->getLabelId()).size() > 1) {
+            // if (current_func->getMachineCFG()->GetSuccessorsByBlockId(predecessor->Mblock->getLabelId()).size() > 1) {
                 auto MidBlock = current_func->InsertNewBranchOnlyBlockBetweenEdge(predecessor->Mblock->getLabelId(),
                                                                                   block->getLabelId());
-            }
+            // }
         }
         for (auto it = block->begin(); it != block->end(); ++it) {
             auto ins = *it;

@@ -103,6 +103,8 @@ void MachineFunction::RedirectPhiNodePredecessor(int phi_block, int old_predeces
     // TODO("Implement RedirectPhiNodePredecessor");
     auto block = mcfg->GetNodeByBlockId(phi_block)->Mblock;
     for (auto ins : *block) {
+        if (ins->arch == MachineBaseInstruction::COMMENT)
+            continue;
         if (ins->arch != MachineBaseInstruction::PHI)
             break;
         auto mphi = (MachinePhiInstruction *)ins;

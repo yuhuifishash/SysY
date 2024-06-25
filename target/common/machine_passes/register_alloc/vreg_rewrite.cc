@@ -70,7 +70,10 @@ void SpillCodeGen::ExecuteInFunc(MachineFunction *function, std::map<Register, A
                     if (dst->is_virtual == true) {
                         dst_p = alloc_result->find(*dst)->second;
                     }
-                    if (src_p.in_mem == true && dst_p.in_mem == true) {
+                    if (*src == *dst) {
+                        it = cur_block->erase(it);
+                        --it;
+                    } else if (src_p.in_mem == true && dst_p.in_mem == true) {
                         it = cur_block->erase(it);
                         auto mid_reg = function->GetNewRegister(src->type.data_type, src->type.data_length);
                         GenerateCopyFromStackCode(it, src_p.stack_offset * 4, mid_reg, src->type);

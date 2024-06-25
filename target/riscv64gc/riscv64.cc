@@ -55,6 +55,7 @@ void RiscV64Function::MoveAllPredecessorsBranchTargetToNewBlock(int original_tar
     TODO("Branch Target Set");
 }
 void RiscV64Function::MoveOnePredecessorBranchTargetToNewBlock(int pre, int original_target, int new_target) {
+    // Log("%d %d %d",pre,original_target,new_target);
     auto preblock = mcfg->GetNodeByBlockId(pre)->Mblock;
     bool jal_gotcha = false;
     for (auto it = preblock->ReverseBegin(); it != preblock->ReverseEnd(); ++it) {
@@ -73,12 +74,15 @@ void RiscV64Function::MoveOnePredecessorBranchTargetToNewBlock(int pre, int orig
             break;
         }
         if (rvins->getOpcode() == RISCV_JAL) {
+            // Log("%d %d",preblock->getLabelId(),rvins->getLabel().jmp_label_id);
             if (rvins->getLabel().jmp_label_id == original_target) {
                 rvins->setLabel(RiscVLabel(new_target));
             }
             jal_gotcha = true;
+            continue;
         }
         if (OpTable[rvins->getOpcode()].ins_formattype == RvOpInfo::B_type) {
+            // Log("%d %d",preblock->getLabelId(),rvins->getLabel().jmp_label_id);
             if (rvins->getLabel().jmp_label_id == original_target) {
                 rvins->setLabel(RiscVLabel(new_target, rvins->getLabel().seq_label_id));
             } else if (rvins->getLabel().seq_label_id == original_target) {

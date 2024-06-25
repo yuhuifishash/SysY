@@ -12,7 +12,7 @@ void RegisterAllocation::Execute() {
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
-        // CoalesceInCurrentFunc();
+        CoalesceInCurrentFunc();
         // std::cerr<<"Doing Alloc:"<<std::endl;
         if (DoAllocInCurrentFunc()) {
             // std::cerr<<"Spilling"<<std::endl;
@@ -51,7 +51,7 @@ void RegisterAllocation::Execute() {
 
 void InstructionNumber::Execute() {
     for (auto func : unit->functions) {
-        int count_begin = 1;
+        int count_begin = 0;
         current_func = func;
         // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
         // changed
@@ -61,6 +61,7 @@ void InstructionNumber::Execute() {
             auto mcfg_node = it->next();
             auto mblock = mcfg_node->Mblock;
             // Update instruction number
+            count_begin++;
             for (auto ins : *mblock) {
                 if (ins->arch != MachineBaseInstruction::COMMENT) {
                     ins->setNumber(count_begin++);
@@ -80,6 +81,7 @@ void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
         auto mcfg_node = it->next();
         auto mblock = mcfg_node->Mblock;
         // Update instruction number
+        count_begin++;
         for (auto ins : *mblock) {
             if (ins->arch != MachineBaseInstruction::COMMENT) {
                 ins->setNumber(count_begin++);

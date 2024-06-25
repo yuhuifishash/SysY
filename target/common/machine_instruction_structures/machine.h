@@ -41,7 +41,7 @@ public:
     int getBlockInNumber() { 
         for (auto ins : instructions) {
             if (ins->arch != MachineBaseInstruction::COMMENT) {
-                return ins->getNumber();
+                return ins->getNumber()-1;
             }
         }
         ERROR("Empty block");
