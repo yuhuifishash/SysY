@@ -27,7 +27,7 @@ void ConstantLoopFullyUnroll(CFG *C) {
     C->BuildDominatorTree();
 }
 
-bool IsLoopEnd(int i, int ub, IcmpCond cond) {
+static bool IsLoopEnd(int i, int ub, IcmpCond cond) {
     assert(cond != eq || cond != ne);
 
     if (cond == sle) {
@@ -283,14 +283,212 @@ for(int i = l; i < u; i += 1){ BB }
 int i = l
 for(; i + 4 < u; i += 4){ BB }
 for(; i < u; i += 1){ BB }
-
-if the loop is reduce-operations like +,min,max
-we will make S to S1,S2,S3,S4 (only i32)
 */
 
-void SimpleForLoopUnroll(CFG *C) {}
+void SimpleForLoopUnroll(CFG *C) {
+    bool is_unroll = false;
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+                                                                             NaturalLoop *L) {
+        for (auto lv : loop_forest.loopG[L->loop_id]) {
+            dfs(C, loop_forest, lv);
+        }
+        if (is_unroll == true) {
+            return;
+        }
+        is_unroll = L->SimpleForLoopUnroll(C);
+    };
 
-// only consider loop with one node
-static bool ReduceLoopCheckAndUnroll(CFG *C, NaturalLoop *L) {}
+    for (auto l : C->LoopForest.loop_set) {
+        if (l->fa_loop == nullptr) {
+            is_unroll = false;
+            dfs(C, C->LoopForest, l);
+        }
+    }
 
-bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {}
+    C->BuildCFG();
+    C->BuildDominatorTree();
+}
+
+bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
+    if (C->LoopForest.loopG[loop_id].size() > 0){
+        return false;
+    }
+    if (scev.is_simpleloop == false) {
+        return false;
+    }
+    auto stepvalopt = scev.forloop_info.step.GetConstantValue();
+    if(!stepvalopt.has_value()){
+        return false;
+    }
+    int stepval = *stepvalopt;
+    if(stepval != 1){
+        return false;
+    }
+    int inst_number = 0;
+    for (auto bb : loop_nodes) {
+        inst_number += bb->Instruction_list.size();
+    }
+    if(inst_number > 50){
+        return false;
+    }
+
+    //now we only unroll the loop with step 1
+    std::cerr<<stepval<<"\n";
+
+    assert(exit_nodes.size() == 1);
+    assert(exiting_nodes.size() == 1);
+    assert(latches.size() == 1);
+    auto exit = *exit_nodes.begin();
+    auto exiting = *exiting_nodes.begin();
+    
+    LLVMBlock old_header = header;
+    LLVMBlock old_exiting = exiting;
+    LLVMBlock old_latch = *latches.begin();
+    LLVMBlock old_preheader = preheader;
+    std::set<LLVMBlock> old_loop_nodes = loop_nodes;
+    // TODO("LoopUnroll Not Implemented");
+    int i = 0;
+    while (i < 4) {
+        std::map<int, int> RegReplaceMap;
+        std::map<int, int> LabelReplaceMap;
+        LLVMBlock new_header = nullptr;
+        LLVMBlock new_exiting = nullptr;
+        LLVMBlock new_latch = nullptr;
+
+        std::set<LLVMBlock> new_loop_nodes;
+
+        for (auto bb : old_loop_nodes) {
+            LLVMBlock newbb = C->NewBlock();
+            new_loop_nodes.insert(newbb);
+            LabelReplaceMap[bb->block_id] = newbb->block_id;
+
+            if (bb == old_header) {
+                new_header = newbb;
+            }
+            if (bb == old_exiting) {
+                new_exiting = newbb;
+            }
+            if (bb == old_latch) {
+                new_latch = newbb;
+            }
+
+            for (auto I : bb->Instruction_list) {
+                auto nI = I->CopyInstruction();
+                int res_regno = I->GetResultRegNo();
+                if (res_regno != -1) {
+                    RegReplaceMap[res_regno] = ++C->max_reg;
+                }
+                nI->ReplaceRegByMap(RegReplaceMap);
+                newbb->Instruction_list.push_back(nI);
+            }
+        }
+
+        LLVMBlock new_preheader = old_latch;
+
+        for (auto bb : new_loop_nodes) {
+            for (auto I : bb->Instruction_list) {
+                I->ReplaceLabelByMap(LabelReplaceMap);
+                I->ReplaceRegByMap(RegReplaceMap);
+            }
+        }
+        for (auto I : exit->Instruction_list) {
+            if (I->GetOpcode() != PHI) {
+                break;
+            }
+            I->ReplaceLabelByMap(LabelReplaceMap);
+            I->ReplaceRegByMap(RegReplaceMap);
+        }
+
+        // erase edge (old_exiting -> exit) and (old_latch -> old_header) (if exists)
+        auto exiting_endI = *(old_exiting->Instruction_list.end() - 1);
+        if (exiting_endI->GetOpcode() == BR_COND) {
+            auto BrCondI = (BrCondInstruction *)exiting_endI;
+            if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
+                exiting_endI = new BrUncondInstruction(BrCondI->GetFalseLabel());
+
+                old_exiting->Instruction_list.pop_back();
+                old_exiting->Instruction_list.push_back(exiting_endI);
+            } else if (((LabelOperand *)BrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id) {
+                exiting_endI = new BrUncondInstruction(BrCondI->GetTrueLabel());
+
+                old_exiting->Instruction_list.pop_back();
+                old_exiting->Instruction_list.push_back(exiting_endI);
+            } else {
+                assert(false);
+            }
+        }
+        // because of LoopSimplify   latch's end Instruction must be BrUnCond
+        auto latch_endI = *(old_latch->Instruction_list.end() - 1);
+        assert(latch_endI->GetOpcode() == BR_UNCOND);
+
+        for (int i = 0; i < old_header->Instruction_list.size(); ++i) {
+            auto I = old_header->Instruction_list[i];
+            auto nI = new_header->Instruction_list[i];
+            if (I->GetOpcode() != PHI) {
+                break;
+            }
+            assert(nI->GetOpcode() == PHI);
+            auto PhiI = (PhiInstruction *)I;
+            auto nPhiI = (PhiInstruction *)nI;
+
+            auto val = PhiI->GetValOperand(old_latch->block_id);
+            nPhiI->SetValOperand(old_preheader->block_id, val);
+        }
+
+        // add edge (old_latch -> new_header) and change the val
+        for (auto I : old_header->Instruction_list) {
+            if (I->GetOpcode() != PHI) {
+                break;
+            }
+            auto PhiI = (PhiInstruction *)I;
+            PhiI->ErasePhi(old_latch->block_id);
+        }
+
+        latch_endI = new BrUncondInstruction(GetNewLabelOperand(new_header->block_id));
+        old_latch->Instruction_list.pop_back();
+        old_latch->Instruction_list.push_back(latch_endI);
+
+        for (auto I : new_header->Instruction_list) {
+            if (I->GetOpcode() != PHI) {
+                break;
+            }
+            auto PhiI = (PhiInstruction *)I;
+            PhiI->SetNewFrom(old_preheader->block_id, old_latch->block_id);
+        }
+
+        old_header = new_header;
+        old_exiting = new_exiting;
+        old_latch = new_latch;
+        old_preheader = new_preheader;
+        old_loop_nodes = new_loop_nodes;
+        i += 1;
+    }
+
+    std::vector<Operand> PhiValList;
+    // erase the latch -> header
+    for (auto I : old_header->Instruction_list) {
+        if (I->GetOpcode() != PHI) {
+            break;
+        }
+        //change phi vals
+        auto PhiI = (PhiInstruction *)I;
+        auto val = PhiI->GetValOperand(old_latch->block_id);
+        PhiValList.push_back(val);
+        //erase the phi
+        PhiI->ErasePhi(old_latch->block_id);
+    }
+
+    for(int i = 0; i < PhiValList.size(); ++i){
+        auto I = header->Instruction_list[i];
+        assert(I->GetOpcode() == PHI);
+        auto PhiI = (PhiInstruction*)I;
+        PhiI->InsertPhi(PhiValList[i],GetNewLabelOperand(old_latch->block_id));
+    }
+    
+    //now we add edge(old_latch -> begin_header)
+    assert(old_latch->Instruction_list.size() == 1);
+    old_latch->Instruction_list.pop_back();
+    old_latch->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
+    
+    return true;
+}

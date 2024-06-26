@@ -392,7 +392,7 @@ void SCEV::CheckSimpleForLoop() {
     if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
         cond = GetInverseIcmpCond(cond);
     }
-
+    
     auto [tag, info] = GetLoopBound(cond, scev2->st, scev1);
     if (tag == false) {
         is_simpleloop = false;
@@ -401,7 +401,7 @@ void SCEV::CheckSimpleForLoop() {
 
     forloop_info = info;
     is_simpleloop = true;
-
+    
     // info.lowerbound.PrintSCEVValue();std::cerr<<" ";
     // info.upperbound.PrintSCEVValue();std::cerr<<" ";
     // info.step.PrintSCEVValue();std::cerr<<" ";

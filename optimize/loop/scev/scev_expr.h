@@ -4,6 +4,7 @@
 #include "../../../include/Instruction.h"
 #include <map>
 #include <set>
+#include <optional>
 
 class NaturalLoop;
 class CFG;
@@ -25,6 +26,7 @@ public:
 
     void PrintSCEVValue();
     Instruction GenerateValueInst(CFG *C);
+    std::optional<int> GetConstantValue();
 };
 
 class AddSCEVExpr {

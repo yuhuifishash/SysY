@@ -75,21 +75,6 @@ SCEVValue GetGEPStep(GetElementptrInstruction *GEPI, std::vector<SCEVValue> valu
     return res;
 }
 
-/*
-non-zero index at end of GEP(only one)
-%r0 = GEP [10000xi32], ptr @G, i32 0, i32 %r1
-secvmap: %r1 -> {%x+%y,+,%z}
-preheader:
-    %st = GEP [10000xi32], ptr @G, i32 0, i32 %x+%y
-header:
-    %r0 = phi [%st, %preheader], [%n, %latch]
-latch:
-    %n = GEP i32, ptr %ry, i32 %z
-
-then we need to update ScalarEvolution on father loop
-*/
-bool SingleGEPStrengthReduce(CFG *C, Instruction I) { return false; }
-
 void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     // first we try to reduce GEP (non zero indexs >= 2) .
     // all the index of GEP must be loop induction variable or invariant variable
@@ -137,16 +122,14 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                         is_induction = false;
                         break;
                     }
-                    if (i + 1 != GEPI->GetIndexes().size()) {
+                    if (val->len == 2){
                         isReduceBetter = true;
                     }
                 } else {    // should not reach here
                     assert(false);
                 }
             }
-            if (SingleGEPStrengthReduce(C, I)) {
-                continue;
-            }
+            
             if (isReduceBetter == false || is_induction == false) {
                 continue;
             }
@@ -186,8 +169,8 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                     auto val = scev.SCEVMap[R->GetRegNo()];
                     if (val->len <= 2) {
                         if (val->st.type != OTHER) {
-                            std::cerr << "InitGEPI Generate New ArithI ";
-                            val->PrintSCEVExpr();
+                            // std::cerr << "InitGEPI Generate New ArithI ";
+                            // val->PrintSCEVExpr();
                             auto ArithI = new ArithmeticInstruction(val->st.type, I32, val->st.op1, val->st.op2,
                                                                     GetNewRegOperand(++C->max_reg));
                             auto tmpI = preheader->Instruction_list.back();
@@ -207,7 +190,7 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             // now we only consider single step
             if (StepVal.type == OTHER) {
                 // std::cerr << "LoopStrengthInLoop Header = " << header->block_id << "\n\n";
-                // std::cerr << "LoopStrengthReduce:Row  ";
+                // std::cerr << "LoopStrengthReduce:Raw  ";
                 // GEPI->PrintIR(std::cerr);
                 // std::cerr << "LoopStrengthReduce:PreHeader  ";
                 // InitGEPI->PrintIR(std::cerr);
@@ -224,6 +207,7 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 auto LatchGEPI =
                 new GetElementptrInstruction(GEPI->GetType(), GetNewRegOperand(++C->max_reg), GEPI->GetResult());
                 LatchGEPI->push_index(StepVal.op1);
+
                 // std::cerr << "LoopStrengthReduce:Latch  ";
                 // LatchGEPI->PrintIR(std::cerr);
 
@@ -238,9 +222,11 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 PhiI->InsertPhi(InitGEPI->GetResult(), GetNewLabelOperand(preheader->block_id));
                 PhiI->InsertPhi(LatchGEPI->GetResult(), GetNewLabelOperand(latch->block_id));
                 header->InsertInstruction(0, PhiI);
+
                 // std::cerr << "LoopStrengthReduce:Header  ";
                 // PhiI->PrintIR(std::cerr);
                 // std::cerr << "\n";
+
                 // Set GEPI's result to new Reg, then it will be eliminate in DCE
                 I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
                                               GetNewRegOperand(++C->max_reg));

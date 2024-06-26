@@ -2,6 +2,17 @@
 #include "../../../include/cfg.h"
 #include <assert.h>
 
+std::optional<int> SCEVValue::GetConstantValue() {
+    if(type != OTHER){
+        return std::nullopt;
+    }
+    if(op1->GetOperandType() == BasicOperand::IMMI32){
+        auto imm = ((ImmI32Operand*)op1)->GetIntImmVal();
+        return imm;
+    }
+    return std::nullopt;
+}
+
 Instruction SCEVValue::GenerateValueInst(CFG *C) {
     if (type == OTHER) {
         return new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(0), GetNewRegOperand(++C->max_reg));
@@ -158,8 +169,10 @@ SCEVValue SCEVValue::operator-(SCEVValue b) {
     if (type != OTHER && b.type != OTHER) {
         return {nullptr, OTHER, nullptr};
     }
-
-    if (type != OTHER && b.type == OTHER && type == SUB) {
+    if (type != OTHER && b.type == OTHER) {
+        if (type == MUL) {
+            return {nullptr, OTHER, nullptr};
+        }
         if (op2->GetOperandType() == BasicOperand::IMMI32 && b.op1->GetOperandType() == BasicOperand::IMMI32) {
             auto imm1 = ((ImmI32Operand *)b.op1)->GetIntImmVal();
             auto imm2 = ((ImmI32Operand *)op2)->GetIntImmVal();
@@ -173,17 +186,7 @@ SCEVValue SCEVValue::operator-(SCEVValue b) {
         return {nullptr, OTHER, nullptr};
     }
 
-    if (type == OTHER && b.type != OTHER && type == SUB) {
-        if (op1->GetOperandType() == BasicOperand::IMMI32 && b.op2->GetOperandType() == BasicOperand::IMMI32) {
-            auto imm1 = ((ImmI32Operand *)op1)->GetIntImmVal();
-            auto imm2 = ((ImmI32Operand *)b.op2)->GetIntImmVal();
-            auto imm = imm1 - imm2;
-            if (imm == 0) {
-                return {b.op1, OTHER, nullptr};
-            } else {
-                return {b.op1, SUB, new ImmI32Operand(imm)};
-            }
-        }
+    if (type == OTHER && b.type != OTHER) {
         return {nullptr, OTHER, nullptr};
     }
 
