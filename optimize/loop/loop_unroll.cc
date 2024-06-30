@@ -333,7 +333,6 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     }
 
     //now we only unroll the loop with step 1
-    std::cerr<<stepval<<"\n";
 
     assert(exit_nodes.size() == 1);
     assert(exiting_nodes.size() == 1);

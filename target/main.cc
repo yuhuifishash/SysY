@@ -258,22 +258,22 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(AddParallelLib);
         // llvmIR.PassExecutor(LoopParallel);
 
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor(LoopSimplify);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopClosedSSA);
-        // llvmIR.PassExecutor(SimpleForLoopUnroll);
-        llvmIR.PassExecutor(SimplifyCFG);
-
-        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopGepStrengthReduce);
-        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(SimpleForLoopUnroll);
         llvmIR.PassExecutor(SimplifyCFG);
+
+        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor(LoopSimplify);
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopGepStrengthReduce);
+        // llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(SimplifyCFG);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {
