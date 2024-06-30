@@ -8,6 +8,7 @@
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerframe.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
+#include "./riscv64gc/riscv64_peehole.h"
 #include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
@@ -294,6 +295,8 @@ int main(int argc, char **argv) {
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         // std::cerr<<"PhiDestruction\n";
+        RiscV64SSAPeehole(m_unit).Execute();
+        RiscV64SSADeadDefElimate(m_unit).Execute();
         MachinePhiDestruction(m_unit).Execute();
         RiscV64LowerFImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
@@ -315,7 +318,9 @@ int main(int argc, char **argv) {
         RiscV64LowerFrame(m_unit).Execute();
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
-        MachinePhiDestruction(m_unit).Execute();
+        RiscV64SSAPeehole(m_unit).Execute();
+        // RiscV64SSADeadDefElimate(m_unit).Execute();
+        // MachinePhiDestruction(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();
         // RiscV64LowerCopy(m_unit).Execute();
 

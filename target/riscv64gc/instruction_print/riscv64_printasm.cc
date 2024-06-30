@@ -1358,48 +1358,4 @@ ___parallel_loop_constant_100:\n\
 	addi	sp,sp,512\n\
 	jr	ra\n\
 	.size	___parallel_loop_constant_100, .-___parallel_loop_constant_100\n";
-    //     s<<"	.option nopic\n\
-// 	.attribute unaligned_access, 0\n\
-// 	.attribute stack_align, 16\n\
-// 	.text\n\
-// 	.align	1\n\
-// 	.globl	__pthread_test_callee\n\
-// 	.type	__pthread_test_callee, @function\n\
-// __pthread_test_callee:\n\
-// 	addi	sp,sp,-32\n\
-// 	sd	s0,24(sp)\n\
-// 	addi	s0,sp,32\n\
-// 	sd	a0,-24(s0)\n\
-// 	li	a5,0\n\
-// 	mv	a0,a5\n\
-// 	ld	s0,24(sp)\n\
-// 	addi	sp,sp,32\n\
-// 	jr	ra\n\
-// 	.size	__pthread_test_callee, .-__pthread_test_callee\n\
-// 	.align	1\n\
-// 	.globl	__pthread_test_call\n\
-// 	.type	__pthread_test_call, @function\n\
-// __pthread_test_call:\n\
-// 	addi	sp,sp,-32\n\
-// 	sd	ra,24(sp)\n\
-// 	sd	s0,16(sp)\n\
-// 	addi	s0,sp,32\n\
-// 	addi	a4,s0,-24\n\
-// 	li	a3,0\n\
-// 	lui	a5,%hi(__pthread_test_callee)\n\
-// 	addi	a2,a5,%lo(__pthread_test_callee)\n\
-// 	li	a1,0\n\
-// 	mv	a0,a4\n\
-// 	call	pthread_create\n\
-// 	ld	a5,-24(s0)\n\
-// 	li	a1,0\n\
-// 	mv	a0,a5\n\
-// 	call	pthread_join\n\
-// 	nop\n\
-// 	ld	ra,24(sp)\n\
-// 	ld	s0,16(sp)\n\
-// 	addi	sp,sp,32\n\
-// 	jr	ra\n\
-// 	.size	__pthread_test_call, .-__pthread_test_call\n\
-// 	.align	1";
 }
