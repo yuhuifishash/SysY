@@ -373,6 +373,7 @@ public:
     void SetOperand1(Operand op) { op1 = op; }
     void SetOperand2(Operand op) { op2 = op; }
     void SwapOperand() { std::swap(op1, op2); }
+    void Setopcode(LLVMIROpcode id) {opcode = id;}
     ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand result) {
         this->opcode = opcode;
         this->op1 = op1;

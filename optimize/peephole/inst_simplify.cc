@@ -104,6 +104,23 @@ void I32ConstantSimplify(Instruction I) {
     }
 }
 
+/*
+%r1 = sub i32 %r0,4 will be transformed to %r1 = add i32 %r0,-4
+*/
+void I32ConstantSub2AddSimplify(Instruction I) {
+    if(I->GetOpcode() == SUB){
+        auto ArithI = (ArithmeticInstruction *)I;
+        if (ArithI->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            auto imm = ((ImmI32Operand*)ArithI->GetOperand2())->GetIntImmVal();
+            if(imm == -2147483648){//can not overflow
+                return;
+            }
+            ArithI->SetOperand2(new ImmI32Operand(-imm));
+            ArithI->Setopcode(ADD);
+        }
+    }
+}
+
 // TODO():ZeroResultSimplify
 //  {sub X, X},{Mul 0, X} is represented as 0 + 0
 void ZeroResultSimplify(Instruction I) { TODO("ZeroResultSimplify"); }
@@ -113,6 +130,7 @@ void InstSimplify(CFG *C) {
         for (auto I : bb->Instruction_list) {
             // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);
+            I32ConstantSub2AddSimplify(I);
         }
     }
 }
