@@ -286,21 +286,18 @@ for(; i < u; i += 1){ BB }
 */
 
 void SimpleForLoopUnroll(CFG *C) {
-    bool is_unroll = false;
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);
         }
-        if (is_unroll == true) {
-            return;
+        if(C->LoopForest.loopG[L->loop_id].size() == 0){//no son loop
+            L->SimpleForLoopUnroll(C);
         }
-        is_unroll = L->SimpleForLoopUnroll(C);
     };
 
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
-            is_unroll = false;
             dfs(C, C->LoopForest, l);
         }
     }
@@ -345,9 +342,112 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     LLVMBlock old_latch = *latches.begin();
     LLVMBlock old_preheader = preheader;
     std::set<LLVMBlock> old_loop_nodes = loop_nodes;
-    // TODO("LoopUnroll Not Implemented");
+    // if iterations mod 4 is not 0, we need other loop to fix it
+    std::set<LLVMBlock> remain_loop_nodes;
+    LLVMBlock remain_header;
+    LLVMBlock remain_latch;
+    LLVMBlock remain_exiting;
+
+    std::map<int, int> RemainRegReplaceMap;
+    std::map<int, int> RemainLabelReplaceMap;
+    for (auto bb : old_loop_nodes) {
+        LLVMBlock newbb = C->NewBlock();
+        remain_loop_nodes.insert(newbb);
+        RemainLabelReplaceMap[bb->block_id] = newbb->block_id;
+
+        if (bb == old_header) {
+            remain_header = newbb;
+        }
+        if (bb == old_exiting) {
+            remain_exiting = newbb;
+        }
+        if (bb == old_latch) {
+            remain_latch = newbb;
+        }
+
+        for (auto I : bb->Instruction_list) {
+            auto nI = I->CopyInstruction();
+            int res_regno = I->GetResultRegNo();
+            if (res_regno != -1) {
+                RemainRegReplaceMap[res_regno] = ++C->max_reg;
+            }
+            nI->ReplaceRegByMap(RemainRegReplaceMap);
+            newbb->Instruction_list.push_back(nI);
+        }
+    }
+    for (auto bb : remain_loop_nodes) {
+        for (auto I : bb->Instruction_list) {
+            I->ReplaceLabelByMap(RemainLabelReplaceMap);
+            I->ReplaceRegByMap(RemainRegReplaceMap);
+        }
+    }
+    //change lcssa
+    for (auto I : exit->Instruction_list){
+        if(I->GetOpcode() != PHI){
+            break;
+        }
+        I->ReplaceLabelByMap(RemainLabelReplaceMap);
+        I->ReplaceRegByMap(RemainRegReplaceMap);
+    }
+
+    //exiting: i < n -> i+4 < n
+    auto exitingI = *(old_exiting->Instruction_list.end() - 2);
+    assert(exitingI->GetOpcode() == ICMP);
+    auto IcmpI = (IcmpInstruction*)exitingI;
+    auto op1 = IcmpI->GetOp1(), op2 = IcmpI->GetOp2();
+    auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
+    assert(scev1 != nullptr && scev2 != nullptr);
+    if(scev1->len == 2 && scev2->len == 1){
+        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
+        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
+        IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
+    }else if(scev1->len == 1 && scev2->len == 2){
+        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
+        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
+        IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
+    }else{
+        assert(false);
+    }
+
+    //add CondBlock   if(upperbound - lowerbound > 10){ do{}while(i+4 < n)}  remain_loop
+    //CondBlock -> remain_header || npreheader
+    LLVMBlock CondBlock = C->NewBlock();
+    LLVMBlock npreheader = C->NewBlock();
+    preheader->Instruction_list.pop_back();
+    preheader->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(CondBlock->block_id)));
+    npreheader->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
+
+    auto CondI1 = scev.forloop_info.lowerbound.GenerateValueInst(C);
+    auto CondI2 = scev.forloop_info.upperbound.GenerateValueInst(C);
+    auto CondI3 = new ArithmeticInstruction(SUB,I32,CondI2->GetResultReg(),CondI1->GetResultReg(),GetNewRegOperand(++C->max_reg));
+    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(10),sgt,GetNewRegOperand(++C->max_reg));
+    auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(),GetNewLabelOperand(npreheader->block_id),GetNewLabelOperand(remain_header->block_id));
+    CondBlock->InsertInstruction(1,CondI1);
+    CondBlock->InsertInstruction(1,CondI2);
+    CondBlock->InsertInstruction(1,CondI3);
+    CondBlock->InsertInstruction(1,CondI4);
+    CondBlock->InsertInstruction(1,CondI5);
+    //set header phi(set npreheader -> header  and  erase preheader->header)
+    for(auto I:header->Instruction_list){
+        if(I->GetOpcode() != PHI){
+            break;
+        }
+        auto PhiI = (PhiInstruction *)I;
+        PhiI->SetNewFrom(preheader->block_id, npreheader->block_id);
+    }
+    //set remain_header phi (CondBlock -> remain_header)
+    for(auto I:remain_header->Instruction_list){
+        if(I->GetOpcode() != PHI){
+            break;
+        }
+        auto PhiI = (PhiInstruction *)I;
+        PhiI->SetNewFrom(preheader->block_id, CondBlock->block_id);
+    }
+
+    preheader = old_preheader = npreheader;
+
     int i = 0;
-    while (i < 4) {
+    while (i < 3) {
         std::map<int, int> RegReplaceMap;
         std::map<int, int> LabelReplaceMap;
         LLVMBlock new_header = nullptr;
@@ -389,13 +489,6 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
                 I->ReplaceLabelByMap(LabelReplaceMap);
                 I->ReplaceRegByMap(RegReplaceMap);
             }
-        }
-        for (auto I : exit->Instruction_list) {
-            if (I->GetOpcode() != PHI) {
-                break;
-            }
-            I->ReplaceLabelByMap(LabelReplaceMap);
-            I->ReplaceRegByMap(RegReplaceMap);
         }
 
         // erase edge (old_exiting -> exit) and (old_latch -> old_header) (if exists)
@@ -488,6 +581,35 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     assert(old_latch->Instruction_list.size() == 1);
     old_latch->Instruction_list.pop_back();
     old_latch->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
-    
+
+    //exiting -> new exit(mid_exit) -> remain_header
+    auto mid_exit = C->NewBlock();
+    mid_exit->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(remain_header->block_id)));
+    auto exiting_endI = *(old_exiting->Instruction_list.end() - 1);
+    if (exiting_endI->GetOpcode() == BR_COND) {
+        auto BrCondI = (BrCondInstruction *)exiting_endI;
+        if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
+            BrCondI->SetTrueLabel(GetNewLabelOperand(mid_exit->block_id));
+        } else if (((LabelOperand *)BrCondI->GetFalseLabel())->GetLabelNo() == exit->block_id) {
+            BrCondI->SetFalseLabel(GetNewLabelOperand(mid_exit->block_id));
+        } else {
+            assert(false);
+        }
+    }
+
+    //add phi from mid_exit -> remain_header (all the phi )
+    for(int i = 0; i < remain_header->Instruction_list.size(); ++i){
+        auto I = remain_header->Instruction_list[i];
+        auto oldI = header->Instruction_list[i];
+        if(I->GetOpcode() != PHI){
+            break;
+        }
+        auto PhiI = (PhiInstruction *)I;
+        auto oldPhiI = (PhiInstruction *)oldI;
+        auto val = oldPhiI->GetValOperand(old_latch->block_id);
+        PhiI->InsertPhi(val,GetNewLabelOperand(mid_exit->block_id));
+    }
+
+
     return true;
 }

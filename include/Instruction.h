@@ -416,6 +416,8 @@ public:
     enum LLVMType GetDataType() { return type; }
     Operand GetOp1() { return op1; }
     Operand GetOp2() { return op2; }
+    void SetOp1(Operand op) {op1 = op;}
+    void SetOp2(Operand op) {op2 = op;}
     IcmpCond GetCompareCondition() { return cond; }
     Operand GetResult() { return result; }
 
