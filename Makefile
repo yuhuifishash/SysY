@@ -12,6 +12,7 @@ SRCDIR += ./target/armv7/instruction_print
 SRCDIR += ./target/riscv64gc
 SRCDIR += ./target/riscv64gc/instruction_print
 SRCDIR += ./target/riscv64gc/instruction_select
+SRCDIR += ./target/riscv64gc/optimize
 SRCDIR += ./parser
 SRCDIR += ./lexer
 SRCDIR += ./ir_gen
