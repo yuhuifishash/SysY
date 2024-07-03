@@ -1,7 +1,9 @@
 #include "basic_register_allocation.h"
+
+// #define PRINT_ALLOC_RESULT
+// #define PRINT_INTERVALS
+
 void RegisterAllocation::Execute() {
-    // std::cerr<<"InstructionNumber"<<std::endl;
-    InstructionNumber(unit).Execute();
     for (auto func : unit->functions) {
         not_allocated_funcs.push(func);
     }
@@ -9,69 +11,43 @@ void RegisterAllocation::Execute() {
     while (!not_allocated_funcs.empty()) {
         // std::cerr<<"Func: "<<current_func->getFunctionName()<<std::endl;
         current_func = not_allocated_funcs.front();
+        numbertoins.clear();
+        InstructionNumber(unit,numbertoins).ExecuteInFunc(current_func);
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
         CoalesceInCurrentFunc();
         // std::cerr<<"Doing Alloc:"<<std::endl;
         if (DoAllocInCurrentFunc()) {
-            // std::cerr<<"Spilling"<<std::endl;
-            // Generate Spill Code
-            // TODO("Spill Code Example");
             spiller->ExecuteInFunc(current_func, &alloc_result[current_func]);
             current_func->AddStackSize(phy_regs->getSpillSize());
             not_allocated_funcs.push(current_func);
-            InstructionNumber(unit).ExecuteInFunc(current_func);
             iterations++;
-            // if(iterations >= unit->functions.size()*2){
-            //     break;
-            // }
         }
-        // std::cerr<<"Iter "<<iterations<<std::endl;
     }
-    // for (auto func : unit->functions) {
-    //     current_func = func;
-    //     UpdateIntervalsInCurrentFunc();
-    //     DoAllocInCurrentFunc();
-    // }
-    // Log("Alloc Result:");
-    // for(auto pair : alloc_result){
-    //     auto func = pair.first;
-    //     auto map = pair.second;
-    //     Log("Func: %s",func->getFunctionName().c_str());
-    //     for(auto alloc_pair: map){
-    //         auto reg = alloc_pair.first;
-    //         auto result = alloc_pair.second;
-    //         // std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<"
-    //         "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
-    //     }
-    // }
+#ifdef PRINT_ALLOC_RESULT
+    Log("Alloc Result:");
+    for(auto pair : alloc_result){
+        auto func = pair.first;
+        auto map = pair.second;
+        Log("Func: %s",func->getFunctionName().c_str());
+        for(auto alloc_pair: map){
+            auto reg = alloc_pair.first;
+            auto result = alloc_pair.second;
+            std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
+        }
+    }
+#endif
     VirtualRegisterRewrite(unit, alloc_result).Execute();
 }
 
 void InstructionNumber::Execute() {
     for (auto func : unit->functions) {
-        int count_begin = 0;
-        current_func = func;
-        // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
-        // changed
-        auto it = func->getMachineCFG()->getBFSIterator();
-        it->open();
-        while (it->hasNext()) {
-            auto mcfg_node = it->next();
-            auto mblock = mcfg_node->Mblock;
-            // Update instruction number
-            count_begin++;
-            for (auto ins : *mblock) {
-                if (ins->arch != MachineBaseInstruction::COMMENT) {
-                    ins->setNumber(count_begin++);
-                }
-            }
-        }
+        ExecuteInFunc(func);
     }
 }
 void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
-    int count_begin = 1;
+    int count_begin = 0;
     current_func = func;
     // Note: If Change to DFS Iterator, RegisterAllocation::UpdateIntervalsInCurrentFunc() Also need to be
     // changed
@@ -81,9 +57,11 @@ void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
         auto mcfg_node = it->next();
         auto mblock = mcfg_node->Mblock;
         // Update instruction number
+        this->numbertoins[count_begin] = InstructionNumberEntry(nullptr,true);
         count_begin++;
         for (auto ins : *mblock) {
             if (ins->arch != MachineBaseInstruction::COMMENT) {
+                this->numbertoins[count_begin] = InstructionNumberEntry(ins,false);
                 ins->setNumber(count_begin++);
             }
         }
@@ -110,7 +88,6 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
         // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
-        //
         // On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
             if (intervals.find(reg) == intervals.end()) {
@@ -184,17 +161,18 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         last_use.clear();
         last_def.clear();
     }
-
-    // std::cerr<<"Check Intervals "<<mfun->getFunctionName().c_str()<<" Before Coalesce"<<std::endl;
-    // for(auto interval_pair : intervals){
-    //     auto reg = interval_pair.first;
-    //     auto interval = interval_pair.second;
-    //     std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
-    //     for(auto seg : interval){
-    //         std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
-    //     }
-    //     std::cerr<<"Ref: "<<interval.getReferenceCount();
-    //     std::cerr<<"\n";
-    // }
-    // std::cerr<<"\n";
+#ifdef PRINT_INTERVALS
+    std::cerr<<"Check Intervals "<<mfun->getFunctionName().c_str()<<" Before Coalesce"<<std::endl;
+    for(auto interval_pair : intervals){
+        auto reg = interval_pair.first;
+        auto interval = interval_pair.second;
+        std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+        for(auto seg : interval){
+            std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+        }
+        std::cerr<<"Ref: "<<interval.getReferenceCount();
+        std::cerr<<"\n";
+    }
+    std::cerr<<"\n";
+#endif
 }

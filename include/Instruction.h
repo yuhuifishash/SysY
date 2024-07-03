@@ -373,6 +373,7 @@ public:
     void SetOperand1(Operand op) { op1 = op; }
     void SetOperand2(Operand op) { op2 = op; }
     void SwapOperand() { std::swap(op1, op2); }
+    void Setopcode(LLVMIROpcode id) {opcode = id;}
     ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand result) {
         this->opcode = opcode;
         this->op1 = op1;
@@ -416,6 +417,8 @@ public:
     enum LLVMType GetDataType() { return type; }
     Operand GetOp1() { return op1; }
     Operand GetOp2() { return op2; }
+    void SetOp1(Operand op) {op1 = op;}
+    void SetOp2(Operand op) {op2 = op;}
     IcmpCond GetCompareCondition() { return cond; }
     Operand GetResult() { return result; }
 

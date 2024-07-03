@@ -18,6 +18,8 @@
 #include <iomanip>
 #include <iostream>
 
+#define AggressiveOptimize
+
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
     fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
          << std::left << CISU << " " << std::setw(32) << std::left << PROP << std::setw(15) << std::left << STR3       \
@@ -206,8 +208,8 @@ int main(int argc, char **argv) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(ScalarEvolution);
             llvmIR.PassExecutor(LoopClosedSSA);
+            llvmIR.PassExecutor(ScalarEvolution);
             llvmIR.PassExecutor(ConstantLoopFullyUnroll);
 
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -235,8 +237,8 @@ int main(int argc, char **argv) {
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopIdomRecognize);
 
         llvmIR.BuildFunctionInfo();
@@ -259,24 +261,26 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(AddParallelLib);
         // llvmIR.PassExecutor(LoopParallel);
 
+        #ifdef AggressiveOptimize
+            llvmIR.BuildLoopInfo();
+            llvmIR.PassExecutor(LoopSimplify);
+            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+            llvmIR.PassExecutor(LoopClosedSSA);
+            llvmIR.PassExecutor(ScalarEvolution);
+            llvmIR.PassExecutor(SimpleForLoopUnroll);
+            llvmIR.PassExecutor(SimplifyCFG);
+            llvmIR.PassExecutor(SimpleDCE);
+        #endif
+
+        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         // llvmIR.BuildLoopInfo();
         // llvmIR.PassExecutor(LoopSimplify);
         // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopClosedSSA);
-        // llvmIR.PassExecutor(SimpleForLoopUnroll);
-        llvmIR.PassExecutor(SimplifyCFG);
-
-        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopGepStrengthReduce);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);
+        // llvmIR.PassExecutor(LoopGepStrengthReduce);
+        // llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(SimplifyCFG);
     }
-
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);
         fout.close();
