@@ -147,7 +147,6 @@ std::pair<Operand, LLVMIROpcode> SCEV::FindBasicIndVarCycleVarDef(int st, int r2
 void SCEV::FindBasicIndVar() {
     assert(L->latches.size() == 1);
     auto latch = *L->latches.begin();
-
     for (auto I : L->header->Instruction_list) {
         if (I->GetOpcode() != PHI) {
             break;
