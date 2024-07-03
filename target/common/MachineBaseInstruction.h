@@ -253,6 +253,7 @@ public:
     MachineBaseInstruction(int arch) : arch(arch) {}
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
+    virtual int GetLatency() = 0;
 };
 
 class MachineComment : public MachineBaseInstruction {
@@ -264,6 +265,7 @@ public:
     virtual std::vector<Register *> GetReadReg() { return std::vector<Register *>(); }
     virtual std::vector<Register *> GetWriteReg() { return std::vector<Register *>(); }
     std::string GetComment() { return comment; }
+    int GetLatency(){return 0;}
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {
@@ -285,6 +287,7 @@ public:
     void pushPhiList(int label, float immf32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateFloat(immf32)));
     }
+    int GetLatency(){return 0;}
 };
 // %x: type = COPY type %y: type
 class MachineCopyInstruction : public MachineBaseInstruction {
@@ -312,5 +315,6 @@ public:
     MachineBaseOperand *GetSrc() { return src; }
     MachineBaseOperand *GetDst() { return dst; }
     MachineDataType GetCopyType() { return copy_type; }
+    int GetLatency(){return 1;}
 };
 #endif

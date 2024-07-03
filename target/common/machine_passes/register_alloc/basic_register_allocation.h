@@ -21,6 +21,14 @@ struct AllocResult {
 
 class SpillCodeGen;
 
+struct InstructionNumberEntry {
+public:
+    MachineBaseInstruction* ins;
+    bool is_block_begin;
+    InstructionNumberEntry():ins(nullptr),is_block_begin(true){}
+    InstructionNumberEntry(MachineBaseInstruction* ins,bool isbegin):ins(ins),is_block_begin(isbegin){}
+};
+
 class RegisterAllocation : public MachinePass {
 private:
     void UpdateIntervalsInCurrentFunc();
@@ -29,6 +37,7 @@ private:
     SpillCodeGen *spiller;
 
 protected:
+    std::map<int, InstructionNumberEntry> numbertoins;
     void AllocPhyReg(MachineFunction *mfun, Register vreg, int phyreg) {
         Assert(vreg.is_virtual);
         alloc_result[mfun][vreg].in_mem = false;
@@ -73,8 +82,10 @@ public:
 };
 
 class InstructionNumber : public MachinePass {
+private:
+    std::map<int, InstructionNumberEntry>&numbertoins;
 public:
-    InstructionNumber(MachineUnit *unit) : MachinePass(unit) {}
+    InstructionNumber(MachineUnit *unit,std::map<int,InstructionNumberEntry>&number2ins) : MachinePass(unit), numbertoins(number2ins) {}
     void Execute();
     void ExecuteInFunc(MachineFunction *func);
 };

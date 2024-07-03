@@ -21,7 +21,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
         auto interval = unalloc_queue.top();
         unalloc_queue.pop();
         auto cur_vreg = interval.getReg();
-        std::vector<int> prefered_regs;
+        std::vector<int> prefered_regs,noprefer_regs;
         for (auto reg : copy_sources[cur_vreg]) {
             if (reg.is_virtual) {
                 if (alloc_result[mfun].find(reg) != alloc_result[mfun].end()) {
@@ -33,7 +33,60 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
                 prefered_regs.push_back(reg.reg_no);
             }
         }
-        int phy_reg_id = phy_regs->getIdleReg(interval, prefered_regs);
+        for (auto seg : interval) {
+            int def = seg.begin;
+            Assert(numbertoins.find(def) != numbertoins.end());
+            auto cur_ins = numbertoins[def].ins;
+            if(cur_ins == nullptr)continue;
+            const int pre_len = 10;
+            for(int i=1;i<pre_len;i++){
+                int pre_no = def - i;
+                if(numbertoins[pre_no].is_block_begin){
+                    break;
+                }
+                auto pre_ins = numbertoins[pre_no].ins;
+                int pre_latency = pre_ins->GetLatency();
+                if (pre_latency < i)continue;
+                if(pre_ins->GetWriteReg().size() == 1){
+                    auto reg = pre_ins->GetWriteReg()[0];
+                    if(reg->is_virtual){
+                        if (alloc_result[mfun].find(*reg) != alloc_result[mfun].end()){
+                            if (alloc_result[mfun][*reg].in_mem == false) {
+                                Assert(alloc_result[mfun][*reg].phy_reg_no != 0);
+                                noprefer_regs.push_back(alloc_result[mfun][*reg].phy_reg_no);
+                            }
+                        }
+                    }else{
+                        if(reg->reg_no != 0){
+                            noprefer_regs.push_back(reg->reg_no);
+                        }
+                    }
+                }
+            }
+            for(int i=1;i<=cur_ins->GetLatency();i++){
+                int after_no = def + i;
+                if(numbertoins[after_no].is_block_begin){
+                    break;
+                }
+                auto after_ins = numbertoins[after_no].ins;
+                if (after_ins->GetWriteReg().size() == 1){
+                    auto reg = after_ins->GetWriteReg()[0];
+                    if(reg->is_virtual){
+                        if(alloc_result[mfun].find(*reg) != alloc_result[mfun].end()){
+                            if(alloc_result[mfun][*reg].in_mem == false){
+                                Assert(alloc_result[mfun][*reg].phy_reg_no != 0);
+                                noprefer_regs.push_back(alloc_result[mfun][*reg].phy_reg_no);
+                            }
+                        }
+                    }else{
+                        if(reg->reg_no != 0){
+                            noprefer_regs.push_back(reg->reg_no);
+                        }
+                    }
+                }
+            }
+        }
+        int phy_reg_id = phy_regs->getIdleReg(interval, prefered_regs, noprefer_regs);
         if (phy_reg_id >= 0) {
             phy_regs->OccupyReg(phy_reg_id, interval);
             AllocPhyReg(mfun, cur_vreg, phy_reg_id);
