@@ -2,6 +2,7 @@
 bool IntervalsPrioCmp(LiveInterval a, LiveInterval b) { return a.begin()->begin > b.begin()->begin; }
 FastLinearScan::FastLinearScan(MachineUnit *unit, PhysicalRegisters *phy, SpillCodeGen *spiller)
     : RegisterAllocation(unit, phy, spiller), unalloc_queue(IntervalsPrioCmp) {}
+#define ENABLE_WAW_ELIMATE
 bool FastLinearScan::DoAllocInCurrentFunc() {
     bool spilled = false;
     auto mfun = current_func;
@@ -33,6 +34,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
                 prefered_regs.push_back(reg.reg_no);
             }
         }
+#ifdef ENABLE_WAW_ELIMATE
         for (auto seg : interval) {
             int def = seg.begin;
             Assert(numbertoins.find(def) != numbertoins.end());
@@ -86,6 +88,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
                 }
             }
         }
+#endif
         int phy_reg_id = phy_regs->getIdleReg(interval, prefered_regs, noprefer_regs);
         if (phy_reg_id >= 0) {
             phy_regs->OccupyReg(phy_reg_id, interval);

@@ -8,7 +8,8 @@
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerframe.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
-#include "./riscv64gc/riscv64_peehole.h"
+#include "./riscv64gc/optimize/riscv64_peehole.h"
+#include "./riscv64gc/optimize/riscv64_cse.h"
 #include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
