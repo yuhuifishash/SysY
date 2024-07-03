@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <iostream>
 
-#define AggressiveOptimize
+//#define AggressiveOptimize
 
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
     fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
@@ -268,18 +268,22 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(LoopClosedSSA);
             llvmIR.PassExecutor(ScalarEvolution);
             llvmIR.PassExecutor(SimpleForLoopUnroll);
+            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
             llvmIR.PassExecutor(SimplifyCFG);
             llvmIR.PassExecutor(SimpleDCE);
+            llvmIR.PassExecutor(InstSimplify);
+            llvmIR.PassExecutor(InstCombine);
+            llvmIR.PassExecutor(SimpleDCE);
         #endif
-
+        
         // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor(LoopSimplify);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopGepStrengthReduce);
-        // llvmIR.PassExecutor(SimpleDCE);
-        // llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(LoopGepStrengthReduce);
+        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SimplifyCFG);
     }
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);

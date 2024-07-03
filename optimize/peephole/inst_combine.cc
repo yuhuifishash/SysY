@@ -1,10 +1,17 @@
 #include "../../include/cfg.h"
+#include <functional>
 
 bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin);
-bool EliminateDoubleI32AddSub(Instruction a, Instruction b);
+bool EliminateDoubleI32Add(Instruction a, Instruction b);
 bool EliminateSubEq(Instruction a, Instruction b);
+void DomTreeDfsI32AddCombine(CFG *C);
 
 void InstCombine(CFG *C) {
+    /* dfs domtree InstCombine*/
+    DomTreeDfsI32AddCombine(C);
+
+
+    /* window InstCombine*/
     for (auto [id, bb] : *C->block_map) {
         bool changed = true;
         while (changed) {
@@ -16,13 +23,54 @@ void InstCombine(CFG *C) {
     }
 }
 
+void DomTreeDfsI32AddCombine(CFG *C) {
+    bool is_changed = true;
+    std::set<Instruction> AddInstConstantSet;
+    std::function<void(int)> dfs = [&](int bbid) {
+        std::set<Instruction> tmpset;
+        LLVMBlock now = (*C->block_map)[bbid];
+
+        for (auto I:now->Instruction_list){
+            if(I->GetOpcode() == ADD){
+                auto op2 = ((ArithmeticInstruction*)I)->GetOperand2();
+                if(op2->GetOperandType() == BasicOperand::IMMI32){
+                    bool is_combine = false;
+                    for(auto oldI:AddInstConstantSet){
+                        if(EliminateDoubleI32Add(oldI,I)){
+                            is_changed = true;
+                            is_combine = true;
+                            break;
+                        }
+                    }
+                    if(!is_combine){
+                        AddInstConstantSet.insert(I);
+                        tmpset.insert(I);
+                    }
+                }
+            }
+        }
+
+        for (auto v : C->DomTree.dom_tree[bbid]) {
+            dfs(v->block_id);
+        }
+
+        for (auto I:tmpset){
+            AddInstConstantSet.erase(I);
+        }
+    };
+    while(is_changed){
+        is_changed = false;
+        dfs(0);
+    }
+}
+
 bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin) {
     int win_size = 4;
     int cnt = 0;
 
     bool changed = false;
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
-        changed |= EliminateDoubleI32AddSub(*begin, *it);
+        // changed |= EliminateDoubleI32Add(*begin, *it);
     }
     return changed;
 }
@@ -30,8 +78,8 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
 // c1 and c2 is const
 // %r = (a + c1) + c2  ->  %r = a + (c1 + c2)
 // a must be i32
-// ( c1 + c2) can not overflow
-bool EliminateDoubleI32AddSub(Instruction a, Instruction b) {
+// (c1 + c2) can not overflow
+bool EliminateDoubleI32Add(Instruction a, Instruction b) {
     if (a->GetOpcode() != ADD || b->GetOpcode() != ADD) {
         return false;
     }

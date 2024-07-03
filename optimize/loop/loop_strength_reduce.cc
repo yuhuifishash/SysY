@@ -20,7 +20,7 @@ void LoopGepStrengthReduce(CFG *C) {
     for (auto l : C->LoopForest.loop_set) {
         LoopBasicBlockGEPStrengthReduce(C, l);
     }
-
+    
     NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
@@ -29,7 +29,7 @@ void LoopGepStrengthReduce(CFG *C) {
         }
         L->LoopGepStrengthReduce(C);
     };
-
+    
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
             dfs(C, C->LoopForest, l);
@@ -71,7 +71,6 @@ SCEVValue GetGEPStep(GetElementptrInstruction *GEPI, std::vector<SCEVValue> valu
             return res;
         }
     }
-    // res.PrintSCEVValue();
     return res;
 }
 
@@ -94,6 +93,8 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     assert(latches.size() == 1);
     auto latch = *latches.begin();
     // std::cerr<<latch->block_id<<"\n";
+    std::vector<Instruction> LatchInstList;
+    std::vector<Instruction> HeaderInstList;
     for (auto bb : loop_nodes) {
         for (auto &I : bb->Instruction_list) {
             if (I->GetOpcode() != GETELEMENTPTR) {
@@ -189,7 +190,7 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             }
             // now we only consider single step
             if (StepVal.type == OTHER) {
-                // std::cerr << "LoopStrengthInLoop Header = " << header->block_id << "\n\n";
+                // std::cerr << "LoopStrengthInLoop Header = " << header->block_id << "\n";
                 // std::cerr << "LoopStrengthReduce:Raw  ";
                 // GEPI->PrintIR(std::cerr);
                 // std::cerr << "LoopStrengthReduce:PreHeader  ";
@@ -208,20 +209,16 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                 new GetElementptrInstruction(GEPI->GetType(), GetNewRegOperand(++C->max_reg), GEPI->GetResult());
                 LatchGEPI->push_index(StepVal.op1);
 
+                LatchInstList.push_back(LatchGEPI);
                 // std::cerr << "LoopStrengthReduce:Latch  ";
                 // LatchGEPI->PrintIR(std::cerr);
-
-                tmpI = latch->Instruction_list.back();
-                assert(tmpI->GetOpcode() == BR_UNCOND);
-                latch->Instruction_list.pop_back();
-                latch->Instruction_list.push_back(LatchGEPI);
-                latch->Instruction_list.push_back(tmpI);
 
                 // final we add val to header
                 auto PhiI = new PhiInstruction(PTR, GEPI->GetResult());
                 PhiI->InsertPhi(InitGEPI->GetResult(), GetNewLabelOperand(preheader->block_id));
                 PhiI->InsertPhi(LatchGEPI->GetResult(), GetNewLabelOperand(latch->block_id));
-                header->InsertInstruction(0, PhiI);
+
+                HeaderInstList.push_back(PhiI);
 
                 // std::cerr << "LoopStrengthReduce:Header  ";
                 // PhiI->PrintIR(std::cerr);
@@ -232,6 +229,17 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                                               GetNewRegOperand(++C->max_reg));
             }
         }
+    }
+    auto tmpI = latch->Instruction_list.back();
+    assert(tmpI->GetOpcode() == BR_UNCOND);
+    latch->Instruction_list.pop_back();
+    for(auto I:LatchInstList){
+        latch->Instruction_list.push_back(I);
+    }
+    latch->Instruction_list.push_back(tmpI);
+
+    for(auto I:HeaderInstList){
+        header->InsertInstruction(0,I);
     }
 }
 
