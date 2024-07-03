@@ -107,10 +107,17 @@ void SrcEqResultInstEliminate(CFG *C) {
         auto Reg0no = Reg0->GetRegNo();
         UnionFindMap[UnionFind(Reg1no)]=UnionFind(Reg0no);
     };
-
+    // std::cerr<<C->function_def->GetFunctionName()<<" "<<C->max_reg<<'\n';
+    if(C->max_reg<=0){return;}
+    for (int i=0;i<=C->max_reg;++i) {
+        // puts("ASDAD");
+       UnionFindMap[i]=i;
+    }
+    
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             // I->PrintIR(std::cerr);
+            if(I->GetNonResultOperands().size()<=1){continue;}
             if(I->GetNonResultOperands()[0]->GetOperandType()!=BasicOperand::REG)continue;
             if(I->GetNonResultOperands()[1]->GetOperandType()==BasicOperand::REG)continue;
             if(I->GetOpcode() == ADD){
@@ -143,6 +150,7 @@ void SrcEqResultInstEliminate(CFG *C) {
             }
         }
     }
+    
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             auto resultopno=I->GetResultRegNo();
@@ -152,13 +160,14 @@ void SrcEqResultInstEliminate(CFG *C) {
             for(auto op : I->GetNonResultOperands()){
                 if(op->GetOperandType()==BasicOperand::REG){
                     auto regno=((RegOperand*)op)->GetRegNo();
-                    if(UnionFindMap.find(regno)!=UnionFindMap.end()){
+                    if(UnionFindMap[regno]!=regno){
                         UnionFindMap[regno]=UnionFind(regno);
                     }
                 }
             }
         }
     }
+    
     for (auto [id, bb] : *C->block_map) {
         auto tmp_Instruction_list = bb->Instruction_list;
         bb->Instruction_list.clear();
@@ -167,6 +176,7 @@ void SrcEqResultInstEliminate(CFG *C) {
                 continue;
             }
             I->ReplaceRegByMap(UnionFindMap);
+            // if(I->GetOpcode())
             bb->InsertInstruction(1, I);
         }
     }
@@ -216,8 +226,13 @@ void InstSimplify(CFG *C) {
             // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);
             I32ConstantSub2AddSimplify(I);
+
         }
     }
+    // std::cerr<<C->function_def->GetFunctionName()<<'\n';
+    SrcEqResultInstEliminate(C);
+    // puts("OVER");
+    // std::cerr<<C->function_def->GetFunctionName()<<'\n';
 }
 
 // TODO():GEPStrengthReduce
@@ -236,5 +251,6 @@ example:
 the implementation is very trivial, only dfs the DomTree
 */
 void GEPStrengthReduce(CFG *C) { 
-    TODO("GEPStrengthReduce");        
+    // TODO("GEPStrengthReduce");
+    std::deque<Instruction> GepQue;
 }

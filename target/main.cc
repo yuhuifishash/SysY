@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
+        // // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
@@ -232,7 +232,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
-        // TODO():GVN/GCM
+        // // TODO():GVN/GCM
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
@@ -245,21 +245,21 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
 
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor(LoopSimplify);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopClosedSSA);
-        // llvmIR.PassExecutor(LoopFusion);
-        // llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(LoopFusion);
+        llvmIR.PassExecutor(SimplifyCFG);
 
-        // llvmIR.BuildLoopInfo();
-        // llvmIR.PassExecutor(LoopSimplify);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(LoopClosedSSA);
-        // llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(AddParallelLib);
-        // llvmIR.PassExecutor(LoopParallel);
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(AddParallelLib);
+        llvmIR.PassExecutor(LoopParallel);
 
         #ifdef AggressiveOptimize
             llvmIR.BuildLoopInfo();
