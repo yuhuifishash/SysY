@@ -1,4 +1,5 @@
 #include "../../include/cfg.h"
+#include <functional>
 
 extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
@@ -90,7 +91,88 @@ void EliminateEmptyIndexGEP(CFG *C) {
 
 I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
 */
-void SrcEqResultInstEliminate(CFG *C) { TODO("SrcEqResultInstEliminate"); }
+void SrcEqResultInstEliminate(CFG *C) { 
+    // TODO("SrcEqResultInstEliminate");
+    std::map<int,int> UnionFindMap;
+    std::set<Instruction> EraseSet;
+    std::function<int(int)> UnionFind = [&](int RegToFindNo) -> int {
+        if (UnionFindMap[RegToFindNo] == RegToFindNo)
+            return RegToFindNo;
+        return UnionFindMap[RegToFindNo] = UnionFind(UnionFindMap[RegToFindNo]);
+    };
+    auto Connect = [&](Operand resultOp,Operand replaceOp) -> void{
+        auto Reg1 = (RegOperand*)resultOp;
+        auto Reg1no = Reg1->GetRegNo();
+        auto Reg0 = (RegOperand*)replaceOp;
+        auto Reg0no = Reg0->GetRegNo();
+        UnionFindMap[UnionFind(Reg1no)]=UnionFind(Reg0no);
+    };
+
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            // I->PrintIR(std::cerr);
+            if(I->GetNonResultOperands()[0]->GetOperandType()!=BasicOperand::REG)continue;
+            if(I->GetNonResultOperands()[1]->GetOperandType()==BasicOperand::REG)continue;
+            if(I->GetOpcode() == ADD){
+                auto AddI = (ArithmeticInstruction*)I;
+                if(AddI->GetOperand2()->GetFullName()=="0"){
+                    Connect(AddI->GetResultReg(),AddI->GetOperand1());
+                    EraseSet.insert(I);
+                }
+            }
+            if(I->GetOpcode() == SUB){
+                auto SubI = (ArithmeticInstruction*)I;
+                if(SubI->GetOperand2()->GetFullName()=="0"){
+                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
+                    EraseSet.insert(I);
+                }
+            }
+            if(I->GetOpcode() == MUL){
+                auto SubI = (ArithmeticInstruction*)I;
+                if(SubI->GetOperand2()->GetFullName()=="1"){
+                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
+                    EraseSet.insert(I);
+                }
+            }
+            if(I->GetOpcode() == DIV){
+                auto SubI = (ArithmeticInstruction*)I;
+                if(SubI->GetOperand2()->GetFullName()=="1"){
+                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
+                    EraseSet.insert(I);
+                }
+            }
+        }
+    }
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            auto resultopno=I->GetResultRegNo();
+            if(UnionFindMap.find(resultopno)!=UnionFindMap.end()){
+                UnionFindMap[resultopno]=UnionFind(resultopno);
+            }
+            for(auto op : I->GetNonResultOperands()){
+                if(op->GetOperandType()==BasicOperand::REG){
+                    auto regno=((RegOperand*)op)->GetRegNo();
+                    if(UnionFindMap.find(regno)!=UnionFindMap.end()){
+                        UnionFindMap[regno]=UnionFind(regno);
+                    }
+                }
+            }
+        }
+    }
+    for (auto [id, bb] : *C->block_map) {
+        auto tmp_Instruction_list = bb->Instruction_list;
+        bb->Instruction_list.clear();
+        for (auto I : tmp_Instruction_list) {
+            if (EraseSet.find(I) != EraseSet.end()) {
+                continue;
+            }
+            I->ReplaceRegByMap(UnionFindMap);
+            bb->InsertInstruction(1, I);
+        }
+    }
+    UnionFindMap.clear();
+    EraseSet.clear();
+}
 
 /*
 %r1 = add i32 4,%r0 will be transformed to %r1 = add i32 %r0,4
@@ -123,7 +205,10 @@ void I32ConstantSub2AddSimplify(Instruction I) {
 
 // TODO():ZeroResultSimplify
 //  {sub X, X},{Mul 0, X} is represented as 0 + 0
-void ZeroResultSimplify(Instruction I) { TODO("ZeroResultSimplify"); }
+void ZeroResultSimplify(Instruction I) { 
+    // TODO("ZeroResultSimplify"); 
+
+}
 
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -150,4 +235,6 @@ example:
 
 the implementation is very trivial, only dfs the DomTree
 */
-void GEPStrengthReduce(CFG *C) { TODO("GEPStrengthReduce"); }
+void GEPStrengthReduce(CFG *C) { 
+    TODO("GEPStrengthReduce");        
+}
