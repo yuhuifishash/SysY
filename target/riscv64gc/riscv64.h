@@ -155,6 +155,7 @@ struct RvOpInfo {
     };
     int ins_formattype;
     char *name;
+    int latency;
 };
 extern RvOpInfo OpTable[];
 enum {
@@ -445,6 +446,7 @@ public:
     int getOpcode() { return op; }
     std::vector<Register *> GetReadReg();
     std::vector<Register *> GetWriteReg();
+    int GetLatency() { return OpTable[op].latency; }
 };
 
 class RiscV64InstructionConstructor {

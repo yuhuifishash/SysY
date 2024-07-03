@@ -44,7 +44,7 @@ bool PhysicalRegisters::ReleaseMem(int offset, int size, LiveInterval interval) 
     return true;
 }
 
-int PhysicalRegisters::getIdleReg(LiveInterval interval, std::vector<int> preferd_regs) {
+int PhysicalRegisters::getIdleReg(LiveInterval interval, std::vector<int> preferd_regs, std::vector<int> noprefer_regs) {
     PRINT("\nVreg: ");
     interval.Print();
     for (auto i : preferd_regs) {
@@ -68,7 +68,38 @@ int PhysicalRegisters::getIdleReg(LiveInterval interval, std::vector<int> prefer
             return i;
         }
     }
+    std::map<int,int> reg_tried,reg_valid;
+    for(auto i : preferd_regs){
+        reg_tried[i] = 1;
+    }
+    for(auto i : noprefer_regs){
+        reg_tried[i] = 1;
+    }
     for (auto i : getValidRegs(interval)) {
+        reg_valid[i] = 1;
+        if(reg_tried[i])continue;
+        int ok = true;
+        for (auto conflict_j : getAliasRegs(i)) {
+            for (auto other_interval : phy_occupied[conflict_j]) {
+                PRINT("\nTry Phy %d", i);
+                // std::cerr<<"\nTry Phy "<<i<<"\n";
+                PRINT("Othe: ");
+                other_interval.Print();
+                if (interval & other_interval) {
+                    PRINT("\n->Fail\n");
+                    ok = false;
+                    break;
+                } else {
+                    PRINT("\n->Success\n");
+                }
+            }
+        }
+        if (ok) {
+            return i;
+        }
+    }
+    for (auto i : noprefer_regs) {
+        if(!reg_valid[i])continue;
         int ok = true;
         for (auto conflict_j : getAliasRegs(i)) {
             for (auto other_interval : phy_occupied[conflict_j]) {
