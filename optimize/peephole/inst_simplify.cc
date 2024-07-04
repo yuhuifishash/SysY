@@ -218,6 +218,7 @@ void InstSimplify(CFG *C) {
             I32ConstantSub2AddSimplify(I);
         }
     }
+    // SrcEqResultInstEliminate(C);
 }
 
 // TODO():GEPStrengthReduce
