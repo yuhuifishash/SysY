@@ -829,6 +829,7 @@ public:
     void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();
     void SetNonResultOperands(std::vector<Operand> ops);
+    void SetDims(std::vector<int> dim);
     virtual Instruction CopyInstruction();
     virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
 };
