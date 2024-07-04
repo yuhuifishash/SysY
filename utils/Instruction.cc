@@ -387,6 +387,13 @@ void GetElementptrInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     ptrval = ops[ops.size() - 1];
 }
 
+void GetElementptrInstruction::SetDims(std::vector<int> dim) {
+    dims.clear();
+    for(int i=0;i<dim.size();++i){
+        dims.push_back(dim[i]);
+    }
+}
+
 void FunctionDefineInstruction::InsertFormal(enum LLVMType t) {
     formals.push_back(t);
     formals_reg.push_back(GetNewRegOperand(formals_reg.size()));
