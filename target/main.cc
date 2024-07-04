@@ -274,12 +274,13 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimpleDCE);
             llvmIR.PassExecutor(InstSimplify);
             llvmIR.PassExecutor(InstCombine);
+            llvmIR.PassExecutor(InstSimplify);
             llvmIR.PassExecutor(SimpleAliasAnalysis);
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SimpleDCE);
         #endif
-        
-        // llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
