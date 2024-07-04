@@ -281,13 +281,13 @@ int main(int argc, char **argv) {
         #endif
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopGepStrengthReduce);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);
+        // llvmIR.BuildLoopInfo();
+        // llvmIR.PassExecutor(LoopSimplify);
+        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        // llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopGepStrengthReduce);
+        // llvmIR.PassExecutor(SimpleDCE);
+        // llvmIR.PassExecutor(SimplifyCFG);
     }
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);
