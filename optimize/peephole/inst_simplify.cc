@@ -457,4 +457,9 @@ void GEPStrengthReduce(CFG *C) {
     C->BuildCFG();
     C->BuildDominatorTree();
     Gepdfs(0);
+    Instructionset.clear();
+    GepMap.clear();
+    AddDefMap.clear();
+    SubDefMap.clear();
+    AddInstConstantSet.clear();
 }
