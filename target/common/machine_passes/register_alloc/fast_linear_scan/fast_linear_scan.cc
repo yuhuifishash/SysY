@@ -158,8 +158,10 @@ void FastLinearScan::CoalesceInCurrentFunc() {
             // if (spillweight_ratio >= 2.0 || spillweight_ratio <= 0.5)continue;
             intervals[root_reg] = intervals[root_reg] | intervals[other_root_reg];
             for(auto src : copy_sources[other_root_reg]){
-                copy_sources[src].push_back(root_reg);
-                copy_sources[root_reg].push_back(src);
+                if(src.is_virtual == false){
+                    copy_sources[src].push_back(root_reg);
+                    copy_sources[root_reg].push_back(src);
+                }
             }
             coal_result[other_root_reg] = root_reg;
             intervals.erase(other_root_reg);
