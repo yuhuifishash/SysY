@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
+        llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        /*llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.BuildLoopInfo();
@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopGepStrengthReduce);
         llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.PassExecutor(SimplifyCFG);*/
     }
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);
