@@ -1132,7 +1132,13 @@ template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruct
 
     // return
     auto ret_instr = rvconstructor->ConstructIImm(RISCV_JALR, GetPhysicalReg(RISCV_x0), GetPhysicalReg(RISCV_ra), 0);
-    ret_instr->setRetUsea0(true);
+    if(ins->GetType() == I32){
+        ret_instr->setRetType(1);
+    }else if(ins->GetType() == FLOAT32){
+        ret_instr->setRetType(2);
+    }else{
+        ret_instr->setRetType(0);
+    }
     cur_block->push_back(ret_instr);
 }
 

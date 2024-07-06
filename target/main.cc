@@ -322,7 +322,7 @@ int main(int argc, char **argv) {
         // std::cerr<<"End\n";
 
         RiscV64Printer(fout, m_unit).emit();
-        RiscV64Printer(std::cout, m_unit).emit();
+        // RiscV64Printer(std::cout, m_unit).emit();
     }
     if (strcmp(argv[step_tag], "-select") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();
