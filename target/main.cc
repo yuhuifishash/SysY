@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
 
 
-        llvmIR.PassExecutor(AggressiveDeadCodeElimination); //ERROR
+        llvmIR.PassExecutor(AggressiveDeadCodeElimination);
         llvmIR.ElimateUnreachedInstructionAndBlocks(); 
         llvmIR.BuildCFG(); 
         llvmIR.BuildDominatorTree();
