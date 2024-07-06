@@ -1,4 +1,5 @@
 #include "../../include/cfg.h"
+#include <algorithm>
 #include <functional>
 #include <iostream>
 
@@ -235,18 +236,38 @@ void InstSimplify(CFG *C) {
 
 // TODO():GEPStrengthReduce
 /*
-example:
-%ry1 = gep [100x[100xi32]], ptr @x, i32 0, i32 %r1, i32 %r2
-%r3 = add %r1, 2
-%ry2 = gep [100x[100xi32]], ptr @x, i32 0, i32 %r3, i32 %r2
-
----------------------------------------------------------will be
-
-%ry1 = gep [100x[100xi32]] , ptr @x, i32 0, i32 %r1, i32 %r2
-%r3 = add %r1, 2 (dead code)
-%ry2 = gep i32, ptr %ry1, i32 200
-
 the implementation is very trivial, only dfs the DomTree
+
+Need to be optimize:
+1.only one reg is changed
+    %ry1 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r1, i32 %r2
+    %r3 = add %r1, 2
+    %ry2 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r3, i32 %r2
+---------------------------------------------------------will be
+    %ry1 = gep [100x[10xi32]] , ptr @x, i32 0, i32 %r1, i32 %r2
+    %r3 = add %r1, 2 (dead code but do not delete at this pass)
+    %ry2 = gep i32, ptr %ry1, i32 20
+
+2.exists multiple regs and immediate ops are changed
+    %ry1 = gep [1000x[100x[10xi32]]], ptr @x, i32 0, i32 %r1, i32 %r2, i32 2
+    %r3 = add %r1, -2
+    %r4 = add %r2, 3
+    %ry2 = gep [1000x[100x[10xi32]]], ptr @x, i32 0, i32 %r3, i32 %r4, i32 3
+---------------------------------------------------------will be
+    %ry1 = gep [1000x[100x[10xi32]]], ptr @x, i32 0, i32 %r1, i32 %r2, i32 2
+    %r3 = add %r1, 2 (dead code but do not delete at this pass)
+    %r4 = add %r2, 3 (dead code but do not delete at this pass)
+    %ry2 = gep i32, ptr %ry1, i32 -1969 (100 * 10 * (r3 - r1) + 10 * (r4 - r2) + 3 - 2)
+3.reg0 = reg1 + imm32 can be transformed to reg1 = reg0 + (-imm32)
+    %ry1 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r1, i32 %r2
+    %r1 = add %r3, 2
+    %ry2 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r3, i32 %r2
+---------------------------------------------------------will be
+    %ry1 = gep [100x[10xi32]] , ptr @x, i32 0, i32 %r1, i32 %r2
+    %r1 = add %r3, 2 (dead code but do not delete at this pass)
+    %ry2 = gep i32, ptr %ry1, i32 -20
+
+the transformed instruction is %r3 = add %r1, 2 , we named it SubDef.
 */
 void GEPStrengthReduce(CFG *C) { 
     // DOING("GEPStrengthReduce");
@@ -254,56 +275,90 @@ void GEPStrengthReduce(CFG *C) {
     std::set<Instruction> Instructionset;
     std::map<std::string,std::vector<Instruction>> GepMap;
     std::map<int,Instruction> AddDefMap;
-    std::map<int,Instruction> SubDefMap;
-    std::map<int,int> RegUseCnt;
+    std::map<int,std::map<int,Instruction>> SubDefMap;
 
     std::set<Instruction> AddInstConstantSet;
     std::function<int(Instruction,Instruction)> existpass = [&](Instruction GepI,Instruction BefI) {
+        // check the two Instruction whether to be optimize
+        // return the difference value between two Instruction if to be optimize, otherwise -1.
         auto GepIvec = GepI->GetNonResultOperands();
         auto BefIvec = BefI->GetNonResultOperands();
-        int aimOperand = -1;
-        if(GepIvec.size()!=BefIvec.size()){return aimOperand;}
+        int aimOperand = 0;
+        if(GepIvec.size()!=BefIvec.size()){
+            aimOperand = -1;
+            return aimOperand;
+        }
+        std::stack<int> siz1;
+        std::vector<int> siz;
+        int siz_now = 1;
+        siz1.push(siz_now);
+        auto GepDim = ((GetElementptrInstruction*)GepI)->GetDims();
+        for(int i = GepDim.size() - 1;i >= 0 ;--i){
+            siz_now *= GepDim[i];
+            siz1.push(siz_now);
+        }
+        while(!siz1.empty()){
+            siz.push_back(siz1.top());
+            siz1.pop();
+        }
+        // GepI   : %ry1 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r1, i32 %r2
+        // OpdefI : %r1 = add %r3, 2
+        // BefI   : %ry2 = gep [100x[10xi32]], ptr @x, i32 0, i32 %r3, i32 %r2
+        // GepIReg:0, %r1, %r2
+        // BefIReg:0, %r3, %r2 
+        auto ResultOp = ((GetElementptrInstruction*)GepI)->GetResultReg();
         for(int i = 0;i < GepIvec.size(); ++i){
             auto GepOp = GepIvec[i];
             auto BefOp = BefIvec[i];
             if(GepOp->GetFullName() != BefOp->GetFullName()){
-                if(!(GepOp->GetOperandType() == BasicOperand::REG && BefOp->GetOperandType() == BasicOperand::REG) || aimOperand != -1 || BefOp->GetOperandType()!=BasicOperand::REG){
+                if(GepOp->GetOperandType() == BasicOperand::REG && BefOp->GetOperandType() == BasicOperand::REG){
+                    auto GepIReg = (RegOperand*)GepOp;
+                    auto GepIRegNo = GepIReg->GetRegNo();
+                    auto BefIReg = (RegOperand*)BefOp;
+                    auto BefIRegNo = BefIReg->GetRegNo();
+                    
+                    if(AddDefMap.find(GepIRegNo)==AddDefMap.end() && SubDefMap.find(GepIRegNo) == SubDefMap.end()){
+                        aimOperand = -1;
+                        return aimOperand;
+                    }
+                    ArithmeticInstruction *OpDefI;
+                    if(AddDefMap.find(GepIRegNo)!=AddDefMap.end()){
+                        OpDefI = (ArithmeticInstruction*)AddDefMap[GepIRegNo];
+                    }else if(SubDefMap[GepIRegNo].find(BefIRegNo)!=SubDefMap[GepIRegNo].end()){
+                        OpDefI = (ArithmeticInstruction*)SubDefMap[GepIRegNo][BefIRegNo];
+                    }else{
+                        aimOperand = -1;
+                        return aimOperand;
+                    }
+                    if(OpDefI->GetOperand1()->GetFullName()!=BefOp->GetFullName()){
+                        aimOperand = -1;
+                        return aimOperand;
+                    }
+                    auto NumOp = (ImmI32Operand*)OpDefI->GetOperand2();
+                    auto Num = NumOp->GetIntImmVal();
+                    auto GepDims = ((GetElementptrInstruction*)GepI)->GetDims();
+                    auto GepIndexes = ((GetElementptrInstruction*)GepI)->GetIndexes();
+                    aimOperand += Num*siz[i];
+                }else if(GepOp->GetOperandType() == BasicOperand::IMMI32 && BefOp->GetOperandType() == BasicOperand::IMMI32){
+                    auto GepDims = ((GetElementptrInstruction*)GepI)->GetDims();
+                    auto Num = ((ImmI32Operand*)GepOp)->GetIntImmVal() - ((ImmI32Operand*)BefOp)->GetIntImmVal();
+                    aimOperand += Num*siz[i];
+                }else{
                     aimOperand = -1;
                     return aimOperand;
-                }else{
-                    aimOperand = i;
                 }
             }
         }
         return aimOperand;
     };
-    // std::function<std::vector<int>(Instruction,Instruction)> existpass = [&](Instruction GepI,Instruction BefI) {
-    //     std::vector<int> aimVec;
-    //     auto GepIvec = GepI->GetNonResultOperands();
-    //     auto BefIvec = BefI->GetNonResultOperands();
-    //     if(GepIvec.size()!=BefIvec.size()){return aimVec;}
-    //     for(int i = 0;i < GepIvec.size(); ++i){
-    //         auto GepOp = GepIvec[i];
-    //         auto BefOp = BefIvec[i];
-    //         if(GepOp->GetFullName() != BefOp->GetFullName()){
-    //             if(!(GepOp->GetOperandType() == BasicOperand::REG && BefOp->GetOperandType() == BasicOperand::REG) || aimOperand != -1 || BefOp->GetOperandType()!=BasicOperand::REG){
-    //                 aimVec.clear();
-    //                 return aimVec;
-    //             }else{
-    //                 aimVec.push_back(i);
-    //             }
-    //         }else{
-    //             aimVec.push_back(0);
-    //         }
-    //     }
-    //     return aimVec;
-    // };
     std::function<void(int)> Gepdfs = [&](int bbid) {
+        // DFS domtree
         LLVMBlock now = (*C->block_map)[bbid];
+        
         for (auto I:now->Instruction_list){
             if(I->GetOpcode() == GETELEMENTPTR){
                 auto GepI = (GetElementptrInstruction*)I;
-                 auto ResultOp = GepI->GetResultReg();
+                auto ResultOp = GepI->GetResultReg();
                 auto ptrOp = GepI->GetPtrVal();
                 GepMap[ptrOp->GetFullName()].push_back(I);
                 Instructionset.insert(I);
@@ -316,11 +371,11 @@ void GEPStrengthReduce(CFG *C) {
                 || NoResultOpVec[0]->GetOperandType()!=BasicOperand::REG){continue;}
                 AddDefMap[((RegOperand*)ResultOp)->GetRegNo()]=ArthiI;
                 Instructionset.insert(I);
-
+                // transform AddDef(reg0 = reg1 + imm32) to SubDef(reg1 = reg0 + (-imm32)), one reg can only have one AddDef,but multiple SubDef
                 auto NewNum = -((ImmI32Operand*)NoResultOpVec[1])->GetIntImmVal();
                 auto NewI = new ArithmeticInstruction(ADD, I32, ResultOp, new ImmI32Operand(NewNum), NoResultOpVec[0]);
                 //Exist Memory Link
-                SubDefMap[((RegOperand*)NoResultOpVec[0])->GetRegNo()]=NewI;
+                SubDefMap[((RegOperand*)NoResultOpVec[0])->GetRegNo()][((RegOperand*)ResultOp)->GetRegNo()]=NewI;
                 // NewI
                 Instructionset.insert(NewI);
             }
@@ -331,6 +386,9 @@ void GEPStrengthReduce(CFG *C) {
         
         auto Instruction_it = now->Instruction_list.end();
         do{
+            // optimize GEP at post order to pursue max optimize number, 
+            // or it may only optimize GEPs in the front but not GEPs whose
+            // BefI is optimized GEP 
             Instruction_it--;
             auto I = *Instruction_it;
             if(Instructionset.find(I) == Instructionset.end()){continue;}
@@ -338,15 +396,17 @@ void GEPStrengthReduce(CFG *C) {
             if(I->GetOpcode()!=GETELEMENTPTR){
                 auto ArthiI=(ArithmeticInstruction*)I;
                 auto ResultOp = ArthiI->GetResultOperand();
-                // if(((RegOperand*)ResultOp)->GetRegNo()==475){
-                //     ArthiI->PrintIR(std::cerr);
-                //     std::cerr<<((RegOperand*)ResultOp)->GetRegNo()<<'\n';
-                // }
+                
                 if(AddDefMap.find(((RegOperand*)ResultOp)->GetRegNo())!=AddDefMap.end()){
                     AddDefMap.erase(((RegOperand*)ResultOp)->GetRegNo());
                 }
+
                 if(SubDefMap.find(((RegOperand*)ResultOp)->GetRegNo())!=SubDefMap.end()){
-                    SubDefMap.erase(((RegOperand*)ResultOp)->GetRegNo());
+                    auto NoResultOpVec = ArthiI->GetNonResultOperands();
+                    if(NoResultOpVec[0]->GetOperandType() == BasicOperand::REG){
+                        auto NoResultOp = (RegOperand*)NoResultOpVec[0];
+                        SubDefMap[((RegOperand*)ResultOp)->GetRegNo()].erase(NoResultOp->GetRegNo());
+                    }
                 }
             }else{
                 auto GepI = (GetElementptrInstruction*)I;
@@ -354,89 +414,42 @@ void GEPStrengthReduce(CFG *C) {
                 auto ResultOp = GepI->GetResultReg();
                 auto ptrOp = GepI->GetPtrVal();
                 auto ptrOpStr = ptrOp->GetFullName();
-                
+                GepMap[ptrOp->GetFullName()].pop_back();
                 for(auto BefI : GepMap[ptrOpStr]){
                     auto aimOp = existpass(GepI,BefI);
+                    
                     if(aimOp != -1){
-                        auto BefIvec = BefI->GetNonResultOperands();
-                        auto GepIOp = GepIvec[aimOp];
-                        auto GepIReg = (RegOperand*)GepIOp;
-                        auto GepIRegNo = GepIReg->GetRegNo();
-                        auto BefIOp = BefIvec[aimOp];
-                        auto BefIReg = (RegOperand*)BefIOp;
-                        auto BefIRegNo = BefIReg->GetRegNo();         
-                        if(AddDefMap.find(GepIRegNo)==AddDefMap.end() && SubDefMap.find(GepIRegNo) == SubDefMap.end()){continue;}
-                        ArithmeticInstruction *OpDefI;
-                        if(AddDefMap.find(GepIRegNo)!=AddDefMap.end()){
-                            OpDefI = (ArithmeticInstruction*)AddDefMap[GepIRegNo];
-                        }else{
-                            OpDefI = (ArithmeticInstruction*)SubDefMap[GepIRegNo];
-                        }
-                        if(OpDefI->GetOperand1()->GetFullName()==BefIOp->GetFullName()){
-                            auto NumOp = (ImmI32Operand*)OpDefI->GetOperand2();
-                            auto Num = NumOp->GetIntImmVal();
-                            auto GepDims = GepI->GetDims();
-                            auto GepIndexes = GepI->GetIndexes();
-                            if(aimOp!=GepDims.size()){
-                                for(int i = aimOp; i < GepI->GetDims().size(); ++i){
-                                    Num = Num*GepI->GetDims()[i];
-                                }
-                            }
-                            // puts("----------");
-                            // I->PrintIR(std::cerr);
-                            // BefI->PrintIR(std::cerr);
-                            // OpDefI->PrintIR(std::cerr);
-                            GepDims.clear();
-                            auto ptrVal=BefI->GetResultReg();
-                            // std::cerr<<ptrVal->GetFullName()<<'\n';
-                            GepIndexes.clear();
-                            GepIndexes.push_back(new ImmI32Operand(Num));
-                            GepIndexes.push_back(ptrVal);
-                            GepI->SetNonResultOperands(GepIndexes);
-                            GepI->SetDims(GepDims);
-                            // GepI->PrintIR(std::cerr);
-                            // GepI = new GetElementptrInstruction(GepI->GetType(),GepI->GetResult(),);
-                            break;
-                        }
+                        auto GepDims = GepI->GetDims();
+                        auto GepIndexes = GepI->GetIndexes();
+                        // puts("----------");
+                        // I->PrintIR(std::cerr);
+                        // BefI->PrintIR(std::cerr);
+                        // OpDefI->PrintIR(std::cerr);
+                        GepDims.clear();
+                        auto ptrVal=BefI->GetResultReg();
+                        // std::cerr<<ptrVal->GetFullName()<<'\n';
+                        GepIndexes.clear();
+                        GepIndexes.push_back(new ImmI32Operand(aimOp));
+                        GepIndexes.push_back(ptrVal);
+                        GepI->SetNonResultOperands(GepIndexes);
+                        GepI->SetDims(GepDims);
+                        // GepI->PrintIR(std::cerr);
+                        // GepI = new GetElementptrInstruction(GepI->GetType(),GepI->GetResult(),);
+                        break;
                     }
                 }
                 // std::cerr<<GepMap[ptrOp].size()<<'\n';
-                GepMap[ptrOp->GetFullName()].pop_back();
+                
             }
             // (*now->Instruction_list.begin())->PrintIR(std::cerr);
             Instructionset.erase(I);
         }while(Instruction_it!=now->Instruction_list.begin());
-        // for (auto I:now->Instruction_list){
-        //     // if(I->GetOpcode() == GETELEMENTPTR){
-        //     //     auto GepI = (GetElementptrInstruction*)I;
-        //     //     auto ptrOp = GepI->GetPtrVal();
-        //     //     GepMap[ptrOp->GetFullName()].pop_back();
-        //     // }
-        //     if(I->GetOpcode() == ADD){
-        //         auto ArthiI=(ArithmeticInstruction*)I;
-        //         auto ResultOp = ArthiI->GetResultOperand();
-        //         auto NoResultOpVec = ArthiI->GetNonResultOperands();
-        //         if(NoResultOpVec.size()<=1 || NoResultOpVec[1]->GetOperandType()!=BasicOperand::IMMI32 || NoResultOpVec[0]->GetOperandType()==BasicOperand::REG){continue;}
-        //         AddDefMap.erase(((RegOperand*)ResultOp)->GetRegNo());
-        //     }
-        // }
     };
     
     C->BuildCFG();
     C->BuildDominatorTree();
-    for (auto [id, bb] : *C->block_map) {
-        for (auto I : bb->Instruction_list) {
-            for(auto op : I->GetNonResultOperands()){
-                if(op->GetOperandType() != BasicOperand::REG){continue;}
-                auto RegUse = (RegOperand*)op;
-                auto RegUseNo = RegUse->GetRegNo();
-                if(RegUseCnt.find(RegUseNo) == RegUseCnt.end()){
-                    RegUseCnt[RegUseNo] = 0;
-                }
-                RegUseCnt[RegUseNo]++;
-            }
-
-        }
-    }
     Gepdfs(0);
+    GepMap.clear();
+    AddDefMap.clear();
+    SubDefMap.clear();
 }
