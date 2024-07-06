@@ -139,6 +139,9 @@ enum {
     RISCV_BLE,
     RISCV_BGTU,
     RISCV_BLEU,
+
+    RISCV_FMV_S,
+    RISCV_FMV_D,
 };
 
 struct RvOpInfo {
