@@ -430,7 +430,7 @@ static bool LoopMemsetRecognize(CFG *C, NaturalLoop *L) {
     auto BrI2 = new BrUncondInstruction(GetNewLabelOperand(exit->block_id));
     latch->InsertInstruction(1, BrI2);
 
-    MemsetI->PrintIR(std::cerr);
+    // MemsetI->PrintIR(std::cerr);
     return true;
 }
 

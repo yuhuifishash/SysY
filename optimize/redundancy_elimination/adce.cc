@@ -140,13 +140,13 @@ void AggressiveDeadCodeElimination(CFG *C) {
     // DEBUG : search for basicblock to delete
     // not-a-liveBlock only have one bruncond instruction, 
     // which is added in the last loop(I = new BrUncondInstruction(GetNewLabelOperand(livebbid));)
-    std::cerr<<C->function_def->GetFunctionName()<<" not-a-liveBlock :\n"; 
-    for(int i = 0;i < C->max_label;++i){
-        if(liveBBset.find(i) == liveBBset.end()){
-            std::cerr<<i<<'\n';
-        }
-    }
-    std::cerr<<" before instruction cnt : "<<cnt<<" now instruction cnt : "<<liveInstructionset.size()+cnt2<<'\n';
+    // std::cerr<<C->function_def->GetFunctionName()<<" not-a-liveBlock :\n"; 
+    // for(int i = 0;i < C->max_label;++i){
+    //     if(liveBBset.find(i) == liveBBset.end()){
+    //         std::cerr<<i<<'\n';
+    //     }
+    // }
+    // std::cerr<<" before instruction cnt : "<<cnt<<" now instruction cnt : "<<liveInstructionset.size()+cnt2<<'\n';
     defmap.clear();
     liveInstructionset.clear();
     liveBBset.clear();
