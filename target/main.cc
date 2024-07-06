@@ -321,8 +321,8 @@ int main(int argc, char **argv) {
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";
 
-        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
-        printer->emit();
+        RiscV64Printer(fout, m_unit).emit();
+        RiscV64Printer(std::cout, m_unit).emit();
     }
     if (strcmp(argv[step_tag], "-select") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();

@@ -126,7 +126,7 @@ void RiscV64LowerIImmCopy::Execute(){
                         if (src_immi != 0){ 
                             if (src_immi->imm32 <= 2047 && src_immi->imm32 >= -2048) {
                                 it = block->erase(it);
-                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDI,dst_reg->reg,GetPhysicalReg(RISCV_x0),src_immi->imm32));
+                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDIW,dst_reg->reg,GetPhysicalReg(RISCV_x0),src_immi->imm32));
                                 --it;
                             }else if ((src_immi->imm32 & 0xFFF) == 0){
                                 it = block->erase(it);
@@ -136,11 +136,10 @@ void RiscV64LowerIImmCopy::Execute(){
                                 auto mid_reg = function->GetNewReg(INT64);
 
                                 // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
-                                // ins = li_instr;
                                 it = block->erase(it);
                                 // block->insert(it, li_instr);
                                 block->insert(it,rvconstructor->ConstructUImm(RISCV_LUI,mid_reg,((unsigned int)(src_immi->imm32 + 0x800))>>12));
-                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDI,dst_reg->reg,mid_reg,((src_immi->imm32)<<20)>>20));
+                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDIW,dst_reg->reg,mid_reg,((src_immi->imm32)<<20)>>20));
                                 --it;
                             }
                         }else{
