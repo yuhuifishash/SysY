@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
+        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
-        /*llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.BuildLoopInfo();
@@ -279,16 +279,15 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SimpleDCE);
         #endif
-
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(GEPStrengthReduce);
+        llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopGepStrengthReduce);
         llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);*/
+        llvmIR.PassExecutor(SimplifyCFG);
     }
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);
@@ -312,7 +311,6 @@ int main(int argc, char **argv) {
         RiscV64SSADeadDefElimate(m_unit).Execute();
         MachinePhiDestruction(m_unit).Execute();
         RiscV64LowerFImmCopy(m_unit).Execute();
-        RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         // std::cerr<<"LowerCopy\n";
@@ -321,8 +319,8 @@ int main(int argc, char **argv) {
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";
 
-        RiscV64Printer(fout, m_unit).emit();
-        RiscV64Printer(std::cout, m_unit).emit();
+        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
+        printer->emit();
     }
     if (strcmp(argv[step_tag], "-select") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();
@@ -333,10 +331,8 @@ int main(int argc, char **argv) {
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         RiscV64SSAPeehole(m_unit).Execute();
-        RiscV64SSADeadDefElimate(m_unit).Execute();
-        MachinePhiDestruction(m_unit).Execute();
-        RiscV64LowerFImmCopy(m_unit).Execute();
-        // RiscV64LowerIImmCopy(m_unit).Execute();
+        // RiscV64SSADeadDefElimate(m_unit).Execute();
+        // MachinePhiDestruction(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();
         // RiscV64LowerCopy(m_unit).Execute();
 
