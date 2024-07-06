@@ -167,7 +167,11 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
+
+        llvmIR.PassExecutor(AggressiveDeadCodeElimination);
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
+        llvmIR.BuildCFG();
+        llvmIR.BuildDominatorTree();
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
@@ -246,6 +250,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
 
+
+        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //ERROR
+        // llvmIR.ElimateUnreachedInstructionAndBlocks(); 
+        // llvmIR.BuildCFG(); 
+        // llvmIR.BuildDominatorTree();
+
         // llvmIR.BuildLoopInfo();
         // llvmIR.PassExecutor(LoopSimplify);
         // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -279,7 +289,7 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SimpleDCE);
         #endif
-
+        
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(GEPStrengthReduce);
         llvmIR.BuildLoopInfo();
@@ -333,10 +343,8 @@ int main(int argc, char **argv) {
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         RiscV64SSAPeehole(m_unit).Execute();
-        RiscV64SSADeadDefElimate(m_unit).Execute();
-        MachinePhiDestruction(m_unit).Execute();
-        RiscV64LowerFImmCopy(m_unit).Execute();
-        // RiscV64LowerIImmCopy(m_unit).Execute();
+        // RiscV64SSADeadDefElimate(m_unit).Execute();
+        // MachinePhiDestruction(m_unit).Execute();
         // FastLinearScan(m_unit, &regs).Execute();
         // RiscV64LowerCopy(m_unit).Execute();
 
