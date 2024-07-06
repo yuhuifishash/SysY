@@ -251,10 +251,10 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
 
 
-        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //ERROR
-        // llvmIR.ElimateUnreachedInstructionAndBlocks(); 
-        // llvmIR.BuildCFG(); 
-        // llvmIR.BuildDominatorTree();
+        llvmIR.PassExecutor(AggressiveDeadCodeElimination); //ERROR
+        llvmIR.ElimateUnreachedInstructionAndBlocks(); 
+        llvmIR.BuildCFG(); 
+        llvmIR.BuildDominatorTree();
 
         // llvmIR.BuildLoopInfo();
         // llvmIR.PassExecutor(LoopSimplify);
