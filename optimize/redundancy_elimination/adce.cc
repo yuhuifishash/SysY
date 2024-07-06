@@ -20,43 +20,15 @@ static std::vector<std::vector<LLVMBlock>> BuildCDG(CFG *C){
     CDG.resize(C->max_label + 2);
     rd.resize(C->max_label + 1, 0);
     CDG_precursor.resize(C->max_label + 1);
-    //CFG map
-    // if(C->function_def->GetFunctionName() == "sort"){
-    // puts("CFG:");
-    // for(int i = 0;i <= C->max_label;++i){
-    //     for(int j=0;j< G[i].size();++j){
-    //         std::cerr<<i<<" "<<G[i][j]->block_id<<'\n';
-    //     }
-    // }
-    // puts("PostDom:");
-    // for(int i = 0;i <= C->max_label;++i){
-    //     auto dom = PostDomTree.dom_tree[i];
-    //     for(int j=0;j< dom.size();++j){
-    //         std::cerr<<i<<" "<<dom[j]->block_id<<'\n';
-    //     }
-    // }
-
-    // puts("CDG:");
-    // }
     for(int i = 0;i <= C->max_label;++i){
         auto domFrontier = PostDomTree.GetDF(i);
-        // std::cerr<<i<<" : ";
         for(auto vbbid:domFrontier){
-            // std::cerr<<vbbid<<' ';
-            // if(C->function_def->GetFunctionName() == "sort"){
-            //     std::cerr<<vbbid<<" "<<i<<'\n';
-            // }
-            // std::cerr<<i<<" "<<C->max_label<<" "<<domFrontier.size()<<" "<<vbbid<<'\n';
-            // CDG[i].push_back(blockmap[vbbid]);
             CDG[vbbid].push_back(blockmap[i]);
             if(vbbid != i){
                 rd[i]++;
             }
-            // std::cerr<<i<<" "<<blockmap[i]->block_id<<'\n';
-            // CDG_precursor[vbbid].push_back(blockmap[i]);
             CDG_precursor[blockmap[i]->block_id].push_back(blockmap[vbbid]);
         }
-        // std::cerr<<"\n";
     }
     for(int i = 0;i <= C->max_label;++i){
         if(!rd[i]){
@@ -71,7 +43,7 @@ static Instruction FindTerminal(CFG *C,int bbid){
     return bb->Instruction_list.back();
 }
 void AggressiveDeadCodeElimination(CFG *C) { 
-    // DOING("AggressiveDeadCodeElimination");
+    // DONE("AggressiveDeadCodeElimination");
     // std::cerr<<C->function_def->GetFunctionName()<<'\n'; 
     std::deque<Instruction> worklist;
     std::map<int,Instruction> defmap;
@@ -104,31 +76,18 @@ void AggressiveDeadCodeElimination(CFG *C) {
         if(liveInstructionset.find(I) != liveInstructionset.end()){
             continue;
         }
-        // if(C->function_def->GetFunctionName() == "main"){
-        //     I->PrintIR(std::cerr);
-        // }
-        // I->PrintIR(std::cerr);
         liveInstructionset.insert(I);
-        // auto parBB = invG[I->GetBlockID()];
-        // int parBBno = -1;
-        // if(!parBB.empty()){
-        //     parBBno = parBB[0]->block_id;
-        //     liveBBset.insert(parBBno);
-        // }
         auto parBBno = I->GetBlockID();
         auto parBB = blockmap[I->GetBlockID()];
         liveBBset.insert(parBBno);
         if(I->GetOpcode()==PHI){
             auto PhiI = (PhiInstruction*)I;
             for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
-                // std::cerr<<Regop->GetFullName()<<" "<<Labelop->GetFullName()<<'\n';
                 auto Label = (LabelOperand*)Labelop;
                 auto Labelno = Label->GetLabelNo();
                 auto terminalI = FindTerminal(C,Labelno);
                 if(liveInstructionset.find(terminalI) == liveInstructionset.end()){
                     worklist.push_front(terminalI);
-                    // std::cerr<<" 1 : "<<Labelno<<"   ";
-                    // terminalI->PrintIR(std::cerr);
                     liveBBset.insert(Labelno);
 
                 }
@@ -138,42 +97,20 @@ void AggressiveDeadCodeElimination(CFG *C) {
             for(auto CDG_pre : CDG_precursor[parBBno]){
                 auto CDG_preno = CDG_pre->block_id;
                 auto terminalI = FindTerminal(C,CDG_preno);
-                // if(C->function_def->GetFunctionName() == "sort"){
-                //     std::cerr<<CDG_preno<<" "<<I->GetBlockID()<<'\n';
-                // }
                 if(liveInstructionset.find(terminalI) == liveInstructionset.end()){
-                    // std::cerr<<" 2 : "<<CDG_preno<<"   ";
-                    // terminalI->PrintIR(std::cerr);
-                    
                     worklist.push_front(terminalI);
                 }
             }
         }
-        
         for(auto op : I->GetNonResultOperands()){
-            // if(C->function_def->GetFunctionName() == "main" && I->GetResultRegNo() == 157){
-            //     I->PrintIR(std::cerr);
-            // }
             if(op->GetOperandType() == BasicOperand::REG){
                 auto Regop = (RegOperand*)op;
                 auto Regopno = Regop->GetRegNo();
                 if(defmap.find(Regopno) == defmap.end()){
                     continue;
-                }
-                
+                }    
                 auto DefI = defmap[Regopno];
-                // if(C->function_def->GetFunctionName() == "main" && I->GetResultRegNo() == 157){
-                //     puts("--------");
-                //     I->PrintIR(std::cerr);
-                //     worklist.front()->PrintIR(std::cerr);
-                //     DefI->PrintIR(std::cerr);
-                // }
                 if(liveInstructionset.find(DefI) == liveInstructionset.end()){
-                    // if(C->function_def->GetFunctionName() == "main"){
-                    // std::cerr<<" 3 : "<<DefI->GetBlockID()<<"   ";
-                    // DefI->PrintIR(std::cerr);
-                    // I->PrintIR(std::cerr);
-                    // }
                     worklist.push_front(DefI);
                 }
             }
@@ -187,23 +124,12 @@ void AggressiveDeadCodeElimination(CFG *C) {
         for (auto I : tmp_Instruction_list) {
             if (liveInstructionset.find(I) == liveInstructionset.end()) {
                 if(terminalI == I){
-                    // std::cerr<<id<<" : ";
-                    // I->PrintIR(std::cerr);
-                    // if(id == 4){
-                    //     std::cerr<<id<<" : ";
-                    //     I->PrintIR(std::cerr);
-                    //     std::cerr<<PostDomTreeidom[id]->block_id<<" "<<PostDomTree.dom_tree[id].size()<<'\n';//DomTree
-                    //     std::cerr<<DomTreeidom[id]->block_id<<" "<<DomTree.dom_tree[id].size()<<'\n';//DomTree
-                    //     std::cerr<<(liveBBset.find(id) == liveBBset.end())<<'\n';
-                    // }
                     auto livebbid = PostDomTreeidom[id]->block_id;
                     while(liveBBset.find(livebbid) == liveBBset.end()){
                         livebbid = PostDomTreeidom[id]->block_id;
                     }
                     I = new BrUncondInstruction(GetNewLabelOperand(livebbid));
                     cnt2++;
-                    // std::cerr<<" to : ";
-                    // I->PrintIR(std::cerr);
                 }else {
                     continue;
                 }
@@ -211,6 +137,19 @@ void AggressiveDeadCodeElimination(CFG *C) {
             bb->InsertInstruction(1, I);
         }
     }
+    // DEBUG : search for basicblock to delete
+    // not-a-liveBlock only have one bruncond instruction, 
+    // which is added in the last loop(I = new BrUncondInstruction(GetNewLabelOperand(livebbid));)
+    std::cerr<<C->function_def->GetFunctionName()<<" not-a-liveBlock :\n"; 
+    for(int i = 0;i < C->max_label;++i){
+        if(liveBBset.find(i) == liveBBset.end()){
+            std::cerr<<i<<'\n';
+        }
+    }
+    std::cerr<<" before instruction cnt : "<<cnt<<" now instruction cnt : "<<liveInstructionset.size()+cnt2<<'\n';
+    defmap.clear();
+    liveInstructionset.clear();
+    liveBBset.clear();
     // std::cerr<<cnt<<" "<<liveInstructionset.size()+cnt2<<'\n';
     // puts("ADCE DONE");
 }
