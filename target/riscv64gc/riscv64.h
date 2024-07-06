@@ -366,14 +366,16 @@ private:
     int callireg_num;
     int callfreg_num;
 
-    int ret_usea0;
+    int ret_type;
 
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
     std::vector<Register *> GetR4_typeReadreg() { return {&rs1, &rs2, &rs3}; }
     std::vector<Register *> GetI_typeReadreg() {
-        if (ret_usea0) {
+        if (ret_type == 1) {
             return {&rs1, &RISCVregs[RISCV_a0]};
+        } else if (ret_type == 2) {
+            return {&rs1, &RISCVregs[RISCV_fa0]};
         } else {
             return {&rs1};
         }
@@ -437,7 +439,7 @@ public:
     void setLabel(RiscVLabel label) { this->label = label; }
     void setCalliregNum(int n) { callireg_num = n; }
     void setCallfregNum(int n) { callfreg_num = n; }
-    void setRetUsea0(int use) { ret_usea0 = use; }
+    void setRetType(int use) { ret_type = use; }
     Register getRd() { return rd; }
     Register getRs1() { return rs1; }
     Register getRs2() { return rs2; }
