@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(SimpleDCE);
-        // // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
+        // llvmIR.PassExecutor(AggressiveDeadCodeElimination); //TODO()
 
         llvmIR.PassExecutor(SimpleMemoryDependenceAnalysis);
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
