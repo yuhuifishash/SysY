@@ -720,20 +720,29 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
         if (icmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG) {
             cmp_op1 = GetllvmReg(((RegOperand *)icmp_ins->GetOp1())->GetRegNo(), INT64);
         } else if (icmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMI32) {
-            cmp_op1 = GetNewReg(INT64);
-            auto copy_imm_instr =
-            rvconstructor->ConstructCopyRegImmI(cmp_op1, ((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal(), INT64);
-            cur_block->push_back(copy_imm_instr);
+            // volatile int temp = ((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal();
+            if (((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal() != 0) {
+                cmp_op1 = GetNewReg(INT64);
+                auto copy_imm_instr =
+                rvconstructor->ConstructCopyRegImmI(cmp_op1, ((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal(), INT64);
+                cur_block->push_back(copy_imm_instr);
+            }else{
+                cmp_op1 = GetPhysicalReg(RISCV_x0);
+            }
         } else {
             ERROR("Unexpected ICMP op1 type");
         }
         if (icmp_ins->GetOp2()->GetOperandType() == BasicOperand::REG) {
             cmp_op2 = GetllvmReg(((RegOperand *)icmp_ins->GetOp2())->GetRegNo(), INT64);
         } else if (icmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMI32) {
-            cmp_op2 = GetNewReg(INT64);
-            auto copy_imm_instr =
-            rvconstructor->ConstructCopyRegImmI(cmp_op2, ((ImmI32Operand *)icmp_ins->GetOp2())->GetIntImmVal(), INT64);
-            cur_block->push_back(copy_imm_instr);
+            if (((ImmI32Operand *)icmp_ins->GetOp2())->GetIntImmVal() != 0){
+                cmp_op2 = GetNewReg(INT64);
+                auto copy_imm_instr =
+                rvconstructor->ConstructCopyRegImmI(cmp_op2, ((ImmI32Operand *)icmp_ins->GetOp2())->GetIntImmVal(), INT64);
+                cur_block->push_back(copy_imm_instr);
+            }else{
+                cmp_op2 = GetPhysicalReg(RISCV_x0);
+            }
         } else {
             ERROR("Unexpected ICMP op2 type");
         }
