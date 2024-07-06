@@ -279,8 +279,9 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SimpleDCE);
         #endif
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(GEPStrengthReduce); //TODO()
+        llvmIR.PassExecutor(GEPStrengthReduce);
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
