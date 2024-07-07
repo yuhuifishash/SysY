@@ -1,4 +1,4 @@
-#include "../../include/cfg.h"
+#include "../../include/ir.h"
 
 /**
  * this function will make function only has one return block.
@@ -324,4 +324,36 @@ void TailRecursiveEliminate(CFG *C) {
     PtrUsed.clear();
     C->BuildCFG();
     // std::cerr<<"TailRecursiveElimate is not implemented now\n";
+}
+
+
+extern std::map<std::string, CFG *> CFGMap;
+void EliminateUselessFunction(LLVMIR* IR){
+    std::set<std::string> CallStrSet;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for (auto [id, bb] : *(cfg->block_map)) {
+            for (auto I : bb->Instruction_list) {
+                if (I->GetOpcode() == CALL) {
+                    auto CallI = (CallInstruction*)I;
+                    CallStrSet.insert(CallI->GetFunctionName()); 
+                }
+            }
+        }
+    }
+    std::set<FuncDefInstruction> EraseFuncDefSet;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        auto func_name = defI->GetFunctionName();
+        if(func_name == "main"){
+            continue;
+        }
+        if(CallStrSet.find(func_name) == CallStrSet.end()){
+            EraseFuncDefSet.insert(defI);
+        }
+    }
+
+    for(auto I:EraseFuncDefSet){
+        // std::cerr<<"Erase Function "<<I->GetFunctionName()<<"\n";
+        IR->llvm_cfg.erase(I);
+        IR->function_block_map.erase(I);
+    }
 }
