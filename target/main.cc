@@ -89,6 +89,7 @@ void FunctionInline(LLVMIR *IR);
 void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 void FindNoWriteStaticGlobal(LLVMIR *IR);
 void AddParallelLib(LLVMIR *IR);
+void EliminateUselessFunction(LLVMIR* IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -207,6 +208,7 @@ int main(int argc, char **argv) {
 
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
+        llvmIR.PassExecutor(EliminateUselessFunction);
 
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
