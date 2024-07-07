@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <utility>
 
 extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
@@ -445,11 +446,110 @@ void GEPStrengthReduce(CFG *C) {
             Instructionset.erase(I);
         }while(Instruction_it!=now->Instruction_list.begin());
     };
-    
+
     C->BuildCFG();
     C->BuildDominatorTree();
     Gepdfs(0);
     GepMap.clear();
     AddDefMap.clear();
     SubDefMap.clear();
+// when |imm32_1| >= 2^9 and |imm32_2| >= 2^9 and |imm32_1 - imm32_2| < 2^9
+//     %ry1 = gep i32, ptr @x, i32 imm32_1
+//     %ry2 = gep i32, ptr @x, i32 imm32_2
+// ---------------------------------------------------------will be
+//     %ry1 = gep i32, ptr @x, i32 imm32_1
+//     %ry2 = gep i32, ptr ry1, i32 imm32_2 - imm32_1
+    int dclock = 0;
+    std::map<int,Instruction> dclocktoImap;
+    std::map<Instruction,int> Itodclockmap;
+    const int max_imm32 = 1<<9;
+
+    std::function<std::pair<bool,int>(Instruction)> checkGepimmI = [&](Instruction I){
+        std::pair<bool,int> ans = std::make_pair(false, 0);
+        auto GepI = (GetElementptrInstruction*)I;
+        if(!GepI->GetDims().empty()){
+            return ans;
+        }
+        auto op = GepI->GetNonResultOperands()[0];
+        if(op->GetOperandType() != BasicOperand::IMMI32){
+            return ans;
+        }
+        auto Imm = ((ImmI32Operand*)op)->GetIntImmVal();
+        if(Imm >= max_imm32 || Imm <= -max_imm32){
+            return ans;
+        }
+        ans.first = true;
+        ans.second = Imm;
+        return ans;
+    };
+    std::function<void(int)> Gepimm32 = [&](int bbid) {
+        LLVMBlock now = (*C->block_map)[bbid];
+        
+        for (auto I:now->Instruction_list){
+            if(I->GetOpcode() == GETELEMENTPTR){
+                auto GepI = (GetElementptrInstruction*)I;
+                auto ans_pair = checkGepimmI(I);
+                if(ans_pair.first){
+                    auto imm = ans_pair.second;
+                    auto ResultOp = GepI->GetResultReg();
+                    auto ptrOp = GepI->GetPtrVal();
+                    GepMap[ptrOp->GetFullName()].push_back(I);
+                    Instructionset.insert(I);
+                }
+            }
+        }
+        for (auto v : C->DomTree.dom_tree[bbid]) {
+            Gepimm32(v->block_id);
+        }
+        
+        auto Instruction_it = now->Instruction_list.end();
+        do{
+            Instruction_it--;
+            auto I = *Instruction_it;
+            if(Instructionset.find(I) == Instructionset.end()){continue;}
+            // I->PrintIR(std::cerr);
+            auto GepI = (GetElementptrInstruction*)I;
+            auto GepIvec = GepI->GetNonResultOperands();
+            auto GepIop = GepIvec[0];
+            auto GepIImm = ((ImmI32Operand*)GepIop)->GetIntImmVal();
+            auto ptrOp = GepI->GetPtrVal();
+            auto ptrOpStr = ptrOp->GetFullName();
+            GepMap[ptrOp->GetFullName()].pop_back();
+            for(auto BefInstruction : GepMap[ptrOpStr]){
+                auto BefI = (GetElementptrInstruction*)BefInstruction;
+                auto BefIptrOp = BefI->GetPtrVal();
+                auto BefIptrOpStr = ptrOp->GetFullName();
+                if(ptrOpStr == BefIptrOpStr){
+                    auto BefIvec = BefI->GetNonResultOperands();
+                    auto BefIop = BefIvec[0];
+                    auto BefIImm = ((ImmI32Operand*)BefIop)->GetIntImmVal();
+                    auto newImm = GepIImm - BefIImm;
+                    if(newImm < max_imm32 && newImm > -max_imm32){
+                        auto GepIndexes = GepI->GetIndexes();
+                        // puts("----------");
+                        // I->PrintIR(std::cerr);
+                        // BefI->PrintIR(std::cerr);
+                        // OpDefI->PrintIR(std::cerr);
+                        auto ptrVal=BefI->GetResultReg();
+                        // std::cerr<<ptrVal->GetFullName()<<'\n';
+                        GepIndexes.clear();
+                        GepIndexes.push_back(new ImmI32Operand(newImm));
+                        GepIndexes.push_back(ptrVal);
+                        GepI->SetNonResultOperands(GepIndexes);
+                        // GepI->PrintIR(std::cerr);
+                        break;
+                    }
+
+                   
+                }
+            }
+            // std::cerr<<GepMap[ptrOp].size()<<'\n';
+                
+            
+            // (*now->Instruction_list.begin())->PrintIR(std::cerr);
+            Instructionset.erase(I);
+        }while(Instruction_it!=now->Instruction_list.begin());
+    };
+    GepMap.clear();
+    Gepimm32(0);
 }
