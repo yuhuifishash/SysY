@@ -459,9 +459,7 @@ void GEPStrengthReduce(CFG *C) {
 // ---------------------------------------------------------will be
 //     %ry1 = gep i32, ptr @x, i32 imm32_1
 //     %ry2 = gep i32, ptr ry1, i32 imm32_2 - imm32_1
-    int dclock = 0;
-    std::map<int,Instruction> dclocktoImap;
-    std::map<Instruction,int> Itodclockmap;
+    
     const int max_imm32 = 1<<9;
 
     std::function<std::pair<bool,int>(Instruction)> checkGepimmI = [&](Instruction I){
@@ -474,8 +472,9 @@ void GEPStrengthReduce(CFG *C) {
         if(op->GetOperandType() != BasicOperand::IMMI32){
             return ans;
         }
+        // I->PrintIR(std::cerr);
         auto Imm = ((ImmI32Operand*)op)->GetIntImmVal();
-        if(Imm >= max_imm32 || Imm <= -max_imm32){
+        if(Imm < max_imm32 && Imm > -max_imm32){
             return ans;
         }
         ans.first = true;
@@ -507,13 +506,17 @@ void GEPStrengthReduce(CFG *C) {
             Instruction_it--;
             auto I = *Instruction_it;
             if(Instructionset.find(I) == Instructionset.end()){continue;}
-            // I->PrintIR(std::cerr);
+            
             auto GepI = (GetElementptrInstruction*)I;
             auto GepIvec = GepI->GetNonResultOperands();
             auto GepIop = GepIvec[0];
             auto GepIImm = ((ImmI32Operand*)GepIop)->GetIntImmVal();
             auto ptrOp = GepI->GetPtrVal();
             auto ptrOpStr = ptrOp->GetFullName();
+            // I->PrintIR(std::cerr);
+            // if(ptrOpStr == "%r71"){
+            //     I->PrintIR(std::cerr);
+            // }
             GepMap[ptrOp->GetFullName()].pop_back();
             for(auto BefInstruction : GepMap[ptrOpStr]){
                 auto BefI = (GetElementptrInstruction*)BefInstruction;
