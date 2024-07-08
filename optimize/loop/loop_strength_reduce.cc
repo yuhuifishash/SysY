@@ -60,7 +60,7 @@ SCEVValue GetAddRecursiveDiff(AddSCEVExpr* a, AddSCEVExpr* b) {
         }
         auto imm = ((ImmI32Operand*)val1.op2)->GetIntImmVal();
         SCEVValue res;
-        res.op1 = new ImmI32Operand(imm);
+        res.op1 = new ImmI32Operand(-imm);
         res.type = OTHER;
         res.op2 = nullptr;
         return res;
@@ -107,7 +107,6 @@ static Operand GetGEPDiff(Instruction a, Instruction b, NaturalLoop* L) {
             return nullptr;
         }
     }
-
 
     SCEVValue res;
     res.op1 = new ImmI32Operand(0);
@@ -193,14 +192,18 @@ static void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop *L) {
                     is_reduce = true;
                     auto nI = new GetElementptrInstruction(oldI->GetType(),I->GetResultReg(),oldI->GetResult());
                     nI->push_index(op);
-                    I = nI;
 
-                    // std::cerr<<"New GEPI: ";
+                    // I->PrintIR(std::cerr);
+                    // oldI->PrintIR(std::cerr);
                     // nI->PrintIR(std::cerr);
-                   
+                    // std::cerr<<op<<"\n";
+                    // std::cerr<<"\n";
+
+                    I = nI;                   
                     break;
                 }
             }
+            // GEPI->PrintIR(std::cerr);
             GEPIList.push_back(GEPI);
         }
     }
