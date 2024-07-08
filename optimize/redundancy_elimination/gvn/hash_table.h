@@ -24,4 +24,31 @@ public:
     virtual Expr InstructiontoExpr(Instruction I) = 0;
 }
 
+// load
+// Syntax: load <ty>, ptr <pointer>
+class LoadInstruction : public BasicInstruction {
+    enum LLVMType type;
+    Operand pointer
+
+public:
+    enum LLVMType GetDataType() { return type; }
+    Operand GetPointer() { return pointer; }
+    void SetPointer(Operand op) { pointer = op; }
+
+    LoadInstruction(enum LLVMType type, Operand pointer) {
+        opcode = LLVMIROpcode::LOAD;
+        this->type = type;
+        this->pointer = pointer;
+    }
+
+    void PrintIR(std::ostream &s);
+    int GetUseRegNo() { return ((RegOperand *)pointer)->GetRegNo(); }
+    Operand GetResultReg() { return result; }
+    void ReplaceRegByMap(const std::map<int, int> &Rule);
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
+    std::vector<Operand> GetNonResultOperands();
+    void SetNonResultOperands(std::vector<Operand> ops);
+    virtual Instruction CopyInstruction();
+    virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
+};
 #endif
