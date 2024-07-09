@@ -150,8 +150,21 @@ public:
     std::vector<MachineFunction *> functions;
 };
 
+class MachineDominatorTree {
+public:
+    MachineCFG* C;
+    std::vector<std::vector<MachineBlock*>> dom_tree{};
+    std::vector<MachineBlock*> idom{};
+
+    std::vector<DynamicBitset> atdom;
+
+    void BuildDominatorTree(bool reverse = false);
+    void BuildPostDominatorTree();
+};
+
 class MachineCFG {
-private:
+    friend class MachineDominatorTree;
+public:
     class MachineCFGNode {
     public:
         MachineBlock *Mblock;
@@ -160,8 +173,11 @@ private:
 private:
     std::map<int, MachineCFGNode *> block_map{};
     std::vector<std::vector<MachineCFGNode *>> G{}, invG{};
+    int max_label;
 
 public:
+    MachineCFG () : max_label(0) {};
+    MachineCFGNode* ret_block;
     void AssignEmptyNode(int id, MachineBlock *Mblk);
 
     // Just modify CFG edge, no change on branch instructions
@@ -171,6 +187,17 @@ public:
     MachineCFGNode *GetNodeByBlockId(int id) { return block_map[id]; }
     std::vector<MachineCFGNode *> GetSuccessorsByBlockId(int id) { return G[id]; }
     std::vector<MachineCFGNode *> GetPredecessorsByBlockId(int id) { return invG[id]; }
+
+    MachineDominatorTree DomTree,PostDomTree;
+    void BuildDominatoorTree(bool buildPost = true) {
+        DomTree.C = this;
+        DomTree.BuildDominatorTree();
+
+        PostDomTree.C = this;
+        if(buildPost){
+            PostDomTree.BuildPostDominatorTree();
+        }
+    }
 
 private:
     class Iterator {

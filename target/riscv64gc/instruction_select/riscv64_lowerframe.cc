@@ -15,7 +15,7 @@ void RiscV64LowerFrame::Execute() {
             if (save_regids[i] >= RISCV_x0 && save_regids[i] <= RISCV_x31) {
                 save_regs[i] = func->GetNewRegister(INT64.data_type, INT64.data_length);
             } else {
-                save_regs[i] = func->GetNewRegister(FLOAT_32.data_type, FLOAT_32.data_length);
+                save_regs[i] = func->GetNewRegister(FLOAT64.data_type, FLOAT64.data_length);
             }
         }
         for (auto &b : func->blocks) {
@@ -45,10 +45,10 @@ void RiscV64LowerFrame::Execute() {
                             para_offset += 8;
                         }
                         i32_cnt++;
-                    } else if (para.type.data_type == FLOAT_32.data_type) {
+                    } else if (para.type.data_type == FLOAT64.data_type) {
                         if (f32_cnt < 8) {
                             b->push_front(
-                            rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_fa0 + f32_cnt), FLOAT_32));
+                            rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_fa0 + f32_cnt), FLOAT64));
                         }
                         if (f32_cnt >= 8) {
                             auto offset_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
@@ -76,7 +76,7 @@ void RiscV64LowerFrame::Execute() {
                         rvconstructor->ConstructCopyReg(save_regs[i], GetPhysicalReg(save_regids[i]), INT64));
                     } else {
                         b->push_front(
-                        rvconstructor->ConstructCopyReg(save_regs[i], GetPhysicalReg(save_regids[i]), FLOAT_32));
+                        rvconstructor->ConstructCopyReg(save_regs[i], GetPhysicalReg(save_regids[i]), FLOAT64));
                     }
                 }
                 b->push_front(rvconstructor->ConstructComment("Lowerframe: save regs\n"));
@@ -96,7 +96,7 @@ void RiscV64LowerFrame::Execute() {
                                 rvconstructor->ConstructCopyReg(GetPhysicalReg(save_regids[i]), save_regs[i], INT64));
                             } else {
                                 b->push_back(rvconstructor->ConstructCopyReg(GetPhysicalReg(save_regids[i]),
-                                                                             save_regs[i], FLOAT_32));
+                                                                             save_regs[i], FLOAT64));
                             }
                         }
                         b->push_back(riscv_last_ins);

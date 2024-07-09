@@ -1,8 +1,8 @@
 #include "riscv64_printer.h"
 #include <assert.h>
 
-const bool print_comment = true;
-// const bool print_comment = false;
+// const bool print_comment = true;
+const bool print_comment = false;
 
 bool isMemFormatOp(int opcode) {
     return opcode == RISCV_LB || opcode == RISCV_LBU || opcode == RISCV_LH || opcode == RISCV_LHU ||

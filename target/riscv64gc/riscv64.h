@@ -308,7 +308,7 @@ static inline MachineDataType getRVRegType(int reg_no) {
         return INT64;
     }
     if (reg_no >= RISCV_f0 && reg_no <= RISCV_f31) {
-        return FLOAT_32;
+        return FLOAT64;
     }
     ERROR("Unknown reg_no %d", reg_no);
 }

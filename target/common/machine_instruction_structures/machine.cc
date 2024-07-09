@@ -9,7 +9,12 @@ MachineDataType FLOAT_32(MachineDataType::FLOAT, MachineDataType::B32);
 MachineDataType FLOAT64(MachineDataType::FLOAT, MachineDataType::B64);
 MachineDataType FLOAT128(MachineDataType::FLOAT, MachineDataType::B128);
 
+// #define CHECK_DOMTREE
+
 void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
+    if (id > this->max_label) {
+        this->max_label = id;
+    }
     MachineCFGNode *node = new MachineCFGNode;
     node->Mblock = Mblk;
     block_map[id] = node;
@@ -122,4 +127,124 @@ MachineBlock *MachineFunction::InitNewBlock() {
     blocks.push_back(new_block);
     mcfg->AssignEmptyNode(new_id, new_block);
     return new_block;
+}
+
+void dfs_post(int cur, const std::vector<std::vector<MachineCFG::MachineCFGNode *>> &G, std::vector<int> &result,
+                   std::vector<int> &vsd) {
+    vsd[cur] = 1;
+    for (auto next_block : G[cur]) {
+        if (vsd[next_block->Mblock->getLabelId()] == 0) {
+            dfs_post(next_block->Mblock->getLabelId(), G, result, vsd);
+        }
+    }
+    result.push_back(cur);
+}
+
+void MachineDominatorTree::BuildDominatorTree(bool reverse) {
+    auto const *G = &(C->G);
+    auto const *invG = &(C->invG);
+    auto begin_id = 0;
+    if (reverse) {
+        auto temp = G;
+        G = invG;
+        invG = temp;
+        Assert(C->ret_block != nullptr);
+        begin_id = C->ret_block->Mblock->getLabelId();
+    }
+
+    int block_num = C->max_label + 1;
+
+    std::vector<int> PostOrder_id;
+    std::vector<int> vsd;
+
+    dom_tree.clear();
+    dom_tree.resize(block_num);
+    idom.clear();
+    atdom.clear();
+
+    for (int i = 0; i <= C->max_label; i++) {
+        vsd.push_back(0);
+    }
+
+    dfs_post(begin_id, (*G), PostOrder_id, vsd);
+
+    atdom.resize(block_num);
+    for (int i = 0; i < block_num; i++) {
+        atdom[i].remake(block_num);
+    }
+    // dom[u][v] = 1 <==> v dom u <==> v is in set dom(u)
+    // atdom[0][0] = 1;
+    atdom[begin_id].setbit(begin_id, 1);
+    for (int i = 0; i <= C->max_label; i++) {
+        for (int j = 0; j <= C->max_label; j++) {
+            if (i != begin_id) {
+                atdom[i].setbit(j, 1);
+                // atdom[i][j] = 1;
+            }
+        }
+    }
+    bool changed = 1;
+    while (changed) {
+        changed = 0;
+        for (std::vector<int>::reverse_iterator it = PostOrder_id.rbegin(); it != PostOrder_id.rend(); ++it) {
+            auto u = *it;
+            DynamicBitset new_dom_u(block_num);
+
+            // Goal: calculate
+            // dom(u) |= {u} | {& dom(v)}
+            // First:
+            // dom(u) = {& dom(v)}, v is qianqu
+            if (!(*invG)[u].empty()) {
+                new_dom_u = atdom[(*((*invG)[u].begin()))->Mblock->getLabelId()];
+                for (auto v : (*invG)[u]) {
+                    // new_dom_u &= atdom[v->block_id];
+                    new_dom_u = new_dom_u & atdom[v->Mblock->getLabelId()];
+                }
+            }
+            // Second:
+            // dom(u) |= {u}
+            new_dom_u.setbit(u, 1);
+            if (new_dom_u != atdom[u]) {
+                atdom[u] = new_dom_u;
+                changed = 1;
+            }
+        }
+    }
+    idom.clear();
+    idom.resize(block_num);
+    // Goal calculate all immediate dom(idom)
+    for (auto [u, bb] : C->block_map) {
+        if (u == begin_id) {
+            continue;
+        }
+        for (int v = 0; v <= C->max_label; v++) {
+            // if v idom u, v must dom u
+            // if (atdom[u][v]) {
+            if (atdom[u].getbit(v)) {
+                // dom(u) = {u,???,v,{domv path}}
+                // dom(v) = {v,{domv path}}
+                // ??? = NULL set if v idom u
+
+                // equals dom(u)-dom(v)
+                auto tmp = (atdom[u] & atdom[v]) ^ atdom[u];
+                if (tmp.count() == 1 && tmp.getbit(u)) {
+                    idom[u] = (C->block_map)[v]->Mblock;
+                    dom_tree[v].push_back((C->block_map)[u]->Mblock);
+                }
+            }
+        }
+    }
+#ifdef CHECK_DOMTREE
+    std::cerr<<"DOM TREE\n";
+    for (int i = 0;i<dom_tree.size();i++) {
+        for (auto jb : dom_tree[i]) {
+            std::cerr << i << "->"<<jb->getLabelId()<<std::endl;
+        }
+    }
+    std::cerr<<"\n";
+#endif
+}
+
+void MachineDominatorTree::BuildPostDominatorTree() {
+    BuildDominatorTree(true);
 }
