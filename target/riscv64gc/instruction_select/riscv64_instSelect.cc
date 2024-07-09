@@ -1718,6 +1718,9 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 ConvertAndAppend<Instruction>(instruction);
             }
         }
+        if (cur_offset % 8 != 0) {
+            cur_offset = ((cur_offset+7)/8)*8;
+        }
         cur_func->SetStackSize(cur_offset + cur_func->GetParaSize());
         ((RiscV64Function *)cur_func)->AddParameterSize(cur_func->GetParaSize());
         for (int i = 0; i < cfg->G.size(); i++) {
