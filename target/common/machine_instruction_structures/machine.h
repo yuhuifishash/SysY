@@ -159,6 +159,7 @@ public:
     std::set<MachineBlock*> latches;
     MachineBlock* header;
     MachineBlock* preheader;
+    MachineNaturalLoop* fa_loop;
     void FindExitNodes(MachineCFG *C);
 };
 
