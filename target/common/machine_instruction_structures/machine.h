@@ -136,7 +136,7 @@ public:
     MachineBlock *InsertNewBranchOnlyBlockBetweenEdge(int begin, int end);
 
     // Not sure if it'll be used
-    MachineBlock *InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id);
+    MachineBlock *InsertNewBranchOnlyPreheader(int id, std::vector<int> pres);
     MachineBlock *InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id);
 
 public:

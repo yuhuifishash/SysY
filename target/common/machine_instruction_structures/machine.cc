@@ -94,9 +94,21 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, in
     RedirectPhiNodePredecessor(end, begin, mid);
     return new_block;
 }
-MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) {
-    TODO("Implement InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(Not sure if it's used)");
-    return nullptr;
+MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<int> pres) {
+    TODO("PreHeader Insert");
+    auto new_block = InitNewBlock();
+    auto preheader = new_block->getLabelId();
+    // Insert Branch in new block
+    AppendUncondBranchInstructionToNewBlock(preheader,id);
+    for (auto pre : pres) {
+        // Change Edge
+        mcfg->RemoveEdge(pre,id);
+        mcfg->MakeEdge(pre,preheader);
+        MoveOnePredecessorBranchTargetToNewBlock(pre,id,preheader);
+        RedirectPhiNodePredecessor(id, pre, preheader);
+    }
+    mcfg->MakeEdge(preheader,id);
+    return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id) {
     TODO("Implement InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(Not sure if it's used)");
