@@ -261,6 +261,97 @@ void MachineDominatorTree::BuildPostDominatorTree() {
     BuildDominatorTree(true);
 }
 
+static std::set<MachineBlock*> FindNodesInLoop(MachineCFG *C, MachineBlock* n, MachineBlock* d)    // backedge n->d
+{
+    std::set<MachineBlock*> loop_nodes;
+
+    std::stack<MachineBlock*> S;
+
+    loop_nodes.insert(n);
+    loop_nodes.insert(d);
+
+    if (n == d) {
+        return loop_nodes;
+    }
+
+    S.push(n);
+    while (!S.empty()) {
+        MachineBlock* x = S.top();
+        S.pop();
+        for (auto preBB : C->GetPredecessorsByBlockId(x->getLabelId())) {
+            if (loop_nodes.find(preBB->Mblock) == loop_nodes.end()) {
+                loop_nodes.insert(preBB->Mblock);
+                S.push(preBB->Mblock);
+            }
+        }
+    }
+    return loop_nodes;
+}
+
+void MachineNaturalLoopForest::CombineSameHeadLoop() {
+    std::set<MachineBlock*> header_set;
+    std::set<MachineNaturalLoop *> erase_loop_set;
+    for (auto l : loop_set) {
+        if (header_set.find(l->header) != header_set.end()) {
+            erase_loop_set.insert(l);
+            MachineNaturalLoop *oldl = (header_loop_map.find(l->header))->second;
+            for (auto l_nodes : l->loop_nodes) {
+                oldl->loop_nodes.insert(l_nodes);
+            }
+            for (auto latch_nodes : l->latches) {
+                oldl->latches.insert(latch_nodes);
+            }
+        } else {
+            header_set.insert(l->header);
+            header_loop_map.insert({l->header, l});
+        }
+    }
+
+    for (auto l : erase_loop_set) {
+        loop_set.erase(l);
+    }
+}
+
+void MachineNaturalLoop::FindExitNodes(MachineCFG *C) {
+    for (auto node : loop_nodes) {
+        if (node->size() < 1) {
+            continue;
+        }
+        auto Ins = *node->end();
+        // if (Ins->getNumber() == BR_UNCOND) {
+        //     auto I = (BrUncondInstruction *)Ins;
+        //     auto nextBB = (*(C->block_map))[I->GetTarget()];
+        //     if (loop_nodes.find(nextBB) == loop_nodes.end()) {
+        //         exiting_nodes.insert(node);
+        //         exit_nodes.insert(nextBB);
+        //     }
+        // } else if (Ins->GetOpcode() == RET) {
+        //     exiting_nodes.insert(node);
+
+        // } else if (Ins->GetOpcode() == BR_COND) {
+        //     auto I = (BrCondInstruction *)Ins;
+        //     auto nextBB1 = (*(C->block_map))[((LabelOperand *)I->GetFalseLabel())->GetLabelNo()];
+        //     auto nextBB2 = (*(C->block_map))[((LabelOperand *)I->GetTrueLabel())->GetLabelNo()];
+        //     bool is_exit = false;
+        //     if (loop_nodes.find(nextBB1) == loop_nodes.end()) {
+        //         exit_nodes.insert(nextBB1);
+        //         is_exit |= true;
+        //     }
+        //     if (loop_nodes.find(nextBB2) == loop_nodes.end()) {
+        //         exit_nodes.insert(nextBB2);
+        //         is_exit |= true;
+        //     }
+
+        //     if (is_exit) {
+        //         exiting_nodes.insert(node);
+        //     }
+        // }
+    }
+    // for(auto nodes:exiting_nodes){
+    //     nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
+    // }
+}
+
 void MachineNaturalLoopForest::BuildLoopForest() {
     loop_set.clear();
     loopG.clear();
@@ -277,10 +368,16 @@ void MachineNaturalLoopForest::BuildLoopForest() {
                 l->header = head_bb->Mblock;
                 l->latches.insert(block);
                 l->loop_id = loop_cnt++;
-                // l->loop_nodes = FindNodesInLoop(this, bb, head_bb);
+                l->loop_nodes = FindNodesInLoop(this->C, block, head_bb->Mblock);
                 loop_set.insert(l);
             }
         }
     }
+    loop_cnt = loop_cnt - 1;
+    CombineSameHeadLoop();
 
+    for (auto l : loop_set) {
+        l->FindExitNodes(this->C);
+        // l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
+    }
 }

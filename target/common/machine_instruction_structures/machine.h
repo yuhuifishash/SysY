@@ -34,6 +34,7 @@ public:
     auto ReverseEnd() { return instructions.rend(); }
     auto begin() { return instructions.begin(); }
     auto end() { return instructions.end(); }
+    auto size() { return instructions.size(); }
     void push_back(MachineBaseInstruction *ins) { instructions.push_back(ins); }
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
     void pop_back() { instructions.pop_back(); }
@@ -158,6 +159,7 @@ public:
     std::set<MachineBlock*> latches;
     MachineBlock* header;
     MachineBlock* preheader;
+    void FindExitNodes(MachineCFG *C);
 };
 
 class MachineNaturalLoopForest {
@@ -165,6 +167,7 @@ public:
     int loop_cnt = 0;
     MachineCFG* C;
     std::set<MachineNaturalLoop *> loop_set;
+    std::map<MachineBlock*, MachineNaturalLoop *> header_loop_map;
     std::vector<std::vector<MachineNaturalLoop *>> loopG;
     void BuildLoopForest();
 private:
