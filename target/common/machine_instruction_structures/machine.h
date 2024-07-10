@@ -150,6 +150,27 @@ public:
     std::vector<MachineFunction *> functions;
 };
 
+class MachineNaturalLoop {
+public:
+    int loop_id;
+    std::set<MachineBlock*> loop_nodes;
+    std::set<MachineBlock*> exits;
+    std::set<MachineBlock*> latches;
+    MachineBlock* header;
+    MachineBlock* preheader;
+};
+
+class MachineNaturalLoopForest {
+public:
+    int loop_cnt = 0;
+    MachineCFG* C;
+    std::set<MachineNaturalLoop *> loop_set;
+    std::vector<std::vector<MachineNaturalLoop *>> loopG;
+    void BuildLoopForest();
+private:
+    void CombineSameHeadLoop();
+};
+
 class MachineDominatorTree {
 public:
     MachineCFG* C;
@@ -160,6 +181,9 @@ public:
 
     void BuildDominatorTree(bool reverse = false);
     void BuildPostDominatorTree();
+    bool IsDominate(int id1,int id2){ // if blockid1 dominate blockid2, return true, else return false
+        return atdom[id2].getbit(id1);
+    }
 };
 
 class MachineCFG {
@@ -197,6 +221,11 @@ public:
         if(buildPost){
             PostDomTree.BuildPostDominatorTree();
         }
+    }
+    MachineNaturalLoopForest LoopForest;
+    void BuildLoopForest() {
+        LoopForest.C = this;
+        LoopForest.BuildLoopForest();
     }
 
 private:

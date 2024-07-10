@@ -248,3 +248,27 @@ void MachineDominatorTree::BuildDominatorTree(bool reverse) {
 void MachineDominatorTree::BuildPostDominatorTree() {
     BuildDominatorTree(true);
 }
+
+void MachineNaturalLoopForest::BuildLoopForest() {
+    loop_set.clear();
+    loopG.clear();
+    loop_cnt = 0;
+
+    auto block_it = C->getSeqScanIterator();
+    block_it->open();
+    while (block_it->hasNext()) {
+        auto block = block_it->next()->Mblock;
+        auto block_id = block->getLabelId();
+        for (auto head_bb : C->GetSuccessorsByBlockId(block_id)) {    // bb->head_bb   backedge
+            if (C->DomTree.IsDominate(head_bb->Mblock->getLabelId(), block_id)) {
+                MachineNaturalLoop *l = new MachineNaturalLoop();
+                l->header = head_bb->Mblock;
+                l->latches.insert(block);
+                l->loop_id = loop_cnt++;
+                // l->loop_nodes = FindNodesInLoop(this, bb, head_bb);
+                loop_set.insert(l);
+            }
+        }
+    }
+
+}
