@@ -597,5 +597,5 @@ void GEPStrengthReduce(CFG *C) {
         }while(Instruction_it!=now->Instruction_list.begin());
     };
     GepPtrMap.clear();
-    // Gepimm32(0);
+    Gepimm32(0);
 }

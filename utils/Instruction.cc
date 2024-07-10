@@ -252,12 +252,18 @@ std::vector<Operand> ArithmeticInstruction::GetNonResultOperands() {
     std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
+    if(op3 != nullptr){
+        ret.push_back(op3);
+    }
     return ret;
 }
 
 void ArithmeticInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     op1 = ops[0];
     op2 = ops[1];
+    if(ops.size() == 3){
+        op3 = ops[2];
+    }
 }
 
 std::vector<Operand> IcmpInstruction::GetNonResultOperands() {
