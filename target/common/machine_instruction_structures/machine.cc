@@ -10,7 +10,7 @@ MachineDataType FLOAT64(MachineDataType::FLOAT, MachineDataType::B64);
 MachineDataType FLOAT128(MachineDataType::FLOAT, MachineDataType::B128);
 
 // #define CHECK_DOMTREE
-// #define CHECK_LOOPFOREST
+#define CHECK_LOOPFOREST
 
 void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
     if (id > this->max_label) {
