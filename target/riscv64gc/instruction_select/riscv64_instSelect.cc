@@ -1730,7 +1730,7 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
             }
         }
         cur_mcfg->BuildDominatoorTree();
-        // cur_mcfg->BuildLoopForest();
+        cur_mcfg->BuildLoopForest();
     }
 }
 

@@ -11,6 +11,7 @@
 #include "./riscv64gc/optimize/riscv64_peehole.h"
 #include "./riscv64gc/optimize/riscv64_cse.h"
 #include "./riscv64gc/riscv64.h"
+#include "./riscv64gc/optimize/riscv64_branch_predict.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -332,6 +333,8 @@ int main(int argc, char **argv) {
         // std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";
+        
+        RiscV64BranchPredict(m_unit).Execute();
 
         RiscV64Printer(fout, m_unit).emit();
         // RiscV64Printer(std::cout, m_unit).emit();

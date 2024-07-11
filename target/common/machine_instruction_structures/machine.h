@@ -22,6 +22,7 @@ private:
     MachineFunction *parent;
 
 public:
+    std::vector<float> branch_predictor; 
     virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
     void InsertParallelCopyList(Register dst, MachineBaseOperand *src) { parallel_copy_list[dst] = src; }
     decltype(parallel_copy_list) &GetParallelCopyList() { return parallel_copy_list; }
