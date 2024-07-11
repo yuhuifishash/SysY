@@ -328,6 +328,7 @@ void MachineNaturalLoop::FindExitNodes(MachineCFG *C) {
             auto succ_bb = succ_node->Mblock;
             if(loop_nodes.find(succ_bb) == loop_nodes.end()){
                 exits.insert(succ_bb);
+                exitings.insert(node);
             }
         }
     }
@@ -420,6 +421,11 @@ void MachineNaturalLoopForest::BuildLoopForest() {
             std::cerr << "header: " << l->header->getLabelId() << "\n";
             std::cerr << "latch: ";
             for (auto nodes : l->latches) {
+                std::cerr << nodes->getLabelId() << " ";
+            }
+            std::cerr << "\n";
+            std::cerr << "exitings: ";
+            for (auto nodes : l->exitings) {
                 std::cerr << nodes->getLabelId() << " ";
             }
             std::cerr << "\n";

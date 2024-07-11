@@ -157,6 +157,7 @@ public:
     int loop_id;
     std::set<MachineBlock*> loop_nodes;
     std::set<MachineBlock*> exits;
+    std::set<MachineBlock*> exitings;
     std::set<MachineBlock*> latches;
     MachineBlock* header;
     MachineBlock* preheader;

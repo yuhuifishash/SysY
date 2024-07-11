@@ -23,6 +23,23 @@ void RiscV64BranchPredict::StaticBranchPredict() {
         }
     }
 
+    //TODO():Set True Label probability to 0.6,  False 0.4
+
+    for (auto l : C->LoopForest.loop_set) {
+        for (auto bb : l->exitings) {
+            int idx = 0;
+            for (auto succ : C->GetSuccessorsByBlockId(bb->getLabelId())) {
+                if(l->loop_nodes.find(succ->Mblock) != l->loop_nodes.end()) {
+                    bb->branch_predictor[idx] = 0.99;
+                }else{
+                    bb->branch_predictor[idx] = 0.01;
+                }
+                idx = idx + 1;
+            }
+        }
+    }
+
+
     #ifdef RISCV64BranchPredictDebug
         block_it = C->getSeqScanIterator();
         block_it->open();
