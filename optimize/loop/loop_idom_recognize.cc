@@ -437,6 +437,7 @@ static bool LoopMemsetRecognize(CFG *C, NaturalLoop *L) {
 /*
 i is invariant
 j is only used for loop iteration
+no-lcssa
 if(j < n)
 do{
     if (i < j){ //j >= i
@@ -447,11 +448,15 @@ do{
     j = j + 1;
 }while(j < n)
 -------------------------------
-if(j < min(i,n))
+if(j < n)
 do{
+    if (i < j){ //j >= i
+        j = j + 1;
+        break;
+    }
     something;
     j = j + 1;
-}while (j < min(i,n)) // min(i,n) can be motion
+}while(j < n)
 */
 static bool LoopUselessContinue2Break(CFG *C, NaturalLoop *L) { return false; }
 
