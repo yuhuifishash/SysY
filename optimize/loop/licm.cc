@@ -245,7 +245,7 @@ loop of the pointer to use a temporary alloca'd variable.
 reference: LLVM   LICM.cpp
 */
 
-void SimpleCSE(CFG *C);
+void OnlyBasicBlockCSE(CFG *C);
 void Mem2Reg(CFG *C);
 
 void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L) {
@@ -499,7 +499,7 @@ void LoopInvariantCodeMotion(CFG *C) {
         }
     }
 
-    SimpleCSE(C);
+    OnlyBasicBlockCSE(C);
 
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
