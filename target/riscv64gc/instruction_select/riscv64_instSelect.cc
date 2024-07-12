@@ -1,6 +1,8 @@
 #include "riscv64_instSelect.h"
 #include <sstream>
 
+extern bool BuildReverseTree;
+
 template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstruction *ins) {
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
         // Lazy("Deal with alloca later");
@@ -1729,7 +1731,7 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 cur_mcfg->MakeEdge(i, arc->block_id);
             }
         }
-        cur_mcfg->BuildDominatoorTree();
+        cur_mcfg->BuildDominatoorTree(BuildReverseTree);
         cur_mcfg->BuildLoopForest();
     }
 }
