@@ -1,0 +1,53 @@
+const int N=11;
+int dp[N][N][N][N];
+int a[N][N];
+int n,x,y,z;
+int max(int a,int b){
+  if(a < b){
+    return b;
+  }else{
+    return a;
+  }
+}
+int main()
+{
+	n = getint();
+	while(1)
+	{
+		x = getint();
+    y = getint();
+    z = getint();
+		if(x==y&&y==z&&z==0)
+		{
+			break;
+		}
+		else
+		{
+			a[x][y]=z;
+		}
+	}
+  int i = 1;
+	while(i<=n)
+	{
+    int j = 1;
+		while(j<=n)
+		{
+      int k = 1;
+			while(k<=n)
+			{
+        int l = 1;
+				while(l<=n)
+				{
+					dp[i][j][k][l]=max(max(dp[i-1][j][k-1][l],dp[i-1][j][k][l-1]),max(dp[i][j-1][k-1][l],dp[i][j-1][k][l-1]))+a[i][j]+a[k][l];
+					if(i==k&&l==j)dp[i][j][k][l]=dp[i][j][k][l]-a[i][j];
+          l = l + 1;
+				}
+        k = k + 1;
+			}
+      j = j + 1;
+		}
+    i = i + 1;
+	}
+	putint(dp[n][n][n][n]);
+	return 0;
+}
