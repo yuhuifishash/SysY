@@ -94,6 +94,7 @@ static bool CanReach(int bb1_id, int bb2_id, CFG *C) {
 
 static bool CanJump(bool isleft, int x1_id, int x2_id, CFG *C) {
     // x1 dominate x2
+    assert(C->IsDominate(x1_id,x2_id));
     auto x1 = (*C->block_map)[x1_id];
     auto x2 = (*C->block_map)[x2_id];
     auto BrI1 = (BrCondInstruction *)(*(x1->Instruction_list.end() - 1));
@@ -315,6 +316,7 @@ void BranchCSE(CFG *C) {
                     }
                 }
                 if (!isCSE && !isConstCmp) {
+                    tmpcse_set.insert(info);
                     CmpMap[info].push_back(I);
                 }
             }

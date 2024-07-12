@@ -53,6 +53,7 @@ void SimpleIfConversion(CFG *C) {}
     * you can use testcase 29_lone_line.sy to check
     * @param C the control flow graph of the function */
 void EliminateDoubleBrUnCond(CFG *C) {
+    // C->BuildCFG();
     std::vector<std::vector<LLVMBlock>> &G = C->G;
     std::vector<std::vector<LLVMBlock>> &invG = C->invG;
     std::unordered_map<int, int> vsd;
@@ -61,6 +62,8 @@ void EliminateDoubleBrUnCond(CFG *C) {
     std::stack<LLVMBlock> bbstack;
     bool changed = true;
     // auto FuncdefI = C->function_def;
+    // puts("-----------------------");
+    // FuncdefI->PrintIR(std::cerr);
     while (changed) {
         changed = false;
         bbstack.push(C->block_map->begin()->second);
@@ -72,7 +75,14 @@ void EliminateDoubleBrUnCond(CFG *C) {
             auto uid = bbu->block_id;
             bbstack.pop();
             vsd[uid] = 1;
+            // std::cerr<<bbu<<'\n';
+            // bbu->printIR(std::cerr);
+            // for(auto [id,bb] : *C->block_map){
+            //     bb->printIR(std::cerr);
+            // }
+            // puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             for (auto bbv : G[uid]) {
+                // bbv->printIR(std::cerr);
                 int vid = bbv->block_id;
                 if (vsd[vid] == 1) {
                     continue;
@@ -84,6 +94,9 @@ void EliminateDoubleBrUnCond(CFG *C) {
                 bool check2 = (G[uid].size() >= 1 && G[vid].size() > 1 && G[uid][0] == bbv && G[vid][1] == bbu);
                 bool check3 = (G[uid].size() > 1 && G[vid].size() >= 1 && G[uid][1] == bbv && G[vid][0] == bbu);
                 bool check4 = (G[uid].size() > 1 && G[vid].size() > 1);
+                // bbu->printIR(std::cerr);
+                // bbv->printIR(std::cerr);
+                // std::cerr<<G[uid].size()<<" "<<G[vid].size()<<" "<<check1<<'\n';
                 // bool check5 = (invG[vid].size() == 1);
                 // check5 = 1;
                 bool check = ((!check4) && (check1 || check2 || check3));
@@ -123,7 +136,11 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         G[vid].clear();
                         invG[vid].clear();
                         C->block_map->erase(vid);
-                    } else if (bbv->Instruction_list.size() == 1 && bbv->Instruction_list.back()->GetOpcode() != RET) {
+                    } else if (bbv->Instruction_list.size() == 1 &&  bbv->Instruction_list.back()->GetOpcode() != RET) {
+                        
+                        if(G[uid].size() == 1){
+                            continue;
+                        }
                         changed |= true;
                         auto endI = (BrCondInstruction *)bbu->Instruction_list.back();
                         bbu->Instruction_list.pop_back();
@@ -131,11 +148,13 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         auto falseop = (LabelOperand *)endI->GetFalseLabel();
                         auto trueopno = trueop->GetLabelNo();
                         auto falseopno = falseop->GetLabelNo();
+                        // bbv->printIR(std::cerr);
                         if (trueopno == vid) {
                             endI->SetTrueLabel(GetNewLabelOperand(uid));
                         } else {
                             endI->SetFalseLabel(GetNewLabelOperand(uid));
                         }
+                        
                         bbu->Instruction_list.push_back(endI);
                         PhiMap[vid] = uid;
                         G[vid].clear();
@@ -274,11 +293,13 @@ void EliminateDoubleBrUnCond(CFG *C) {
         OtherPhiMap.clear();
         PhiMap.clear();
     }
+    
     int cnt = 0;
     std::unordered_map<int, int> NewMap;
     for (auto [id, bb] : *C->block_map) {
         NewMap[id] = cnt++;
     }
+    
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() == PHI) {
@@ -319,11 +340,13 @@ void EliminateDoubleBrUnCond(CFG *C) {
             }
         }
     }
+    // puts("HERE");
     std::map<int, LLVMBlock> new_block_map = *C->block_map;
     C->block_map->clear();
     for (auto [id, bb] : new_block_map) {
         bb->block_id = NewMap[bb->block_id];
         C->block_map->insert(std::make_pair(NewMap[id], bb));
+        // bb->printIR(std::cerr);
     }
     C->max_label = cnt;
     C->BuildCFG();
