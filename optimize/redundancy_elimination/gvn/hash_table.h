@@ -4,51 +4,46 @@
 // N_H
 
 #include "../../../include/Instruction.h"
+#include <c++/11/bits/std_thread.h>
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
-class BasicExpr;
-typedef BasicExpr *Expr;
-// @expr
-class BasicExpr{
-protected:
-    LLVMIROpcode opcode;
 
+// class GVN_Value{
+// public:
+//     int vid;
+//     Expr vexpr;
+//     bool operator==(GVN_Value Value){
+//         return vid == Value.vid;
+//     }
+// };
+
+class HashTable{
 public:
-    int GetOpcode() { return opcode; }
-
-    virtual void PrintIR(std::ostream &s) = 0;
-    virtual std::vector<Operand> GetNonResultOperands() = 0;
-    virtual Expr InstructiontoExpr(Instruction I) = 0;
-}
-
-// load
-// Syntax: load <ty>, ptr <pointer>
-class LoadInstruction : public BasicInstruction {
-    enum LLVMType type;
-    Operand pointer
-
-public:
-    enum LLVMType GetDataType() { return type; }
-    Operand GetPointer() { return pointer; }
-    void SetPointer(Operand op) { pointer = op; }
-
-    LoadInstruction(enum LLVMType type, Operand pointer) {
-        opcode = LLVMIROpcode::LOAD;
-        this->type = type;
-        this->pointer = pointer;
+    int expr_number = 0;
+    std::map<std::string,int> valuemap;
+    std::map<int,std::string> stringmap;
+    //key = original num, value = value num
+    int lookupOrAdd(std::string ExprStr){
+        if(valuemap.find(ExprStr) == valuemap.end()){
+            valuemap[ExprStr] = expr_number;
+            // valuemap[expr_number++] = e;
+        }
+        return valuemap[ExprStr];
     }
-
-    void PrintIR(std::ostream &s);
-    int GetUseRegNo() { return ((RegOperand *)pointer)->GetRegNo(); }
-    Operand GetResultReg() { return result; }
-    void ReplaceRegByMap(const std::map<int, int> &Rule);
-    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
-    std::vector<Operand> GetNonResultOperands();
-    void SetNonResultOperands(std::vector<Operand> ops);
-    virtual Instruction CopyInstruction();
-    virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
+    int lookupOrAdd(Instruction I);
+    int lookupOrAddReg(Operand op);
+    int lookupOrAddLoad(Instruction I);
+    int lookupOrAddStore(Instruction I);
+    int lookupOrAddArithmetic(Instruction I);
+    int lookupOrAddIcmp(Instruction I);
+    int lookupOrAddFcmp(Instruction I);
+    int lookupOrAddCall(Instruction I);
+    int lookupOrAddGep(Instruction I);
+    int lookupOrAddPhi(Instruction I);
 };
+
 #endif

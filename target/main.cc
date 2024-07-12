@@ -83,6 +83,7 @@ void LoopParallel(CFG *C);
 void LoopFusion(CFG *C);
 void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
+void GlobalValueNumber(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -90,6 +91,8 @@ void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 void FindNoWriteStaticGlobal(LLVMIR *IR);
 void AddParallelLib(LLVMIR *IR);
 void EliminateUselessFunction(LLVMIR* IR);
+
+
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -200,6 +203,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(BranchCSE);
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(GlobalValueNumber);
         // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);

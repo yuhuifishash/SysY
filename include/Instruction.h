@@ -443,7 +443,7 @@ public:
     virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
 };
 
-//<result>=fadd <ty> <op1>,<op2>
+//<result>=fcmp <ty> <op1>,<op2>
 class FcmpInstruction : public BasicInstruction {
     enum LLVMType type;
     Operand op1;
