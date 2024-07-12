@@ -5,6 +5,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <map>
 
 // #define ENABLE_PRINT
 #ifdef ENABLE_PRINT
@@ -254,6 +255,15 @@ public:
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
     virtual int GetLatency() = 0;
+    void ReplaceByMap (std::map<int,int> vreg_replacemap) {
+        for (auto preg : this->GetReadReg()) {
+            if (preg->is_virtual) {
+                if (vreg_replacemap.find(preg->reg_no) != vreg_replacemap.end()) {
+                    preg->reg_no = vreg_replacemap[preg->reg_no];
+                }
+            }
+        }
+    }
 };
 
 class MachineComment : public MachineBaseInstruction {
