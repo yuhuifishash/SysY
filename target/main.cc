@@ -94,8 +94,6 @@ void EliminateUselessFunction(LLVMIR* IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
-bool BuildReverseTree = false;
-
 int main(int argc, char **argv) {
     // target = ARMV7;
     target = RV64GC;
@@ -165,7 +163,6 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(EliminateSimpleConstArrayValue); //TODO()
 
         llvmIR.PassExecutor(SimplifyCFG);
-        BuildReverseTree = true;
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
 
