@@ -121,4 +121,6 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
             }
         }
     }
+    current_func->getMachineCFG()->BuildDominatoorTree();
+    current_func->getMachineCFG()->BuildLoopForest();
 }

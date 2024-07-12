@@ -11,6 +11,7 @@
 #include "./riscv64gc/optimize/riscv64_peehole.h"
 #include "./riscv64gc/optimize/riscv64_cse.h"
 #include "./riscv64gc/riscv64.h"
+#include "./riscv64gc/optimize/riscv64_branch_predict.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -183,7 +184,7 @@ int main(int argc, char **argv) {
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
-
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
@@ -255,7 +256,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
-
+        
 
         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
         llvmIR.ElimateUnreachedInstructionAndBlocks(); 
@@ -336,6 +337,8 @@ int main(int argc, char **argv) {
         // std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";
+        
+        RiscV64BranchPredict(m_unit).Execute();
 
         RiscV64Printer(fout, m_unit).emit();
         // RiscV64Printer(std::cout, m_unit).emit();
@@ -343,16 +346,22 @@ int main(int argc, char **argv) {
     if (strcmp(argv[step_tag], "-select") == 0) {
         MachineUnit *m_unit = new RiscV64Unit();
         RiscV64Register regs;
+        RiscV64Spiller spiller;
 
+        // std::cerr<<"Select\n";
         RiscV64Selector(m_unit, &llvmIR).SelectInstructionAndBuildCFG();
+        // std::cerr<<"LowerFrame\n";
         RiscV64LowerFrame(m_unit).Execute();
+        // std::cerr<<"LowerImm\n";
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
+        // std::cerr<<"PhiDestruction\n";
         RiscV64SSAPeehole(m_unit).Execute();
-        // RiscV64SSADeadDefElimate(m_unit).Execute();
+        RiscV64SSADeadDefElimate(m_unit).Execute();
+        
         // MachinePhiDestruction(m_unit).Execute();
-        // FastLinearScan(m_unit, &regs).Execute();
-        // RiscV64LowerCopy(m_unit).Execute();
+        // RiscV64LowerFImmCopy(m_unit).Execute();
+        // RiscV64LowerIImmCopy(m_unit).Execute();
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();

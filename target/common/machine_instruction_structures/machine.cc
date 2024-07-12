@@ -10,6 +10,7 @@ MachineDataType FLOAT64(MachineDataType::FLOAT, MachineDataType::B64);
 MachineDataType FLOAT128(MachineDataType::FLOAT, MachineDataType::B128);
 
 // #define CHECK_DOMTREE
+// #define CHECK_LOOPFOREST
 
 void MachineCFG::AssignEmptyNode(int id, MachineBlock *Mblk) {
     if (id > this->max_label) {
@@ -94,9 +95,21 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, in
     RedirectPhiNodePredecessor(end, begin, mid);
     return new_block;
 }
-MachineBlock *MachineFunction::InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id) {
-    TODO("Implement InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(Not sure if it's used)");
-    return nullptr;
+MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<int> pres) {
+    TODO("PreHeader Insert");
+    auto new_block = InitNewBlock();
+    auto preheader = new_block->getLabelId();
+    // Insert Branch in new block
+    AppendUncondBranchInstructionToNewBlock(preheader,id);
+    for (auto pre : pres) {
+        // Change Edge
+        mcfg->RemoveEdge(pre,id);
+        mcfg->MakeEdge(pre,preheader);
+        MoveOnePredecessorBranchTargetToNewBlock(pre,id,preheader);
+        RedirectPhiNodePredecessor(id, pre, preheader);
+    }
+    mcfg->MakeEdge(preheader,id);
+    return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id) {
     TODO("Implement InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(Not sure if it's used)");
@@ -247,4 +260,184 @@ void MachineDominatorTree::BuildDominatorTree(bool reverse) {
 
 void MachineDominatorTree::BuildPostDominatorTree() {
     BuildDominatorTree(true);
+}
+
+static std::set<MachineBlock*> FindNodesInLoop(MachineCFG *C, MachineBlock* n, MachineBlock* d)    // backedge n->d
+{
+    std::set<MachineBlock*> loop_nodes;
+
+    std::stack<MachineBlock*> S;
+
+    loop_nodes.insert(n);
+    loop_nodes.insert(d);
+
+    if (n == d) {
+        return loop_nodes;
+    }
+
+    S.push(n);
+    while (!S.empty()) {
+        MachineBlock* x = S.top();
+        S.pop();
+        for (auto preBB : C->GetPredecessorsByBlockId(x->getLabelId())) {
+            if (loop_nodes.find(preBB->Mblock) == loop_nodes.end()) {
+                loop_nodes.insert(preBB->Mblock);
+                S.push(preBB->Mblock);
+            }
+        }
+    }
+    return loop_nodes;
+}
+
+static bool JudgeLoopContain(MachineNaturalLoop *l1, MachineNaturalLoop *l2) {
+    for (auto l2_n : l2->loop_nodes) {
+        if (l1->loop_nodes.find(l2_n) == l1->loop_nodes.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void MachineNaturalLoopForest::CombineSameHeadLoop() {
+    std::set<MachineBlock*> header_set;
+    std::set<MachineNaturalLoop *> erase_loop_set;
+    for (auto l : loop_set) {
+        if (header_set.find(l->header) != header_set.end()) {
+            erase_loop_set.insert(l);
+            MachineNaturalLoop *oldl = (header_loop_map.find(l->header))->second;
+            for (auto l_nodes : l->loop_nodes) {
+                oldl->loop_nodes.insert(l_nodes);
+            }
+            for (auto latch_nodes : l->latches) {
+                oldl->latches.insert(latch_nodes);
+            }
+        } else {
+            header_set.insert(l->header);
+            header_loop_map.insert({l->header, l});
+        }
+    }
+
+    for (auto l : erase_loop_set) {
+        loop_set.erase(l);
+    }
+}
+
+void MachineNaturalLoop::FindExitNodes(MachineCFG *C) {
+    for (auto node : loop_nodes) {
+        for (auto succ_node : C->GetSuccessorsByBlockId(node->getLabelId())) {
+            auto succ_bb = succ_node->Mblock;
+            if(loop_nodes.find(succ_bb) == loop_nodes.end()){
+                exits.insert(succ_bb);
+                exitings.insert(node);
+            }
+        }
+    }
+    // for(auto nodes:exiting_nodes){
+    //     nodes->comment = nodes->comment + "  exiting" + std::to_string(loop_id);;
+    // }
+}
+
+void MachineNaturalLoopForest::BuildLoopForest() {
+    loop_set.clear();
+    loopG.clear();
+    loop_cnt = 0;
+
+    auto block_it = C->getSeqScanIterator();
+    block_it->open();
+    while (block_it->hasNext()) {
+        auto block = block_it->next()->Mblock;
+        auto block_id = block->getLabelId();
+        for (auto head_bb : C->GetSuccessorsByBlockId(block_id)) {    // bb->head_bb   backedge
+            if (C->DomTree.IsDominate(head_bb->Mblock->getLabelId(), block_id)) {
+                MachineNaturalLoop *l = new MachineNaturalLoop();
+                l->header = head_bb->Mblock;
+                l->latches.insert(block);
+                l->loop_id = loop_cnt++;
+                l->loop_nodes = FindNodesInLoop(this->C, block, head_bb->Mblock);
+                loop_set.insert(l);
+            }
+        }
+    }
+    loop_cnt = loop_cnt - 1;
+    CombineSameHeadLoop();
+
+    for (auto l : loop_set) {
+        l->FindExitNodes(this->C);
+        // l->header->comment = l->header->comment + "  header" + std::to_string(l->loop_id);
+    }
+
+    // build forest
+    loopG.resize(loop_cnt + 1);
+
+    std::vector<std::vector<MachineNaturalLoop *>> tmploopG;
+    std::vector<std::pair<int, MachineNaturalLoop *>> Indegree;
+    tmploopG.resize(loop_cnt + 1);
+    Indegree.resize(loop_cnt + 1);
+    for (auto l1 : loop_set) {
+        Indegree[l1->loop_id].second = l1;
+        for (auto l2 : loop_set) {
+            if (l1 == l2) {
+                continue;
+            }
+            if (JudgeLoopContain(l1, l2)) {
+                tmploopG[l1->loop_id].push_back(l2);
+                Indegree[l2->loop_id].first++;
+            }
+        }
+    }
+
+    std::queue<MachineNaturalLoop *> q;
+
+    for (auto L : Indegree) {
+        if (L.first == 0 && L.second) {
+            q.push(L.second);
+        }
+    }
+    while (!q.empty()) {
+        MachineNaturalLoop *x = q.front();
+        q.pop();
+        for (auto v : tmploopG[x->loop_id]) {
+            --Indegree[v->loop_id].first;
+            if (Indegree[v->loop_id].first == 0) {
+                loopG[x->loop_id].push_back(v);
+                v->fa_loop = x;
+                q.push(v);
+            }
+        }
+    }
+
+    #ifdef CHECK_LOOPFOREST
+        for(auto l : loop_set){
+            std::cerr << "\n";
+            std::cerr << "loop:" << l->loop_id << "------------------------------------\n";
+            std::cerr << "loop nodes: ";
+            for (auto nodes : l->loop_nodes) {
+                std::cerr << nodes->getLabelId() << " ";
+            }
+            std::cerr << "\n";
+            if(l->preheader){
+                std::cerr << "preheader: " << l->preheader->getLabelId() << "\n";
+            }
+            std::cerr << "header: " << l->header->getLabelId() << "\n";
+            std::cerr << "latch: ";
+            for (auto nodes : l->latches) {
+                std::cerr << nodes->getLabelId() << " ";
+            }
+            std::cerr << "\n";
+            std::cerr << "exitings: ";
+            for (auto nodes : l->exitings) {
+                std::cerr << nodes->getLabelId() << " ";
+            }
+            std::cerr << "\n";
+            std::cerr << "exits: ";
+            for (auto nodes : l->exits) {
+                std::cerr << nodes->getLabelId() << " ";
+            }
+            std::cerr << "\n";
+            if (l->fa_loop) {
+                std::cerr << "father loop " << l->fa_loop->loop_id << "\n";
+            }
+        }
+    #endif
+
 }

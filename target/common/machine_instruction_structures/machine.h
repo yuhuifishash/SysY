@@ -22,6 +22,7 @@ private:
     MachineFunction *parent;
 
 public:
+    std::vector<float> branch_predictor; 
     virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
     void InsertParallelCopyList(Register dst, MachineBaseOperand *src) { parallel_copy_list[dst] = src; }
     decltype(parallel_copy_list) &GetParallelCopyList() { return parallel_copy_list; }
@@ -34,6 +35,7 @@ public:
     auto ReverseEnd() { return instructions.rend(); }
     auto begin() { return instructions.begin(); }
     auto end() { return instructions.end(); }
+    auto size() { return instructions.size(); }
     void push_back(MachineBaseInstruction *ins) { instructions.push_back(ins); }
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
     void pop_back() { instructions.pop_back(); }
@@ -136,7 +138,7 @@ public:
     MachineBlock *InsertNewBranchOnlyBlockBetweenEdge(int begin, int end);
 
     // Not sure if it'll be used
-    MachineBlock *InsertNewBranchOnlyPreheaderBetweenThisAndAllPredecessors(int id);
+    MachineBlock *InsertNewBranchOnlyPreheader(int id, std::vector<int> pres);
     MachineBlock *InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id);
 
 public:
@@ -150,6 +152,31 @@ public:
     std::vector<MachineFunction *> functions;
 };
 
+class MachineNaturalLoop {
+public:
+    int loop_id;
+    std::set<MachineBlock*> loop_nodes;
+    std::set<MachineBlock*> exits;
+    std::set<MachineBlock*> exitings;
+    std::set<MachineBlock*> latches;
+    MachineBlock* header;
+    MachineBlock* preheader;
+    MachineNaturalLoop* fa_loop;
+    void FindExitNodes(MachineCFG *C);
+};
+
+class MachineNaturalLoopForest {
+public:
+    int loop_cnt = 0;
+    MachineCFG* C;
+    std::set<MachineNaturalLoop *> loop_set;
+    std::map<MachineBlock*, MachineNaturalLoop *> header_loop_map;
+    std::vector<std::vector<MachineNaturalLoop *>> loopG;
+    void BuildLoopForest();
+private:
+    void CombineSameHeadLoop();
+};
+
 class MachineDominatorTree {
 public:
     MachineCFG* C;
@@ -160,6 +187,9 @@ public:
 
     void BuildDominatorTree(bool reverse = false);
     void BuildPostDominatorTree();
+    bool IsDominate(int id1,int id2){ // if blockid1 dominate blockid2, return true, else return false
+        return atdom[id2].getbit(id1);
+    }
 };
 
 class MachineCFG {
@@ -197,6 +227,11 @@ public:
         if(buildPost){
             PostDomTree.BuildPostDominatorTree();
         }
+    }
+    MachineNaturalLoopForest LoopForest;
+    void BuildLoopForest() {
+        LoopForest.C = this;
+        LoopForest.BuildLoopForest();
     }
 
 private:
