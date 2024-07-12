@@ -56,7 +56,7 @@ elif [ $1 == 'S' ] && [ $2 == 'rv64gc' ] ; then
         score_all=`expr ${score_all} + 1`
         var=${file%.*}
         bin/SysYc $file \-$step -o ${pwdout}/${var##*/}.s \-O1
-        riscv64-unknown-linux-gnu-gcc ${pwdout}/${var##*/}.s -c -static -march=rv64gc
+        riscv64-unknown-linux-gnu-gcc ${pwdout}/${var##*/}.s -c -static -march=rv64gczba
         riscv64-unknown-linux-gnu-gcc -static ${var##*/}.o lib/libsysy_rv.a
         rm -rf ${var##*/}.o
         mv a.out ${pwdout}/${var##*/}

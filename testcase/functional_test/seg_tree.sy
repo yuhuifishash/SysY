@@ -1,6 +1,6 @@
 const int MAXN  = 100010;
 int n,m,p;
-int a[MAXN],tree[MAXN*4],sum[MAXN*4],add[MAXN*4],multiply[MAXN*4];
+int a[MAXN + 10],tree[MAXN*4 + 10],sum[MAXN*4 + 10],add[MAXN*4 + 10],multiply[MAXN*4 + 10];
 
 void push_up(int x)//////////
 {
