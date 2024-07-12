@@ -255,6 +255,19 @@ public:
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
     virtual int GetLatency() = 0;
+    bool ExistPhysicalReg () {
+        for (auto preg : this->GetReadReg()) {
+            if (!preg->is_virtual) {
+                return true;
+            }
+        }
+        for (auto preg : this->GetWriteReg()) {
+            if (!preg->is_virtual) {
+                return true;
+            }
+        }
+        return false;
+    }
     void ReplaceByMap (std::map<int,int> vreg_replacemap) {
         for (auto preg : this->GetReadReg()) {
             if (preg->is_virtual) {

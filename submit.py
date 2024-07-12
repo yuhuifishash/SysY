@@ -20,4 +20,4 @@ if __name__ == '__main__':
                     with open(file_path, 'r') as fs:
                         with open(submit_path,'w') as fd:
                             for line in fs:
-                                fd.write(re.sub('#include *"(.*)/(.*)\.h"','#include "\\2.h"',line))
+                                fd.write(re.sub('#include *"(.*)/(.*)\\.h"','#include "\\2.h"',line))
