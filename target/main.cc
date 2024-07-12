@@ -305,8 +305,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
-        llvmIR.PassExecutor(EliminateEmptyIndexGEP);
-        llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
     }
 
