@@ -303,7 +303,13 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopGepStrengthReduce);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
+    } else {
+        llvmIR.PassExecutor(GlobalConstReplace);
+        llvmIR.PassExecutor(EliminateEmptyIndexGEP);
+        llvmIR.PassExecutor(TailRecursiveEliminate);
+        llvmIR.PassExecutor(MakeFunctionOneExit);
     }
+
     if (strcmp(argv[step_tag], "-llvm") == 0) {
         llvmIR.printIR(fout);
         fout.close();
@@ -324,6 +330,8 @@ int main(int argc, char **argv) {
         // std::cerr<<"PhiDestruction\n";
         RiscV64SSAPeehole(m_unit).Execute();
         RiscV64SSADeadDefElimate(m_unit).Execute();
+        RiscV64CSE(m_unit).Execute();
+
         MachinePhiDestruction(m_unit).Execute();
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
@@ -355,6 +363,7 @@ int main(int argc, char **argv) {
         // std::cerr<<"PhiDestruction\n";
         RiscV64SSAPeehole(m_unit).Execute();
         RiscV64SSADeadDefElimate(m_unit).Execute();
+        RiscV64CSE(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();

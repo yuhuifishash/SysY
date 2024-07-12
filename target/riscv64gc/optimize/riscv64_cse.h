@@ -4,6 +4,7 @@
 class RiscV64CSE : public MachinePass{
 private:
     void ReplaceRegByMapInCurrFunc(std::map<int,int> regreplace_map);
+    void CSEInCurrFunc();
 public:
     RiscV64CSE(MachineUnit* unit) : MachinePass(unit){}
     void Execute();
