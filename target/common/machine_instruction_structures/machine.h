@@ -25,6 +25,8 @@ public:
     int loop_depth = 0;
     std::vector<float> branch_predictor; 
 
+    virtual std::vector<int> getAllBranch () = 0; // [0]-false, [1]-true
+    virtual void ReverseBranch() = 0;
     virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
     void InsertParallelCopyList(Register dst, MachineBaseOperand *src) { parallel_copy_list[dst] = src; }
     decltype(parallel_copy_list) &GetParallelCopyList() { return parallel_copy_list; }

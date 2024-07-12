@@ -137,7 +137,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                     // No Last Use, New Range
                     intervals[*reg].PushFront(ins->getNumber(), ins->getNumber());
                 }
-                intervals[*reg].IncreaseReferenceCount(1);
+                intervals[*reg].IncreaseReferenceCount(mblock->loop_depth + 1);
             }
             for (auto reg : ins->GetReadReg()) {
                 // Update last_use of reg
@@ -155,7 +155,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 }
                 last_use[*reg] = ins->getNumber();
 
-                intervals[*reg].IncreaseReferenceCount(1);
+                intervals[*reg].IncreaseReferenceCount(mblock->loop_depth + 1);
             }
         }
         last_use.clear();

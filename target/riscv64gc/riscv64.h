@@ -602,6 +602,8 @@ class RiscV64Block : public MachineBlock {
 public:
     RiscV64Block(int id) : MachineBlock(id) {}
     std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt();
+    std::vector<int> getAllBranch (); // [0]-false, [1]-true
+    void ReverseBranch();
 };
 
 class RiscV64BlockFactory : public MachineBlockFactory {
