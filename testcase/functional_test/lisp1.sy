@@ -33,9 +33,6 @@ int panic(int code) {
   putch(32);
   putint(code);
   putch(10);
-  while (1) {
-    // do nothing
-  }
   return code;
 }
 

@@ -18,8 +18,15 @@ void RiscV64BranchPredict::StaticBranchPredict() {
         auto block = block_it->next()->Mblock;
         auto succs = C->GetSuccessorsByBlockId(block->getLabelId());
         block->branch_predictor.resize(succs.size());
-        for(auto &p:block->branch_predictor){
-            p = 1.0/succs.size();
+        if (succs.size() == 2) {
+            // [1]->True label
+            // [0]->False label
+            block->branch_predictor[0] = 0.4;
+            block->branch_predictor[1] = 0.6;
+        } else {
+            for(auto &p:block->branch_predictor){
+                p = 1.0/succs.size();
+            }
         }
     }
 
@@ -27,14 +34,32 @@ void RiscV64BranchPredict::StaticBranchPredict() {
 
     for (auto l : C->LoopForest.loop_set) {
         for (auto bb : l->exitings) {
-            int idx = 0;
+            // int idx = 0;
             for (auto succ : C->GetSuccessorsByBlockId(bb->getLabelId())) {
+                // Check succ true/false
+                float this_br_prob = 1;
                 if(l->loop_nodes.find(succ->Mblock) != l->loop_nodes.end()) {
-                    bb->branch_predictor[idx] = 0.99;
+                    this_br_prob = 0.99;
                 }else{
-                    bb->branch_predictor[idx] = 0.01;
+                    this_br_prob = 0.01;
                 }
-                idx = idx + 1;
+                // idx = idx + 1;
+                auto targets = bb->getAllBranch();
+                if (targets[0] == succ->Mblock->getLabelId()) {
+                    bb->branch_predictor[0] = this_br_prob;
+                } else if (targets[1] == succ->Mblock->getLabelId()) {
+                    bb->branch_predictor[1] = this_br_prob;
+                }
+            }
+        }
+    }
+
+    block_it->rewind();
+    while (block_it->hasNext()) {
+        auto block = block_it->next()->Mblock;
+        if (block->branch_predictor.size() == 2) {
+            if (block->branch_predictor[0] < block->branch_predictor[1]) {
+                block->ReverseBranch();
             }
         }
     }

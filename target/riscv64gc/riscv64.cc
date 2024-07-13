@@ -460,3 +460,98 @@ std::list<MachineBaseInstruction *>::iterator RiscV64Block::getInsertBeforeBrIt(
     }
     return it;
 }
+
+std::vector<int> RiscV64Block::getAllBranch () {
+    auto it = --instructions.end();
+    // auto jal_pos = it;
+    std::vector<int> ret;
+    for (auto it = --instructions.end(); it != instructions.begin(); --it) {
+        if ((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI) {
+            continue;
+        }
+        if ((*it)->arch != MachineBaseInstruction::RiscV) {
+            // return jal_pos;
+            return ret;
+        }
+        // Assert((*it)->arch == MachineBaseInstruction::RiscV);
+        auto rvlast = (RiscV64Instruction *)(*it);
+        if (rvlast->getOpcode() == RISCV_JALR) {
+            return ret;
+        }
+        if (rvlast->getOpcode() == RISCV_JAL) {
+            // jal_pos = it;
+            ret.push_back(rvlast->getLabel().jmp_label_id);
+            continue;
+        }
+        if (OpTable[rvlast->getOpcode()].ins_formattype == RvOpInfo::B_type) {
+            // return it;
+            ret.push_back(rvlast->getLabel().jmp_label_id);
+            return ret;
+        } else {
+            // return jal_pos;
+            return ret;
+        }
+    }
+    return ret;
+}
+
+static int GetReverseBranchOp (int op) {
+    Assert(OpTable[op].ins_formattype == RvOpInfo::B_type);
+    switch (op) {
+        case RISCV_BEQ:
+        return RISCV_BNE;
+        case RISCV_BNE:
+        return RISCV_BEQ;
+
+        case RISCV_BLT:
+        return RISCV_BGE;
+        case RISCV_BGE:
+        return RISCV_BLT;
+
+        case RISCV_BLTU:
+        return RISCV_BGEU;
+        case RISCV_BGEU:
+        return RISCV_BLTU;
+
+        case RISCV_BGT:
+        return RISCV_BLE;
+        case RISCV_BLE:
+        return RISCV_BGT;
+
+        case RISCV_BGTU:
+        return RISCV_BLEU;
+        case RISCV_BLEU:
+        return RISCV_BGTU;
+    }
+    ERROR("Unknown Br Opcode");
+    return 0;
+}
+
+void RiscV64Block::ReverseBranch () {
+    auto it = --instructions.end();
+    auto jal_pos = it;
+    for (; it != instructions.begin(); --it) {
+        if ((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI) {
+            continue;
+        }
+        if ((*it)->arch != MachineBaseInstruction::RiscV) { return; }
+        // Assert((*it)->arch == MachineBaseInstruction::RiscV);
+        auto rvlast = (RiscV64Instruction *)(*it);
+        if (rvlast->getOpcode() == RISCV_JALR) { return; }
+        if (rvlast->getOpcode() == RISCV_JAL) { 
+            jal_pos = it;
+            continue; 
+        }
+        if (OpTable[rvlast->getOpcode()].ins_formattype == RvOpInfo::B_type) {
+            auto old_label = rvlast->getLabel();
+            rvlast->setLabel(RiscVLabel(old_label.seq_label_id, old_label.jmp_label_id));
+            rvlast->setOpcode(GetReverseBranchOp(rvlast->getOpcode()), rvlast->getUseLabel());
+            auto jal = (RiscV64Instruction*)(*jal_pos);
+            auto old_jallabel = jal->getLabel();
+            jal->setLabel(RiscVLabel(old_label.jmp_label_id));
+            return;
+        } else {
+            return;
+        }
+    }
+}

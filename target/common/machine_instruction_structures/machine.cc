@@ -406,6 +406,12 @@ void MachineNaturalLoopForest::BuildLoopForest() {
         }
     }
 
+    for (auto l:loop_set){
+        for(auto bb:l->loop_nodes){
+            bb->loop_depth += 1;
+        }
+    }
+
     #ifdef CHECK_LOOPFOREST
         for(auto l : loop_set){
             std::cerr << "\n";
@@ -439,5 +445,4 @@ void MachineNaturalLoopForest::BuildLoopForest() {
             }
         }
     #endif
-
 }

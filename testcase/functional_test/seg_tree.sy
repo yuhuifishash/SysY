@@ -1,0 +1,149 @@
+const int MAXN  = 100010;
+int n,m,p;
+int a[MAXN + 10],tree[MAXN*4 + 10],sum[MAXN*4 + 10],add[MAXN*4 + 10],multiply[MAXN*4 + 10];
+
+void push_up(int x)//////////
+{
+    sum[x]=sum[x*2]+sum[x*2+1];
+}
+
+void push_down_add(int x,int l,int r)/////////
+{
+    if(add[x])
+    {
+        int leftson=x*2,rightson=x*2+1;
+        int mid=(l+r)/2;
+        add[leftson]=(add[leftson]%p+add[x]%p)%p;
+        add[rightson]=(add[rightson]%p+add[x]%p)%p;
+        sum[leftson]=(sum[leftson]%p+add[x]%p*(mid-l+1)%p)%p;
+        sum[rightson]=(sum[rightson]%p+add[x]%p*(r-(mid+1)+1)%p)%p;
+        add[x]=0;
+        return;
+    }
+}
+
+void push_down_multiply(int x,int l,int r)
+{
+    if(multiply[x]!=1)
+    {
+        int leftson=x*2,rightson=x*2+1;
+        multiply[leftson]=(multiply[leftson]*multiply[x])%p;
+        multiply[rightson]=(multiply[rightson]*multiply[x])%p;
+        add[leftson]=(add[leftson]*multiply[x])%p;
+        add[rightson]=(add[rightson]*multiply[x])%p;
+        sum[leftson]=(sum[leftson]*multiply[x])%p;
+        sum[rightson]=(sum[rightson]*multiply[x])%p;
+        multiply[x]=1;
+        return;
+    }
+}
+
+void build(int x,int l,int r)/////////////
+{
+    if(l==r)
+    {
+        sum[x]=a[l];
+        return; 
+    } 
+    int mid=(l+r)/2;
+    build(x*2,l,mid);
+    build(x*2+1,mid+1,r);
+    push_up(x);
+}
+
+void add_update(int x,int l,int r,int lx,int ly,int k)
+{
+    if(l>ly||r<lx) return;
+    if(l>=lx&&r<=ly) 
+    {
+        sum[x]=sum[x]+k*(r-l+1)%p;
+        add[x]=add[x]+k;
+        return;
+    }
+    push_down_multiply(x,l,r);
+    push_down_add(x,l,r);
+    int mid=(l+r)/2;
+    add_update(x*2,l,mid,lx,ly,k);
+    add_update(x*2+1,mid+1,r,lx,ly,k);
+    push_up(x);
+    return;
+}
+
+void multiply_update(int x,int l,int r,int lx,int ly,int k)
+{
+    if(l>ly||r<lx) return;
+    if(l>=lx&&r<=ly)
+    {
+        sum[x]=(sum[x]*k)%p;
+        add[x]=(add[x]*k)%p;
+        multiply[x]=(multiply[x]*k)%p;
+        return;
+    }
+    push_down_multiply(x,l,r);
+    push_down_add(x,l,r);
+    int mid=(l+r)/2;
+    multiply_update(x*2,l,mid,lx,ly,k);
+    multiply_update(x*2+1,mid+1,r,lx,ly,k);
+    push_up(x);
+    return;
+}
+
+int query(int x,int l,int r,int lx,int ly)
+{
+    if(l>ly||r<lx) return 0;
+    if(lx<=l&&r<=ly) return sum[x];
+    int mid=(l+r)/2;
+    push_down_multiply(x,l,r);
+    push_down_add(x,l,r);
+    int summ=(query(x*2,l,mid,lx,ly)+query(x*2+1,mid+1,r,lx,ly))%p;
+    return summ;
+}
+
+int main()
+{
+    int i = 0;
+    while(i <= 4*MAXN){
+      multiply[i] = 1;
+      i = i + 1;
+    }
+    n = getint();
+    m = getint();
+    p = getint();
+    
+    i = 1;
+    while(i<=n)
+    {
+        a[i] = getint();
+        i = i + 1;
+    }
+    build(1,1,n);
+    
+    while(m)
+    {
+        m = m - 1;
+        int z,x,y,k;
+        z = getint();
+        if(z==1)
+        {
+            x = getint();
+            y = getint();
+            k = getint();
+            multiply_update(1,1,n,x,y,k);
+        }
+        if(z==2)
+        {
+            x = getint();
+            y = getint();
+            k = getint();
+            add_update(1,1,n,x,y,k);
+        }
+        if(z==3)
+        {
+            x = getint();
+            y = getint();
+            putint(query(1,1,n,x,y));
+            putch(10);
+        }
+    }
+    return 0;
+} 
