@@ -99,7 +99,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
                 if(liveInstructionset.find(terminalI) == liveInstructionset.end()){
                     worklist.push_front(terminalI);
                     liveBBset.insert(Labelno);
-
                 }
             }
         }

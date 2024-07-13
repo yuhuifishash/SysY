@@ -26,7 +26,7 @@ public:
     int expr_number = 0;
     std::map<std::string,int> valuemap;
     std::map<int,std::string> stringmap;
-    //key = original num, value = value num
+    std::map<int,std::vector<Operand>> valuevetor;
     int lookupOrAdd(std::string ExprStr){
         if(valuemap.find(ExprStr) == valuemap.end()){
             valuemap[ExprStr] = expr_number;
@@ -36,7 +36,6 @@ public:
     }
     int lookupOrAdd(Instruction I);
     int lookupOrAddReg(Operand op);
-    int lookupOrAddLoad(Instruction I);
     int lookupOrAddStore(Instruction I);
     int lookupOrAddArithmetic(Instruction I);
     int lookupOrAddIcmp(Instruction I);
@@ -44,6 +43,14 @@ public:
     int lookupOrAddCall(Instruction I);
     int lookupOrAddGep(Instruction I);
     int lookupOrAddPhi(Instruction I);
+    int lookup(Instruction I);
+    int lookupStore(Instruction I);
+    int lookupArithmetic(Instruction I);
+    int lookupIcmp(Instruction I);
+    int lookupFcmp(Instruction I);
+    int lookupCall(Instruction I);
+    int lookupGep(Instruction I);
+    int lookupPhi(Instruction I);
 };
 
 #endif
