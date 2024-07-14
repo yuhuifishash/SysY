@@ -1464,15 +1464,11 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
             product /= ins->GetDims()[i];
         }
     }
-    // ins->PrintIR(std::cerr);
-    // Log("const_offset = %d",const_offset);
-    bool all_imm = false;
     if (const_offset != 0) {
         if (offset_reg_assigned == 0) {
             offset_reg_assigned = 1;
-            all_imm = true;
 
-            auto li_instr = rvconstructor->ConstructCopyRegImmI(offset_reg, const_offset * 4, INT64);
+            auto li_instr = rvconstructor->ConstructCopyRegImmI(offset_reg, const_offset, INT64);
 
             cur_block->push_back(li_instr);
         } else {
@@ -1482,20 +1478,11 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
         }
     }
     if (ins->GetPtrVal()->GetOperandType() == BasicOperand::REG) {
-        // Lazy("Not tested");
         auto ptr_op = (RegOperand *)ins->GetPtrVal();
-        auto offsetfull_reg = GetNewReg(INT64);
         if (offset_reg_assigned) {
-            auto sll_instr = rvconstructor->ConstructIImm(RISCV_SLLI, offsetfull_reg, offset_reg, 2);
-            if (all_imm) {
-                offsetfull_reg = offset_reg;
-            }
             if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
                 auto base_reg = GetllvmReg(ptr_op->GetRegNo(), INT64);
-                if (!all_imm) {
-                    cur_block->push_back(sll_instr);
-                }
-                auto addoffset_instr = rvconstructor->ConstructR(RISCV_ADD, result_reg, base_reg, offsetfull_reg);
+                auto addoffset_instr = rvconstructor->ConstructR(RISCV_SH2ADD, result_reg, offset_reg, base_reg);
                 cur_block->push_back(addoffset_instr);
             } else {
                 auto sp_offset = llvm_rv_allocas[ptr_op->GetRegNo()];
@@ -1504,10 +1491,7 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
                 rvconstructor->ConstructIImm(RISCV_ADDI, base_reg, GetPhysicalReg(RISCV_sp), sp_offset);
                 ((RiscV64Function *)cur_func)->AddAllocaIns(load_basereg_instr);
                 cur_block->push_back(load_basereg_instr);
-                if (!all_imm) {
-                    cur_block->push_back(sll_instr);
-                }
-                auto addoffset_instr = rvconstructor->ConstructR(RISCV_ADD, result_reg, base_reg, offsetfull_reg);
+                auto addoffset_instr = rvconstructor->ConstructR(RISCV_SH2ADD, result_reg, offset_reg, base_reg);
                 cur_block->push_back(addoffset_instr);
             }
         } else {
@@ -1526,23 +1510,15 @@ template <> void RiscV64Selector::ConvertAndAppend<GetElementptrInstruction *>(G
         if (offset_reg_assigned) {
             auto basehi_reg = GetNewReg(INT64);
             auto basefull_reg = GetNewReg(INT64);
-            auto offsetfull_reg = GetNewReg(INT64);
 
             auto lui_instr =
             rvconstructor->ConstructULabel(RISCV_LUI, basehi_reg, RiscVLabel(global_op->GetName(), true));
             auto addi_instr = rvconstructor->ConstructILabel(RISCV_ADDI, basefull_reg, basehi_reg,
                                                              RiscVLabel(global_op->GetName(), false));
-            auto sll_instr = rvconstructor->ConstructIImm(RISCV_SLLI, offsetfull_reg, offset_reg, 2);
-            if (all_imm) {
-                offsetfull_reg = offset_reg;
-            }
-            auto addoffset_instr = rvconstructor->ConstructR(RISCV_ADD, result_reg, basefull_reg, offsetfull_reg);
+            auto addoffset_instr = rvconstructor->ConstructR(RISCV_SH2ADD, result_reg, offset_reg, basefull_reg);
 
             cur_block->push_back(lui_instr);
             cur_block->push_back(addi_instr);
-            if (!all_imm) {
-                cur_block->push_back(sll_instr);
-            }
             cur_block->push_back(addoffset_instr);
         } else {
             auto result_hi_reg = GetNewReg(INT64);

@@ -142,6 +142,10 @@ enum {
 
     RISCV_FMV_S,
     RISCV_FMV_D,
+
+    RISCV_SH1ADD,
+    RISCV_SH2ADD,
+    RISCV_SH3ADD,
 };
 
 struct RvOpInfo {

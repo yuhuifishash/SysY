@@ -237,6 +237,10 @@ struct RvOpInfo OpTable[] = {
 
 [RISCV_FMV_S] = RvOpInfo{RvOpInfo::R2_type, "fmv.s", 2},
 [RISCV_FMV_D] = RvOpInfo{RvOpInfo::R2_type, "fmv.d", 2},
+
+[RISCV_SH1ADD] = RvOpInfo{RvOpInfo::R_type, "sh1add", 1},
+[RISCV_SH2ADD] = RvOpInfo{RvOpInfo::R_type, "sh2add", 1},
+[RISCV_SH3ADD] = RvOpInfo{RvOpInfo::R_type, "sh3add", 1},
 };
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
