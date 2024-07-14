@@ -353,6 +353,16 @@ struct RiscVLabel : public Label {
         }
         return *this;
     }
+    bool operator==(const RiscVLabel &other) {
+        if (this == &other)
+            return true;
+        if (is_data_address != other.is_data_address) return false;
+        if (is_data_address) {
+            return name == other.name && is_hi == other.is_hi;
+        } else {
+            return jmp_label_id == other.jmp_label_id;
+        }
+    }
 };
 
 class RiscV64Instruction : public MachineBaseInstruction {
