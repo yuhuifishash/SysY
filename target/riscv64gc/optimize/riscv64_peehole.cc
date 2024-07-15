@@ -52,6 +52,42 @@ bool Tryfmla (std::list<MachineBaseInstruction*>::iterator&pre, std::list<Machin
     return false;
 }
 
+bool Tryshxadd (std::list<MachineBaseInstruction*>::iterator&pre, std::list<MachineBaseInstruction*>::iterator&cur, MachineBlock* block) {
+    auto pre_ins = *pre;
+    auto cur_ins = *cur;
+    if (pre_ins->arch == MachineBaseInstruction::RiscV && cur_ins->arch == MachineBaseInstruction::RiscV) {
+        auto pre_rvins = (RiscV64Instruction*)pre_ins;
+        auto cur_rvins = (RiscV64Instruction*)cur_ins;
+        if ((pre_rvins->getOpcode() == RISCV_SLLI && cur_rvins->getOpcode() == RISCV_ADD) || (pre_rvins->getOpcode() == RISCV_SLLIW && cur_rvins->getOpcode() == RISCV_ADDW)) {
+            if (!pre_rvins->getRd().is_virtual)return false;
+            if (pre_rvins->getImm() > 3 || pre_rvins->getImm() <= 0) return false;
+            if (pre_rvins->getRd() == cur_rvins->getRs1() || pre_rvins->getRd() == cur_rvins->getRs2()) {
+                auto diff_op = cur_rvins->getRs1();
+                int opcode = 0;
+                if (pre_rvins->getOpcode() == RISCV_SLLI) {
+                    // Log("SHxADD");
+                    opcode = RISCV_SH1ADD - 1 + pre_rvins->getImm();
+                } else {
+                    // Log("SHxADD.UW");
+                    opcode = RISCV_SH1ADDUW - 1 + pre_rvins->getImm();
+                }
+                if (pre_rvins->getRd() == cur_rvins->getRs1()) {
+                    diff_op = cur_rvins->getRs2();
+                    cur = block->erase(cur);
+                    block->insert(cur, rvconstructor->ConstructR(opcode,cur_rvins->getRd(),pre_rvins->getRs1(),diff_op));
+                    --cur;
+                } else if (pre_rvins->getRd() == cur_rvins->getRs2()) {
+                    diff_op = cur_rvins->getRs1();
+                    cur = block->erase(cur);
+                    block->insert(cur, rvconstructor->ConstructR(opcode,cur_rvins->getRd(),pre_rvins->getRs1(),diff_op));
+                    --cur;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void RiscV64SSAPeehole::Execute(){
     for (auto func : unit->functions) {
         current_func = func;
@@ -64,6 +100,7 @@ void RiscV64SSAPeehole::Execute(){
                     --jt;
                     if (TryAddi(jt,it,block)){ break; }
                     // if (Tryfmla(jt,it,block)){ break; }
+                    if (Tryshxadd(jt,it,block)) {break;}
                 }
             }
         }
