@@ -30,8 +30,6 @@ void RiscV64BranchPredict::StaticBranchPredict() {
         }
     }
 
-    //TODO():Set True Label probability to 0.6,  False 0.4
-
     for (auto l : C->LoopForest.loop_set) {
         for (auto bb : l->exitings) {
             // int idx = 0;

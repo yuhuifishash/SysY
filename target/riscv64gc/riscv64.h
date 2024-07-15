@@ -353,7 +353,7 @@ struct RiscVLabel : public Label {
         }
         return *this;
     }
-    bool operator==(const RiscVLabel &other) {
+    bool operator==(const RiscVLabel &other)const {
         if (this == &other)
             return true;
         if (is_data_address != other.is_data_address) return false;
