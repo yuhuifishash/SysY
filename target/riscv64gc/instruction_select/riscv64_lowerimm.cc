@@ -177,6 +177,38 @@ void RiscV64AlgStrenghReduce::Execute() {
                                         block->insert(it, rvconstructor->ConstructIImm(op, cur_rvins->getRd(), reg1,
                                                                                        __builtin_ctz(const_val)));
                                         --it;
+                                    } else if (__builtin_popcount(const_val + 1) == 1) {
+                                        // Log("%d + 1",const_val);
+                                        it = block->erase(it);
+                                        auto op = cur_op;
+                                        auto op2 = cur_op;
+                                        if (cur_op == RISCV_MUL) {
+                                            op = RISCV_SLLI;
+                                            op2 = RISCV_SUB;
+                                        } else if (cur_op == RISCV_MULW) {
+                                            op = RISCV_SLLIW;
+                                            op2 = RISCV_SUBW;
+                                        }
+                                        auto mid_reg = current_func->GetNewReg(INT64);
+                                        block->insert(it, rvconstructor->ConstructIImm(op, mid_reg, reg1, __builtin_ctz(const_val + 1)));
+                                        block->insert(it, rvconstructor->ConstructR(op2, cur_rvins->getRd(), mid_reg, reg1));
+                                        --it;
+                                    } else if (__builtin_popcount(const_val - 1) == 1) {
+                                        // Log("%d - 1",const_val);
+                                        it = block->erase(it);
+                                        auto op = cur_op;
+                                        auto op2 = cur_op;
+                                        if (cur_op == RISCV_MUL) {
+                                            op = RISCV_SLLI;
+                                            op2 = RISCV_ADD;
+                                        } else if (cur_op == RISCV_MULW) {
+                                            op = RISCV_SLLIW;
+                                            op2 = RISCV_ADDW;
+                                        }
+                                        auto mid_reg = current_func->GetNewReg(INT64);
+                                        block->insert(it, rvconstructor->ConstructIImm(op, mid_reg, reg1, __builtin_ctz(const_val - 1)));
+                                        block->insert(it, rvconstructor->ConstructR(op2, cur_rvins->getRd(), mid_reg, reg1));
+                                        --it;
                                     }
                                 }
                             }
