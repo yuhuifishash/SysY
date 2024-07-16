@@ -88,6 +88,48 @@ bool Tryshxadd (std::list<MachineBaseInstruction*>::iterator&pre, std::list<Mach
     return false;
 }
 
+bool TryConstshxadd (std::list<MachineBaseInstruction*>::iterator&pre, std::list<MachineBaseInstruction*>::iterator&cur, MachineBlock* block, MachineFunction* current_func) {
+    auto pre_ins = *pre;
+    auto cur_ins = *cur;
+    if (pre_ins->arch == MachineBaseInstruction::COPY && cur_ins->arch == MachineBaseInstruction::RiscV) {
+        auto precopy_ins = (MachineCopyInstruction*)pre_ins;
+        auto cur_rvins = (RiscV64Instruction*)cur_ins;
+        if (precopy_ins->GetSrc()->op_type == MachineBaseOperand::IMMI) {
+            auto pre_imm = ((MachineImmediateInt*)(precopy_ins->GetSrc()))->imm32;
+            if (pre_imm <= 2047) return false;
+            if (cur_rvins->getOpcode() == RISCV_ADD) {
+                Assert(precopy_ins->GetDst()->op_type == MachineBaseOperand::REG);
+                auto pre_rd = ((MachineRegister*)(precopy_ins->GetDst()))->reg;
+                if (pre_rd == cur_rvins->getRs1() || pre_rd == cur_rvins->getRs2()) {
+                    int ctz = __builtin_ctz(pre_imm);
+                    if (ctz > 3) ctz = 3;
+                    if (ctz == 0) return false;
+                    int after_imm = pre_imm >> ctz;
+                    if (after_imm <= 2047 && after_imm >= -2048) {
+                        auto mid_reg = current_func->GetNewReg(INT64);
+                        auto diff_op = cur_rvins->getRs1();
+                        if (cur_rvins->getRs1() == pre_rd) {
+                            diff_op = cur_rvins->getRs2();
+                        } else {
+                            diff_op = cur_rvins->getRs1();
+                        }
+                        int base_op = RISCV_SH1ADD;
+                        if (cur_rvins->getOpcode() == RISCV_ADDW) {
+                            base_op = RISCV_SH1ADDUW;
+                            Log("ADD %d SH%dADDUW %d",pre_imm,ctz,after_imm);
+                        }
+                        cur = block->erase(cur);
+                        block->insert(cur, rvconstructor->ConstructCopyRegImmI(mid_reg,after_imm,INT64));
+                        block->insert(cur, rvconstructor->ConstructR(base_op - 1 + ctz,cur_rvins->getRd(),mid_reg,diff_op));
+                        --cur;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void RiscV64SSAPeehole::Execute(){
     for (auto func : unit->functions) {
         current_func = func;
@@ -100,7 +142,8 @@ void RiscV64SSAPeehole::Execute(){
                     --jt;
                     if (TryAddi(jt,it,block)){ break; }
                     // if (Tryfmla(jt,it,block)){ break; }
-                    if (Tryshxadd(jt,it,block)) {break;}
+                    if (Tryshxadd(jt,it,block)) { break; }
+                    if (TryConstshxadd(jt,it,block,current_func)) { break; }
                 }
             }
         }
