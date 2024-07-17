@@ -203,6 +203,7 @@ template <> void RiscV64Printer::printMachineIR<RiscV64Instruction *>(RiscV64Ins
 
 void RiscV64Printer::emit() {
     s << "\t.text\n\t.globl main\n";
+	s << "\t.attribute arch, \"rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0\"\n";
     for (auto func : printee->functions) {
         current_func = func;
         // s << "\t.globl\t" << func->getFunctionName() << "\n";
