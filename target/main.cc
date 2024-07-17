@@ -80,7 +80,6 @@ void AggressiveDeadCodeElimination(CFG *C);
 void LoopIdomRecognize(CFG *C);
 void LoopGepStrengthReduce(CFG *C);
 void OnlyBasicBlockCSE(CFG *C);
-void LoopParallel(CFG *C);
 void LoopFusion(CFG *C);
 void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
@@ -92,6 +91,8 @@ void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 void FindNoWriteStaticGlobal(LLVMIR *IR);
 void AddParallelLib(LLVMIR *IR);
 void EliminateUselessFunction(LLVMIR* IR);
+
+void LoopParallel(CFG *C, LLVMIR* IR);
 
 
 
@@ -279,6 +280,7 @@ int main(int argc, char **argv) {
         // llvmIR.PassExecutor(ScalarEvolution);
         // llvmIR.PassExecutor(AddParallelLib);
         // llvmIR.PassExecutor(LoopParallel);
+        // llvmIR.PassExecutor(SimplifyCFG);
 
         #ifdef AggressiveOptimize
             llvmIR.BuildLoopInfo();
@@ -333,7 +335,6 @@ int main(int argc, char **argv) {
         RiscV64SSAPeehole(m_unit).Execute();
         RiscV64SSADeadDefElimate(m_unit).Execute();
         RiscV64CSE(m_unit).Execute();
-        RiscV64SSADeadDefElimate(m_unit).Execute();
 
         MachinePhiDestruction(m_unit).Execute();
         RiscV64LowerFImmCopy(m_unit).Execute();
@@ -367,7 +368,6 @@ int main(int argc, char **argv) {
         RiscV64SSAPeehole(m_unit).Execute();
         RiscV64SSADeadDefElimate(m_unit).Execute();
         RiscV64CSE(m_unit).Execute();
-        RiscV64SSADeadDefElimate(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();

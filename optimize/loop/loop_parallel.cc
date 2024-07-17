@@ -3,6 +3,8 @@
 #include "../alias_analysis/alias_analysis.h"
 #include <functional>
 
+#define LOOP_PARALLEL_DEBUG
+
 extern std::map<std::string, CFG *> CFGMap;
 extern AliasAnalyser *alias_analyser;
 
@@ -86,6 +88,7 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
     if (scev.is_simpleloop == false) {
         return false;
     }
+
     std::map<int, Instruction> ResultMap;
     std::vector<LoadInstruction *> LoadList;
     std::vector<StoreInstruction *> StoreList;
@@ -140,10 +143,10 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
     return true;
 }
 
-void LoopParallel(CFG *C) {
+void LoopParallel(CFG *C, LLVMIR* IR) {
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
-        if (L->LoopParallel(C)) {    // if parallel, stop the dfs
+        if (L->LoopParallel(C, IR)) {    // if parallel, stop the dfs
             return;
         }
         for (auto lv : loop_forest.loopG[L->loop_id]) {
@@ -158,7 +161,15 @@ void LoopParallel(CFG *C) {
     }
 }
 
-bool NaturalLoop::LoopParallel(CFG *C) {
+static LLVMType GetResultType(Instruction I) {
+    if(I->GetOpcode() == GETELEMENTPTR || I->GetOpcode() == ALLOCA){
+        return PTR;
+    }else{ // in sysy, we assume other instruction's results are all I32
+        return I32;
+    }
+}
+
+bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     if (!LoopCarriedDependenceTest(C)) {
         return false;
     }
@@ -177,15 +188,140 @@ bool NaturalLoop::LoopParallel(CFG *C) {
         // TODO(): reduction operator (+,min,max)
         return false;
     }
+    assert(exit_nodes.size() == 1);
+    auto exit = *exit_nodes.begin();
+
+    // can not have lcssa
+    for (auto I : exit->Instruction_list){
+        if(I->GetOpcode() == PHI){
+            return false;
+        }
+    }
+    // now we only consider loop with step 1 (TODO: parallel more loops)
+
 
     // now we can parallel the loop
-    //  std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
+    std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
 
     // add dynamic parallel check
 
     // transform loop to function
+    auto defI = new FunctionDefineInstruction(VOID,"___D86D10319A84A67B_" + std::to_string(header->block_id));
+    int parallel_label = -1;
+    int parallel_reg = -1;
+    defI->InsertFormal(PTR);
+    IR->NewFunction(defI);
+    auto entry = IR->NewBlock(defI, parallel_label);
 
+    auto LoadThreadIdI = new LoadInstruction(I32,GetNewRegOperand(0),GetNewRegOperand(++parallel_reg));
+    entry->InsertInstruction(1,LoadThreadIdI);
+
+    auto GEP1I = new GetElementptrInstruction(I32,GetNewRegOperand(++parallel_reg),GetNewRegOperand(0));
+    GEP1I->push_idx_imm32(4);
+    entry->InsertInstruction(1,GEP1I);
+    auto LoadStI = new LoadInstruction(I32,GEP1I->GetResultReg(),GetNewRegOperand(++parallel_reg));
+    entry->InsertInstruction(1,LoadStI);
+
+    auto GEP2I = new GetElementptrInstruction(I32,GetNewRegOperand(++parallel_reg),GetNewRegOperand(0));
+    GEP2I->push_idx_imm32(8);
+    entry->InsertInstruction(1,GEP2I);
+    auto LoadEdI = new LoadInstruction(I32,GEP2I->GetResultReg(),GetNewRegOperand(++parallel_reg));
+    entry->InsertInstruction(1,LoadEdI);
+
+    // get the reg use in loop but def out of the loop
+
+    std::map<int, Instruction> ResultMap;
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            I->SetBlockID(id);
+            int v = I->GetResultRegNo();
+            if (v != -1) {    // result exists
+                ResultMap[v] = I;
+            }
+        }
+    }
+    std::set<int> i32set, i64set;
+    std::map<int,int> regreplace_map;
+
+    for(auto bb:loop_nodes){
+        for(auto I:bb->Instruction_list){
+            for(auto op:I->GetNonResultOperands()){
+                if(op->GetOperandType() == BasicOperand::REG){
+                    auto r = (RegOperand*)op;
+                    int regno = r->GetRegNo();
+                    if(ResultMap[regno]){
+                        auto defI = ResultMap[regno];
+                        auto def_bbid = ResultMap[regno]->GetBlockID();
+                        auto def_bb = (*C->block_map)[def_bbid];
+                        if(loop_nodes.find(def_bb) == loop_nodes.end()) {
+                            auto type = GetResultType(defI);
+                            if(type == I32){
+                                i32set.insert(regno);
+                            }else if(type == PTR){
+                                i64set.insert(regno);
+                            }else{
+                                assert(false);
+                            }
+                        }
+                    }else{
+                        assert(regno < C->function_def->formals.size());
+                        auto type = C->function_def->formals[regno];
+                        if(type == I32){
+                            i32set.insert(regno);
+                        }else if(type == PTR){
+                            i64set.insert(regno);
+                        }else{
+                            assert(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #ifdef LOOP_PARALLEL_DEBUG
+        std::cerr<<"variable use in loop but define out of loop: \n";
+        std::cerr<<"i32 ";
+        for(auto regno:i32set){
+            std::cerr<<regno<<" ";
+        }
+        std::cerr<<"\n";
+        std::cerr<<"i64 ";
+        for(auto regno:i64set){
+            std::cerr<<regno<<" ";
+        }
+        std::cerr<<"\n";
+    #endif
+
+    int bias = 8;
+    for(auto regno:i32set){
+        bias += 4;
+        auto reg = GetNewRegOperand(regno);
+        auto GEP3I = new GetElementptrInstruction(I32,GetNewRegOperand(++parallel_reg),GetNewRegOperand(0));
+        GEP3I->push_idx_imm32(bias);
+        entry->InsertInstruction(1,GEP3I);
+        auto LoadvalI = new LoadInstruction(I32,GEP3I->GetResultReg(),GetNewRegOperand(++parallel_reg));
+        entry->InsertInstruction(1,LoadvalI);
+        regreplace_map[regno] = LoadvalI->GetResultRegNo();
+    }
+
+    for(auto regno:i64set){
+        bias += 8;
+        auto reg = GetNewRegOperand(regno);
+        auto GEP3I = new GetElementptrInstruction(I32,GetNewRegOperand(++parallel_reg),GetNewRegOperand(0));
+        GEP3I->push_idx_imm32(bias);
+        entry->InsertInstruction(1,GEP3I);
+        auto LoadvalI = new LoadInstruction(I32,GEP3I->GetResultReg(),GetNewRegOperand(++parallel_reg));
+        entry->InsertInstruction(1,LoadvalI);
+        regreplace_map[regno] = LoadvalI->GetResultRegNo();
+    }
+
+    // calculate the initval and endval of the loop
+    
+
+
+    
     // add parallel function
 
-    return false;
+    return true;
 }
