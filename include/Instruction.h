@@ -256,7 +256,7 @@ typedef BasicInstruction *Instruction;
 // @instruction
 class BasicInstruction {
 private:
-    int BlockID;
+    int BlockID = 0;
 
 protected:
     LLVMIROpcode opcode;

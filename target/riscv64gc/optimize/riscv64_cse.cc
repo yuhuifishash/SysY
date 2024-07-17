@@ -134,6 +134,7 @@ void RiscV64CSE::CSEInCurrFunc(){
                     #endif
 
                     is_cse = true;
+                    is_changed = true;
                     auto vw1 = oldI->GetWriteReg();
                     auto vw2 = I->GetWriteReg();
                     assert(vw1.size() == 1 && vw2.size() == 1);
@@ -156,6 +157,9 @@ void RiscV64CSE::CSEInCurrFunc(){
 
     };
     while(is_changed){
+        CSESet.clear();
+        regreplace_map.clear();
+        
         is_changed = false;
         dfs(0);
 
@@ -172,5 +176,38 @@ void RiscV64CSE::CSEInCurrFunc(){
                 }
             }
         }
+
+        //erase dead def
+        for (auto func : unit->functions) {
+            current_func = func;
+            std::map<int,int>vreg_refcnt;
+            for(auto block : func->blocks){
+                cur_block = block;
+                for (auto it = block->begin();it!=block->end();++it) {
+                    auto cur_ins = *it;
+                    for(auto reg : cur_ins->GetReadReg()) {
+                        if (reg->is_virtual) {
+                            vreg_refcnt[reg->reg_no] = vreg_refcnt[reg->reg_no] + 1;
+                        }
+                    }
+                }
+            }
+            for(auto block : func->blocks){
+                cur_block = block;
+                for (auto it = block->begin();it!=block->end();++it) {
+                    auto cur_ins = *it;
+                    if (cur_ins->GetWriteReg().size() == 1){
+                        auto rd = cur_ins->GetWriteReg()[0];
+                        if (rd->is_virtual) {
+                            if (vreg_refcnt[rd->reg_no] == 0) {
+                                it = block->erase(it);
+                                --it;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

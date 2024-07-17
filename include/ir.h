@@ -36,6 +36,12 @@ public:
             Pass(cfg);
         }
     }
+
+    void PassExecutor(void (*Pass)(CFG *, LLVMIR* )) {
+        for (auto [defI, cfg] : llvm_cfg) {
+            Pass(cfg,this);
+        }
+    }
     /*if your pass is global optimize, you can use this function, the pass will only be executed once*/
     void PassExecutor(void (*Pass)(LLVMIR *)) { Pass(this); }
 };
