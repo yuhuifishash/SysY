@@ -436,7 +436,17 @@ std::vector<Operand> ZextInstruction::GetNonResultOperands() {
     ret.push_back(value);
     return ret;
 }
+
 void ZextInstruction::SetNonResultOperands(std::vector<Operand> ops) { value = ops[0]; }
+
+std::vector<Operand> BitCastInstruction::GetNonResultOperands() {
+    std::vector<Operand> ret;
+    ret.push_back(src);
+    return ret;
+}
+
+void BitCastInstruction::SetNonResultOperands(std::vector<Operand> ops) { src = ops[0]; }
+
 
 Operand RegOperand::CopyOperand() { return GetNewRegOperand(reg_no); }
 
@@ -567,6 +577,13 @@ Instruction ZextInstruction::CopyInstruction() {
     Operand nvalue = value->CopyOperand();
 
     return new ZextInstruction(to_type, nresult, from_type, nvalue);
+}
+
+Instruction BitCastInstruction::CopyInstruction() {
+    Operand ndst = dst->CopyOperand();
+    Operand nsrc = src->CopyOperand();
+
+    return new BitCastInstruction(nsrc, ndst, src_type, dst_type); 
 }
 
 void LoadInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
@@ -780,6 +797,19 @@ void ZextInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
         auto result_reg = (RegOperand *)value;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())
             value = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
+    }
+}
+
+void BitCastInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
+    if (src->GetOperandType() == BasicOperand::REG) {
+        auto result_reg = (RegOperand *)src;
+        if (Rule.find(result_reg->GetRegNo()) != Rule.end())
+            this->src = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
+    }
+    if (dst->GetOperandType() == BasicOperand::REG) {
+        auto result_reg = (RegOperand *)dst;
+        if (Rule.find(result_reg->GetRegNo()) != Rule.end())
+            dst = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
 

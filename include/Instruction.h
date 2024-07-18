@@ -109,6 +109,7 @@ enum LLVMIROpcode {
     UMAX = 32,
     SMIN = 33,
     SMAX = 34,
+    BITCAST = 35,
 };
 
 // @Operand datatypes
@@ -906,6 +907,29 @@ public:
     Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
+    void ReplaceRegByMap(const std::map<int, int> &Rule);
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
+    std::vector<Operand> GetNonResultOperands();
+    void SetNonResultOperands(std::vector<Operand> ops);
+    virtual Instruction CopyInstruction();
+    virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
+};
+
+class BitCastInstruction : public BasicInstruction {
+private:
+    Operand src;
+    Operand dst;
+    LLVMType src_type;
+    LLVMType dst_type;
+public:
+    BitCastInstruction(Operand src_op, Operand dst_op, LLVMType src_t, LLVMType dst_t)
+        : src(src_op), dst(dst_op), src_type(src_t), dst_type(dst_t) {
+        this->opcode = BITCAST;
+    }
+    Operand GetResultReg() { return dst; }
+    Operand GetSrc() { return src; }
+    void PrintIR(std::ostream &s);
+    int GetResultRegNo() { return ((RegOperand *)dst)->GetRegNo(); }
     void ReplaceRegByMap(const std::map<int, int> &Rule);
     void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands();

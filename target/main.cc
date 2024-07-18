@@ -287,8 +287,10 @@ int main(int argc, char **argv) {
         //     llvmIR.PassExecutor(ScalarEvolution);
         //     llvmIR.PassExecutor(AddParallelLib);
         //     llvmIR.PassExecutor(LoopParallel);
+        //     llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         //     llvmIR.PassExecutor(SimplifyCFG);
         // #endif
+
 
         #ifdef AggressiveOptimize
             llvmIR.BuildLoopInfo();

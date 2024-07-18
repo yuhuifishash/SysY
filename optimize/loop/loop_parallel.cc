@@ -552,22 +552,25 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     
     // add parallel function
     auto parallelCallI = new CallInstruction(VOID,nullptr,"___parallel_loop_constant_100");
-    parallelbb->InsertInstruction(1,parallelCallI);
     parallelCallI->push_back_Parameter({PTR,GetNewGlobalOperand(defI->GetFunctionName())});
     parallelCallI->push_back_Parameter({I32,real_st});
     parallelCallI->push_back_Parameter({I32,real_ed});
     parallelCallI->push_back_Parameter({I32,new ImmI32Operand(i32set.size())});
     parallelCallI->push_back_Parameter({I32,new ImmI32Operand(i64set.size())});
     for(auto rn:i32set){
-        auto type = I32;
+        auto real_rn = rn;
         if(float32set.find(rn) != float32set.end()){
-            type = FLOAT32;
+            auto bitcastI = new BitCastInstruction(GetNewRegOperand(rn),GetNewRegOperand(++C->max_reg),FLOAT32,I32);
+            real_rn = C->max_reg;
+            parallelbb->InsertInstruction(1,bitcastI);
         }
-        parallelCallI->push_back_Parameter({type,GetNewRegOperand(rn)});
+        parallelCallI->push_back_Parameter({I32,GetNewRegOperand(real_rn)});
     }
     for(auto rn:i64set){
         parallelCallI->push_back_Parameter({PTR,GetNewRegOperand(rn)});
     }
+
+    parallelbb->InsertInstruction(1,parallelCallI);
 
     // parallelbb -> exit
     parallelbb->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(exit->block_id)));

@@ -575,3 +575,7 @@ void GlobalStringConstInstruction::PrintIR(std::ostream &s) {
 void ZextInstruction::PrintIR(std::ostream &s) {
     s << result << " = zext " << from_type << " " << value << " to " << to_type << "\n";
 }
+
+void BitCastInstruction::PrintIR(std::ostream &s) {
+    s << dst << " = bitcast " << src_type << " " << src << " to " << dst_type << "\n";
+}

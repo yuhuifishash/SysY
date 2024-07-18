@@ -422,6 +422,15 @@ int ZextInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     return 1;
 }
 
+int BitCastInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
+    auto &lattice = ConstLatticeMap[this];
+    if (lattice.status == ConstLattice::VAR) {
+        return 0;
+    }
+    lattice.status = ConstLattice::VAR;
+    return 1;
+}
+
 // true if statu changes, false if not
 // used for phi instructions
 bool UpdateLatticeStatus(Instruction I, ConstLattice pre_lattice) {
