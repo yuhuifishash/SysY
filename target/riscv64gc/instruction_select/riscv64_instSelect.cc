@@ -32,6 +32,18 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
                 ((RiscV64Function *)cur_func)->AddAllocaIns(lw_instr);
                 cur_block->push_back(lw_instr);
             }
+        } else if (ins->GetDataType() == PTR) {
+            Register rd = GetllvmReg(rd_op->GetRegNo(), INT64);
+            if (llvm_rv_allocas.find(ptr_op->GetRegNo()) == llvm_rv_allocas.end()) {
+                Register ptr = GetllvmReg(ptr_op->GetRegNo(), INT64);    // INT64 HERE
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_LD, rd, ptr, 0);
+                cur_block->push_back(lw_instr);
+            } else {
+                auto sp_offset = llvm_rv_allocas[ptr_op->GetRegNo()];
+                auto lw_instr = rvconstructor->ConstructIImm(RISCV_LD, rd, GetPhysicalReg(RISCV_sp), sp_offset);
+                ((RiscV64Function *)cur_func)->AddAllocaIns(lw_instr);
+                cur_block->push_back(lw_instr);
+            }
         } else {
             ERROR("Unexpected data type");
         }
@@ -59,6 +71,15 @@ template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstru
             auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
             auto lw_instr =
             rvconstructor->ConstructILabel(RISCV_FLW, rd, addr_hi, RiscVLabel(global_op->GetName(), false));
+
+            cur_block->push_back(lui_instr);
+            cur_block->push_back(lw_instr);
+        } else if (ins->GetDataType() == PTR) {
+            Register rd = GetllvmReg(rd_op->GetRegNo(), INT64);
+
+            auto lui_instr = rvconstructor->ConstructULabel(RISCV_LUI, addr_hi, RiscVLabel(global_op->GetName(), true));
+            auto lw_instr =
+            rvconstructor->ConstructILabel(RISCV_LD, rd, addr_hi, RiscVLabel(global_op->GetName(), false));
 
             cur_block->push_back(lui_instr);
             cur_block->push_back(lw_instr);
@@ -953,6 +974,11 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                     auto arg_copy_instr =
                     rvconstructor->ConstructCopyRegImmI(GetPhysicalReg(RISCV_a0 + ireg_cnt), arg_imm, INT64);
                     cur_block->push_back(arg_copy_instr);
+                } else if (arg_op->GetOperandType() == BasicOperand::GLOBAL) {
+                    auto mid_reg = GetNewReg(INT64);
+                    auto arg_global = (GlobalOperand*)arg_op;
+                    cur_block->push_back(rvconstructor->ConstructULabel(RISCV_LUI, mid_reg, RiscVLabel(arg_global->GetName(), true)));
+                    cur_block->push_back(rvconstructor->ConstructILabel(RISCV_ADDI, GetPhysicalReg(RISCV_a0 + ireg_cnt), mid_reg, RiscVLabel(arg_global->GetName(), false)));
                 } else {
                     ERROR("Unexpected Operand type");
                 }
@@ -1019,6 +1045,13 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                         cur_block->push_back(rvconstructor->ConstructCopyRegImmI(imm_reg, arg_imm, INT64));
                         cur_block->push_back(
                         rvconstructor->ConstructSImm(RISCV_SD, imm_reg, GetPhysicalReg(RISCV_sp), arg_off));
+                    } else if (arg_op->GetOperandType() == BasicOperand::GLOBAL) {
+                        auto glb_reg1 = GetNewReg(INT64);
+                        auto glb_reg2 = GetNewReg(INT64);
+                        auto arg_glbop = (GlobalOperand*)arg_op;
+                        cur_block->push_back(rvconstructor->ConstructULabel(RISCV_LUI, glb_reg1, RiscVLabel(arg_glbop->GetName(), true)));
+                        cur_block->push_back(rvconstructor->ConstructILabel(RISCV_ADDI, glb_reg2, glb_reg1, RiscVLabel(arg_glbop->GetName(), false)));
+                        cur_block->push_back(rvconstructor->ConstructSImm(RISCV_SD, glb_reg2, GetPhysicalReg(RISCV_sp), arg_off));
                     }
                     arg_off += 8;
                 }
