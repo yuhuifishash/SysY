@@ -27,7 +27,8 @@ elif [ $arch == "rv64gc" ] ; then
         -ex "set arch riscv:rv64" \
         -ex "target remote localhost:1234" \
         -ex "b main" \
-        -ex "continue" 
+        -ex "continue" \
+        -ex "set scheduler-locking on"
     rm ${pwdasm}/${case}
 else
     echo "Unsupported architecture"

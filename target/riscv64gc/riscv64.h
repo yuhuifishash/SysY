@@ -390,13 +390,22 @@ private:
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
     std::vector<Register *> GetR4_typeReadreg() { return {&rs1, &rs2, &rs3}; }
     std::vector<Register *> GetI_typeReadreg() {
-        if (ret_type == 1) {
-            return {&rs1, &RISCVregs[RISCV_a0]};
-        } else if (ret_type == 2) {
-            return {&rs1, &RISCVregs[RISCV_fa0]};
-        } else {
-            return {&rs1};
+        std::vector<Register* > ret;
+        ret.push_back(&rs1);
+        if (op == RISCV_JALR) {
+            if (ret_type == 1) {
+                ret.push_back(&RISCVregs[RISCV_a0]);
+            } else if (ret_type == 2) {
+                ret.push_back(&RISCVregs[RISCV_fa0]);
+            }
+            for (int i = RISCV_s0; i <= RISCV_s11; i++) {
+                ret.push_back(&RISCVregs[i]);
+            }
+            for (int i = RISCV_fs0; i <= RISCV_fs11; i++) {
+                ret.push_back(&RISCVregs[i]);
+            }
         }
+        return ret;
     }
     std::vector<Register *> GetS_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetB_typeReadreg() { return {&rs1, &rs2}; }
