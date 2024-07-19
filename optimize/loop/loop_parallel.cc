@@ -3,7 +3,7 @@
 #include "../alias_analysis/alias_analysis.h"
 #include <functional>
 
-#define LOOP_PARALLEL_DEBUG
+// #define LOOP_PARALLEL_DEBUG
 
 extern std::map<std::string, CFG *> CFGMap;
 extern AliasAnalyser *alias_analyser;
@@ -109,12 +109,12 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
             }
         }
     }
-
     for (auto LoadI : LoadList) {
         for (auto StoreI : StoreList) {
             auto ptr1 = LoadI->GetPointer();
             auto ptr2 = StoreI->GetPointer();
             if (alias_analyser->QueryAlias(ptr1, ptr2, C) != AliasAnalyser::NoAlias) {
+                // std::cerr<<ptr1<<" "<<ptr2<<"\n";
                 // alias, may generate dependency
                 if (ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL) {
                     return false;
@@ -128,7 +128,6 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
             }
         }
     }
-
     return true;
 }
 
@@ -154,7 +153,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     if (scev.is_simpleloop == false) {
         return false;
     }
-
+    
     if (!LoopCarriedDependenceTest(C)) {
         return false;
     }
@@ -179,7 +178,6 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     auto exit = *exit_nodes.begin();
     auto exiting = *exiting_nodes.begin();
     auto latch = *latches.begin();
-
     // can not have lcssa
     for (auto I : exit->Instruction_list){
         if(I->GetOpcode() == PHI){
@@ -198,7 +196,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     if(stepval != 1){
         return false;
     }
-
+    
      // get the reg use in loop but def out of the loop
     std::map<int, Instruction> ResultMap;
     for (auto [id, bb] : *C->block_map) {
@@ -261,8 +259,9 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     }
 
     // now we can parallel the loop
-    std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
-
+    #ifdef LOOP_PARALLEL_DEBUG
+        std::cerr<<"loop header: "<<header->block_id<<"  can parallel\n";
+    #endif
     // transform loop to function
     auto defI = new FunctionDefineInstruction(VOID,"___D86D10319A84A67B_" + C->function_def->GetFunctionName() + std::to_string(header->block_id));
     int parallel_label = -1;
@@ -367,6 +366,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     std::set<LLVMBlock> nloop_nodes;
 
     std::map<int,int> labelreplace_map;
+    parallel_label = C->max_label + 1;
     for(auto bb:loop_nodes){
         auto nbb = IR->NewBlock(defI,parallel_label);
         if(bb == header){
@@ -387,7 +387,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
             nbb->InsertInstruction(1,nI);
         }
     }
-
+    
     for(auto nbb:nloop_nodes){
         for(auto I:nbb->Instruction_list){
             I->ReplaceLabelByMap(labelreplace_map);
