@@ -965,9 +965,14 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                 if (arg_op->GetOperandType() == BasicOperand::REG) {
                     auto arg_regop = (RegOperand *)arg_op;
                     auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), INT64);
-                    auto arg_copy_instr =
-                    rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0 + ireg_cnt), arg_reg, INT64);
-                    cur_block->push_back(arg_copy_instr);
+                    if (llvm_rv_allocas.find(arg_regop->GetRegNo()) == llvm_rv_allocas.end()) {
+                        auto arg_copy_instr =
+                        rvconstructor->ConstructCopyReg(GetPhysicalReg(RISCV_a0 + ireg_cnt), arg_reg, INT64);
+                        cur_block->push_back(arg_copy_instr);
+                    } else {
+                        auto sp_offset = llvm_rv_allocas[arg_regop->GetRegNo()];
+                        cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ADDI,GetPhysicalReg(RISCV_a0 + ireg_cnt), GetPhysicalReg(RISCV_sp), sp_offset));
+                    }
                 } else if (arg_op->GetOperandType() == BasicOperand::IMMI32) {
                     auto arg_immop = (ImmI32Operand *)arg_op;
                     auto arg_imm = arg_immop->GetIntImmVal();
@@ -1036,8 +1041,15 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                     if (arg_op->GetOperandType() == BasicOperand::REG) {
                         auto arg_regop = (RegOperand *)arg_op;
                         auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), INT64);
-                        cur_block->push_back(
-                        rvconstructor->ConstructSImm(RISCV_SD, arg_reg, GetPhysicalReg(RISCV_sp), arg_off));
+                        if (llvm_rv_allocas.find(arg_regop->GetRegNo()) == llvm_rv_allocas.end()) {
+                            cur_block->push_back(
+                            rvconstructor->ConstructSImm(RISCV_SD, arg_reg, GetPhysicalReg(RISCV_sp), arg_off));
+                        } else {
+                            auto sp_offset = llvm_rv_allocas[arg_regop->GetRegNo()];
+                            auto mid_reg = GetNewReg(INT64);
+                            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ADDI, mid_reg, GetPhysicalReg(RISCV_sp), sp_offset));
+                            cur_block->push_back(rvconstructor->ConstructSImm(RISCV_SD, mid_reg, GetPhysicalReg(RISCV_sp), arg_off));
+                        }
                     } else if (arg_op->GetOperandType() == BasicOperand::IMMI32) {
                         auto arg_immop = (ImmI32Operand *)arg_op;
                         auto arg_imm = arg_immop->GetIntImmVal();
@@ -1633,6 +1645,25 @@ template <> void RiscV64Selector::ConvertAndAppend<PhiInstruction *>(PhiInstruct
     cur_block->push_back(m_phi);
 }
 
+template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCastInstruction *ins) {
+    // Only float to int
+    Assert(ins->GetResultReg()->GetOperandType() == BasicOperand::REG);
+    auto rd_op = (RegOperand*)ins->GetResultReg();
+    auto rd = GetllvmReg(rd_op->GetRegNo(), INT64);
+    auto src_op = ins->GetSrc();
+    if (src_op->GetOperandType() == BasicOperand::REG) {
+        auto rs_op = (RegOperand*)src_op;
+        auto rs = GetllvmReg(rs_op->GetRegNo(), FLOAT64);
+        cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_X_W, rd, rs));
+    } else if (src_op->GetOperandType() == BasicOperand::IMMF32) {
+        auto float_imm = (ImmF32Operand*)src_op;
+        float fimm = float_imm->GetFloatVal();
+        cur_block->push_back(rvconstructor->ConstructCopyRegImmI(rd, *((int*)(&fimm)), INT64));
+    } else {
+        ERROR("Unexpected op type");
+    }
+}
+
 template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst) {
     std::ostringstream oss;
     inst->PrintIR(oss);
@@ -1697,6 +1728,9 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
         break;
     case PHI:
         ConvertAndAppend<PhiInstruction *>((PhiInstruction *)inst);
+        break;
+    case BITCAST:
+        ConvertAndAppend<BitCastInstruction *>((BitCastInstruction *)inst);
         break;
     }
 }
