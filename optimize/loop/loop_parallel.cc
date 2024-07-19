@@ -522,7 +522,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     auto iterI = new ArithmeticInstruction(SUB,I32,real_ed,real_st,GetNewRegOperand(++C->max_reg));
     Checkbb->InsertInstruction(1,iterI);
     if(depth < 4){
-        auto limit = std::max(20,2000000/inst_number/depth_const[depth]);
+        auto limit = std::max(20,4000000/inst_number/depth_const[depth]);
         auto condcmpI = new IcmpInstruction(I32,iterI->GetResultReg(),new ImmI32Operand(limit),slt,GetNewRegOperand(++C->max_reg));
         Checkbb->InsertInstruction(1,condcmpI);
     }else{
