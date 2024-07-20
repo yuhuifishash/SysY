@@ -10,6 +10,7 @@
 #include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
 #include "./riscv64gc/optimize/riscv64_peehole.h"
 #include "./riscv64gc/optimize/riscv64_cse.h"
+#include "./riscv64gc/optimize/riscv64_licm.h"
 #include "./riscv64gc/riscv64.h"
 #include "./riscv64gc/optimize/riscv64_branch_predict.h"
 
@@ -349,6 +350,8 @@ int main(int argc, char **argv) {
             RiscV64SSAPeehole(m_unit).Execute();
             RiscV64SSADeadDefElimate(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
+            RiscV64LICM(m_unit).Execute();
+            RiscV64CSE(m_unit).Execute();
         }
 
         MachinePhiDestruction(m_unit).Execute();
@@ -383,6 +386,8 @@ int main(int argc, char **argv) {
         RiscV64SSAPeehole(m_unit).Execute();
         RiscV64SSADeadDefElimate(m_unit).Execute();
         RiscV64CSE(m_unit).Execute();
+        RiscV64LICM(m_unit).Execute();
+        // RiscV64CSE(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();
