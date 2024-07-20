@@ -223,6 +223,7 @@ void Lval::codeIR() {
     if (dims != nullptr) {
         for (auto d : *dims) {
             d->codeIR();
+            IRgenTypeConverse(B,d->attribute.T.type, Type::INT, max_reg);
             arrayindexs.push_back(GetNewRegOperand(max_reg));
         }
     }

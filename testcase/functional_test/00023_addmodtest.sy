@@ -1,0 +1,50 @@
+int A[100000]={};
+const int p = 0x100000 - 1;
+int main()
+{
+    int n = getint();
+    int i = 0;
+    while(i < n){
+        int j = 0;
+        int S = 0;
+        while(j < n){
+            S = S + 894321;
+            S = S % p;
+            j = j + 1;
+        }
+        int S1 = 0;
+        j = 0;
+        while(j < n){
+            S1 = S1 + 894321;
+            S1 = S1 %p;
+            j = j + 1;
+        }
+        int S2 = 0;
+        j = 0;
+        while(j < n){
+            S2 = S2 + 894324;
+            S2 = S2 %p;
+            j = j + 1;
+        }
+
+        int S3 = 0;
+        j = 0;
+        while(j < n){
+            S3 = S3 + 894321;
+            S3 = S3 %(0x100000 - 2);
+            j = j + 1;
+        }
+
+        int S4 = 0;
+        j = 0;
+        while(j < n + 5){
+            S4 = S4 + 894321;
+            S4 = S4 %(0x100000 - 1);
+            j = j + 1;
+        }
+        A[i] = S + S1 + S2 + S3 + i*S4%p + i;
+        i = i + 1;
+    }
+    putarray(n,A);
+    return 0;
+}

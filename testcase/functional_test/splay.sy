@@ -1,0 +1,133 @@
+const int N=1e5+5,inf=1e9;
+int data[N],ch[N][2],fa[N],siz[N],root,tag[N],tot,a[N],cnt[N];
+
+int eq(int x,int y)
+{
+    if(x == y){
+        return 1;
+    }
+    return 0;
+}
+
+int son(int x){return eq(x,ch[fa[x]][1]);}
+void push_up(int x){siz[x]=siz[ch[x][0]]+siz[ch[x][1]]+cnt[x];}
+
+int xor_01(int x,int y)
+{
+    if(x == 1 && y == 1){
+        return 0;
+    }else if(x == 0 && y == 0){
+        return 0;
+    }else{
+        return 1;
+    }
+}
+
+void push_down(int x){
+	if(tag[x]==0) return;
+	int lt=ch[x][0],rt=ch[x][1];
+    tag[lt] = xor_01(tag[lt],tag[x]);
+
+    int tmp = ch[lt][0];
+    ch[lt][0] = ch[lt][1];
+    ch[lt][1] = tmp;
+	//swap(ch[lt][0],ch[lt][1]);
+
+    tag[rt] = xor_01(tag[rt],tag[x]);
+
+    tmp = ch[rt][0];
+    ch[rt][0] = ch[rt][1];
+    ch[rt][1] = tmp;
+
+	//swap(ch[rt][0],ch[rt][1]);
+	tag[x]=0;
+}
+
+void rotate(int x){
+	int y=fa[x],z=fa[y],sx=son(x),sy=son(y),b=ch[x][!sx];
+	push_down(y);push_down(x);
+	if(z) ch[z][sy]=x; else root=x;fa[x]=z;
+	ch[x][!sx]=y;fa[y]=x;
+	ch[y][sx]=b;if(b) fa[b]=y;
+	push_up(y);push_up(x);
+}
+
+void splay(int x,int aim){
+	while(fa[x]!=aim){
+		int y=fa[x],z=fa[y];
+		if(z==aim) rotate(x);
+		else if(xor_01(son(x),son(y))) {rotate(x);rotate(x);}
+		else {rotate(y);rotate(x);}
+	}
+}
+
+int get_kth(int k){
+	k = k - 1;
+	int now=root;
+	while(now){
+        putint(now);putch(32);putint(ch[now][0]);putch(32);putint(ch[now][1]);putch(10);
+		if(siz[ch[now][0]]>k) {push_down(now);now=ch[now][0];}
+		else if(siz[ch[now][0]]+cnt[now]>k) return now;
+		else {k=k-(siz[ch[now][0]]+cnt[now]);push_down(now);now=ch[now][1];}
+	}
+    return 0;
+}
+
+void reverse(int L,int R){ 
+	int p1=get_kth(L),p2=get_kth(R+2);
+    putint(p1);putch(32);putint(p2);putch(10);
+
+	splay(p1,0);splay(p2,root); 
+	int p3=ch[p2][0];
+    tag[p3] = xor_01(tag[p3],1);
+
+    int tmp = ch[p3][0];
+    ch[p3][0] = ch[p3][1];
+    ch[p3][1] = tmp;
+	// swap(ch[p3][0],ch[p3][1]);
+}
+
+int build(int L,int R){
+	if(L>R) return 0;
+	int mid=(L+R)/2,now=a[mid];
+	if(now==-inf||now==inf) {now=tot + 1; tot = tot + 1;}
+	data[now]=a[mid];
+	cnt[now]=1;siz[now]=1;
+	if(L==R) return now;
+	int lt=build(L,mid-1);
+	ch[now][0]=lt;fa[lt]=now;
+	int rt=build(mid+1,R);
+	ch[now][1]=rt;fa[rt]=now;
+	push_up(now);
+    putint(L);putch(32);putint(R);putch(32);putint(now);putch(32);putint(ch[now][0]);putch(32);putint(ch[now][1]);putch(10);
+	return now;
+}
+
+void get_ans(int now){
+	push_down(now);
+	if(ch[now][0]) get_ans(ch[now][0]);
+	if(data[now]!=-inf&&data[now]!=inf) {putint(data[now]);putch(32);}
+	if(ch[now][1]) get_ans(ch[now][1]);
+}
+
+int main(){
+	int n=getint(),m=getint();
+	a[1]=-inf;a[n+2]=inf; 
+    int i = 2;
+    while(i <= n+1){
+        a[i] = i - 1;
+        i = i + 1;
+    }
+	tot=n;
+	root=build(1,n+2);
+    
+    i = 1;
+    while(i <= m){
+        int l = getint();
+        int r = getint();
+        reverse(l,r);
+        i = i + 1;
+    }
+	get_ans(root);
+	return 0;
+}
