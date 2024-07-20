@@ -96,7 +96,7 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyBlockBetweenEdge(int begin, in
     return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<int> pres) {
-    TODO("PreHeader Insert");
+    // TODO("PreHeader Insert");
     auto new_block = InitNewBlock();
     auto preheader = new_block->getLabelId();
     // Insert Branch in new block
@@ -106,9 +106,33 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
         mcfg->RemoveEdge(pre,id);
         mcfg->MakeEdge(pre,preheader);
         MoveOnePredecessorBranchTargetToNewBlock(pre,id,preheader);
-        RedirectPhiNodePredecessor(id, pre, preheader);
+        // RedirectPhiNodePredecessor(id, pre, preheader);
     }
     mcfg->MakeEdge(preheader,id);
+    // Move Phi Instruction to New Block
+    auto curblock = mcfg->GetNodeByBlockId(id)->Mblock;
+    auto insert_it = new_block->getInsertBeforeBrIt();
+    std::list<MachinePhiInstruction*> mult_phi_list;
+    std::list<MachinePhiInstruction*> single_phi_list;
+    for (auto ins : *curblock) {
+        if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
+        if (ins->arch != MachineBaseInstruction::PHI) { break; }
+        auto phi_ins = (MachinePhiInstruction*)ins;
+        if (phi_ins->GetPhiList().size() == 1) {
+            single_phi_list.push_back(phi_ins);
+        } else {
+            mult_phi_list.push_back(phi_ins);
+        }
+    }
+    for (auto ins : mult_phi_list) {
+        new_block->insert(insert_it, ins);
+    }
+    for (auto ins : single_phi_list) {
+        // new_block->insert(insert_it, ins);
+        auto copy_src = ins->GetPhiList()[0].second;
+        auto copy_dst = ins->GetResult();
+        new_block->insert(insert_it, new MachineCopyInstruction(copy_src, new MachineRegister(copy_dst), copy_dst.type));
+    }
     return new_block;
 }
 MachineBlock *MachineFunction::InsertNewBranchOnlySuccessorBetweenThisAndAllSuccessors(int id) {
