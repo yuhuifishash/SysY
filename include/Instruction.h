@@ -903,6 +903,7 @@ public:
         : result(result_receiver), value(value_for_cast) {
         this->opcode = FPTOSI;
     }
+    virtual LLVMType GetResultType() { return I32; }
     Operand GetResultReg() { return result; }
     Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
@@ -926,6 +927,7 @@ public:
         : src(src_op), dst(dst_op), src_type(src_t), dst_type(dst_t) {
         this->opcode = BITCAST;
     }
+    virtual LLVMType GetResultType() { return dst_type; }
     Operand GetResultReg() { return dst; }
     Operand GetSrc() { return src; }
     void PrintIR(std::ostream &s);
@@ -948,6 +950,8 @@ public:
         : result(result_receiver), value(value_for_cast) {
         this->opcode = SITOFP;
     }
+    
+    virtual LLVMType GetResultType() { return FLOAT32; }
     Operand GetResultReg() { return result; }
     Operand GetSrc() { return value; }
     void PrintIR(std::ostream &s);
@@ -968,6 +972,7 @@ private:
     Operand value;
 
 public:
+    virtual LLVMType GetResultType() { return I32; }
     Operand GetResultReg() { return result; }
     Operand GetSrc() { return value; }
     Operand GetDst() { return result; }

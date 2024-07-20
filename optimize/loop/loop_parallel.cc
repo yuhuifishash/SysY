@@ -338,13 +338,17 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     // if(thread == 3){ED = ed}
     auto SubI = new ArithmeticInstruction(SUB,I32,ed,st,GetNewRegOperand(++parallel_reg));
     auto partI = new ArithmeticInstruction(DIV,I32,SubI->GetResultReg(),new ImmI32Operand(4),GetNewRegOperand(++parallel_reg));
-    auto STI = new ArithmeticInstruction(MUL,I32,partI->GetResultReg(),thread,GetNewRegOperand(++parallel_reg));
+    auto stmulI = new ArithmeticInstruction(MUL,I32,partI->GetResultReg(),thread,GetNewRegOperand(++parallel_reg));
+    auto STI = new ArithmeticInstruction(ADD,I32,stmulI->GetResultReg(),st,GetNewRegOperand(++parallel_reg));
     auto threadaddI = new ArithmeticInstruction(ADD,I32,thread,new ImmI32Operand(1),GetNewRegOperand(++parallel_reg));
-    auto EDI = new ArithmeticInstruction(MUL,I32,partI->GetResultReg(),threadaddI->GetResultReg(),GetNewRegOperand(++parallel_reg));
+    auto edmulI = new ArithmeticInstruction(MUL,I32,partI->GetResultReg(),threadaddI->GetResultReg(),GetNewRegOperand(++parallel_reg));
+    auto EDI = new ArithmeticInstruction(ADD,I32,edmulI->GetResultReg(),st,GetNewRegOperand(++parallel_reg));
     entry->InsertInstruction(1,SubI);
     entry->InsertInstruction(1,partI);
+    entry->InsertInstruction(1,stmulI);
     entry->InsertInstruction(1,STI);
     entry->InsertInstruction(1,threadaddI);
+    entry->InsertInstruction(1,edmulI);
     entry->InsertInstruction(1,EDI);
 
     auto threadcmpI = new IcmpInstruction(I32,thread,new ImmI32Operand(3),eq,GetNewRegOperand(++parallel_reg));

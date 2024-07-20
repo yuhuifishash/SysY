@@ -1,0 +1,49 @@
+float A[1000][1000];
+float B[1000][1000];
+int main()
+{
+	float bias = getfloat();
+	int n = getint();
+	int d = getint();
+	int i = 0;
+	while(i < n){
+		int j = 0;
+		while(j < n){
+			A[i][j] = i + j + bias;
+			j = j + 1;
+		}
+		i = i + 1;
+	}
+
+	i = d;
+	while(i < n){
+		int j = d;
+		while(j < n){
+			int k = 0;
+			while(k < d){
+				int t = 0;
+				while(t < d){
+					B[i][j] = B[i][j] + A[k+i-d][t+j-d];
+					t = t + 1;
+				}
+				k = k + 1;
+			}
+			B[i][j] = B[i][j] / d / d;
+			j = j + 1;
+		}
+		i = i + 1;
+	}
+	i = 0;
+	while(i < n){
+		float sum = 0;
+		int j = 0;
+		while(j < n){
+			sum = sum + B[i][j];
+			j = j + 1;
+		}
+		putfloat(sum);
+		putch(10);
+		i = i + 1;
+	}
+	return 0;
+}
