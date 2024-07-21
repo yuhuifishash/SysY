@@ -114,7 +114,8 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
     auto insert_it = new_block->getInsertBeforeBrIt();
     std::list<MachinePhiInstruction*> mult_phi_list;
     std::list<MachinePhiInstruction*> single_phi_list;
-    for (auto ins : *curblock) {
+    for (auto it = curblock->begin();it != curblock->end();++it) {
+        auto ins = *it;
         if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
         if (ins->arch != MachineBaseInstruction::PHI) { break; }
         auto phi_ins = (MachinePhiInstruction*)ins;
@@ -123,6 +124,7 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
         } else {
             mult_phi_list.push_back(phi_ins);
         }
+        it = curblock->erase(it);
     }
     for (auto ins : mult_phi_list) {
         new_block->insert(insert_it, ins);
