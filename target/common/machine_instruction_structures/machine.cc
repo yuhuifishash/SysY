@@ -119,12 +119,26 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
         if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
         if (ins->arch != MachineBaseInstruction::PHI) { break; }
         auto phi_ins = (MachinePhiInstruction*)ins;
-        if (phi_ins->GetPhiList().size() == 1) {
-            single_phi_list.push_back(phi_ins);
-        } else {
-            mult_phi_list.push_back(phi_ins);
+        auto mid_reg = this->GetNewReg(phi_ins->GetResult().type);
+        auto newphi_ins = new MachinePhiInstruction(mid_reg);
+        for (auto pre : pres) {
+            auto valop = phi_ins->removePhiList(pre);
+            if (valop != nullptr) {
+                newphi_ins->pushPhiList(pre, valop);
+            }
         }
-        it = curblock->erase(it);
+        if (phi_ins->GetPhiList().empty()) {
+            newphi_ins->SetResult(phi_ins->GetResult());
+            it = curblock->erase(it);
+            --it;
+        } else {
+            phi_ins->pushPhiList(preheader, mid_reg);
+        }
+        if (newphi_ins->GetPhiList().size() == 1) {
+            single_phi_list.push_back(newphi_ins);
+        } else {
+            mult_phi_list.push_back(newphi_ins);
+        }
     }
     for (auto ins : mult_phi_list) {
         new_block->insert(insert_it, ins);
