@@ -307,8 +307,9 @@ public:
     MachineBaseOperand* removePhiList(int label) {
         for (auto it = phi_list.begin();it != phi_list.end();++it) {
             if (it->first == label) {
+                auto ret = it->second;
                 phi_list.erase(it);
-                return it->second;
+                return ret;
             }
         }
         return nullptr;
