@@ -380,6 +380,8 @@ void MachineNaturalLoop::FindExitNodes(MachineCFG *C) {
 void MachineNaturalLoopForest::BuildLoopForest() {
     loop_set.clear();
     loopG.clear();
+    header_loop_map.clear();
+
     loop_cnt = 0;
 
     auto block_it = C->getSeqScanIterator();

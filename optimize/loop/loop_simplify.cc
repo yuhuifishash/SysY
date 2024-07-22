@@ -8,7 +8,7 @@ void LoopSimplify(CFG *C) {
         bb->comment = "";
     }
 
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         L->LoopSimplify(C);
         for (auto lv : loop_forest.loopG[L->loop_id]) {

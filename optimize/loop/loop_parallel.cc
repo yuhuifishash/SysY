@@ -132,7 +132,7 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
 }
 
 void LoopParallel(CFG *C, LLVMIR* IR) {
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         if (L->LoopParallel(C, IR)) {    // if parallel, stop the dfs
             return;
@@ -465,7 +465,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     // add dynamic parallel check (preheader -> checkbb)
     // first calculate the loop depth
     std::map<NaturalLoop*, int> loop_depth_map;
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);
