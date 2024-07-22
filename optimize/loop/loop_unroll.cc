@@ -5,7 +5,7 @@
 // the loop's instructions after unrolling <= 2048
 void ConstantLoopFullyUnroll(CFG *C) {
     bool is_unroll = false;
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);
@@ -286,7 +286,7 @@ for(; i < u; i += 1){ BB }
 */
 
 void SimpleForLoopUnroll(CFG *C) {
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);

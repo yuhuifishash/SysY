@@ -216,7 +216,7 @@ void LoopGepStrengthReduce(CFG *C) {
     }
     
     NewGepSet.clear();
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *, NaturalLoopForest &loop_forest,
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);
