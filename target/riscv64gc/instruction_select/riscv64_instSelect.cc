@@ -279,6 +279,14 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
 
             auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(rd, imm1 - imm2, INT64);
             cur_block->push_back(copy_imm_instr);
+        } else if (ins->GetOperand1()->GetOperandType() == BasicOperand::REG && 
+            ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
+            Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
+            Register sub1 = GetllvmReg(((RegOperand *)ins->GetOperand1())->GetRegNo(), INT64);
+            int imm = ((ImmI32Operand *)ins->GetOperand2())->GetIntImmVal();
+            Log("Entered -%d", imm);
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ADDIW, rd, sub1, -imm));
         } else {
             Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
             Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
