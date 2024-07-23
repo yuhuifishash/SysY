@@ -1,0 +1,72 @@
+const int N=2010;
+int s[N];
+int fa[N],ch[N][26],len[N],siz[N];
+int lst=1,node=1,l,t[N],A[N];
+int ans;
+void __memcpy(int a[],int b[],int len){
+	int i = 0;
+	while(i < len){
+		a[i] = b[i];
+		i = i + 1;
+	}
+}
+
+int max(int a,int b){
+	if(a < b){
+		return b;
+	}
+	return a;
+}
+
+void Extend(int c)
+{
+	node = node + 1;
+	int f=lst,p=node;lst=p;
+	len[p]=len[f]+1;siz[p]=1;
+
+	while(f&&!ch[f][c]) {ch[f][c]=p;f=fa[f];}
+	if(!f) {fa[p]=1;return;}
+
+	node = node + 1;
+	int x=ch[f][c],y=node;
+	if(len[f]+1==len[x]) {fa[p]=x;node = node - 1;return;}
+
+	len[y]=len[f]+1; fa[y]=fa[x]; fa[x]=y;fa[p]=y;
+	__memcpy(ch[y],ch[x],26);
+	while(f&&ch[f][c]==x) {ch[f][c]=y;f=fa[f];}
+
+}
+int main()
+{
+	l = getarray(s);
+	int i = l;
+	while(i >= 1){s[i]=s[i-1];i=i-1;}
+	s[0]=0;
+
+	i = 1;
+	while(i<=l) {Extend(s[i]-97);i=i+1;}
+
+	i = 1;
+	while(i<=node) {t[len[i]] = t[len[i]] + 1;i=i+1;}
+
+	i = 1;
+	while(i<=node) {t[i]=t[i]+t[i-1];i=i+1;}
+
+	i = 1;
+	while(i<=node) {
+
+		A[t[len[i]]]=i;
+		t[len[i]] = t[len[i]] - 1;
+		i = i + 1;
+	}
+
+	i = node;
+	while(i>=1){
+		int now=A[i];siz[fa[now]]=siz[fa[now]]+siz[now];
+		if(siz[now]>1) ans=max(ans,siz[now]*len[now]);
+		i = i - 1;
+	}
+	putint(ans);
+	putch(10);
+	return 0;
+}
