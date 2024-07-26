@@ -219,17 +219,23 @@ void ArithmeticInstruction::PrintIR(std::ostream &s) {
     if (opcode == LL_ADDMOD) {
         s << result << " = call i32 @___llvm_ll_add_mod(i32 " << op1 << ",i32 " << op2 << ",i32 " << op3 << ")\n";
         return;
-    } else if (opcode == UMIN) {
+    } else if (opcode == UMIN_I32) {
         s << result << " = call i32 @llvm.umin.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    } else if (opcode == UMAX) {
+    } else if (opcode == UMAX_I32) {
         s << result << " = call i32 @llvm.umax.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    } else if (opcode == SMIN) {
+    } else if (opcode == SMIN_I32) {
         s << result << " = call i32 @llvm.smin.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
         return;
-    } else if (opcode == SMAX) {
+    } else if (opcode == SMAX_I32) {
         s << result << " = call i32 @llvm.smax.i32(i32 " << op1 << ",i32 " << op2 << ")\n";
+        return;
+    }else if (opcode == FMIN_F32) {
+        s << result << " = call float @___llvm_fmin_f32(float " << op1 << ",float " << op2 << ")\n";
+        return;
+    }else if (opcode == FMAX_F32) {
+        s << result << " = call float @___llvm_fmax_f32(float " << op1 << ",float " << op2 << ")\n";
         return;
     }
     s << result << " = " << opcode << " " << type << " " << op1 << "," << op2 << "\n";
