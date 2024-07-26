@@ -11,6 +11,7 @@ void GlobalValueNumber(CFG *C){
     std::cerr<<C->function_def->GetFunctionName()<<'\n';
     C->BuildCFG();
     C->BuildDominatorTree();
+    hashtable.defineDFS(C);
     auto DomTree = C->DomTree;
     auto G = DomTree.dom_tree;
     auto blockmap = *C->block_map;
@@ -80,12 +81,11 @@ void GlobalValueNumber(CFG *C){
 void ElimateGVNPhi(CFG *C){
     //TODO:ElimateGVNPhi
     // std::cerr<<C->function_def->GetFunctionName()<<'\n';
-    C->BuildCFG();
-    C->BuildDominatorTree();
+    auto blockmap = *C->block_map;
     hashtable.defineDFS(C);
+    bool Check = true;
     auto DomTree = C->DomTree;
     auto G = DomTree.dom_tree;
-    auto blockmap = *C->block_map;
     std::function<void(int)> DFS1 = [&](int ubbid) {
         auto ubb = blockmap[ubbid];
         auto it = ubb->Instruction_list.end();
@@ -93,13 +93,6 @@ void ElimateGVNPhi(CFG *C){
             it--;
             auto I = *it;
             auto check = hashtable.lookupOrAdd(I);
-            // I->PrintIR(std::cerr);
-            // if(I->GetResultReg() != nullptr && I->GetResultReg()->GetFullName() == "%r25"){
-            //     std::cerr<<"25:"<<hashtable.resultmap[25]<<" "<<check<<'\n';
-            // }
-            // if(I->GetResultReg() != nullptr && I->GetResultReg()->GetFullName() == "%r56"){
-            //     std::cerr<<"56:"<<hashtable.resultmap[56]<<" "<<check<<'\n';
-            // }
         }while(it != ubb->Instruction_list.begin());
         
         for(int i = 0; i < G[ubbid].size(); ++i){
@@ -108,56 +101,75 @@ void ElimateGVNPhi(CFG *C){
             DFS1(vbbid);
         }
     };
-    DFS1(0);
-    // puts("done");
-    // std::cerr<<hashtable.resultmap[25]<<" "<<hashtable.resultmap[56]<<" "<<hashtable.resultmap[70]<<" "<<hashtable.resultmap[52]<<'\n';
-    for (auto [id, bb] : *C->block_map) {
-        for (auto I : bb->Instruction_list) {
-            if(I->GetOpcode() == PHI){
 
-                auto PhiI = (PhiInstruction*)I;
-                bool CanElimate = 1;
-                auto FstOp = PhiI->GetPhiList().front().second;
-                if(FstOp->GetOperandType() !=BasicOperand::REG){
-                    continue;
-                }
-                // I->PrintIR(std::cerr);
-                auto FstValue = hashtable.resultmap[((RegOperand*)FstOp)->GetRegNo()];
-                for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
-                    if(Regop->GetOperandType() !=BasicOperand::REG){
-                        CanElimate = 0;
-                        break;
+    bool isFirst = true;
+    while(Check){
+        Check = false;
+        if(!isFirst){
+            isFirst =false;
+        }else{
+            C->BuildCFG();
+            C->BuildDominatorTree();
+            hashtable.defineDFS(C);
+            DomTree = C->DomTree;
+            G = DomTree.dom_tree;
+            blockmap = *C->block_map;
+        }
+        DFS1(0);
+        for (auto [id, bb] : *C->block_map) {
+            // bb->printIR(std::cerr);
+            for (auto &I : bb->Instruction_list) {
+                if(I->GetOpcode() == PHI){
+                    auto PhiI = (PhiInstruction*)I;
+                    bool CanElimate = 1;
+                    auto FstOp = PhiI->GetPhiList().front().second;
+                    if(FstOp->GetOperandType() !=BasicOperand::REG){
+                        continue;
                     }
-                    auto OpValue = hashtable.resultmap[((RegOperand*)Regop)->GetRegNo()];
-                    if(OpValue != FstValue){
-                        // I -> PrintIR(std::cerr);
-                        // std::cerr<<OpValue<<" "<<FstValue<<'\n';
-                        // std::cerr<<Regop->GetFullName()<<'\n';
-                        // std::cerr<<"HERE\n";
-                        CanElimate = 0;
-                        break;
+                    // I->PrintIR(std::cerr);
+                    auto FstValue = hashtable.resultmap[((RegOperand*)FstOp)->GetRegNo()];
+                    for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
+                        // I->PrintIR(std::cerr);
+                        if(Regop->GetOperandType() !=BasicOperand::REG){
+                            CanElimate = 0;
+                            break;
+                        }
+                        auto OpValue = hashtable.resultmap[((RegOperand*)Regop)->GetRegNo()];
+                        if(OpValue != FstValue){
+                            CanElimate = 0;
+                            break;
+                        }
+                        // std::cerr<<Labelop->GetFullName()<<" "<<
+                        //     Regop->GetFullName()<<" "<<(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo())==hashtable.definemap.end())<<'\n';
+                        // std::cerr<<Labelop->GetFullName()<<" "<<Regop->GetFullName()<<'\n';
+                        // defI->PrintIR(std::cerr);
+                        if(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo()) == hashtable.definemap.end() 
+                            || hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD){
+                            CanElimate = 0;
+                            break;
+                        }
+                        
+                        // I->PrintIR(std::cerr);
+                    }
+                    
+                    if(CanElimate){
+                        auto resultOp = (RegOperand*)PhiI->GetResultReg();
+                        // I->PrintIR(std::cerr);
+                        auto oldI = hashtable.definemap[((RegOperand*)FstOp)->GetRegNo()];
+                        oldI = (ArithmeticInstruction*)oldI;
+                        auto NoResultOp = oldI->GetNonResultOperands();
+                        if(NoResultOp.size() == 2){
+                            I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],PhiI->GetResultOp());
+                        }else{
+                            I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],NoResultOp[2],PhiI->GetResultOp());
+                        }
+                        Check = true;
+                        // I->PrintIR(std::cerr);
                     }
                 }
-                if(CanElimate){
-                    auto resultOp = (RegOperand*)PhiI->GetResultReg();
-                    I->PrintIR(std::cerr);
-                    auto type_ = PhiI->GetDataType();
-                    // std::cerr<<type_<<'\n';
-                    if(type_ == I32) {
-                        I = new ArithmeticInstruction(
-                            ADD, I32, new ImmI32Operand(0),
-                            new ImmI32Operand(((ImmI32Operand *)FstOp)->GetIntImmVal()),
-                            resultOp);
-                    }else{
-                        I = new ArithmeticInstruction(
-                            FADD, FLOAT32, new ImmF32Operand(0),
-                            new ImmF32Operand(((ImmF32Operand *)FstOp)->GetFloatVal()),
-                            resultOp);
-                    }
-                    I->PrintIR(std::cerr);
-                    puts("-----");
-                }
+                
             }
+            // bb->printIR(std::cerr);
         }
     }
     C->BuildCFG();
