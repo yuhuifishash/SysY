@@ -28,6 +28,28 @@ B0--->B2  may be transformed to B0(B1 use select)->B2
 */
 void SimpleIfConversion(CFG *C) {}
 
+
+
+/*
+L0:  
+    %r6 = icmp slt i32 %r0,%r1
+    br i1 %r6, label %L2, label %L1
+L1:  
+    br label %L2
+L2:  
+    %r11 = phi i32 [%r0,%L0],[%r1,%L1]
+
+will be transformed to
+
+L2:
+    %r11 = llvm.smin(%r0,%r1)
+*/
+void MinMaxRecognize(CFG *C) {
+
+}
+
+
+
 /**
     * this function will eliminate the double br_uncond
     *
