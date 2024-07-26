@@ -690,13 +690,13 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL, middle_reg, mod1_reg, mod2_reg));
             cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, result_reg, middle_reg, op_reg[2]));
         }
-    } else if (ins->GetOpcode() == UMIN) {
+    } else if (ins->GetOpcode() == UMIN_I32) {
         TODO("UMIN");
-    } else if (ins->GetOpcode() == UMAX) {
+    } else if (ins->GetOpcode() == UMAX_I32) {
         TODO("UMAX");
-    } else if (ins->GetOpcode() == SMIN) {
+    } else if (ins->GetOpcode() == SMIN_I32) {
         TODO("SMIN");
-    } else if (ins->GetOpcode() == SMAX) {
+    } else if (ins->GetOpcode() == SMAX_I32) {
         TODO("SMAX");
     } else {
         Log("RV InstSelect For Opcode %d", ins->GetOpcode());
@@ -1687,10 +1687,10 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
     case XOR:
     case SHL:
     case LL_ADDMOD:
-    case UMIN:
-    case UMAX:
-    case SMIN:
-    case SMAX:
+    case UMIN_I32:
+    case UMAX_I32:
+    case SMIN_I32:
+    case SMAX_I32:
         ConvertAndAppend<ArithmeticInstruction *>((ArithmeticInstruction *)inst);
         break;
     case ICMP:

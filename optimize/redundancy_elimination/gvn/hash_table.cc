@@ -14,8 +14,8 @@ static std::map<LLVMType,std::string> TypeMap={{I32,"i32"},{FLOAT32,"float32"},
 static std::map<LLVMIROpcode,std::string> OpcodeMap={{OTHER , "other"},{LOAD , "load"},{STORE , "store"},{ADD , "add"},{SUB , "sub"},
 {ICMP , "icmp"},{PHI , "phi"},{ALLOCA , "alloca"},{MUL , "mul"},{DIV , "div"},{BR_COND , "br_cond"},{BR_UNCOND , "br_uncond"},{FADD , "fadd"},{FSUB , "fsub"},
 {FMUL , "fmul"},{FDIV , "fdiv"},{FCMP , "fcmp"},{MOD , "mod"},{XOR , "xor"},{RET , "ret"},{ZEXT , "zext"},{SHL , "shl"},{FPTOSI , "fptosi"},
-{GETELEMENTPTR , "getelementptr"},{CALL , "call"},{SITOFP , "sitofp"},{GLOBAL_VAR , "global_var"},{GLOBAL_STR , "global_str"},{LL_ADDMOD , "ll_addmod"},{UMIN , "umin"},
-{UMAX , "umax"},{SMIN , "smin"},{SMAX , "smax"}};
+{GETELEMENTPTR , "getelementptr"},{CALL , "call"},{SITOFP , "sitofp"},{GLOBAL_VAR , "global_var"},{GLOBAL_STR , "global_str"},{LL_ADDMOD , "ll_addmod"},{UMIN_I32 , "umin"},
+{UMAX_I32 , "umax"},{SMIN_I32 , "smin"},{SMAX_I32 , "smax"}};
 
 static std::map<IcmpCond,std::string> IcmpCondMap={{eq,"eq"},{ne,"ne"},{ult,"ult"},
     {ule,"ule"},{slt,"slt"},{sle,"sle"}};
@@ -198,13 +198,13 @@ int HashTable::lookupOrAddArithmetic(Instruction I){
     std::string str;
     if (opcode_ == LL_ADDMOD) {
         str = "call i32 @___llvm_ll_add_mod(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ",i32 %v" + std::to_string(op3Value) + ")";
-    } else if (opcode_ == UMIN) {
+    } else if (opcode_ == UMIN_I32) {
         str = "call i32 @llvm.umin.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == UMAX) {
+    } else if (opcode_ == UMAX_I32) {
         str = "call i32 @llvm.umax.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == SMIN) {
+    } else if (opcode_ == SMIN_I32) {
         str = "call i32 @llvm.smin.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == SMAX) {
+    } else if (opcode_ == SMAX_I32) {
         str = " call i32 @llvm.smax.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
     }else{
         str =  OpcodeMap[(LLVMIROpcode)opcode_] + " " + TypeMap[type_] + " %v" + std::to_string(op1Value) + ",%v" + std::to_string(op2Value);
@@ -435,13 +435,13 @@ int HashTable::lookupArithmetic(Instruction I){
     std::string str;
     if (opcode_ == LL_ADDMOD) {
         str = "call i32 @___llvm_ll_add_mod(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ",i32 %v" + std::to_string(op3Value) + ")";
-    } else if (opcode_ == UMIN) {
+    } else if (opcode_ == UMIN_I32) {
         str = "call i32 @llvm.umin.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == UMAX) {
+    } else if (opcode_ == UMAX_I32) {
         str = "call i32 @llvm.umax.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == SMIN) {
+    } else if (opcode_ == SMIN_I32) {
         str = "call i32 @llvm.smin.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
-    } else if (opcode_ == SMAX) {
+    } else if (opcode_ == SMAX_I32) {
         str = " call i32 @llvm.smax.i32(i32 %v" + std::to_string(op1Value) + ",i32 %v" + std::to_string(op2Value) + ")";
     }else{
         str =  OpcodeMap[(LLVMIROpcode)opcode_] + " " + TypeMap[type_] + " %v" + std::to_string(op1Value) + ",%v" + std::to_string(op2Value);

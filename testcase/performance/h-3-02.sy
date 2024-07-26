@@ -1,0 +1,84 @@
+//#include "sylib.h"
+int m = 800;
+int n = 800;
+int data[800][800];
+int corr[800][800];
+int mean[800];
+int stddev[800];
+
+void kernel_correlation(int m, int n,
+   int data[][800],
+   int corr[][800],
+   int mean[],
+   int stddev[]) 
+{
+  int i, j, k;
+  j = 0;
+  while (j < m) {
+    mean[j] = 0;
+    i = 0;
+    while (i < n) {
+      mean[j] =mean[j]+ data[i][j];
+      i = i +1;
+    }
+    mean[j] = mean[j] / n;
+    j = j + 1;
+  }
+  j = 0;
+  while(j < m) {
+      stddev[j] = 0;
+      i= 0;
+      while(i < n) {
+        stddev[j] =stddev[j] + (data[i][j] - mean[j]) * (data[i][j] - mean[j]);
+        i = i +1;
+      }
+      stddev[j] = stddev[j] / n;
+      stddev[j] = stddev[j] * stddev[j];
+      if (stddev[j] <= 1) {
+        stddev[j] = 1;
+      }
+      j = j + 1;
+    }
+  i =0;
+  while (i < n) {
+    j = 0;
+    while (j < m)
+      {
+        data[i][j] = data[i][j] - mean[j];
+        data[i][j] = data[i][j] / (n * n * stddev[j]);
+        j = j + 1;
+      }
+    i = i +1;
+  }
+
+  i = 0;
+  while (i < m-1)
+  {
+      corr[i][i] = 1;
+      j = i +1;
+      while (j < m)
+        {
+          corr[i][j] = 0;
+          k =0;
+          while (k < n) {
+            corr[i][j] = corr[i][j] + (data[k][i] * data[k][j]);
+            k = k +1;
+          }
+          corr[j][i] = corr[i][j];
+          j = j +1;
+        }
+    i = i +1;
+  }
+  corr[m-1][m-1] = 1;
+}
+
+
+int main() 
+{
+  getarray(data);
+  starttime();
+  kernel_correlation (m, n, data, corr, mean, stddev);
+  stoptime();
+  putarray(m*m, corr);
+  return 0;
+}
