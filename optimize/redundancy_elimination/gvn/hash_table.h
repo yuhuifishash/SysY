@@ -4,7 +4,8 @@
 // N_H
 
 #include "../../../include/Instruction.h"
-#include <c++/11/bits/std_thread.h>
+#include "../../../include/ir.h"
+#include <functional>
 #include <iostream>
 #include <map>
 #include <set>
@@ -25,8 +26,11 @@ class HashTable{
 public:
     int expr_number = 0;
     std::map<std::string,int> valuemap;
+    std::map<int,int> resultmap;
     std::map<int,std::string> stringmap;
     std::map<int,std::vector<Operand>> valuevetor;
+    std::map<int,Instruction> definemap;
+    void defineDFS(CFG* C);
     int lookupOrAdd(std::string ExprStr){
         if(valuemap.find(ExprStr) == valuemap.end()){
             valuemap[ExprStr] = expr_number;
