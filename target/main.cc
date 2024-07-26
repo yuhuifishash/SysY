@@ -259,15 +259,13 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimplifyCFG);
         }
 
-
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
         
-
         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
         llvmIR.ElimateUnreachedInstructionAndBlocks(); 
-        llvmIR.BuildCFG(); 
+        llvmIR.BuildCFG();
         llvmIR.BuildDominatorTree();
 
         // #ifdef AggressiveOptimize
@@ -278,7 +276,11 @@ int main(int argc, char **argv) {
         //     llvmIR.PassExecutor(LoopClosedSSA);
         //     llvmIR.PassExecutor(SimpleAliasAnalysis);
         //     llvmIR.PassExecutor(LoopFusion);
-        //     // llvmIR.PassExecutor(SimplifyCFG);
+        //     llvmIR.PassExecutor(SimplifyCFG);
+        //     llvmIR.PassExecutor(SimpleDCE);
+        //     llvmIR.PassExecutor(SimpleAliasAnalysis);
+        //     llvmIR.PassExecutor(SimpleCSE);
+        //     llvmIR.PassExecutor(SimpleDSE);
         // #endif
 
         #ifdef AggressiveOptimize
