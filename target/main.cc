@@ -204,6 +204,9 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(BranchCSE);
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
+        llvmIR.BuildCFG();
+        llvmIR.BuildDominatorTree();
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         // llvmIR.PassExecutor(ElimateGVNPhi);
@@ -247,7 +250,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
-        llvmIR.PassExecutor(ElimateGVNPhi);
+        // llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
         
         for(int i = 0;i < 5;++i){
