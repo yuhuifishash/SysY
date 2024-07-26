@@ -1,0 +1,44 @@
+// test correctness of loop optimize
+// be careful with input data since it may causes undefined behavior
+
+int min(int a,int b){
+    if(a<b){
+        return a;
+    }else{
+        return b;
+    }
+}
+
+int f(int x){
+    int t1 = min(x,2147483647-x);
+    int t2 = min(t1,1073741823-t1);
+    int t3 = min(t2,536870912-t2);
+    return (t3+t3*3/1000*1001)%19491001;
+}
+
+const int mod = 998244853;
+
+int loop_test(int s,int t,int d){
+    int sum = 0;
+    int x = s;
+while (x < t) { 
+        sum = (sum + f(x)) % mod;
+        x =x+ d; 
+    }
+    return sum;
+}
+
+int main(){
+    int T = getint();
+    starttime();
+    while(T){
+        int s = getint();
+        int t = getint();
+        int d = getint();
+        putint(loop_test(s,t,d));
+        putch(10);
+        T = T-1;
+    }
+    stoptime();
+    return 0;
+}

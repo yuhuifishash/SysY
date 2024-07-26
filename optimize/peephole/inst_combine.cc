@@ -78,7 +78,6 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
 // c1 and c2 is const
 // %r = (a + c1) + c2  ->  %r = a + (c1 + c2)
 // a must be i32
-// (c1 + c2) can not overflow
 bool EliminateDoubleI32Add(Instruction a, Instruction b) {
     if (a->GetOpcode() != ADD || b->GetOpcode() != ADD) {
         return false;
