@@ -84,7 +84,7 @@ void OnlyBasicBlockCSE(CFG *C);
 void LoopFusion(CFG *C);
 void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
-void GlobalValueNumber(CFG *C);
+void ElimateGVNPhi(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(BranchCSE);
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(GlobalValueNumber);
+        llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);
