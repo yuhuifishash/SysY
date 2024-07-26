@@ -162,13 +162,6 @@ void ElimateGVNPhi(CFG *C){
     }
     C->BuildCFG();
     C->BuildDominatorTree();
-    // std::cerr<<"DONE\n";
     SparseConditionalConstantPropagation(C);
     SimplifyCFG(C);
-    // for (auto [id, bb] : *uCFG->block_map) {
-    //     for (auto I : bb->Instruction_list) {
-    //         I->SetBlockID(id);
-    //     }
-    // }
-
 }

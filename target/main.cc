@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(BranchCSE);
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ElimateGVNPhi);
+        // llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);
