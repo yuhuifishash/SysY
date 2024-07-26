@@ -326,22 +326,26 @@ static bool LoopFusion(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
 }
 
 void LoopFusion(CFG *C) {
-
-    bool is_fused= false;
-    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
-                                                                             NaturalLoop *L) {
-        for (auto lv : loop_forest.loopG[L->loop_id]) {
-            dfs(C, loop_forest, lv);
-        }
-        if (is_fused == true) {
-            return;
-        }
-    };
-
-
+    std::set<NaturalLoop*> LoopFuseSet;
     for (auto l1 : C->LoopForest.loop_set) {
+        if(C->LoopForest.loopG[l1->loop_id].size() != 0){
+            continue;
+        }
+        if(LoopFuseSet.find(l1) != LoopFuseSet.end()){
+            continue;
+        }
         for (auto l2 : C->LoopForest.loop_set) {
-            LoopFusion(C,l1,l2);
+            if(C->LoopForest.loopG[l2->loop_id].size() != 0){
+                continue;
+            }
+            if(LoopFuseSet.find(l2) != LoopFuseSet.end()){
+                continue;
+            }
+            if(LoopFusion(C,l1,l2)){
+                LoopFuseSet.insert(l1);
+                LoopFuseSet.insert(l2);
+            }
+            
         }
     }
     C->BuildCFG();
