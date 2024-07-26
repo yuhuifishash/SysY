@@ -1,4 +1,5 @@
 #include "hash_table.h"
+#include <deque>
 
 void SparseConditionalConstantPropagation(CFG *C);
 // void InstSimplify(CFG *C);
@@ -118,56 +119,74 @@ void ElimateGVNPhi(CFG *C){
         DFS1(0);
         for (auto [id, bb] : *C->block_map) {
             // bb->printIR(std::cerr);
+            bool existElimate = 0;
             for (auto &I : bb->Instruction_list) {
-                if(I->GetOpcode() == PHI){
-                    auto PhiI = (PhiInstruction*)I;
-                    bool CanElimate = 1;
-                    auto FstOp = PhiI->GetPhiList().front().second;
-                    if(FstOp->GetOperandType() !=BasicOperand::REG){
-                        continue;
-                    }
+                if(I->GetOpcode() != PHI){
+                    break;
+                }
+                auto PhiI = (PhiInstruction*)I;
+                bool CanElimate = 1;
+                auto FstOp = PhiI->GetPhiList().front().second;
+                if(FstOp->GetOperandType() !=BasicOperand::REG){
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                auto FstValue = hashtable.resultmap[((RegOperand*)FstOp)->GetRegNo()];
+                for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
                     // I->PrintIR(std::cerr);
-                    auto FstValue = hashtable.resultmap[((RegOperand*)FstOp)->GetRegNo()];
-                    for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
-                        // I->PrintIR(std::cerr);
-                        if(Regop->GetOperandType() !=BasicOperand::REG){
-                            CanElimate = 0;
-                            break;
-                        }
-                        auto OpValue = hashtable.resultmap[((RegOperand*)Regop)->GetRegNo()];
-                        if(OpValue != FstValue){
-                            CanElimate = 0;
-                            break;
-                        }
-                        // std::cerr<<Labelop->GetFullName()<<" "<<
-                        //     Regop->GetFullName()<<" "<<(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo())==hashtable.definemap.end())<<'\n';
-                        // std::cerr<<Labelop->GetFullName()<<" "<<Regop->GetFullName()<<'\n';
-                        // defI->PrintIR(std::cerr);
-                        if(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo()) == hashtable.definemap.end() 
-                            || hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD){
-                            CanElimate = 0;
-                            break;
-                        }
-                        
-                        // I->PrintIR(std::cerr);
+                    if(Regop->GetOperandType() !=BasicOperand::REG){
+                        CanElimate = 0;
+                        break;
+                    }
+                    auto OpValue = hashtable.resultmap[((RegOperand*)Regop)->GetRegNo()];
+                    if(OpValue != FstValue){
+                        CanElimate = 0;
+                        break;
+                    }
+                    // std::cerr<<Labelop->GetFullName()<<" "<<
+                    //     Regop->GetFullName()<<" "<<(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo())==hashtable.definemap.end())<<'\n';
+                    // std::cerr<<Labelop->GetFullName()<<" "<<Regop->GetFullName()<<'\n';
+                    // defI->PrintIR(std::cerr);
+                    if(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo()) == hashtable.definemap.end() 
+                        || hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD){
+                        CanElimate = 0;
+                        break;
                     }
                     
-                    if(CanElimate){
-                        auto resultOp = (RegOperand*)PhiI->GetResultReg();
-                        // I->PrintIR(std::cerr);
-                        auto oldI = hashtable.definemap[((RegOperand*)FstOp)->GetRegNo()];
-                        oldI = (ArithmeticInstruction*)oldI;
-                        auto NoResultOp = oldI->GetNonResultOperands();
-                        if(NoResultOp.size() == 2){
-                            I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],PhiI->GetResultOp());
-                        }else{
-                            I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],NoResultOp[2],PhiI->GetResultOp());
-                        }
-                        Check = true;
-                        // I->PrintIR(std::cerr);
-                    }
+                    // I->PrintIR(std::cerr);
                 }
                 
+                if(CanElimate){
+                    existElimate = 1;
+                    auto resultOp = (RegOperand*)PhiI->GetResultReg();
+                    // I->PrintIR(std::cerr);
+                    auto oldI = hashtable.definemap[((RegOperand*)FstOp)->GetRegNo()];
+                    oldI = (ArithmeticInstruction*)oldI;
+                    auto NoResultOp = oldI->GetNonResultOperands();
+                    if(NoResultOp.size() == 2){
+                        I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],PhiI->GetResultOp());
+                    }else{
+                        I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],NoResultOp[2],PhiI->GetResultOp());
+                    }
+                    // I->PrintIR(std::cerr);
+                    Check = true;
+                }
+            }
+            if(existElimate){
+                std::queue<Instruction> phiq;
+                auto tmp_Instruction_list = bb->Instruction_list;
+                bb->Instruction_list.clear();
+                for (auto I : tmp_Instruction_list) {
+                    if(I->GetOpcode() == PHI){
+                        phiq.push(I);
+                    }else{
+                        bb->InsertInstruction(1, I);
+                    }
+                }
+                while(!phiq.empty()){
+                    bb->InsertInstruction(0, phiq.front());
+                    phiq.pop();
+                }
             }
             // bb->printIR(std::cerr);
         }

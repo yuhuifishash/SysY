@@ -133,10 +133,18 @@ void HashTable::defineDFS(CFG* C){
 }
 
 int HashTable::lookupOrAddReg(Operand op){
-    if(op == nullptr || op->GetOperandType() != BasicOperand::REG){
+    if(op == nullptr){
         return -1;
     }
     auto opstr = op->GetFullName();
+    if(op->GetOperandType() != BasicOperand::REG){
+        if(valuemap.find(opstr) == valuemap.end()){
+            valuemap[opstr] = ++expr_number;
+            stringmap[expr_number] = opstr;
+            return expr_number;
+        }
+        return valuemap[opstr];
+    }
     auto RegOp = (RegOperand*)op;
     auto RegNo = RegOp->GetRegNo();
     if(valuemap.find(opstr) == valuemap.end() && resultmap.find(RegNo) == resultmap.end()){
