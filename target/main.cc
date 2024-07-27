@@ -289,6 +289,7 @@ int main(int argc, char **argv) {
         //     llvmIR.PassExecutor(SimpleAliasAnalysis);
         //     llvmIR.PassExecutor(SimpleCSE);
         //     llvmIR.PassExecutor(SimpleDSE);
+        //     llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         // #endif
 
         #ifdef AggressiveOptimize
