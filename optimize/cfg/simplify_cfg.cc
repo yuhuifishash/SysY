@@ -132,10 +132,15 @@ void MinMaxRecognize(CFG *C) {
                 }
                 
                 if(IcmpOp1->GetFullName() != PhiOp1->GetFullName() || IcmpOp2->GetFullName() != PhiOp2->GetFullName()){
+                    // std::cerr<<IcmpOp1->GetFullName()<<" "<<PhiOp1->GetFullName()<<'\n';
+                    // std::cerr<<IcmpOp2->GetFullName()<<" "<<PhiOp2->GetFullName()<<'\n';
                     continue;
                 }
                 
-                if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    ismin^=1;
+                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
                     || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
                     continue;
                 }
@@ -156,7 +161,7 @@ void MinMaxRecognize(CFG *C) {
                 }
                 // I->PrintIR(std::cerr);
             }else{
-                
+                // I->PrintIR(std::cerr);
                 auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
                 bool ismin = 1;
                 auto cmpcond = FcmpI->GetCompareCondition();
@@ -179,16 +184,20 @@ void MinMaxRecognize(CFG *C) {
                     std::swap(PhiL1,PhiL2);
                     ismin^=1;
                 }
-                
+                // I->PrintIR(std::cerr);
                 if(FcmpOp1->GetFullName() != PhiOp1->GetFullName() || FcmpOp2->GetFullName() != PhiOp2->GetFullName()){
                     continue;
                 }
-                
-                if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                // I->PrintIR(std::cerr);
+                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    ismin^=1;
+                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
                     || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    // std::cerr<<id<<" "<<((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()<<'\n';
                     continue;
                 }
-                
+                // I->PrintIR(std::cerr);
                 if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
                     || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
                     continue;
