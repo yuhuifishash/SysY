@@ -390,7 +390,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         I->ReplaceRegByMap(RemainRegReplaceMap);
     }
 
-    //exiting: i < n -> i+4 < n
+    //exiting: i < n -> i < n - 4
     auto exitingI = *(old_exiting->Instruction_list.end() - 2);
     assert(exitingI->GetOpcode() == ICMP);
     auto IcmpI = (IcmpInstruction*)exitingI;
@@ -398,13 +398,13 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
     assert(scev1 != nullptr && scev2 != nullptr);
     if(scev1->len == 2 && scev2->len == 1){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
-        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
-        IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
-    }else if(scev1->len == 1 && scev2->len == 2){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
+        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
+    }else if(scev1->len == 1 && scev2->len == 2){
+        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
+        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
+        IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
     }else{
         assert(false);
     }

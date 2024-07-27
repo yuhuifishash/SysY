@@ -291,6 +291,12 @@ void BasicBlockCSE(CFG *C) {
                 bb->InsertInstruction(1, I);
             }
         }
+
+        for(auto &[o_id,n_id]:reg_replace_map){
+            while (reg_replace_map.find(n_id) != reg_replace_map.end()) {
+                n_id = reg_replace_map[n_id];
+            }
+        }
         for (auto [id, bb] : *C->block_map) {
             for (auto I : bb->Instruction_list) {
                 I->ReplaceRegByMap(reg_replace_map);
@@ -484,6 +490,5 @@ void OnlyBasicBlockCSE(CFG *C) {
             I->SetBlockID(id);
         }
     }
-
     BasicBlockCSE(C);
 }

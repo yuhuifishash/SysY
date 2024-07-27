@@ -211,7 +211,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ElimateGVNPhi);
+        // llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);
@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
-        llvmIR.PassExecutor(ElimateGVNPhi);
+        // llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
         
         for(int i = 0;i < 5;++i){
