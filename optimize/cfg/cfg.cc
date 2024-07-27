@@ -51,15 +51,30 @@ void LLVMIR::ElimateUnreachedInstructionAndBlocks() {
                 }
             }
         }
+        std::set<int> deadbb_set;
         std::queue<int> deadblocks;
         for (auto id_block_pair : blocks) {
             if (reachable[id_block_pair.first] == 0) {
                 deadblocks.push(id_block_pair.first);
+                deadbb_set.insert(id_block_pair.first);
             }
         }
         while (!deadblocks.empty()) {
             blocks.erase(deadblocks.front());
             deadblocks.pop();
+        }
+
+        for(auto [id,bb]:blocks){
+            for(auto I:bb->Instruction_list){
+                if(I->GetOpcode() == PHI){
+                    auto PhiI = (PhiInstruction*)I;
+                    for(auto bbid:deadbb_set){
+                        PhiI->ErasePhi(bbid);
+                    }
+                }else{
+                    break;
+                }
+            }
         }
     }
 }
