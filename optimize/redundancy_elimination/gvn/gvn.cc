@@ -148,7 +148,8 @@ void ElimateGVNPhi(CFG *C){
                     // std::cerr<<Labelop->GetFullName()<<" "<<Regop->GetFullName()<<'\n';
                     // defI->PrintIR(std::cerr);
                     if(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo()) == hashtable.definemap.end() 
-                        || hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD){
+                        || (hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD
+                        && hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != FADD)){
                         CanElimate = 0;
                         break;
                     }

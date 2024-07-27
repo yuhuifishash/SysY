@@ -85,6 +85,7 @@ void LoopFusion(CFG *C);
 void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
 void ElimateGVNPhi(CFG *C);
+void MinMaxRecognize(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -170,6 +171,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
+        // llvmIR.PassExecutor(MinMaxRecognize); //TODO()
 
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
@@ -206,7 +208,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(BranchCSE);
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(ElimateGVNPhi);
+        llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
 
         llvmIR.PassExecutor(SimplifyCFG);
@@ -247,7 +249,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
 
-        // llvmIR.PassExecutor(ElimateGVNPhi);
+        llvmIR.PassExecutor(ElimateGVNPhi);
         // TODO():GVN/GCM
         
         for(int i = 0;i < 5;++i){
