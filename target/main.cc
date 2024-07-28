@@ -273,7 +273,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildDominatorTree();
 
         #ifdef AggressiveOptimize
-            for(int i = 0;i < 5; ++i){
+            for(int i = 0;i < 4; ++i){
                 llvmIR.BuildLoopInfo();
                 llvmIR.PassExecutor(LoopSimplify);
                 llvmIR.PassExecutor(SparseConditionalConstantPropagation);
