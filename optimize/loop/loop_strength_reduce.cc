@@ -453,3 +453,38 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
 
     then %r2 is dead, we can eliminate it by ADCE
 */
+
+
+
+/*
+L4: (preheader)
+    something
+L1: (header)
+    %r25 = phi i32 [0,%L4],[%r251,%L1]
+    %r24 = phi i32 [0,%L4],[%r252,%L1]
+    ......
+    %r251 = add i32 %r25,4
+    %r252 = add i32 %r24,4 
+
+then %r25 and %r24 are same 
+*/
+void LoopIndVarSimplify(CFG* C)
+{
+    for(auto l:C->LoopForest.loop_set){
+        auto header = l->header;
+        assert(l->latches.size() == 1);
+        auto latch = *l->latches.begin();
+
+        for(auto I:header->Instruction_list){
+            if(I->GetOpcode() == PHI){
+                auto PhiI = (PhiInstruction*)I;
+                auto preheader_val = PhiI->GetValOperand(l->preheader->block_id);
+                auto latch_val = PhiI->GetValOperand(latch->block_id);
+
+
+            }else{
+                break;
+            }
+        }
+    }
+}

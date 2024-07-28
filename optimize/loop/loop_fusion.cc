@@ -45,8 +45,51 @@ static bool LoopSameIterationsCheck(NaturalLoop *L1, NaturalLoop *L2) {
 }
 
 // I1 and I2 must be GEP
-static bool LoopAntiDepSingleInstCheck(NaturalLoop *L1, NaturalLoop *L2, Instruction *I1, Instruction *I2) {
-    return false;
+static bool LoopDepSingleInstCheck(NaturalLoop *L1, NaturalLoop *L2, Instruction I1, Instruction I2) {
+    assert(I1->GetOpcode() == GETELEMENTPTR);
+    assert(I2->GetOpcode() == GETELEMENTPTR);
+
+    auto GEPI1 = (GetElementptrInstruction *)I1;
+    auto GEPI2 = (GetElementptrInstruction *)I2;
+
+    auto L1scev = L1->scev;
+    auto L2scev = L2->scev;
+
+    auto ptr1 = GEPI1->GetPtrVal(), ptr2 = GEPI2->GetPtrVal();
+    if (ptr1 != ptr2) {
+        return true;
+    }
+    auto idxes1 = GEPI1->GetIndexes();
+    auto idxes2 = GEPI2->GetIndexes();
+    if (idxes1.size() != idxes2.size()) {
+        return true;
+    }
+    for (int i = 0; i < idxes1.size(); ++i) {
+        auto idx1 = idxes1[i];
+        auto idx2 = idxes2[i];
+        if (idx1->GetOperandType() == BasicOperand::REG && idx2->GetOperandType() == BasicOperand::REG) {
+            auto r1 = ((RegOperand *)idx1)->GetRegNo();
+            auto r2 = ((RegOperand *)idx2)->GetRegNo();
+            if (L1scev.SCEVMap.find(r1) == L1scev.SCEVMap.end()) {
+                continue;
+            }
+            if (L2scev.SCEVMap.find(r2) == L2scev.SCEVMap.end()) {
+                continue;
+            }
+            auto scev1 = L1scev.SCEVMap[r1];
+            auto scev2 = L2scev.SCEVMap[r2];
+
+            if (scev1->len != 2 || scev2->len != 2) {
+                continue;
+            }
+            auto step1 = scev1->RecurExpr->st, step2 = scev2->RecurExpr->st;
+            auto st1 = scev1->st, st2 = scev2->st;
+            if (st1 == st2 && step1 == step2) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 static bool LoopFusionSpecialCaseCheck(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
@@ -185,16 +228,91 @@ static bool LoopAntiDependencyCheck(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
         return false;
     }
 
-    // first we check some simple case
+    // first we check some simple special case
     if(LoopFusionSpecialCaseCheck(C,L1,L2)){
         return true;
     }
 
     // only fuse none-dependency loop L1 and L2 (for LoopParallel in next pass)
     // actually, none-Anti-dependency loop L1 and L2 can also be fused
-    
+    std::map<int, Instruction> ResultMap;
+    std::vector<StoreInstruction*> StoreList1;
+    std::vector<LoadInstruction*> LoadList1;
+    std::vector<StoreInstruction*> StoreList2;
+    std::vector<LoadInstruction*> LoadList2;
 
-    return false; 
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            int v = I->GetResultRegNo();
+            if (v != -1) {    // result exists
+                ResultMap[v] = I;
+            }
+        }
+    }
+
+    for (auto n : L1->loop_nodes) {
+        for (auto I : n->Instruction_list) {
+            if (I->GetOpcode() == LOAD) {
+                LoadList1.push_back((LoadInstruction *)I);
+            } else if (I->GetOpcode() == STORE) {
+                StoreList1.push_back((StoreInstruction *)I);
+            } else if (I->GetOpcode() == CALL) {
+                return false;
+            }
+        }
+    }
+    for (auto n : L2->loop_nodes) {
+        for (auto I : n->Instruction_list) {
+            if (I->GetOpcode() == LOAD) {
+                LoadList2.push_back((LoadInstruction *)I);
+            } else if (I->GetOpcode() == STORE) {
+                StoreList2.push_back((StoreInstruction *)I);
+            } else if (I->GetOpcode() == CALL) {
+                return false;
+            }
+        }
+    }
+
+    for (auto LoadI : LoadList1) {
+        for (auto StoreI : StoreList2) {
+            auto ptr1 = LoadI->GetPointer();
+            auto ptr2 = StoreI->GetPointer();
+            if (alias_analyser->QueryAlias(ptr1, ptr2, C) != AliasAnalyser::NoAlias) {
+                // std::cerr<<ptr1<<" "<<ptr2<<"\n";
+                // alias, may generate dependency
+                if (ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                    return false;
+                }
+                auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
+                auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
+                if(LoopDepSingleInstCheck(L1, L2, GEPI1, GEPI2)){
+                    return false;
+                };
+
+            }
+        }
+    }
+
+    for (auto LoadI : LoadList2) {
+        for (auto StoreI : StoreList1) {
+            auto ptr1 = LoadI->GetPointer();
+            auto ptr2 = StoreI->GetPointer();
+            if (alias_analyser->QueryAlias(ptr1, ptr2, C) != AliasAnalyser::NoAlias) {
+                // std::cerr<<ptr1<<" "<<ptr2<<"\n";
+                // alias, may generate dependency
+                if (ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                    return false;
+                }
+                auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
+                auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
+                if(LoopDepSingleInstCheck(L1, L2, GEPI2, GEPI1)){
+                    return false;
+                };
+            }
+        }
+    }
+
+    return true; 
 }
 
 
@@ -282,7 +400,7 @@ static bool LoopFusion(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
     }
 
     //now we can fuse the L1 and L2
-    std::cerr<<L1->header->block_id<<" "<<L2->header->block_id<<"\n";
+    // std::cerr<<L1->header->block_id<<" "<<L2->header->block_id<<"\n";
 
     // erase exiting1 -> latch1    erase latch2 -> header2
     // latch2 -> header1 (change phi's val)
@@ -326,16 +444,28 @@ static bool LoopFusion(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
 }
 
 void LoopFusion(CFG *C) {
+    std::map<NaturalLoop*, int> loop_depth_map;
+    std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
+                                                                             NaturalLoop *L) {
+        for (auto lv : loop_forest.loopG[L->loop_id]) {
+            dfs(C, loop_forest, lv);
+            loop_depth_map[lv] = loop_depth_map[L] + 1;
+        }
+    };
+
+    for (auto l : C->LoopForest.loop_set) {
+        if (l->fa_loop == nullptr) {
+            dfs(C, C->LoopForest, l);
+        }
+    }
+
     std::set<NaturalLoop*> LoopFuseSet;
     for (auto l1 : C->LoopForest.loop_set) {
-        if(C->LoopForest.loopG[l1->loop_id].size() != 0){
-            continue;
-        }
         if(LoopFuseSet.find(l1) != LoopFuseSet.end()){
             continue;
         }
         for (auto l2 : C->LoopForest.loop_set) {
-            if(C->LoopForest.loopG[l2->loop_id].size() != 0){
+            if(loop_depth_map[l1] != loop_depth_map[l2]){
                 continue;
             }
             if(LoopFuseSet.find(l2) != LoopFuseSet.end()){
