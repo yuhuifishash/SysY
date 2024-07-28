@@ -511,7 +511,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     }
     /* cond: 
         if(loop_depth < 4){
-            iterations >= max(20,2*10^6 / loop_instnumber / C (C is const))
+            iterations >= max(20,4*10^6 / loop_instnumber / C (C is const))
         }else{
             iterations >= 20
         }
