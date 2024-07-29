@@ -86,6 +86,7 @@ void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
 void ElimateGVNPhi(CFG *C);
 void MinMaxRecognize(CFG *C);
+void LatchPhiCombine(CFG* C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -188,6 +189,7 @@ int main(int argc, char **argv) {
 
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(LatchPhiCombine);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
