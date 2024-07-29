@@ -61,7 +61,7 @@ public:
         AND = 12,    // &&
         NOT = 13,    // !
     };
-    int line_number;
+    int line_number = -1;
     Type T;
     ConstValue V;
     std::string GetAttributeInfo();
