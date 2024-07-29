@@ -277,8 +277,8 @@ int main(int argc, char **argv) {
                 llvmIR.BuildLoopInfo();
                 llvmIR.PassExecutor(LoopSimplify);
                 llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-                llvmIR.PassExecutor(ScalarEvolution);
                 llvmIR.PassExecutor(LoopClosedSSA);
+                llvmIR.PassExecutor(ScalarEvolution);
                 llvmIR.PassExecutor(SimpleAliasAnalysis);
                 llvmIR.PassExecutor(LoopFusion);
                 llvmIR.PassExecutor(SimplifyCFG);

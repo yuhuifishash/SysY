@@ -78,7 +78,6 @@ static bool LoopDepSingleInstCheck(NaturalLoop *L1, NaturalLoop *L2, Instruction
             }
             auto scev1 = L1scev.SCEVMap[r1];
             auto scev2 = L2scev.SCEVMap[r2];
-
             if (scev1->len != 2 || scev2->len != 2) {
                 continue;
             }
@@ -312,6 +311,25 @@ static bool LoopAntiDependencyCheck(CFG* C, NaturalLoop *L1, NaturalLoop *L2) {
         }
     }
 
+    for (auto StoreI1 : StoreList1) {
+        for (auto StoreI2 : StoreList2) {
+            auto ptr1 = StoreI1->GetPointer();
+            auto ptr2 = StoreI2->GetPointer();
+            if (alias_analyser->QueryAlias(ptr1, ptr2, C) != AliasAnalyser::NoAlias) {
+                // std::cerr<<ptr1<<" "<<ptr2<<"\n";
+                // alias, may generate dependency
+                if (ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                    return false;
+                }
+                auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
+                auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
+                if(LoopDepSingleInstCheck(L1, L2, GEPI1, GEPI2)){
+                    return false;
+                };
+            }
+        }
+    }
+    
     return true; 
 }
 
