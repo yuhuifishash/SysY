@@ -87,6 +87,7 @@ void SimpleForLoopUnroll(CFG *C);
 void ElimateGVNPhi(CFG *C);
 void MinMaxRecognize(CFG *C);
 void LatchPhiCombine(CFG* C);
+void LoopIndVarSimplify(CFG* C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -332,7 +333,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor();
+        // llvmIR.PassExecutor(LoopIndVarSimplify);// TODO
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
     } else {
