@@ -1,0 +1,59 @@
+int B[100]={};
+int A[100][100]={};
+int p = 1234;
+int Sum()
+{
+    int i = 0;
+    int S = 0;
+    while(i < 100){
+        S = S + A[i][3];
+        i = i + 1;
+    }
+    return S;
+}
+
+void modify_p(){p = p + 3;}
+
+int main()
+{
+    int S = 0;
+    int i = 0, j = 0, k = 0, m = 0, q = 0;
+    while(i < 100){
+        j = 0;
+        k = 0;
+        m = 0;
+        while(j < 100){
+            A[i][j] = i*j*k*m*q%p;
+            j = j + 1;
+            k = k + 1;
+            m = m + 2;
+        }
+        i = i + 1;
+        q = q + 1;
+    }
+    i = 0;j = 0;
+    while(i < 100){
+        j = 0;
+        while(j < 100){
+            //calculate min{A[i][0],A[i][1],......,A[i][99]}
+            if(B[i] < A[i][j]){
+                B[i] = A[i][j];
+            }
+            modify_p();
+            S = S + Sum();
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    
+    i = 0;j = 0;
+    while(i < 100){
+        putint(B[i]);
+        putch(32);
+        i = i + 1;
+    }
+    putch(10);
+    putint(S);
+    putch(10);
+    return 0;
+}
