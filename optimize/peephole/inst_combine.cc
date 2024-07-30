@@ -70,7 +70,8 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
 
     bool changed = false;
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
-        // changed |= EliminateDoubleI32Add(*begin, *it);
+        // changed |= EliminateSubEq(*begin,*it);
+        // changed |= EliminateSubEq(*begin,*it);
     }
     return changed;
 }
@@ -125,9 +126,9 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 }
 
 // TODO():
-// %r = a*b + a  ->  %r = a*(b + 1)
-// %r = a*b + b  ->  %r = b*(a + 1)
-bool EliminateSameMulAdd(Instruction a, Instruction b) {
-    TODO("EliminateSameMulAdd");
+// %r = a / c1 / c2  ->  %r = a / (c1*c2)
+// c1*c2 can not overflow (range of int32_t)
+bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
+    TODO("EliminateDoubleConstDiv");
     return false;
 }

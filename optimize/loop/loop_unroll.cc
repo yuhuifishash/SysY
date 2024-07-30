@@ -84,11 +84,6 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     int inst_number = 0;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
-        for (auto I : bb->Instruction_list) {
-            if (I->GetOpcode() == CALL) {
-                return false;
-            }
-        }
     }
     if (iterations * inst_number > 1024) {
         return false;
