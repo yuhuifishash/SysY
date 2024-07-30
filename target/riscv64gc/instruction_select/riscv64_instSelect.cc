@@ -1684,7 +1684,7 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
     case FMUL:
     case FDIV:
     case MOD:
-    case XOR:
+    case BITXOR:
     case SHL:
     case LL_ADDMOD:
     case UMIN_I32:

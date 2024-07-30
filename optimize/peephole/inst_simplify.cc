@@ -1,4 +1,4 @@
-#include "../../include/cfg.h"
+#include "../../include/ir.h"
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -10,6 +10,37 @@ extern std::map<std::string, VarAttribute> StaticGlobalMap;
 // TODO():FindNoWriteStaticGlobal
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
 void FindNoWriteStaticGlobal(LLVMIR *IR) { TODO("FindNoWriteStaticGlobal"); }
+
+void EraseNoUseGlobal(LLVMIR *IR) {
+    std::set<std::string> GlobalUsedSet;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for(auto [id,bb]:*cfg->block_map) {
+            for(auto I:bb->Instruction_list){
+                auto ops = I->GetNonResultOperands();
+                for(auto op:ops){
+                    if(op->GetOperandType() == BasicOperand::GLOBAL){
+                        auto gop = (GlobalOperand*)op;
+                        GlobalUsedSet.insert(gop->GetName());
+                    }
+                }
+            }
+        }
+    }
+
+    for(auto it = IR->global_def.begin(); it != IR->global_def.end();){
+        auto I = *it;
+        if(I->GetOpcode() != GLOBAL_VAR){
+            continue;
+        }
+        auto gI = (GlobalVarDefineInstruction*)I;
+        if(GlobalUsedSet.find(gI->name) == GlobalUsedSet.end()){
+            it = IR->global_def.erase(it);
+            // gI->PrintIR(std::cerr);
+        }else{
+            ++it;
+        }
+    }
+}
 
 void GlobalConstReplace(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -159,7 +190,7 @@ void SrcEqResultInstEliminate(CFG *C) {
                 if(num != 0.0){
                     continue;
                 }
-                AddI->PrintIR(std::cerr);
+                // AddI->PrintIR(std::cerr);
                 Connect(AddI->GetResultReg(),AddI->GetOperand1());
                 EraseSet.insert(I);
             }

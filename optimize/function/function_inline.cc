@@ -152,7 +152,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             }
             auto newAddReg = GetNewRegOperand(++uCFG->max_reg);
             oldbb->InsertInstruction(
-            0, new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), formal.second, newAddReg));
+            0, new ArithmeticInstruction(ADD, I32, formal.second, new ImmI32Operand(0), newAddReg));
             while (!PhiISta.empty()) {
                 oldbb->InsertInstruction(0, PhiISta.top());
                 PhiISta.pop();
@@ -167,7 +167,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             }
             auto newAddReg = GetNewRegOperand(++uCFG->max_reg);
             oldbb->InsertInstruction(
-            0, new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0), formal.second, newAddReg));
+            0, new ArithmeticInstruction(FADD, FLOAT32, formal.second,new ImmF32Operand(0), newAddReg));
             while (!PhiISta.empty()) {
                 oldbb->InsertInstruction(0, PhiISta.top());
                 PhiISta.pop();
@@ -202,12 +202,12 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     EraseSet.clear();
     if (CallI->GetRetType() != VOID) {
         if (CallI->GetResultType() == I32) {
-            EndBB->InsertInstruction(1, new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0),
-                                                                  (ImmI32Operand *)NewResultOperand,
+            EndBB->InsertInstruction(1, new ArithmeticInstruction(ADD, I32, 
+                                                                  (ImmI32Operand *)NewResultOperand,new ImmI32Operand(0),
                                                                   CallI->GetResultReg()));
         } else {
-            EndBB->InsertInstruction(1, new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
-                                                                  (ImmF32Operand *)NewResultOperand,
+            EndBB->InsertInstruction(1, new ArithmeticInstruction(FADD, FLOAT32, 
+                                                                  (ImmF32Operand *)NewResultOperand,new ImmF32Operand(0),
                                                                   CallI->GetResultReg()));
         }
         fcallgraph.CGINum[uCFG]++;
@@ -246,8 +246,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     }
     label_replace_map.clear();
 }
-#define LeftInlineInstructionNum 50
-#define RightInlineInstructionNum
+
 bool IsInlineBetter(CFG *uCFG, CFG *vCFG) {
     bool flag3 = false;
     auto vFuncdef = vCFG->function_def->formals;
@@ -328,33 +327,33 @@ void InlineDFS(CFG *uCFG) {
         }
     }
 
-    // if (fcallgraph.CG.find(uCFG) != fcallgraph.CG.end() &&
-    //     fcallgraph.CGNum[uCFG].find(uCFG) != fcallgraph.CGNum[uCFG].end()) {
-    //     int i = 0;
-    //     while (IsInlineBetter(uCFG, uCFG)) {
-    //         is_reinline = true;
-    //         auto vCFG = CopyCFG(uCFG);
-    //         auto oldI = (CallInstruction *)fcallgraph.CGCallI[uCFG][uCFG][i];
-    //         auto CallI = (CallInstruction *)oldI->CopyInstruction();
-    //         CallI->SetFunctionName(vCFG->function_def->GetFunctionName());
-    //         CallI->SetBlockID(oldI->GetBlockID());
-    //         fcallgraph.CGCallI[uCFG][uCFG][i] = CallI;
-    //         oldI->SetFunctionName(vCFG->function_def->GetFunctionName());
-    //         auto block_map = uCFG->block_map;
-    //         auto oldbb = (*block_map)[oldI->GetBlockID()];
-    //         fcallgraph.CGCallI[uCFG][vCFG].push_back(oldI);
+    if (fcallgraph.CG.find(uCFG) != fcallgraph.CG.end() &&
+        fcallgraph.CGNum[uCFG].find(uCFG) != fcallgraph.CGNum[uCFG].end()) {
+        int i = 0;
+        while (IsInlineBetter(uCFG, uCFG)) {
+            is_reinline = true;
+            auto vCFG = CopyCFG(uCFG);
+            auto oldI = (CallInstruction *)fcallgraph.CGCallI[uCFG][uCFG][i];
+            auto CallI = (CallInstruction *)oldI->CopyInstruction();
+            CallI->SetFunctionName(vCFG->function_def->GetFunctionName());
+            CallI->SetBlockID(oldI->GetBlockID());
+            fcallgraph.CGCallI[uCFG][uCFG][i] = CallI;
+            oldI->SetFunctionName(vCFG->function_def->GetFunctionName());
+            auto block_map = uCFG->block_map;
+            auto oldbb = (*block_map)[oldI->GetBlockID()];
+            fcallgraph.CGCallI[uCFG][vCFG].push_back(oldI);
 
-    //         InlineCFG(uCFG, vCFG, 0);
+            InlineCFG(uCFG, vCFG, 0);
 
-    //         fcallgraph.CGINum[uCFG] += fcallgraph.CGINum[vCFG];
-    //         fcallgraph.CG[uCFG].pop_back();
-    //         fcallgraph.CGNum[uCFG][vCFG] = 0;
-    //         fcallgraph.CGCallI[uCFG][vCFG].pop_back();
-    //         uCFG->BuildCFG();
-    //         i++;
-    //     }
-    //     is_reinline = false;
-    // }
+            fcallgraph.CGINum[uCFG] += fcallgraph.CGINum[vCFG];
+            fcallgraph.CG[uCFG].pop_back();
+            fcallgraph.CGNum[uCFG][vCFG] = 0;
+            fcallgraph.CGCallI[uCFG][vCFG].pop_back();
+            uCFG->BuildCFG();
+            i++;
+        }
+        is_reinline = false;
+    }
 
     uCFG->BuildCFG();
     uCFG->BuildDominatorTree();

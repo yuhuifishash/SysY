@@ -201,6 +201,10 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
             lattice.vals.I32Val = std::max(op1_lattice_i32val, op2_lattice_i32val);
         } else if (opcode == SMIN_I32) {
             lattice.vals.I32Val = std::min(op1_lattice_i32val, op2_lattice_i32val);
+        } else if (opcode == BITXOR) {
+            lattice.vals.I32Val = op1_lattice_i32val ^ op2_lattice_i32val;
+        } else if (opcode == BITAND) {
+            lattice.vals.I32Val = op1_lattice_i32val & op2_lattice_i32val;
         } else {    // should not reach here
             assert(false);
         }
