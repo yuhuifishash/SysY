@@ -159,7 +159,7 @@ void SrcEqResultInstEliminate(CFG *C) {
                 if(num != 0.0){
                     continue;
                 }
-                AddI->PrintIR(std::cerr);
+                // AddI->PrintIR(std::cerr);
                 Connect(AddI->GetResultReg(),AddI->GetOperand1());
                 EraseSet.insert(I);
             }

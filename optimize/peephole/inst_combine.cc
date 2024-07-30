@@ -141,7 +141,10 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     %6 = and i32 %0, 1, !dbg !28
     %7 = icmp eq i32 %6, 0, !dbg !28
 
-we need to optimize ne and eq
+if(n%2 == 1)  
+if(n%2 == 0)
+if(n%2 != 1)
+if(n%2 != 0)
 */
 bool EliminateMod2EqNeCmp(Instruction a, Instruction b) {
     TODO("EliminateDoubleConstDiv");
