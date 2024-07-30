@@ -404,7 +404,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         assert(false);
     }
 
-    //add CondBlock   if(upperbound - lowerbound > 10){ do{}while(i+4 < n)}  remain_loop
+    //add CondBlock   if(upperbound - lowerbound >= 4){ do{}while(i+4 < n)}  remain_loop
     //CondBlock -> remain_header || npreheader
     LLVMBlock CondBlock = C->NewBlock();
     LLVMBlock npreheader = C->NewBlock();
@@ -415,7 +415,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto CondI1 = scev.forloop_info.lowerbound.GenerateValueInst(C);
     auto CondI2 = scev.forloop_info.upperbound.GenerateValueInst(C);
     auto CondI3 = new ArithmeticInstruction(SUB,I32,CondI2->GetResultReg(),CondI1->GetResultReg(),GetNewRegOperand(++C->max_reg));
-    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(10),sgt,GetNewRegOperand(++C->max_reg));
+    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(4),sge,GetNewRegOperand(++C->max_reg));
     auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(),GetNewLabelOperand(npreheader->block_id),GetNewLabelOperand(remain_header->block_id));
     CondBlock->InsertInstruction(1,CondI1);
     CondBlock->InsertInstruction(1,CondI2);
