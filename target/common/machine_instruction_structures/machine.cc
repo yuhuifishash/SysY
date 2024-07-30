@@ -388,6 +388,7 @@ void MachineNaturalLoopForest::BuildLoopForest() {
     block_it->open();
     while (block_it->hasNext()) {
         auto block = block_it->next()->Mblock;
+        block->loop_depth = 0;
         auto block_id = block->getLabelId();
         for (auto head_bb : C->GetSuccessorsByBlockId(block_id)) {    // bb->head_bb   backedge
             if (C->DomTree.IsDominate(head_bb->Mblock->getLabelId(), block_id)) {
