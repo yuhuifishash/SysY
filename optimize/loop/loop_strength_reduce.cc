@@ -576,9 +576,6 @@ void LoopIndVarSimplify(CFG* C)
                             }
                             
                         }
-                        // first operand : %r24 = %25 + 0
-                        // secI = new ArithmeticInstruction(ADD,I32,result_val1,new ImmI32Operand(0),result_val2);
-                        // second operand: %24 = phi i32 [0,%L4],[%r251,%L1](definition of %r25)
 
                         auto regno1 = ((RegOperand*)result_val1)->GetRegNo();
                         auto regno2 = ((RegOperand*)result_val2)->GetRegNo();
