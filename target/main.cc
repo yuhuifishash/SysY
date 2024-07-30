@@ -333,7 +333,13 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(LoopIndVarSimplify);// TODO
+
+        llvmIR.PassExecutor(LoopIndVarSimplify);
+        llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(SimpleCSE);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
     } else {

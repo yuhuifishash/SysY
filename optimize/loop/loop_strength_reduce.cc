@@ -470,9 +470,9 @@ then %r25 and %r24 are same
 */
 void LoopIndVarSimplify(CFG* C)
 {
-    std::map<int,Instruction> definemap;
+    std::map<int,Instruction> define_map;
     std::set<Instruction> EraseSet;
-    std::map<int,int> replacemap;
+    std::map<int,int> replace_map;
     for(auto [id,bb] : *C->block_map){
         for(auto I : bb->Instruction_list){
             if(I->GetOpcode() == ADD){
@@ -480,15 +480,14 @@ void LoopIndVarSimplify(CFG* C)
                 if(addI->GetDataType() != I32 && addI->GetOperand1()->GetOperandType() != BasicOperand::REG && addI->GetOperand2()->GetOperandType() != BasicOperand::IMMI32){
                     continue;
                 }
-                definemap[I->GetResultRegNo()] = addI;
+                define_map[I->GetResultRegNo()] = addI;
             }else if(I->GetOpcode() == GETELEMENTPTR){
                 auto gepI = (GetElementptrInstruction*)I;
                 auto ptr = gepI->GetPtrVal();
                 if(gepI->GetDims().size() != 0 || ptr->GetOperandType() != BasicOperand::REG){
                     continue;
                 }
-                definemap[I->GetResultRegNo()] = gepI;
-                // gepI->PrintIR(std::cerr);
+                define_map[I->GetResultRegNo()] = gepI;
             }
         }
     }
@@ -510,11 +509,11 @@ void LoopIndVarSimplify(CFG* C)
                 
                 auto latch_reg1 = (RegOperand*)latch_val1;
                 auto latch_regno1 = latch_reg1->GetRegNo();
-                if(definemap.find(latch_regno1) == definemap.end()){
+                if(define_map.find(latch_regno1) == define_map.end()){
                     continue;
                 }
                 
-                auto origin_latchI1 = definemap[latch_regno1];
+                auto origin_latchI1 = define_map[latch_regno1];
                 if(origin_latchI1->GetOpcode() == ADD){
                     if(((ArithmeticInstruction*)origin_latchI1)->GetOperand1()->GetFullName() != result_val1->GetFullName()){
                         continue;
@@ -525,8 +524,6 @@ void LoopIndVarSimplify(CFG* C)
                     }
                 }
                 
-                // PhiI1->PrintIR(std::cerr);
-                // latchI1->PrintIR(std::cerr);
                 bool start_flag = 0;
                 for(auto &secI:header->Instruction_list){
                     if(secI->GetOpcode() == PHI){
@@ -551,10 +548,10 @@ void LoopIndVarSimplify(CFG* C)
                         
                         auto latch_reg2 = (RegOperand*)latch_val2;
                         auto latch_regno2 = latch_reg2->GetRegNo();
-                        if(definemap.find(latch_regno2) == definemap.end()){
+                        if(define_map.find(latch_regno2) == define_map.end()){
                             continue;
                         }
-                        auto origin_latchI2 = definemap[latch_regno2];
+                        auto origin_latchI2 = define_map[latch_regno2];
                         if(origin_latchI2->GetOpcode() != origin_latchI1->GetOpcode()){
                             continue;
                         }
@@ -567,11 +564,6 @@ void LoopIndVarSimplify(CFG* C)
                             if(latchI1->GetOperand2()->GetFullName() != latchI2->GetOperand2()->GetFullName()){
                                 continue;
                             }
-                            // I->PrintIR(std::cerr);
-                            // secI->PrintIR(std::cerr);
-                            // latchI1->PrintIR(std::cerr);
-                            // latchI2->PrintIR(std::cerr);
-                            // puts("----------");
                         }else{
                             auto latchI1 = (GetElementptrInstruction*)origin_latchI1;
                             auto latchI2 = (GetElementptrInstruction*)origin_latchI2;
@@ -579,43 +571,25 @@ void LoopIndVarSimplify(CFG* C)
                             if(latchI2->GetPtrVal()->GetFullName() != result_val2->GetFullName()){
                                 continue;
                             }
-                            // I->PrintIR(std::cerr);
-                            // secI->PrintIR(std::cerr);
-                            // latchI1->PrintIR(std::cerr);
-                            // latchI2->PrintIR(std::cerr);
-                            // puts("----------");
                             if(latchI1->GetIndexes()[0]->GetFullName() != latchI2->GetIndexes()[0]->GetFullName()){
                                 continue;
                             }
                             
                         }
-                        
-                        // secI->PrintIR(std::cerr);
-                        // first option : %r24 = %25 + 0
+                        // first operand : %r24 = %25 + 0
                         // secI = new ArithmeticInstruction(ADD,I32,result_val1,new ImmI32Operand(0),result_val2);
-                        
-                        // second option: %24 = phi i32 [0,%L4],[%r251,%L1](definition of %r25)
-                        // auto vec = PhiI2->GetNonResultOperands();
-                        // vec.pop_back();
-                        // vec.push_back(PhiI1->GetNonResultOperands().back());
-                        // PhiI2->SetNonResultOperands(vec);
+                        // second operand: %24 = phi i32 [0,%L4],[%r251,%L1](definition of %r25)
 
-                        //replace
-                        // std::cerr<<result_val2->GetFullName()<<"->"<<result_val1->GetFullName()<<'\n';
                         auto regno1 = ((RegOperand*)result_val1)->GetRegNo();
                         auto regno2 = ((RegOperand*)result_val2)->GetRegNo();
-                        while(replacemap.find(regno1) != replacemap.end()){
-                            regno1 = replacemap[regno1];
+                        while(replace_map.find(regno1) != replace_map.end()){
+                            regno1 = replace_map[regno1];
                         }
-                        replacemap[regno2] = regno1;
-                        // std::cerr<<regno2<<" -> "<<regno1<<'\n';
-                        // secI->PrintIR(std::cerr);
-                        // puts("----------");
+                        replace_map[regno2] = regno1;
                     }else{
                         break;
                     }
                 }
-                // puts("-------------------------");
             }else{
                 break;
             }
@@ -623,14 +597,13 @@ void LoopIndVarSimplify(CFG* C)
     }
     for(auto [id,bb]:*C->block_map){
         for(auto &I:bb->Instruction_list){
-            // I->ReplaceRegByMap(replacemap);
             auto vec = I->GetNonResultOperands();
             for(auto &op : vec){
                 if(op->GetOperandType() == BasicOperand::REG){
                     auto reg = (RegOperand*)op;
                     auto regno = reg->GetRegNo();
-                    if(replacemap.find(regno) != replacemap.end()){
-                        op = GetNewRegOperand(regno);
+                    if(replace_map.find(regno) != replace_map.end()){
+                        op = GetNewRegOperand(replace_map[regno]);
                     }
                 }
             }
