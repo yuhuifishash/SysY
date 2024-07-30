@@ -103,7 +103,6 @@ void SrcEqResultInstEliminate(CFG *C) {
             return RegToFindNo;
         return UnionFindMap[RegToFindNo] = UnionFind(UnionFindMap[RegToFindNo]);
     };
-    const float eps = 1e-7;
     auto Connect = [&](Operand resultOp,Operand replaceOp) -> void{
         auto Reg1 = (RegOperand*)resultOp;
         auto Reg1no = Reg1->GetRegNo();
@@ -157,7 +156,7 @@ void SrcEqResultInstEliminate(CFG *C) {
                     continue;
                 }
                 auto num = ((ImmF32Operand*)op)->GetFloatVal();
-                if(num > eps || num < -eps){
+                if(num != 0.0){
                     continue;
                 }
                 AddI->PrintIR(std::cerr);
@@ -172,7 +171,7 @@ void SrcEqResultInstEliminate(CFG *C) {
                     continue;
                 }
                 auto num = ((ImmF32Operand*)op)->GetFloatVal();
-                if(num-1 > eps || num-1 < -eps){
+                if(num != 1.0){
                     continue;
                 }
                 // std::cerr<<num-1<<'\n';
