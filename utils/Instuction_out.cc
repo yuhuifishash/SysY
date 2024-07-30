@@ -88,8 +88,11 @@ std::ostream &operator<<(std::ostream &s, LLVMIROpcode type) {
     case MOD:
         s << "srem";
         break;
-    case XOR:
+    case BITXOR:
         s << "xor";
+        break;
+    case BITAND:
+        s << "and";
         break;
     case SHL:
         s << "shl";

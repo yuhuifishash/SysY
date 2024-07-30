@@ -13,7 +13,7 @@ static std::map<LLVMType,std::string> TypeMap={{I32,"i32"},{FLOAT32,"float32"},
 // enum LLVMType { I32 = 1, FLOAT32 = 2, PTR = 3, VOID = 4, I8 = 5, I1 = 6, I64 = 7, DOUBLE = 8 };
 static std::map<LLVMIROpcode,std::string> OpcodeMap={{OTHER , "other"},{LOAD , "load"},{STORE , "store"},{ADD , "add"},{SUB , "sub"},
 {ICMP , "icmp"},{PHI , "phi"},{ALLOCA , "alloca"},{MUL , "mul"},{DIV , "div"},{BR_COND , "br_cond"},{BR_UNCOND , "br_uncond"},{FADD , "fadd"},{FSUB , "fsub"},
-{FMUL , "fmul"},{FDIV , "fdiv"},{FCMP , "fcmp"},{MOD , "mod"},{XOR , "xor"},{RET , "ret"},{ZEXT , "zext"},{SHL , "shl"},{FPTOSI , "fptosi"},
+{FMUL , "fmul"},{FDIV , "fdiv"},{FCMP , "fcmp"},{MOD , "mod"},{BITXOR , "xor"},{RET , "ret"},{ZEXT , "zext"},{SHL , "shl"},{FPTOSI , "fptosi"},
 {GETELEMENTPTR , "getelementptr"},{CALL , "call"},{SITOFP , "sitofp"},{GLOBAL_VAR , "global_var"},{GLOBAL_STR , "global_str"},{LL_ADDMOD , "ll_addmod"},{UMIN_I32 , "umin"},
 {UMAX_I32 , "umax"},{SMIN_I32 , "smin"},{SMAX_I32 , "smax"}};
 
