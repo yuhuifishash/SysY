@@ -246,8 +246,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     }
     label_replace_map.clear();
 }
-#define LeftInlineInstructionNum 50
-#define RightInlineInstructionNum
+
 bool IsInlineBetter(CFG *uCFG, CFG *vCFG) {
     bool flag3 = false;
     auto vFuncdef = vCFG->function_def->formals;
