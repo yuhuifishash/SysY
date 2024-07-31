@@ -10,6 +10,8 @@ private:
     Register GetllvmReg(int, MachineDataType);
     Register GetNewReg(MachineDataType, bool save_across_call = false);
     Register ExtractOp2Reg(BasicOperand*, MachineDataType);
+    int ExtractOp2ImmI32(BasicOperand*);
+    int ExtractOp2ImmF32(BasicOperand*);
 
     // struct LastCmpInfo{
     //     Register cmp_result,cmp_op1,cmp_op2;

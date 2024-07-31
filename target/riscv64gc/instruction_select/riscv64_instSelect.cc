@@ -203,6 +203,16 @@ Register RiscV64Selector::ExtractOp2Reg (BasicOperand* op, MachineDataType type)
     return Register();
 }
 
+int RiscV64Selector::ExtractOp2ImmI32 (BasicOperand* op) {
+    Assert(op->GetOperandType() == BasicOperand::IMMI32);
+    return ((ImmI32Operand *)op)->GetIntImmVal();
+}
+
+int RiscV64Selector::ExtractOp2ImmF32 (BasicOperand* op) {
+    Assert(op->GetOperandType() == BasicOperand::IMMF32);
+    return ((ImmF32Operand *)op)->GetFloatVal();
+}
+
 template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(ArithmeticInstruction *ins) {
     if (ins->GetOpcode() == ADD) {
         if (ins->GetDataType() == I32) {
@@ -806,6 +816,32 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             Register max2 = ExtractOp2Reg(ins->GetOperand2(), FLOAT64);
             auto max_instr = rvconstructor->ConstructR(RISCV_FMAX_S, rd, max1, max2);
             cur_block->push_back(max_instr);
+        }
+    } else if (ins->GetOpcode() == BITAND) {
+        Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
+        if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 && ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            int imm1 = ExtractOp2ImmI32(ins->GetOperand1());
+            int imm2 = ExtractOp2ImmI32(ins->GetOperand2());
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(rd, imm1 & imm2, INT64));
+        } else if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 || ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            int imm = ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 ? ExtractOp2ImmI32(ins->GetOperand1()) : ExtractOp2ImmI32(ins->GetOperand2());
+            Register rs = ins->GetOperand1()->GetOperandType() == BasicOperand::REG ? ExtractOp2Reg(ins->GetOperand1(), INT64) : ExtractOp2Reg(ins->GetOperand2(), INT64);
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ANDI, rd, rs, imm));
+        } else {
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_AND, rd, ExtractOp2Reg(ins->GetOperand1(), INT64), ExtractOp2Reg(ins->GetOperand2(), INT64)));
+        }
+    } else if (ins->GetOpcode() == BITXOR) {
+        Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
+        if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 && ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            int imm1 = ExtractOp2ImmI32(ins->GetOperand1());
+            int imm2 = ExtractOp2ImmI32(ins->GetOperand2());
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(rd, imm1 ^ imm2, INT64));
+        } else if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 || ins->GetOperand2()->GetOperandType() == BasicOperand::IMMI32) {
+            int imm = ins->GetOperand1()->GetOperandType() == BasicOperand::IMMI32 ? ExtractOp2ImmI32(ins->GetOperand1()) : ExtractOp2ImmI32(ins->GetOperand2());
+            Register rs = ins->GetOperand1()->GetOperandType() == BasicOperand::REG ? ExtractOp2Reg(ins->GetOperand1(), INT64) : ExtractOp2Reg(ins->GetOperand2(), INT64);
+            cur_block->push_back(rvconstructor->ConstructIImm(RISCV_XORI, rd, rs, imm));
+        } else {
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_XOR, rd, ExtractOp2Reg(ins->GetOperand1(), INT64), ExtractOp2Reg(ins->GetOperand2(), INT64)));
         }
     } else {
         Log("RV InstSelect For Opcode %d", ins->GetOpcode());
@@ -1793,13 +1829,16 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
     case FMUL:
     case FDIV:
     case MOD:
-    case BITXOR:
     case SHL:
     case LL_ADDMOD:
     case UMIN_I32:
     case UMAX_I32:
     case SMIN_I32:
     case SMAX_I32:
+    case FMIN_F32:
+    case FMAX_F32:
+    case BITAND:
+    case BITXOR:
         ConvertAndAppend<ArithmeticInstruction *>((ArithmeticInstruction *)inst);
         break;
     case ICMP:
