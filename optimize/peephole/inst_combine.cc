@@ -74,7 +74,7 @@ bool ApplyCombineRules(CFG* C, std::deque<Instruction> &InstList, std::deque<Ins
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
         // changed |= EliminateSubEq(*begin,*it);
         changed |= EliminateDoubleConstDiv(*begin,*it);
-        // changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
+        changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
     }
     return changed;
 }
@@ -220,10 +220,10 @@ bool EliminateMod2EqNeCmp(CFG* C, Instruction a, Instruction b, std::deque<Instr
     auto newandI = new ArithmeticInstruction(BITAND,I32,modIop1,new ImmI32Operand(1),newop);
     InstList.insert(insertit,newandI);
     icmpI->SetOp1(newop);
-    a->PrintIR(std::cerr);
-    newandI->PrintIR(std::cerr);
-    b->PrintIR(std::cerr);
-    puts("-----------");
+    // a->PrintIR(std::cerr);
+    // newandI->PrintIR(std::cerr);
+    // b->PrintIR(std::cerr);
+    // puts("-----------");
     // auto bb = 
     return true;
 }
