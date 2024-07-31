@@ -214,6 +214,10 @@ void MinMaxRecognize(CFG *C) {
     }
 }
 
+void ArrayMinMaxRecognize(CFG *C) {
+
+}
+
 
 
 /**
