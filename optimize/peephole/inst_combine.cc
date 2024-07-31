@@ -1,10 +1,11 @@
 #include "../../include/cfg.h"
 #include <functional>
 
-bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin);
+bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin);
 bool EliminateDoubleI32Add(Instruction a, Instruction b);
 bool EliminateSubEq(Instruction a, Instruction b);
 bool EliminateDoubleConstDiv(Instruction a, Instruction b);
+bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator insertit);
 void DomTreeDfsI32AddCombine(CFG *C);
 
 void InstCombine(CFG *C) {
@@ -18,7 +19,7 @@ void InstCombine(CFG *C) {
         while (changed) {
             changed = false;
             for (auto it = bb->Instruction_list.begin(); it != bb->Instruction_list.end(); ++it) {
-                changed |= ApplyCombineRules(bb->Instruction_list, it);
+                changed |= ApplyCombineRules(C, bb->Instruction_list, it);
             }
         }
     }
@@ -65,7 +66,7 @@ void DomTreeDfsI32AddCombine(CFG *C) {
     }
 }
 
-bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin) {
+bool ApplyCombineRules(CFG* C, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin) {
     int win_size = 4;
     int cnt = 0;
 
@@ -73,6 +74,7 @@ bool ApplyCombineRules(std::deque<Instruction> &InstList, std::deque<Instruction
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
         // changed |= EliminateSubEq(*begin,*it);
         changed |= EliminateDoubleConstDiv(*begin,*it);
+        // changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
     }
     return changed;
 }
@@ -184,7 +186,44 @@ if(n%2 == 0)
 if(n%2 != 1)
 if(n%2 != 0)
 */
-bool EliminateMod2EqNeCmp(Instruction a, Instruction b) {
-    TODO("EliminateDoubleConstDiv");
-    return false;
+bool EliminateMod2EqNeCmp(CFG* C, Instruction a, Instruction b, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator insertit) {
+    // TODO("EliminateDoubleConstDiv");
+    if(a->GetOpcode() != MOD || b->GetOpcode() != ICMP){
+        return false;
+    }
+    auto modI = (ArithmeticInstruction*)a;
+    auto icmpI = (IcmpInstruction*)b;
+    if(icmpI->GetCompareCondition() != eq && icmpI->GetCompareCondition() != ne){
+        return false;
+    }
+    auto modIresult = modI->GetResultOperand();
+    auto modIop1 = modI->GetOperand1();
+    auto modIop2 = modI->GetOperand2();
+    auto icmpIresult = icmpI->GetResult();
+    auto icmpIop1 = icmpI->GetOp1();
+    auto icmpIop2 = icmpI->GetOp2();
+    if(modIresult->GetFullName()!=icmpIop1->GetFullName()){
+        return false;
+    }
+    if(modIop2->GetOperandType() != BasicOperand::IMMI32 || icmpIop2->GetOperandType() != BasicOperand::IMMI32){
+        return false;
+    }
+    auto modInum = ((ImmI32Operand*)modIop2)->GetIntImmVal();
+    auto icmpInum = ((ImmI32Operand*)icmpIop2)->GetIntImmVal();
+    if(modInum != 2){
+        return false;
+    }
+    if(icmpInum != 0 && icmpInum != 1){
+        return false;
+    }
+    auto newop = GetNewRegOperand(++C->max_reg);
+    auto newandI = new ArithmeticInstruction(BITAND,I32,modIop1,new ImmI32Operand(1),newop);
+    InstList.insert(insertit,newandI);
+    icmpI->SetOp1(newop);
+    a->PrintIR(std::cerr);
+    newandI->PrintIR(std::cerr);
+    b->PrintIR(std::cerr);
+    puts("-----------");
+    // auto bb = 
+    return true;
 }
