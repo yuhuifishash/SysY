@@ -128,6 +128,26 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
             }
         }
     }
+
+    for (auto StoreI1 : StoreList) {
+        for (auto StoreI2 : StoreList) {
+            auto ptr1 = StoreI1->GetPointer();
+            auto ptr2 = StoreI2->GetPointer();
+            if (alias_analyser->QueryAlias(ptr1, ptr2, C) != AliasAnalyser::NoAlias) {
+                // std::cerr<<ptr1<<" "<<ptr2<<"\n";
+                // alias, may generate dependency
+                if (ptr1->GetOperandType() == BasicOperand::GLOBAL || ptr2->GetOperandType() == BasicOperand::GLOBAL) {
+                    return false;
+                }
+                auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
+                auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
+                auto result = CheckDependenceResult(GEPI1, GEPI2);
+                if (result != NONE) {
+                    return false;
+                }
+            }
+        }
+    }
     return true;
 }
 
@@ -511,7 +531,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR* IR) {
     }
     /* cond: 
         if(loop_depth < 4){
-            iterations >= max(20,2*10^6 / loop_instnumber / C (C is const))
+            iterations >= max(20,4*10^6 / loop_instnumber / C (C is const))
         }else{
             iterations >= 20
         }

@@ -1,7 +1,5 @@
 #include "hash_table.h"
-#include "../../../include/ir.h"
-
-#include <functional>
+#include <deque>
 
 void SparseConditionalConstantPropagation(CFG *C);
 // void InstSimplify(CFG *C);
@@ -12,24 +10,9 @@ HashTable hashtable;
 //TODO():GVN
 void GlobalValueNumber(CFG *C){
     std::cerr<<C->function_def->GetFunctionName()<<'\n';
-    // for(auto [id,bb] : *C->block_map){
-    //     // bb->printIR(std::cerr);
-    //     for(auto I : bb->Instruction_list){
-    //         if(hashtable.lookup(I) != -1){
-    //             std::cerr<<"asdaasdasdasdasdsssaddd\n";
-    //         }
-    //         auto value_ = hashtable.lookupOrAdd(I);
-    //         I->PrintIR(std::cerr);
-    //         if(value_==-1){
-    //             std::cerr<<"NOT SUPPORT"<<'\n';
-    //         }else{
-    //             std::cerr<<"%v"<<value_<<" = "<<hashtable.stringmap[value_]<<'\n';
-    //         }
-    //         puts("-----------");
-    //     }
-    // }
     C->BuildCFG();
     C->BuildDominatorTree();
+    hashtable.defineDFS(C);
     auto DomTree = C->DomTree;
     auto G = DomTree.dom_tree;
     auto blockmap = *C->block_map;
@@ -42,18 +25,12 @@ void GlobalValueNumber(CFG *C){
             auto I = *it;
             auto check = hashtable.lookupOrAdd(I);
             if(check != -1 && hashtable.valuevetor[check].front()->GetFullName() != I->GetResultReg()->GetFullName()){
-                I->PrintIR(std::cerr);
                 auto resulttype = I->GetResultType();
-                // std::cerr<<resulttype<<'\n';
                 auto op = hashtable.valuevetor[check].front();
                 if (resulttype == I32) {
                     auto newI = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), op,
                                                   I->GetResultReg());
-                    // I->PrintIR(std::cerr);
                     EraseMap[I] = newI;
-                    // std::cerr<<I<<'\n';
-                    // ubb->printIR(std::cerr);
-                    // std::cerr<<ubb->Instruction_list.front()<<'\n';
                 } else if (resulttype == FLOAT32) {
                     auto newI = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
                                                   op, I->GetResultReg());
@@ -93,11 +70,130 @@ void GlobalValueNumber(CFG *C){
     }
     C->BuildCFG();
     C->BuildDominatorTree();
-    // SparseConditionalConstantPropagation(C);
-    // SimplifyCFG(C);
+    SparseConditionalConstantPropagation(C);
+    SimplifyCFG(C);
     // for (auto [id, bb] : *uCFG->block_map) {
     //     for (auto I : bb->Instruction_list) {
     //         I->SetBlockID(id);
     //     }
     // }
+}
+
+void ElimateGVNPhi(CFG *C){
+    //TODO:ElimateGVNPhi
+    // std::cerr<<C->function_def->GetFunctionName()<<'\n';
+    auto blockmap = *C->block_map;
+    hashtable.defineDFS(C);
+    bool Check = true;
+    auto DomTree = C->DomTree;
+    auto G = DomTree.dom_tree;
+    std::function<void(int)> DFS1 = [&](int ubbid) {
+        auto ubb = blockmap[ubbid];
+        auto it = ubb->Instruction_list.end();
+        do{
+            it--;
+            auto I = *it;
+            auto check = hashtable.lookupOrAdd(I);
+        }while(it != ubb->Instruction_list.begin());
+        
+        for(int i = 0; i < G[ubbid].size(); ++i){
+            auto vbb = G[ubbid][i];
+            auto vbbid = vbb->block_id;
+            DFS1(vbbid);
+        }
+    };
+
+    bool isFirst = true;
+    while(Check){
+        Check = false;
+        if(!isFirst){
+            isFirst =false;
+        }else{
+            C->BuildCFG();
+            C->BuildDominatorTree();
+            hashtable.defineDFS(C);
+            DomTree = C->DomTree;
+            G = DomTree.dom_tree;
+            blockmap = *C->block_map;
+        }
+        DFS1(0);
+        for (auto [id, bb] : *C->block_map) {
+            // bb->printIR(std::cerr);
+            bool existElimate = 0;
+            for (auto &I : bb->Instruction_list) {
+                if(I->GetOpcode() != PHI){
+                    break;
+                }
+                auto PhiI = (PhiInstruction*)I;
+                bool CanElimate = 1;
+                auto FstOp = PhiI->GetPhiList().front().second;
+                if(FstOp->GetOperandType() !=BasicOperand::REG){
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                auto FstValue = hashtable.resultmap[((RegOperand*)FstOp)->GetRegNo()];
+                for(auto [Labelop, Regop ] : PhiI->GetPhiList()){
+                    // I->PrintIR(std::cerr);
+                    if(Regop->GetOperandType() !=BasicOperand::REG){
+                        CanElimate = 0;
+                        break;
+                    }
+                    auto OpValue = hashtable.resultmap[((RegOperand*)Regop)->GetRegNo()];
+                    if(OpValue != FstValue){
+                        CanElimate = 0;
+                        break;
+                    }
+                    // std::cerr<<Labelop->GetFullName()<<" "<<
+                    //     Regop->GetFullName()<<" "<<(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo())==hashtable.definemap.end())<<'\n';
+                    // std::cerr<<Labelop->GetFullName()<<" "<<Regop->GetFullName()<<'\n';
+                    // defI->PrintIR(std::cerr);
+                    if(hashtable.definemap.find(((RegOperand*)Regop)->GetRegNo()) == hashtable.definemap.end() 
+                        || (hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != ADD
+                        && hashtable.definemap[((RegOperand*)Regop)->GetRegNo()]->GetOpcode() != FADD)){
+                        CanElimate = 0;
+                        break;
+                    }
+                    
+                    // I->PrintIR(std::cerr);
+                }
+                
+                if(CanElimate){
+                    existElimate = 1;
+                    auto resultOp = (RegOperand*)PhiI->GetResultReg();
+                    // I->PrintIR(std::cerr);
+                    auto oldI = hashtable.definemap[((RegOperand*)FstOp)->GetRegNo()];
+                    oldI = (ArithmeticInstruction*)oldI;
+                    auto NoResultOp = oldI->GetNonResultOperands();
+                    if(NoResultOp.size() == 2){
+                        I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],PhiI->GetResultOp());
+                    }else{
+                        I = new ArithmeticInstruction((LLVMIROpcode)oldI->GetOpcode(),oldI->GetResultType(),NoResultOp[0],NoResultOp[1],NoResultOp[2],PhiI->GetResultOp());
+                    }
+                    // I->PrintIR(std::cerr);
+                    Check = true;
+                }
+            }
+            if(existElimate){
+                std::queue<Instruction> phiq;
+                auto tmp_Instruction_list = bb->Instruction_list;
+                bb->Instruction_list.clear();
+                for (auto I : tmp_Instruction_list) {
+                    if(I->GetOpcode() == PHI){
+                        phiq.push(I);
+                    }else{
+                        bb->InsertInstruction(1, I);
+                    }
+                }
+                while(!phiq.empty()){
+                    bb->InsertInstruction(0, phiq.front());
+                    phiq.pop();
+                }
+            }
+            // bb->printIR(std::cerr);
+        }
+    }
+    C->BuildCFG();
+    C->BuildDominatorTree();
+    SparseConditionalConstantPropagation(C);
+    SimplifyCFG(C);
 }

@@ -28,6 +28,194 @@ B0--->B2  may be transformed to B0(B1 use select)->B2
 */
 void SimpleIfConversion(CFG *C) {}
 
+
+
+/*
+L0(bb1):  
+    %r6 = icmp slt i32 %r0,%r1
+    br i1 %r6, label %L2, label %L1
+L1(bb2):  
+    br label %L2
+L2(bb):  
+    %r11 = phi i32 [%r0,%L0],[%r1,%L1]
+
+will be transformed to
+
+L2:
+    %r11 = llvm.smin(%r0,%r1)
+*/
+
+/*
+    min(%r0,%r1) => 
+                    slt %r0,%r1
+                    sle %r0,%r1
+*/
+void MinMaxRecognize(CFG *C) {
+    // puts("BEGIN");
+    auto blockmap = *C->block_map;
+    std::map<int,Instruction> definemap;
+    for (auto [id, bb] : blockmap) {
+        for(auto I : bb->Instruction_list){
+            I->SetBlockID(id);
+            definemap[I->GetResultRegNo()] = I;
+        }
+    }
+    for (auto [id, bb] : blockmap) {
+        for(auto &I : bb->Instruction_list){
+            if(I->GetOpcode() != PHI){
+                continue;
+            }
+            auto PhiI = (PhiInstruction*)I;
+            auto PhiList = PhiI->GetPhiList();
+            if(PhiList.size() != 2){
+                continue;
+            }
+            auto datatype = PhiI->GetDataType();
+            if(datatype != I32 && datatype != FLOAT32){
+                continue;
+            }
+            auto Labelop1 = (LabelOperand*)PhiList[0].first;
+            auto Labelop2 = (LabelOperand*)PhiList[1].first;
+            auto Regop1 = PhiList[0].second;
+            auto Regop2 = PhiList[1].second;
+            auto bb1 = blockmap[Labelop1->GetLabelNo()];
+            auto bb2 = blockmap[Labelop2->GetLabelNo()];
+            
+            auto endI1 = bb1->Instruction_list.back();
+            auto endI2 = bb2->Instruction_list.back();
+            if(endI2->GetOpcode() == BR_COND && endI1->GetOpcode() ==BR_UNCOND){
+                std::swap(endI1,endI2);
+                std::swap(Labelop1,Labelop2);
+                std::swap(Regop1,Regop2);
+                std::swap(bb1,bb2);
+            }
+            if(endI1->GetOpcode() != BR_COND || endI2->GetOpcode() !=BR_UNCOND){
+                continue;
+            }
+            auto BrcondI = (BrCondInstruction*)endI1;
+            auto BruncondI = (BrCondInstruction*)endI2;
+            auto BrcondReg = (RegOperand*)BrcondI->GetCond();
+            auto BrcondRegDefI = definemap[BrcondReg->GetRegNo()];
+            if((datatype == I32 && BrcondRegDefI->GetOpcode() != ICMP) && (datatype == FLOAT32 && BrcondRegDefI->GetOpcode() != FCMP)){// can be fcmp
+                continue;
+            }
+            if(datatype == I32){
+                auto IcmpI = (IcmpInstruction*)BrcondRegDefI;
+                bool ismin = 1;
+                bool issigned = 1;
+                auto cmpcond = IcmpI->GetCompareCondition();
+                if(cmpcond == slt || cmpcond == sle){
+                    ismin = 1;
+                    issigned = 1;
+                }else if(cmpcond == sgt || cmpcond == sge){
+                    ismin = 0;
+                    issigned = 1;
+                }else if(cmpcond == ult || cmpcond == ule){
+                    ismin = 1;
+                    issigned = 0;
+                }else if(cmpcond == sgt || cmpcond == sge){
+                    ismin = 0;
+                    issigned = 0;
+                }else{
+                    continue;
+                }
+                auto IcmpOp1 = IcmpI->GetOp1();
+                auto IcmpOp2 = IcmpI->GetOp2();
+                auto PhiOp1 = PhiList[0].second;
+                auto PhiOp2 = PhiList[1].second;
+                auto PhiL1 = ((LabelOperand*)PhiList[0].first);
+                auto PhiL2 = ((LabelOperand*)PhiList[1].first);
+                if(IcmpOp1->GetFullName() == PhiOp2->GetFullName() && IcmpOp2->GetFullName() == PhiOp1->GetFullName()){
+                    std::swap(PhiOp1,PhiOp2);
+                    std::swap(PhiL1,PhiL2);
+                    ismin^=1;
+                }
+                
+                if(IcmpOp1->GetFullName() != PhiOp1->GetFullName() || IcmpOp2->GetFullName() != PhiOp2->GetFullName()){
+                    // std::cerr<<IcmpOp1->GetFullName()<<" "<<PhiOp1->GetFullName()<<'\n';
+                    // std::cerr<<IcmpOp2->GetFullName()<<" "<<PhiOp2->GetFullName()<<'\n';
+                    continue;
+                }
+                
+                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    ismin^=1;
+                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    continue;
+                }
+                
+                if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
+                    || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                if(ismin && issigned){
+                    I = new ArithmeticInstruction(SMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
+                }else if(!ismin && issigned){
+                    I = new ArithmeticInstruction(SMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
+                }else if(ismin && !issigned){
+                    I = new ArithmeticInstruction(UMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
+                }else{
+                    I = new ArithmeticInstruction(UMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
+                }
+                // I->PrintIR(std::cerr);
+            }else{
+                // I->PrintIR(std::cerr);
+                auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
+                bool ismin = 1;
+                auto cmpcond = FcmpI->GetCompareCondition();
+                if(cmpcond == ULT || cmpcond == ULE || cmpcond == OLT || cmpcond == OLE){
+                    ismin = 1;
+                }else if(cmpcond == UGT || cmpcond == UGE || cmpcond == OGT || cmpcond == OGE){
+                    ismin = 0;
+                }else{
+                    continue;
+                }
+                
+                auto FcmpOp1 = FcmpI->GetOp1();
+                auto FcmpOp2 = FcmpI->GetOp2();
+                auto PhiOp1 = PhiList[0].second;
+                auto PhiOp2 = PhiList[1].second;
+                auto PhiL1 = ((LabelOperand*)PhiList[0].first);
+                auto PhiL2 = ((LabelOperand*)PhiList[1].first);
+                if(FcmpOp1->GetFullName() == PhiOp2->GetFullName() && FcmpOp2->GetFullName() == PhiOp1->GetFullName()){
+                    std::swap(PhiOp1,PhiOp2);
+                    std::swap(PhiL1,PhiL2);
+                    ismin^=1;
+                }
+                // I->PrintIR(std::cerr);
+                if(FcmpOp1->GetFullName() != PhiOp1->GetFullName() || FcmpOp2->GetFullName() != PhiOp2->GetFullName()){
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    ismin^=1;
+                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                    || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    // std::cerr<<id<<" "<<((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()<<'\n';
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
+                    || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
+                    continue;
+                }
+                // I->PrintIR(std::cerr);
+                if(ismin){
+                    I = new ArithmeticInstruction(FMIN_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
+                }else{
+                    I = new ArithmeticInstruction(FMAX_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
+                }
+                // I->PrintIR(std::cerr);
+            }
+        }
+    }
+}
+
+
+
 /**
     * this function will eliminate the double br_uncond
     *

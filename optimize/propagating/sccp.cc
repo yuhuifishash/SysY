@@ -193,14 +193,18 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
             lattice.vals.I32Val = op1_lattice_i32val / op2_lattice_i32val;
         } else if (opcode == MOD) {
             lattice.vals.I32Val = op1_lattice_i32val % op2_lattice_i32val;
-        } else if (opcode == UMAX) {
+        } else if (opcode == UMAX_I32) {
             lattice.vals.I32Val = std::max((uint32_t)op1_lattice_i32val, (uint32_t)op2_lattice_i32val);
-        } else if (opcode == UMIN) {
+        } else if (opcode == UMIN_I32) {
             lattice.vals.I32Val = std::min((uint32_t)op1_lattice_i32val, (uint32_t)op2_lattice_i32val);
-        } else if (opcode == SMAX) {
+        } else if (opcode == SMAX_I32) {
             lattice.vals.I32Val = std::max(op1_lattice_i32val, op2_lattice_i32val);
-        } else if (opcode == SMIN) {
+        } else if (opcode == SMIN_I32) {
             lattice.vals.I32Val = std::min(op1_lattice_i32val, op2_lattice_i32val);
+        } else if (opcode == BITXOR) {
+            lattice.vals.I32Val = op1_lattice_i32val ^ op2_lattice_i32val;
+        } else if (opcode == BITAND) {
+            lattice.vals.I32Val = op1_lattice_i32val & op2_lattice_i32val;
         } else {    // should not reach here
             assert(false);
         }
@@ -218,6 +222,10 @@ int ArithmeticInstruction::ConstPropagate(std::map<int, Instruction> &regresult_
             lattice.vals.FloatVal = op1_lattice_floatval * op2_lattice_floatval;
         } else if (opcode == FDIV) {
             lattice.vals.FloatVal = op1_lattice_floatval / op2_lattice_floatval;
+        } else if (opcode == FMIN_F32) {
+            lattice.vals.FloatVal = std::min(op1_lattice_floatval, op2_lattice_floatval);
+        } else if (opcode == FMAX_F32) {
+            lattice.vals.FloatVal = std::max(op1_lattice_floatval, op2_lattice_floatval);
         } else {    // should not reach here
             assert(false);
         }

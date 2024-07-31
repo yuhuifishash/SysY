@@ -84,11 +84,6 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     int inst_number = 0;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
-        for (auto I : bb->Instruction_list) {
-            if (I->GetOpcode() == CALL) {
-                return false;
-            }
-        }
     }
     if (iterations * inst_number > 1024) {
         return false;
@@ -390,7 +385,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         I->ReplaceRegByMap(RemainRegReplaceMap);
     }
 
-    //exiting: i < n -> i+4 < n
+    //exiting: i < n -> i < n - 4
     auto exitingI = *(old_exiting->Instruction_list.end() - 2);
     assert(exitingI->GetOpcode() == ICMP);
     auto IcmpI = (IcmpInstruction*)exitingI;
@@ -398,18 +393,18 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
     assert(scev1 != nullptr && scev2 != nullptr);
     if(scev1->len == 2 && scev2->len == 1){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
-        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
-        IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
-    }else if(scev1->len == 1 && scev2->len == 2){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(4),GetNewRegOperand(++C->max_reg));
+        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
+    }else if(scev1->len == 1 && scev2->len == 2){
+        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
+        exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
+        IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
     }else{
         assert(false);
     }
 
-    //add CondBlock   if(upperbound - lowerbound > 10){ do{}while(i+4 < n)}  remain_loop
+    //add CondBlock   if(upperbound - lowerbound >= 4){ do{}while(i+4 < n)}  remain_loop
     //CondBlock -> remain_header || npreheader
     LLVMBlock CondBlock = C->NewBlock();
     LLVMBlock npreheader = C->NewBlock();
@@ -420,7 +415,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto CondI1 = scev.forloop_info.lowerbound.GenerateValueInst(C);
     auto CondI2 = scev.forloop_info.upperbound.GenerateValueInst(C);
     auto CondI3 = new ArithmeticInstruction(SUB,I32,CondI2->GetResultReg(),CondI1->GetResultReg(),GetNewRegOperand(++C->max_reg));
-    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(10),sgt,GetNewRegOperand(++C->max_reg));
+    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(4),sge,GetNewRegOperand(++C->max_reg));
     auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(),GetNewLabelOperand(npreheader->block_id),GetNewLabelOperand(remain_header->block_id));
     CondBlock->InsertInstruction(1,CondI1);
     CondBlock->InsertInstruction(1,CondI2);

@@ -453,3 +453,158 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
 
     then %r2 is dead, we can eliminate it by ADCE
 */
+
+
+
+/*
+L4: (preheader)
+    something
+L1: (header)
+    %r25 = phi i32 [0,%L4],[%r251,%L1]
+    %r24 = phi i32 [0,%L4],[%r252,%L1]
+    ......
+    %r251 = add i32 %r25,4
+    %r252 = add i32 %r24,4 
+
+then %r25 and %r24 are same 
+*/
+void LoopIndVarSimplify(CFG* C)
+{
+    std::map<int,Instruction> define_map;
+    std::set<Instruction> EraseSet;
+    std::map<int,int> replace_map;
+    for(auto [id,bb] : *C->block_map){
+        for(auto I : bb->Instruction_list){
+            if(I->GetOpcode() == ADD){
+                auto addI = (ArithmeticInstruction*)I;
+                if(addI->GetDataType() != I32 && addI->GetOperand1()->GetOperandType() != BasicOperand::REG && addI->GetOperand2()->GetOperandType() != BasicOperand::IMMI32){
+                    continue;
+                }
+                define_map[I->GetResultRegNo()] = addI;
+            }else if(I->GetOpcode() == GETELEMENTPTR){
+                auto gepI = (GetElementptrInstruction*)I;
+                auto ptr = gepI->GetPtrVal();
+                if(gepI->GetDims().size() != 0 || ptr->GetOperandType() != BasicOperand::REG){
+                    continue;
+                }
+                define_map[I->GetResultRegNo()] = gepI;
+            }
+        }
+    }
+    for(auto l:C->LoopForest.loop_set){
+        auto header = l->header;
+        assert(l->latches.size() == 1);
+        auto latch = *l->latches.begin();
+
+        for(auto I:header->Instruction_list){
+            if(I->GetOpcode() == PHI){
+                auto PhiI1 = (PhiInstruction*)I;
+                auto result_val1 = PhiI1->GetResultOp();
+                auto preheader_val1 = PhiI1->GetValOperand(l->preheader->block_id);
+                auto latch_val1 = PhiI1->GetValOperand(latch->block_id);
+                
+                if(latch_val1->GetOperandType() != BasicOperand::REG){
+                    continue;
+                }
+                
+                auto latch_reg1 = (RegOperand*)latch_val1;
+                auto latch_regno1 = latch_reg1->GetRegNo();
+                if(define_map.find(latch_regno1) == define_map.end()){
+                    continue;
+                }
+                
+                auto origin_latchI1 = define_map[latch_regno1];
+                if(origin_latchI1->GetOpcode() == ADD){
+                    if(((ArithmeticInstruction*)origin_latchI1)->GetOperand1()->GetFullName() != result_val1->GetFullName()){
+                        continue;
+                    }
+                }else{
+                    if(((GetElementptrInstruction*)origin_latchI1)->GetPtrVal()->GetFullName() != result_val1->GetFullName()){
+                        continue;
+                    }
+                }
+                
+                bool start_flag = 0;
+                for(auto &secI:header->Instruction_list){
+                    if(secI->GetOpcode() == PHI){
+                        if(!start_flag){
+                            if(secI->GetResultRegNo() == I->GetResultRegNo()){
+                                start_flag = 1;
+                            }
+                            continue;
+                        }
+                        
+                        
+                        auto PhiI2 = (PhiInstruction*)secI;
+                        auto result_val2 = PhiI2->GetResultOp();
+                        auto preheader_val2 = PhiI2->GetValOperand(l->preheader->block_id);
+                        auto latch_val2 = PhiI2->GetValOperand(latch->block_id);
+                        if(preheader_val1->GetFullName() != preheader_val2->GetFullName()){
+                            continue;
+                        }
+                        if(latch_val2->GetOperandType() != BasicOperand::REG){
+                            continue;
+                        }
+                        
+                        auto latch_reg2 = (RegOperand*)latch_val2;
+                        auto latch_regno2 = latch_reg2->GetRegNo();
+                        if(define_map.find(latch_regno2) == define_map.end()){
+                            continue;
+                        }
+                        auto origin_latchI2 = define_map[latch_regno2];
+                        if(origin_latchI2->GetOpcode() != origin_latchI1->GetOpcode()){
+                            continue;
+                        }
+                        if(origin_latchI1->GetOpcode() == ADD){
+                            auto latchI1 = (ArithmeticInstruction*)origin_latchI1;
+                            auto latchI2 = (ArithmeticInstruction*)origin_latchI2;
+                            if(latchI2->GetOperand1()->GetFullName() != result_val2->GetFullName()){
+                                continue;
+                            }
+                            if(latchI1->GetOperand2()->GetFullName() != latchI2->GetOperand2()->GetFullName()){
+                                continue;
+                            }
+                        }else{
+                            auto latchI1 = (GetElementptrInstruction*)origin_latchI1;
+                            auto latchI2 = (GetElementptrInstruction*)origin_latchI2;
+                            
+                            if(latchI2->GetPtrVal()->GetFullName() != result_val2->GetFullName()){
+                                continue;
+                            }
+                            if(latchI1->GetIndexes()[0]->GetFullName() != latchI2->GetIndexes()[0]->GetFullName()){
+                                continue;
+                            }
+                            
+                        }
+
+                        auto regno1 = ((RegOperand*)result_val1)->GetRegNo();
+                        auto regno2 = ((RegOperand*)result_val2)->GetRegNo();
+                        while(replace_map.find(regno1) != replace_map.end()){
+                            regno1 = replace_map[regno1];
+                        }
+                        replace_map[regno2] = regno1;
+                    }else{
+                        break;
+                    }
+                }
+            }else{
+                break;
+            }
+        }
+    }
+    for(auto [id,bb]:*C->block_map){
+        for(auto &I:bb->Instruction_list){
+            auto vec = I->GetNonResultOperands();
+            for(auto &op : vec){
+                if(op->GetOperandType() == BasicOperand::REG){
+                    auto reg = (RegOperand*)op;
+                    auto regno = reg->GetRegNo();
+                    if(replace_map.find(regno) != replace_map.end()){
+                        op = GetNewRegOperand(replace_map[regno]);
+                    }
+                }
+            }
+            I->SetNonResultOperands(vec);
+        }
+    }
+}

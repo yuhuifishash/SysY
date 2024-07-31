@@ -1,0 +1,288 @@
+const int maxn = 5e4 + 10, maxm = 1e7;
+const int INT_MAX = 2147483647;
+int son[2][maxm], fa[maxm], size[maxm], cur;
+int cnt[maxm], col[maxm], val[maxm], root, tree[maxn * 4];
+int min(int a,int b)
+{
+  if(a < b){
+    return a;
+  }
+  return b;
+}
+
+int max(int a,int b)
+{
+  if(a < b){
+    return b;
+  }
+  return a;
+}
+
+int eq(int a,int b)
+{
+  if(a == b){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+int lt(int a,int b)
+{
+  if(a < b){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+int ne(int a,int b)
+{
+  if(a != b){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int select(int cond, int t, int f)
+{
+  if(cond){
+    return t;
+  }else{
+    return f;
+  }
+}
+
+void newNode(int k, int c, int f)
+{
+    cur = cur + 1;
+    int x = cur;
+    fa[x] = f; size[x] = 1;cnt[x] = 1;
+    val[x] = k; col[x] = c;
+}
+
+void update1(int x) { size[x] = size[son[0][x]] + cnt[x] + size[son[1][x]]; }
+void rotate(int x, int r)
+{
+    int y = son[!r][x]; son[!r][x] = son[r][y];
+    if(son[r][y]) fa[son[r][y]] = x;
+    fa[y] = fa[x]; if(!fa[x]) root = y;
+    else son[eq(x, son[1][fa[x]])][fa[x]] = y;
+    son[r][y] = x; fa[x] = y; size[y] = size[x];
+    update1(x);
+}
+
+void transplant(int to, int from)
+{
+    fa[from] = fa[to]; if(!fa[to]) root = from;
+    else son[eq(to,son[1][fa[to]])][fa[to]] = from;
+}
+
+int findMin(int x) { while(son[0][x]) x = son[0][x]; return x; }
+void insertFixUp(int z)
+{
+    while(col[fa[z]])
+    {
+        int f = fa[z], g = fa[f], l = eq(f,son[0][g]), y = son[l][g];
+        if(col[y]) {col[y] = 0 ;col[f] = 0; z = g; col[z] = 1;}
+        else
+        {
+            if(z == son[l][f]) {z = f; rotate(z, !l);}
+            col[fa[z]] = 0; col[fa[fa[z]]] = 1; rotate(g, l);
+        }
+    }
+    col[root] = 0;
+}
+
+void insert1(int k)
+{
+    int x = root, y = 0;
+    while(x)
+    {
+        y = x;
+        size[x] = size[x] + 1; if(val[x] == k) {cnt[x] = cnt[x] + 1; return;}
+        x = son[lt(val[x] , k)][x];
+    }
+    newNode(k, 1, y);
+    if(!y) root = cur; else son[lt(val[y],k)][y] = cur;
+    insertFixUp(cur);
+}
+
+void delFixUp(int x)
+{
+    while(x != root && (!col[x]))
+    {
+        int l = eq(x , son[0][fa[x]]), f = fa[x], w = son[l][f];
+        if(col[w])
+        {
+            col[f] = 1; col[w] = 0;
+            rotate(f, !l); w = son[l][f];
+        }
+        if((!col[son[0][w]]) && (!col[son[1][w]])){ col[w] = 0; x = fa[x];}
+        else
+        {
+            if(!col[son[l][w]]){
+                col[w] = 1; col[son[!l][w]] = 0;
+                rotate(w, l); w = son[l][f];
+            }
+            col[w] = col[f]; col[f] = 0; col[son[l][w]] = 0;
+            rotate(fa[w], !l); x = root;
+        }
+    }
+    col[x] = 0;
+}
+
+void erase(int k)
+{
+    int z = root, w = 0;
+    while(z)
+    {
+        w = z;
+        size[w] = size[w] - 1; if(k == val[z]) break;
+        z = son[lt(val[z],k)][z];
+    }
+    if(z)
+    {
+        if(cnt[z] > 1) {cnt[z] = cnt[z] - 1; return;}
+        int y = z, x, oldc = col[y];
+        if(!son[0][z]) {x = son[1][z]; transplant(z, son[1][z]);}
+        else if(!son[1][z]) {x = son[0][z]; transplant(z, son[0][z]);}
+        else
+        {
+            y = findMin(son[1][z]); oldc = col[y]; x = son[1][y];
+            if(fa[y] == z) fa[x] = y;
+            else
+            {
+                int tmpy = y;
+                while(tmpy != z) {size[tmpy] =size[tmpy]- cnt[y]; tmpy = fa[tmpy];}
+                transplant(y, son[1][y]); son[1][y] = son[1][z];
+                fa[son[1][y]] = y;
+            }
+            transplant(z, y); son[0][y] = son[0][z];
+            fa[son[0][y]] = y; col[y] = col[z]; update1(y);
+        }
+        if(!oldc) delFixUp(x);
+    }
+    else while(w) {size[w]=size[w]+1; w = fa[w];}
+}
+
+int cmp(int x, int k) { return select(lt(val[x],k), 0, select(ne(val[x], k), 1, -1)); }
+int suc2(int k, int b)
+{
+    int x = root, p = 0, res = -INT_MAX;
+    while(x)
+        if(cmp(x, k) == b) { p = x; res = val[p]; x = son[!b][x];}
+        else x = son[b][x];
+    return select(ne(res, -INT_MAX) , res, select(b, INT_MAX, -INT_MAX));
+}
+
+int rank(int r)
+{
+    int x = root, ret = 0;
+    while(x)
+    {
+        if(val[x] < r) {ret = ret + size[son[0][x]] + cnt[x]; x = son[1][x];}
+        else x = son[0][x];
+    }
+    return ret;
+}
+
+int a[maxn], n, m;
+void insert(int pos, int val)
+{
+    int rt = 1, l = 1, r = n, mid;
+    while(l != r)
+    {
+        root = tree[rt]; insert1(val); tree[rt] = root;
+        mid = (l + r) / 2; rt = rt* 2;
+        if(pos <= mid) r = mid;
+        else {l = mid + 1; rt = rt + 1;}
+    }
+    root = tree[rt]; insert1(val); tree[rt] = root;
+}
+
+void update(int pos, int val)
+{
+    int rt = 1, l = 1, r = n, mid;
+    while(l != r)
+    {
+        root = tree[rt]; insert1(val); erase(a[pos]); tree[rt] = root;
+        mid = (l + r) / 2; rt = rt*2;
+        if(pos <= mid) r = mid;
+        else {l = mid + 1; rt = rt + 1;}
+    }
+    root = tree[rt]; insert1(val); erase(a[pos]);
+    tree[rt] = root; a[pos] = val;
+}
+
+int lower(int ql, int qr, int val, int rt, int l, int r)
+{
+    if(qr < l || r < ql) return 0;
+    root = tree[rt];
+    if(ql <= l && r <= qr) return rank(val);
+    int mid = (l + r) / 2, lson = rt*2, rson = lson + 1;
+    return lower(ql, qr, val, lson, l, mid)
+        + lower(ql, qr, val, rson, mid + 1, r);
+}
+
+int suc(int ql, int qr, int val, int opt, int rt, int l, int r)
+{
+    if(qr < l || r < ql) return select(opt, INT_MAX, -INT_MAX);
+    root = tree[rt];
+    if(ql <= l && r <= qr) return suc2(val, opt);
+    int mid = (l + r) / 2, lson = rt*2, rson = lson + 1;
+    int lans = suc(ql, qr, val, opt, lson, l, mid);
+    int rans = suc(ql, qr, val, opt, rson, mid + 1, r);
+    if(opt){
+      return min(lans,rans);
+    }else{
+      return max(lans,rans);
+    }
+}
+
+int k_th(int ql, int qr, int k)
+{
+    int l = 0, r = 100000001, mid, rnk;
+    while(l < r)
+    {
+        mid = (l + r) / 2; rnk = lower(ql, qr, mid,1,1,n);
+        if(rnk < k) l = mid + 1; else r = mid;
+    }
+    return l - 1;
+}
+
+int main()
+{
+    n = getint(); m = getint();
+
+    int i = 1;
+    while(i <= n){
+      a[i] = getint();
+      i = i + 1;
+    }
+
+    i = 1;
+    while(i <= n){
+      insert(i,a[i]);
+      i = i + 1;
+    }
+
+    while(m)
+    {
+        m = m - 1;
+        int opt = getint(), x = getint(), y = getint(), z;
+        if(opt == 1){
+          z = getint(); putint(lower(x, y, z,1,1,n) + 1);putch(10);
+        }
+        if(opt == 2){
+          z = getint(); putint(k_th(x, y, z)); putch(10);
+        }
+        if(opt == 3){
+          update(x, y);
+        }
+        if(opt == 4 || opt == 5){
+          z = getint();
+          putint(suc(x, y, z, opt - 4,1,1,n));putch(10); 
+        }
+    }
+    return 0;
+}

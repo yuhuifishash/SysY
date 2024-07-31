@@ -94,7 +94,7 @@ enum LLVMIROpcode {
     FDIV = 15,
     FCMP = 16,
     MOD = 17,
-    XOR = 18,
+    BITXOR = 18,
     RET = 19,
     ZEXT = 20,
     SHL = 21,
@@ -105,11 +105,14 @@ enum LLVMIROpcode {
     GLOBAL_VAR = 28,
     GLOBAL_STR = 29,
     LL_ADDMOD = 30,
-    UMIN = 31,
-    UMAX = 32,
-    SMIN = 33,
-    SMAX = 34,
+    UMIN_I32 = 31,
+    UMAX_I32 = 32,
+    SMIN_I32 = 33,
+    SMAX_I32 = 34,
     BITCAST = 35,
+    FMIN_F32 = 36,
+    FMAX_F32 = 37,
+    BITAND = 38,
 };
 
 // @Operand datatypes
@@ -654,7 +657,7 @@ public:
     }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
-
+    
     void ReplaceRegByMap(const std::map<int, int> &Rule);
     void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>{}; }

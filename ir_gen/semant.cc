@@ -424,7 +424,7 @@ void StringConst::TypeCheck() { std::cerr << "StringConst is not implement now\n
 
 void PrimaryExp_branch::TypeCheck() {
     exp->TypeCheck();
-    attribute = SemantSingleNode[exp->attribute.T.type](exp->attribute, NodeAttribute::ADD);
+    attribute = exp->attribute;
 }
 
 void assign_stmt::TypeCheck() {

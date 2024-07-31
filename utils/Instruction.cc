@@ -613,6 +613,13 @@ void StoreInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
 }
 
 void ArithmeticInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
+    if (op3 != nullptr){
+        if (op3->GetOperandType() == BasicOperand::REG) {
+            auto op3_reg = (RegOperand *)op3;
+            if (Rule.find(op3_reg->GetRegNo()) != Rule.end())
+                this->op3 = GetNewRegOperand(Rule.find(op3_reg->GetRegNo())->second);
+        }
+    }
     if (op2->GetOperandType() == BasicOperand::REG) {
         auto op2_reg = (RegOperand *)op2;
         if (Rule.find(op2_reg->GetRegNo()) != Rule.end())

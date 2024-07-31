@@ -1,0 +1,94 @@
+int main()
+{
+    int x = 100000000;
+    int y = 27;
+    int z = 666;
+    int p = 5;
+
+    starttime();
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+    z = x/4;
+    p = z/-2;
+    x = p/110;
+    putint(x);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/1073741824;
+    p = z/2;
+    putint(p);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/-1073741824;
+    p = z/2;
+    putint(p);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/1073741824;
+    p = z/-2;
+    putint(p);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/-1073741824;
+    p = z/-2;
+    putint(p);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/-2147483647;
+    p = z/-1;
+    putint(p);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/44;
+    p = z/20;
+    x = p/1140;
+    putint(x);
+    putch(32);
+
+    x = getint();
+    y = getint();
+    z = getint();
+    p = getint();
+
+    z = x/4444;
+    p = z/4444;
+    x = p/1140;
+    putint(x);
+    putch(32);
+
+    stoptime();
+	
+    return 0;
+}

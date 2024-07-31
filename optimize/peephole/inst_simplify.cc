@@ -1,4 +1,4 @@
-#include "../../include/cfg.h"
+#include "../../include/ir.h"
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -10,6 +10,37 @@ extern std::map<std::string, VarAttribute> StaticGlobalMap;
 // TODO():FindNoWriteStaticGlobal
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
 void FindNoWriteStaticGlobal(LLVMIR *IR) { TODO("FindNoWriteStaticGlobal"); }
+
+void EraseNoUseGlobal(LLVMIR *IR) {
+    std::set<std::string> GlobalUsedSet;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for(auto [id,bb]:*cfg->block_map) {
+            for(auto I:bb->Instruction_list){
+                auto ops = I->GetNonResultOperands();
+                for(auto op:ops){
+                    if(op->GetOperandType() == BasicOperand::GLOBAL){
+                        auto gop = (GlobalOperand*)op;
+                        GlobalUsedSet.insert(gop->GetName());
+                    }
+                }
+            }
+        }
+    }
+
+    for(auto it = IR->global_def.begin(); it != IR->global_def.end();){
+        auto I = *it;
+        if(I->GetOpcode() != GLOBAL_VAR){
+            continue;
+        }
+        auto gI = (GlobalVarDefineInstruction*)I;
+        if(GlobalUsedSet.find(gI->name) == GlobalUsedSet.end()){
+            it = IR->global_def.erase(it);
+            // gI->PrintIR(std::cerr);
+        }else{
+            ++it;
+        }
+    }
+}
 
 void GlobalConstReplace(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
@@ -113,49 +144,76 @@ void SrcEqResultInstEliminate(CFG *C) {
     // std::cerr<<C->function_def->GetFunctionName()<<" "<<C->max_reg<<'\n';
     if(C->max_reg<=0){return;}
     for (int i=0;i<=C->max_reg;++i) {
-        // puts("ASDAD");
        UnionFindMap[i]=i;
     }
     
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            // I->PrintIR(std::cerr);
+            
             if(I->GetNonResultOperands().size()<=1){continue;}
             if(I->GetNonResultOperands()[0]->GetOperandType()!=BasicOperand::REG)continue;
             if(I->GetNonResultOperands()[1]->GetOperandType()==BasicOperand::REG)continue;
-            if(I->GetOpcode() == ADD){
+            if(I->GetOpcode() == ADD || I->GetOpcode() == SUB){
                 auto AddI = (ArithmeticInstruction*)I;
-                if(AddI->GetOperand2()->GetFullName()=="0"){
-                    Connect(AddI->GetResultReg(),AddI->GetOperand1());
-                    EraseSet.insert(I);
+                auto op = AddI->GetOperand2();
+                if(op->GetOperandType() != BasicOperand::IMMI32){
+                    continue;
                 }
+                auto num = ((ImmI32Operand*)op)->GetIntImmVal();
+                if(num != 0){
+                    continue;
+                }
+                Connect(AddI->GetResultReg(),AddI->GetOperand1());
+                EraseSet.insert(I);
             }
-            if(I->GetOpcode() == SUB){
+            if(I->GetOpcode() == MUL || I->GetOpcode() == DIV){
                 auto SubI = (ArithmeticInstruction*)I;
-                if(SubI->GetOperand2()->GetFullName()=="0"){
-                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
-                    EraseSet.insert(I);
+                auto op = SubI->GetOperand2();
+                if(op->GetOperandType() != BasicOperand::IMMI32){
+                    continue;
                 }
+                auto num = ((ImmI32Operand*)op)->GetIntImmVal();
+                if(num != 1){
+                    continue;
+                }
+                Connect(SubI->GetResultReg(),SubI->GetOperand1());
+                EraseSet.insert(I);
             }
-            if(I->GetOpcode() == MUL){
-                auto SubI = (ArithmeticInstruction*)I;
-                if(SubI->GetOperand2()->GetFullName()=="1"){
-                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
-                    EraseSet.insert(I);
+            if(I->GetOpcode() == FADD || I->GetOpcode() == FSUB){
+                auto AddI = (ArithmeticInstruction*)I;
+                
+                auto op = AddI->GetOperand2();
+                if(op->GetOperandType() != BasicOperand::IMMF32){
+                    continue;
                 }
+                auto num = ((ImmF32Operand*)op)->GetFloatVal();
+                if(num != 0.0){
+                    continue;
+                }
+                // AddI->PrintIR(std::cerr);
+                Connect(AddI->GetResultReg(),AddI->GetOperand1());
+                EraseSet.insert(I);
             }
-            if(I->GetOpcode() == DIV){
+            if(I->GetOpcode() == FMUL || I->GetOpcode() == FDIV){
+                
                 auto SubI = (ArithmeticInstruction*)I;
-                if(SubI->GetOperand2()->GetFullName()=="1"){
-                    Connect(SubI->GetResultReg(),SubI->GetOperand1());
-                    EraseSet.insert(I);
+                auto op = SubI->GetOperand2();
+                if(op->GetOperandType() != BasicOperand::IMMF32){
+                    continue;
                 }
+                auto num = ((ImmF32Operand*)op)->GetFloatVal();
+                if(num != 1.0){
+                    continue;
+                }
+                // std::cerr<<num-1<<'\n';
+                Connect(SubI->GetResultReg(),SubI->GetOperand1());
+                EraseSet.insert(I);
             }
         }
     }
     
     for (auto [id, bb] : *C->block_map) {
-        for (auto I : bb->Instruction_list) {
+        for (auto &I : bb->Instruction_list) {
             auto resultopno=I->GetResultRegNo();
             if(UnionFindMap.find(resultopno)!=UnionFindMap.end()){
                 UnionFindMap[resultopno]=UnionFind(resultopno);
@@ -174,14 +232,14 @@ void SrcEqResultInstEliminate(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         auto tmp_Instruction_list = bb->Instruction_list;
         bb->Instruction_list.clear();
-        for (auto I : tmp_Instruction_list) {
+        for (auto &I : tmp_Instruction_list) {
             if (EraseSet.find(I) != EraseSet.end()) {
                 continue;
             }
             I->ReplaceRegByMap(UnionFindMap);
-            // if(I->GetOpcode())
             bb->InsertInstruction(1, I);
         }
+        // bb->printIR(std::cerr);
     }
     UnionFindMap.clear();
     EraseSet.clear();

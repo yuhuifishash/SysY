@@ -1,0 +1,113 @@
+int N,m,n,cnt;
+int siz[2000010],ch[2000010][2],zch[2000010][4],vis[2000010];
+
+int dfs_ls(int u){
+	if(ch[u][0] && !dfs_ls(ch[u][0]))return 0;
+	if(ch[u][1] && !dfs_ls(ch[u][1]))return 0;
+	int s1=siz[ch[u][0]],s2=siz[ch[u][1]];
+	siz[u] = s1+s2+1;
+	if(siz[ch[u][0]] > 1 && siz[ch[u][1]] > 1)return 0;
+	if(s1 == 0 && s2 == 0)return 1;
+	return 1;
+}
+int newnode(int x){
+	if(x == 0){x = cnt + 1; cnt = cnt + 1;}
+	return x;
+}
+void dfs(int x,int u){
+	//printf("dfs,x = %intd,u = %intd\n",x,u);
+	int s1=siz[ch[u][0]],s2=siz[ch[u][1]];
+	if(s1 == 0 && s2 == 0){//叶子结点
+	//	printf("end,x = %intd\n",x);
+		vis[x]=1;
+	//	printf("vis[%intd] = 1\n",x);
+		return;
+	}
+	if(s1 == 1 && s2 == 1){//处理唯一两种重叠的情况
+	//	printf("x = %intd,u = %intd,two ends.\n",x,u);
+    if(zch[x][2] == 0){
+      zch[x][2] = cnt + 1; cnt = cnt + 1;
+    }
+		vis[newnode(zch[x][2])]=1;
+    if(zch[x][3] == 0){
+      zch[x][3] = cnt + 1; cnt = cnt + 1;
+    }
+		vis[newnode(zch[x][3])]=1;
+	//	printf("vis[%intd] = 1,vis[%intd] = 1\n",zch[x][2],zch[x][3]);
+		return;
+	}
+	if(s1 >= 1 && s2 == 0){//链通往左边，另一边没有叶子结点
+    if(zch[x][0] == 0){
+      zch[x][0] = cnt + 1; cnt = cnt + 1;
+    }
+		dfs(newnode(zch[x][0]),ch[u][0]);
+	}
+	if(s1 >= 1 && s2 == 1){
+    if(zch[x][2] == 0){
+      zch[x][2] = cnt + 1; cnt = cnt + 1;
+    }
+		dfs(newnode(zch[x][2]),ch[u][0]);
+	}
+	if(s2 >= 1 && s1 == 0){
+    if(zch[x][1] == 0){
+      zch[x][1] = cnt + 1; cnt = cnt + 1;
+    }
+		dfs(newnode(zch[x][1]),ch[u][1]);
+	}
+	if(s2 >= 1 && s1 == 1){
+    if(zch[x][3] == 0){
+      zch[x][3] = cnt + 1; cnt = cnt + 1;
+    }
+		dfs(newnode(zch[x][3]),ch[u][1]);
+	}
+}
+int ansdfs(int x){
+	if(vis[x])return 0;
+	if(zch[x][0] == 0 || zch[x][1] == 0 || zch[x][2] == 0 || zch[x][3] == 0)return 1;
+	if(ansdfs(zch[x][0]) || ansdfs(zch[x][1]) || ansdfs(zch[x][2]) || ansdfs(zch[x][3]))return 1;
+	return 0;
+}
+int main(){
+	N = getint();
+	while(N){
+    N = N - 1;
+		m = getint();
+    int i = 0;
+		while(i<=cnt){
+			siz[i]=0;
+			vis[i]=0;
+			zch[i][0] =0; zch[i][1] =0; zch[i][2] =0; zch[i][3] = 0;
+      i = i + 1;
+		}
+		cnt = 1;
+		int f=0;
+		while(m){
+      m = m - 1;
+			n = getint();
+      int i = 1;
+			while(i<=n){ch[i][0] = 0;ch[i][1] = 0;i = i + 1;}
+			int j=1;
+      i = 1;
+			while(i<=n){
+				ch[i][0] = getint();ch[i][1] = getint();
+        i = i + 1;
+			}
+			if(n == 1)f=1;
+			if(!dfs_ls(1))continue;
+			dfs(1,1);
+		}
+		if(f == 1){
+			putch(89);
+      putch(10);
+			continue;
+		}
+		if(ansdfs(1)){
+      putch(78);
+      putch(10);
+    }
+		else {
+      putch(89);
+      putch(10);
+    }
+	}
+}

@@ -142,6 +142,13 @@ static bool BlockDefNoUseCheck(CFG *C, int bb_id, int st_id) {
             }
         }
     }
+    for(auto I : bb->Instruction_list) {
+        if(I->GetOpcode() == STORE){
+            return false;
+        }else if(I->GetOpcode() == CALL){
+            return false;
+        }
+    }
 
     auto bb2 = (*C->block_map)[st_id];
     for (auto I : bb2->Instruction_list) {

@@ -781,23 +781,34 @@ void AddLibFunctionDeclare() {
     llvm_ll_add_mod->InsertFormal(I32);
     llvmIR.function_declare.push_back(llvm_ll_add_mod);
 
-    FunctionDeclareInstruction *llvm_umax = new FunctionDeclareInstruction(VOID, "llvm.umax.i32");
+    FunctionDeclareInstruction *llvm_umax = new FunctionDeclareInstruction(I32, "llvm.umax.i32");
     llvm_umax->InsertFormal(I32);
     llvm_umax->InsertFormal(I32);
     llvmIR.function_declare.push_back(llvm_umax);
 
-    FunctionDeclareInstruction *llvm_umin = new FunctionDeclareInstruction(VOID, "llvm.umin.i32");
+    FunctionDeclareInstruction *llvm_umin = new FunctionDeclareInstruction(I32, "llvm.umin.i32");
     llvm_umin->InsertFormal(I32);
     llvm_umin->InsertFormal(I32);
     llvmIR.function_declare.push_back(llvm_umin);
 
-    FunctionDeclareInstruction *llvm_smax = new FunctionDeclareInstruction(VOID, "llvm.smax.i32");
+    FunctionDeclareInstruction *llvm_smax = new FunctionDeclareInstruction(I32, "llvm.smax.i32");
     llvm_smax->InsertFormal(I32);
     llvm_smax->InsertFormal(I32);
     llvmIR.function_declare.push_back(llvm_smax);
 
-    FunctionDeclareInstruction *llvm_smin = new FunctionDeclareInstruction(VOID, "llvm.smin.i32");
+    FunctionDeclareInstruction *llvm_smin = new FunctionDeclareInstruction(I32, "llvm.smin.i32");
     llvm_smin->InsertFormal(I32);
     llvm_smin->InsertFormal(I32);
     llvmIR.function_declare.push_back(llvm_smin);
+
+    FunctionDeclareInstruction *llvm_fmin = new FunctionDeclareInstruction(FLOAT32, "___llvm_fmin_f32");
+    llvm_fmin->InsertFormal(FLOAT32);
+    llvm_fmin->InsertFormal(FLOAT32);
+    llvmIR.function_declare.push_back(llvm_fmin);
+
+    FunctionDeclareInstruction *llvm_fmax = new FunctionDeclareInstruction(FLOAT32, "___llvm_fmax_f32");
+    llvm_fmax->InsertFormal(FLOAT32);
+    llvm_fmax->InsertFormal(FLOAT32);
+    llvmIR.function_declare.push_back(llvm_fmax);
+    
 }

@@ -44,6 +44,7 @@ public:
 
     // if blockid1 dominate blockid2, return true, else return false
     bool IsDominate(int id1, int id2) { return DomTree.IsDominate(id1, id2); }
+    bool IsPostDominate(int id1, int id2) { return PostDomTree.IsDominate(id1, id2); }
 
     std::vector<LLVMBlock> GetPredecessor(LLVMBlock B);
     std::vector<LLVMBlock> GetPredecessor(int bbid);

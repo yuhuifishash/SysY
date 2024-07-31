@@ -127,20 +127,37 @@ bool isInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruction>
     //TODO(): we need range analysis to judge whether the instructions may throw exceptions
     */
     if (I->GetOpcode() == LOAD) {
+        if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
+            auto LoadI = (LoadInstruction*)I;
+            // load global will not throw exceptions
+            if(LoadI->GetPointer()->GetOperandType() != BasicOperand::GLOBAL){
+                return false; 
+            }
+        }
         if (!isLoadInvariant(C, I, L, WriteInsts)) {
             return false;
         }
     } else if (I->GetOpcode() == CALL) {
+        if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
+            return false;
+        }
         if (!isCallInvariant(C, I, L, WriteInsts)) {
             return false;
         }
     } else if (I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
-        // TODO(): the instructions may throw exceptions because it might divide by zero
+        // the instructions may throw exceptions because it might divide by zero
         // so the instruction needs to dominate all loop exits.
 
-        // if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
-        //     return false;
-        // }
+        if (!IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
+            auto ArithI = (ArithmeticInstruction*)I;
+            if(ArithI->GetOperand2()->GetOperandType() != BasicOperand::IMMI32){
+                return false; // we don't know the divisor, so it may throw exceptiosn
+            }
+            auto op2 = (ImmI32Operand*)ArithI->GetOperand2();
+            if(op2->GetIntImmVal() == 0){ // immi32 0 is invalid 
+                return false;
+            }
+        }
     }
     // I->PrintIR(std::cerr);
     if (I->GetResultRegNo() != -1) {    // mark the reg operand to be invariant
@@ -317,6 +334,18 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
                 break;
             }
         }
+        // check if exists one store or load dominator all the loop exits 
+        bool dom_tag = false;
+        for(auto I:Insts){
+            if (IsDomAllExitBB(C, (*(C->block_map))[I->GetBlockID()], L)) {
+                dom_tag = true;
+                break;
+            }
+        } 
+        if(!dom_tag){
+            break;
+        }
+
         if (!can_licm) {
             break;
         }
@@ -371,7 +400,9 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
             break;
         }
     }
-    // then we consider GlobalVar
+
+
+    // then we consider GlobalVar (load or store global will not throw exceptions)
     for (auto [global_name, Insts] : GlobalPtrInstMap) {
         // check if other instructions will read/write ptr_regno
         bool can_licm = true;
@@ -390,7 +421,7 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
         if (!can_licm) {
             break;
         }
-
+        
         is_motion_store = true;
         // now we can do the licm
         // std::cerr << ptr << "\n";
@@ -444,7 +475,6 @@ void SingleLoopStoreLICM(CFG *C, NaturalLoopForest &loop_forest, NaturalLoop *L)
     }
     if (is_motion_store) {
         Mem2Reg(C);
-
         // rebuild ResultMap
         ResultMap.clear();
         for (auto formal_reg : C->function_def->formals_reg) {
@@ -498,9 +528,8 @@ void LoopInvariantCodeMotion(CFG *C) {
             DFSLoopForest4LICM(C, C->LoopForest, l);
         }
     }
-
+    
     OnlyBasicBlockCSE(C);
-
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
             DFSLoopForest4StoreLICM(C, C->LoopForest, l);

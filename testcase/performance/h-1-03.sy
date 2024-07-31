@@ -1,0 +1,30 @@
+int lim;
+
+int fun(int n,int dep){
+	if(n==1) return dep;
+	else{
+		if(n%2==0) return fun(n/2,dep+1);
+		else{
+			if(n*3+1<=lim)
+				return fun(n*3+1,dep+1);
+			else
+				return 0;
+		}
+	}
+}
+
+const int mod = 1000000007;
+
+int main(){
+	lim = getint();
+	int ans = 0;
+	int i = 1;
+        starttime();
+	while(i<=lim){
+		ans = (ans+fun(i,0))%mod;
+		i = i+1;
+	}
+        stoptime();
+	putint(ans);
+	putch(10);
+}

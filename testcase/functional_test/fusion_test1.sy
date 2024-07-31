@@ -1,0 +1,59 @@
+int A[10000] = {},B[10000] = {},C[10000] = {};
+int D[1000][1000] = {};
+int main()
+{
+  int n = getint();
+  int i = 0;
+  while(i < n){
+    A[i] = i;
+    i = i + 1;
+  }
+  i = 0;
+  while(i < n){
+    B[i] = i+i/3;
+    i = i + 1;
+  }
+  i = 0;
+  while(i < n){
+    C[i] = i*i;
+    i = i + 1;
+  }
+  i = 0;
+  while(i < n){
+    int j = 0;
+    while(j < n){
+      D[i][j] = D[i][j] + 5;
+      j = j + 1;
+    }
+    i = i + 1;
+  }
+  i = 0;
+  while(i < n){
+    int j = 0;
+    while(j < n){
+      D[i][j] = D[i][j] + i + j;
+      j = j + 1;
+    }
+    i = i + 1;
+  }
+
+  putarray(n,A);
+  putarray(n,B);
+  putarray(n,C);
+  
+  i = 0;
+  while(i < n){
+    int S = 0;
+    int j = 0;
+    while(j < n){
+      S = S + D[i][j]*D[i][j];
+      S = S % 998244353;
+      j = j + 1;
+    }
+    putint(S);
+    putch(32);
+    i = i + 1;
+  }
+  putch(10);
+  return 0;
+}
