@@ -30,6 +30,7 @@ public:
     virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
     void InsertParallelCopyList(Register dst, MachineBaseOperand *src) { parallel_copy_list[dst] = src; }
     decltype(parallel_copy_list) &GetParallelCopyList() { return parallel_copy_list; }
+    decltype(instructions) &GetInsList() { return instructions; }
     auto erase(decltype(instructions.begin()) it) { return instructions.erase(it); }
     auto insert(decltype(instructions.begin()) it, MachineBaseInstruction *ins) { return instructions.insert(it, ins); }
     auto getParent() { return parent; }

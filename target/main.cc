@@ -13,6 +13,7 @@
 #include "./riscv64gc/optimize/riscv64_licm.h"
 #include "./riscv64gc/riscv64.h"
 #include "./riscv64gc/optimize/riscv64_branch_predict.h"
+#include "./riscv64gc/optimize/riscv64_ins_schedule.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -358,6 +359,7 @@ int main(int argc, char **argv) {
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
+        // RiscV64InstructionSchedule(m_unit).Execute();
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         // std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();
@@ -390,6 +392,7 @@ int main(int argc, char **argv) {
             RiscV64LICM(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
         }
+        RiscV64InstructionSchedule(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();

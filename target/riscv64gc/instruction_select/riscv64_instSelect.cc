@@ -691,10 +691,18 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                     ERROR("Unexpected Operand Type");
                 }
             }
-            Register mod1_reg = GetNewReg(INT64);
-            Register mod2_reg = GetNewReg(INT64);
-            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod1_reg, op_reg[0], op_reg[2]));
-            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod2_reg, op_reg[1], op_reg[2]));
+            Register mod1_reg;
+            Register mod2_reg;
+            if (op2->GetOperandType() == BasicOperand::IMMI32 && op3->GetOperandType() == BasicOperand::IMMI32) {
+                mod1_reg = GetNewReg(INT64);
+                mod2_reg = op_reg[1];
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod1_reg, op_reg[0], op_reg[2]));
+            } else {
+                mod1_reg = GetNewReg(INT64);
+                mod2_reg = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod1_reg, op_reg[0], op_reg[2]));
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod2_reg, op_reg[1], op_reg[2]));
+            }
             cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL, middle_reg, mod1_reg, mod2_reg));
             cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, result_reg, middle_reg, op_reg[2]));
         }
