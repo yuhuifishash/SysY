@@ -163,6 +163,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
     printer.SyncBlock(cur_block);
+    std::cerr<<"------Block Border---------\n";
     for (auto ready_ins : ready) {
         std::cerr<<"Ready ins:\n";
         printer.printAsm(ready_ins);

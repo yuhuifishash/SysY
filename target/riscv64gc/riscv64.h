@@ -403,12 +403,6 @@ private:
             } else if (ret_type == 2) {
                 ret.push_back(&RISCVregs[RISCV_fa0]);
             }
-            for (int i = RISCV_s0; i <= RISCV_s11; i++) {
-                ret.push_back(&RISCVregs[i]);
-            }
-            for (int i = RISCV_fs0; i <= RISCV_fs11; i++) {
-                ret.push_back(&RISCVregs[i]);
-            }
         }
         return ret;
     }

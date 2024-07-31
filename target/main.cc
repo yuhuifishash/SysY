@@ -414,7 +414,10 @@ int main(int argc, char **argv) {
             RiscV64LICM(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
         }
-        RiscV64InstructionSchedule(m_unit).Execute();
+        MachinePhiDestruction(m_unit).Execute();
+        RiscV64LowerFImmCopy(m_unit).Execute();
+        RiscV64LowerIImmCopy(m_unit).Execute();
+        // RiscV64InstructionSchedule(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();
