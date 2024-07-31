@@ -1,4 +1,5 @@
 #include "riscv64_ins_schedule.h"
+#include "../instruction_print/riscv64_printer.h"
 void RiscV64InstructionSchedule::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
@@ -154,6 +155,27 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
             ready.push_back(ins);
         }
     }
+
+    RiscV64Printer printer(std::cerr, unit);
+    printer.SyncFunction(current_func);
+    printer.SyncBlock(cur_block);
+    for (auto ready_ins : ready) {
+        std::cerr<<"Ready ins:\n";
+        printer.printAsm(ready_ins);
+        std::cerr<<"\n";
+    }
+    std::cerr<<"\n";
+    for (auto [begin, ends] : data_pre_graph) {
+        std::cerr<<"Begin ins:\n";
+        printer.printAsm(begin);
+        std::cerr<<"->\n";
+        for (auto end : ends) {
+            std::cerr<<"\t";
+            printer.printAsm(end);
+        }
+        std::cerr<<"\n";
+    }
+
     // Schedule Instructions
     std::map<int, MachineBaseInstruction*> result;
     std::vector<MachineBaseInstruction*> res;

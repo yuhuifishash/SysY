@@ -201,9 +201,29 @@ template <> void RiscV64Printer::printMachineIR<RiscV64Instruction *>(RiscV64Ins
     TODO("Implement RiscV64Instruction::printMachineIR");
 }
 
+template <> void RiscV64Printer::printAsm<MachineBaseInstruction *>(MachineBaseInstruction *ins) {
+	if (ins->arch == MachineBaseInstruction::RiscV) {
+		printAsm<RiscV64Instruction *>((RiscV64Instruction *)ins);
+		return;
+	} else if (ins->arch == MachineBaseInstruction::COPY) {
+		printAsm<MachineCopyInstruction *>((MachineCopyInstruction *)ins);
+		return;
+	} else if (ins->arch == MachineBaseInstruction::PHI) {
+		printAsm<MachinePhiInstruction *>((MachinePhiInstruction *)ins);
+		return;
+	} else {
+		s << "# Unknown Instruction, probably COMMENT\n";
+		return;
+	}
+}
+
+void RiscV64Printer::SyncFunction(MachineFunction *func) { current_func = func; }
+
+void RiscV64Printer::SyncBlock(MachineBlock *block) { cur_block = block; }
+
 void RiscV64Printer::emit() {
     s << "\t.text\n\t.globl main\n";
-	s << "\t.attribute arch, \"rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0\"\n";
+	s << "\t.attribute arch, \"rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0\"\n";
     for (auto func : printee->functions) {
         current_func = func;
         // s << "\t.globl\t" << func->getFunctionName() << "\n";

@@ -150,6 +150,11 @@ enum {
     RISCV_SH1ADDUW,
     RISCV_SH2ADDUW,
     RISCV_SH3ADDUW,
+
+    RISCV_MIN,
+    RISCV_MAX,
+    RISCV_MINU,
+    RISCV_MAXU,
 };
 
 struct RvOpInfo {

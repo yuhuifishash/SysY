@@ -9,6 +9,7 @@ private:
     int cur_offset;
     Register GetllvmReg(int, MachineDataType);
     Register GetNewReg(MachineDataType, bool save_across_call = false);
+    Register ExtractOp2Reg(BasicOperand*, MachineDataType);
 
     // struct LastCmpInfo{
     //     Register cmp_result,cmp_op1,cmp_op2;
