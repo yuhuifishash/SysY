@@ -74,7 +74,7 @@ bool ApplyCombineRules(CFG* C, std::deque<Instruction> &InstList, std::deque<Ins
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
         // changed |= EliminateSubEq(*begin,*it);
         changed |= EliminateDoubleConstDiv(*begin,*it);
-        changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
+        // changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
     }
     return changed;
 }
