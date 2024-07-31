@@ -81,8 +81,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRs1());
         s << ",";
         printRVfield(ins->getRs2());
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::R2_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -90,8 +89,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         if (ins->getOpcode() == RISCV_FCVT_W_S || ins->getOpcode() == RISCV_FCVT_WU_S) {
             s << ",rtz";
         }
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::R4_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -100,8 +98,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRs2());
         s << ",";
         printRVfield(ins->getRs3());
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::I_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -123,8 +120,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
             printRVfield(ins->getRs1());
             s << ")";
         }
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::S_type:
         printRVfield(ins->getRs1());
         s << ",";
@@ -135,8 +131,8 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         }
         s << "(";
         printRVfield(ins->getRs2());
-        s << ")\n";
-        return;
+        s << ")";
+		break;
     case RvOpInfo::B_type:
         printRVfield(ins->getRs1());
         s << ",";
@@ -147,8 +143,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::U_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -157,8 +152,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::J_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -167,20 +161,28 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-        s << "\n";
-        return;
+		break;
     case RvOpInfo::CALL_type:
-        s << ins->getLabel().name << "\n";
-        return;
+        s << ins->getLabel().name;
+        break;
+	default:
+        ERROR("Unexpected instruction format");
     }
-    ERROR("Unexpected instruction format");
+	if (!ins->CanSchedule()) {
+		s << " # Can't schedule";
+	}
+    s << "\n";
 }
 
 template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyInstruction *ins) {
     printRVfield(ins->GetDst());
     s << " = COPY ";
     printRVfield(ins->GetSrc());
-    s << ", " << ins->GetCopyType().toString() << "\n";
+    s << ", " << ins->GetCopyType().toString();
+	if (!ins->CanSchedule()) {
+		s << " # Can't schedule";
+	}
+	s << "\n";
 }
 
 template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {

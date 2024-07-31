@@ -99,7 +99,9 @@ void RiscV64Function::YankBranchInstructionToNewBlock(int original_block_id, int
 }
 void RiscV64Function::AppendUncondBranchInstructionToNewBlock(int new_block, int br_target) {
     auto newblock = mcfg->GetNodeByBlockId(new_block)->Mblock;
+    rvconstructor->DisableSchedule();
     newblock->push_back(rvconstructor->ConstructJLabel(RISCV_JAL, GetPhysicalReg(RISCV_x0), RiscVLabel(br_target)));
+    rvconstructor->EnableSchedule();
 }
 
 struct RvOpInfo OpTable[] = {

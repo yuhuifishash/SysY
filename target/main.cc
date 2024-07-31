@@ -381,7 +381,7 @@ int main(int argc, char **argv) {
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
-        // RiscV64InstructionSchedule(m_unit).Execute();
+        RiscV64InstructionSchedule(m_unit).Execute();
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         // std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();
@@ -417,7 +417,7 @@ int main(int argc, char **argv) {
         MachinePhiDestruction(m_unit).Execute();
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
-        // RiscV64InstructionSchedule(m_unit).Execute();
+        RiscV64InstructionSchedule(m_unit).Execute();
         
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();

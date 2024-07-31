@@ -1,7 +1,7 @@
 #include "riscv64_ins_schedule.h"
 #include "../instruction_print/riscv64_printer.h"
 
-#define SCHEDULEDBG
+// #define SCHEDULEDBG
 
 void RiscV64InstructionSchedule::Execute() {
     for (auto func : unit->functions) {
@@ -105,7 +105,7 @@ struct ExecState {
     }
 };
 
-void RiscV64InstructionSchedule::ExecuteInBlock() {
+void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstruction*>& list) {
     // Construct Data Dependency Graph
     // Assume no phi
     std::map<MachineBaseInstruction*, std::vector<MachineBaseInstruction*>> data_pre_graph;
@@ -116,7 +116,8 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
     std::vector<MachineBaseInstruction* > last_loads;
 
     std::vector<MachineBaseInstruction*> ready;
-    for (auto ins : *cur_block) {
+    std::priority_queue<int> ready_queue;
+    for (auto ins : list) {
         if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
         if (ins->arch == MachineBaseInstruction::RiscV) {
             auto riscv_ins = (RiscV64Instruction*)(ins);
@@ -163,7 +164,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
     printer.SyncBlock(cur_block);
-    std::cerr<<"------Block Border---------\n";
+    std::cerr<<"------Block ---------\n";
     for (auto ready_ins : ready) {
         std::cerr<<"Ready ins:\n";
         printer.printAsm(ready_ins);
@@ -211,9 +212,51 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
             }
         }
     }
-    auto& inslist = cur_block->GetInsList();
-    inslist.clear();
+#ifdef SCHEDULEDBG
+    std::cerr<<"Result:\n";
     for (auto ins : res) {
-        inslist.push_back(ins);
+        std::cerr<<"\t";
+        printer.printAsm(ins);
+    }
+#endif
+}
+
+void RiscV64InstructionSchedule::ExecuteInBlock () {
+    std::vector<MachineBaseInstruction*> schedule_batch;
+    std::vector<MachineBaseInstruction*> result;
+    for (auto ins : *cur_block) {
+        if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
+        if (ins->CanSchedule()) {
+            schedule_batch.push_back(ins);
+        } else {
+            if (!schedule_batch.empty()) {
+                ExecuteInList(schedule_batch);
+                for (auto scheduled_ins : schedule_batch) {
+                    result.push_back(scheduled_ins);
+                }
+                schedule_batch.clear();
+            }
+            result.push_back(ins);
+        }
+    }
+    if (!schedule_batch.empty()) {
+        ExecuteInList(schedule_batch);
+        for (auto scheduled_ins : schedule_batch) {
+            result.push_back(scheduled_ins);
+        }
+        schedule_batch.clear();
+    }
+#ifdef SCHEDULEDBGRESULT
+    RiscV64Printer printer(std::cerr, unit);
+    printer.SyncFunction(current_func);
+    printer.SyncBlock(cur_block);
+    std::cerr<<"------Block ---------\n";
+    for (auto ins : result) {
+        printer.printAsm(ins);
+    }
+#endif
+    cur_block->clear();
+    for (auto ins : result) {
+        cur_block->push_back(ins);
     }
 }

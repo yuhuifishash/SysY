@@ -872,6 +872,7 @@ template <> void RiscV64Selector::ConvertAndAppend<AllocaInstruction *>(AllocaIn
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondInstruction *ins) {
+    rvconstructor->DisableSchedule();
     // Log("RV InstSelect");
     // Lazy("Testing RV InstSelect");
     Assert(ins->GetCond()->GetOperandType() == BasicOperand::REG);
@@ -1035,6 +1036,7 @@ template <> void RiscV64Selector::ConvertAndAppend<BrCondInstruction *>(BrCondIn
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUncondInstruction *ins) {
+    rvconstructor->DisableSchedule();
     auto dest_label = RiscVLabel(((LabelOperand *)ins->GetDestLabel())->GetLabelNo());
 
     auto jal_instr = rvconstructor->ConstructJLabel(RISCV_JAL, GetPhysicalReg(RISCV_x0), dest_label);
@@ -1043,6 +1045,7 @@ template <> void RiscV64Selector::ConvertAndAppend<BrUncondInstruction *>(BrUnco
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstruction *ins) {
+    rvconstructor->DisableSchedule();
     Assert(ins->GetRetType() == VOID || ins->GetResult()->GetOperandType() == BasicOperand::REG);
 
     int ireg_cnt = 0;
@@ -1272,6 +1275,7 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<RetInstruction *>(RetInstruction *ins) {
+    rvconstructor->DisableSchedule();
     if (ins->GetRetVal() != NULL) {
         if (ins->GetRetVal()->GetOperandType() == BasicOperand::REG) {
             if (ins->GetType() == FLOAT32) {
@@ -1881,6 +1885,7 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
         ConvertAndAppend<BitCastInstruction *>((BitCastInstruction *)inst);
         break;
     }
+    rvconstructor->EnableSchedule();
 }
 
 void RiscV64Selector::SelectInstructionAndBuildCFG() {

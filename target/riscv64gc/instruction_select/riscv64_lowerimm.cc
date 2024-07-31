@@ -13,6 +13,9 @@ void RiscV64LowerImm::Execute() {
                         continue;
                     if (cur_rvins->getUseLabel() == true)
                         continue;
+                    if (cur_rvins->CanSchedule() == false) {
+                        rvconstructor->DisableSchedule();
+                    }
                     if (cur_rvins->getOpcode() == RISCV_LD || cur_rvins->getOpcode() == RISCV_SD ||
                         cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_SW ||
                         cur_rvins->getOpcode() == RISCV_FLW || cur_rvins->getOpcode() == RISCV_FSW) {
@@ -86,6 +89,7 @@ void RiscV64LowerImm::Execute() {
                         block->insert(it, cur_rvins);
                         --it;
                     }
+                    rvconstructor->EnableSchedule();
                 }
             }
         }

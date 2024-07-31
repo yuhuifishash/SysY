@@ -481,10 +481,14 @@ public:
 };
 
 class RiscV64InstructionConstructor {
-    RiscV64InstructionConstructor() {}
     static RiscV64InstructionConstructor instance;
+    bool no_schedule;
+
+    RiscV64InstructionConstructor() : no_schedule(false) {}
 
 public:
+    void DisableSchedule() { no_schedule = true; }
+    void EnableSchedule() { no_schedule = false; }
     static RiscV64InstructionConstructor *GetConstructor() { return &instance; }
     RiscV64Instruction *ConstructR(int op, Register Rd, Register Rs1, Register Rs2) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -493,7 +497,8 @@ public:
         ret->setRd(Rd);
         ret->setRs1(Rs1);
         ret->setRs2(Rs2);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructR2(int op, Register Rd, Register Rs1) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -501,7 +506,8 @@ public:
         Assert(OpTable[op].ins_formattype == RvOpInfo::R2_type);
         ret->setRd(Rd);
         ret->setRs1(Rs1);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructR4(int op, Register Rd, Register Rs1, Register Rs2, Register Rs3) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -511,7 +517,8 @@ public:
         ret->setRs1(Rs1);
         ret->setRs2(Rs2);
         ret->setRs3(Rs3);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructIImm(int op, Register Rd, Register Rs1, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -520,7 +527,8 @@ public:
         ret->setRd(Rd);
         ret->setRs1(Rs1);
         ret->setImm(imm);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructILabel(int op, Register Rd, Register Rs1, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -529,7 +537,8 @@ public:
         ret->setRd(Rd);
         ret->setRs1(Rs1);
         ret->setLabel(label);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructSImm(int op, Register value, Register ptr, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -538,7 +547,8 @@ public:
         ret->setRs1(value);
         ret->setRs2(ptr);
         ret->setImm(imm);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructSLabel(int op, Register value, Register ptr, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -547,7 +557,8 @@ public:
         ret->setRs1(value);
         ret->setRs2(ptr);
         ret->setLabel(label);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructBLabel(int op, Register Rs1, Register Rs2, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -556,7 +567,8 @@ public:
         ret->setRs1(Rs1);
         ret->setRs2(Rs2);
         ret->setLabel(label);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructUImm(int op, Register Rd, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -564,7 +576,8 @@ public:
         Assert(OpTable[op].ins_formattype == RvOpInfo::U_type);
         ret->setRd(Rd);
         ret->setImm(imm);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructULabel(int op, Register Rd, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -572,7 +585,8 @@ public:
         Assert(OpTable[op].ins_formattype == RvOpInfo::U_type);
         ret->setRd(Rd);
         ret->setLabel(label);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructJLabel(int op, Register rd, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -580,7 +594,8 @@ public:
         Assert(OpTable[op].ins_formattype == RvOpInfo::J_type);
         ret->setRd(rd);
         ret->setLabel(label);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     MachineCopyInstruction *ConstructCopyReg(Register dst, Register src, MachineDataType type) {
         Assert(dst.type == src.type);
@@ -588,7 +603,8 @@ public:
 
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineRegister(src), new MachineRegister(dst), type);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     MachineCopyInstruction *ConstructCopyRegImmI(Register dst, int src, MachineDataType type) {
         Assert(dst.type == type);
@@ -596,7 +612,8 @@ public:
 
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineImmediateInt(src), new MachineRegister(dst), type);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     MachineCopyInstruction *ConstructCopyRegImmF(Register dst, float src, MachineDataType type) {
         Assert(dst.type == type);
@@ -604,7 +621,8 @@ public:
 
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineImmediateFloat(src), new MachineRegister(dst), type);
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     RiscV64Instruction *ConstructCall(int op, std::string funcname, int iregnum, int fregnum) {
         Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
@@ -614,7 +632,8 @@ public:
         ret->setCalliregNum(iregnum);
         ret->setCallfregNum(fregnum);
         ret->setLabel(RiscVLabel(funcname, false));
-        return ret;
+        ret->SetNoSchedule(no_schedule);
+		return ret;
     }
     MachineComment *ConstructComment(std::string comment) { return new MachineComment(comment); }
 };

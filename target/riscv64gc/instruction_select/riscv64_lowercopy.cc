@@ -87,11 +87,14 @@ void RiscV64LowerFImmCopy::Execute() {
                 if (ins->arch == MachineBaseInstruction::COPY) {
                     auto m_copy = (MachineCopyInstruction *)ins;
                     Assert(m_copy->GetDst()->op_type == MachineBaseOperand::REG);
+                    if (!ins->CanSchedule()) {
+                        rvconstructor->DisableSchedule();
+                    }
                     if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMF) {
                         auto src_immf = (MachineImmediateFloat *)m_copy->GetSrc();
                         auto dst_reg = (MachineRegister *)m_copy->GetDst();
                         auto immf = src_immf->fimm32;
-                        if (immf == 0.0 ){
+                        if (immf == 0.0){
                             it = block->erase(it);
                             block->insert(it, rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg->reg,GetPhysicalReg(RISCV_x0)));
                             --it;
@@ -103,6 +106,7 @@ void RiscV64LowerFImmCopy::Execute() {
                             --it;
                         }
                     }
+                    rvconstructor->EnableSchedule();
                 }
             }
         }
@@ -120,6 +124,9 @@ void RiscV64LowerIImmCopy::Execute(){
                     auto m_copy = (MachineCopyInstruction *)ins;
                     Assert(m_copy->GetDst()->op_type == MachineBaseOperand::REG);
                     if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMI) {
+                        if (!ins->CanSchedule()) {
+                            rvconstructor->DisableSchedule();
+                        }
                         // If here should use lui&addi,see: https://zhuanlan.zhihu.com/p/374235855
                         auto src_immi = (MachineImmediateInt *)m_copy->GetSrc();
                         auto dst_reg = (MachineRegister *)m_copy->GetDst();
@@ -147,9 +154,9 @@ void RiscV64LowerIImmCopy::Execute(){
                             block->insert(it,rvconstructor->ConstructCopyReg(dst_reg->reg,GetPhysicalReg(RISCV_x0),INT64));
                             --it;
                         }
+                        rvconstructor->EnableSchedule();
                     }
                 }
-
             }
         }
     }

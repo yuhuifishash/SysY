@@ -247,11 +247,14 @@ public:
 
 private:
     int ins_number;
+    bool no_schedule;
 
 public:
+    void SetNoSchedule(bool no_schedule) { this->no_schedule = no_schedule; }
+    bool CanSchedule() { return !no_schedule; }
     void setNumber(int ins_number) { this->ins_number = ins_number; }
     int getNumber() { return ins_number; }
-    MachineBaseInstruction(int arch) : arch(arch) {}
+    MachineBaseInstruction(int arch) : arch(arch), no_schedule(false) {}
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
     virtual int GetLatency() = 0;
