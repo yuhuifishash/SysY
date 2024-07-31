@@ -149,7 +149,7 @@ void MinMaxRecognize(CFG *C) {
                     || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
                     continue;
                 }
-                // I->PrintIR(std::cerr);
+                I->PrintIR(std::cerr);
                 if(ismin && issigned){
                     I = new ArithmeticInstruction(SMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
                 }else if(!ismin && issigned){
@@ -159,8 +159,8 @@ void MinMaxRecognize(CFG *C) {
                 }else{
                     I = new ArithmeticInstruction(UMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
                 }
-                // I->PrintIR(std::cerr);
-            }else{
+                I->PrintIR(std::cerr);
+            }/*else{
                 // I->PrintIR(std::cerr);
                 auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
                 bool ismin = 1;
@@ -209,7 +209,7 @@ void MinMaxRecognize(CFG *C) {
                     I = new ArithmeticInstruction(FMAX_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
                 }
                 // I->PrintIR(std::cerr);
-            }
+            }*/
         }
     }
 }

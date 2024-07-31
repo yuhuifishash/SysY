@@ -217,6 +217,7 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstCombine);
+        // llvmIR.PassExecutor(MinMaxRecognize);
         llvmIR.PassExecutor(SimpleDCE);
 
         llvmIR.BuildFunctionInfo();
