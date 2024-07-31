@@ -1,5 +1,8 @@
 #include "riscv64_ins_schedule.h"
 #include "../instruction_print/riscv64_printer.h"
+
+#define SCHEDULEDBG
+
 void RiscV64InstructionSchedule::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
@@ -156,6 +159,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
         }
     }
 
+#ifdef SCHEDULEDBG
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
     printer.SyncBlock(cur_block);
@@ -175,6 +179,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
         }
         std::cerr<<"\n";
     }
+#endif
 
     // Schedule Instructions
     std::map<int, MachineBaseInstruction*> result;

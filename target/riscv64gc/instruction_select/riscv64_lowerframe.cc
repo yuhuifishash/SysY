@@ -70,6 +70,7 @@ void RiscV64LowerFrame::Execute() {
                     }
                 }
                 b->push_front(rvconstructor->ConstructComment("Lowerframe: parameters\n"));
+#ifdef SAVEREGBYCOPY
                 for (int i = 0; i < saveregnum; i++) {
                     if (save_regs[i].type == INT64) {
                         b->push_front(
@@ -80,7 +81,9 @@ void RiscV64LowerFrame::Execute() {
                     }
                 }
                 b->push_front(rvconstructor->ConstructComment("Lowerframe: save regs\n"));
+#endif
             }
+#ifdef SAVEREGBYCOPY
             auto last_ins = *(b->ReverseBegin());
             Assert(last_ins->arch == MachineBaseInstruction::RiscV);
             auto riscv_last_ins = (RiscV64Instruction *)last_ins;
@@ -103,6 +106,49 @@ void RiscV64LowerFrame::Execute() {
                     }
                 }
             }
+#endif
+        }
+    }
+}
+
+void GatherUseSregs (MachineFunction* func, std::vector<int>& saveregs) {
+    int RegNeedSaved[64] = {
+        [RISCV_s0] = 1,
+        [RISCV_s1] = 1,
+        [RISCV_s2] = 1,
+        [RISCV_s3] = 1,
+        [RISCV_s4] = 1,
+        [RISCV_s5] = 1,
+        [RISCV_s6] = 1,
+        [RISCV_s7] = 1,
+        [RISCV_s8] = 1,
+        [RISCV_s9] = 1,
+        [RISCV_s10] = 1,
+        [RISCV_s11] = 1,
+        [RISCV_fs0] = 1,
+        [RISCV_fs1] = 1,
+        [RISCV_fs2] = 1,
+        [RISCV_fs3] = 1,
+        [RISCV_fs4] = 1,
+        [RISCV_fs5] = 1,
+        [RISCV_fs6] = 1,
+        [RISCV_fs7] = 1,
+        [RISCV_fs8] = 1,
+        [RISCV_fs9] = 1,
+        [RISCV_fs10] = 1,
+        [RISCV_fs11] = 1,
+        [RISCV_ra] = 1,
+    };
+    for (auto &b : func->blocks) {
+        for (auto ins : *b) {
+            for (auto reg : ins->GetWriteReg()) {
+                if (reg->is_virtual == false) {
+                    if (RegNeedSaved[reg->reg_no]) {
+                        RegNeedSaved[reg->reg_no] = 0;
+                        saveregs.push_back(reg->reg_no);
+                    }
+                }
+            }
         }
     }
 }
@@ -110,6 +156,9 @@ void RiscV64LowerFrame::Execute() {
 void RiscV64LowerStack::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
+        std::vector<int> saveregs;
+        GatherUseSregs(func, saveregs);
+        func->AddStackSize(saveregs.size() * 8);
         for (auto &b : func->blocks) {
             cur_block = b;
             if (b->getLabelId() == 0) {
@@ -123,7 +172,16 @@ void RiscV64LowerStack::Execute() {
                                                             GetPhysicalReg(RISCV_sp), stacksz_reg));
                     b->push_front(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                 }
-                b->push_front(rvconstructor->ConstructComment("Lowerstack: sub sp\n"));
+                // b->push_front(rvconstructor->ConstructComment("Lowerstack: sub sp\n"));
+                int offset = 0;
+                for (auto regno : saveregs) {
+                    offset -= 8;
+                    if (regno >= RISCV_x0 && regno <= RISCV_x31) {
+                        b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                    } else {
+                        b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                    }
+                }
             }
             auto last_ins = *(b->ReverseBegin());
             Assert(last_ins->arch == MachineBaseInstruction::RiscV);
@@ -133,7 +191,7 @@ void RiscV64LowerStack::Execute() {
                     if (riscv_last_ins->getRs1() == GetPhysicalReg(RISCV_ra)) {
                         Assert(riscv_last_ins->getImm() == 0);
                         b->pop_back();
-                        b->push_back(rvconstructor->ConstructComment("Lowerstack: add sp\n"));
+                        // b->push_back(rvconstructor->ConstructComment("Lowerstack: add sp\n"));
                         if (func->GetStackSize() <= 2032) {
                             b->push_back(rvconstructor->ConstructIImm(RISCV_ADDI, GetPhysicalReg(RISCV_sp),
                                                                       GetPhysicalReg(RISCV_sp), func->GetStackSize()));
@@ -142,6 +200,15 @@ void RiscV64LowerStack::Execute() {
                             b->push_back(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                             b->push_back(rvconstructor->ConstructR(RISCV_ADD, GetPhysicalReg(RISCV_sp),
                                                                    GetPhysicalReg(RISCV_sp), stacksz_reg));
+                        }
+                        int offset = 0;
+                        for (auto regno : saveregs) {
+                            offset -= 8;
+                            if (regno >= RISCV_x0 && regno <= RISCV_x31) {
+                                b->push_back(rvconstructor->ConstructIImm(RISCV_LD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                            } else {
+                                b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                            }
                         }
                         b->push_back(riscv_last_ins);
                     }
