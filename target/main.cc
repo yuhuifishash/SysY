@@ -177,6 +177,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(MinMaxRecognize);
+        llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.BuildFunctionInfo();
@@ -271,7 +272,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(MinMaxRecognize);
-        // llvmIR.PassExecutor(ArrayMinMaxRecognize);
+        llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
         llvmIR.ElimateUnreachedInstructionAndBlocks(); 
