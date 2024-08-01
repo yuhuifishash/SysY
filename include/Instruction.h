@@ -377,7 +377,7 @@ public:
     void SetOperand1(Operand op) { op1 = op; }
     void SetOperand2(Operand op) { op2 = op; }
     void SwapOperand() { std::swap(op1, op2); }
-    void Setopcode(LLVMIROpcode id) {opcode = id;}
+    void Setopcode(LLVMIROpcode id) { opcode = id; }
     ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand result) {
         this->opcode = opcode;
         this->op1 = op1;
@@ -421,8 +421,8 @@ public:
     enum LLVMType GetDataType() { return type; }
     Operand GetOp1() { return op1; }
     Operand GetOp2() { return op2; }
-    void SetOp1(Operand op) {op1 = op;}
-    void SetOp2(Operand op) {op2 = op;}
+    void SetOp1(Operand op) { op1 = op; }
+    void SetOp2(Operand op) { op2 = op; }
     IcmpCond GetCompareCondition() { return cond; }
     Operand GetResult() { return result; }
 
@@ -657,7 +657,7 @@ public:
     }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return -1; }
-    
+
     void ReplaceRegByMap(const std::map<int, int> &Rule);
     void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
     std::vector<Operand> GetNonResultOperands() { return std::vector<Operand>{}; }
@@ -925,6 +925,7 @@ private:
     Operand dst;
     LLVMType src_type;
     LLVMType dst_type;
+
 public:
     BitCastInstruction(Operand src_op, Operand dst_op, LLVMType src_t, LLVMType dst_t)
         : src(src_op), dst(dst_op), src_type(src_t), dst_type(dst_t) {
@@ -953,7 +954,7 @@ public:
         : result(result_receiver), value(value_for_cast) {
         this->opcode = SITOFP;
     }
-    
+
     virtual LLVMType GetResultType() { return FLOAT32; }
     Operand GetResultReg() { return result; }
     Operand GetSrc() { return value; }

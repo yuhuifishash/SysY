@@ -21,8 +21,9 @@ void RiscV64LowerCopy::Execute() {
                         // ins = li_instr;
                         it = block->erase(it);
                         // block->insert(it, li_instr);
-                        block->insert(it,rvconstructor->ConstructUImm(RISCV_LUI,mid_reg,src_immi->imm32 + 0x800));
-                        block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDI,dst_reg->reg,mid_reg,((src_immi->imm32)<<20)>>20));
+                        block->insert(it, rvconstructor->ConstructUImm(RISCV_LUI, mid_reg, src_immi->imm32 + 0x800));
+                        block->insert(it, rvconstructor->ConstructIImm(RISCV_ADDI, dst_reg->reg, mid_reg,
+                                                                       ((src_immi->imm32) << 20) >> 20));
                         --it;
                     } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMF) {
                         ERROR("Shouldn't reach here");
@@ -62,7 +63,7 @@ void RiscV64LowerCopy::Execute() {
                             } else {
                                 // block->insert(it, load_x0_ins);
                                 // block->insert(it, copy);
-                                block->insert(it,rvconstructor->ConstructR2(RISCV_FMV_S, dst_reg, src_reg));
+                                block->insert(it, rvconstructor->ConstructR2(RISCV_FMV_S, dst_reg, src_reg));
                             }
                             --it;
                         } else {
@@ -94,11 +95,12 @@ void RiscV64LowerFImmCopy::Execute() {
                         auto src_immf = (MachineImmediateFloat *)m_copy->GetSrc();
                         auto dst_reg = (MachineRegister *)m_copy->GetDst();
                         auto immf = src_immf->fimm32;
-                        if (immf == 0.0){
+                        if (immf == 0.0) {
                             it = block->erase(it);
-                            block->insert(it, rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg->reg,GetPhysicalReg(RISCV_x0)));
+                            block->insert(
+                            it, rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg->reg, GetPhysicalReg(RISCV_x0)));
                             --it;
-                        }else{
+                        } else {
                             it = block->erase(it);
                             auto mid_reg = function->GetNewRegister(INT64.data_type, INT64.data_length);
                             block->insert(it, rvconstructor->ConstructCopyRegImmI(mid_reg, *(int *)&immf, INT64));
@@ -112,7 +114,7 @@ void RiscV64LowerFImmCopy::Execute() {
         }
     }
 }
-void RiscV64LowerIImmCopy::Execute(){
+void RiscV64LowerIImmCopy::Execute() {
     for (auto function : unit->functions) {
         auto block_it = function->getMachineCFG()->getSeqScanIterator();
         block_it->open();
@@ -130,28 +132,35 @@ void RiscV64LowerIImmCopy::Execute(){
                         // If here should use lui&addi,see: https://zhuanlan.zhihu.com/p/374235855
                         auto src_immi = (MachineImmediateInt *)m_copy->GetSrc();
                         auto dst_reg = (MachineRegister *)m_copy->GetDst();
-                        if (src_immi != 0){ 
+                        if (src_immi != 0) {
                             if (src_immi->imm32 <= 2047 && src_immi->imm32 >= -2048) {
                                 it = block->erase(it);
-                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDIW,dst_reg->reg,GetPhysicalReg(RISCV_x0),src_immi->imm32));
+                                block->insert(it,
+                                              rvconstructor->ConstructIImm(RISCV_ADDIW, dst_reg->reg,
+                                                                           GetPhysicalReg(RISCV_x0), src_immi->imm32));
                                 --it;
-                            }else if ((src_immi->imm32 & 0xFFF) == 0){
+                            } else if ((src_immi->imm32 & 0xFFF) == 0) {
                                 it = block->erase(it);
-                                block->insert(it,rvconstructor->ConstructUImm(RISCV_LUI,dst_reg->reg,((unsigned int)src_immi->imm32)>>12));
+                                block->insert(it, rvconstructor->ConstructUImm(RISCV_LUI, dst_reg->reg,
+                                                                               ((unsigned int)src_immi->imm32) >> 12));
                                 --it;
-                            }else{
+                            } else {
                                 auto mid_reg = function->GetNewReg(INT64);
 
-                                // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
+                                // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg,
+                                // src_immi->imm32);
                                 it = block->erase(it);
                                 // block->insert(it, li_instr);
-                                block->insert(it,rvconstructor->ConstructUImm(RISCV_LUI,mid_reg,((unsigned int)(src_immi->imm32 + 0x800))>>12));
-                                block->insert(it,rvconstructor->ConstructIImm(RISCV_ADDIW,dst_reg->reg,mid_reg,((src_immi->imm32)<<20)>>20));
+                                block->insert(it, rvconstructor->ConstructUImm(
+                                                  RISCV_LUI, mid_reg, ((unsigned int)(src_immi->imm32 + 0x800)) >> 12));
+                                block->insert(it, rvconstructor->ConstructIImm(RISCV_ADDIW, dst_reg->reg, mid_reg,
+                                                                               ((src_immi->imm32) << 20) >> 20));
                                 --it;
                             }
-                        }else{
+                        } else {
                             it = block->erase(it);
-                            block->insert(it,rvconstructor->ConstructCopyReg(dst_reg->reg,GetPhysicalReg(RISCV_x0),INT64));
+                            block->insert(
+                            it, rvconstructor->ConstructCopyReg(dst_reg->reg, GetPhysicalReg(RISCV_x0), INT64));
                             --it;
                         }
                         rvconstructor->EnableSchedule();

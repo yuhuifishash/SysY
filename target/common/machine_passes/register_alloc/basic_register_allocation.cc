@@ -12,7 +12,7 @@ void RegisterAllocation::Execute() {
         // std::cerr<<"Func: "<<current_func->getFunctionName()<<std::endl;
         current_func = not_allocated_funcs.front();
         numbertoins.clear();
-        InstructionNumber(unit,numbertoins).ExecuteInFunc(current_func);
+        InstructionNumber(unit, numbertoins).ExecuteInFunc(current_func);
         alloc_result[current_func].clear();
         not_allocated_funcs.pop();
         UpdateIntervalsInCurrentFunc();
@@ -27,14 +27,15 @@ void RegisterAllocation::Execute() {
     }
 #ifdef PRINT_ALLOC_RESULT
     Log("Alloc Result:");
-    for(auto pair : alloc_result){
+    for (auto pair : alloc_result) {
         auto func = pair.first;
         auto map = pair.second;
-        Log("Func: %s",func->getFunctionName().c_str());
-        for(auto alloc_pair: map){
+        Log("Func: %s", func->getFunctionName().c_str());
+        for (auto alloc_pair : map) {
             auto reg = alloc_pair.first;
             auto result = alloc_pair.second;
-            std::cerr<<"Reg: "<<reg.is_virtual<<" "<<reg.reg_no<<", Result: "<<result.in_mem<<" "<<result.phy_reg_no<<" "<<result.stack_offset<<"\n";
+            std::cerr << "Reg: " << reg.is_virtual << " " << reg.reg_no << ", Result: " << result.in_mem << " "
+                      << result.phy_reg_no << " " << result.stack_offset << "\n";
         }
     }
 #endif
@@ -57,11 +58,11 @@ void InstructionNumber::ExecuteInFunc(MachineFunction *func) {
         auto mcfg_node = it->next();
         auto mblock = mcfg_node->Mblock;
         // Update instruction number
-        this->numbertoins[count_begin] = InstructionNumberEntry(nullptr,true);
+        this->numbertoins[count_begin] = InstructionNumberEntry(nullptr, true);
         count_begin++;
         for (auto ins : *mblock) {
             if (ins->arch != MachineBaseInstruction::COMMENT) {
-                this->numbertoins[count_begin] = InstructionNumberEntry(ins,false);
+                this->numbertoins[count_begin] = InstructionNumberEntry(ins, false);
                 ins->setNumber(count_begin++);
             }
         }
@@ -87,8 +88,8 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         auto mblock = mcfg_node->Mblock;
         auto cur_id = mcfg_node->Mblock->getLabelId();
         // For pseudo code see https://www.cnblogs.com/AANA/p/16311477.html
-        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<" "<<mblock->getBlockOutNumber()<<"\n";
-        // On Use(Out)
+        // std::cerr<<"Func:"<<mfun->getFunctionName()<<" Block: "<<cur_id<<" "<<mblock->getBlockInNumber()<<"
+        // "<<mblock->getBlockOutNumber()<<"\n"; On Use(Out)
         for (auto reg : liveness.GetOUT(cur_id)) {
             if (intervals.find(reg) == intervals.end()) {
                 intervals[reg] = LiveInterval(reg);
@@ -137,7 +138,8 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                     // No Last Use, New Range
                     intervals[*reg].PushFront(ins->getNumber(), ins->getNumber());
                 }
-                intervals[*reg].IncreaseReferenceCount((1<<(std::min(5,mblock->loop_depth))) + mblock->loop_depth + 1);
+                intervals[*reg].IncreaseReferenceCount((1 << (std::min(5, mblock->loop_depth))) + mblock->loop_depth +
+                                                       1);
             }
             for (auto reg : ins->GetReadReg()) {
                 // Update last_use of reg
@@ -155,24 +157,25 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
                 }
                 last_use[*reg] = ins->getNumber();
 
-                intervals[*reg].IncreaseReferenceCount((1<<(std::min(5,mblock->loop_depth))) + mblock->loop_depth + 1);
+                intervals[*reg].IncreaseReferenceCount((1 << (std::min(5, mblock->loop_depth))) + mblock->loop_depth +
+                                                       1);
             }
         }
         last_use.clear();
         last_def.clear();
     }
 #ifdef PRINT_INTERVALS
-    std::cerr<<"Check Intervals "<<mfun->getFunctionName().c_str()<<" Before Coalesce"<<std::endl;
-    for(auto interval_pair : intervals){
+    std::cerr << "Check Intervals " << mfun->getFunctionName().c_str() << " Before Coalesce" << std::endl;
+    for (auto interval_pair : intervals) {
         auto reg = interval_pair.first;
         auto interval = interval_pair.second;
-        std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
-        for(auto seg : interval){
-            std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+        std::cerr << reg.is_virtual << " " << reg.reg_no << " ";
+        for (auto seg : interval) {
+            std::cerr << "[" << seg.begin << "," << seg.end << ") ";
         }
-        std::cerr<<"Ref: "<<interval.getReferenceCount();
-        std::cerr<<"\n";
+        std::cerr << "Ref: " << interval.getReferenceCount();
+        std::cerr << "\n";
     }
-    std::cerr<<"\n";
+    std::cerr << "\n";
 #endif
 }

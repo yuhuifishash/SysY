@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <set>
 #include <vector>
-#include <map>
 
 // #define ENABLE_PRINT
 #ifdef ENABLE_PRINT
@@ -258,7 +258,7 @@ public:
     virtual std::vector<Register *> GetReadReg() = 0;
     virtual std::vector<Register *> GetWriteReg() = 0;
     virtual int GetLatency() = 0;
-    bool ExistPhysicalReg () {
+    bool ExistPhysicalReg() {
         for (auto preg : this->GetReadReg()) {
             if (!preg->is_virtual) {
                 return true;
@@ -271,7 +271,7 @@ public:
         }
         return false;
     }
-    void ReplaceByMap (std::map<int,int> vreg_replacemap) {
+    void ReplaceByMap(std::map<int, int> vreg_replacemap) {
         for (auto preg : this->GetReadReg()) {
             if (preg->is_virtual) {
                 if (vreg_replacemap.find(preg->reg_no) != vreg_replacemap.end()) {
@@ -291,7 +291,7 @@ public:
     virtual std::vector<Register *> GetReadReg() { return std::vector<Register *>(); }
     virtual std::vector<Register *> GetWriteReg() { return std::vector<Register *>(); }
     std::string GetComment() { return comment; }
-    int GetLatency(){return 0;}
+    int GetLatency() { return 0; }
 };
 
 class MachinePhiInstruction : public MachineBaseInstruction {
@@ -307,8 +307,8 @@ public:
     Register GetResult() { return result; }
     void SetResult(Register result) { this->result = result; }
     std::vector<std::pair<int, MachineBaseOperand *>> &GetPhiList() { return phi_list; }
-    MachineBaseOperand* removePhiList(int label) {
-        for (auto it = phi_list.begin();it != phi_list.end();++it) {
+    MachineBaseOperand *removePhiList(int label) {
+        for (auto it = phi_list.begin(); it != phi_list.end(); ++it) {
             if (it->first == label) {
                 auto ret = it->second;
                 phi_list.erase(it);
@@ -324,10 +324,8 @@ public:
     void pushPhiList(int label, float immf32) {
         phi_list.push_back(std::make_pair(label, new MachineImmediateFloat(immf32)));
     }
-    void pushPhiList(int label, MachineBaseOperand* op) {
-        phi_list.push_back(std::make_pair(label, op));
-    }
-    int GetLatency(){return 0;}
+    void pushPhiList(int label, MachineBaseOperand *op) { phi_list.push_back(std::make_pair(label, op)); }
+    int GetLatency() { return 0; }
 };
 // %x: type = COPY type %y: type
 class MachineCopyInstruction : public MachineBaseInstruction {
@@ -355,6 +353,6 @@ public:
     MachineBaseOperand *GetSrc() { return src; }
     MachineBaseOperand *GetDst() { return dst; }
     MachineDataType GetCopyType() { return copy_type; }
-    int GetLatency(){return 1;}
+    int GetLatency() { return 1; }
 };
 #endif

@@ -286,11 +286,11 @@ void SimpleForLoopUnroll(CFG *C) {
         for (auto lv : loop_forest.loopG[L->loop_id]) {
             dfs(C, loop_forest, lv);
         }
-        if(C->LoopForest.loopG[L->loop_id].size() == 0){//no son loop
+        if (C->LoopForest.loopG[L->loop_id].size() == 0) {    // no son loop
             L->SimpleForLoopUnroll(C);
         }
     };
-    
+
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
             dfs(C, C->LoopForest, l);
@@ -302,36 +302,36 @@ void SimpleForLoopUnroll(CFG *C) {
 }
 
 bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
-    if (C->LoopForest.loopG[loop_id].size() > 0){
+    if (C->LoopForest.loopG[loop_id].size() > 0) {
         return false;
     }
     if (scev.is_simpleloop == false) {
         return false;
     }
     auto stepvalopt = scev.forloop_info.step.GetConstantValue();
-    if(!stepvalopt.has_value()){
+    if (!stepvalopt.has_value()) {
         return false;
     }
     int stepval = *stepvalopt;
-    if(stepval != 1){
+    if (stepval != 1) {
         return false;
     }
     int inst_number = 0;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
     }
-    if(inst_number > 50){
+    if (inst_number > 50) {
         return false;
     }
 
-    //now we only unroll the loop with step 1
+    // now we only unroll the loop with step 1
 
     assert(exit_nodes.size() == 1);
     assert(exiting_nodes.size() == 1);
     assert(latches.size() == 1);
     auto exit = *exit_nodes.begin();
     auto exiting = *exiting_nodes.begin();
-    
+
     LLVMBlock old_header = header;
     LLVMBlock old_exiting = exiting;
     LLVMBlock old_latch = *latches.begin();
@@ -376,63 +376,66 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
             I->ReplaceRegByMap(RemainRegReplaceMap);
         }
     }
-    //change lcssa
-    for (auto I : exit->Instruction_list){
-        if(I->GetOpcode() != PHI){
+    // change lcssa
+    for (auto I : exit->Instruction_list) {
+        if (I->GetOpcode() != PHI) {
             break;
         }
         I->ReplaceLabelByMap(RemainLabelReplaceMap);
         I->ReplaceRegByMap(RemainRegReplaceMap);
     }
 
-    //exiting: i < n -> i < n - 4
+    // exiting: i < n -> i < n - 4
     auto exitingI = *(old_exiting->Instruction_list.end() - 2);
     assert(exitingI->GetOpcode() == ICMP);
-    auto IcmpI = (IcmpInstruction*)exitingI;
+    auto IcmpI = (IcmpInstruction *)exitingI;
     auto op1 = IcmpI->GetOp1(), op2 = IcmpI->GetOp2();
     auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
     assert(scev1 != nullptr && scev2 != nullptr);
-    if(scev1->len == 2 && scev2->len == 1){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op2,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
+    if (scev1->len == 2 && scev2->len == 1) {
+        auto AddI = new ArithmeticInstruction(ADD, I32, op2, new ImmI32Operand(-4), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
-    }else if(scev1->len == 1 && scev2->len == 2){
-        auto AddI = new ArithmeticInstruction(ADD,I32,op1,new ImmI32Operand(-4),GetNewRegOperand(++C->max_reg));
+    } else if (scev1->len == 1 && scev2->len == 2) {
+        auto AddI = new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(-4), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
-    }else{
+    } else {
         assert(false);
     }
 
-    //add CondBlock   if(upperbound - lowerbound >= 4){ do{}while(i+4 < n)}  remain_loop
-    //CondBlock -> remain_header || npreheader
+    // add CondBlock   if(upperbound - lowerbound >= 4){ do{}while(i+4 < n)}  remain_loop
+    // CondBlock -> remain_header || npreheader
     LLVMBlock CondBlock = C->NewBlock();
     LLVMBlock npreheader = C->NewBlock();
     preheader->Instruction_list.pop_back();
-    preheader->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(CondBlock->block_id)));
-    npreheader->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
+    preheader->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(CondBlock->block_id)));
+    npreheader->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
 
     auto CondI1 = scev.forloop_info.lowerbound.GenerateValueInst(C);
     auto CondI2 = scev.forloop_info.upperbound.GenerateValueInst(C);
-    auto CondI3 = new ArithmeticInstruction(SUB,I32,CondI2->GetResultReg(),CondI1->GetResultReg(),GetNewRegOperand(++C->max_reg));
-    auto CondI4 = new IcmpInstruction(I32,CondI3->GetResultReg(),new ImmI32Operand(4),sge,GetNewRegOperand(++C->max_reg));
-    auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(),GetNewLabelOperand(npreheader->block_id),GetNewLabelOperand(remain_header->block_id));
-    CondBlock->InsertInstruction(1,CondI1);
-    CondBlock->InsertInstruction(1,CondI2);
-    CondBlock->InsertInstruction(1,CondI3);
-    CondBlock->InsertInstruction(1,CondI4);
-    CondBlock->InsertInstruction(1,CondI5);
-    //set header phi(set npreheader -> header  and  erase preheader->header)
-    for(auto I:header->Instruction_list){
-        if(I->GetOpcode() != PHI){
+    auto CondI3 =
+    new ArithmeticInstruction(SUB, I32, CondI2->GetResultReg(), CondI1->GetResultReg(), GetNewRegOperand(++C->max_reg));
+    auto CondI4 =
+    new IcmpInstruction(I32, CondI3->GetResultReg(), new ImmI32Operand(4), sge, GetNewRegOperand(++C->max_reg));
+    auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(), GetNewLabelOperand(npreheader->block_id),
+                                        GetNewLabelOperand(remain_header->block_id));
+    CondBlock->InsertInstruction(1, CondI1);
+    CondBlock->InsertInstruction(1, CondI2);
+    CondBlock->InsertInstruction(1, CondI3);
+    CondBlock->InsertInstruction(1, CondI4);
+    CondBlock->InsertInstruction(1, CondI5);
+    // set header phi(set npreheader -> header  and  erase preheader->header)
+    for (auto I : header->Instruction_list) {
+        if (I->GetOpcode() != PHI) {
             break;
         }
         auto PhiI = (PhiInstruction *)I;
         PhiI->SetNewFrom(preheader->block_id, npreheader->block_id);
     }
-    //set remain_header phi (CondBlock -> remain_header)
-    for(auto I:remain_header->Instruction_list){
-        if(I->GetOpcode() != PHI){
+    // set remain_header phi (CondBlock -> remain_header)
+    for (auto I : remain_header->Instruction_list) {
+        if (I->GetOpcode() != PHI) {
             break;
         }
         auto PhiI = (PhiInstruction *)I;
@@ -557,29 +560,29 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         if (I->GetOpcode() != PHI) {
             break;
         }
-        //change phi vals
+        // change phi vals
         auto PhiI = (PhiInstruction *)I;
         auto val = PhiI->GetValOperand(old_latch->block_id);
         PhiValList.push_back(val);
-        //erase the phi
+        // erase the phi
         PhiI->ErasePhi(old_latch->block_id);
     }
 
-    for(int i = 0; i < PhiValList.size(); ++i){
+    for (int i = 0; i < PhiValList.size(); ++i) {
         auto I = header->Instruction_list[i];
         assert(I->GetOpcode() == PHI);
-        auto PhiI = (PhiInstruction*)I;
-        PhiI->InsertPhi(PhiValList[i],GetNewLabelOperand(old_latch->block_id));
+        auto PhiI = (PhiInstruction *)I;
+        PhiI->InsertPhi(PhiValList[i], GetNewLabelOperand(old_latch->block_id));
     }
-    
-    //now we add edge(old_latch -> begin_header)
+
+    // now we add edge(old_latch -> begin_header)
     assert(old_latch->Instruction_list.size() == 1);
     old_latch->Instruction_list.pop_back();
-    old_latch->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
+    old_latch->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(header->block_id)));
 
-    //exiting -> new exit(mid_exit) -> remain_header
+    // exiting -> new exit(mid_exit) -> remain_header
     auto mid_exit = C->NewBlock();
-    mid_exit->InsertInstruction(1,new BrUncondInstruction(GetNewLabelOperand(remain_header->block_id)));
+    mid_exit->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(remain_header->block_id)));
     auto exiting_endI = *(old_exiting->Instruction_list.end() - 1);
     if (exiting_endI->GetOpcode() == BR_COND) {
         auto BrCondI = (BrCondInstruction *)exiting_endI;
@@ -592,19 +595,18 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         }
     }
 
-    //add phi from mid_exit -> remain_header (all the phi )
-    for(int i = 0; i < remain_header->Instruction_list.size(); ++i){
+    // add phi from mid_exit -> remain_header (all the phi )
+    for (int i = 0; i < remain_header->Instruction_list.size(); ++i) {
         auto I = remain_header->Instruction_list[i];
         auto oldI = header->Instruction_list[i];
-        if(I->GetOpcode() != PHI){
+        if (I->GetOpcode() != PHI) {
             break;
         }
         auto PhiI = (PhiInstruction *)I;
         auto oldPhiI = (PhiInstruction *)oldI;
         auto val = oldPhiI->GetValOperand(old_latch->block_id);
-        PhiI->InsertPhi(val,GetNewLabelOperand(mid_exit->block_id));
+        PhiI->InsertPhi(val, GetNewLabelOperand(mid_exit->block_id));
     }
-
 
     return true;
 }

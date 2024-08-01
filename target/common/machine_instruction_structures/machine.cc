@@ -100,25 +100,29 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
     auto new_block = InitNewBlock();
     auto preheader = new_block->getLabelId();
     // Insert Branch in new block
-    AppendUncondBranchInstructionToNewBlock(preheader,id);
+    AppendUncondBranchInstructionToNewBlock(preheader, id);
     for (auto pre : pres) {
         // Change Edge
-        mcfg->RemoveEdge(pre,id);
-        mcfg->MakeEdge(pre,preheader);
-        MoveOnePredecessorBranchTargetToNewBlock(pre,id,preheader);
+        mcfg->RemoveEdge(pre, id);
+        mcfg->MakeEdge(pre, preheader);
+        MoveOnePredecessorBranchTargetToNewBlock(pre, id, preheader);
         // RedirectPhiNodePredecessor(id, pre, preheader);
     }
-    mcfg->MakeEdge(preheader,id);
+    mcfg->MakeEdge(preheader, id);
     // Move Phi Instruction to New Block
     auto curblock = mcfg->GetNodeByBlockId(id)->Mblock;
     auto insert_it = new_block->getInsertBeforeBrIt();
-    std::list<MachinePhiInstruction*> mult_phi_list;
-    std::list<MachinePhiInstruction*> single_phi_list;
-    for (auto it = curblock->begin();it != curblock->end();++it) {
+    std::list<MachinePhiInstruction *> mult_phi_list;
+    std::list<MachinePhiInstruction *> single_phi_list;
+    for (auto it = curblock->begin(); it != curblock->end(); ++it) {
         auto ins = *it;
-        if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
-        if (ins->arch != MachineBaseInstruction::PHI) { break; }
-        auto phi_ins = (MachinePhiInstruction*)ins;
+        if (ins->arch == MachineBaseInstruction::COMMENT) {
+            continue;
+        }
+        if (ins->arch != MachineBaseInstruction::PHI) {
+            break;
+        }
+        auto phi_ins = (MachinePhiInstruction *)ins;
         auto mid_reg = this->GetNewReg(phi_ins->GetResult().type);
         auto newphi_ins = new MachinePhiInstruction(mid_reg);
         for (auto pre : pres) {
@@ -147,7 +151,8 @@ MachineBlock *MachineFunction::InsertNewBranchOnlyPreheader(int id, std::vector<
         // new_block->insert(insert_it, ins);
         auto copy_src = ins->GetPhiList()[0].second;
         auto copy_dst = ins->GetResult();
-        new_block->insert(insert_it, new MachineCopyInstruction(copy_src, new MachineRegister(copy_dst), copy_dst.type));
+        new_block->insert(insert_it,
+                          new MachineCopyInstruction(copy_src, new MachineRegister(copy_dst), copy_dst.type));
     }
     return new_block;
 }
@@ -183,7 +188,7 @@ MachineBlock *MachineFunction::InitNewBlock() {
 }
 
 void dfs_post(int cur, const std::vector<std::vector<MachineCFG::MachineCFGNode *>> &G, std::vector<int> &result,
-                   std::vector<int> &vsd) {
+              std::vector<int> &vsd) {
     vsd[cur] = 1;
     for (auto next_block : G[cur]) {
         if (vsd[next_block->Mblock->getLabelId()] == 0) {
@@ -288,25 +293,23 @@ void MachineDominatorTree::BuildDominatorTree(bool reverse) {
         }
     }
 #ifdef CHECK_DOMTREE
-    std::cerr<<"DOM TREE\n";
-    for (int i = 0;i<dom_tree.size();i++) {
+    std::cerr << "DOM TREE\n";
+    for (int i = 0; i < dom_tree.size(); i++) {
         for (auto jb : dom_tree[i]) {
-            std::cerr << i << "->"<<jb->getLabelId()<<std::endl;
+            std::cerr << i << "->" << jb->getLabelId() << std::endl;
         }
     }
-    std::cerr<<"\n";
+    std::cerr << "\n";
 #endif
 }
 
-void MachineDominatorTree::BuildPostDominatorTree() {
-    BuildDominatorTree(true);
-}
+void MachineDominatorTree::BuildPostDominatorTree() { BuildDominatorTree(true); }
 
-static std::set<MachineBlock*> FindNodesInLoop(MachineCFG *C, MachineBlock* n, MachineBlock* d)    // backedge n->d
+static std::set<MachineBlock *> FindNodesInLoop(MachineCFG *C, MachineBlock *n, MachineBlock *d)    // backedge n->d
 {
-    std::set<MachineBlock*> loop_nodes;
+    std::set<MachineBlock *> loop_nodes;
 
-    std::stack<MachineBlock*> S;
+    std::stack<MachineBlock *> S;
 
     loop_nodes.insert(n);
     loop_nodes.insert(d);
@@ -317,7 +320,7 @@ static std::set<MachineBlock*> FindNodesInLoop(MachineCFG *C, MachineBlock* n, M
 
     S.push(n);
     while (!S.empty()) {
-        MachineBlock* x = S.top();
+        MachineBlock *x = S.top();
         S.pop();
         for (auto preBB : C->GetPredecessorsByBlockId(x->getLabelId())) {
             if (loop_nodes.find(preBB->Mblock) == loop_nodes.end()) {
@@ -339,7 +342,7 @@ static bool JudgeLoopContain(MachineNaturalLoop *l1, MachineNaturalLoop *l2) {
 }
 
 void MachineNaturalLoopForest::CombineSameHeadLoop() {
-    std::set<MachineBlock*> header_set;
+    std::set<MachineBlock *> header_set;
     std::set<MachineNaturalLoop *> erase_loop_set;
     for (auto l : loop_set) {
         if (header_set.find(l->header) != header_set.end()) {
@@ -366,7 +369,7 @@ void MachineNaturalLoop::FindExitNodes(MachineCFG *C) {
     for (auto node : loop_nodes) {
         for (auto succ_node : C->GetSuccessorsByBlockId(node->getLabelId())) {
             auto succ_bb = succ_node->Mblock;
-            if(loop_nodes.find(succ_bb) == loop_nodes.end()){
+            if (loop_nodes.find(succ_bb) == loop_nodes.end()) {
                 exits.insert(succ_bb);
                 exitings.insert(node);
             }
@@ -449,43 +452,43 @@ void MachineNaturalLoopForest::BuildLoopForest() {
         }
     }
 
-    for (auto l:loop_set){
-        for(auto bb:l->loop_nodes){
+    for (auto l : loop_set) {
+        for (auto bb : l->loop_nodes) {
             bb->loop_depth += 1;
         }
     }
 
-    #ifdef CHECK_LOOPFOREST
-        for(auto l : loop_set){
-            std::cerr << "\n";
-            std::cerr << "loop:" << l->loop_id << "------------------------------------\n";
-            std::cerr << "loop nodes: ";
-            for (auto nodes : l->loop_nodes) {
-                std::cerr << nodes->getLabelId() << " ";
-            }
-            std::cerr << "\n";
-            if(l->preheader){
-                std::cerr << "preheader: " << l->preheader->getLabelId() << "\n";
-            }
-            std::cerr << "header: " << l->header->getLabelId() << "\n";
-            std::cerr << "latch: ";
-            for (auto nodes : l->latches) {
-                std::cerr << nodes->getLabelId() << " ";
-            }
-            std::cerr << "\n";
-            std::cerr << "exitings: ";
-            for (auto nodes : l->exitings) {
-                std::cerr << nodes->getLabelId() << " ";
-            }
-            std::cerr << "\n";
-            std::cerr << "exits: ";
-            for (auto nodes : l->exits) {
-                std::cerr << nodes->getLabelId() << " ";
-            }
-            std::cerr << "\n";
-            if (l->fa_loop) {
-                std::cerr << "father loop " << l->fa_loop->loop_id << "\n";
-            }
+#ifdef CHECK_LOOPFOREST
+    for (auto l : loop_set) {
+        std::cerr << "\n";
+        std::cerr << "loop:" << l->loop_id << "------------------------------------\n";
+        std::cerr << "loop nodes: ";
+        for (auto nodes : l->loop_nodes) {
+            std::cerr << nodes->getLabelId() << " ";
         }
-    #endif
+        std::cerr << "\n";
+        if (l->preheader) {
+            std::cerr << "preheader: " << l->preheader->getLabelId() << "\n";
+        }
+        std::cerr << "header: " << l->header->getLabelId() << "\n";
+        std::cerr << "latch: ";
+        for (auto nodes : l->latches) {
+            std::cerr << nodes->getLabelId() << " ";
+        }
+        std::cerr << "\n";
+        std::cerr << "exitings: ";
+        for (auto nodes : l->exitings) {
+            std::cerr << nodes->getLabelId() << " ";
+        }
+        std::cerr << "\n";
+        std::cerr << "exits: ";
+        for (auto nodes : l->exits) {
+            std::cerr << nodes->getLabelId() << " ";
+        }
+        std::cerr << "\n";
+        if (l->fa_loop) {
+            std::cerr << "father loop " << l->fa_loop->loop_id << "\n";
+        }
+    }
+#endif
 }

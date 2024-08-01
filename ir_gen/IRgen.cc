@@ -223,7 +223,7 @@ void Lval::codeIR() {
     if (dims != nullptr) {
         for (auto d : *dims) {
             d->codeIR();
-            IRgenTypeConverse(B,d->attribute.T.type, Type::INT, max_reg);
+            IRgenTypeConverse(B, d->attribute.T.type, Type::INT, max_reg);
             arrayindexs.push_back(GetNewRegOperand(max_reg));
         }
     }
@@ -810,5 +810,4 @@ void AddLibFunctionDeclare() {
     llvm_fmax->InsertFormal(FLOAT32);
     llvm_fmax->InsertFormal(FLOAT32);
     llvmIR.function_declare.push_back(llvm_fmax);
-    
 }

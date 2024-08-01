@@ -3,8 +3,8 @@
 
 #include "../../../include/Instruction.h"
 #include <map>
-#include <set>
 #include <optional>
+#include <set>
 
 class NaturalLoop;
 class CFG;

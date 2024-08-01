@@ -4,9 +4,10 @@
 class RiscV64InstructionSchedule : public MachinePass {
 private:
     void ExecuteInBlock();
-    void ExecuteInList(std::vector<MachineBaseInstruction*>&, std::vector<MachineBaseInstruction*>&);
+    void ExecuteInList(std::vector<MachineBaseInstruction *> &, std::vector<MachineBaseInstruction *> &);
+
 public:
-    RiscV64InstructionSchedule(MachineUnit* unit) : MachinePass (unit) {}
+    RiscV64InstructionSchedule(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
 #endif

@@ -8,12 +8,12 @@
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerframe.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
-#include "./riscv64gc/optimize/riscv64_peehole.h"
-#include "./riscv64gc/optimize/riscv64_cse.h"
-#include "./riscv64gc/optimize/riscv64_licm.h"
-#include "./riscv64gc/riscv64.h"
 #include "./riscv64gc/optimize/riscv64_branch_predict.h"
+#include "./riscv64gc/optimize/riscv64_cse.h"
 #include "./riscv64gc/optimize/riscv64_ins_schedule.h"
+#include "./riscv64gc/optimize/riscv64_licm.h"
+#include "./riscv64gc/optimize/riscv64_peehole.h"
+#include "./riscv64gc/riscv64.h"
 
 #include <assert.h>
 #include <cstdio>
@@ -88,20 +88,18 @@ void SimpleForLoopUnroll(CFG *C);
 void ElimateGVNPhi(CFG *C);
 void MinMaxRecognize(CFG *C);
 void ArrayMinMaxRecognize(CFG *C);
-void LatchPhiCombine(CFG* C);
-void LoopIndVarSimplify(CFG* C);
+void LatchPhiCombine(CFG *C);
+void LoopIndVarSimplify(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
 void SimpleMemoryDependenceAnalysis(LLVMIR *IR);
 void FindNoWriteStaticGlobal(LLVMIR *IR);
 void AddParallelLib(LLVMIR *IR);
-void EliminateUselessFunction(LLVMIR* IR);
+void EliminateUselessFunction(LLVMIR *IR);
 void EraseNoUseGlobal(LLVMIR *IR);
 
-void LoopParallel(CFG *C, LLVMIR* IR);
-
-
+void LoopParallel(CFG *C, LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
@@ -257,8 +255,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDCE);
 
         // TODO():GVN/GCM
-        
-        for(int i = 0;i < 5;++i){
+
+        for (int i = 0; i < 5; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -275,61 +273,60 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
-        llvmIR.ElimateUnreachedInstructionAndBlocks(); 
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
         llvmIR.BuildCFG();
         llvmIR.BuildDominatorTree();
 
-        #ifdef AggressiveOptimize
-            for(int i = 0;i < 4; ++i){
-                llvmIR.BuildLoopInfo();
-                llvmIR.PassExecutor(LoopSimplify);
-                llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-                llvmIR.PassExecutor(LoopClosedSSA);
-                llvmIR.PassExecutor(ScalarEvolution);
-                llvmIR.PassExecutor(SimpleAliasAnalysis);
-                llvmIR.PassExecutor(LoopFusion);
-                llvmIR.PassExecutor(SimplifyCFG);
-            }
-            llvmIR.PassExecutor(SimpleDCE);
-            llvmIR.PassExecutor(SimpleAliasAnalysis);
-            llvmIR.PassExecutor(SimpleCSE);
-            llvmIR.PassExecutor(SimpleDSE);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        #endif
-
-        #ifdef AggressiveOptimize
-            llvmIR.PassExecutor(AddParallelLib);
-
+#ifdef AggressiveOptimize
+        for (int i = 0; i < 4; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
             llvmIR.PassExecutor(LoopClosedSSA);
             llvmIR.PassExecutor(ScalarEvolution);
             llvmIR.PassExecutor(SimpleAliasAnalysis);
-            llvmIR.PassExecutor(LoopParallel);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+            llvmIR.PassExecutor(LoopFusion);
             llvmIR.PassExecutor(SimplifyCFG);
-        #endif
+        }
+        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(SimpleCSE);
+        llvmIR.PassExecutor(SimpleDSE);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+#endif
 
+#ifdef AggressiveOptimize
+        llvmIR.PassExecutor(AddParallelLib);
 
-        #ifdef AggressiveOptimize
-            llvmIR.BuildLoopInfo();
-            llvmIR.PassExecutor(LoopSimplify);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(LoopClosedSSA);
-            llvmIR.PassExecutor(ScalarEvolution);
-            llvmIR.PassExecutor(SimpleForLoopUnroll);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(SimplifyCFG);
-            llvmIR.PassExecutor(SimpleDCE);
-            llvmIR.PassExecutor(InstSimplify);
-            llvmIR.PassExecutor(InstCombine);
-            llvmIR.PassExecutor(InstSimplify);
-            llvmIR.PassExecutor(SimpleAliasAnalysis);
-            llvmIR.PassExecutor(SimpleCSE);
-            llvmIR.PassExecutor(SimpleDCE);
-        #endif
-        
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(LoopParallel);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SimplifyCFG);
+#endif
+
+#ifdef AggressiveOptimize
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(SimpleForLoopUnroll);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(InstSimplify);
+        llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(InstSimplify);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(SimpleCSE);
+        llvmIR.PassExecutor(SimpleDCE);
+#endif
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(GEPStrengthReduce);
         llvmIR.BuildLoopInfo();
@@ -374,7 +371,7 @@ int main(int argc, char **argv) {
         RiscV64LowerImm(m_unit).Execute();
         // std::cerr<<"PhiDestruction\n";
 
-        if(optimize_flag){
+        if (optimize_flag) {
             RiscV64SSAPeehole(m_unit).Execute();
             RiscV64SSADeadDefElimate(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
@@ -386,7 +383,7 @@ int main(int argc, char **argv) {
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
-        if(optimize_flag){
+        if (optimize_flag) {
             RiscV64InstructionSchedule(m_unit).Execute();
         }
         FastLinearScan(m_unit, &regs, &spiller).Execute();
@@ -395,7 +392,7 @@ int main(int argc, char **argv) {
         // std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";
-        
+
         RiscV64BranchPredict(m_unit).Execute();
 
         RiscV64Printer(fout, m_unit).emit();
@@ -414,7 +411,7 @@ int main(int argc, char **argv) {
         RiscV64AlgStrenghReduce(m_unit).Execute();
         RiscV64LowerImm(m_unit).Execute();
         // std::cerr<<"PhiDestruction\n";
-        if(optimize_flag){
+        if (optimize_flag) {
             RiscV64SSAPeehole(m_unit).Execute();
             RiscV64SSADeadDefElimate(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
@@ -425,11 +422,11 @@ int main(int argc, char **argv) {
         RiscV64LowerFImmCopy(m_unit).Execute();
         RiscV64LowerIImmCopy(m_unit).Execute();
         // RiscV64InstructionSchedule(m_unit).Execute();
-        
+
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();
         // RiscV64LowerIImmCopy(m_unit).Execute();
-        if(optimize_flag){
+        if (optimize_flag) {
             RiscV64InstructionSchedule(m_unit).Execute();
         }
 

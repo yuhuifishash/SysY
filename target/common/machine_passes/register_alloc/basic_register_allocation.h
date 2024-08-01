@@ -23,10 +23,10 @@ class SpillCodeGen;
 
 struct InstructionNumberEntry {
 public:
-    MachineBaseInstruction* ins;
+    MachineBaseInstruction *ins;
     bool is_block_begin;
-    InstructionNumberEntry():ins(nullptr),is_block_begin(true){}
-    InstructionNumberEntry(MachineBaseInstruction* ins,bool isbegin):ins(ins),is_block_begin(isbegin){}
+    InstructionNumberEntry() : ins(nullptr), is_block_begin(true) {}
+    InstructionNumberEntry(MachineBaseInstruction *ins, bool isbegin) : ins(ins), is_block_begin(isbegin) {}
 };
 
 class RegisterAllocation : public MachinePass {
@@ -83,9 +83,11 @@ public:
 
 class InstructionNumber : public MachinePass {
 private:
-    std::map<int, InstructionNumberEntry>&numbertoins;
+    std::map<int, InstructionNumberEntry> &numbertoins;
+
 public:
-    InstructionNumber(MachineUnit *unit,std::map<int,InstructionNumberEntry>&number2ins) : MachinePass(unit), numbertoins(number2ins) {}
+    InstructionNumber(MachineUnit *unit, std::map<int, InstructionNumberEntry> &number2ins)
+        : MachinePass(unit), numbertoins(number2ins) {}
     void Execute();
     void ExecuteInFunc(MachineFunction *func);
 };

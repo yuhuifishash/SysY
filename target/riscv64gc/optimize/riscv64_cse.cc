@@ -3,135 +3,141 @@
 
 // #define MachineCSE_DEBUG
 
-void RiscV64CSE::Execute(){
+void RiscV64CSE::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
         CSEInCurrFunc();
     }
 }
 
-static bool IsNeedCSE(MachineBaseInstruction* I) {
-    if(I->ExistPhysicalReg()){
+static bool IsNeedCSE(MachineBaseInstruction *I) {
+    if (I->ExistPhysicalReg()) {
         return false;
     }
-    if(I->arch == MachineBaseInstruction::COPY){
+    if (I->arch == MachineBaseInstruction::COPY) {
         return true;
     }
-    if(I->arch == MachineBaseInstruction::RiscV){
-        auto rvI = (RiscV64Instruction*)I;
-        if(rvI->getOpcode() == RISCV_LUI || rvI->getOpcode() == RISCV_ADDI || 
-            rvI->getOpcode() == RISCV_ADD || rvI->getOpcode() == RISCV_MUL || rvI->getOpcode() == RISCV_ADDIW){
+    if (I->arch == MachineBaseInstruction::RiscV) {
+        auto rvI = (RiscV64Instruction *)I;
+        if (rvI->getOpcode() == RISCV_LUI || rvI->getOpcode() == RISCV_ADDI || rvI->getOpcode() == RISCV_ADD ||
+            rvI->getOpcode() == RISCV_MUL || rvI->getOpcode() == RISCV_ADDIW) {
             return true;
         }
     }
     return false;
 }
 
-static std::string GetCSEInstInfo(MachineBaseInstruction* I) {
-    if(I->arch == MachineBaseInstruction::COPY){
-        auto cpI = (MachineCopyInstruction*)I;
+static std::string GetCSEInstInfo(MachineBaseInstruction *I) {
+    if (I->arch == MachineBaseInstruction::COPY) {
+        auto cpI = (MachineCopyInstruction *)I;
         return cpI->GetDst()->toString() + " = COPY " + cpI->GetSrc()->toString();
-    }else if(I->arch == MachineBaseInstruction::RiscV){
-        auto rvI = (RiscV64Instruction*)I;
-        if(rvI->getOpcode() == RISCV_ADD){
-            return "%"+std::to_string(rvI->getRd().reg_no) + " = %"+std::to_string(rvI->getRs1().reg_no) + " + " + "%"+std::to_string(rvI->getRs2().reg_no);
-        }else if(rvI->getOpcode() == RISCV_ADDI){
-            if(rvI->getUseLabel()){
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = %"+std::to_string(rvI->getRs1().reg_no) + " + "  + rvI->getLabel().name;
-            }else{
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = %"+std::to_string(rvI->getRs1().reg_no) + " + " + std::to_string(rvI->getImm());
+    } else if (I->arch == MachineBaseInstruction::RiscV) {
+        auto rvI = (RiscV64Instruction *)I;
+        if (rvI->getOpcode() == RISCV_ADD) {
+            return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) + " + " +
+                   "%" + std::to_string(rvI->getRs2().reg_no);
+        } else if (rvI->getOpcode() == RISCV_ADDI) {
+            if (rvI->getUseLabel()) {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) +
+                       " + " + rvI->getLabel().name;
+            } else {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) +
+                       " + " + std::to_string(rvI->getImm());
             }
-        }else if(rvI->getOpcode() == RISCV_ADDIW){
-            if(rvI->getUseLabel()){
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = %"+std::to_string(rvI->getRs1().reg_no) + " + "  + rvI->getLabel().name;
-            }else{
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = %"+std::to_string(rvI->getRs1().reg_no) + " + " + std::to_string(rvI->getImm());
+        } else if (rvI->getOpcode() == RISCV_ADDIW) {
+            if (rvI->getUseLabel()) {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) +
+                       " + " + rvI->getLabel().name;
+            } else {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) +
+                       " + " + std::to_string(rvI->getImm());
             }
-        }else if(rvI->getOpcode() == RISCV_LUI){
-            if(rvI->getUseLabel()){
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = lui " + rvI->getLabel().name;
-            }else{
-                return "%"+std::to_string(rvI->getRd().reg_no) + " = lui " + std::to_string(rvI->getImm());
+        } else if (rvI->getOpcode() == RISCV_LUI) {
+            if (rvI->getUseLabel()) {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = lui " + rvI->getLabel().name;
+            } else {
+                return "%" + std::to_string(rvI->getRd().reg_no) + " = lui " + std::to_string(rvI->getImm());
             }
-        }else if(rvI->getOpcode() == RISCV_MUL){
-            return "%"+std::to_string(rvI->getRd().reg_no)+ " = %"+std::to_string(rvI->getRs1().reg_no) + " * " + "%"+std::to_string(rvI->getRs2().reg_no);
-        }else{
+        } else if (rvI->getOpcode() == RISCV_MUL) {
+            return "%" + std::to_string(rvI->getRd().reg_no) + " = %" + std::to_string(rvI->getRs1().reg_no) + " * " +
+                   "%" + std::to_string(rvI->getRs2().reg_no);
+        } else {
             ERROR("Unexpected Opcode");
         }
-    }else{
+    } else {
         ERROR("Unexpected Arch");
     }
     return "";
 }
 
 // if the value I1 calculated is same as I2, return true
-static bool isSameInst(MachineBaseInstruction* I1, MachineBaseInstruction* I2) {
-    if(I1->arch != I2->arch){
+static bool isSameInst(MachineBaseInstruction *I1, MachineBaseInstruction *I2) {
+    if (I1->arch != I2->arch) {
         return false;
     }
-    if(I1->arch == MachineBaseInstruction::COPY){
-        auto cpI1 = (MachineCopyInstruction*)I1;
-        auto cpI2 = (MachineCopyInstruction*)I2;
+    if (I1->arch == MachineBaseInstruction::COPY) {
+        auto cpI1 = (MachineCopyInstruction *)I1;
+        auto cpI2 = (MachineCopyInstruction *)I2;
         return cpI1->GetSrc()->toString() == cpI2->GetSrc()->toString() && cpI1->GetCopyType() == cpI2->GetCopyType();
-        
-    }else if(I1->arch == MachineBaseInstruction::RiscV){
-        auto rvI1 = (RiscV64Instruction*)I1;
-        auto rvI2 = (RiscV64Instruction*)I2;
-        if(rvI1->getOpcode() != rvI2->getOpcode()){
+
+    } else if (I1->arch == MachineBaseInstruction::RiscV) {
+        auto rvI1 = (RiscV64Instruction *)I1;
+        auto rvI2 = (RiscV64Instruction *)I2;
+        if (rvI1->getOpcode() != rvI2->getOpcode()) {
             return false;
         }
-        if(rvI1->getOpcode() == RISCV_ADD){
+        if (rvI1->getOpcode() == RISCV_ADD) {
             return rvI1->getRs1() == rvI2->getRs1() && rvI1->getRs2() == rvI2->getRs2();
-        }else if(rvI1->getOpcode() == RISCV_ADDI){
-            if(rvI1->getUseLabel()){
+        } else if (rvI1->getOpcode() == RISCV_ADDI) {
+            if (rvI1->getUseLabel()) {
                 return rvI1->getRs1() == rvI2->getRs1() && rvI1->getLabel() == rvI2->getLabel();
-            }else{
+            } else {
                 return rvI1->getRs1() == rvI2->getRs1() && rvI1->getImm() == rvI2->getImm();
             }
-        }else if(rvI1->getOpcode() == RISCV_ADDIW){
-            if(rvI1->getUseLabel()){
+        } else if (rvI1->getOpcode() == RISCV_ADDIW) {
+            if (rvI1->getUseLabel()) {
                 return rvI1->getRs1() == rvI2->getRs1() && rvI1->getLabel() == rvI2->getLabel();
-            }else{
+            } else {
                 return rvI1->getRs1() == rvI2->getRs1() && rvI1->getImm() == rvI2->getImm();
             }
-        }else if(rvI1->getOpcode() == RISCV_LUI){
-            if(rvI1->getUseLabel()){
-               return rvI1->getLabel() == rvI2->getLabel();
-            }else{
+        } else if (rvI1->getOpcode() == RISCV_LUI) {
+            if (rvI1->getUseLabel()) {
+                return rvI1->getLabel() == rvI2->getLabel();
+            } else {
                 return rvI1->getImm() == rvI2->getImm();
             }
-        }else if(rvI1->getOpcode() == RISCV_MUL){
+        } else if (rvI1->getOpcode() == RISCV_MUL) {
             return rvI1->getRs1() == rvI2->getRs1() && rvI1->getRs2() == rvI2->getRs2();
-        }else{
+        } else {
             ERROR("Unexpected Opcode");
         }
-    }else{
+    } else {
         ERROR("Unexpected Arch");
     }
     return false;
 }
 
-void RiscV64CSE::CSEInCurrFunc(){
+void RiscV64CSE::CSEInCurrFunc() {
     bool is_changed = true;
-    std::set<MachineBaseInstruction*> CSESet;
-    std::map<int,int> regreplace_map;
+    std::set<MachineBaseInstruction *> CSESet;
+    std::map<int, int> regreplace_map;
     std::function<void(int)> dfs = [&](int bbid) {
-        std::set<MachineBaseInstruction*> tmpcse_set;
+        std::set<MachineBaseInstruction *> tmpcse_set;
 
         auto C = current_func->getMachineCFG();
-        MachineBlock* now = C->GetNodeByBlockId(bbid)->Mblock;
-        for (auto it = now->begin();it != now->end();++it) {
+        MachineBlock *now = C->GetNodeByBlockId(bbid)->Mblock;
+        for (auto it = now->begin(); it != now->end(); ++it) {
             auto I = *it;
-            if(!IsNeedCSE(I)){
+            if (!IsNeedCSE(I)) {
                 continue;
             }
             bool is_cse = false;
-            for(auto oldI : CSESet){
-                if(isSameInst(I,oldI)){
-                    #ifdef MachineCSE_DEBUG
-                        std::cerr<<GetCSEInstInfo(oldI)<<"\n";
-                        std::cerr<<GetCSEInstInfo(I)<<"\n\n";
-                    #endif
+            for (auto oldI : CSESet) {
+                if (isSameInst(I, oldI)) {
+#ifdef MachineCSE_DEBUG
+                    std::cerr << GetCSEInstInfo(oldI) << "\n";
+                    std::cerr << GetCSEInstInfo(I) << "\n\n";
+#endif
 
                     is_cse = true;
                     is_changed = true;
@@ -142,7 +148,7 @@ void RiscV64CSE::CSEInCurrFunc(){
                     break;
                 }
             }
-            if(!is_cse){
+            if (!is_cse) {
                 tmpcse_set.insert(I);
                 CSESet.insert(I);
             }
@@ -151,49 +157,48 @@ void RiscV64CSE::CSEInCurrFunc(){
             dfs(v->getLabelId());
         }
 
-        for (auto I : tmpcse_set){
+        for (auto I : tmpcse_set) {
             CSESet.erase(I);
         }
-
     };
-    while(is_changed){
+    while (is_changed) {
         CSESet.clear();
         regreplace_map.clear();
-        
+
         is_changed = false;
         dfs(0);
-        //replace reg
+        // replace reg
         for (auto func : unit->functions) {
             auto C = func->getMachineCFG();
             auto block_it = C->getSeqScanIterator();
             block_it->open();
             while (block_it->hasNext()) {
                 auto block = block_it->next()->Mblock;
-                for (auto it = block->begin();it != block->end();++it) {
+                for (auto it = block->begin(); it != block->end(); ++it) {
                     auto I = *it;
                     I->ReplaceByMap(regreplace_map);
                 }
             }
         }
-        
-        //erase dead def
-        std::map<int,int>vreg_refcnt;
-        for(auto block : current_func->blocks){
+
+        // erase dead def
+        std::map<int, int> vreg_refcnt;
+        for (auto block : current_func->blocks) {
             cur_block = block;
-            for (auto it = block->begin();it!=block->end();++it) {
+            for (auto it = block->begin(); it != block->end(); ++it) {
                 auto cur_ins = *it;
-                for(auto reg : cur_ins->GetReadReg()) {
+                for (auto reg : cur_ins->GetReadReg()) {
                     if (reg->is_virtual) {
                         vreg_refcnt[reg->reg_no] = vreg_refcnt[reg->reg_no] + 1;
                     }
                 }
             }
         }
-        for(auto block : current_func->blocks){
+        for (auto block : current_func->blocks) {
             cur_block = block;
-            for (auto it = block->begin();it!=block->end();++it) {
+            for (auto it = block->begin(); it != block->end(); ++it) {
                 auto cur_ins = *it;
-                if (cur_ins->GetWriteReg().size() == 1){
+                if (cur_ins->GetWriteReg().size() == 1) {
                     auto rd = cur_ins->GetWriteReg()[0];
                     if (rd->is_virtual) {
                         if (vreg_refcnt[rd->reg_no] == 0) {

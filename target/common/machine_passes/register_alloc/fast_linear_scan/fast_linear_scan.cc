@@ -22,7 +22,7 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
         auto interval = unalloc_queue.top();
         unalloc_queue.pop();
         auto cur_vreg = interval.getReg();
-        std::vector<int> prefered_regs,noprefer_regs;
+        std::vector<int> prefered_regs, noprefer_regs;
         for (auto reg : copy_sources[cur_vreg]) {
             if (reg.is_virtual) {
                 if (alloc_result[mfun].find(reg) != alloc_result[mfun].end()) {
@@ -39,49 +39,51 @@ bool FastLinearScan::DoAllocInCurrentFunc() {
             int def = seg.begin;
             Assert(numbertoins.find(def) != numbertoins.end());
             auto cur_ins = numbertoins[def].ins;
-            if(cur_ins == nullptr)continue;
+            if (cur_ins == nullptr)
+                continue;
             const int pre_len = 10;
-            for(int i=1;i<pre_len;i++){
+            for (int i = 1; i < pre_len; i++) {
                 int pre_no = def - i;
-                if(numbertoins[pre_no].is_block_begin){
+                if (numbertoins[pre_no].is_block_begin) {
                     break;
                 }
                 auto pre_ins = numbertoins[pre_no].ins;
                 int pre_latency = pre_ins->GetLatency();
-                if (pre_latency < i)continue;
-                if(pre_ins->GetWriteReg().size() == 1){
+                if (pre_latency < i)
+                    continue;
+                if (pre_ins->GetWriteReg().size() == 1) {
                     auto reg = pre_ins->GetWriteReg()[0];
-                    if(reg->is_virtual){
-                        if (alloc_result[mfun].find(*reg) != alloc_result[mfun].end()){
+                    if (reg->is_virtual) {
+                        if (alloc_result[mfun].find(*reg) != alloc_result[mfun].end()) {
                             if (alloc_result[mfun][*reg].in_mem == false) {
                                 Assert(alloc_result[mfun][*reg].phy_reg_no != 0);
                                 noprefer_regs.push_back(alloc_result[mfun][*reg].phy_reg_no);
                             }
                         }
-                    }else{
-                        if(reg->reg_no != 0){
+                    } else {
+                        if (reg->reg_no != 0) {
                             noprefer_regs.push_back(reg->reg_no);
                         }
                     }
                 }
             }
-            for(int i=1;i<=cur_ins->GetLatency();i++){
+            for (int i = 1; i <= cur_ins->GetLatency(); i++) {
                 int after_no = def + i;
-                if(numbertoins[after_no].is_block_begin){
+                if (numbertoins[after_no].is_block_begin) {
                     break;
                 }
                 auto after_ins = numbertoins[after_no].ins;
-                if (after_ins->GetWriteReg().size() == 1){
+                if (after_ins->GetWriteReg().size() == 1) {
                     auto reg = after_ins->GetWriteReg()[0];
-                    if(reg->is_virtual){
-                        if(alloc_result[mfun].find(*reg) != alloc_result[mfun].end()){
-                            if(alloc_result[mfun][*reg].in_mem == false){
+                    if (reg->is_virtual) {
+                        if (alloc_result[mfun].find(*reg) != alloc_result[mfun].end()) {
+                            if (alloc_result[mfun][*reg].in_mem == false) {
                                 Assert(alloc_result[mfun][*reg].phy_reg_no != 0);
                                 noprefer_regs.push_back(alloc_result[mfun][*reg].phy_reg_no);
                             }
                         }
-                    }else{
-                        if(reg->reg_no != 0){
+                    } else {
+                        if (reg->reg_no != 0) {
                             noprefer_regs.push_back(reg->reg_no);
                         }
                     }
@@ -130,35 +132,40 @@ double FastLinearScan::CalculateSpillWeight(LiveInterval interval) {
     return (double)interval.getReferenceCount() / interval.getIntervalLen();
 }
 
-static Register findroot(std::map<Register,Register>&coal_result,Register vreg) {
+static Register findroot(std::map<Register, Register> &coal_result, Register vreg) {
     Register ret = vreg;
-    while(!(ret == coal_result[ret])) {
+    while (!(ret == coal_result[ret])) {
         ret = coal_result[ret];
     }
     return coal_result[vreg] = ret;
 }
 
 void FastLinearScan::CoalesceInCurrentFunc() {
-    std::map<Register,Register> coal_result;
-    for (auto [reg,interval] : intervals) {
-        if(reg.is_virtual == false)continue;
+    std::map<Register, Register> coal_result;
+    for (auto [reg, interval] : intervals) {
+        if (reg.is_virtual == false)
+            continue;
         coal_result[reg] = reg;
     }
-    for (auto [reg,interval] : intervals) {
-        if(reg.is_virtual == false)continue;
-        for(auto other : copy_sources[reg]){
-            if(other.is_virtual == false)continue;
+    for (auto [reg, interval] : intervals) {
+        if (reg.is_virtual == false)
+            continue;
+        for (auto other : copy_sources[reg]) {
+            if (other.is_virtual == false)
+                continue;
             Assert(coal_result.find(reg) != coal_result.end());
             Assert(coal_result.find(other) != coal_result.end());
-            auto root_reg = ::findroot(coal_result,reg);
-            auto other_root_reg = ::findroot(coal_result,other);
-            if(root_reg == other_root_reg)continue;
-            if(intervals[root_reg] & intervals[other_root_reg])continue;
+            auto root_reg = ::findroot(coal_result, reg);
+            auto other_root_reg = ::findroot(coal_result, other);
+            if (root_reg == other_root_reg)
+                continue;
+            if (intervals[root_reg] & intervals[other_root_reg])
+                continue;
             // double spillweight_ratio = CalculateSpillWeight(root_reg) / CalculateSpillWeight(other_root_reg);
             // if (spillweight_ratio >= 2.0 || spillweight_ratio <= 0.5)continue;
             intervals[root_reg] = intervals[root_reg] | intervals[other_root_reg];
-            for(auto src : copy_sources[other_root_reg]){
-                if(src.is_virtual == false){
+            for (auto src : copy_sources[other_root_reg]) {
+                if (src.is_virtual == false) {
                     copy_sources[src].push_back(root_reg);
                     copy_sources[root_reg].push_back(src);
                 }
@@ -170,12 +177,14 @@ void FastLinearScan::CoalesceInCurrentFunc() {
     for (auto block : current_func->blocks) {
         for (auto ins : *block) {
             for (auto reg : ins->GetReadReg()) {
-                if (reg->is_virtual == false) continue; 
-                *reg = ::findroot(coal_result,*reg);
+                if (reg->is_virtual == false)
+                    continue;
+                *reg = ::findroot(coal_result, *reg);
             }
             for (auto reg : ins->GetWriteReg()) {
-                if (reg->is_virtual == false) continue; 
-                *reg = ::findroot(coal_result,*reg);
+                if (reg->is_virtual == false)
+                    continue;
+                *reg = ::findroot(coal_result, *reg);
             }
         }
     }

@@ -98,8 +98,8 @@ void RiscV64LowerFrame::Execute() {
                                 b->push_back(
                                 rvconstructor->ConstructCopyReg(GetPhysicalReg(save_regids[i]), save_regs[i], INT64));
                             } else {
-                                b->push_back(rvconstructor->ConstructCopyReg(GetPhysicalReg(save_regids[i]),
-                                                                             save_regs[i], FLOAT64));
+                                b->push_back(
+                                rvconstructor->ConstructCopyReg(GetPhysicalReg(save_regids[i]), save_regs[i], FLOAT64));
                             }
                         }
                         b->push_back(riscv_last_ins);
@@ -111,33 +111,13 @@ void RiscV64LowerFrame::Execute() {
     }
 }
 
-void GatherUseSregs (MachineFunction* func, std::vector<int>& saveregs) {
+void GatherUseSregs(MachineFunction *func, std::vector<int> &saveregs) {
     int RegNeedSaved[64] = {
-        [RISCV_s0] = 1,
-        [RISCV_s1] = 1,
-        [RISCV_s2] = 1,
-        [RISCV_s3] = 1,
-        [RISCV_s4] = 1,
-        [RISCV_s5] = 1,
-        [RISCV_s6] = 1,
-        [RISCV_s7] = 1,
-        [RISCV_s8] = 1,
-        [RISCV_s9] = 1,
-        [RISCV_s10] = 1,
-        [RISCV_s11] = 1,
-        [RISCV_fs0] = 1,
-        [RISCV_fs1] = 1,
-        [RISCV_fs2] = 1,
-        [RISCV_fs3] = 1,
-        [RISCV_fs4] = 1,
-        [RISCV_fs5] = 1,
-        [RISCV_fs6] = 1,
-        [RISCV_fs7] = 1,
-        [RISCV_fs8] = 1,
-        [RISCV_fs9] = 1,
-        [RISCV_fs10] = 1,
-        [RISCV_fs11] = 1,
-        [RISCV_ra] = 1,
+    [RISCV_s0] = 1,  [RISCV_s1] = 1,  [RISCV_s2] = 1,   [RISCV_s3] = 1,   [RISCV_s4] = 1,
+    [RISCV_s5] = 1,  [RISCV_s6] = 1,  [RISCV_s7] = 1,   [RISCV_s8] = 1,   [RISCV_s9] = 1,
+    [RISCV_s10] = 1, [RISCV_s11] = 1, [RISCV_fs0] = 1,  [RISCV_fs1] = 1,  [RISCV_fs2] = 1,
+    [RISCV_fs3] = 1, [RISCV_fs4] = 1, [RISCV_fs5] = 1,  [RISCV_fs6] = 1,  [RISCV_fs7] = 1,
+    [RISCV_fs8] = 1, [RISCV_fs9] = 1, [RISCV_fs10] = 1, [RISCV_fs11] = 1, [RISCV_ra] = 1,
     };
     for (auto &b : func->blocks) {
         for (auto ins : *b) {
@@ -177,9 +157,11 @@ void RiscV64LowerStack::Execute() {
                 for (auto regno : saveregs) {
                     offset -= 8;
                     if (regno >= RISCV_x0 && regno <= RISCV_x31) {
-                        b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                        b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(regno),
+                                                                   GetPhysicalReg(RISCV_sp), offset));
                     } else {
-                        b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                        b->push_front(rvconstructor->ConstructSImm(RISCV_FSD, GetPhysicalReg(regno),
+                                                                   GetPhysicalReg(RISCV_sp), offset));
                     }
                 }
             }
@@ -205,9 +187,11 @@ void RiscV64LowerStack::Execute() {
                         for (auto regno : saveregs) {
                             offset -= 8;
                             if (regno >= RISCV_x0 && regno <= RISCV_x31) {
-                                b->push_back(rvconstructor->ConstructIImm(RISCV_LD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                                b->push_back(rvconstructor->ConstructIImm(RISCV_LD, GetPhysicalReg(regno),
+                                                                          GetPhysicalReg(RISCV_sp), offset));
                             } else {
-                                b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(regno), GetPhysicalReg(RISCV_sp), offset));
+                                b->push_back(rvconstructor->ConstructIImm(RISCV_FLD, GetPhysicalReg(regno),
+                                                                          GetPhysicalReg(RISCV_sp), offset));
                             }
                         }
                         b->push_back(riscv_last_ins);

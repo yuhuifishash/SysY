@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-
 // class GVN_Value{
 // public:
 //     int vid;
@@ -22,17 +21,17 @@
 //     }
 // };
 
-class HashTable{
+class HashTable {
 public:
     int expr_number = 0;
-    std::map<std::string,int> valuemap;
-    std::map<int,int> resultmap;
-    std::map<int,std::string> stringmap;
-    std::map<int,std::vector<Operand>> valuevetor;
-    std::map<int,Instruction> definemap;
-    void defineDFS(CFG* C);
-    int lookupOrAdd(std::string ExprStr){
-        if(valuemap.find(ExprStr) == valuemap.end()){
+    std::map<std::string, int> valuemap;
+    std::map<int, int> resultmap;
+    std::map<int, std::string> stringmap;
+    std::map<int, std::vector<Operand>> valuevetor;
+    std::map<int, Instruction> definemap;
+    void defineDFS(CFG *C);
+    int lookupOrAdd(std::string ExprStr) {
+        if (valuemap.find(ExprStr) == valuemap.end()) {
             valuemap[ExprStr] = expr_number;
             // valuemap[expr_number++] = e;
         }

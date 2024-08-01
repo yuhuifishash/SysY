@@ -5,13 +5,13 @@ bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Ins
 bool EliminateDoubleI32Add(Instruction a, Instruction b);
 bool EliminateSubEq(Instruction a, Instruction b);
 bool EliminateDoubleConstDiv(Instruction a, Instruction b);
-bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator insertit);
+bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
+                          std::deque<Instruction>::iterator insertit);
 void DomTreeDfsI32AddCombine(CFG *C);
 
 void InstCombine(CFG *C) {
     /* dfs domtree InstCombine*/
     DomTreeDfsI32AddCombine(C);
-
 
     /* window InstCombine*/
     for (auto [id, bb] : *C->block_map) {
@@ -32,19 +32,19 @@ void DomTreeDfsI32AddCombine(CFG *C) {
         std::set<Instruction> tmpset;
         LLVMBlock now = (*C->block_map)[bbid];
 
-        for (auto I:now->Instruction_list){
-            if(I->GetOpcode() == ADD){
-                auto op2 = ((ArithmeticInstruction*)I)->GetOperand2();
-                if(op2->GetOperandType() == BasicOperand::IMMI32){
+        for (auto I : now->Instruction_list) {
+            if (I->GetOpcode() == ADD) {
+                auto op2 = ((ArithmeticInstruction *)I)->GetOperand2();
+                if (op2->GetOperandType() == BasicOperand::IMMI32) {
                     bool is_combine = false;
-                    for(auto oldI:AddInstConstantSet){
-                        if(EliminateDoubleI32Add(oldI,I)){
+                    for (auto oldI : AddInstConstantSet) {
+                        if (EliminateDoubleI32Add(oldI, I)) {
                             is_changed = true;
                             is_combine = true;
                             break;
                         }
                     }
-                    if(!is_combine){
+                    if (!is_combine) {
                         AddInstConstantSet.insert(I);
                         tmpset.insert(I);
                     }
@@ -56,25 +56,25 @@ void DomTreeDfsI32AddCombine(CFG *C) {
             dfs(v->block_id);
         }
 
-        for (auto I:tmpset){
+        for (auto I : tmpset) {
             AddInstConstantSet.erase(I);
         }
     };
-    while(is_changed){
+    while (is_changed) {
         is_changed = false;
         dfs(0);
     }
 }
 
-bool ApplyCombineRules(CFG* C, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin) {
+bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator begin) {
     int win_size = 4;
     int cnt = 0;
 
     bool changed = false;
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
         // changed |= EliminateSubEq(*begin,*it);
-        changed |= EliminateDoubleConstDiv(*begin,*it);
-        changed |= EliminateMod2EqNeCmp(C,*begin,*it,InstList,it);
+        changed |= EliminateDoubleConstDiv(*begin, *it);
+        changed |= EliminateMod2EqNeCmp(C, *begin, *it, InstList, it);
     }
     return changed;
 }
@@ -135,14 +135,14 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     // TODO("EliminateDoubleConstDiv");
     // a->PrintIR(std::cerr);
     // b->PrintIR(std::cerr);
-    if(a->GetOpcode() != DIV || b->GetOpcode() != DIV){
+    if (a->GetOpcode() != DIV || b->GetOpcode() != DIV) {
         return false;
     }
-    auto divI1 = (ArithmeticInstruction*)a;
-    auto divI2 = (ArithmeticInstruction*)b;
+    auto divI1 = (ArithmeticInstruction *)a;
+    auto divI2 = (ArithmeticInstruction *)b;
     // divI1->PrintIR(std::cerr);
     // divI2->PrintIR(std::cerr);
-    if(divI1->GetDataType()!= I32 || divI2->GetResultType() != I32){
+    if (divI1->GetDataType() != I32 || divI2->GetResultType() != I32) {
         return false;
     }
     auto divI1resultop = divI1->GetResultOperand();
@@ -151,22 +151,23 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     auto divI2resultop = divI2->GetResultOperand();
     auto divI2op1 = divI2->GetOperand1();
     auto divI2op2 = divI2->GetOperand2();
-    if(divI1resultop->GetFullName() != divI2op1->GetFullName() || divI2op2->GetOperandType() != BasicOperand::IMMI32 || divI1op2->GetOperandType() != BasicOperand::IMMI32){
+    if (divI1resultop->GetFullName() != divI2op1->GetFullName() || divI2op2->GetOperandType() != BasicOperand::IMMI32 ||
+        divI1op2->GetOperandType() != BasicOperand::IMMI32) {
         // std::cerr<<divI2op1->GetOperandType()<<" "<<divI1op2->GetOperandType()<<" "<<divI2op1->GetFullName()<<'\n';
         return false;
     }
 
-    auto num1 = ((ImmI32Operand*)divI1op2)->GetIntImmVal();
-    auto num2 = ((ImmI32Operand*)divI2op2)->GetIntImmVal();
-    auto newnum = 1LL*num1*num2;
+    auto num1 = ((ImmI32Operand *)divI1op2)->GetIntImmVal();
+    auto num2 = ((ImmI32Operand *)divI2op2)->GetIntImmVal();
+    auto newnum = 1LL * num1 * num2;
     // std::cerr<<num1<<" "<<num2<<" "<<newnum<<'\n';
-    if(newnum > maxINT || newnum < -maxINT - 1){// -2147483648 ~ 2147483647
+    if (newnum > maxINT || newnum < -maxINT - 1) {    // -2147483648 ~ 2147483647
         return false;
     }
     // divI1->PrintIR(std::cerr);
     // divI2->PrintIR(std::cerr);
     divI2->SetOperand1(divI1op1);
-    divI2->SetOperand2(new ImmI32Operand(num1*num2));
+    divI2->SetOperand2(new ImmI32Operand(num1 * num2));
     // divI1->PrintIR(std::cerr);
     // divI2->PrintIR(std::cerr);
     // puts("-------");
@@ -181,19 +182,20 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     %6 = and i32 %0, 1, !dbg !28
     %7 = icmp eq i32 %6, 0, !dbg !28
 
-if(n%2 == 1)  
+if(n%2 == 1)
 if(n%2 == 0)
 if(n%2 != 1)
 if(n%2 != 0)
 */
-bool EliminateMod2EqNeCmp(CFG* C, Instruction a, Instruction b, std::deque<Instruction> &InstList, std::deque<Instruction>::iterator insertit) {
+bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
+                          std::deque<Instruction>::iterator insertit) {
     // TODO("EliminateDoubleConstDiv");
-    if(a->GetOpcode() != MOD || b->GetOpcode() != ICMP){
+    if (a->GetOpcode() != MOD || b->GetOpcode() != ICMP) {
         return false;
     }
-    auto modI = (ArithmeticInstruction*)a;
-    auto icmpI = (IcmpInstruction*)b;
-    if(icmpI->GetCompareCondition() != eq && icmpI->GetCompareCondition() != ne){
+    auto modI = (ArithmeticInstruction *)a;
+    auto icmpI = (IcmpInstruction *)b;
+    if (icmpI->GetCompareCondition() != eq && icmpI->GetCompareCondition() != ne) {
         return false;
     }
     auto modIresult = modI->GetResultOperand();
@@ -202,28 +204,28 @@ bool EliminateMod2EqNeCmp(CFG* C, Instruction a, Instruction b, std::deque<Instr
     auto icmpIresult = icmpI->GetResult();
     auto icmpIop1 = icmpI->GetOp1();
     auto icmpIop2 = icmpI->GetOp2();
-    if(modIresult->GetFullName()!=icmpIop1->GetFullName()){
+    if (modIresult->GetFullName() != icmpIop1->GetFullName()) {
         return false;
     }
-    if(modIop2->GetOperandType() != BasicOperand::IMMI32 || icmpIop2->GetOperandType() != BasicOperand::IMMI32){
+    if (modIop2->GetOperandType() != BasicOperand::IMMI32 || icmpIop2->GetOperandType() != BasicOperand::IMMI32) {
         return false;
     }
-    auto modInum = ((ImmI32Operand*)modIop2)->GetIntImmVal();
-    auto icmpInum = ((ImmI32Operand*)icmpIop2)->GetIntImmVal();
-    if(modInum != 2){
+    auto modInum = ((ImmI32Operand *)modIop2)->GetIntImmVal();
+    auto icmpInum = ((ImmI32Operand *)icmpIop2)->GetIntImmVal();
+    if (modInum != 2) {
         return false;
     }
-    if(icmpInum != 0 && icmpInum != 1){
+    if (icmpInum != 0 && icmpInum != 1) {
         return false;
     }
     auto newop = GetNewRegOperand(++C->max_reg);
-    auto newandI = new ArithmeticInstruction(BITAND,I32,modIop1,new ImmI32Operand(1),newop);
-    InstList.insert(insertit,newandI);
+    auto newandI = new ArithmeticInstruction(BITAND, I32, modIop1, new ImmI32Operand(1), newop);
+    InstList.insert(insertit, newandI);
     icmpI->SetOp1(newop);
     // a->PrintIR(std::cerr);
     // newandI->PrintIR(std::cerr);
     // b->PrintIR(std::cerr);
     // puts("-----------");
-    // auto bb = 
+    // auto bb =
     return true;
 }

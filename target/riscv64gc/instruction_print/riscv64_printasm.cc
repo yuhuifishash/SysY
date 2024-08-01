@@ -81,7 +81,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRs1());
         s << ",";
         printRVfield(ins->getRs2());
-		break;
+        break;
     case RvOpInfo::R2_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -89,7 +89,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         if (ins->getOpcode() == RISCV_FCVT_W_S || ins->getOpcode() == RISCV_FCVT_WU_S) {
             s << ",rtz";
         }
-		break;
+        break;
     case RvOpInfo::R4_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -98,7 +98,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         printRVfield(ins->getRs2());
         s << ",";
         printRVfield(ins->getRs3());
-		break;
+        break;
     case RvOpInfo::I_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -120,7 +120,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
             printRVfield(ins->getRs1());
             s << ")";
         }
-		break;
+        break;
     case RvOpInfo::S_type:
         printRVfield(ins->getRs1());
         s << ",";
@@ -132,7 +132,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         s << "(";
         printRVfield(ins->getRs2());
         s << ")";
-		break;
+        break;
     case RvOpInfo::B_type:
         printRVfield(ins->getRs1());
         s << ",";
@@ -143,7 +143,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-		break;
+        break;
     case RvOpInfo::U_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -152,7 +152,7 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-		break;
+        break;
     case RvOpInfo::J_type:
         printRVfield(ins->getRd());
         s << ",";
@@ -161,16 +161,16 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
         } else {
             s << ins->getImm();
         }
-		break;
+        break;
     case RvOpInfo::CALL_type:
         s << ins->getLabel().name;
         break;
-	default:
+    default:
         ERROR("Unexpected instruction format");
     }
-	if (!ins->CanSchedule()) {
-		s << " # Can't schedule";
-	}
+    if (!ins->CanSchedule()) {
+        s << " # Can't schedule";
+    }
     s << "\n";
 }
 
@@ -179,10 +179,10 @@ template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyI
     s << " = COPY ";
     printRVfield(ins->GetSrc());
     s << ", " << ins->GetCopyType().toString();
-	if (!ins->CanSchedule()) {
-		s << " # Can't schedule";
-	}
-	s << "\n";
+    if (!ins->CanSchedule()) {
+        s << " # Can't schedule";
+    }
+    s << "\n";
 }
 
 template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {
@@ -204,19 +204,19 @@ template <> void RiscV64Printer::printMachineIR<RiscV64Instruction *>(RiscV64Ins
 }
 
 template <> void RiscV64Printer::printAsm<MachineBaseInstruction *>(MachineBaseInstruction *ins) {
-	if (ins->arch == MachineBaseInstruction::RiscV) {
-		printAsm<RiscV64Instruction *>((RiscV64Instruction *)ins);
-		return;
-	} else if (ins->arch == MachineBaseInstruction::COPY) {
-		printAsm<MachineCopyInstruction *>((MachineCopyInstruction *)ins);
-		return;
-	} else if (ins->arch == MachineBaseInstruction::PHI) {
-		printAsm<MachinePhiInstruction *>((MachinePhiInstruction *)ins);
-		return;
-	} else {
-		s << "# Unknown Instruction, probably COMMENT\n";
-		return;
-	}
+    if (ins->arch == MachineBaseInstruction::RiscV) {
+        printAsm<RiscV64Instruction *>((RiscV64Instruction *)ins);
+        return;
+    } else if (ins->arch == MachineBaseInstruction::COPY) {
+        printAsm<MachineCopyInstruction *>((MachineCopyInstruction *)ins);
+        return;
+    } else if (ins->arch == MachineBaseInstruction::PHI) {
+        printAsm<MachinePhiInstruction *>((MachinePhiInstruction *)ins);
+        return;
+    } else {
+        s << "# Unknown Instruction, probably COMMENT\n";
+        return;
+    }
 }
 
 void RiscV64Printer::SyncFunction(MachineFunction *func) { current_func = func; }
@@ -225,7 +225,7 @@ void RiscV64Printer::SyncBlock(MachineBlock *block) { cur_block = block; }
 
 void RiscV64Printer::emit() {
     s << "\t.text\n\t.globl main\n";
-	s << "\t.attribute arch, \"rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0\"\n";
+    s << "\t.attribute arch, \"rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0\"\n";
     for (auto func : printee->functions) {
         current_func = func;
         // s << "\t.globl\t" << func->getFunctionName() << "\n";

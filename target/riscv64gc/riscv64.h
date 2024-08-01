@@ -366,10 +366,11 @@ struct RiscVLabel : public Label {
         }
         return *this;
     }
-    bool operator==(const RiscVLabel &other)const {
+    bool operator==(const RiscVLabel &other) const {
         if (this == &other)
             return true;
-        if (is_data_address != other.is_data_address) return false;
+        if (is_data_address != other.is_data_address)
+            return false;
         if (is_data_address) {
             return name == other.name && is_hi == other.is_hi;
         } else {
@@ -395,7 +396,7 @@ private:
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
     std::vector<Register *> GetR4_typeReadreg() { return {&rs1, &rs2, &rs3}; }
     std::vector<Register *> GetI_typeReadreg() {
-        std::vector<Register* > ret;
+        std::vector<Register *> ret;
         ret.push_back(&rs1);
         if (op == RISCV_JALR) {
             if (ret_type == 1) {
@@ -498,7 +499,7 @@ public:
         ret->setRs1(Rs1);
         ret->setRs2(Rs2);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructR2(int op, Register Rd, Register Rs1) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -507,7 +508,7 @@ public:
         ret->setRd(Rd);
         ret->setRs1(Rs1);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructR4(int op, Register Rd, Register Rs1, Register Rs2, Register Rs3) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -518,7 +519,7 @@ public:
         ret->setRs2(Rs2);
         ret->setRs3(Rs3);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructIImm(int op, Register Rd, Register Rs1, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -528,7 +529,7 @@ public:
         ret->setRs1(Rs1);
         ret->setImm(imm);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructILabel(int op, Register Rd, Register Rs1, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -538,7 +539,7 @@ public:
         ret->setRs1(Rs1);
         ret->setLabel(label);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructSImm(int op, Register value, Register ptr, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -548,7 +549,7 @@ public:
         ret->setRs2(ptr);
         ret->setImm(imm);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructSLabel(int op, Register value, Register ptr, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -558,7 +559,7 @@ public:
         ret->setRs2(ptr);
         ret->setLabel(label);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructBLabel(int op, Register Rs1, Register Rs2, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -568,7 +569,7 @@ public:
         ret->setRs2(Rs2);
         ret->setLabel(label);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructUImm(int op, Register Rd, int imm) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -577,7 +578,7 @@ public:
         ret->setRd(Rd);
         ret->setImm(imm);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructULabel(int op, Register Rd, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -586,7 +587,7 @@ public:
         ret->setRd(Rd);
         ret->setLabel(label);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructJLabel(int op, Register rd, RiscVLabel label) {
         RiscV64Instruction *ret = new RiscV64Instruction();
@@ -595,7 +596,7 @@ public:
         ret->setRd(rd);
         ret->setLabel(label);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     MachineCopyInstruction *ConstructCopyReg(Register dst, Register src, MachineDataType type) {
         Assert(dst.type == src.type);
@@ -604,7 +605,7 @@ public:
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineRegister(src), new MachineRegister(dst), type);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     MachineCopyInstruction *ConstructCopyRegImmI(Register dst, int src, MachineDataType type) {
         Assert(dst.type == type);
@@ -613,7 +614,7 @@ public:
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineImmediateInt(src), new MachineRegister(dst), type);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     MachineCopyInstruction *ConstructCopyRegImmF(Register dst, float src, MachineDataType type) {
         Assert(dst.type == type);
@@ -622,7 +623,7 @@ public:
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineImmediateFloat(src), new MachineRegister(dst), type);
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     RiscV64Instruction *ConstructCall(int op, std::string funcname, int iregnum, int fregnum) {
         Assert(OpTable[op].ins_formattype == RvOpInfo::CALL_type);
@@ -633,7 +634,7 @@ public:
         ret->setCallfregNum(fregnum);
         ret->setLabel(RiscVLabel(funcname, false));
         ret->SetNoSchedule(no_schedule);
-		return ret;
+        return ret;
     }
     MachineComment *ConstructComment(std::string comment) { return new MachineComment(comment); }
 };
@@ -647,7 +648,7 @@ class RiscV64Block : public MachineBlock {
 public:
     RiscV64Block(int id) : MachineBlock(id) {}
     std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt();
-    std::vector<int> getAllBranch (); // [0]-false, [1]-true
+    std::vector<int> getAllBranch();    // [0]-false, [1]-true
     void ReverseBranch();
 };
 

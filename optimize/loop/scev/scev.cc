@@ -317,8 +317,8 @@ void SCEV::CheckSimpleForLoop() {
         is_simpleloop = false;
         return;
     }
-    
-    if (L->exiting_nodes.size() == 0){
+
+    if (L->exiting_nodes.size() == 0) {
         is_simpleloop = false;
         return;
     }
@@ -326,20 +326,20 @@ void SCEV::CheckSimpleForLoop() {
     auto exit = *L->exit_nodes.begin();
     auto exiting = *L->exiting_nodes.begin();
     auto latch = *L->latches.begin();
-    
+
     bool is_latch_eq_exiting = (exiting == latch);
     for (auto v : C->GetSuccessor(exiting)) {
         if (v == latch && latch->Instruction_list.size() == 1) {
             is_latch_eq_exiting = true;
         }
     }
-    
+
     if (!is_latch_eq_exiting) {
         is_simpleloop = false;
         return;
     }
 
-    if(exiting->Instruction_list.size() == 1){
+    if (exiting->Instruction_list.size() == 1) {
         is_simpleloop = false;
         return;
     }
@@ -350,11 +350,11 @@ void SCEV::CheckSimpleForLoop() {
         return;
     }
 
-    if(I->GetOpcode() != ICMP){
+    if (I->GetOpcode() != ICMP) {
         is_simpleloop = false;
         return;
     }
-    
+
     auto I2 = *(exiting->Instruction_list.end() - 1);
     assert(I2->GetOpcode() == BR_COND);
     auto BrCondI = (BrCondInstruction *)I2;
@@ -406,7 +406,7 @@ void SCEV::CheckSimpleForLoop() {
     if (((LabelOperand *)BrCondI->GetTrueLabel())->GetLabelNo() == exit->block_id) {
         cond = GetInverseIcmpCond(cond);
     }
-    
+
     auto [tag, info] = GetLoopBound(cond, scev2->st, scev1);
     if (tag == false) {
         is_simpleloop = false;

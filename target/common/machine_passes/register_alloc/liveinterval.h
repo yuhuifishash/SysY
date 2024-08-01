@@ -32,7 +32,7 @@ public:
         }
         return reg == that.reg;    // && segments == that.segments;
     }
-    LiveInterval operator | (const LiveInterval &that) const{
+    LiveInterval operator|(const LiveInterval &that) const {
         LiveInterval ret(this->reg);
         ret.reference_count = this->reference_count + that.reference_count - 2;
         auto it = segments.begin();

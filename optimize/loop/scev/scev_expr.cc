@@ -3,11 +3,11 @@
 #include <assert.h>
 
 std::optional<int> SCEVValue::GetConstantValue() {
-    if(type != OTHER){
+    if (type != OTHER) {
         return std::nullopt;
     }
-    if(op1->GetOperandType() == BasicOperand::IMMI32){
-        auto imm = ((ImmI32Operand*)op1)->GetIntImmVal();
+    if (op1->GetOperandType() == BasicOperand::IMMI32) {
+        auto imm = ((ImmI32Operand *)op1)->GetIntImmVal();
         return imm;
     }
     return std::nullopt;

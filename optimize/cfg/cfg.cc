@@ -64,14 +64,14 @@ void LLVMIR::ElimateUnreachedInstructionAndBlocks() {
             deadblocks.pop();
         }
 
-        for(auto [id,bb]:blocks){
-            for(auto I:bb->Instruction_list){
-                if(I->GetOpcode() == PHI){
-                    auto PhiI = (PhiInstruction*)I;
-                    for(auto bbid:deadbb_set){
+        for (auto [id, bb] : blocks) {
+            for (auto I : bb->Instruction_list) {
+                if (I->GetOpcode() == PHI) {
+                    auto PhiI = (PhiInstruction *)I;
+                    for (auto bbid : deadbb_set) {
                         PhiI->ErasePhi(bbid);
                     }
-                }else{
+                } else {
                     break;
                 }
             }

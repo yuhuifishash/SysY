@@ -24,8 +24,8 @@ void RiscV64BranchPredict::StaticBranchPredict() {
             block->branch_predictor[0] = 0.4;
             block->branch_predictor[1] = 0.6;
         } else {
-            for(auto &p:block->branch_predictor){
-                p = 1.0/succs.size();
+            for (auto &p : block->branch_predictor) {
+                p = 1.0 / succs.size();
             }
         }
     }
@@ -36,9 +36,9 @@ void RiscV64BranchPredict::StaticBranchPredict() {
             for (auto succ : C->GetSuccessorsByBlockId(bb->getLabelId())) {
                 // Check succ true/false
                 float this_br_prob = 1;
-                if(l->loop_nodes.find(succ->Mblock) != l->loop_nodes.end()) {
+                if (l->loop_nodes.find(succ->Mblock) != l->loop_nodes.end()) {
                     this_br_prob = 0.99;
-                }else{
+                } else {
                     this_br_prob = 0.01;
                 }
                 // idx = idx + 1;
@@ -62,23 +62,23 @@ void RiscV64BranchPredict::StaticBranchPredict() {
         }
     }
 
-
-    #ifdef RISCV64BranchPredictDebug
-        block_it = C->getSeqScanIterator();
-        block_it->open();
-        while (block_it->hasNext()) {
-            auto block = block_it->next()->Mblock;
-            auto succs = C->GetSuccessorsByBlockId(block->getLabelId());
-            if(succs.size() >= 2){
-                std::cerr<<block->getLabelId()<<": \n";
-                for(auto succ:succs){
-                    std::cerr<<succ->Mblock->getLabelId()<<" ";
-                }std::cerr<<"\n";
-                for(auto p:block->branch_predictor){
-                    std::cerr<<p<<" ";
-                }std::cerr<<"\n\n";
+#ifdef RISCV64BranchPredictDebug
+    block_it = C->getSeqScanIterator();
+    block_it->open();
+    while (block_it->hasNext()) {
+        auto block = block_it->next()->Mblock;
+        auto succs = C->GetSuccessorsByBlockId(block->getLabelId());
+        if (succs.size() >= 2) {
+            std::cerr << block->getLabelId() << ": \n";
+            for (auto succ : succs) {
+                std::cerr << succ->Mblock->getLabelId() << " ";
             }
+            std::cerr << "\n";
+            for (auto p : block->branch_predictor) {
+                std::cerr << p << " ";
+            }
+            std::cerr << "\n\n";
         }
-    #endif
+    }
+#endif
 }
-

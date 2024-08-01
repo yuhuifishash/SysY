@@ -94,7 +94,7 @@ static bool CanReach(int bb1_id, int bb2_id, CFG *C) {
 
 static bool CanJump(bool isleft, int x1_id, int x2_id, CFG *C) {
     // x1 dominate x2
-    assert(C->IsDominate(x1_id,x2_id));
+    assert(C->IsDominate(x1_id, x2_id));
     auto x1 = (*C->block_map)[x1_id];
     auto x2 = (*C->block_map)[x2_id];
     auto BrI1 = (BrCondInstruction *)(*(x1->Instruction_list.end() - 1));
@@ -142,17 +142,17 @@ static bool BlockDefNoUseCheck(CFG *C, int bb_id, int st_id) {
             }
         }
     }
-    for(auto I : bb->Instruction_list) {
-        if(I->GetOpcode() == STORE){
+    for (auto I : bb->Instruction_list) {
+        if (I->GetOpcode() == STORE) {
             return false;
-        }else if(I->GetOpcode() == CALL){
+        } else if (I->GetOpcode() == CALL) {
             return false;
         }
     }
 
     auto bb2 = (*C->block_map)[st_id];
     for (auto I : bb2->Instruction_list) {
-        if(I->GetOpcode() == PHI) {
+        if (I->GetOpcode() == PHI) {
             return false;
         }
     }

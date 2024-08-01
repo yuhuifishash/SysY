@@ -292,7 +292,7 @@ void BasicBlockCSE(CFG *C) {
             }
         }
 
-        for(auto &[o_id,n_id]:reg_replace_map){
+        for (auto &[o_id, n_id] : reg_replace_map) {
             while (reg_replace_map.find(n_id) != reg_replace_map.end()) {
                 n_id = reg_replace_map[n_id];
             }
@@ -493,8 +493,8 @@ void OnlyBasicBlockCSE(CFG *C) {
     BasicBlockCSE(C);
 }
 
-void LatchPhiCombine(CFG* C) {
-    std::map<int,Instruction> ResultMap;
+void LatchPhiCombine(CFG *C) {
+    std::map<int, Instruction> ResultMap;
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             int v = I->GetResultRegNo();
@@ -511,53 +511,54 @@ void LatchPhiCombine(CFG* C) {
         std::vector<Instruction> InsertIlist;
 
         auto it = latch->Instruction_list.begin();
-        for(; it != latch->Instruction_list.end();){
+        for (; it != latch->Instruction_list.end();) {
             auto I = *it;
-            if(I->GetOpcode() != PHI){
+            if (I->GetOpcode() != PHI) {
                 break;
             }
             bool is_same = true;
-            auto PhiI = (PhiInstruction*)I;
+            auto PhiI = (PhiInstruction *)I;
             Instruction defI = nullptr;
             std::set<InstCSEInfo> CSEInfoSet;
-            for(auto [l,r]:PhiI->GetPhiList()){
-                if(r->GetOperandType() != BasicOperand::REG){
+            for (auto [l, r] : PhiI->GetPhiList()) {
+                if (r->GetOperandType() != BasicOperand::REG) {
                     is_same = false;
                     break;
                 }
-                auto regno = ((RegOperand*)r)->GetRegNo();
-                if(ResultMap.find(regno) == ResultMap.end()){
+                auto regno = ((RegOperand *)r)->GetRegNo();
+                if (ResultMap.find(regno) == ResultMap.end()) {
                     is_same = false;
                     break;
                 }
                 defI = ResultMap[regno];
-                if(defI->GetOpcode() != ADD){
+                if (defI->GetOpcode() != ADD) {
                     is_same = false;
                     break;
                 }
                 CSEInfoSet.insert(GetCSEInfo(defI));
             }
-            if(is_same == false){
+            if (is_same == false) {
                 ++it;
                 continue;
             }
-            if(CSEInfoSet.size() == 1){
+            if (CSEInfoSet.size() == 1) {
                 it = latch->Instruction_list.erase(it);
 
                 assert(defI->GetOpcode() == ADD);
-                auto ArithI = (ArithmeticInstruction*)defI;
-                auto nI = new ArithmeticInstruction(ADD,I32,ArithI->GetOperand1(),ArithI->GetOperand2(),PhiI->GetResultReg());
-                
+                auto ArithI = (ArithmeticInstruction *)defI;
+                auto nI =
+                new ArithmeticInstruction(ADD, I32, ArithI->GetOperand1(), ArithI->GetOperand2(), PhiI->GetResultReg());
+
                 InsertIlist.push_back(nI);
-                continue;    
+                continue;
             }
             ++it;
         }
-        for(auto I:InsertIlist){
+        for (auto I : InsertIlist) {
             // std::cerr<<"latch"<<latch->block_id<<" combine ";
             // I->PrintIR(std::cerr);
 
-            latch->Instruction_list.insert(it,I);
+            latch->Instruction_list.insert(it, I);
         }
     }
 }

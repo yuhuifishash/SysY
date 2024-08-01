@@ -48,7 +48,7 @@ public:
     void LoopGepStrengthReduce(CFG *C);
 
     bool LoopCarriedDependenceTest(CFG *C);
-    bool LoopParallel(CFG *C, LLVMIR* IR);
+    bool LoopParallel(CFG *C, LLVMIR *IR);
 
     enum LoopDepResult {
         NONE = 0,

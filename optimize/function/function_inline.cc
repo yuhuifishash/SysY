@@ -167,7 +167,7 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
             }
             auto newAddReg = GetNewRegOperand(++uCFG->max_reg);
             oldbb->InsertInstruction(
-            0, new ArithmeticInstruction(FADD, FLOAT32, formal.second,new ImmF32Operand(0), newAddReg));
+            0, new ArithmeticInstruction(FADD, FLOAT32, formal.second, new ImmF32Operand(0), newAddReg));
             while (!PhiISta.empty()) {
                 oldbb->InsertInstruction(0, PhiISta.top());
                 PhiISta.pop();
@@ -202,13 +202,11 @@ void InlineCFG(CFG *uCFG, CFG *vCFG, uint32_t CallINo) {
     EraseSet.clear();
     if (CallI->GetRetType() != VOID) {
         if (CallI->GetResultType() == I32) {
-            EndBB->InsertInstruction(1, new ArithmeticInstruction(ADD, I32, 
-                                                                  (ImmI32Operand *)NewResultOperand,new ImmI32Operand(0),
-                                                                  CallI->GetResultReg()));
+            EndBB->InsertInstruction(1, new ArithmeticInstruction(ADD, I32, (ImmI32Operand *)NewResultOperand,
+                                                                  new ImmI32Operand(0), CallI->GetResultReg()));
         } else {
-            EndBB->InsertInstruction(1, new ArithmeticInstruction(FADD, FLOAT32, 
-                                                                  (ImmF32Operand *)NewResultOperand,new ImmF32Operand(0),
-                                                                  CallI->GetResultReg()));
+            EndBB->InsertInstruction(1, new ArithmeticInstruction(FADD, FLOAT32, (ImmF32Operand *)NewResultOperand,
+                                                                  new ImmF32Operand(0), CallI->GetResultReg()));
         }
         fcallgraph.CGINum[uCFG]++;
     }

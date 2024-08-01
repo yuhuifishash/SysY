@@ -252,7 +252,7 @@ std::vector<Operand> ArithmeticInstruction::GetNonResultOperands() {
     std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
-    if(op3 != nullptr){
+    if (op3 != nullptr) {
         ret.push_back(op3);
     }
     return ret;
@@ -261,7 +261,7 @@ std::vector<Operand> ArithmeticInstruction::GetNonResultOperands() {
 void ArithmeticInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     op1 = ops[0];
     op2 = ops[1];
-    if(ops.size() == 3){
+    if (ops.size() == 3) {
         op3 = ops[2];
     }
 }
@@ -395,7 +395,7 @@ void GetElementptrInstruction::SetNonResultOperands(std::vector<Operand> ops) {
 
 void GetElementptrInstruction::SetDims(std::vector<int> dim) {
     dims.clear();
-    for(int i=0;i<dim.size();++i){
+    for (int i = 0; i < dim.size(); ++i) {
         dims.push_back(dim[i]);
     }
 }
@@ -446,7 +446,6 @@ std::vector<Operand> BitCastInstruction::GetNonResultOperands() {
 }
 
 void BitCastInstruction::SetNonResultOperands(std::vector<Operand> ops) { src = ops[0]; }
-
 
 Operand RegOperand::CopyOperand() { return GetNewRegOperand(reg_no); }
 
@@ -583,7 +582,7 @@ Instruction BitCastInstruction::CopyInstruction() {
     Operand ndst = dst->CopyOperand();
     Operand nsrc = src->CopyOperand();
 
-    return new BitCastInstruction(nsrc, ndst, src_type, dst_type); 
+    return new BitCastInstruction(nsrc, ndst, src_type, dst_type);
 }
 
 void LoadInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
@@ -613,7 +612,7 @@ void StoreInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
 }
 
 void ArithmeticInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
-    if (op3 != nullptr){
+    if (op3 != nullptr) {
         if (op3->GetOperandType() == BasicOperand::REG) {
             auto op3_reg = (RegOperand *)op3;
             if (Rule.find(op3_reg->GetRegNo()) != Rule.end())

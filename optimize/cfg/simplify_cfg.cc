@@ -28,15 +28,13 @@ B0--->B2  may be transformed to B0(B1 use select)->B2
 */
 void SimpleIfConversion(CFG *C) {}
 
-
-
 /*
-L0(bb1):  
+L0(bb1):
     %r6 = icmp slt i32 %r0,%r1
     br i1 %r6, label %L2, label %L1
-L1(bb2):  
+L1(bb2):
     br label %L2
-L2(bb):  
+L2(bb):
     %r11 = phi i32 [%r0,%L0],[%r1,%L1]
 
 will be transformed to
@@ -46,188 +44,191 @@ L2:
 */
 
 /*
-    min(%r0,%r1) => 
+    min(%r0,%r1) =>
                     slt %r0,%r1
                     sle %r0,%r1
 */
 void MinMaxRecognize(CFG *C) {
     // puts("BEGIN");
     auto blockmap = *C->block_map;
-    std::map<int,Instruction> definemap;
+    std::map<int, Instruction> definemap;
     for (auto [id, bb] : blockmap) {
-        for(auto I : bb->Instruction_list){
+        for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
             definemap[I->GetResultRegNo()] = I;
         }
     }
     for (auto [id, bb] : blockmap) {
         bool existElimate = 0;
-        for(auto &I : bb->Instruction_list){
-            if(I->GetOpcode() != PHI){
+        for (auto &I : bb->Instruction_list) {
+            if (I->GetOpcode() != PHI) {
                 continue;
             }
-            auto PhiI = (PhiInstruction*)I;
+            auto PhiI = (PhiInstruction *)I;
             auto PhiList = PhiI->GetPhiList();
-            if(PhiList.size() != 2){
+            if (PhiList.size() != 2) {
                 continue;
             }
             auto datatype = PhiI->GetDataType();
-            if(datatype != I32 && datatype != FLOAT32){
+            if (datatype != I32 && datatype != FLOAT32) {
                 continue;
             }
-            auto Labelop1 = (LabelOperand*)PhiList[0].first;
-            auto Labelop2 = (LabelOperand*)PhiList[1].first;
+            auto Labelop1 = (LabelOperand *)PhiList[0].first;
+            auto Labelop2 = (LabelOperand *)PhiList[1].first;
             auto Regop1 = PhiList[0].second;
             auto Regop2 = PhiList[1].second;
             auto bb1 = blockmap[Labelop1->GetLabelNo()];
             auto bb2 = blockmap[Labelop2->GetLabelNo()];
-            
+
             auto endI1 = bb1->Instruction_list.back();
             auto endI2 = bb2->Instruction_list.back();
-            if(endI2->GetOpcode() == BR_COND && endI1->GetOpcode() ==BR_UNCOND){
-                std::swap(endI1,endI2);
-                std::swap(Labelop1,Labelop2);
-                std::swap(Regop1,Regop2);
-                std::swap(bb1,bb2);
+            if (endI2->GetOpcode() == BR_COND && endI1->GetOpcode() == BR_UNCOND) {
+                std::swap(endI1, endI2);
+                std::swap(Labelop1, Labelop2);
+                std::swap(Regop1, Regop2);
+                std::swap(bb1, bb2);
             }
-            if(endI1->GetOpcode() != BR_COND || endI2->GetOpcode() !=BR_UNCOND){
+            if (endI1->GetOpcode() != BR_COND || endI2->GetOpcode() != BR_UNCOND) {
                 continue;
             }
-            auto BrcondI = (BrCondInstruction*)endI1;
-            auto BruncondI = (BrCondInstruction*)endI2;
-            auto BrcondReg = (RegOperand*)BrcondI->GetCond();
+            auto BrcondI = (BrCondInstruction *)endI1;
+            auto BruncondI = (BrCondInstruction *)endI2;
+            auto BrcondReg = (RegOperand *)BrcondI->GetCond();
             auto BrcondRegDefI = definemap[BrcondReg->GetRegNo()];
-            if((datatype == I32 && BrcondRegDefI->GetOpcode() != ICMP) && (datatype == FLOAT32 && BrcondRegDefI->GetOpcode() != FCMP)){// can be fcmp
+            if ((datatype == I32 && BrcondRegDefI->GetOpcode() != ICMP) &&
+                (datatype == FLOAT32 && BrcondRegDefI->GetOpcode() != FCMP)) {    // can be fcmp
                 continue;
             }
-            if(datatype == I32){
-                auto IcmpI = (IcmpInstruction*)BrcondRegDefI;
+            if (datatype == I32) {
+                auto IcmpI = (IcmpInstruction *)BrcondRegDefI;
                 bool ismin = 1;
                 bool issigned = 1;
                 auto cmpcond = IcmpI->GetCompareCondition();
-                if(cmpcond == slt || cmpcond == sle){
+                if (cmpcond == slt || cmpcond == sle) {
                     ismin = 1;
                     issigned = 1;
-                }else if(cmpcond == sgt || cmpcond == sge){
+                } else if (cmpcond == sgt || cmpcond == sge) {
                     ismin = 0;
                     issigned = 1;
-                }else if(cmpcond == ult || cmpcond == ule){
+                } else if (cmpcond == ult || cmpcond == ule) {
                     ismin = 1;
                     issigned = 0;
-                }else if(cmpcond == ugt || cmpcond == uge){
+                } else if (cmpcond == ugt || cmpcond == uge) {
                     ismin = 0;
                     issigned = 0;
-                }else{
+                } else {
                     continue;
                 }
                 auto IcmpOp1 = IcmpI->GetOp1();
                 auto IcmpOp2 = IcmpI->GetOp2();
                 auto PhiOp1 = PhiList[0].second;
                 auto PhiOp2 = PhiList[1].second;
-                auto PhiL1 = ((LabelOperand*)PhiList[0].first);
-                auto PhiL2 = ((LabelOperand*)PhiList[1].first);
-                if(IcmpOp1->GetFullName() == PhiOp2->GetFullName() && IcmpOp2->GetFullName() == PhiOp1->GetFullName()){
-                    std::swap(PhiOp1,PhiOp2);
-                    std::swap(PhiL1,PhiL2);
-                    ismin^=1;
+                auto PhiL1 = ((LabelOperand *)PhiList[0].first);
+                auto PhiL2 = ((LabelOperand *)PhiList[1].first);
+                if (IcmpOp1->GetFullName() == PhiOp2->GetFullName() &&
+                    IcmpOp2->GetFullName() == PhiOp1->GetFullName()) {
+                    std::swap(PhiOp1, PhiOp2);
+                    std::swap(PhiL1, PhiL2);
+                    ismin ^= 1;
                 }
-                
-                if(IcmpOp1->GetFullName() != PhiOp1->GetFullName() || IcmpOp2->GetFullName() != PhiOp2->GetFullName()){
+
+                if (IcmpOp1->GetFullName() != PhiOp1->GetFullName() ||
+                    IcmpOp2->GetFullName() != PhiOp2->GetFullName()) {
                     // std::cerr<<IcmpOp1->GetFullName()<<" "<<PhiOp1->GetFullName()<<'\n';
                     // std::cerr<<IcmpOp2->GetFullName()<<" "<<PhiOp2->GetFullName()<<'\n';
                     continue;
                 }
-                
-                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
-                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
-                    ismin^=1;
-                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
-                    || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+
+                if (bb2->block_id == ((LabelOperand *)BrcondI->GetTrueLabel())->GetLabelNo() &&
+                    id == ((LabelOperand *)BrcondI->GetFalseLabel())->GetLabelNo()) {
+                    ismin ^= 1;
+                } else if (id != ((LabelOperand *)BrcondI->GetTrueLabel())->GetLabelNo() ||
+                           bb2->block_id != ((LabelOperand *)BrcondI->GetFalseLabel())->GetLabelNo()) {
                     continue;
                 }
-                if(C->invG[bb2->block_id].size() > 1){
+                if (C->invG[bb2->block_id].size() > 1) {
                     continue;
                 }
-                
-                if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
-                    || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
+
+                if (!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id) ||
+                      PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)) {
                     continue;
                 }
                 existElimate = 1;
                 // I->PrintIR(std::cerr);
-                if(ismin && issigned){
-                    I = new ArithmeticInstruction(SMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
-                }else if(!ismin && issigned){
-                    I = new ArithmeticInstruction(SMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
-                }else if(ismin && !issigned){
-                    I = new ArithmeticInstruction(UMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
-                }else{
-                    I = new ArithmeticInstruction(UMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
+                if (ismin && issigned) {
+                    I = new ArithmeticInstruction(SMIN_I32, I32, PhiOp1, PhiOp2, I->GetResultReg());
+                } else if (!ismin && issigned) {
+                    I = new ArithmeticInstruction(SMAX_I32, I32, PhiOp1, PhiOp2, I->GetResultReg());
+                } else if (ismin && !issigned) {
+                    I = new ArithmeticInstruction(UMIN_I32, I32, PhiOp1, PhiOp2, I->GetResultReg());
+                } else {
+                    I = new ArithmeticInstruction(UMAX_I32, I32, PhiOp1, PhiOp2, I->GetResultReg());
                 }
                 // I->PrintIR(std::cerr);
-            }/*else{
-                // I->PrintIR(std::cerr);
-                auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
-                bool ismin = 1;
-                auto cmpcond = FcmpI->GetCompareCondition();
-                if(cmpcond == ULT || cmpcond == ULE || cmpcond == OLT || cmpcond == OLE){
-                    ismin = 1;
-                }else if(cmpcond == UGT || cmpcond == UGE || cmpcond == OGT || cmpcond == OGE){
-                    ismin = 0;
-                }else{
-                    continue;
-                }
-                
-                auto FcmpOp1 = FcmpI->GetOp1();
-                auto FcmpOp2 = FcmpI->GetOp2();
-                auto PhiOp1 = PhiList[0].second;
-                auto PhiOp2 = PhiList[1].second;
-                auto PhiL1 = ((LabelOperand*)PhiList[0].first);
-                auto PhiL2 = ((LabelOperand*)PhiList[1].first);
-                if(FcmpOp1->GetFullName() == PhiOp2->GetFullName() && FcmpOp2->GetFullName() == PhiOp1->GetFullName()){
-                    std::swap(PhiOp1,PhiOp2);
-                    std::swap(PhiL1,PhiL2);
-                    ismin^=1;
-                }
-                // I->PrintIR(std::cerr);
-                if(FcmpOp1->GetFullName() != PhiOp1->GetFullName() || FcmpOp2->GetFullName() != PhiOp2->GetFullName()){
-                    continue;
-                }
-                // I->PrintIR(std::cerr);
-                if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
-                    && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
-                    ismin^=1;
-                }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
-                    || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
-                    // std::cerr<<id<<" "<<((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()<<'\n';
-                    continue;
-                }
-                // I->PrintIR(std::cerr);
-                if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
-                    || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
-                    continue;
-                }
-                // I->PrintIR(std::cerr);
-                if(ismin){
-                    I = new ArithmeticInstruction(FMIN_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
-                }else{
-                    I = new ArithmeticInstruction(FMAX_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
-                }
-                // I->PrintIR(std::cerr);
-            }*/
+            } /*else{
+                 // I->PrintIR(std::cerr);
+                 auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
+                 bool ismin = 1;
+                 auto cmpcond = FcmpI->GetCompareCondition();
+                 if(cmpcond == ULT || cmpcond == ULE || cmpcond == OLT || cmpcond == OLE){
+                     ismin = 1;
+                 }else if(cmpcond == UGT || cmpcond == UGE || cmpcond == OGT || cmpcond == OGE){
+                     ismin = 0;
+                 }else{
+                     continue;
+                 }
+
+                 auto FcmpOp1 = FcmpI->GetOp1();
+                 auto FcmpOp2 = FcmpI->GetOp2();
+                 auto PhiOp1 = PhiList[0].second;
+                 auto PhiOp2 = PhiList[1].second;
+                 auto PhiL1 = ((LabelOperand*)PhiList[0].first);
+                 auto PhiL2 = ((LabelOperand*)PhiList[1].first);
+                 if(FcmpOp1->GetFullName() == PhiOp2->GetFullName() && FcmpOp2->GetFullName() == PhiOp1->GetFullName()){
+                     std::swap(PhiOp1,PhiOp2);
+                     std::swap(PhiL1,PhiL2);
+                     ismin^=1;
+                 }
+                 // I->PrintIR(std::cerr);
+                 if(FcmpOp1->GetFullName() != PhiOp1->GetFullName() || FcmpOp2->GetFullName() != PhiOp2->GetFullName()){
+                     continue;
+                 }
+                 // I->PrintIR(std::cerr);
+                 if(bb2->block_id == ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                     && id == ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                     ismin^=1;
+                 }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
+                     || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                     // std::cerr<<id<<" "<<((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()<<'\n';
+                     continue;
+                 }
+                 // I->PrintIR(std::cerr);
+                 if(!((PhiL1->GetLabelNo() == bb1->block_id && PhiL2->GetLabelNo() == bb2->block_id)
+                     || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
+                     continue;
+                 }
+                 // I->PrintIR(std::cerr);
+                 if(ismin){
+                     I = new ArithmeticInstruction(FMIN_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
+                 }else{
+                     I = new ArithmeticInstruction(FMAX_F32,FLOAT32,PhiOp1,PhiOp2,I->GetResultReg());
+                 }
+                 // I->PrintIR(std::cerr);
+             }*/
         }
-        if(existElimate){
+        if (existElimate) {
             std::queue<Instruction> phiq;
             auto tmp_Instruction_list = bb->Instruction_list;
             bb->Instruction_list.clear();
             for (auto I : tmp_Instruction_list) {
-                if(I->GetOpcode() == PHI){
+                if (I->GetOpcode() == PHI) {
                     phiq.push(I);
-                }else{
+                } else {
                     bb->InsertInstruction(1, I);
                 }
             }
-            while(!phiq.empty()){
+            while (!phiq.empty()) {
                 bb->InsertInstruction(0, phiq.front());
                 phiq.pop();
             }
@@ -235,14 +236,14 @@ void MinMaxRecognize(CFG *C) {
     }
 }
 /*
-L0(bb0):  
+L0(bb0):
     %r20 = load i32, ptr %r19
     %r22 = icmp slt i32 %r20,%r17
     br i1 %r22, label %L1, label %L2
-L1(bb1):  
+L1(bb1):
     store i32 %r17, ptr %r19
     br label %L2
-L2(bb2):  
+L2(bb2):
     ...
 
 will be transformed to
@@ -253,121 +254,125 @@ L2:
 */
 void ArrayMinMaxRecognize(CFG *C) {
     auto blockmap = *C->block_map;
-    std::map<int,Instruction> definemap;
+    std::map<int, Instruction> definemap;
     for (auto [id, bb] : blockmap) {
-        for(auto I : bb->Instruction_list){
+        for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);
             definemap[I->GetResultRegNo()] = I;
         }
     }
     for (auto [id, bb] : blockmap) {
         bool existElimate = 0;
-        for(auto &I : bb->Instruction_list){
-            if(I->GetOpcode() != BR_COND){
+        for (auto &I : bb->Instruction_list) {
+            if (I->GetOpcode() != BR_COND) {
                 continue;
             }
-            
-            auto brcondI = (BrCondInstruction*)I;
-            auto condreg = (RegOperand*)brcondI->GetCond();
+
+            auto brcondI = (BrCondInstruction *)I;
+            auto condreg = (RegOperand *)brcondI->GetCond();
             auto conddefI = definemap[condreg->GetRegNo()];
-            if(conddefI->GetOpcode() != ICMP){
+            if (conddefI->GetOpcode() != ICMP) {
                 continue;
             }
-            auto IcmpI = (IcmpInstruction*)conddefI;
+            auto IcmpI = (IcmpInstruction *)conddefI;
             bool ismin = 1;
             bool issigned = 1;
             auto cmpcond = IcmpI->GetCompareCondition();
-            if(cmpcond == slt || cmpcond == sle){
+            if (cmpcond == slt || cmpcond == sle) {
                 ismin = 0;
                 issigned = 1;
-            }else if(cmpcond == sgt || cmpcond == sge){
+            } else if (cmpcond == sgt || cmpcond == sge) {
                 ismin = 1;
                 issigned = 1;
-            }else if(cmpcond == ult || cmpcond == ule){
+            } else if (cmpcond == ult || cmpcond == ule) {
                 ismin = 0;
                 issigned = 0;
-            }else if(cmpcond == ugt || cmpcond == uge){
+            } else if (cmpcond == ugt || cmpcond == uge) {
                 ismin = 1;
                 issigned = 0;
-            }else{
+            } else {
                 continue;
             }
             auto IcmpOp1_origin = IcmpI->GetOp1();
             auto IcmpOp2_origin = IcmpI->GetOp2();
             // puts("HHH");
-            if(IcmpOp1_origin->GetOperandType() != BasicOperand::REG){
+            if (IcmpOp1_origin->GetOperandType() != BasicOperand::REG) {
                 continue;
             }
-            auto IcmpOp1 = (RegOperand*)IcmpOp1_origin;
-            
-            //check bb2
-            auto Labelop1 = (LabelOperand*)brcondI->GetTrueLabel();
-            auto Labelop2 = (LabelOperand*)brcondI->GetFalseLabel();
+            auto IcmpOp1 = (RegOperand *)IcmpOp1_origin;
+
+            // check bb2
+            auto Labelop1 = (LabelOperand *)brcondI->GetTrueLabel();
+            auto Labelop2 = (LabelOperand *)brcondI->GetFalseLabel();
             auto bb1 = blockmap[Labelop1->GetLabelNo()];
             auto bb2 = blockmap[Labelop2->GetLabelNo()];
             auto fstI1 = bb1->Instruction_list.front();
             auto endI1 = bb1->Instruction_list.back();
             auto fstI2 = bb2->Instruction_list.front();
             auto endI2 = bb2->Instruction_list.back();
-            if(fstI1->GetOpcode() == PHI || fstI2->GetOpcode() == PHI){
+            if (fstI1->GetOpcode() == PHI || fstI2->GetOpcode() == PHI) {
                 continue;
             }
-            if(bb2->Instruction_list.size() == 2 && endI2->GetOpcode() == BR_UNCOND && fstI2->GetOpcode() == STORE){
-                std::swap(bb1,bb2);
-                std::swap(Labelop1,Labelop2);
-                std::swap(fstI1,fstI2);
-            }else if(bb1->Instruction_list.size() > 2 || endI1->GetOpcode() != BR_UNCOND || fstI1->GetOpcode() != STORE){
+            if (bb2->Instruction_list.size() == 2 && endI2->GetOpcode() == BR_UNCOND && fstI2->GetOpcode() == STORE) {
+                std::swap(bb1, bb2);
+                std::swap(Labelop1, Labelop2);
+                std::swap(fstI1, fstI2);
+            } else if (bb1->Instruction_list.size() > 2 || endI1->GetOpcode() != BR_UNCOND ||
+                       fstI1->GetOpcode() != STORE) {
                 continue;
             }
-            auto BruncondI = (BrUncondInstruction*)endI1;
-            if(BruncondI->GetDestLabel()->GetFullName() != brcondI->GetFalseLabel()->GetFullName()){
+            auto BruncondI = (BrUncondInstruction *)endI1;
+            if (BruncondI->GetDestLabel()->GetFullName() != brcondI->GetFalseLabel()->GetFullName()) {
                 continue;
             }
-            
-            //check store
-            auto storeI = (StoreInstruction*)fstI1;
+
+            // check store
+            auto storeI = (StoreInstruction *)fstI1;
             auto loadI1_origin = definemap[IcmpOp1->GetRegNo()];
             Instruction loadI2_origin = nullptr;
-            RegOperand* IcmpOp2 = nullptr;
-            if(IcmpOp2_origin->GetOperandType() == BasicOperand::REG){
-                IcmpOp2 = (RegOperand*)IcmpOp2_origin;
+            RegOperand *IcmpOp2 = nullptr;
+            if (IcmpOp2_origin->GetOperandType() == BasicOperand::REG) {
+                IcmpOp2 = (RegOperand *)IcmpOp2_origin;
                 loadI2_origin = definemap[IcmpOp2->GetRegNo()];
             }
-            if(loadI2_origin != nullptr && loadI2_origin->GetOpcode() == LOAD 
-                && storeI->GetValue()->GetFullName() == IcmpOp1_origin->GetFullName() 
-                && storeI->GetPointer()->GetFullName() == ((LoadInstruction*)loadI2_origin)->GetPointer()->GetFullName()){
-                ismin^=1;
-            }else if(loadI1_origin->GetOpcode() != LOAD || storeI->GetValue()->GetFullName() != IcmpOp2_origin->GetFullName() 
-                || storeI->GetPointer()->GetFullName() != ((LoadInstruction*)loadI1_origin)->GetPointer()->GetFullName()){
+            if (loadI2_origin != nullptr && loadI2_origin->GetOpcode() == LOAD &&
+                storeI->GetValue()->GetFullName() == IcmpOp1_origin->GetFullName() &&
+                storeI->GetPointer()->GetFullName() ==
+                ((LoadInstruction *)loadI2_origin)->GetPointer()->GetFullName()) {
+                ismin ^= 1;
+            } else if (loadI1_origin->GetOpcode() != LOAD ||
+                       storeI->GetValue()->GetFullName() != IcmpOp2_origin->GetFullName() ||
+                       storeI->GetPointer()->GetFullName() !=
+                       ((LoadInstruction *)loadI1_origin)->GetPointer()->GetFullName()) {
                 // bb->printIR(std::cerr);
                 // bb1->printIR(std::cerr);
                 // bb2->printIR(std::cerr);
                 continue;
             }
-            if(C->invG[bb1->block_id].size() > 1){
+            if (C->invG[bb1->block_id].size() > 1) {
                 puts("HERE");
                 continue;
             }
             // bb->printIR(std::cerr);
             // bb1->printIR(std::cerr);
             // bb2->printIR(std::cerr);
-            
+
             existElimate = 1;
             Instruction minmaxI;
             auto newresultop = GetNewRegOperand(++C->max_reg);
-            if(ismin && issigned){
-                minmaxI = new ArithmeticInstruction(SMIN_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
-            }else if(!ismin && issigned){
-                minmaxI = new ArithmeticInstruction(SMAX_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
-            }else if(ismin && !issigned){
-                minmaxI = new ArithmeticInstruction(UMIN_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
-            }else{
-                minmaxI = new ArithmeticInstruction(UMAX_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
+            if (ismin && issigned) {
+                minmaxI = new ArithmeticInstruction(SMIN_I32, I32, IcmpOp1_origin, IcmpOp2_origin, newresultop);
+            } else if (!ismin && issigned) {
+                minmaxI = new ArithmeticInstruction(SMAX_I32, I32, IcmpOp1_origin, IcmpOp2_origin, newresultop);
+            } else if (ismin && !issigned) {
+                minmaxI = new ArithmeticInstruction(UMIN_I32, I32, IcmpOp1_origin, IcmpOp2_origin, newresultop);
+            } else {
+                minmaxI = new ArithmeticInstruction(UMAX_I32, I32, IcmpOp1_origin, IcmpOp2_origin, newresultop);
             }
             // auto newstoreI = new StoreInstruction(I32,storeI->GetPointer(),newresultop);
             // storeI = new StoreInstruction(I32,storeI->GetPointer(),newresultop);
             storeI->SetValue(newresultop);
-            bb1->InsertInstruction(0,minmaxI);
+            bb1->InsertInstruction(0, minmaxI);
             I = new BrUncondInstruction(Labelop1);
             // bb->printIR(std::cerr);
             // bb1->printIR(std::cerr);
@@ -392,8 +397,6 @@ void ArrayMinMaxRecognize(CFG *C) {
         // }
     }
 }
-
-
 
 /**
     * this function will eliminate the double br_uncond
@@ -503,9 +506,9 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         G[vid].clear();
                         invG[vid].clear();
                         C->block_map->erase(vid);
-                    } else if (bbv->Instruction_list.size() == 1 &&  bbv->Instruction_list.back()->GetOpcode() != RET) {
-                        
-                        if(G[uid].size() == 1){
+                    } else if (bbv->Instruction_list.size() == 1 && bbv->Instruction_list.back()->GetOpcode() != RET) {
+
+                        if (G[uid].size() == 1) {
                             continue;
                         }
                         changed |= true;
@@ -521,7 +524,7 @@ void EliminateDoubleBrUnCond(CFG *C) {
                         } else {
                             endI->SetFalseLabel(GetNewLabelOperand(uid));
                         }
-                        
+
                         bbu->Instruction_list.push_back(endI);
                         PhiMap[vid] = uid;
                         G[vid].clear();
@@ -660,13 +663,13 @@ void EliminateDoubleBrUnCond(CFG *C) {
         OtherPhiMap.clear();
         PhiMap.clear();
     }
-    
+
     int cnt = 0;
     std::unordered_map<int, int> NewMap;
     for (auto [id, bb] : *C->block_map) {
         NewMap[id] = cnt++;
     }
-    
+
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
             if (I->GetOpcode() == PHI) {

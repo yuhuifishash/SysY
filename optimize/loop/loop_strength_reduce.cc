@@ -4,61 +4,61 @@
 
 static std::set<Instruction> NewGepSet;
 
-//return b - a
-SCEVValue GetAddRecursiveDiff(AddSCEVExpr* a, AddSCEVExpr* b) {
-    if(a->len !=2 || b->len != 2){
-        return {nullptr,OTHER,nullptr};
+// return b - a
+SCEVValue GetAddRecursiveDiff(AddSCEVExpr *a, AddSCEVExpr *b) {
+    if (a->len != 2 || b->len != 2) {
+        return {nullptr, OTHER, nullptr};
     }
-    if(!(a->RecurExpr->st == b->RecurExpr->st)){
-        return {nullptr,OTHER,nullptr};
+    if (!(a->RecurExpr->st == b->RecurExpr->st)) {
+        return {nullptr, OTHER, nullptr};
     }
     // a->PrintSCEVExpr();
     // b->PrintSCEVExpr();
     // std::cerr<<"\n";
     auto val1 = a->st, val2 = b->st;
-    
-    if(val1.type != ADD && val1.type != OTHER){
-        return {nullptr,OTHER,nullptr};
+
+    if (val1.type != ADD && val1.type != OTHER) {
+        return {nullptr, OTHER, nullptr};
     }
-    if(val2.type != ADD && val2.type != OTHER){
-        return {nullptr,OTHER,nullptr};
+    if (val2.type != ADD && val2.type != OTHER) {
+        return {nullptr, OTHER, nullptr};
     }
 
-    if(val1.type == OTHER && val2.type == OTHER){
-        if(val1.op1->GetOperandType() == BasicOperand::IMMI32 && val2.op1->GetOperandType() == BasicOperand::IMMI32){
-            auto imm1 = ((ImmI32Operand*)val1.op1)->GetIntImmVal();
-            auto imm2 = ((ImmI32Operand*)val2.op1)->GetIntImmVal();
+    if (val1.type == OTHER && val2.type == OTHER) {
+        if (val1.op1->GetOperandType() == BasicOperand::IMMI32 && val2.op1->GetOperandType() == BasicOperand::IMMI32) {
+            auto imm1 = ((ImmI32Operand *)val1.op1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand *)val2.op1)->GetIntImmVal();
             SCEVValue res;
             res.op1 = new ImmI32Operand(imm2 - imm1);
             res.type = OTHER;
             res.op2 = nullptr;
             return res;
-        }else if(val1.op1->GetOperandType() == BasicOperand::IMMI32){
-            auto imm = ((ImmI32Operand*)val1.op1)->GetIntImmVal();
-            if(imm == 0){
-                return {val2.op1,OTHER,nullptr};
+        } else if (val1.op1->GetOperandType() == BasicOperand::IMMI32) {
+            auto imm = ((ImmI32Operand *)val1.op1)->GetIntImmVal();
+            if (imm == 0) {
+                return {val2.op1, OTHER, nullptr};
             }
         }
-        return {nullptr,OTHER,nullptr};
+        return {nullptr, OTHER, nullptr};
     }
 
-    if(val1.op1->GetFullName() != val2.op1->GetFullName()){
-        return {nullptr,OTHER,nullptr};
+    if (val1.op1->GetFullName() != val2.op1->GetFullName()) {
+        return {nullptr, OTHER, nullptr};
     }
 
-    if(val1.type == OTHER && val2.type != OTHER){
+    if (val1.type == OTHER && val2.type != OTHER) {
         SCEVValue res;
         res.op1 = val2.op2;
         res.type = OTHER;
         res.op2 = nullptr;
-        return res;   
+        return res;
     }
 
-    if(val1.type != OTHER && val2.type == OTHER){
-        if(val1.op2->GetOperandType() != BasicOperand::IMMI32){
-            return {nullptr,OTHER,nullptr};
+    if (val1.type != OTHER && val2.type == OTHER) {
+        if (val1.op2->GetOperandType() != BasicOperand::IMMI32) {
+            return {nullptr, OTHER, nullptr};
         }
-        auto imm = ((ImmI32Operand*)val1.op2)->GetIntImmVal();
+        auto imm = ((ImmI32Operand *)val1.op2)->GetIntImmVal();
         SCEVValue res;
         res.op1 = new ImmI32Operand(-imm);
         res.type = OTHER;
@@ -66,15 +66,15 @@ SCEVValue GetAddRecursiveDiff(AddSCEVExpr* a, AddSCEVExpr* b) {
         return res;
     }
 
-    if(val1.type != OTHER && val2.type != OTHER){
-        if(val1.op2->GetOperandType() != BasicOperand::IMMI32){
-            return {nullptr,OTHER,nullptr};
+    if (val1.type != OTHER && val2.type != OTHER) {
+        if (val1.op2->GetOperandType() != BasicOperand::IMMI32) {
+            return {nullptr, OTHER, nullptr};
         }
-        if(val2.op2->GetOperandType() != BasicOperand::IMMI32){
-            return {nullptr,OTHER,nullptr};
+        if (val2.op2->GetOperandType() != BasicOperand::IMMI32) {
+            return {nullptr, OTHER, nullptr};
         }
-        auto imm1 = ((ImmI32Operand*)val1.op2)->GetIntImmVal();
-        auto imm2 = ((ImmI32Operand*)val2.op2)->GetIntImmVal();
+        auto imm1 = ((ImmI32Operand *)val1.op2)->GetIntImmVal();
+        auto imm2 = ((ImmI32Operand *)val2.op2)->GetIntImmVal();
         SCEVValue res;
         res.op1 = new ImmI32Operand(imm2 - imm1);
         res.type = OTHER;
@@ -82,28 +82,28 @@ SCEVValue GetAddRecursiveDiff(AddSCEVExpr* a, AddSCEVExpr* b) {
         return res;
     }
 
-    return {nullptr,OTHER,nullptr};
+    return {nullptr, OTHER, nullptr};
 }
 
-//return b - a
-static Operand GetGEPDiff(Instruction a, Instruction b, NaturalLoop* L) {
+// return b - a
+static Operand GetGEPDiff(Instruction a, Instruction b, NaturalLoop *L) {
     assert(a->GetOpcode() == GETELEMENTPTR);
     assert(b->GetOpcode() == GETELEMENTPTR);
-    auto GEPI1 = (GetElementptrInstruction*)a;
-    auto GEPI2 = (GetElementptrInstruction*)b;
-    if(GEPI1->GetIndexes().size() != GEPI2->GetIndexes().size()){
+    auto GEPI1 = (GetElementptrInstruction *)a;
+    auto GEPI2 = (GetElementptrInstruction *)b;
+    if (GEPI1->GetIndexes().size() != GEPI2->GetIndexes().size()) {
         return nullptr;
     }
-    if(GEPI1->GetPtrVal()->GetFullName() != GEPI2->GetPtrVal()->GetFullName()){
+    if (GEPI1->GetPtrVal()->GetFullName() != GEPI2->GetPtrVal()->GetFullName()) {
         return nullptr;
     }
-    if(GEPI1->GetDims().size() != GEPI2->GetDims().size()){
+    if (GEPI1->GetDims().size() != GEPI2->GetDims().size()) {
         return nullptr;
     }
-    for(int i = 0; i < GEPI1->GetDims().size(); ++i){
+    for (int i = 0; i < GEPI1->GetDims().size(); ++i) {
         auto d1 = GEPI1->GetDims()[i];
         auto d2 = GEPI2->GetDims()[i];
-        if(d1 != d2){
+        if (d1 != d2) {
             return nullptr;
         }
     }
@@ -116,39 +116,38 @@ static Operand GetGEPDiff(Instruction a, Instruction b, NaturalLoop* L) {
     for (auto dim : GEPI1->GetDims()) {
         ArrayDim *= dim;
     }
-    for(int i = 0; i < GEPI1->GetIndexes().size(); ++i){
+    for (int i = 0; i < GEPI1->GetIndexes().size(); ++i) {
         auto idx1 = GEPI1->GetIndexes()[i];
         auto idx2 = GEPI2->GetIndexes()[i];
-        if(idx1->GetOperandType() == BasicOperand::IMMI32 || idx2->GetOperandType() == BasicOperand::IMMI32){
-            if(GEPI1->GetIndexes().size() == 1){
+        if (idx1->GetOperandType() == BasicOperand::IMMI32 || idx2->GetOperandType() == BasicOperand::IMMI32) {
+            if (GEPI1->GetIndexes().size() == 1) {
                 return nullptr;
             }
-            if(idx1->GetOperandType() != idx2->GetOperandType()){
+            if (idx1->GetOperandType() != idx2->GetOperandType()) {
                 return nullptr;
             }
-            auto imm1 = ((ImmI32Operand*)idx1)->GetIntImmVal();
-            auto imm2 = ((ImmI32Operand*)idx2)->GetIntImmVal();
-            if(imm1 != imm2){
+            auto imm1 = ((ImmI32Operand *)idx1)->GetIntImmVal();
+            auto imm2 = ((ImmI32Operand *)idx2)->GetIntImmVal();
+            if (imm1 != imm2) {
                 SCEVValue diff;
-                diff.op1 = new ImmI32Operand((imm2-imm1)*ArrayDim);
+                diff.op1 = new ImmI32Operand((imm2 - imm1) * ArrayDim);
                 diff.type = OTHER;
                 diff.op2 = nullptr;
                 res = res + diff;
             }
-        }
-        else if(idx1->GetFullName() != idx2->GetFullName()){
+        } else if (idx1->GetFullName() != idx2->GetFullName()) {
             auto R1 = (RegOperand *)idx1;
-            if (L->scev.SCEVMap.find(R1->GetRegNo()) == L->scev.SCEVMap.end()){
+            if (L->scev.SCEVMap.find(R1->GetRegNo()) == L->scev.SCEVMap.end()) {
                 return nullptr;
             }
             auto R2 = (RegOperand *)idx2;
-            if (L->scev.SCEVMap.find(R2->GetRegNo()) == L->scev.SCEVMap.end()){
+            if (L->scev.SCEVMap.find(R2->GetRegNo()) == L->scev.SCEVMap.end()) {
                 return nullptr;
             }
             auto scev1 = L->scev.SCEVMap[R1->GetRegNo()];
             auto scev2 = L->scev.SCEVMap[R2->GetRegNo()];
-            auto diff = GetAddRecursiveDiff(scev1,scev2);
-            if(diff.op1 == nullptr){
+            auto diff = GetAddRecursiveDiff(scev1, scev2);
+            if (diff.op1 == nullptr) {
                 return nullptr;
             }
             SCEVValue Sz;
@@ -162,7 +161,7 @@ static Operand GetGEPDiff(Instruction a, Instruction b, NaturalLoop* L) {
             ArrayDim /= (GEPI1->GetDims())[i];
         }
     }
-    if(res.type == OTHER){
+    if (res.type == OTHER) {
         return res.op1;
     }
     return nullptr;
@@ -178,19 +177,19 @@ so we can use %r0 to get %r1
 then %r3 may be useless
 */
 static void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop *L) {
-    for(auto bb:L->loop_nodes){
-        std::vector<GetElementptrInstruction*> GEPIList;
-        for(auto &I:bb->Instruction_list){
-            if(I->GetOpcode() != GETELEMENTPTR){
+    for (auto bb : L->loop_nodes) {
+        std::vector<GetElementptrInstruction *> GEPIList;
+        for (auto &I : bb->Instruction_list) {
+            if (I->GetOpcode() != GETELEMENTPTR) {
                 continue;
             }
-            auto GEPI = (GetElementptrInstruction*)I;
+            auto GEPI = (GetElementptrInstruction *)I;
             bool is_reduce = false;
-            for(auto oldI:GEPIList){
-                auto op = GetGEPDiff(oldI,I,L);
-                if(op != nullptr){
+            for (auto oldI : GEPIList) {
+                auto op = GetGEPDiff(oldI, I, L);
+                if (op != nullptr) {
                     is_reduce = true;
-                    auto nI = new GetElementptrInstruction(oldI->GetType(),I->GetResultReg(),oldI->GetResult());
+                    auto nI = new GetElementptrInstruction(oldI->GetType(), I->GetResultReg(), oldI->GetResult());
                     nI->push_index(op);
 
                     // I->PrintIR(std::cerr);
@@ -199,7 +198,7 @@ static void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop *L) {
                     // std::cerr<<op<<"\n";
                     // std::cerr<<"\n";
 
-                    I = nI;                   
+                    I = nI;
                     break;
                 }
             }
@@ -209,12 +208,11 @@ static void LoopBasicBlockGEPStrengthReduce(CFG *C, NaturalLoop *L) {
     }
 }
 
-
 void LoopGepStrengthReduce(CFG *C) {
     for (auto l : C->LoopForest.loop_set) {
         LoopBasicBlockGEPStrengthReduce(C, l);
     }
-    
+
     NewGepSet.clear();
     std::function<void(CFG *, NaturalLoopForest &, NaturalLoop *)> dfs = [&](CFG *C, NaturalLoopForest &loop_forest,
                                                                              NaturalLoop *L) {
@@ -223,7 +221,7 @@ void LoopGepStrengthReduce(CFG *C) {
         }
         L->LoopGepStrengthReduce(C);
     };
-    
+
     for (auto l : C->LoopForest.loop_set) {
         if (l->fa_loop == nullptr) {
             dfs(C, C->LoopForest, l);
@@ -317,14 +315,14 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
                         is_induction = false;
                         break;
                     }
-                    if (val->len == 2){
+                    if (val->len == 2) {
                         isReduceBetter = true;
                     }
                 } else {    // should not reach here
                     assert(false);
                 }
             }
-            
+
             if (isReduceBetter == false || is_induction == false) {
                 continue;
             }
@@ -427,13 +425,13 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     auto tmpI = latch->Instruction_list.back();
     assert(tmpI->GetOpcode() == BR_UNCOND);
     latch->Instruction_list.pop_back();
-    for(auto I:LatchInstList){
+    for (auto I : LatchInstList) {
         latch->Instruction_list.push_back(I);
     }
     latch->Instruction_list.push_back(tmpI);
 
-    for(auto I:HeaderInstList){
-        header->InsertInstruction(0,I);
+    for (auto I : HeaderInstList) {
+        header->InsertInstruction(0, I);
     }
 }
 
@@ -454,8 +452,6 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
     then %r2 is dead, we can eliminate it by ADCE
 */
 
-
-
 /*
 L4: (preheader)
     something
@@ -464,142 +460,142 @@ L1: (header)
     %r24 = phi i32 [0,%L4],[%r252,%L1]
     ......
     %r251 = add i32 %r25,4
-    %r252 = add i32 %r24,4 
+    %r252 = add i32 %r24,4
 
-then %r25 and %r24 are same 
+then %r25 and %r24 are same
 */
-void LoopIndVarSimplify(CFG* C)
-{
-    std::map<int,Instruction> define_map;
+void LoopIndVarSimplify(CFG *C) {
+    std::map<int, Instruction> define_map;
     std::set<Instruction> EraseSet;
-    std::map<int,int> replace_map;
-    for(auto [id,bb] : *C->block_map){
-        for(auto I : bb->Instruction_list){
-            if(I->GetOpcode() == ADD){
-                auto addI = (ArithmeticInstruction*)I;
-                if(addI->GetDataType() != I32 && addI->GetOperand1()->GetOperandType() != BasicOperand::REG && addI->GetOperand2()->GetOperandType() != BasicOperand::IMMI32){
+    std::map<int, int> replace_map;
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            if (I->GetOpcode() == ADD) {
+                auto addI = (ArithmeticInstruction *)I;
+                if (addI->GetDataType() != I32 && addI->GetOperand1()->GetOperandType() != BasicOperand::REG &&
+                    addI->GetOperand2()->GetOperandType() != BasicOperand::IMMI32) {
                     continue;
                 }
                 define_map[I->GetResultRegNo()] = addI;
-            }else if(I->GetOpcode() == GETELEMENTPTR){
-                auto gepI = (GetElementptrInstruction*)I;
+            } else if (I->GetOpcode() == GETELEMENTPTR) {
+                auto gepI = (GetElementptrInstruction *)I;
                 auto ptr = gepI->GetPtrVal();
-                if(gepI->GetDims().size() != 0 || ptr->GetOperandType() != BasicOperand::REG){
+                if (gepI->GetDims().size() != 0 || ptr->GetOperandType() != BasicOperand::REG) {
                     continue;
                 }
                 define_map[I->GetResultRegNo()] = gepI;
             }
         }
     }
-    for(auto l:C->LoopForest.loop_set){
+    for (auto l : C->LoopForest.loop_set) {
         auto header = l->header;
         assert(l->latches.size() == 1);
         auto latch = *l->latches.begin();
 
-        for(auto I:header->Instruction_list){
-            if(I->GetOpcode() == PHI){
-                auto PhiI1 = (PhiInstruction*)I;
+        for (auto I : header->Instruction_list) {
+            if (I->GetOpcode() == PHI) {
+                auto PhiI1 = (PhiInstruction *)I;
                 auto result_val1 = PhiI1->GetResultOp();
                 auto preheader_val1 = PhiI1->GetValOperand(l->preheader->block_id);
                 auto latch_val1 = PhiI1->GetValOperand(latch->block_id);
-                
-                if(latch_val1->GetOperandType() != BasicOperand::REG){
+
+                if (latch_val1->GetOperandType() != BasicOperand::REG) {
                     continue;
                 }
-                
-                auto latch_reg1 = (RegOperand*)latch_val1;
+
+                auto latch_reg1 = (RegOperand *)latch_val1;
                 auto latch_regno1 = latch_reg1->GetRegNo();
-                if(define_map.find(latch_regno1) == define_map.end()){
+                if (define_map.find(latch_regno1) == define_map.end()) {
                     continue;
                 }
-                
+
                 auto origin_latchI1 = define_map[latch_regno1];
-                if(origin_latchI1->GetOpcode() == ADD){
-                    if(((ArithmeticInstruction*)origin_latchI1)->GetOperand1()->GetFullName() != result_val1->GetFullName()){
+                if (origin_latchI1->GetOpcode() == ADD) {
+                    if (((ArithmeticInstruction *)origin_latchI1)->GetOperand1()->GetFullName() !=
+                        result_val1->GetFullName()) {
                         continue;
                     }
-                }else{
-                    if(((GetElementptrInstruction*)origin_latchI1)->GetPtrVal()->GetFullName() != result_val1->GetFullName()){
+                } else {
+                    if (((GetElementptrInstruction *)origin_latchI1)->GetPtrVal()->GetFullName() !=
+                        result_val1->GetFullName()) {
                         continue;
                     }
                 }
-                
+
                 bool start_flag = 0;
-                for(auto &secI:header->Instruction_list){
-                    if(secI->GetOpcode() == PHI){
-                        if(!start_flag){
-                            if(secI->GetResultRegNo() == I->GetResultRegNo()){
+                for (auto &secI : header->Instruction_list) {
+                    if (secI->GetOpcode() == PHI) {
+                        if (!start_flag) {
+                            if (secI->GetResultRegNo() == I->GetResultRegNo()) {
                                 start_flag = 1;
                             }
                             continue;
                         }
-                        
-                        
-                        auto PhiI2 = (PhiInstruction*)secI;
+
+                        auto PhiI2 = (PhiInstruction *)secI;
                         auto result_val2 = PhiI2->GetResultOp();
                         auto preheader_val2 = PhiI2->GetValOperand(l->preheader->block_id);
                         auto latch_val2 = PhiI2->GetValOperand(latch->block_id);
-                        if(preheader_val1->GetFullName() != preheader_val2->GetFullName()){
+                        if (preheader_val1->GetFullName() != preheader_val2->GetFullName()) {
                             continue;
                         }
-                        if(latch_val2->GetOperandType() != BasicOperand::REG){
+                        if (latch_val2->GetOperandType() != BasicOperand::REG) {
                             continue;
                         }
-                        
-                        auto latch_reg2 = (RegOperand*)latch_val2;
+
+                        auto latch_reg2 = (RegOperand *)latch_val2;
                         auto latch_regno2 = latch_reg2->GetRegNo();
-                        if(define_map.find(latch_regno2) == define_map.end()){
+                        if (define_map.find(latch_regno2) == define_map.end()) {
                             continue;
                         }
                         auto origin_latchI2 = define_map[latch_regno2];
-                        if(origin_latchI2->GetOpcode() != origin_latchI1->GetOpcode()){
+                        if (origin_latchI2->GetOpcode() != origin_latchI1->GetOpcode()) {
                             continue;
                         }
-                        if(origin_latchI1->GetOpcode() == ADD){
-                            auto latchI1 = (ArithmeticInstruction*)origin_latchI1;
-                            auto latchI2 = (ArithmeticInstruction*)origin_latchI2;
-                            if(latchI2->GetOperand1()->GetFullName() != result_val2->GetFullName()){
+                        if (origin_latchI1->GetOpcode() == ADD) {
+                            auto latchI1 = (ArithmeticInstruction *)origin_latchI1;
+                            auto latchI2 = (ArithmeticInstruction *)origin_latchI2;
+                            if (latchI2->GetOperand1()->GetFullName() != result_val2->GetFullName()) {
                                 continue;
                             }
-                            if(latchI1->GetOperand2()->GetFullName() != latchI2->GetOperand2()->GetFullName()){
+                            if (latchI1->GetOperand2()->GetFullName() != latchI2->GetOperand2()->GetFullName()) {
                                 continue;
                             }
-                        }else{
-                            auto latchI1 = (GetElementptrInstruction*)origin_latchI1;
-                            auto latchI2 = (GetElementptrInstruction*)origin_latchI2;
-                            
-                            if(latchI2->GetPtrVal()->GetFullName() != result_val2->GetFullName()){
+                        } else {
+                            auto latchI1 = (GetElementptrInstruction *)origin_latchI1;
+                            auto latchI2 = (GetElementptrInstruction *)origin_latchI2;
+
+                            if (latchI2->GetPtrVal()->GetFullName() != result_val2->GetFullName()) {
                                 continue;
                             }
-                            if(latchI1->GetIndexes()[0]->GetFullName() != latchI2->GetIndexes()[0]->GetFullName()){
+                            if (latchI1->GetIndexes()[0]->GetFullName() != latchI2->GetIndexes()[0]->GetFullName()) {
                                 continue;
                             }
-                            
                         }
 
-                        auto regno1 = ((RegOperand*)result_val1)->GetRegNo();
-                        auto regno2 = ((RegOperand*)result_val2)->GetRegNo();
-                        while(replace_map.find(regno1) != replace_map.end()){
+                        auto regno1 = ((RegOperand *)result_val1)->GetRegNo();
+                        auto regno2 = ((RegOperand *)result_val2)->GetRegNo();
+                        while (replace_map.find(regno1) != replace_map.end()) {
                             regno1 = replace_map[regno1];
                         }
                         replace_map[regno2] = regno1;
-                    }else{
+                    } else {
                         break;
                     }
                 }
-            }else{
+            } else {
                 break;
             }
         }
     }
-    for(auto [id,bb]:*C->block_map){
-        for(auto &I:bb->Instruction_list){
+    for (auto [id, bb] : *C->block_map) {
+        for (auto &I : bb->Instruction_list) {
             auto vec = I->GetNonResultOperands();
-            for(auto &op : vec){
-                if(op->GetOperandType() == BasicOperand::REG){
-                    auto reg = (RegOperand*)op;
+            for (auto &op : vec) {
+                if (op->GetOperandType() == BasicOperand::REG) {
+                    auto reg = (RegOperand *)op;
                     auto regno = reg->GetRegNo();
-                    if(replace_map.find(regno) != replace_map.end()){
+                    if (replace_map.find(regno) != replace_map.end()) {
                         op = GetNewRegOperand(replace_map[regno]);
                     }
                 }

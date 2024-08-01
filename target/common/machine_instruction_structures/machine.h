@@ -23,9 +23,9 @@ private:
 
 public:
     int loop_depth = 0;
-    std::vector<float> branch_predictor; 
+    std::vector<float> branch_predictor;
 
-    virtual std::vector<int> getAllBranch () = 0; // [0]-false, [1]-true
+    virtual std::vector<int> getAllBranch() = 0;    // [0]-false, [1]-true
     virtual void ReverseBranch() = 0;
     virtual std::list<MachineBaseInstruction *>::iterator getInsertBeforeBrIt() = 0;
     void InsertParallelCopyList(Register dst, MachineBaseOperand *src) { parallel_copy_list[dst] = src; }
@@ -46,24 +46,24 @@ public:
     void push_front(MachineBaseInstruction *ins) { instructions.push_front(ins); }
     void pop_back() { instructions.pop_back(); }
     void pop_front() { instructions.pop_front(); }
-    int getBlockInNumber() { 
+    int getBlockInNumber() {
         for (auto ins : instructions) {
             if (ins->arch != MachineBaseInstruction::COMMENT) {
-                return ins->getNumber()-1;
+                return ins->getNumber() - 1;
             }
         }
         ERROR("Empty block");
         // return (*(instructions.begin()))->getNumber();
     }
-    int getBlockOutNumber() { 
-        for (auto it = instructions.rbegin(); it != instructions.rend(); ++it){
+    int getBlockOutNumber() {
+        for (auto it = instructions.rbegin(); it != instructions.rend(); ++it) {
             auto ins = *it;
             if (ins->arch != MachineBaseInstruction::COMMENT) {
                 return ins->getNumber();
             }
         }
         ERROR("Empty block");
-        // return (*(instructions.rbegin()))->getNumber(); 
+        // return (*(instructions.rbegin()))->getNumber();
     }
     MachineBlock(int id) : label_id(id) {}
 };
@@ -161,45 +161,47 @@ public:
 class MachineNaturalLoop {
 public:
     int loop_id;
-    std::set<MachineBlock*> loop_nodes;
-    std::set<MachineBlock*> exits;
-    std::set<MachineBlock*> exitings;
-    std::set<MachineBlock*> latches;
-    MachineBlock* header;
-    MachineBlock* preheader;
-    MachineNaturalLoop* fa_loop;
+    std::set<MachineBlock *> loop_nodes;
+    std::set<MachineBlock *> exits;
+    std::set<MachineBlock *> exitings;
+    std::set<MachineBlock *> latches;
+    MachineBlock *header;
+    MachineBlock *preheader;
+    MachineNaturalLoop *fa_loop;
     void FindExitNodes(MachineCFG *C);
 };
 
 class MachineNaturalLoopForest {
 public:
     int loop_cnt = 0;
-    MachineCFG* C;
+    MachineCFG *C;
     std::set<MachineNaturalLoop *> loop_set;
-    std::map<MachineBlock*, MachineNaturalLoop *> header_loop_map;
+    std::map<MachineBlock *, MachineNaturalLoop *> header_loop_map;
     std::vector<std::vector<MachineNaturalLoop *>> loopG;
     void BuildLoopForest();
+
 private:
     void CombineSameHeadLoop();
 };
 
 class MachineDominatorTree {
 public:
-    MachineCFG* C;
-    std::vector<std::vector<MachineBlock*>> dom_tree{};
-    std::vector<MachineBlock*> idom{};
+    MachineCFG *C;
+    std::vector<std::vector<MachineBlock *>> dom_tree{};
+    std::vector<MachineBlock *> idom{};
 
     std::vector<DynamicBitset> atdom;
 
     void BuildDominatorTree(bool reverse = false);
     void BuildPostDominatorTree();
-    bool IsDominate(int id1,int id2){ // if blockid1 dominate blockid2, return true, else return false
+    bool IsDominate(int id1, int id2) {    // if blockid1 dominate blockid2, return true, else return false
         return atdom[id2].getbit(id1);
     }
 };
 
 class MachineCFG {
     friend class MachineDominatorTree;
+
 public:
     class MachineCFGNode {
     public:
@@ -212,8 +214,8 @@ private:
     int max_label;
 
 public:
-    MachineCFG () : max_label(0) {};
-    MachineCFGNode* ret_block;
+    MachineCFG() : max_label(0){};
+    MachineCFGNode *ret_block;
     void AssignEmptyNode(int id, MachineBlock *Mblk);
 
     // Just modify CFG edge, no change on branch instructions
@@ -224,13 +226,13 @@ public:
     std::vector<MachineCFGNode *> GetSuccessorsByBlockId(int id) { return G[id]; }
     std::vector<MachineCFGNode *> GetPredecessorsByBlockId(int id) { return invG[id]; }
 
-    MachineDominatorTree DomTree,PostDomTree;
+    MachineDominatorTree DomTree, PostDomTree;
     void BuildDominatoorTree(bool buildPost = true) {
         DomTree.C = this;
         DomTree.BuildDominatorTree();
 
         PostDomTree.C = this;
-        if(buildPost){
+        if (buildPost) {
             PostDomTree.BuildPostDominatorTree();
         }
     }

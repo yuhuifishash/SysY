@@ -26,7 +26,8 @@ public:
     virtual bool OccupyMem(int offset, int size, LiveInterval interval);
     virtual bool ReleaseMem(int offset, int size, LiveInterval interval);
 
-    virtual int getIdleReg(LiveInterval interval, std::vector<int> preferd_regs = {}, std::vector<int> noprefer_regs = {});
+    virtual int getIdleReg(LiveInterval interval, std::vector<int> preferd_regs = {},
+                           std::vector<int> noprefer_regs = {});
     virtual int getIdleMem(LiveInterval interval);
 
     virtual int swapRegspill(int p_reg1, LiveInterval interval1, int offset_spill2, int size, LiveInterval interval2);

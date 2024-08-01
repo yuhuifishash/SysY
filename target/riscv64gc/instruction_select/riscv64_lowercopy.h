@@ -16,7 +16,7 @@ public:
 class RiscV64LowerIImmCopy : public MachinePass {
 protected:
 public:
-    RiscV64LowerIImmCopy(MachineUnit* m_unit) : MachinePass(m_unit) {}
+    RiscV64LowerIImmCopy(MachineUnit *m_unit) : MachinePass(m_unit) {}
     void Execute();
 };
 #endif
