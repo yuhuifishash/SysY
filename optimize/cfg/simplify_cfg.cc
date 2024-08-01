@@ -61,6 +61,7 @@ void MinMaxRecognize(CFG *C) {
         }
     }
     for (auto [id, bb] : blockmap) {
+        bool existElimate = 0;
         for(auto &I : bb->Instruction_list){
             if(I->GetOpcode() != PHI){
                 continue;
@@ -149,7 +150,8 @@ void MinMaxRecognize(CFG *C) {
                     || PhiL1->GetLabelNo() == bb2->block_id && PhiL2->GetLabelNo() == bb1->block_id)){
                     continue;
                 }
-                I->PrintIR(std::cerr);
+                existElimate = 1;
+                // I->PrintIR(std::cerr);
                 if(ismin && issigned){
                     I = new ArithmeticInstruction(SMIN_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
                 }else if(!ismin && issigned){
@@ -159,7 +161,7 @@ void MinMaxRecognize(CFG *C) {
                 }else{
                     I = new ArithmeticInstruction(UMAX_I32,I32,PhiOp1,PhiOp2,I->GetResultReg());
                 }
-                I->PrintIR(std::cerr);
+                // I->PrintIR(std::cerr);
             }/*else{
                 // I->PrintIR(std::cerr);
                 auto FcmpI = (FcmpInstruction*)BrcondRegDefI;
@@ -210,6 +212,22 @@ void MinMaxRecognize(CFG *C) {
                 }
                 // I->PrintIR(std::cerr);
             }*/
+        }
+        if(existElimate){
+            std::queue<Instruction> phiq;
+            auto tmp_Instruction_list = bb->Instruction_list;
+            bb->Instruction_list.clear();
+            for (auto I : tmp_Instruction_list) {
+                if(I->GetOpcode() == PHI){
+                    phiq.push(I);
+                }else{
+                    bb->InsertInstruction(1, I);
+                }
+            }
+            while(!phiq.empty()){
+                bb->InsertInstruction(0, phiq.front());
+                phiq.pop();
+            }
         }
     }
 }
