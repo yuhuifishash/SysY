@@ -53,6 +53,9 @@ struct ExecState {
         }
         return ret;
     }
+    bool full () {
+        return (inflight.size() == 2) || (inflight.size() == 1 && inflight.begin()->second != inflight.begin()->first->GetLatency());
+    }
     bool empty () {
         return inflight.empty();
     }
@@ -82,7 +85,12 @@ struct ExecState {
         return true;
     }
     bool Issue (MachineBaseInstruction* ins) {
-        if (ins->arch != MachineBaseInstruction::RiscV) { return true; }
+        if (inflight.size() == 2) { return false; } 
+        if (inflight.size() == 1 && inflight.begin()->second != inflight.begin()->first->GetLatency()) { return false; }
+        if (ins->arch != MachineBaseInstruction::RiscV) {
+            inflight[ins] = ins->GetLatency();
+            return true;
+        }
         auto riscv_ins = (RiscV64Instruction*)(ins);
         if (Occupy(riscv_ins, MemOp, mem_unit_idle, sizeof(MemOp)/4) && 
         Occupy(riscv_ins, BranchOp, branch_unit_idle, sizeof(BranchOp)/4) && 
@@ -94,10 +102,10 @@ struct ExecState {
         return false;
     }
     bool Retire (MachineBaseInstruction* ins) {
-        if (ins->arch != MachineBaseInstruction::RiscV) { return true; }
-        auto riscv_ins = (RiscV64Instruction*)(ins);
         Assert(inflight[ins] == 0);
         inflight.erase(ins);
+        if (ins->arch != MachineBaseInstruction::RiscV) { return true; }
+        auto riscv_ins = (RiscV64Instruction*)(ins);
         return Release(riscv_ins, MemOp, mem_unit_idle, sizeof(MemOp)/4) && 
         Release(riscv_ins, BranchOp, branch_unit_idle, sizeof(BranchOp)/4) && 
         Release(riscv_ins, FaluOp, falu_unit_idle, sizeof(FaluOp)/4) && 
@@ -105,9 +113,24 @@ struct ExecState {
     }
 };
 
-void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstruction*>& list) {
+struct InsPrioEntry {
+    MachineBaseInstruction* ins;
+    int prio;
+    InsPrioEntry(MachineBaseInstruction* ins, int prio): ins(ins), prio(prio) {}
+    bool operator < (const InsPrioEntry& other) const {
+        if (prio != other.prio)
+        return prio > other.prio;
+        return (long long)ins < (long long)other.ins;
+    }
+    bool operator == (const InsPrioEntry& other) const {
+        return ins == other.ins && prio == other.prio;
+    }
+};
+
+void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstruction*>& list, std::vector<MachineBaseInstruction*>&res) {
     // Construct Data Dependency Graph
     // Assume no phi
+    res.clear();
     std::map<MachineBaseInstruction*, std::vector<MachineBaseInstruction*>> data_pre_graph;
     std::map<MachineBaseInstruction*, int> in_degree;
     std::map<MachineBaseInstruction*, std::vector<MachineBaseInstruction*>> data_dep_graph;
@@ -116,7 +139,9 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
     std::vector<MachineBaseInstruction* > last_loads;
 
     std::vector<MachineBaseInstruction*> ready;
-    std::priority_queue<int> ready_queue;
+    std::map<MachineBaseInstruction*, int> ins_prio;
+
+    std::set<InsPrioEntry> ready_set;
     for (auto ins : list) {
         if (ins->arch == MachineBaseInstruction::COMMENT) { continue; }
         if (ins->arch == MachineBaseInstruction::RiscV) {
@@ -160,24 +185,42 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
         }
     }
 
+    for (auto it = list.rbegin();it != list.rend();++it) {
+        auto ins = *it;
+        int longest_latency = 0;
+        for (auto succ : data_pre_graph[ins]) {
+            if (longest_latency < ins_prio[succ]) {
+                longest_latency = ins_prio[succ];
+            }
+        }
+        ins_prio[ins] = longest_latency + ins->GetLatency();
+    }
+
+    for (auto ins : ready) {
+        ready_set.insert(InsPrioEntry(ins, ins_prio[ins]));
+    }
+#define SCHEDULEDBG
 #ifdef SCHEDULEDBG
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
     printer.SyncBlock(cur_block);
-    std::cerr<<"------Block ---------\n";
+    std::cerr<<"------ "<<current_func->getFunctionName() << "-" << cur_block->getLabelId() <<" ---------\n";
     for (auto ready_ins : ready) {
         std::cerr<<"Ready ins:\n";
         printer.printAsm(ready_ins);
+        std::cerr<<"Latency:"<<ins_prio[ready_ins]<<"\n";
         std::cerr<<"\n";
     }
     std::cerr<<"\n";
     for (auto [begin, ends] : data_pre_graph) {
         std::cerr<<"Begin ins:\n";
+        std::cerr<<":"<<ins_prio[begin]<<"\n";
         printer.printAsm(begin);
         std::cerr<<"->\n";
         for (auto end : ends) {
             std::cerr<<"\t";
             printer.printAsm(end);
+            std::cerr<<":"<<ins_prio[end]<<"\n";
         }
         std::cerr<<"\n";
     }
@@ -185,20 +228,21 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
 
     // Schedule Instructions
     std::map<int, MachineBaseInstruction*> result;
-    std::vector<MachineBaseInstruction*> res;
 
     int cycle = 0;
 
     ExecState state;
 
-    while (!ready.empty() || !state.empty()) {
-        for (auto it = ready.begin(); it != ready.end();++it) {
-            auto ins = *it;
-            if (state.Issue(ins)) { // if an FU exists to start at the cycle
-                ready.erase(it);
-                res.push_back(ins);
-                break;
+    while (!ready_set.empty() || !state.empty()) {
+        for (auto it = ready_set.begin(); it != ready_set.end();) {
+            auto entry = *it;
+            if (state.Issue(entry.ins)) { // if an FU exists to start at the cycle
+                it = ready_set.erase(it);
+                res.push_back(entry.ins);
+            } else {
+                ++it;
             }
+            if (state.full()) { break; }
         }
         auto retirelist = state.nextCycle();
         for (auto ins : retirelist) {
@@ -207,18 +251,20 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
                 in_degree[succ] = in_degree[succ] - 1;
                 Assert(in_degree[succ] >= 0);
                 if (in_degree[succ] == 0) {
-                    ready.push_back(succ);
+                    ready_set.insert(InsPrioEntry(succ, ins_prio[succ]));
                 }
             }
         }
     }
-#ifdef SCHEDULEDBG
+#define SCHEDULEDBGSEGRESULT
+#ifdef SCHEDULEDBGSEGRESULT
     std::cerr<<"Result:\n";
     for (auto ins : res) {
         std::cerr<<"\t";
         printer.printAsm(ins);
     }
 #endif
+    Assert(list.size() == res.size());
 }
 
 void RiscV64InstructionSchedule::ExecuteInBlock () {
@@ -230,8 +276,9 @@ void RiscV64InstructionSchedule::ExecuteInBlock () {
             schedule_batch.push_back(ins);
         } else {
             if (!schedule_batch.empty()) {
-                ExecuteInList(schedule_batch);
-                for (auto scheduled_ins : schedule_batch) {
+                std::vector<MachineBaseInstruction*> schedule_result;
+                ExecuteInList(schedule_batch, schedule_result);
+                for (auto scheduled_ins : schedule_result) {
                     result.push_back(scheduled_ins);
                 }
                 schedule_batch.clear();
@@ -240,12 +287,14 @@ void RiscV64InstructionSchedule::ExecuteInBlock () {
         }
     }
     if (!schedule_batch.empty()) {
-        ExecuteInList(schedule_batch);
-        for (auto scheduled_ins : schedule_batch) {
+        std::vector<MachineBaseInstruction*> schedule_result;
+        ExecuteInList(schedule_batch, schedule_result);
+        for (auto scheduled_ins : schedule_result) {
             result.push_back(scheduled_ins);
         }
         schedule_batch.clear();
     }
+// #define SCHEDULEDBGRESULT
 #ifdef SCHEDULEDBGRESULT
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
