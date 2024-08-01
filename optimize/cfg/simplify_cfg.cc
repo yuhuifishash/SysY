@@ -114,7 +114,7 @@ void MinMaxRecognize(CFG *C) {
                 }else if(cmpcond == ult || cmpcond == ule){
                     ismin = 1;
                     issigned = 0;
-                }else if(cmpcond == sgt || cmpcond == sge){
+                }else if(cmpcond == ugt || cmpcond == uge){
                     ismin = 0;
                     issigned = 0;
                 }else{
@@ -143,6 +143,9 @@ void MinMaxRecognize(CFG *C) {
                     ismin^=1;
                 }else if(id != ((LabelOperand*)BrcondI->GetTrueLabel())->GetLabelNo()
                     || bb2->block_id != ((LabelOperand*)BrcondI->GetFalseLabel())->GetLabelNo()){
+                    continue;
+                }
+                if(C->invG[bb2->block_id].size() > 1){
                     continue;
                 }
                 
@@ -231,9 +234,163 @@ void MinMaxRecognize(CFG *C) {
         }
     }
 }
+/*
+L0(bb0):  
+    %r20 = load i32, ptr %r19
+    %r22 = icmp slt i32 %r20,%r17
+    br i1 %r22, label %L1, label %L2
+L1(bb1):  
+    store i32 %r17, ptr %r19
+    br label %L2
+L2(bb2):  
+    ...
 
+will be transformed to
+
+L2:
+    %r23 = llvm.smin(%r20,%r17)
+    store i32 %r23 ptr %r19
+*/
 void ArrayMinMaxRecognize(CFG *C) {
-
+    auto blockmap = *C->block_map;
+    std::map<int,Instruction> definemap;
+    for (auto [id, bb] : blockmap) {
+        for(auto I : bb->Instruction_list){
+            I->SetBlockID(id);
+            definemap[I->GetResultRegNo()] = I;
+        }
+    }
+    for (auto [id, bb] : blockmap) {
+        bool existElimate = 0;
+        for(auto &I : bb->Instruction_list){
+            if(I->GetOpcode() != BR_COND){
+                continue;
+            }
+            
+            auto brcondI = (BrCondInstruction*)I;
+            auto condreg = (RegOperand*)brcondI->GetCond();
+            auto conddefI = definemap[condreg->GetRegNo()];
+            if(conddefI->GetOpcode() != ICMP){
+                continue;
+            }
+            auto IcmpI = (IcmpInstruction*)conddefI;
+            bool ismin = 1;
+            bool issigned = 1;
+            auto cmpcond = IcmpI->GetCompareCondition();
+            if(cmpcond == slt || cmpcond == sle){
+                ismin = 0;
+                issigned = 1;
+            }else if(cmpcond == sgt || cmpcond == sge){
+                ismin = 1;
+                issigned = 1;
+            }else if(cmpcond == ult || cmpcond == ule){
+                ismin = 0;
+                issigned = 0;
+            }else if(cmpcond == ugt || cmpcond == uge){
+                ismin = 1;
+                issigned = 0;
+            }else{
+                continue;
+            }
+            auto IcmpOp1_origin = IcmpI->GetOp1();
+            auto IcmpOp2_origin = IcmpI->GetOp2();
+            // puts("HHH");
+            if(IcmpOp1_origin->GetOperandType() != BasicOperand::REG){
+                continue;
+            }
+            auto IcmpOp1 = (RegOperand*)IcmpOp1_origin;
+            
+            //check bb2
+            auto Labelop1 = (LabelOperand*)brcondI->GetTrueLabel();
+            auto Labelop2 = (LabelOperand*)brcondI->GetFalseLabel();
+            auto bb1 = blockmap[Labelop1->GetLabelNo()];
+            auto bb2 = blockmap[Labelop2->GetLabelNo()];
+            auto fstI1 = bb1->Instruction_list.front();
+            auto endI1 = bb1->Instruction_list.back();
+            auto fstI2 = bb2->Instruction_list.front();
+            auto endI2 = bb2->Instruction_list.back();
+            if(fstI1->GetOpcode() == PHI || fstI2->GetOpcode() == PHI){
+                continue;
+            }
+            if(bb2->Instruction_list.size() == 2 && endI2->GetOpcode() == BR_UNCOND && fstI2->GetOpcode() == STORE){
+                std::swap(bb1,bb2);
+                std::swap(Labelop1,Labelop2);
+                std::swap(fstI1,fstI2);
+            }else if(bb1->Instruction_list.size() > 2 || endI1->GetOpcode() != BR_UNCOND || fstI1->GetOpcode() != STORE){
+                continue;
+            }
+            auto BruncondI = (BrUncondInstruction*)endI1;
+            if(BruncondI->GetDestLabel()->GetFullName() != brcondI->GetFalseLabel()->GetFullName()){
+                continue;
+            }
+            
+            //check store
+            auto storeI = (StoreInstruction*)fstI1;
+            auto loadI1_origin = definemap[IcmpOp1->GetRegNo()];
+            Instruction loadI2_origin = nullptr;
+            RegOperand* IcmpOp2 = nullptr;
+            if(IcmpOp2_origin->GetOperandType() == BasicOperand::REG){
+                IcmpOp2 = (RegOperand*)IcmpOp2_origin;
+                loadI2_origin = definemap[IcmpOp2->GetRegNo()];
+            }
+            if(loadI2_origin != nullptr && loadI2_origin->GetOpcode() == LOAD 
+                && storeI->GetValue()->GetFullName() == IcmpOp1_origin->GetFullName() 
+                && storeI->GetPointer()->GetFullName() == ((LoadInstruction*)loadI2_origin)->GetPointer()->GetFullName()){
+                ismin^=1;
+            }else if(loadI1_origin->GetOpcode() != LOAD || storeI->GetValue()->GetFullName() != IcmpOp2_origin->GetFullName() 
+                || storeI->GetPointer()->GetFullName() != ((LoadInstruction*)loadI1_origin)->GetPointer()->GetFullName()){
+                // bb->printIR(std::cerr);
+                // bb1->printIR(std::cerr);
+                // bb2->printIR(std::cerr);
+                continue;
+            }
+            if(C->invG[bb1->block_id].size() > 1){
+                puts("HERE");
+                continue;
+            }
+            // bb->printIR(std::cerr);
+            // bb1->printIR(std::cerr);
+            // bb2->printIR(std::cerr);
+            
+            existElimate = 1;
+            Instruction minmaxI;
+            auto newresultop = GetNewRegOperand(++C->max_reg);
+            if(ismin && issigned){
+                minmaxI = new ArithmeticInstruction(SMIN_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
+            }else if(!ismin && issigned){
+                minmaxI = new ArithmeticInstruction(SMAX_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
+            }else if(ismin && !issigned){
+                minmaxI = new ArithmeticInstruction(UMIN_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
+            }else{
+                minmaxI = new ArithmeticInstruction(UMAX_I32,I32,IcmpOp1_origin,IcmpOp2_origin,newresultop);
+            }
+            // auto newstoreI = new StoreInstruction(I32,storeI->GetPointer(),newresultop);
+            // storeI = new StoreInstruction(I32,storeI->GetPointer(),newresultop);
+            storeI->SetValue(newresultop);
+            bb1->InsertInstruction(0,minmaxI);
+            I = new BrUncondInstruction(Labelop1);
+            // bb->printIR(std::cerr);
+            // bb1->printIR(std::cerr);
+            // bb2->printIR(std::cerr);
+            // std::cerr<<cmpcond<<'\n';
+        }
+        // if(existElimate){
+        //     std::queue<Instruction> phiq;
+        //     auto tmp_Instruction_list = bb->Instruction_list;
+        //     bb->Instruction_list.clear();
+        //     for (auto I : tmp_Instruction_list) {
+        //         if(I->GetOpcode() == PHI){
+        //             phiq.push(I);
+        //         }else{
+        //             bb->InsertInstruction(1, I);
+        //         }
+        //     }
+        //     while(!phiq.empty()){
+        //         bb->InsertInstruction(0, phiq.front());
+        //         phiq.pop();
+        //     }
+        // }
+    }
 }
 
 

@@ -87,6 +87,7 @@ void BranchCSE(CFG *C);
 void SimpleForLoopUnroll(CFG *C);
 void ElimateGVNPhi(CFG *C);
 void MinMaxRecognize(CFG *C);
+void ArrayMinMaxRecognize(CFG *C);
 void LatchPhiCombine(CFG* C);
 void LoopIndVarSimplify(CFG* C);
 
@@ -270,6 +271,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(MinMaxRecognize);
+        // llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
         llvmIR.ElimateUnreachedInstructionAndBlocks(); 
