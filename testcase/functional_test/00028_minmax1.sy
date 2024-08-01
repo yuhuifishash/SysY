@@ -1,0 +1,392 @@
+int a[10];
+int b[10];
+int c[10];
+int d[10];
+int main()
+{
+    int x;
+    int y;
+    int z;
+    int p;
+
+    starttime();
+    
+    int n = getarray(c);
+    int m = getarray(d);
+    x = getint();
+    y = getint();
+    z = getint();
+    if(x < y){
+        x = y;
+        z = 5;
+    }
+    putint(x+z);
+    putch(32);
+    
+    if(x < y){
+        z = 6;
+        x = y;
+        y = x;
+    }
+    putint(x+z);
+    putch(32);
+
+    if(x > y){
+        y = x;
+        z = 7;
+    }
+    putint(y+z);
+    putch(32);
+
+    if(x < y){
+        y = x;
+        z = 8;
+    }
+    putint(y+z);
+    putch(32);
+
+    if(x < y){
+        x = y;
+        z = 5;
+    }
+    putint(x+z);
+    putch(32);
+
+    if(x < y){
+        z = 6;
+        x = y;
+        y = x;
+    }
+    putint(x+z);
+    putch(32);
+
+    if(x > y){
+        y = x;
+        z = 7;
+    }
+    putint(y+z);
+    putch(32);
+
+    if(x < y){
+        x = y + x;
+        z = 9;
+    }
+    putint(x+z);
+    putch(32);
+
+    if(x + y < y){
+        x = y;
+        z = 10;
+    }
+    putint(x+z);
+    putch(32);
+
+    if(x > y && x > z){
+        x = y;
+    }
+    putint(x);
+    putch(32);
+
+    if(x > y || x > z){
+        x = y;
+    }
+    putint(x);
+    putch(32);
+
+    if(x > y && x > z){
+        x = z;
+    }
+    putint(x);
+    putch(32);
+
+    if(x > y || x > z){
+        x = z;
+    }
+    putint(x);
+    putch(32);
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    z = 2;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > b[y] + z){
+                a[x] = b[y] + z;
+            }else{
+                a[x] = b[y];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > b[y]){
+                a[x] = b[y];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] < b[y]){
+                a[x] = b[y];
+                b[y] = a[x];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > b[x]){
+                a[x] = b[x];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > a[x] + y){
+                a[x] = a[x] + y;
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > z){
+                a[x] = z;
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(x > 4 && a[x] > b[x]){
+                a[x] = b[x];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(x > 4 || a[x] > b[x]){
+                a[x] = b[x];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > b[y] && a[x] > b[x]){
+                a[x] = b[y];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            if(a[x] > b[y] || a[x] > b[x]){
+                a[x] = b[x];
+            }
+            putint(a[x]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        if(z > b[x]){
+            z = b[x];
+        }
+        putint(z);
+        putch(32);
+        x = x + 1;
+    }
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        if(b[x] > z){
+            z = b[x];
+        }
+        putint(z);
+        putch(32);
+        x = x + 1;
+    }
+
+    stoptime();
+	
+    return 0;
+}
