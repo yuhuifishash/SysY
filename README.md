@@ -3,7 +3,7 @@
 
 ## OverView
 
-### Grammar of SysY (subset of C)
+### Introduction to SysY (subset of C)
 
 
 ### Architecture of Compilers
