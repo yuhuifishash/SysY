@@ -98,8 +98,9 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                         }
                     }
                     block->insert(insert_it, new MachineComment("Phi Destruction Copy\n"));
-                    block->insert(insert_it,
-                                  new MachineCopyInstruction(srcop, new MachineRegister(dstreg), dstreg.type));
+                    auto copy_instr = new MachineCopyInstruction(srcop, new MachineRegister(dstreg), dstreg.type);
+                    copy_instr->SetNoSchedule(true);
+                    block->insert(insert_it, copy_instr);
                 }
             } else {
                 auto pair = *copylist.begin();
@@ -107,8 +108,9 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                 auto dst_reg = pair.first;
                 auto src_op = pair.second;
                 block->insert(insert_it, new MachineComment("Phi Destruction Copy\n"));
-                block->insert(insert_it,
-                              new MachineCopyInstruction(src_op, new MachineRegister(mid_reg), dst_reg.type));
+                auto copy_instr = new MachineCopyInstruction(src_op, new MachineRegister(mid_reg), dst_reg.type);
+                copy_instr->SetNoSchedule(true);
+                block->insert(insert_it, copy_instr);
                 if (src_op->op_type == MachineBaseOperand::REG) {
                     auto src_reg = ((MachineRegister *)src_op)->reg;
                     src_ref_count[src_reg] = src_ref_count[src_reg] - 1;

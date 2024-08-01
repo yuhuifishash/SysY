@@ -199,7 +199,7 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
     for (auto ins : ready) {
         ready_set.insert(InsPrioEntry(ins, ins_prio[ins]));
     }
-#define SCHEDULEDBG
+// #define SCHEDULEDBG
 #ifdef SCHEDULEDBG
     RiscV64Printer printer(std::cerr, unit);
     printer.SyncFunction(current_func);
@@ -256,7 +256,7 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
             }
         }
     }
-#define SCHEDULEDBGSEGRESULT
+// #define SCHEDULEDBGSEGRESULT
 #ifdef SCHEDULEDBGSEGRESULT
     std::cerr<<"Result:\n";
     for (auto ins : res) {
