@@ -44,8 +44,8 @@ To test **performance** testcases with optimization
 
 To generate asm of single file(*.sy) with optimization
 ```bash
-## first put your input file in testcase/example
-## then run the command. output file is in test_output/example
+## first put your inputfile in testcase/example
+## then run the command below, outputfile is in test_output/example
 ## you can see SysY_test_single.sh for more details
 ./SysY_test_single.sh [filename] S O1  
 ```

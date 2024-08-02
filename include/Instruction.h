@@ -113,6 +113,7 @@ enum LLVMIROpcode {
     FMIN_F32 = 36,
     FMAX_F32 = 37,
     BITAND = 38,
+    FPEXT = 39,
 };
 
 // @Operand datatypes
@@ -918,6 +919,30 @@ public:
     virtual Instruction CopyInstruction();
     virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
 };
+
+class FpextInstruction : public BasicInstruction {
+private:
+    Operand result;
+    Operand value;
+
+public:
+    FpextInstruction(Operand result_receiver, Operand value_for_cast)
+        : result(result_receiver), value(value_for_cast) {
+        this->opcode = FPTOSI;
+    }
+    virtual LLVMType GetResultType() { return I32; }
+    Operand GetResultReg() { return result; }
+    Operand GetSrc() { return value; }
+    void PrintIR(std::ostream &s);
+    int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
+    void ReplaceRegByMap(const std::map<int, int> &Rule);
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
+    std::vector<Operand> GetNonResultOperands();
+    void SetNonResultOperands(std::vector<Operand> ops);
+    virtual Instruction CopyInstruction();
+    virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
+};
+
 
 class BitCastInstruction : public BasicInstruction {
 private:

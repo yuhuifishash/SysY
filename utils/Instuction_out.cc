@@ -529,6 +529,13 @@ void FptosiInstruction::PrintIR(std::ostream &s) {
       << "\n";
 }
 
+void FpextInstruction::PrintIR(std::ostream &s) {
+    s << result << " = fpext float"
+      << " " << value << " to "
+      << "double"
+      << "\n";
+}
+
 void SitofpInstruction::PrintIR(std::ostream &s) {
     s << result << " = sitofp i32"
       << " " << value << " to "

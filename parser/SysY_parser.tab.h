@@ -1,4 +1,4 @@
-#include "../include/SysY_tree.h" /* A Bison parser, made by GNU Bison 3.8.2.  */
+#include "SysY_tree.h"/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -36,10 +36,10 @@
    private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_SYSY_PARSER_TAB_H_INCLUDED
-#define YY_YY_SYSY_PARSER_TAB_H_INCLUDED
+# define YY_YY_SYSY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-#define YYDEBUG 0
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -47,88 +47,89 @@ extern int yydebug;
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
-#define YYTOKENTYPE
-enum yytokentype {
+# define YYTOKENTYPE
+  enum yytokentype
+  {
     YYEMPTY = -2,
-    YYEOF = 0,         /* "end of file"  */
-    YYerror = 256,     /* error  */
-    YYUNDEF = 257,     /* "invalid token"  */
-    STR_CONST = 258,   /* STR_CONST  */
-    IDENT = 259,       /* IDENT  */
-    FLOAT_CONST = 260, /* FLOAT_CONST  */
-    INT_CONST = 261,   /* INT_CONST  */
-    LEQ = 262,         /* LEQ  */
-    GEQ = 263,         /* GEQ  */
-    EQ = 264,          /* EQ  */
-    NE = 265,          /* NE  */
-    AND = 266,         /* AND  */
-    OR = 267,          /* OR  */
-    CONST = 268,       /* CONST  */
-    IF = 269,          /* IF  */
-    ELSE = 270,        /* ELSE  */
-    WHILE = 271,       /* WHILE  */
-    NONE_TYPE = 272,   /* NONE_TYPE  */
-    INT = 273,         /* INT  */
-    FLOAT = 274,       /* FLOAT  */
-    RETURN = 275,      /* RETURN  */
-    BREAK = 276,       /* BREAK  */
-    CONTINUE = 277,    /* CONTINUE  */
-    ERROR = 278,       /* ERROR  */
-    THEN = 279         /* THEN  */
-};
-typedef enum yytokentype yytoken_kind_t;
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    STR_CONST = 258,               /* STR_CONST  */
+    IDENT = 259,                   /* IDENT  */
+    FLOAT_CONST = 260,             /* FLOAT_CONST  */
+    INT_CONST = 261,               /* INT_CONST  */
+    LEQ = 262,                     /* LEQ  */
+    GEQ = 263,                     /* GEQ  */
+    EQ = 264,                      /* EQ  */
+    NE = 265,                      /* NE  */
+    AND = 266,                     /* AND  */
+    OR = 267,                      /* OR  */
+    CONST = 268,                   /* CONST  */
+    IF = 269,                      /* IF  */
+    ELSE = 270,                    /* ELSE  */
+    WHILE = 271,                   /* WHILE  */
+    NONE_TYPE = 272,               /* NONE_TYPE  */
+    INT = 273,                     /* INT  */
+    FLOAT = 274,                   /* FLOAT  */
+    FOR = 275,                     /* FOR  */
+    RETURN = 276,                  /* RETURN  */
+    BREAK = 277,                   /* BREAK  */
+    CONTINUE = 278,                /* CONTINUE  */
+    ERROR = 279,                   /* ERROR  */
+    THEN = 280                     /* THEN  */
+  };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-union YYSTYPE {
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+union YYSTYPE
+{
 #line 14 "parser/SysY_parser.y"
 
-    char *error_msg;
+    char* error_msg;
     Symbol symbol_token;
     double float_token;
     int int_token;
-    Program program;
-    CompUnit comp_unit;
-    std::vector<CompUnit> *comps;
+    Program program;  
+    CompUnit comp_unit;  std::vector<CompUnit>* comps; 
     Decl decl;
-    Def def;
-    std::vector<Def> *defs;
+    Def def;  std::vector<Def>* defs;
     FuncDef func_def;
-    Expression expression;
-    std::vector<Expression> *expressions;    // added *
+    Expression expression;  std::vector<Expression>* expressions;//added *
     Stmt stmt;
     Block block;
-    InitVal initval;
-    std::vector<InitVal> *initvals;    // added *
-    FuncFParam formal;
-    std::vector<FuncFParam> *formals;    // added *
-    BlockItem block_item;
-    std::vector<BlockItem> *block_items;    // added *
+    InitVal initval;  std::vector<InitVal>* initvals;//added *
+    FuncFParam formal;   std::vector<FuncFParam>* formals;//added *
+    BlockItem block_item;   std::vector<BlockItem>* block_items;//added *
 
-#line 106 "SysY_parser.tab.h"
+#line 107 "SysY_parser.tab.h"
+
 };
 typedef union YYSTYPE YYSTYPE;
-#define YYSTYPE_IS_TRIVIAL 1
-#define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
 
 /* Location type.  */
-#if !defined YYLTYPE && !defined YYLTYPE_IS_DECLARED
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
 typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE {
-    int first_line;
-    int first_column;
-    int last_line;
-    int last_column;
+struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
 };
-#define YYLTYPE_IS_DECLARED 1
-#define YYLTYPE_IS_TRIVIAL 1
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
 #endif
+
 
 extern YYSTYPE yylval;
 extern YYLTYPE yylloc;
 
-int yyparse(void);
+int yyparse (void);
+
 
 #endif /* !YY_YY_SYSY_PARSER_TAB_H_INCLUDED  */

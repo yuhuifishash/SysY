@@ -1,0 +1,35 @@
+int p[105]={};
+int vis[105]={};
+void Print(int n)
+{
+    int i = 0;
+    while(i<n){
+        putf("%d ",p[i]);
+        i = i + 1;
+    }
+    putf("\n");
+}
+void DFS(int pos,int n)
+{
+    if(pos == n){
+        Print(n);
+        return;
+    }
+    int i = 1;
+    while(i<=n){
+        if(vis[i]){i = i + 1;continue;}
+        p[pos] = i;
+        vis[i] = 1;
+        DFS(pos+1,n);
+        vis[i] = 0;
+        i = i + 1;
+    }
+}
+int main()
+{
+    int n = 0;
+    
+    n = getint();
+    DFS(0,n);
+    return 0;
+}
