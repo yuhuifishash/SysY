@@ -7,6 +7,7 @@ extern LLVMIR llvmIR;
 extern StringTable str_table;
 
 static int GlobalVarCnt = 0;
+static int GlobalStrCnt = 0;
 std::map<std::string, VarAttribute> ConstGlobalMap;
 std::map<std::string, VarAttribute> StaticGlobalMap;    // in SysY2022, we assume all the global are static
 
@@ -376,6 +377,14 @@ void Func_call::TypeCheck() {
             }
         }
     }
+    // do not check putf
+    if(name->get_string() == "putf"){
+        if(funcr_params_len < 1){
+            error_msgs.push_back("Function FuncFParams and FuncRParams are not matched in line " +
+                                 std::to_string(line_number) + "\n");
+        }
+        return;
+    }
     // check name exist
     // set type
     auto it = semant_table.FunctionTable.find(name);
@@ -420,7 +429,13 @@ void FloatConst::TypeCheck() {
     attribute.V.val.FloatVal = val;
 }
 
-void StringConst::TypeCheck() { std::cerr << "StringConst is not implement now\n"; }
+void StringConst::TypeCheck() {
+    attribute.T.type = Type::PTR;
+    GlobalStrCnt += 1;
+    auto GlobalStrI = new GlobalStringConstInstruction(str->get_string(),".str"+std::to_string(GlobalStrCnt));
+    llvmIR.global_def.push_back(GlobalStrI);
+    semant_table.GlobalStrTable[str] = GlobalStrCnt;
+}
 
 void PrimaryExp_branch::TypeCheck() {
     exp->TypeCheck();
@@ -470,6 +485,18 @@ void while_stmt::TypeCheck() {
     InWhileCount++;
     body->TypeCheck();
     InWhileCount--;
+}
+
+void for_stmt::TypeCheck() {
+    semant_table.symbol_table.enter_scope();
+    decl->TypeCheck();
+    Cond->TypeCheck();
+
+    InWhileCount++;
+    body->TypeCheck();
+    InWhileCount--;
+    latch->TypeCheck();
+    semant_table.symbol_table.exit_scope();
 }
 
 void continue_stmt::TypeCheck() {

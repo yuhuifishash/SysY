@@ -376,6 +376,15 @@ int FptosiInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map)
     return 1;
 }
 
+int FpextInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
+    auto &lattice = ConstLatticeMap[this];
+    if (lattice.status == ConstLattice::VAR) {
+        return 0;
+    }
+    lattice.status = ConstLattice::VAR;
+    return 1;
+}
+
 int SitofpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
 

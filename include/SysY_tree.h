@@ -468,7 +468,6 @@ public:
     // construction
     while_stmt(Expression c, Stmt b) : Cond(c), body(b) {}
     void codeIR();
-    void code_dowhileIR();
     void TypeCheck();
     void printAST(std::ostream &s, int pad);
 };
@@ -501,6 +500,20 @@ public:
 
 class return_stmt_void : public __Stmt {
 public:
+    void codeIR();
+    void TypeCheck();
+    void printAST(std::ostream &s, int pad);
+};
+class __Decl;
+typedef __Decl *Decl;
+
+class for_stmt : public __Stmt {
+public:
+    Expression Cond;
+    Stmt body;
+    Stmt latch;
+    Decl decl;
+    for_stmt(Expression c,Stmt b,Stmt l,Decl d):Cond(c),body(b),latch(l),decl(d){}
     void codeIR();
     void TypeCheck();
     void printAST(std::ostream &s, int pad);
@@ -641,7 +654,6 @@ public:
     virtual std::vector<Def> *GetDefs() = 0;
     virtual Type::ty GetTypedecl() = 0;
 };
-typedef __Decl *Decl;
 
 // var definition
 class VarDecl : public __Decl {

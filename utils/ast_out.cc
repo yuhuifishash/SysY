@@ -357,6 +357,18 @@ void while_stmt::printAST(std::ostream &s, int pad) {
     body->printAST(s, pad + 2);
 }
 
+void for_stmt::printAST(std::ostream &s, int pad) {
+    s << std::string(pad, ' ') << "ForStmt:\n";
+    s << std::string(pad, ' ') << "ForVarDecl:\n";
+    decl->printAST(s, pad + 2);
+    s << std::string(pad, ' ') << "Cond   type:bool\n";
+    Cond->printAST(s, pad + 2);
+    s << std::string(pad, ' ') << "Body:\n";
+    body->printAST(s, pad + 2);
+    s << std::string(pad, ' ') << "ForLatch:\n";
+    latch->printAST(s, pad + 2);
+}
+
 void continue_stmt::printAST(std::ostream &s, int pad) { s << std::string(pad, ' ') << "ContinueStmt\n"; }
 
 void break_stmt::printAST(std::ostream &s, int pad) { s << std::string(pad, ' ') << "BreakStmt\n"; }

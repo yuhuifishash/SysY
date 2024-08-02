@@ -485,6 +485,7 @@ void IRgenFcmp(LLVMBlock B, FcmpCond cmp_op, int reg1, int reg2, int result_reg)
 void IRgenIcmpImmRight(LLVMBlock B, IcmpCond cmp_op, int reg1, int val2, int result_reg);
 void IRgenFcmpImmRight(LLVMBlock B, FcmpCond cmp_op, int reg1, float val2, int result_reg);
 void IRgenFptosi(LLVMBlock B, int src, int dst);
+void IRgenFpext(LLVMBlock B, int src, int dst);
 void IRgenSitofp(LLVMBlock B, int src, int dst);
 void IRgenZextI1toI32(LLVMBlock B, int src, int dst);
 
@@ -775,7 +776,9 @@ void IRgenTypeConverse(LLVMBlock B, Type::ty type_src, Type::ty type_dst, int sr
         IRgenZextI1toI32(B, src, ++max_reg);
         src = max_reg;
         IRgenSitofp(B, src, ++max_reg);
-    } else {
+    } else if (type_src == Type::FLOAT && type_dst == Type::DOUBLE) {
+        IRgenFpext(B, src, ++max_reg);
+    }else {
         assert(false);
     }
 }

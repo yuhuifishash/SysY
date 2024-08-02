@@ -58,7 +58,8 @@ Binary_Exponent_const [pP][\+\-]?[0-9]+
 "const" {cur_col_number = col_number;col_number += strlen(yytext);return CONST;}     
 "if" {cur_col_number = col_number;col_number += strlen(yytext);return IF;}       
 "else" {cur_col_number = col_number;col_number += strlen(yytext);return ELSE;}  
-"while" {cur_col_number = col_number;col_number += strlen(yytext);return WHILE;}   
+"while" {cur_col_number = col_number;col_number += strlen(yytext);return WHILE;}
+"@for" {cur_col_number = col_number;col_number += strlen(yytext);return FOR;}   
 "void" {cur_col_number = col_number;col_number += strlen(yytext);return NONE_TYPE;}    
 "int" {cur_col_number = col_number;col_number += strlen(yytext);return INT;}    
 "float" {cur_col_number = col_number;col_number += strlen(yytext);return FLOAT;}      

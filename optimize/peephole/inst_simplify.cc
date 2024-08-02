@@ -30,6 +30,7 @@ void EraseNoUseGlobal(LLVMIR *IR) {
     for (auto it = IR->global_def.begin(); it != IR->global_def.end();) {
         auto I = *it;
         if (I->GetOpcode() != GLOBAL_VAR) {
+            ++it;
             continue;
         }
         auto gI = (GlobalVarDefineInstruction *)I;

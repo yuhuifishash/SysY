@@ -100,6 +100,10 @@ void IRgenFptosi(LLVMBlock B, int src, int dst) {
     B->InsertInstruction(1, new FptosiInstruction(GetNewRegOperand(dst), GetNewRegOperand(src)));
 }
 
+void IRgenFpext(LLVMBlock B, int src, int dst) {
+    B->InsertInstruction(1, new FpextInstruction(GetNewRegOperand(dst), GetNewRegOperand(src)));
+}
+
 void IRgenSitofp(LLVMBlock B, int src, int dst) {
     B->InsertInstruction(1, new SitofpInstruction(GetNewRegOperand(dst), GetNewRegOperand(src)));
 }
@@ -424,6 +428,14 @@ std::vector<Operand> FptosiInstruction::GetNonResultOperands() {
 }
 void FptosiInstruction::SetNonResultOperands(std::vector<Operand> ops) { value = ops[0]; }
 
+std::vector<Operand> FpextInstruction::GetNonResultOperands() {
+    std::vector<Operand> ret;
+    ret.push_back(value);
+    return ret;
+}
+
+void FpextInstruction::SetNonResultOperands(std::vector<Operand> ops) { value = ops[0]; }
+
 std::vector<Operand> SitofpInstruction::GetNonResultOperands() {
     std::vector<Operand> ret;
     ret.push_back(value);
@@ -562,6 +574,13 @@ Instruction FptosiInstruction::CopyInstruction() {
     Operand nvalue = value->CopyOperand();
 
     return new FptosiInstruction(nresult, nvalue);
+}
+
+Instruction FpextInstruction::CopyInstruction() {
+    Operand nresult = result->CopyOperand();
+    Operand nvalue = value->CopyOperand();
+
+    return new FpextInstruction(nresult, nvalue);
 }
 
 Instruction SitofpInstruction::CopyInstruction() {
@@ -768,6 +787,19 @@ void FunctionDefineInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) 
 void FunctionDeclareInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {}
 
 void FptosiInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
+    if (result->GetOperandType() == BasicOperand::REG) {
+        auto result_reg = (RegOperand *)result;
+        if (Rule.find(result_reg->GetRegNo()) != Rule.end())
+            this->result = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
+    }
+    if (value->GetOperandType() == BasicOperand::REG) {
+        auto result_reg = (RegOperand *)value;
+        if (Rule.find(result_reg->GetRegNo()) != Rule.end())
+            value = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
+    }
+}
+
+void FpextInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;
         if (Rule.find(result_reg->GetRegNo()) != Rule.end())

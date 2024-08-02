@@ -266,6 +266,30 @@ void FuncRParams::codeIR() {}
 
 void Func_call::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
+
+    if(name->get_string() == "putf"){
+        auto params = ((FuncRParams *)funcr_params)->params;
+        std::vector<std::pair<LLVMType, Operand>> args;
+
+        auto str_param = (*params)[0];
+        str_param->codeIR();
+        args.push_back({PTR, irgen_table.current_strptr});
+
+        for (int i = 1; i < (*params).size(); ++i) {
+            auto param = (*params)[i];
+            param->codeIR();
+
+            auto real_type = param->attribute.T.type;
+            if(param->attribute.T.type == Type::FLOAT){
+                real_type = Type::DOUBLE;
+                IRgenTypeConverse(B, param->attribute.T.type, Type::DOUBLE, max_reg);
+            }
+            args.push_back({Type2LLvm[real_type], GetNewRegOperand(max_reg)});
+        }
+        IRgenCallVoid(B, VOID, args, name->get_string());
+        return;
+    }
+    
     Type::ty return_type = semant_table.FunctionTable[name]->return_type;
     LLVMType ret_type = Type2LLvm[return_type];
 
@@ -322,7 +346,10 @@ void FloatConst::codeIR() {
     IRgenArithmeticF32ImmAll(B, LLVMIROpcode::FADD, val, 0, max_reg);
 }
 
-void StringConst::codeIR() {}
+void StringConst::codeIR() {
+    int id = semant_table.GlobalStrTable[str];
+    irgen_table.current_strptr = GetNewGlobalOperand(".str"+std::to_string(id));
+}
 
 void PrimaryExp_branch::codeIR() { exp->codeIR(); }
 
@@ -416,6 +443,48 @@ void while_stmt::codeIR() {
 
     loop_start_label = t1;
     loop_end_label = t2;
+}
+
+void for_stmt::codeIR() {
+    int judge_label = llvmIR.NewBlock(function_now, max_label)->block_id;
+    int body_label = llvmIR.NewBlock(function_now, max_label)->block_id;
+    int latch_label = llvmIR.NewBlock(function_now, max_label)->block_id; 
+    int end_label = llvmIR.NewBlock(function_now, max_label)->block_id;
+
+    int t1 = loop_start_label;
+    int t2 = loop_end_label;
+    loop_start_label = latch_label;
+    loop_end_label = end_label;
+
+    LLVMBlock B0 = llvmIR.GetBlock(function_now, now_label);
+    decl->codeIR();
+
+    LLVMBlock B1 = llvmIR.GetBlock(function_now, now_label);
+    IRgenBRUnCond(B1, judge_label);
+
+    now_label = judge_label;
+    Cond->true_label = body_label;
+    Cond->false_label = end_label;
+    Cond->codeIR();
+    LLVMBlock B2 = llvmIR.GetBlock(function_now, now_label);
+    IRgenTypeConverse(B2, Cond->attribute.T.type, Type::BOOL, max_reg);
+    IRgenBrCond(B2, max_reg, body_label, end_label);
+
+    now_label = body_label;
+    body->codeIR();
+    LLVMBlock B3 = llvmIR.GetBlock(function_now, now_label);
+    IRgenBRUnCond(B3, latch_label);
+
+    now_label = latch_label;
+    latch->codeIR();
+    LLVMBlock B4 = llvmIR.GetBlock(function_now, now_label);
+    IRgenBRUnCond(B4, judge_label);
+
+    now_label = end_label;
+
+    loop_start_label = t1;
+    loop_end_label = t2;
+
 }
 
 void continue_stmt::codeIR() {
