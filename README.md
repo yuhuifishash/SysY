@@ -4,7 +4,14 @@
 ## OverView
 
 ### Introduction to SysY (subset of C)
+supports int and float
+supports array of any dimensions
+supports while,for,if,else,break,continue
 
+you can see more details in lexer/SysY_lexer.l and parser/SysY_parser.y
+
+### IO
+see lib/sylib.c and lib/sylib.h
 
 ### Architecture of Compilers
 
