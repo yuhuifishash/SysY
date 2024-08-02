@@ -1,0 +1,79 @@
+const int SIZE = 1e5 + 7;
+const int NUM = 107;
+const int mod = 998244353;
+
+int n,k,num_edge;
+int head[SIZE],siz[SIZE];
+int dp[SIZE][NUM][2][2],tmp[NUM][2][2];
+int edgeto[SIZE * 2];
+int edgenxt[SIZE * 2];
+int min(int u,int v)
+{
+    if(u < v){
+        return u;
+    }
+    return v;
+}
+
+void add(int u,int v)
+{
+    num_edge = num_edge + 1;
+	edgeto[num_edge] = v;
+	edgenxt[num_edge] = head[u];
+	head[u] = num_edge;
+}
+
+int solve(int u,int v)
+{
+    return (u+v)%mod;
+}
+
+void dfs(int u,int fa)
+{
+	siz[u] = 1; dp[u][0][0][0] = 1; dp[u][1][1][0] = 1;
+	@for (int t = head[u]; t ; t = edgenxt[t])
+	{
+		int v = edgeto[t];
+		if (v == fa) continue;
+		dfs(v,u);
+		int side = min(siz[u],k);
+		@for (int i = 0; i <= side; i=i+1)
+		{
+			tmp[i][0][0] = dp[u][i][0][0];
+			dp[u][i][0][0] = 0;
+			tmp[i][0][1] = dp[u][i][0][1];
+			dp[u][i][0][1] = 0;
+			tmp[i][1][0] = dp[u][i][1][0];
+			dp[u][i][1][0] = 0;
+			tmp[i][1][1] = dp[u][i][1][1];
+			dp[u][i][1][1] = 0;
+		}
+		@for (int i = 0; i <= side; i=i+1)
+		{
+			int limit = min(siz[v],k-i);
+			@for (int j = 0; j <= limit; j=j+1)
+			{
+				dp[u][i+j][0][0] = solve(dp[u][i+j][0][0], tmp[i][0][0] * dp[v][j][0][1]);
+				dp[u][i+j][0][1] = solve(dp[u][i+j][0][1], tmp[i][0][1] * (dp[v][j][0][1] + dp[v][j][1][1]));
+				dp[u][i+j][0][1] = solve(dp[u][i+j][0][1], tmp[i][0][0] * dp[v][j][1][1]);
+				dp[u][i+j][1][0] = solve(dp[u][i+j][1][0], tmp[i][1][0] * (dp[v][j][0][0] + dp[v][j][0][1]));
+				dp[u][i+j][1][1] = solve(dp[u][i+j][1][1], tmp[i][1][0] * (dp[v][j][1][0] + dp[v][j][1][1]));
+				dp[u][i+j][1][1] = solve(dp[u][i+j][1][1], tmp[i][1][1] * ( dp[v][j][0][0] +  dp[v][j][0][1] +  dp[v][j][1][0] +  dp[v][j][1][1]));
+			}
+		}
+		siz[u] = siz[u] + siz[v];
+	}
+}
+int main()
+{
+	n = getint();k = getint();
+	@for (int i = 1; i < n; i=i+1)
+	{
+		int u = getint(),v = getint();
+		add(u,v);
+		add(v,u);
+	}
+	dfs(1,0);
+	putf("%d\n",(dp[1][k][0][1] + dp[1][k][1][1]) % mod);
+	return 0;
+}

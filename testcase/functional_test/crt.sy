@@ -1,0 +1,40 @@
+int a,b,s[10001],k[1025],n,x[101];
+int gcd(int q1,int q2)
+{
+	if(q2==0) return q1;
+    else return gcd(q2,q1%q2);
+}
+int lcd(int kk)
+{
+	return (x[kk-1]*s[kk])/gcd(x[kk-1],s[kk]);
+}
+int qy(int m,int bc,int y)
+{
+	@for(int i=0;i<=1000000;i=i+1)
+	{
+		if((i*m)%bc==y) return i*m;
+	}
+}
+int main()
+{
+	n = getint();
+	@for(int p=1;p<=n;p=p+1){
+        s[p] = getint();
+        k[p] = getint();
+    }
+	x[1]=s[1];
+	@for(int i=2;i<=n;i=i+1) x[i]=lcd(i);
+	a=s[1];
+	b=k[1];
+	@for(int i=2;i<=n;i=i+1)
+	{
+		int y=b%s[i];
+		y=k[i]-y;
+		if(y>k[i]) y=s[i]+y;
+		int a1=x[i];
+		b=qy(a,s[i],y)+b;
+		a=a1;
+	}
+	putint(b);
+    putch(10);
+}

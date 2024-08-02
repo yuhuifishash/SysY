@@ -1,0 +1,46 @@
+const int N=50+10;
+const int K=65+10;
+int f[N][N][K],dis[N][N],n,m;
+int min(int a,int b)
+{
+    if(a < b){
+        return a;
+    }
+    return b;
+}
+int main()
+{
+    n=getint();m=getint();
+    @for(int i=0;i<N;i=i+1){
+        @for(int j=0;j<N;j=j+1){
+            dis[i][j] = 0x3f3f3f3f;
+        }
+    }
+    @for(int i=1;i<=m;i=i+1)
+    {
+        int s=getint(),t=getint();
+        f[s][t][0]=1;
+        dis[s][t]=1;
+    }
+    
+    @for(int o=1;o<=64;o=o+1)
+        @for(int i=1;i<=n;i=i+1)
+            @for(int j=1;j<=n;j=j+1)
+                @for(int k=1;k<=n;k=k+1)
+                    if(f[j][i][o-1] && f[i][k][o-1])
+                    {
+                        f[j][k][o]=1;
+                        dis[j][k]=1;
+                    }
+                
+    @for(int i=1;i<=n;i=i+1)
+        @for(int j=1;j<=n;j=j+1)
+            @for(int k=1;k<=n;k=k+1)
+                dis[j][k]=min(dis[j][k],dis[j][i]+dis[i][k]);
+
+    @for(int i=2;i<=n;i=i+1){
+        putf("%d ",dis[1][i]);
+    }
+    putf("\n");
+    return 0;
+}
