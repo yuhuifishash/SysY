@@ -120,12 +120,14 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > b[y] + z){
-                a[x] = b[y] + z;
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > b[yy] + z){
+                a[xx] = b[yy] + z;
             }else{
-                a[x] = b[y];
+                a[xx] = b[yy];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -146,10 +148,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > b[y]){
-                a[x] = b[y];
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > b[yy]){
+                a[xx] = b[yy];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -170,11 +174,13 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] < b[y]){
-                a[x] = b[y];
-                b[y] = a[x];
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] < b[yy]){
+                a[xx] = b[yy];
+                b[yy] = a[xx];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -195,10 +201,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > b[x]){
-                a[x] = b[x];
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > b[xx]){
+                a[xx] = b[xx];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -218,10 +226,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > a[x] + y){
-                a[x] = a[x] + y;
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > a[xx] + yy){
+                a[xx] = a[xx] + yy;
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -241,34 +251,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > z){
-                a[x] = z;
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > z){
+                a[xx] = z;
             }
-            putint(a[x]);
-            putch(32);
-            y = y + 1;
-        }
-        x = x + 1;
-    }
-
-    x = 0;
-    while(x < n){
-        a[x] = c[x];
-        x = x + 1;
-    }
-    y = 0;
-    while(y < m){
-        b[y] = d[y];
-        y = y + 1;
-    }
-    x = 0;
-    while(x < n){
-        y = 0;
-        while(y < m){
-            if(x > 4 && a[x] > b[x]){
-                a[x] = b[x];
-            }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -289,10 +277,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(x > 4 || a[x] > b[x]){
-                a[x] = b[x];
+            int xx = getint();
+            int yy = getint();
+            if(x > 4 && a[xx] > b[xx]){
+                a[xx] = b[xx];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -313,10 +303,12 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > b[y] && a[x] > b[x]){
-                a[x] = b[y];
+            int xx = getint();
+            int yy = getint();
+            if(x > 4 || a[xx] > b[xx]){
+                a[xx] = b[xx];
             }
-            putint(a[x]);
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }
@@ -337,10 +329,38 @@ int main()
     while(x < n){
         y = 0;
         while(y < m){
-            if(a[x] > b[y] || a[x] > b[x]){
-                a[x] = b[x];
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > b[yy] && a[xx] > b[xx]){
+                a[xx] = b[yy];
             }
-            putint(a[x]);
+            putint(a[xx]);
+            putch(32);
+            y = y + 1;
+        }
+        x = x + 1;
+    }
+
+    x = 0;
+    while(x < n){
+        a[x] = c[x];
+        x = x + 1;
+    }
+    y = 0;
+    while(y < m){
+        b[y] = d[y];
+        y = y + 1;
+    }
+    x = 0;
+    while(x < n){
+        y = 0;
+        while(y < m){
+            int xx = getint();
+            int yy = getint();
+            if(a[xx] > b[yy] || a[xx] > b[xx]){
+                a[xx] = b[xx];
+            }
+            putint(a[xx]);
             putch(32);
             y = y + 1;
         }

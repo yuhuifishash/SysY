@@ -9,7 +9,60 @@ extern std::map<std::string, VarAttribute> StaticGlobalMap;
 
 // TODO():FindNoWriteStaticGlobal
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
-void FindNoWriteStaticGlobal(LLVMIR *IR) { TODO("FindNoWriteStaticGlobal"); }
+void FindNoWriteStaticGlobal(LLVMIR *IR) { 
+    // TODO("FindNoWriteStaticGlobal"); 
+    std::set<std::string> GlobalUsedSet;
+    std::map<int,std::string> GEPMap;
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for (auto [id, bb] : *cfg->block_map) {
+            for (auto I : bb->Instruction_list) {
+                if(I->GetOpcode() == STORE){
+                    auto storeI = (StoreInstruction*)I;
+                    auto op = storeI->GetPointer();
+                    if (op->GetOperandType() == BasicOperand::GLOBAL) {
+                        auto gop = (GlobalOperand *)op;
+                        auto name = gop->GetName();
+                        if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
+                            // std::cerr<<name<<'\n';
+                            GlobalUsedSet.insert(name);
+                        }
+                        // I->PrintIR(std::cerr);
+                    }else if(op->GetOperandType() == BasicOperand::REG){
+                        auto regop = (RegOperand*)op;
+                        auto regopno = regop->GetRegNo();
+                        if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
+                            continue;
+                        }
+                        GlobalUsedSet.insert(GEPMap[regopno]);
+                    }
+                }
+                if(I->GetOpcode() == GETELEMENTPTR){
+                    auto gepI = (GetElementptrInstruction*)I;
+                    auto ptr = gepI->GetPtrVal();
+                    if(ptr->GetOperandType() != BasicOperand::GLOBAL){
+                        continue;
+                    }
+                    auto gptr = (GlobalOperand*)ptr;
+                    auto name = gptr->GetName();
+                    GEPMap[gepI->GetResultRegNo()] = name;
+                }
+            }
+        }
+    }
+    // puts("DONE");
+    for(auto [str,var]:StaticGlobalMap){
+        if(GlobalUsedSet.find(str) == GlobalUsedSet.end() && ConstGlobalMap.find(str) == ConstGlobalMap.end()){
+            ConstGlobalMap.insert(std::make_pair(str,var));
+            // std::cerr<<str<<'\n';
+        }
+    }
+    for(auto [str,var]:ConstGlobalMap){
+        if(StaticGlobalMap.find(str) != StaticGlobalMap.end()){
+            StaticGlobalMap.erase(str);
+            // std::cerr<<str<<'\n';
+        }
+    }
+}
 
 void EraseNoUseGlobal(LLVMIR *IR) {
     std::set<std::string> GlobalUsedSet;
@@ -45,6 +98,7 @@ void EraseNoUseGlobal(LLVMIR *IR) {
 void GlobalConstReplace(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         for (auto &I : bb->Instruction_list) {
+            // I->PrintIR(std::cerr);
             if (I->GetOpcode() != LOAD) {
                 continue;
             }
@@ -54,6 +108,7 @@ void GlobalConstReplace(CFG *C) {
             }
 
             auto pointer = (GlobalOperand *)LoadI->GetPointer();
+            
             if (ConstGlobalMap.find(pointer->GetName()) != ConstGlobalMap.end()) {
                 VarAttribute val = ConstGlobalMap[pointer->GetName()];
                 if (val.type == Type::INT) {
@@ -63,6 +118,7 @@ void GlobalConstReplace(CFG *C) {
                     I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
                                                   new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
                 }
+                // I->PrintIR(std::cerr);   
             }
         }
     }
