@@ -4,8 +4,11 @@
 ## OverView
 
 ### Introduction to SysY (subset of C)
+
 supports int and float
+
 supports array of any dimensions
+
 supports while,for,if,else,break,continue
 
 you can see more details in lexer/SysY_lexer.l and parser/SysY_parser.y
@@ -16,10 +19,15 @@ see lib/sylib.c and lib/sylib.h
 ### Architecture of Compilers
 
 ## Prerequisites
+
 Clang 15.0+
+
 riscv64-unknown-linux-gnu-gcc 12.2+
+
 qemu-riscv64 7.0+
+
 flex 2.6+
+
 bison 3.8+
 
 ## Build Steps
