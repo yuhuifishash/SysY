@@ -769,6 +769,30 @@ void CompUnit_Decl::TypeCheck() {
         if (def->IsConst()) {
             ConstGlobalMap[def->GetName()->get_string()] = val;
         }
+
+        if (init == nullptr) { 
+            if (def->GetDims() != nullptr) {
+                int arraySz = 1;
+                for (auto d : val.dims) {
+                    arraySz *= d;
+                }
+                if(type_decl == Type::INT){
+                    val.type = Type::INT;
+                    val.IntInitVals.resize(arraySz,0);
+                }else if(type_decl == Type::FLOAT){
+                    val.type = Type::FLOAT;
+                    val.FloatInitVals.resize(arraySz,0);
+                }
+            }else{
+                if(type_decl == Type::INT){
+                    val.type = Type::INT;
+                    val.IntInitVals.resize(1,0);
+                }else if(type_decl == Type::FLOAT){
+                    val.type = Type::FLOAT;
+                    val.FloatInitVals.resize(1,0);
+                }
+            }
+        }
         StaticGlobalMap[def->GetName()->get_string()] = val;
         semant_table.GlobalTable[def->GetName()] = val;
 

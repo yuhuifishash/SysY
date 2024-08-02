@@ -161,7 +161,7 @@ int main(int argc, char **argv) {
     bool optimize_flag =
     (argc == 6 && (strcmp(argv[optimize_tag], "-O1") == 0 || strcmp(argv[optimize_tag], "-O2") == 0));
     if (optimize_flag) {
-        // llvmIR.PassExecutor(FindNoWriteStaticGlobal); //TODO()
+        // llvmIR.PassExecutor(FindNoWriteStaticGlobal);
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
         llvmIR.PassExecutor(TailRecursiveEliminate);
