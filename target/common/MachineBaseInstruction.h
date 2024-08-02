@@ -191,7 +191,7 @@ public:
 
 struct MachineBaseOperand {
     MachineDataType type;
-    enum { REG, IMMI, IMMF };
+    enum { REG, IMMI, IMMF, IMMD };
     int op_type;
     MachineBaseOperand(int op_type) : op_type(op_type) {}
     virtual std::string toString() = 0;
@@ -217,6 +217,11 @@ struct MachineImmediateFloat : public MachineBaseOperand {
     float fimm32;
     MachineImmediateFloat(float fimm32) : MachineBaseOperand(MachineBaseOperand::IMMF), fimm32(fimm32) {}
     std::string toString() { return std::to_string(fimm32); }
+};
+struct MachineImmediateDouble : public MachineBaseOperand {
+    double dimm64;
+    MachineImmediateDouble(double dimm64) : MachineBaseOperand(MachineBaseOperand::IMMD), dimm64(dimm64) {}
+    std::string toString() { return std::to_string(dimm64); }
 };
 
 struct Label {
