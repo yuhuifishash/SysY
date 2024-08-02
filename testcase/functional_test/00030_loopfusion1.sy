@@ -1,0 +1,23 @@
+const int maxn=1e6+5;
+int n,m;
+float f[maxn];
+int a[maxn],b[maxn];
+int main(){
+	n = getint();
+	@for(int i=1;i<=n;i=i+1){
+		a[i]=getint();
+	}
+	@for(int i=1;i<=n;i=i+1){
+		b[i]=getint();
+	}
+	@for(int i=1;i<=n;i=i+2){
+		float x = a[i];
+		float y = b[i+1];
+		f[i] = x/y;
+        if(a[i] == 0){
+            continue;
+        }
+		putf("%d %.4f\n",i,f[i]);
+	}
+	return 0;
+}

@@ -1,0 +1,46 @@
+int a[5] = {0,1,2,3,4};
+int b[5] = {4,3,2,1,0};
+int c[5][5];
+int d[5][5];
+int x = 10;
+int y = 5;
+void f(int aa[]){
+	aa[2] = getint();
+}
+void ff(int bb){
+	bb = getint();
+}
+void fff(int aa[][5]){
+	aa[1][2] = getint();
+}
+void ffff(int aa[]){
+	aa[2] = getint();
+}
+int main()
+{
+
+    starttime();
+
+    x = getint();
+    a[2] = getint();
+    f(b);
+	ff(y);
+	fff(c);
+	ffff(d[0]);
+
+	putint(x);
+	putch(10);
+	putint(y);
+	putch(10);
+	putarray(5,a);
+	putch(10);
+	putarray(5,b);
+	putch(10);
+	putarray(5,c[1]);
+	putch(10);
+	putarray(5,d[0]);
+
+    stoptime();
+	
+    return 0;
+}

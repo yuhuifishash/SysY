@@ -1,0 +1,41 @@
+int f[42][42][42][42],n,m,b[5],a[400],k;
+int max(int x,int y){
+	if(x > y){
+		return x;
+	}
+	return y;
+}
+int main()  
+{
+	n = getint();
+	m = getint();
+    @for(int i=1;i<=n;i=i+1){
+		a[i] = getint();
+	}
+    @for(int i=1;i<=m;i=i+1){
+		k = getint();  
+        b[k] = b[k] + 1;  
+    }   
+    int t;  
+    f[0][0][0][0]=a[1];  
+    @for(int l1=0;l1<=b[1];l1=l1+1)  
+       @for(int l2=0;l2<=b[2];l2=l2+1)  
+          @for(int l3=0;l3<=b[3];l3=l3+1)  
+            @for(int l4=0;l4<=b[4];l4=l4+1)  
+            {
+                t=l1+l2*2+l3*3+l4*4+1;  
+                if(l1!=0){
+					f[l1][l2][l3][l4]=max(f[l1][l2][l3][l4],f[l1-1][l2][l3][l4]+a[t]); 
+				}   
+                if(l2!=0){
+					f[l1][l2][l3][l4]=max(f[l1][l2][l3][l4],f[l1][l2-1][l3][l4]+a[t]); 
+				}   
+                if(l3!=0){
+					f[l1][l2][l3][l4]=max(f[l1][l2][l3][l4],f[l1][l2][l3-1][l4]+a[t]);  
+				}  
+                if(l4!=0){
+					f[l1][l2][l3][l4]=max(f[l1][l2][l3][l4],f[l1][l2][l3][l4-1]+a[t]);  
+				}  
+            }  
+    putf("%d",f[b[1]][b[2]][b[3]][b[4]]);    
+}
