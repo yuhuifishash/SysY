@@ -16,26 +16,6 @@ void FindNoWriteStaticGlobal(LLVMIR *IR) {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         for (auto [id, bb] : *cfg->block_map) {
             for (auto I : bb->Instruction_list) {
-                if(I->GetOpcode() == STORE){
-                    auto storeI = (StoreInstruction*)I;
-                    auto op = storeI->GetPointer();
-                    if (op->GetOperandType() == BasicOperand::GLOBAL) {
-                        auto gop = (GlobalOperand *)op;
-                        auto name = gop->GetName();
-                        if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
-                            // std::cerr<<name<<'\n';
-                            GlobalUsedSet.insert(name);
-                        }
-                        // I->PrintIR(std::cerr);
-                    }else if(op->GetOperandType() == BasicOperand::REG){
-                        auto regop = (RegOperand*)op;
-                        auto regopno = regop->GetRegNo();
-                        if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
-                            continue;
-                        }
-                        GlobalUsedSet.insert(GEPMap[regopno]);
-                    }
-                }
                 if(I->GetOpcode() == GETELEMENTPTR){
                     auto gepI = (GetElementptrInstruction*)I;
                     auto ptr = gepI->GetPtrVal();
@@ -45,6 +25,48 @@ void FindNoWriteStaticGlobal(LLVMIR *IR) {
                     auto gptr = (GlobalOperand*)ptr;
                     auto name = gptr->GetName();
                     GEPMap[gepI->GetResultRegNo()] = name;
+                }
+            }
+        }
+    }
+    for (auto [defI, cfg] : IR->llvm_cfg) {
+        for (auto [id, bb] : *cfg->block_map) {
+            for (auto I : bb->Instruction_list) {
+                if(I->GetOpcode() == STORE){
+                    auto storeI = (StoreInstruction*)I;
+                    auto op = storeI->GetPointer();
+                    if (op->GetOperandType() == BasicOperand::GLOBAL) {
+                        auto gop = (GlobalOperand *)op;
+                        auto name = gop->GetName();
+                        if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
+                            GlobalUsedSet.insert(name);
+                        }
+                    }else if(op->GetOperandType() == BasicOperand::REG){
+                        auto regop = (RegOperand*)op;
+                        auto regopno = regop->GetRegNo();
+                        if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
+                            continue;
+                        }
+                        GlobalUsedSet.insert(GEPMap[regopno]);
+                    }
+                }else if(I->GetOpcode() == CALL){
+                    auto callI = (CallInstruction*)I;
+                    for(auto [type,op]:callI->GetParameterList()){
+                        if (op->GetOperandType() == BasicOperand::GLOBAL) {
+                            auto gop = (GlobalOperand *)op;
+                            auto name = gop->GetName();
+                            if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
+                                GlobalUsedSet.insert(name);
+                            }
+                        }else if(op->GetOperandType() == BasicOperand::REG){
+                            auto regop = (RegOperand*)op;
+                            auto regopno = regop->GetRegNo();
+                            if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
+                                continue;
+                            }
+                            GlobalUsedSet.insert(GEPMap[regopno]);
+                        }
+                    }
                 }
             }
         }

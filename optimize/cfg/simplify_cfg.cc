@@ -350,7 +350,7 @@ void ArrayMinMaxRecognize(CFG *C) {
                 continue;
             }
             if (C->invG[bb1->block_id].size() > 1) {
-                puts("HERE");
+                // puts("HERE");
                 continue;
             }
             // bb->printIR(std::cerr);
