@@ -17,10 +17,7 @@ void RiscV64LowerCopy::Execute() {
                         auto dst_reg = (MachineRegister *)m_copy->GetDst();
                         auto mid_reg = function->GetNewReg(INT64);
 
-                        // auto li_instr = rvconstructor->ConstructUImm(RISCV_LI, dst_reg->reg, src_immi->imm32);
-                        // ins = li_instr;
                         it = block->erase(it);
-                        // block->insert(it, li_instr);
                         block->insert(it, rvconstructor->ConstructUImm(RISCV_LUI, mid_reg, src_immi->imm32 + 0x800));
                         block->insert(it, rvconstructor->ConstructIImm(RISCV_ADDI, dst_reg->reg, mid_reg,
                                                                        ((src_immi->imm32) << 20) >> 20));
@@ -34,15 +31,10 @@ void RiscV64LowerCopy::Execute() {
                             auto dst_reg = ((MachineRegister *)(m_copy)->GetDst())->reg;
                             auto src_reg = ((MachineRegister *)(m_copy)->GetSrc())->reg;
 
-                            // auto copy_addi_ins = rvconstructor->ConstructIImm(RISCV_ADDI, dst_reg, src_reg, 0);
                             auto copy_addi_ins =
                             rvconstructor->ConstructR(RISCV_ADD, dst_reg, src_reg, GetPhysicalReg(RISCV_x0));
-                            // ins = copy_addi_ins;
                             it = block->erase(it);
                             if (dst_reg == src_reg) {
-                                // std::string comment = "Elimated Self Copy ";
-                                // block->insert(it, rvconstructor->ConstructComment(comment +
-                                // RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
                             } else {
                                 block->insert(it, copy_addi_ins);
                             }
@@ -52,17 +44,9 @@ void RiscV64LowerCopy::Execute() {
                             auto dst_reg = ((MachineRegister *)(m_copy)->GetDst())->reg;
                             auto src_reg = ((MachineRegister *)(m_copy)->GetSrc())->reg;
 
-                            // auto load_x0_ins =
-                            // rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg, GetPhysicalReg(RISCV_x0));
-                            // auto copy = rvconstructor->ConstructR(RISCV_FADD_S, dst_reg, src_reg, dst_reg);
                             it = block->erase(it);
                             if (dst_reg == src_reg) {
-                                // std::string comment = "Elimated Self Copy ";
-                                // block->insert(it, rvconstructor->ConstructComment(comment +
-                                // RiscV64Registers[dst_reg.reg_no].name + std::string("\n")));
                             } else {
-                                // block->insert(it, load_x0_ins);
-                                // block->insert(it, copy);
                                 block->insert(it, rvconstructor->ConstructR2(RISCV_FMV_S, dst_reg, src_reg));
                             }
                             --it;
@@ -105,6 +89,23 @@ void RiscV64LowerFImmCopy::Execute() {
                             auto mid_reg = function->GetNewRegister(INT64.data_type, INT64.data_length);
                             block->insert(it, rvconstructor->ConstructCopyRegImmI(mid_reg, *(int *)&immf, INT64));
                             block->insert(it, rvconstructor->ConstructR2(RISCV_FMV_W_X, dst_reg->reg, mid_reg));
+                            --it;
+                        }
+                    } else if (m_copy->GetSrc()->op_type == MachineBaseOperand::IMMD) {
+                        ERROR("Never be used");
+                        auto src_immd = (MachineImmediateDouble *)m_copy->GetSrc();
+                        auto dst_reg = (MachineRegister *)m_copy->GetDst();
+                        auto immd = src_immd->dimm64;
+                        if (immd == 0.0) {
+                            it = block->erase(it);
+                            block->insert(
+                            it, rvconstructor->ConstructR2(RISCV_FMV_D_X, dst_reg->reg, GetPhysicalReg(RISCV_x0)));
+                            --it;
+                        } else {
+                            it = block->erase(it);
+                            auto mid_reg = function->GetNewRegister(INT64.data_type, INT64.data_length);
+                            // block->insert(it, rvconstructor->ConstructCopyRegImmI(mid_reg, ));
+                            // block->insert(it,);
                             --it;
                         }
                     }

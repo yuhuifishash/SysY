@@ -1154,13 +1154,10 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                     ERROR("Unexpected Operand type");
                 }
             } else {
-                // TODO("More than 8 parameters");
-                // Lazy("Not tested");
             }
             ireg_cnt++;
         } else if (type == FLOAT32) {
             if (freg_cnt < 8) {
-                // Lazy("Not tested");
                 if (arg_op->GetOperandType() == BasicOperand::REG) {
                     auto arg_regop = (RegOperand *)arg_op;
                     auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), FLOAT64);
@@ -1173,18 +1170,24 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                     auto arg_copy_instr =
                     rvconstructor->ConstructCopyRegImmF(GetPhysicalReg(RISCV_fa0 + freg_cnt), arg_imm, FLOAT64);
                     cur_block->push_back(arg_copy_instr);
-                    // auto imm_reg = GetNewReg(INT64);
-                    // cur_block->push_back(rvconstructor->ConstructCopyRegImmI(imm_reg, *(int *)&arg_imm, INT64));
-                    // cur_block->push_back(
-                    // rvconstructor->ConstructR2(RISCV_FMV_W_X, GetPhysicalReg(RISCV_fa0 + freg_cnt), imm_reg));
                 } else {
                     ERROR("Unexpected Operand type");
                 }
             } else {
-                // TODO("More than 8 parameters");
-                // Lazy("Not tested");
             }
             freg_cnt++;
+        } else if (type == DOUBLE) {
+            if (ireg_cnt < 8) {
+                if (arg_op->GetOperandType() == BasicOperand::REG) {
+                    auto arg_regop = (RegOperand *)arg_op;
+                    auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), FLOAT64);
+                    cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_X_D, GetPhysicalReg(RISCV_a0 + ireg_cnt), arg_reg));
+                } else {
+                    ERROR("Unexpected Operand Type");
+                }
+            } else {
+            }
+            ireg_cnt++;
         } else {
             ERROR("Unexpected parameter type %d", type);
         }
@@ -1260,6 +1263,20 @@ template <> void RiscV64Selector::ConvertAndAppend<CallInstruction *>(CallInstru
                     arg_off += 8;
                 }
                 freg_cnt++;
+            } else if (type == DOUBLE) {
+                if (ireg_cnt < 8) {
+                } else {
+                    if (arg_op->GetOperandType() == BasicOperand::REG) {
+                        auto arg_regop = (RegOperand *)arg_op;
+                        auto arg_reg = GetllvmReg(arg_regop->GetRegNo(), FLOAT64);
+                        cur_block->push_back(
+                        rvconstructor->ConstructSImm(RISCV_FSD, arg_reg, GetPhysicalReg(RISCV_sp), arg_off));
+                    } else {
+                        ERROR("Unexpected Operand type");
+                    }
+                    arg_off += 8;
+                }
+                ireg_cnt++;
             } else {
                 ERROR("Unexpected parameter type %d", type);
             }
@@ -1397,6 +1414,23 @@ template <> void RiscV64Selector::ConvertAndAppend<SitofpInstruction *>(SitofpIn
         rvconstructor->ConstructR2(RISCV_FCVT_S_W, GetllvmReg(dst_op->GetRegNo(), FLOAT64), inter_reg));
     } else {
         ERROR("Unexpected Sitofp src type");
+    }
+}
+
+template <> void RiscV64Selector::ConvertAndAppend<FpextInstruction *>(FpextInstruction *ins) {
+    auto src_op= ins->GetSrc();
+    Assert(ins->GetResultReg()->GetOperandType() == BasicOperand::REG);
+    auto dst_op = (RegOperand *)ins->GetResultReg();
+    if (src_op->GetOperandType() == BasicOperand::REG) {
+        auto regf = (RegOperand *)src_op;
+        cur_block->push_back(rvconstructor->ConstructR2(RISCV_FCVT_D_S, GetllvmReg(dst_op->GetRegNo(), FLOAT64), GetllvmReg(regf->GetRegNo(), FLOAT64)));
+    } else if (src_op->GetOperandType() == BasicOperand::IMMF32) {
+        auto immf = (ImmF32Operand *)src_op;
+        auto mid_reg = GetNewReg(FLOAT64);
+        cur_block->push_back(rvconstructor->ConstructCopyRegImmF(mid_reg, immf->GetFloatVal(), FLOAT64));
+        cur_block->push_back(rvconstructor->ConstructR2(RISCV_FCVT_D_S, GetllvmReg(dst_op->GetRegNo(), FLOAT64), mid_reg));
+    } else {
+        ERROR("Unexpected Fpext src type");
     }
 }
 
@@ -1894,6 +1928,9 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
         break;
     case SITOFP:
         ConvertAndAppend<SitofpInstruction *>((SitofpInstruction *)inst);
+        break;
+    case FPEXT:
+        ConvertAndAppend<FpextInstruction *>((FpextInstruction *)inst);
         break;
     case GETELEMENTPTR:
         ConvertAndAppend<GetElementptrInstruction *>((GetElementptrInstruction *)inst);

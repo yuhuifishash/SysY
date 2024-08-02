@@ -155,6 +155,8 @@ enum {
     RISCV_MAX,
     RISCV_MINU,
     RISCV_MAXU,
+
+    RISCV_FCVT_D_S,
 };
 
 struct RvOpInfo {
@@ -622,6 +624,15 @@ public:
 
         MachineCopyInstruction *ret =
         new MachineCopyInstruction(new MachineImmediateFloat(src), new MachineRegister(dst), type);
+        ret->SetNoSchedule(no_schedule);
+        return ret;
+    }
+    MachineCopyInstruction *ConstructCopyRegImmF64(Register dst, double src, MachineDataType type) {
+        Assert(dst.type == type);
+        Assert(type.data_type == MachineDataType::FLOAT);
+
+        MachineCopyInstruction *ret =
+        new MachineCopyInstruction(new MachineImmediateDouble(src), new MachineRegister(dst), type);
         ret->SetNoSchedule(no_schedule);
         return ret;
     }

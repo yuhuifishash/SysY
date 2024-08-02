@@ -928,7 +928,7 @@ private:
 public:
     FpextInstruction(Operand result_receiver, Operand value_for_cast)
         : result(result_receiver), value(value_for_cast) {
-        this->opcode = FPTOSI;
+        this->opcode = FPEXT;
     }
     virtual LLVMType GetResultType() { return I32; }
     Operand GetResultReg() { return result; }

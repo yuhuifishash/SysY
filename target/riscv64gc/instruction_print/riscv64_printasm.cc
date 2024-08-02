@@ -359,8 +359,8 @@ void RiscV64Printer::emit() {
             }
         } else if (global->GetOpcode() == GLOBAL_STR) {
             auto str_ins = (GlobalStringConstInstruction *)global;
-            TODO("GLOBAL STR CONST");
-            Lazy("Not tested");
+            // Log("Here");
+			s << str_ins->str_name << ":\n";
             s << "\t.asciz\t"
               << "\"" << str_ins->str_val << "\""
               << "\n";
