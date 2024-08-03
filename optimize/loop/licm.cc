@@ -31,8 +31,6 @@ bool isCallInvariant(CFG *C, Instruction I, NaturalLoop *L, std::vector<Instruct
         return false;    // write memory or IO, we can not motion
     }
 
-    // TODO(): if the call instructions may throw exceptions, it must dominate all the exitBB
-
     auto ReadPtrs = alias_analyser->GetReadPtrs(targetcfg);
 
     // Get real read pointers

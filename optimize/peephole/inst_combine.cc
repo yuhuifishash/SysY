@@ -127,10 +127,24 @@ bool EliminateSubEq(Instruction a, Instruction b) {
     TODO("EliminateSubEq");
     return false;
 }
-static const int maxINT = 2147483647;
+
+
 // TODO():
+// c1 > 0 && c2 > 0
+// if(%r / c1 > c2) => if(%r > (c2+1)*c1-1) 
+// if(%r / c1 >= c2) => ...
+// if(%r / c1 < c2) => ...
+// if(%r / c1 >= c2) => ...
+// the result can not overflow
+bool EliminateConstDivIcmp(Instruction a, Instruction b) {
+    TODO("EliminateConstDivIcmp");
+    return false;
+}
+
+
 // %r = a / c1 / c2  ->  %r = a / (c1*c2)
 // c1*c2 can not overflow (range of int32_t)
+static const int maxINT = 2147483647;
 bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     // a->PrintIR(std::cerr);
     // b->PrintIR(std::cerr);
@@ -173,7 +187,6 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     return true;
 }
 
-// TODO():
 /*
     %6 = srem i32 %0, 2
     %7 = icmp eq i32 %6, 0

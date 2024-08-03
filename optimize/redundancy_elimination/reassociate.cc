@@ -1,5 +1,5 @@
 #include "../../include/cfg.h"
-// TODO():NaryReassociate
+// TODO():Reassociate
 
 /*
 int t1 = a + b;
@@ -18,7 +18,7 @@ an expression is computed before, we need to store each instruction seen.
 
 we need to run multiple iterations
 
-we only consider add and mul.
+we only consider add.
 */
 
 // reference: LLVM  lib/Transforms/Scalar/NaryReassociate.cpp
