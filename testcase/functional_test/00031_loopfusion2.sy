@@ -1,0 +1,21 @@
+const int maxn=1e6+5;
+int n,m;
+int f[maxn];
+int a[maxn],b[maxn];
+int main(){
+	n = getint();
+	@for(int i=1;i<=n;i=i+1){
+		a[i]=i;
+	}
+	@for(int i=1;i<=n;i=i+1){
+		b[i]=i*2-1;
+	}
+	@for(int i=1;i<=n;i=i+1){
+		@for(int j=1;j<=n;j=j+1){
+			f[i] = f[i] + a[i] * b[j];
+		}
+		f[i] = f[i] - a[i] - b[i];
+		putf("%d\n",f[i]);
+	}
+	return 0;
+}

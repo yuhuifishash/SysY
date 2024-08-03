@@ -1,0 +1,39 @@
+const int maxn=1e4+5;
+int n,m;
+int f[maxn],g[1000][1000];
+int a[maxn],b[maxn],c[maxn],d[maxn];
+int main(){
+	n = getint();
+	@for(int i=1;i<=n;i=i+1){
+		c[i]=i+1;
+		f[i]=0;
+	}
+	@for(int i=1;i<=n;i=i+1){
+		d[i]=i*2+1;
+		g[i][0]=d[i];
+	}
+	@for(int i=1;i<=n;i=i+1){
+		f[i]=g[i][0];
+		@for(int j=1;j<=n;j=j+1){
+			f[i] = f[i] + g[i][j];
+			@for(int k=1;k<=i;k=k+1){
+				g[i][j]=g[i][j] + c[i] + d[j] + c[k] + d[k];
+			}
+		}
+		f[i] = f[i] + c[i+1] * d[i];
+		@for(int j=1;j<=n;j=j+1){
+			f[i]=f[i] + g[i][j-1];
+		}
+		@for(int j=1;j<=i;j=j+1){
+			f[j]=f[i] - g[i][j-1];
+		}
+		@for(int j=1;j<=n;j=j+1){
+			g[i][j]=f[j];
+		}
+		@for(int j=1;j<=n;j=j+1){
+			putf("%d ",f[j]);
+		}
+		putf("\n");
+	}
+	return 0;
+}
