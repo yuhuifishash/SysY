@@ -145,9 +145,66 @@ void GlobalConstReplace(CFG *C) {
     }
 }
 
-// TODO():EliminateSimpleConstArrayValue
 // GEPindex is const and ArrayDefine is const, we need not to load.
-void EliminateSimpleConstArrayValue(CFG *C) { TODO("EliminateSimpleConstArrayValue"); }
+void EliminateSimpleConstArrayValue(CFG *C) { 
+    std::map<int,Operand> GEPMap;
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            if(I->GetOpcode() != GETELEMENTPTR){
+                continue;
+            }
+            auto gepI = (GetElementptrInstruction*)I;
+            auto ptrop = gepI->GetPtrVal();
+            if(ptrop->GetOperandType()!=BasicOperand::GLOBAL){
+                continue;
+            }
+            auto gop = (GlobalOperand*)ptrop;
+            if(ConstGlobalMap.find(gop->GetName())==ConstGlobalMap.end()){
+                continue;
+            }
+            auto [num,siz] = gepI->GetConstIndexes();
+            if(siz != 1){
+                continue;
+            }
+            auto constvar = ConstGlobalMap[gop->GetName()];
+            if(constvar.type == Type::INT){
+                auto constnum = constvar.IntInitVals.at(num);
+                GEPMap[gepI->GetResultRegNo()]=new ImmI32Operand(constnum);
+            }else if(constvar.type == Type::FLOAT){
+                auto constnum = constvar.FloatInitVals.at(num);
+                GEPMap[gepI->GetResultRegNo()]=new ImmF32Operand(constnum);
+            }
+            
+            // std::cerr<<num<<' '<<siz<<" "<<constnum<<'\n';
+        }
+    }
+    for (auto [id, bb] : *C->block_map) {
+        for (auto &I : bb->Instruction_list) {
+            if(I->GetOpcode() != LOAD){
+                continue;
+            }
+            auto loadI = (LoadInstruction*)I;
+            auto ptrop = loadI->GetPointer();
+            if(ptrop->GetOperandType()!=BasicOperand::REG){
+                continue;
+            }
+            auto ptrreg = (RegOperand*)ptrop;
+            auto ptrno = ptrreg->GetRegNo();
+            if(GEPMap.find(ptrno) == GEPMap.end()){
+                continue;
+            }
+            auto op = GEPMap[ptrno];
+            if(op->GetOperandType() == BasicOperand::IMMI32){
+                I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), op,
+                                                  loadI->GetResultReg());
+            }else if(op->GetOperandType() == BasicOperand::IMMF32){
+                I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
+                                                  op, loadI->GetResultReg());
+            }
+                  
+        }
+    }
+}
 
 /**
  * this function will eliminate getelementptr instruction with empty index
