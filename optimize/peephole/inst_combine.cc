@@ -132,7 +132,6 @@ static const int maxINT = 2147483647;
 // %r = a / c1 / c2  ->  %r = a / (c1*c2)
 // c1*c2 can not overflow (range of int32_t)
 bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
-    // TODO("EliminateDoubleConstDiv");
     // a->PrintIR(std::cerr);
     // b->PrintIR(std::cerr);
     if (a->GetOpcode() != DIV || b->GetOpcode() != DIV) {
@@ -189,7 +188,6 @@ if(n%2 != 0)
 */
 bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
                           std::deque<Instruction>::iterator insertit) {
-    // TODO("EliminateDoubleConstDiv");
     if (a->GetOpcode() != MOD || b->GetOpcode() != ICMP) {
         return false;
     }

@@ -7,10 +7,8 @@
 extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
 
-// TODO():FindNoWriteStaticGlobal
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
 void FindNoWriteStaticGlobal(LLVMIR *IR) { 
-    // TODO("FindNoWriteStaticGlobal"); 
     std::set<std::string> GlobalUsedSet;
     std::map<int,std::string> GEPMap;
     for (auto [defI, cfg] : IR->llvm_cfg) {
