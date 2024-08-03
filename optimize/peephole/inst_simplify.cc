@@ -340,6 +340,17 @@ void I32ConstantSimplify(Instruction I) {
             ArithI->SwapOperand();
         }
     }
+    if (I->GetOpcode() == ICMP) {
+        auto IcmpI = (IcmpInstruction*)I;
+        if(IcmpI->GetCompareCondition() == eq || IcmpI->GetCompareCondition() == ne){
+            if(IcmpI->GetOp1()->GetOperandType() == BasicOperand::IMMI32) {
+                auto op1 = IcmpI->GetOp1();
+                auto op2 = IcmpI->GetOp2();
+                IcmpI->SetOp1(op2);
+                IcmpI->SetOp2(op1);
+            }
+        }
+    }
 }
 
 /*
