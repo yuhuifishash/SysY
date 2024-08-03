@@ -1,0 +1,26 @@
+const int is1 = 1;
+const int is0 = 0;
+const int isnt1 = 3;
+const int isnt0 = 2;
+int main() {
+	int n;
+	n=getint();
+	@for(int i=0;i<n;i=i+1){
+		int x;
+		x=getint();
+		if(x%2==1){
+			putf("%d\n",is1);
+		}
+		if(x%2==0){
+			putf("%d\n",is0);
+		}
+		if(x%2!=1){
+			putf("%d\n",isnt1);
+		}
+		if(x%2!=0){
+			putf("%d\n",isnt0);
+		}
+	}
+	
+    return 0;
+}

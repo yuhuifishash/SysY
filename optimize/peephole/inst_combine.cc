@@ -215,17 +215,21 @@ bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instr
     if (modInum != 2) {
         return false;
     }
-    if (icmpInum != 0 && icmpInum != 1) {
-        return false;
+    
+    if(icmpInum == 0){
+        auto newop = GetNewRegOperand(++C->max_reg);
+        auto newandI = new ArithmeticInstruction(BITAND, I32, modIop1, new ImmI32Operand(1), newop);
+        InstList.insert(insertit, newandI);
+        icmpI->SetOp1(newop);
+        // newandI->PrintIR(std::cerr);
+        return true;
+    }else if(icmpInum == 1){
+        auto newop = GetNewRegOperand(++C->max_reg);
+        auto newandI = new ArithmeticInstruction(BITAND, I32, modIop1, new ImmI32Operand(-2147483647), newop);
+        InstList.insert(insertit, newandI);
+        icmpI->SetOp1(newop);
+        // newandI->PrintIR(std::cerr);
+        return true;
     }
-    auto newop = GetNewRegOperand(++C->max_reg);
-    auto newandI = new ArithmeticInstruction(BITAND, I32, modIop1, new ImmI32Operand(1), newop);
-    InstList.insert(insertit, newandI);
-    icmpI->SetOp1(newop);
-    // a->PrintIR(std::cerr);
-    // newandI->PrintIR(std::cerr);
-    // b->PrintIR(std::cerr);
-    // puts("-----------");
-    // auto bb =
-    return true;
+    return false;
 }

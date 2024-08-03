@@ -1,0 +1,111 @@
+int a[50], b[50], c[50], d[10];
+int main() {
+    int n = 8, m = 5;
+    
+    @for(int i=0;i<n*m;i=i+1){
+		a[i]=getint();
+		b[i]=getint();
+		c[i]=getint();
+    }
+    @for(int i=0;i<n;i=i+1){
+        d[i] = a[i]+b[i+n]+c[i+2*n];
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        a[i] = b[i] + 1;
+    }
+    
+    @for(int i=0;i<n;i=i+1){
+        c[i] = a[i] * 2;
+    }
+
+	@for(int i=0;i<n;i=i+1){
+        putf("%d %d %d %d\n",i,a[i],i,c[i]);
+    }
+
+	@for(int i=0;i<n;i=i+1){
+        a[i] = b[i] + 1;
+    }
+    d[3] = a[5]*c[1];
+    @for(int i=0;i<n;i=i+1){
+        c[i] = a[i] * 2;
+    }
+	@for(int i=0;i<n;i=i+1){
+        putf("%d %d %d %d\n",i,a[i],i,c[i]);
+    }
+
+	@for(int i=0;i<n;i=i+1){
+        a[i] = b[i] + 1;
+    }
+    a[1] = d[1];
+    @for(int i=0;i<n;i=i+1){
+        c[i] = a[i] * 2;
+    }
+	@for(int i=0;i<n;i=i+1){
+        putf("%d %d %d %d\n",i,a[i],i,c[i]);
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        a[i] = b[i] + d[i];
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        b[i] = c[i] * 2 + 5;
+    }
+	@for(int i=0;i<n;i=i+1){
+        putf("%d %d %d %d\n",i,a[i],i,b[i]);
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        a[i] = b[i] + 1;
+    }
+
+    @for(int i=0;i<m;i=i+1){
+        c[i] = a[i] * 2;
+    }
+	@for(int i=0;i<n;i=i+1){
+        if(i<m) {
+            putf("%d %d %d %d\n",i,a[i],i,c[i]);
+        } else {
+            putf("%d %d\n",i,a[i]);
+        }
+    }
+	@for(int i=0;i<n;i=i+1){
+        putf("%d %d %d %d\n",i,a[i],i,c[i]);
+    }
+    @for(int i=0;i<n;i=i+1){
+        @for(int j=0;j<m;j=j+1){
+            a[i * m + j] = b[i * m + j] + 1;
+        }
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        d[i] = c[i] * 2;
+    }
+	@for(int i=0;i<n;i=i+1) {
+        @for(int j=0;j<m;j=j+1) {
+            putf("%d %d %d\n",i,j,a[i * m + j]);
+        }
+        putf("%d %d\n",i,d[i]);
+    }
+
+    @for (int i=0;i<n;i=i+1){
+        @for(int j=0;j<m;j=j+1){
+            a[i * m + j] = b[i * m + j] + 1;
+        }
+    }
+
+    @for (int i=0;i<n;i=i+1){
+        @for(int j=0;j<m;j=j+1){
+            c[i * m + j] = a[i * m + j] * 2;
+        }
+    }
+
+    @for(int i=0;i<n;i=i+1){
+        @for(int j=0;j<m;j=j+1){
+            putf("%d %d %d %d\n", i, j, a[i * m + j],c[i * m + j]);
+        }
+    }
+
+    return 0;
+}

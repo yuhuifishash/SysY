@@ -1,0 +1,169 @@
+const int mod1=14514;
+const int mod2=9982;
+const int mod3=4415;
+const int maxn=3e5;
+int a[maxn],b[maxn],c[maxn],d[maxn],e[maxn];
+void loop_fusion_example(int p, int q, int r, int s, int t) {
+    @for(int i=0;i<p;i=i+1) {
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                @for(int l=0;l<s;l=l+1) {
+                    a[(i * q * r * s) + (j * r * s) + (k * s) + l]=(b[(i * q * r * s) + (j * r * s) + (k * s) + l] + 1)%mod1;
+                }
+            }
+        }
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                @for(int l=0;l<s;l=l+1) {
+                    c[(i * q * r * s) + (j * r * s) + (k * s) + l]=(c[(i * q * r * s) + (j * r * s) + (k * s) + l]+a[(i * q * r * s) + (j * r * s) + (k * s) + l] * 2)%mod1;
+                }
+            }
+        }
+
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                d[(i * q * r) + (j * r) + k]=(d[(i * q * r) + (j * r) + k] + b[(i * q * r) + (j * r) + k] + 3)%mod1;
+            }
+        }
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                e[(i * q * r) + (j * r) + k]=(e[(i * q * r) + (j * r) + k] + d[(i * q * r) + (j * r) + k] * 2)%mod1;
+            }
+        }
+
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                a[(i * q * r) + (j * r) + k]=(a[(i * q * r) + (j * r) + k] + b[(i * q * r) + (j * r) + k] + 4)%mod1;
+            }
+        }
+        @for(int j=0;j<q;j=j+1) {
+            @for(int k=0;k<r;k=k+1) {
+                c[(i * q * r) + (j * r) + k]=(c[(i * q * r) + (j * r) + k]+a[(i * q * r) + (j * r) + k] * 2)%mod1;
+            }
+        }
+    }
+
+    @for(int i=0;i<q;i=i+1) {
+        @for(int j=0;j<r;j=j+1) {
+            @for(int k=0;k<s;k=k+1) {
+                @for(int l=0;l<t;l=l+1) {
+                    b[(i * r * s * t) + (j * s * t) + (k * t) + l]=(b[(i * r * s * t) + (j * s * t) + (k * t) + l] + a[(i * r * s * t) + (j * s * t) + (k * t) + l] + 1)%mod2;
+                }
+            }
+        }
+        @for(int j=0;j<r;j=j+1) {
+            @for(int k=0;k<s;k=k+1) {
+                @for(int l=0;l<t;l=l+1) {
+                    c[(i * r * s * t) + (j * s * t) + (k * t) + l]=(c[(i * r * s * t) + (j * s * t) + (k * t) + l]+b[(i * r * s * t) + (j * s * t) + (k * t) + l] * 2)%mod2;
+                }
+            }
+        }
+
+        @for(int j=0;j<r;j=j+1) {
+            @for(int k=0;k<s;k=k+1) {
+                d[(i * r * s) + (j * s) + k]=(d[(i * r * s) + (j * s) + k]+a[(i * r * s) + (j * s) + k] + 3)%mod3;
+            }
+        }
+        @for(int j=0;j<r;j=j+1) {
+            @for(int k=0;k<s;k=k+1) {
+                e[(i * r * s) + (j * s) + k]=(e[(i * r * s) + (j * s) + k]+d[(i * r * s) + (j * s) + k] * 2)%mod3;
+            }
+        }
+    }
+
+    @for(int i=0;i<r;i=i+1) {
+        @for(int j=0;j<s;j=j+1) {
+            @for(int k=0;k<t;k=k+1) {
+                a[(i * s * t) + (j * t) + k]=b[(i * s * t) + (j * t) + k] + 5;
+            }
+        }
+        @for(int j=0;j<s;j=j+1) {
+            @for(int k=0;k<t;k=k+1) {
+                c[(i * s * t) + (j * t) + k]=a[(i * s * t) + (j * t) + k] * 2;
+            }
+        }
+        @for(int j=0;j<s;j=j+1) {
+            @for(int k=0;k<t;k=k+1) {
+                putf("%d %d\n", a[(i * s * t) + (j * t) + k], c[(i * s * t) + (j * t) + k]);
+            }
+        }
+    }
+
+    @for(int i=0;i<s;i=i+1) {
+        @for(int j=0;j<t;j=j+1) {
+            @for(int k=0;k<p;k=k+1) {
+                @for(int l=0;l<q;l=l+1) {
+                    d[(i * t * p * q) + (j * p * q) + (k * q) + l]=(d[(i * t * p * q) + (j * p * q) + (k * q) + l]+b[(i * t * p * q) + (j * p * q) + (k * q) + l] + 7)%mod2;
+                }
+            }
+        }
+        @for(int j=0;j<t;j=j+1) {
+            @for(int k=0;k<p;k=k+1) {
+                @for(int l=0;l<q;l=l+1) {
+                    e[(i * t * p * q) + (j * p * q) + (k * q) + l]=(e[(i * t * p * q) + (j * p * q) + (k * q) + l]+d[(i * t * p * q) + (j * p * q) + (k * q) + l] * 2)%mod2;
+                }
+            }
+        }
+
+        @for(int j=0;j<t;j=j+1) {
+            @for(int k=0;k<p;k=k+1) {
+                a[(i * t * p) + (j * p) + k]=b[(i * t * p) + (j * p) + k] + 8;
+            }
+        }
+        @for(int j=0;j<t;j=j+1) {
+            @for(int k=0;k<p;k=k+1) {
+                c[(i * t * p) + (j * p) + k]=a[(i * t * p) + (j * p) + k] * 2;
+            }
+        }
+        @for(int j=0;j<t;j=j+1) {
+            @for(int k=0;k<p;k=k+1) {
+                putf("%d %d\n", a[(i * t * p) + (j * p) + k], c[(i * t * p) + (j * p) + k]);
+            }
+        }
+    }
+
+    @for(int i=0;i<t;i=i+1) {
+        @for(int j=0;j<p;j=j+1) {
+            @for(int k=0;k<q;k=k+1) {
+                @for(int l=0;l<r;l=l+1) {
+                    @for(int m=0;m<s;m=m+1) {
+                        b[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m]=a[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m] + 10;
+                    }
+                }
+            }
+        }
+        @for(int j=0;j<p;j=j+1) {
+            @for(int k=0;k<q;k=k+1) {
+                @for(int l=0;l<r;l=l+1) {
+                    @for(int m=0;m<s;m=m+1) {
+                        c[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m]=b[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m] * 2;
+                    }
+                }
+            }
+        }
+        @for(int j=0;j<p;j=j+1) {
+            @for(int k=0;k<q;k=k+1) {
+                @for(int l=0;l<r;l=l+1) {
+                    @for(int m=0;m<s;m=m+1) {
+                        putf("%d %d %d %d\n", a[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m], b[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m], c[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m], d[(i * p * q * r * s) + (j * q * r * s) + (k * r * s) + (l * s) + m]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int p=10, q=10, r=10, s=10, t=10;
+    int size=p * q * r * s * t;
+    @for(int i=0;i<size;i=i+1) {
+		a[i]=getint();
+		b[i]=getint();
+		c[i]=getint();
+		d[i]=getint();
+		e[i]=getint();
+    }
+
+    loop_fusion_example(p, q, r, s, t);
+    return 0;
+}
