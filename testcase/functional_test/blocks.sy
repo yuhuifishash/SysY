@@ -1,0 +1,108 @@
+const int MAXN=1e3+5,N=1e3+5,SQRTN=1e2+5,M=1e3+5;
+int n,m,L[MAXN],R[MAXN],a[N],ans[M];
+int st[MAXN],fa[MAXN],size[MAXN],rev[MAXN],maxn,tag_dec;
+int ql[M],qr[M],qx[M],op[M],len;
+int get(int x){
+    if(fa[x] == x){
+        return x;
+    }else{
+        fa[x] = get(fa[x]);
+        return fa[x];
+    }
+    //return fa[x]==x ? x : fa[x]=get(fa[x]);
+}
+int min(int a,int b)
+{
+    if(a < b){
+        return a;
+    }
+    return b;
+}
+int max(int a,int b)
+{
+    if(a < b){
+        return b;
+    }
+    return a;
+}
+int gt(int a,int b)
+{
+    if(a > b){
+        return 1;
+    }
+    return 0;
+}
+void merge(int x,int y){
+  if(st[y]){fa[st[x]]=st[y];}
+  else{st[y]=st[x];rev[st[y]]=y;}
+  size[y]=size[y]+size[x];st[x]=0;size[x]=0;
+}
+void pre_build(){
+  len=n/3;
+  @for( int i=1;i<=len;i=i+1){L[i]=(i-1)*len+1;R[i]=i*len;}
+  if(R[len]<n){len=len+1;L[len]=R[len-1]+1;R[len]=n;}
+}
+void build_each(int num){
+  maxn=0;tag_dec=0;
+  @for( int i=L[num];i<=R[num];i=i+1){
+    maxn=max(maxn,a[i]);
+    if(st[a[i]]){fa[i]=st[a[i]];}
+    else{st[a[i]]=i;fa[i]=i;rev[i]=a[i];}
+    size[a[i]]=size[a[i]]+1;
+  }
+}
+void modify(int x){
+  if(maxn-tag_dec>=x*2){
+    @for( int i=tag_dec+1;i<=tag_dec+x;i=i+1){if(st[i]){merge(i,x+i);}}
+    tag_dec=tag_dec+x;
+  }
+  else{
+    @for( int i=x+tag_dec+1;i<=maxn;i=i+1){if(st[i]){merge(i,i-x);}}
+    maxn=min(maxn,tag_dec+x);
+  }
+}
+void rebuild(int num,int queryl,int queryr,int x){
+  @for( int i=L[num];i<=R[num];i=i+1){
+    a[i]=rev[get(i)];
+    st[a[i]]=0;size[a[i]]=0;
+    a[i]=a[i]-tag_dec;
+  }
+  @for( int i=L[num];i<=R[num];i=i+1){rev[i]=0;}
+  int lim=min(queryr,R[num]);
+  int liml=max(L[num],queryl);
+  @for( int i=liml;i<=lim;i=i+1){a[i]=a[i]-gt(a[i],x)*x;}
+  build_each(num);
+}
+void query(int num,int querynum){
+  int x=qx[querynum],queryr=qr[querynum],queryl=ql[querynum];
+  if(x+tag_dec>5e5){return;}
+  if(queryl<=L[num]&&R[num]<=queryr){ans[querynum]=ans[querynum]+size[x+tag_dec];}
+  else{
+    int lim=min(queryr,R[num]);
+    int liml=max(queryl,L[num]);
+    @for(int i=liml;i<=lim;i=i+1){if(rev[get(i)]==x+tag_dec){ans[querynum] = ans[querynum] + 1;}}
+  }
+}
+int main(){
+  n=getint();m=getint();
+  @for( int i=1;i<=n;i=i+1){a[i]=getint();}
+  pre_build();
+  @for( int i=1;i<=m;i=i+1){op[i]=getint();ql[i]=getint();qr[i]=getint();qx[i]=getint();}
+  @for( int i=1;i<=len;i=i+1){
+    @for(int j=0;j<MAXN;j=j+1){
+        st[j]=0;
+        size[j]=0;
+    }
+    build_each(i);
+    @for( int j=1;j<=m;j=j+1){
+      if(qr[j]<L[i]||ql[j]>R[i]){continue;}
+      if(op[j]==1){
+        if(L[i]>=ql[j]&&R[i]<=qr[j]){modify(qx[j]);}
+        else{rebuild(i,ql[j],qr[j],qx[j]);}
+      }
+      else{query(i,j);}
+    }
+  }
+  @for(int i=1;i<=m;i=i+1){if(op[i]==2){putint(ans[i]);putch(10);}}
+  return 0;
+}

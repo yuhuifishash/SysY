@@ -1,0 +1,42 @@
+int A[100]={};
+int main()
+{
+	int k = 0;
+	while(k < 100){
+		A[k] = k*k;
+		k = k + 3;
+	}
+	int T = getint();
+	int n = getint();
+	while(T){
+		T = T - 1;
+		int a = getint();
+		int b = getint();
+		int c = getint();//c must < 1300
+		int S = 0;
+        int i = 0;
+		while(i < n){
+			S = S + (a*b*b);
+			if(b != 0){
+				S = S + a/b*b*3*b*2;
+			}
+			if(a != 0 && b != 0){
+				S = S + a*3/(2*a*b);
+			}
+			S = S + A[c/13];
+			if(a == 0){
+				i = i + 1;
+				continue;
+			}
+			if(c < 100){
+				S = S + A[c];
+			}
+			S = S + 5*b/2/a;
+			i = i + 1;
+		}
+		putint(S);
+		putch(10);
+	}
+	putarray(100,A);
+	return 0;
+}
