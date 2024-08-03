@@ -193,7 +193,6 @@ void EliminateEmptyIndexGEP(CFG *C) {
     // std::cerr<<"EliminateEmptyIndexGEP is not implemented now\n";
 }
 
-// TODO():SrcEqResultInstEliminate
 /*eliminate the instructions like
 %rx = %ry + 0(replace all the use of %rx with %ry) %ry can be i32 or float
 %rx = %ry - 0(replace all the use of %rx with %ry) %ry can be i32 or float
@@ -203,7 +202,6 @@ void EliminateEmptyIndexGEP(CFG *C) {
 I->ReplaceRegByMap(), I->GetNonResultOperands(), I->SetNonResultOperands() is Useful
 */
 void SrcEqResultInstEliminate(CFG *C) {
-    // TODO("SrcEqResultInstEliminate");
     std::map<int, int> UnionFindMap;
     std::set<Instruction> EraseSet;
     std::function<int(int)> UnionFind = [&](int RegToFindNo) -> int {
@@ -385,7 +383,6 @@ void InstSimplify(CFG *C) {
     SrcEqResultInstEliminate(C);
 }
 
-// TODO():GEPStrengthReduce
 /*
 the implementation is very trivial, only dfs the DomTree
 
