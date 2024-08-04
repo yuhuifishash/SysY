@@ -1,0 +1,120 @@
+int A[105] = {};
+int B[105][105] = {};
+int C[5][5][5][105] = {};
+int D[3][4][3][4][105] = {};
+int E[3][105][4][5] = {};
+int F[105][8][105] = {};
+int H[105][8][105] = {};
+int main()
+{
+	int s1 = getint();
+	int s2 = getint();
+	int s3 = getint();
+	int s4 = getint();
+	int n = getint();
+	@for(int i = 0;i < n; i=i+1){
+		A[i] = -1;
+	}
+	@for(int i = 0;i < n; i=i+1){
+		B[3][i] = -1;
+	}
+	@for(int i = 0; i < n; i=i+1){
+		B[s1][i] = -1;
+	}
+	@for(int i = 0; i < n; i=i+1){
+		C[s1][s2][s3][i] = -1;
+	}
+	@for(int i = 0; i < n; i=i+1){
+		C[3][2][4][i] = -1;
+	}
+	@for(int i = 0; i < n; i=i+1){
+		D[2][2][1][1][i] = -1;
+	}
+	@for(int i=0; i < n; i=i+1){
+		D[s1][s2][s3][s4][i] = -1;
+	}
+
+	@for(int i=0;i < n; i=i+5){
+		@for(int j=0;j<n;j=j+1){
+			F[i][i%8][j] = -1;
+		}
+		@for(int j=0;j<n;j=j+1){
+			F[i+1][i%8][j] = -1;
+		}
+		@for(int j=0;j<8;j=j+1){
+			@for(int k=0;k<n;k=k+1){
+				H[i][j][k] = -1;
+			}
+			H[i][j][0] = 0;
+		}
+	}
+
+	@for(int i=0; i < n; i=i+1){
+		E[0][i][0][0] = -1;
+	}
+
+	int S_1 = 0;
+	putarray(n,A);
+
+	@for(int i=0;i<n;i=i+1){
+		@for(int j=0;j<n;j=j+1){
+			if(B[i][j] == -1){
+				S_1 += 1;
+			}
+		}
+	}
+
+	@for(int i=0;i<5;i=i+1){
+		@for(int j=0;j<5;j=j+1){
+			@for(int k=0;k<5;k=k+1){
+				@for(int t=0;t<n;t=t+1){
+					if(C[i][j][k][t] == -1){
+						S_1 += 1;
+					}
+				}
+			}
+		}
+	}
+
+	@for(int i=0;i<3;i=i+1){
+		@for(int j=0;j<4;j=j+1){
+			@for(int k=0;k<3;k=k+1){
+				@for(int t=0;t<4;t=t+1){
+					@for(int s=0;s<n;s=s+1){
+						if(D[i][j][k][t][s] == -1){
+							putf("%d %d %d %d %d\n",i,j,k,t,s);
+							S_1 += 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@for(int i=0;i<3;i=i+1){
+		@for(int j=0;j<n;j=j+1){
+			@for(int k=0;k<4;k=k+1){
+				@for(int t=0;t<5;t=t+1){
+					if(E[i][j][k][t] == -1){
+						S_1 += 1;
+					}
+				}
+			}
+		}
+	}
+	@for(int i=0;i<n;i=i+1){
+		@for(int j=0;j<8;j=j+1){
+			@for(int k=0;k<n;k=k+1){
+				if(H[i][j][k] == -1){
+					S_1 += 1;
+				}
+				if(F[i][j][k] == -1){
+					putf("%d %d %d\n",i,j,k);
+					S_1 += 1;
+				}
+			}
+		}
+	}
+	putint(S_1);
+	putch(10);
+}

@@ -1,0 +1,197 @@
+
+int n1 = 0, n2 = 0;
+int Sf = 0;
+int complex_f_read(int A[],int B[],int C[],int D[],int E[])
+{
+	if(n1 == 0){
+		n1 = 20;
+		int tmp = Sf;
+		Sf = 0;
+		return tmp;
+	}
+	Sf += A[n1] + D[n1];
+	n1 = n1 - 1;
+	return complex_f_read(C,A,B,E,D);
+}
+int no_global_f_read(int A[],int B[],int C[],int S,int n)
+{
+	if(n == 0){
+		return S;
+	}
+	return no_global_f_read(B,C,A,S+A[n],n-1);
+}
+
+void complex_f_write(int A[],int B[],int C[],int D[],int E[])
+{
+	if(n2 == 0){
+		n2 = 20;
+		return;
+	}
+	A[n2] += 7 + n2%6;
+	D[n2] += 11 + n2%13;
+	n2 = n2 - 1;
+	complex_f_write(C,A,B,E,D);
+	return;
+}
+int m1 = 0, m2 = 0;
+int Sg = 0;
+int complex_g_read(int A[],int B[],int C[],int D[],int E[])
+{
+	if(m1 == 0){
+		m1 = 20;
+		int tmp = Sg;
+		Sg = 0;
+		return tmp;
+	}
+	Sg += A[m1];
+	m1 = m1 - 1;
+	return complex_g_read(E,A,B,C,D);
+}
+
+void complex_g_write(int A[],int B[],int C[],int D[],int E[])
+{
+	if(m2 == 0){
+		m2 = 20;
+		return;
+	}
+	A[m2] += 13 + m2%5;
+	m2 = m2 - 1;
+	complex_g_write(E,A,B,C,D);
+	return;
+}
+
+int a1[1000] = {},a2[1000] = {}, a3[1000] = {}, a4[1000] = {};
+int a5[1000] = {},a6[1000] = {};
+int main()
+{
+	n1 = getint();
+	n2 = getint();
+	m1 = getint();
+	m2 = getint();
+	int limit = getint();
+
+	// test licm
+	int S = 0;
+	int i = 0;
+	while(i < limit) {
+		int j = i;
+		while(1){
+			S = S + no_global_f_read(a2,a3,a4,0,20); // can licm
+			S = S + no_global_f_read(a5,a6,a1,0,20); // can not licm
+			complex_g_write(a1,a1,a1,a1,a1);
+			if(j%3 == 0){
+				break;
+			}
+			j = j + 1;
+		}
+		S = S + (a2[5] + a3[6] + a4[3] + a1[6]); // a1 can not motion
+		S = S + complex_f_read(a2,a3,a4,a5,a6); 
+		S = S + no_global_f_read(a2,a3,a4,0,20); // can cse with loop j
+		S = S + no_global_f_read(a3,a3,a3,0,20); // can licm
+		S = S + no_global_f_read(a1,a3,a2,0,20); // can not licm
+		S = S + no_global_f_read(a2,a3,a1,0,20); // can not licm
+		i = i + 1;
+	}
+
+	putint(S);
+	putch(10);
+	putarray(limit,a1);
+	putarray(limit,a2);
+	putarray(limit,a3);
+	putarray(limit,a4);
+	putarray(limit,a5);
+	putarray(limit,a6);
+
+	S = 0;
+	i = 0;
+	while(i < limit) {
+		int j = i;
+		while(1){
+			S = S + no_global_f_read(a2,a3,a4,0,20); // can licm
+			complex_g_write(a1,a1,a1,a1,a1);
+			S = S + no_global_f_read(a2,a3,a4,0,20); // can cse
+			S = S + no_global_f_read(a5,a6,a5,0,20); // can licm
+			S = S + no_global_f_read(a6,a5,a4,0,20); //exp2			
+			if(j%3 == 0){
+				break;
+			}
+			complex_g_write(a1,a2,a3,a2,a3); // we do not modify a5[] and a6[]
+			S = S + no_global_f_read(a2,a3,a4,0,20); // can not cse
+			S = S + no_global_f_read(a6,a5,a4,0,20); 
+			j = j + 1;
+		}
+		S = S + (a2[5] + a3[6] + a4[3] + a1[6] + (a5[5] + a6[5] + a3[12])); 
+		S = S + complex_f_read(a2,a3,a4,a5,a6); 
+		S = S + no_global_f_read(a6,a5,a4,0,20);  // can cse with exp2 but can not licm
+		complex_g_write(a1,a2,a3,a2,a4); // we do not modify a5[] and a6[]
+		S = S + no_global_f_read(a3,a3,a3,0,20); 
+		S = S + no_global_f_read(a1,a3,a2,0,20); 
+		S = S + no_global_f_read(a2,a3,a1,0,20); 
+		i = i + 1;
+	}
+
+	putint(S);
+	putch(10);
+	putarray(limit,a1);
+	putarray(limit,a2);
+	putarray(limit,a3);
+	putarray(limit,a4);
+	putarray(limit,a5);
+	putarray(limit,a6);
+
+	complex_f_write(a6,a6,a6,a6,a6);
+
+	S = 0;
+	i = 0;
+	while(i < limit) {
+		complex_f_write(a1,a2,a3,a4,a5);
+		int j = i;
+		S = S + a1[3];
+		S = S + a6[13];
+		while(1){		
+			int k = j;
+			S = S + a1[3];
+			a1[3] = 9961;
+			S = S + a5[j];
+			while(1){
+				S = S + a3[4]; // exp1
+				S = S + a4[5]; // exp2
+				S = S + a5[14]; // exp3
+				S = S + a5[j];
+				a4[13] = 5;
+				a5[14] = 333;
+				if(k%5 == 0){
+					a6[13] += n1; 
+					S = S + a5[j];
+					break;
+				}
+				S = S + a5[j];
+				k = k + 1;
+			}
+			S = S + a5[j];
+			S = S + a3[4]; // same as exp1
+			S = S + a4[5]; // same as exp2
+			S = S + a5[14]; // different with exp3, but the value is 333
+			if(j%3 == 0){
+				a6[13] += n1%(8); 
+				S = S + a5[j];
+				break;
+			}
+			S = S + a5[j];
+			j = j + 1;
+		}
+		S = S + a1[3];
+		i = i + 1;
+	}
+
+	putint(S);
+	putch(10);
+	putarray(limit,a1);
+	putarray(limit,a2);
+	putarray(limit,a3);
+	putarray(limit,a4);
+	putarray(limit,a5);
+	putarray(limit,a6);
+
+	return 0;
+}

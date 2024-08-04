@@ -3,20 +3,43 @@
 
 ## OverView
 
-### Introduction to SysY (subset of C)
+### Introduction to SysY (subset of C, but something different with C)
 
-supports int and float
+**supports int and float**
 
-supports array of any dimensions
+**supports array of any dimensions**
 
-supports while,for,if,else,break,continue
+**supports while, for, if, else, break, continue**
 
-you can see more details in lexer/SysY_lexer.l and parser/SysY_parser.y
+```c
+A[f()] += B[f()] is same as A[f()] = A[f()] + B[f()]
+```
+
+```c
+//this expression below is valid
+const int a = 5,b = 13
+int Arr[a][b] = {} 
+```
+
+```c
+//not support ++ operator
+++i is same as +(+i) 
+```
+
+```c
+//keyword of for loop is @for
+//because SysY2022 does not have keyword "for", and we can define a variable named "for"
+@for(int i=1;i<=10;i=i+1){}
+```
+
+you can see more details in **lexer/SysY_lexer.l** and **parser/SysY_parser.y**
 
 ### IO
 see lib/sylib.c and lib/sylib.h
 
 ### Architecture of Compilers
+
+you can see more details in **documents/***
 
 ## Prerequisites
 
@@ -36,6 +59,19 @@ mkdir obj
 mkdir bin
 make -j
 ```
+
+if you update parser(*.y), use the command below
+```bash
+make parser
+make -j
+```
+
+if you update lexer(*.l), use the command below
+```bash
+make lexer
+make -j
+```
+
 
 ## Tests
 
@@ -80,7 +116,7 @@ To generate asm of single file(*.sy) with optimization
 
 ##### TransForm Pass
 
--TailrecursiveElimination
+-TailRecursiveElimination
 -Mem2reg
 -SparseConditionalConstantPropagation
 -SimplifyCFG
@@ -88,6 +124,8 @@ To generate asm of single file(*.sy) with optimization
 -InstCombine
 -AggressiveDeadCodeElimination
 -CommonSubexpressionElimination
+-DeadStoreElimination
+-RedundantBranchElimination
 -FunctionInline
 -LoopSimplify
 -LCSSA
@@ -100,10 +138,10 @@ To generate asm of single file(*.sy) with optimization
 -LoopUnroll
 
 ## Back-End Optimization
--Machine-peephole
--Machine-CSE
--Machine-LICM
--Machine-InstructionSchedule
+-MachinePeephole
+-MachineCSE
+-MachineLICM
+-MachineInstructionSchedule
 -RegisterCoalesce
 -LinearScan
 
