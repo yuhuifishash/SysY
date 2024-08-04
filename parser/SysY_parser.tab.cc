@@ -596,13 +596,13 @@ static const yytype_int16 yyrline[] =
      139,   141,   143,   148,   150,   152,   154,   159,   161,   166,
      167,   168,   172,   173,   174,   178,   182,   189,   193,   200,
      204,   212,   216,   220,   225,   230,   236,   245,   249,   256,
-     260,   267,   271,   278,   282,   288,   294,   300,   306,   312,
-     316,   320,   324,   328,   332,   336,   340,   344,   348,   352,
-     359,   363,   367,   371,   378,   382,   383,   384,   385,   389,
-     396,   403,   410,   411,   415,   435,   439,   443,   450,   457,
-     461,   468,   469,   470,   471,   475,   476,   477,   481,   482,
-     483,   484,   485,   489,   490,   491,   495,   496,   500,   501,
-     505,   509,   513,   518,   526,   530,   535
+     260,   267,   271,   278,   282,   295,   308,   321,   334,   347,
+     351,   355,   359,   363,   367,   371,   375,   379,   383,   387,
+     394,   398,   402,   406,   413,   417,   418,   419,   420,   424,
+     431,   438,   445,   446,   450,   470,   474,   478,   485,   492,
+     496,   503,   504,   505,   506,   510,   511,   512,   516,   517,
+     518,   519,   520,   524,   525,   526,   530,   531,   535,   536,
+     540,   544,   548,   553,   561,   565,   570
 };
 #endif
 
@@ -1850,264 +1850,299 @@ yyreduce:
   case 54: /* Stmt: Lval ADDASSIGN Exp ';'  */
 #line 282 "parser/SysY_parser.y"
                         {
-    auto l = new Lval(((Lval*)(yyvsp[-3].expression))->name,((Lval*)(yyvsp[-3].expression))->dims);
+    Lval* l;
+    auto pd = ((Lval*)(yyvsp[-3].expression))->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,vd);
+    }else{
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,nullptr);
+    }
     auto n = new AddExp_plus(l,(yyvsp[-1].expression));
-    (yyval.stmt) = new assign_stmt(l,n);
+    (yyval.stmt) = new assign_stmt((yyvsp[-3].expression),n);
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1859 "SysY_parser.tab.c"
+#line 1866 "SysY_parser.tab.c"
     break;
 
   case 55: /* Stmt: Lval SUBASSIGN Exp ';'  */
-#line 288 "parser/SysY_parser.y"
+#line 295 "parser/SysY_parser.y"
                         {
-    auto l = new Lval(((Lval*)(yyvsp[-3].expression))->name,((Lval*)(yyvsp[-3].expression))->dims);
+    Lval* l;
+    auto pd = ((Lval*)(yyvsp[-3].expression))->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,vd);
+    }else{
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,nullptr);
+    }
     auto n = new AddExp_sub(l,(yyvsp[-1].expression));
-    (yyval.stmt) = new assign_stmt(l,n);
+    (yyval.stmt) = new assign_stmt((yyvsp[-3].expression),n);
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1870 "SysY_parser.tab.c"
+#line 1884 "SysY_parser.tab.c"
     break;
 
   case 56: /* Stmt: Lval MULASSIGN Exp ';'  */
-#line 294 "parser/SysY_parser.y"
+#line 308 "parser/SysY_parser.y"
                         {
-    auto l = new Lval(((Lval*)(yyvsp[-3].expression))->name,((Lval*)(yyvsp[-3].expression))->dims);
+    Lval* l;
+    auto pd = ((Lval*)(yyvsp[-3].expression))->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,vd);
+    }else{
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,nullptr);
+    }
     auto n = new MulExp_mul(l,(yyvsp[-1].expression));
-    (yyval.stmt) = new assign_stmt(l,n);
+    (yyval.stmt) = new assign_stmt((yyvsp[-3].expression),n);
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1881 "SysY_parser.tab.c"
+#line 1902 "SysY_parser.tab.c"
     break;
 
   case 57: /* Stmt: Lval DIVASSIGN Exp ';'  */
-#line 300 "parser/SysY_parser.y"
+#line 321 "parser/SysY_parser.y"
                         {
-    auto l = new Lval(((Lval*)(yyvsp[-3].expression))->name,((Lval*)(yyvsp[-3].expression))->dims);
+    Lval* l;
+    auto pd = ((Lval*)(yyvsp[-3].expression))->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,vd);
+    }else{
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,nullptr);
+    }
     auto n = new MulExp_div(l,(yyvsp[-1].expression));
-    (yyval.stmt) = new assign_stmt(l,n);
+    (yyval.stmt) = new assign_stmt((yyvsp[-3].expression),n);
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1892 "SysY_parser.tab.c"
+#line 1920 "SysY_parser.tab.c"
     break;
 
   case 58: /* Stmt: Lval MODASSIGN Exp ';'  */
-#line 306 "parser/SysY_parser.y"
+#line 334 "parser/SysY_parser.y"
                         {
-    auto l = new Lval(((Lval*)(yyvsp[-3].expression))->name,((Lval*)(yyvsp[-3].expression))->dims);
+    Lval* l;
+    auto pd = ((Lval*)(yyvsp[-3].expression))->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,vd);
+    }else{
+        l = new Lval(((Lval*)(yyvsp[-3].expression))->name,nullptr);
+    }
     auto n = new MulExp_mod(l,(yyvsp[-1].expression));
-    (yyval.stmt) = new assign_stmt(l,n);
+    (yyval.stmt) = new assign_stmt((yyvsp[-3].expression),n);
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1903 "SysY_parser.tab.c"
+#line 1938 "SysY_parser.tab.c"
     break;
 
   case 59: /* Stmt: Exp ';'  */
-#line 312 "parser/SysY_parser.y"
+#line 347 "parser/SysY_parser.y"
         {
     (yyval.stmt) = new expr_stmt((yyvsp[-1].expression));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1912 "SysY_parser.tab.c"
+#line 1947 "SysY_parser.tab.c"
     break;
 
   case 60: /* Stmt: ';'  */
-#line 316 "parser/SysY_parser.y"
+#line 351 "parser/SysY_parser.y"
     {
     (yyval.stmt) = new null_stmt();
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1921 "SysY_parser.tab.c"
+#line 1956 "SysY_parser.tab.c"
     break;
 
   case 61: /* Stmt: Block  */
-#line 320 "parser/SysY_parser.y"
+#line 355 "parser/SysY_parser.y"
       {
     (yyval.stmt) = new block_stmt((yyvsp[0].block));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1930 "SysY_parser.tab.c"
+#line 1965 "SysY_parser.tab.c"
     break;
 
   case 62: /* Stmt: IF '(' Cond ')' Stmt  */
-#line 324 "parser/SysY_parser.y"
+#line 359 "parser/SysY_parser.y"
                                 {
     (yyval.stmt) = new if_stmt((yyvsp[-2].expression),(yyvsp[0].stmt));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1939 "SysY_parser.tab.c"
+#line 1974 "SysY_parser.tab.c"
     break;
 
   case 63: /* Stmt: IF '(' Cond ')' Stmt ELSE Stmt  */
-#line 328 "parser/SysY_parser.y"
+#line 363 "parser/SysY_parser.y"
                                {
     (yyval.stmt) = new ifelse_stmt((yyvsp[-4].expression),(yyvsp[-2].stmt),(yyvsp[0].stmt));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1948 "SysY_parser.tab.c"
+#line 1983 "SysY_parser.tab.c"
     break;
 
   case 64: /* Stmt: WHILE '(' Cond ')' Stmt  */
-#line 332 "parser/SysY_parser.y"
+#line 367 "parser/SysY_parser.y"
                         {
     (yyval.stmt) = new while_stmt((yyvsp[-2].expression),(yyvsp[0].stmt));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1957 "SysY_parser.tab.c"
+#line 1992 "SysY_parser.tab.c"
     break;
 
   case 65: /* Stmt: BREAK ';'  */
-#line 336 "parser/SysY_parser.y"
+#line 371 "parser/SysY_parser.y"
           {
     (yyval.stmt) = new break_stmt();
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1966 "SysY_parser.tab.c"
+#line 2001 "SysY_parser.tab.c"
     break;
 
   case 66: /* Stmt: CONTINUE ';'  */
-#line 340 "parser/SysY_parser.y"
+#line 375 "parser/SysY_parser.y"
              {
     (yyval.stmt) = new continue_stmt();
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1975 "SysY_parser.tab.c"
+#line 2010 "SysY_parser.tab.c"
     break;
 
   case 67: /* Stmt: RETURN Exp ';'  */
-#line 344 "parser/SysY_parser.y"
+#line 379 "parser/SysY_parser.y"
                {
     (yyval.stmt) = new return_stmt((yyvsp[-1].expression));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1984 "SysY_parser.tab.c"
+#line 2019 "SysY_parser.tab.c"
     break;
 
   case 68: /* Stmt: RETURN ';'  */
-#line 348 "parser/SysY_parser.y"
+#line 383 "parser/SysY_parser.y"
            {
     (yyval.stmt) = new return_stmt_void();
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 1993 "SysY_parser.tab.c"
+#line 2028 "SysY_parser.tab.c"
     break;
 
   case 69: /* Stmt: FOR '(' VarDecl Cond ';' Lval '=' Exp ')' Stmt  */
-#line 352 "parser/SysY_parser.y"
+#line 387 "parser/SysY_parser.y"
                                                 {
     (yyval.stmt) = new for_stmt((yyvsp[-6].expression),(yyvsp[0].stmt),new assign_stmt((yyvsp[-4].expression),(yyvsp[-2].expression)),(yyvsp[-7].decl));
     (yyval.stmt)->SetLineNumber(line_number);
 }
-#line 2002 "SysY_parser.tab.c"
+#line 2037 "SysY_parser.tab.c"
     break;
 
   case 70: /* Exp: AddExp  */
-#line 359 "parser/SysY_parser.y"
+#line 394 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2008 "SysY_parser.tab.c"
+#line 2043 "SysY_parser.tab.c"
     break;
 
   case 71: /* Cond: LOrExp  */
-#line 363 "parser/SysY_parser.y"
+#line 398 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2014 "SysY_parser.tab.c"
+#line 2049 "SysY_parser.tab.c"
     break;
 
   case 72: /* Lval: IDENT  */
-#line 367 "parser/SysY_parser.y"
+#line 402 "parser/SysY_parser.y"
       {
     (yyval.expression) = new Lval((yyvsp[0].symbol_token),nullptr);
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2023 "SysY_parser.tab.c"
+#line 2058 "SysY_parser.tab.c"
     break;
 
   case 73: /* Lval: IDENT ArrayDim_list  */
-#line 371 "parser/SysY_parser.y"
+#line 406 "parser/SysY_parser.y"
                     {
     (yyval.expression) = new Lval((yyvsp[-1].symbol_token),(yyvsp[0].expressions));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2032 "SysY_parser.tab.c"
+#line 2067 "SysY_parser.tab.c"
     break;
 
   case 74: /* PrimaryExp: '(' Exp ')'  */
-#line 378 "parser/SysY_parser.y"
+#line 413 "parser/SysY_parser.y"
             {
     (yyval.expression) = new PrimaryExp_branch((yyvsp[-1].expression));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2041 "SysY_parser.tab.c"
+#line 2076 "SysY_parser.tab.c"
     break;
 
   case 75: /* PrimaryExp: Lval  */
-#line 382 "parser/SysY_parser.y"
+#line 417 "parser/SysY_parser.y"
      {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2047 "SysY_parser.tab.c"
+#line 2082 "SysY_parser.tab.c"
     break;
 
   case 76: /* PrimaryExp: IntConst  */
-#line 383 "parser/SysY_parser.y"
+#line 418 "parser/SysY_parser.y"
          {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2053 "SysY_parser.tab.c"
+#line 2088 "SysY_parser.tab.c"
     break;
 
   case 77: /* PrimaryExp: FloatConst  */
-#line 384 "parser/SysY_parser.y"
+#line 419 "parser/SysY_parser.y"
            {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2059 "SysY_parser.tab.c"
+#line 2094 "SysY_parser.tab.c"
     break;
 
   case 78: /* PrimaryExp: StringConst  */
-#line 385 "parser/SysY_parser.y"
+#line 420 "parser/SysY_parser.y"
             {(yyval.expression) = (yyvsp[0].expression); (yyval.expression)->SetLineNumber(line_number);}
-#line 2065 "SysY_parser.tab.c"
+#line 2100 "SysY_parser.tab.c"
     break;
 
   case 79: /* IntConst: INT_CONST  */
-#line 389 "parser/SysY_parser.y"
+#line 424 "parser/SysY_parser.y"
           {
     (yyval.expression) = new IntConst((yyvsp[0].int_token));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2074 "SysY_parser.tab.c"
+#line 2109 "SysY_parser.tab.c"
     break;
 
   case 80: /* FloatConst: FLOAT_CONST  */
-#line 396 "parser/SysY_parser.y"
+#line 431 "parser/SysY_parser.y"
             {
     (yyval.expression) = new FloatConst((yyvsp[0].float_token));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2083 "SysY_parser.tab.c"
+#line 2118 "SysY_parser.tab.c"
     break;
 
   case 81: /* StringConst: STR_CONST  */
-#line 403 "parser/SysY_parser.y"
+#line 438 "parser/SysY_parser.y"
           {
     (yyval.expression) = new StringConst((yyvsp[0].symbol_token));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2092 "SysY_parser.tab.c"
+#line 2127 "SysY_parser.tab.c"
     break;
 
   case 82: /* UnaryExp: PrimaryExp  */
-#line 410 "parser/SysY_parser.y"
+#line 445 "parser/SysY_parser.y"
            {(yyval.expression) = (yyvsp[0].expression);}
-#line 2098 "SysY_parser.tab.c"
+#line 2133 "SysY_parser.tab.c"
     break;
 
   case 83: /* UnaryExp: IDENT '(' FuncRParams ')'  */
-#line 411 "parser/SysY_parser.y"
+#line 446 "parser/SysY_parser.y"
                           {
     (yyval.expression) = new Func_call((yyvsp[-3].symbol_token),(yyvsp[-1].expression));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2107 "SysY_parser.tab.c"
+#line 2142 "SysY_parser.tab.c"
     break;
 
   case 84: /* UnaryExp: IDENT '(' ')'  */
-#line 415 "parser/SysY_parser.y"
+#line 450 "parser/SysY_parser.y"
               {
     if((yyvsp[-2].symbol_token)->get_string() == "starttime"){
         auto params = new std::vector<Expression>;
@@ -2128,233 +2163,233 @@ yyreduce:
         (yyval.expression)->SetLineNumber(line_number);
     }
 }
-#line 2132 "SysY_parser.tab.c"
+#line 2167 "SysY_parser.tab.c"
     break;
 
   case 85: /* UnaryExp: '+' UnaryExp  */
-#line 435 "parser/SysY_parser.y"
+#line 470 "parser/SysY_parser.y"
              {
     (yyval.expression) = new UnaryExp_plus((yyvsp[0].expression));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2141 "SysY_parser.tab.c"
+#line 2176 "SysY_parser.tab.c"
     break;
 
   case 86: /* UnaryExp: '-' UnaryExp  */
-#line 439 "parser/SysY_parser.y"
+#line 474 "parser/SysY_parser.y"
              {
     (yyval.expression) = new UnaryExp_neg((yyvsp[0].expression));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2150 "SysY_parser.tab.c"
+#line 2185 "SysY_parser.tab.c"
     break;
 
   case 87: /* UnaryExp: '!' UnaryExp  */
-#line 443 "parser/SysY_parser.y"
+#line 478 "parser/SysY_parser.y"
              {
     (yyval.expression) = new UnaryExp_not((yyvsp[0].expression));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2159 "SysY_parser.tab.c"
+#line 2194 "SysY_parser.tab.c"
     break;
 
   case 88: /* FuncRParams: Exp_list  */
-#line 450 "parser/SysY_parser.y"
+#line 485 "parser/SysY_parser.y"
          {
     (yyval.expression) = new FuncRParams((yyvsp[0].expressions));
     (yyval.expression)->SetLineNumber(line_number);
 }
-#line 2168 "SysY_parser.tab.c"
+#line 2203 "SysY_parser.tab.c"
     break;
 
   case 89: /* Exp_list: Exp  */
-#line 457 "parser/SysY_parser.y"
+#line 492 "parser/SysY_parser.y"
     {
     (yyval.expressions) = new std::vector<Expression>;
     ((yyval.expressions))->push_back((yyvsp[0].expression));
 }
-#line 2177 "SysY_parser.tab.c"
+#line 2212 "SysY_parser.tab.c"
     break;
 
   case 90: /* Exp_list: Exp_list ',' Exp  */
-#line 461 "parser/SysY_parser.y"
+#line 496 "parser/SysY_parser.y"
                  {
     ((yyvsp[-2].expressions))->push_back((yyvsp[0].expression));
     (yyval.expressions) = (yyvsp[-2].expressions);
 }
-#line 2186 "SysY_parser.tab.c"
+#line 2221 "SysY_parser.tab.c"
     break;
 
   case 91: /* MulExp: UnaryExp  */
-#line 468 "parser/SysY_parser.y"
+#line 503 "parser/SysY_parser.y"
          {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2192 "SysY_parser.tab.c"
+#line 2227 "SysY_parser.tab.c"
     break;
 
   case 92: /* MulExp: MulExp '*' UnaryExp  */
-#line 469 "parser/SysY_parser.y"
+#line 504 "parser/SysY_parser.y"
                     {(yyval.expression) = new MulExp_mul((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2198 "SysY_parser.tab.c"
+#line 2233 "SysY_parser.tab.c"
     break;
 
   case 93: /* MulExp: MulExp '/' UnaryExp  */
-#line 470 "parser/SysY_parser.y"
+#line 505 "parser/SysY_parser.y"
                     {(yyval.expression) = new MulExp_div((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2204 "SysY_parser.tab.c"
+#line 2239 "SysY_parser.tab.c"
     break;
 
   case 94: /* MulExp: MulExp '%' UnaryExp  */
-#line 471 "parser/SysY_parser.y"
+#line 506 "parser/SysY_parser.y"
                     {(yyval.expression) = new MulExp_mod((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2210 "SysY_parser.tab.c"
+#line 2245 "SysY_parser.tab.c"
     break;
 
   case 95: /* AddExp: MulExp  */
-#line 475 "parser/SysY_parser.y"
+#line 510 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2216 "SysY_parser.tab.c"
+#line 2251 "SysY_parser.tab.c"
     break;
 
   case 96: /* AddExp: AddExp '+' MulExp  */
-#line 476 "parser/SysY_parser.y"
+#line 511 "parser/SysY_parser.y"
                   {(yyval.expression) = new AddExp_plus((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2222 "SysY_parser.tab.c"
+#line 2257 "SysY_parser.tab.c"
     break;
 
   case 97: /* AddExp: AddExp '-' MulExp  */
-#line 477 "parser/SysY_parser.y"
+#line 512 "parser/SysY_parser.y"
                   {(yyval.expression) = new AddExp_sub((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2228 "SysY_parser.tab.c"
+#line 2263 "SysY_parser.tab.c"
     break;
 
   case 98: /* RelExp: AddExp  */
-#line 481 "parser/SysY_parser.y"
+#line 516 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2234 "SysY_parser.tab.c"
+#line 2269 "SysY_parser.tab.c"
     break;
 
   case 99: /* RelExp: RelExp '<' AddExp  */
-#line 482 "parser/SysY_parser.y"
+#line 517 "parser/SysY_parser.y"
                   {(yyval.expression) = new RelExp_lt((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2240 "SysY_parser.tab.c"
+#line 2275 "SysY_parser.tab.c"
     break;
 
   case 100: /* RelExp: RelExp '>' AddExp  */
-#line 483 "parser/SysY_parser.y"
+#line 518 "parser/SysY_parser.y"
                   {(yyval.expression) = new RelExp_gt((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2246 "SysY_parser.tab.c"
+#line 2281 "SysY_parser.tab.c"
     break;
 
   case 101: /* RelExp: RelExp LEQ AddExp  */
-#line 484 "parser/SysY_parser.y"
+#line 519 "parser/SysY_parser.y"
                   {(yyval.expression) = new RelExp_leq((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2252 "SysY_parser.tab.c"
+#line 2287 "SysY_parser.tab.c"
     break;
 
   case 102: /* RelExp: RelExp GEQ AddExp  */
-#line 485 "parser/SysY_parser.y"
+#line 520 "parser/SysY_parser.y"
                   {(yyval.expression) = new RelExp_geq((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2258 "SysY_parser.tab.c"
+#line 2293 "SysY_parser.tab.c"
     break;
 
   case 103: /* EqExp: RelExp  */
-#line 489 "parser/SysY_parser.y"
+#line 524 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2264 "SysY_parser.tab.c"
+#line 2299 "SysY_parser.tab.c"
     break;
 
   case 104: /* EqExp: EqExp EQ RelExp  */
-#line 490 "parser/SysY_parser.y"
+#line 525 "parser/SysY_parser.y"
                 {(yyval.expression) = new EqExp_eq((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2270 "SysY_parser.tab.c"
+#line 2305 "SysY_parser.tab.c"
     break;
 
   case 105: /* EqExp: EqExp NE RelExp  */
-#line 491 "parser/SysY_parser.y"
+#line 526 "parser/SysY_parser.y"
                 {(yyval.expression) = new EqExp_neq((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2276 "SysY_parser.tab.c"
+#line 2311 "SysY_parser.tab.c"
     break;
 
   case 106: /* LAndExp: EqExp  */
-#line 495 "parser/SysY_parser.y"
+#line 530 "parser/SysY_parser.y"
       {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2282 "SysY_parser.tab.c"
+#line 2317 "SysY_parser.tab.c"
     break;
 
   case 107: /* LAndExp: LAndExp AND EqExp  */
-#line 496 "parser/SysY_parser.y"
+#line 531 "parser/SysY_parser.y"
                   {(yyval.expression) = new LAndExp_and((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2288 "SysY_parser.tab.c"
+#line 2323 "SysY_parser.tab.c"
     break;
 
   case 108: /* LOrExp: LAndExp  */
-#line 500 "parser/SysY_parser.y"
+#line 535 "parser/SysY_parser.y"
         {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2294 "SysY_parser.tab.c"
+#line 2329 "SysY_parser.tab.c"
     break;
 
   case 109: /* LOrExp: LOrExp OR LAndExp  */
-#line 501 "parser/SysY_parser.y"
+#line 536 "parser/SysY_parser.y"
                   {(yyval.expression) = new LOrExp_or((yyvsp[-2].expression),(yyvsp[0].expression)); (yyval.expression)->SetLineNumber(line_number);}
-#line 2300 "SysY_parser.tab.c"
+#line 2335 "SysY_parser.tab.c"
     break;
 
   case 110: /* ConstExp: AddExp  */
-#line 505 "parser/SysY_parser.y"
+#line 540 "parser/SysY_parser.y"
        {(yyval.expression) = (yyvsp[0].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2306 "SysY_parser.tab.c"
+#line 2341 "SysY_parser.tab.c"
     break;
 
   case 111: /* ArrayDim: '[' Exp ']'  */
-#line 509 "parser/SysY_parser.y"
+#line 544 "parser/SysY_parser.y"
             {(yyval.expression) = (yyvsp[-1].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2312 "SysY_parser.tab.c"
+#line 2347 "SysY_parser.tab.c"
     break;
 
   case 112: /* ArrayDim_list: ArrayDim  */
-#line 514 "parser/SysY_parser.y"
+#line 549 "parser/SysY_parser.y"
 {
     (yyval.expressions) = new std::vector<Expression>;
     ((yyval.expressions))->push_back((yyvsp[0].expression));
 }
-#line 2321 "SysY_parser.tab.c"
+#line 2356 "SysY_parser.tab.c"
     break;
 
   case 113: /* ArrayDim_list: ArrayDim_list ArrayDim  */
-#line 519 "parser/SysY_parser.y"
+#line 554 "parser/SysY_parser.y"
 {
     ((yyvsp[-1].expressions))->push_back((yyvsp[0].expression));
     (yyval.expressions) = (yyvsp[-1].expressions);
 }
-#line 2330 "SysY_parser.tab.c"
+#line 2365 "SysY_parser.tab.c"
     break;
 
   case 114: /* ConstArrayDim: '[' ConstExp ']'  */
-#line 526 "parser/SysY_parser.y"
+#line 561 "parser/SysY_parser.y"
                  {(yyval.expression) = (yyvsp[-1].expression);(yyval.expression)->SetLineNumber(line_number);}
-#line 2336 "SysY_parser.tab.c"
+#line 2371 "SysY_parser.tab.c"
     break;
 
   case 115: /* ConstArrayDim_list: ConstArrayDim  */
-#line 531 "parser/SysY_parser.y"
+#line 566 "parser/SysY_parser.y"
 {
     (yyval.expressions) = new std::vector<Expression>;
     ((yyval.expressions))->push_back((yyvsp[0].expression));
 }
-#line 2345 "SysY_parser.tab.c"
+#line 2380 "SysY_parser.tab.c"
     break;
 
   case 116: /* ConstArrayDim_list: ConstArrayDim_list ConstArrayDim  */
-#line 536 "parser/SysY_parser.y"
+#line 571 "parser/SysY_parser.y"
 {
     ((yyvsp[-1].expressions))->push_back((yyvsp[0].expression));
     (yyval.expressions) = (yyvsp[-1].expressions);
 }
-#line 2354 "SysY_parser.tab.c"
+#line 2389 "SysY_parser.tab.c"
     break;
 
 
-#line 2358 "SysY_parser.tab.c"
+#line 2393 "SysY_parser.tab.c"
 
       default: break;
     }
@@ -2552,7 +2587,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 542 "parser/SysY_parser.y"
+#line 577 "parser/SysY_parser.y"
  
 
 void yyerror(char* s, ...)

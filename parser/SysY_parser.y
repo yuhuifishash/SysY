@@ -280,33 +280,68 @@ Stmt
     $$->SetLineNumber(line_number);
 }
 |Lval ADDASSIGN Exp ';' {
-    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    Lval* l;
+    auto pd = ((Lval*)$1)->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)$1)->name,vd);
+    }else{
+        l = new Lval(((Lval*)$1)->name,nullptr);
+    }
     auto n = new AddExp_plus(l,$3);
-    $$ = new assign_stmt(l,n);
+    $$ = new assign_stmt($1,n);
     $$->SetLineNumber(line_number);
 }
 |Lval SUBASSIGN Exp ';' {
-    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    Lval* l;
+    auto pd = ((Lval*)$1)->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)$1)->name,vd);
+    }else{
+        l = new Lval(((Lval*)$1)->name,nullptr);
+    }
     auto n = new AddExp_sub(l,$3);
-    $$ = new assign_stmt(l,n);
+    $$ = new assign_stmt($1,n);
     $$->SetLineNumber(line_number);
 }
 |Lval MULASSIGN Exp ';' {
-    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    Lval* l;
+    auto pd = ((Lval*)$1)->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)$1)->name,vd);
+    }else{
+        l = new Lval(((Lval*)$1)->name,nullptr);
+    }
     auto n = new MulExp_mul(l,$3);
-    $$ = new assign_stmt(l,n);
+    $$ = new assign_stmt($1,n);
     $$->SetLineNumber(line_number);
 }
 |Lval DIVASSIGN Exp ';' {
-    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    Lval* l;
+    auto pd = ((Lval*)$1)->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)$1)->name,vd);
+    }else{
+        l = new Lval(((Lval*)$1)->name,nullptr);
+    }
     auto n = new MulExp_div(l,$3);
-    $$ = new assign_stmt(l,n);
+    $$ = new assign_stmt($1,n);
     $$->SetLineNumber(line_number);
 }
 |Lval MODASSIGN Exp ';' {
-    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    Lval* l;
+    auto pd = ((Lval*)$1)->dims;
+    if(pd != nullptr){
+        auto vd = new std::vector<Expression>(*pd);
+        l = new Lval(((Lval*)$1)->name,vd);
+    }else{
+        l = new Lval(((Lval*)$1)->name,nullptr);
+    }
     auto n = new MulExp_mod(l,$3);
-    $$ = new assign_stmt(l,n);
+    $$ = new assign_stmt($1,n);
     $$->SetLineNumber(line_number);
 }
 |Exp ';'{

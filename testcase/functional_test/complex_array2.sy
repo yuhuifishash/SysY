@@ -1,0 +1,249 @@
+const int N = 29;
+const int T = 24009;
+const int INF  = 0x3f3f3f3f;
+int n,HP[N],hp[N],MP[N],mp[N],atk[N],def[N],dth[N],Datk[N],Ddef[N];//角色基础
+
+int p[N][N],nw[N];//攻击顺序，包括现在的目标 
+int tf[N],X1[N],Y1[N],skl[N],X2[N],Y2[N],Z2[N];//天赋，技能 
+int t,K[2][T];//记录轮数
+int Dmp[2][T],DAtk[2][T],DDef[2][T],DAtk2[2][T],DDef2[2][T],DDef3[2][T],DAtk3[2][T];
+int min(int a,int b)
+{
+	if(a < b){
+		return a;
+	}
+	return b;
+}
+int max(int a,int b)
+{
+	if(a < b){
+		return b;
+	}
+	return a;
+}
+int A(int num)
+{
+	return max(atk[num]+Datk[num],1);
+}
+int D(int num)
+{
+	return max(def[num]+Ddef[num],0);
+}
+// #define A(num) max(atk[num]+Datk[num],1)
+// #define D(num) max(def[num]+Ddef[num],0)
+void CMP(int num){
+	if(mp[num]>MP[num]) mp[num]=MP[num];
+}
+void CHP(int num){
+	if(hp[num]>HP[num]) hp[num]=HP[num];
+	if(hp[num]<=0) {hp[num]=0;dth[num]=1;}
+}
+int harm(int num,int x,int y){
+	if(tf[num]==1) return (max(x-D(num),0)+y-y/2);
+	else return (max(x-D(num),0)+y);
+} 
+void mnus(int num,int x,int y){
+	mp[num]+=1;
+	CMP(num);
+	hp[num]-=harm(num,x,y);
+	CHP(num);
+}
+int ADead(int tm){
+	@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+		if(!dth[i]) return 0;
+	return 1;
+}
+void Norm(int num){ 
+	int tar=p[num][nw[num]];
+	if(tf[num]==2) mnus(tar,A(num),X1[num]);
+	else if(tf[num]==4) mnus(tar,0,A(num));
+	else{
+		mnus(tar,A(num),0);
+		int tm=((num-1)/n+1)%2;
+		if(tf[num]==5&&!ADead(tm)){hp[num]+=X1[num];CHP(num);} 
+	}
+	mp[num]+=1;CMP(num);
+}
+int pred(int num){
+	int tar=p[num][nw[num]];
+	if(tf[num]==2){
+		int x=A(num),y=X1[num];
+		if(tf[tar]==1) return (max(x-D(tar),0)+y-y/2);
+		else return (max(x-D(tar),0)+y);
+	}
+	else if(tf[num]==4){
+		int x=0,y=A(num);
+		if(tf[tar]==1) return (max(x-D(tar),0)+y-y/2);
+		else return (max(x-D(tar),0)+y);
+	}
+	else{
+		int y=0,x=A(num);
+		if(tf[tar]==1) return (max(x-D(tar),0)+y-y/2);
+		else return (max(x-D(tar),0)+y);
+	}
+}
+void skiint(int num){
+	mp[num]=0;
+	if(skl[num]==1){
+		int tm=((num-1)/n+1)%2;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) mnus(i,X2[num],0);
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) mp[i]-=mp[i]/10;
+	} 
+	if(skl[num]==2){
+		int tm=((num-1)/n+1)%2;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) mnus(i,0,A(num));
+	}
+	if(skl[num]==3){
+		int tm=((num-1)/n+1)%2;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) mnus(i,min(HP[i]/10,X2[num]*A(num)),0);
+	}
+	if(skl[num]==4){
+		int tm=(num-1)/n;
+		@for(int i=t;i<=min(t+X2[num]-1,23333);i=i+1) Dmp[tm][i]+=Y2[num];
+	}
+	if(skl[num]==5){
+		int tar=p[num][nw[num]];
+		Ddef[tar]-=X2[num];
+		mnus(tar,0,A(num));
+	}
+	if(skl[num]==6){
+		int tar=p[num][nw[num]];
+		int tm=((num-1)/n+1)%2;
+		mnus(tar,0,A(num));
+		DAtk2[tm][t]-=Y2[num];
+		DAtk3[tm][min(t+X2[num],23334)]+=Y2[num]; 
+	}
+	if(skl[num]==7){
+		int tm=(num-1)/n;
+		int mn=INF,pp;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if((!dth[i])&&mn>hp[i]) {pp=i;mn=hp[i];}
+		hp[pp]+=Z2[num];
+		CHP(pp);
+		DAtk[tm][t]+=Y2[num];
+		DAtk3[tm][min(t+X2[num],23334)]-=Y2[num];
+	}
+	if(skl[num]==8){
+		int tm=((num-1)/n+1)%2;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) mnus(i,A(num),0);
+		DDef2[tm][t]-=Y2[num];
+		DDef3[tm][min(t+X2[num],23334)]+=Y2[num];
+	}
+	if(skl[num]==9){
+		int tm=(num-1)/n;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]) {hp[i]+=Z2[num];CHP(i);}
+		DDef[tm][t]+=Y2[num];
+		DDef3[tm][min(t+X2[num],23334)]-=Y2[num];
+	}
+	if(skl[num]==10){
+		int tm=(num-1)/n;
+		@for(int i=tm*n+1;i<=tm*n+n;i=i+1)
+			if(!dth[i]){
+				atk[i]*=2;def[i]*=2;hp[i]=max(hp[i],HP[i]/2);mp[i]=max(mp[i],MP[i]/2);
+			}
+		@for(int i=1;i<=2*n;i=i+1)
+			if(skl[i]==10) skl[i]=0;
+		@for(int i=t;i<=min(t+X2[num]-1,23333);i=i+1) Dmp[tm][i]+=1;
+		K[tm][min(t+X2[num]-1,23334)]=1;
+	}
+	int tmsf=(num-1)/n;
+	int tmop=((num-1)/n+1)%2;
+	@for(int i=tmsf*n+1;i<=tmsf*n+n;i=i+1)
+		if(!dth[i]){
+			Ddef[i]+=DDef[tmsf][t];
+			mp[i]+=Dmp[tmsf][t];
+			Datk[i]+=DAtk[tmsf][t]; 
+			CMP(i);
+		}
+	@for(int i=tmop*n+1;i<=tmop*n+n;i=i+1)
+		if(!dth[i])	{Datk[i]+=DAtk2[tmop][t];Ddef[i]+=DDef2[tmop][t];}
+	if(tf[num]==5&&!ADead(tmop)) {mp[num]+=Y1[num];CMP(num);}
+	mp[num]+=1;CMP(num);
+}
+int main(){
+	//freopen(".in","r",stdin);
+	//freopen("game.txt","w",stdout);
+	n=getint();
+	@for(int i=1;i<=2*n;i=i+1){
+		HP[i]=getint();MP[i]=getint();
+		atk[i]=getint();def[i]=getint();
+		mp[i]=0;hp[i]=HP[i];
+		int tm=((i-1)/n+1)%2;
+		@for(int j=1;j<=n;j=j+1) {p[i][j]=getint()+tm*n;nw[i]=1;}
+		tf[i]=getint();X1[i]=getint();Y1[i]=getint();
+		skl[i]=getint();X2[i]=getint();Y2[i]=getint();Z2[i]=getint();
+	}
+	while(1){
+		t+=1;
+		if(t>23333) break;
+		@for(int i=0;i<=1;i=i+1)
+			@for(int j=i*n+1;j<=n+i*n;j=j+1){
+				if(!dth[j]){
+					Ddef[j]+=DDef3[i][t];
+					Datk[j]+=DAtk3[i][t];
+				}
+			} 
+		@for(int i=0;i<=1;i=i+1){
+			int mx=0,pp=0;
+			@for(int j=i*n+1;j<=n*i+n;j=j+1)
+				if(mp[j]==MP[j]&&(!dth[j])&&mx<=skl[j]) {mx=skl[j];pp=j;}
+			if(pp!=0) skiint(pp);
+			else{
+				int mx1=0,mx2=0,p1=0;
+				@for(int j=i*n+1;j<=n*i+n;j=j+1){
+					if((!dth[j])&&mx1<=hp[p[j][nw[j]]]){
+						if(mx1==hp[p[j][nw[j]]]){
+							if(mx2<=pred(j)) {mx1=hp[p[j][nw[j]]];mx2=pred(j);p1=j;	}
+						}
+						else {mx1=hp[p[j][nw[j]]];mx2=pred(j);p1=j;}
+					}
+				}	
+				Norm(p1);
+				int tmsf=i;
+				int tmop=(i+1)%2;
+				@for(int j=tmsf*n+1;j<=tmsf*n+n;j=j+1)
+					if(!dth[j]){
+						Ddef[j]+=DDef[tmsf][t];
+						mp[j]+=Dmp[tmsf][t];
+						Datk[j]+=DAtk[tmsf][t]; 
+						CMP(j);
+					}
+				@for(int j=tmop*n+1;j<=tmop*n+n;j=j+1)
+					if(!dth[j])	{Datk[j]+=DAtk2[tmop][t];Ddef[j]+=DDef2[tmop][t];}
+			}
+			if(ADead(0)){
+				putf("%d\nBob\n",t);
+				@for(int i=1+n;i<=n+n;i=i+1) putf("%d ",hp[i]);
+				return 0;
+			}
+			if(ADead(1)){
+				putf("%d\nAlice\n",t);
+				@for(int i=1;i<=n;i=i+1) putf("%d ",hp[i]);
+				return 0;
+			}
+			@for(int j=i*n+1;j<=n*i+n;j=j+1)
+				if(!dth[j]) {mp[j]+=1;CMP(j);}
+			@for(int j=i*n+1;j<=n*i+n;j=j+1)
+				if(!dth[j]&&tf[j]==3) {hp[j]+=X1[j];CHP(j);mp[j]+=Y1[j];CMP(j);} 
+		}
+		if(K[0][t]||ADead(0)){
+			putf("%d\nBob\n",t);
+			@for(int i=1+n;i<=n+n;i=i+1) putf("%d ",hp[i]);
+			break;
+		}
+		if(K[1][t]||ADead(1)){
+			putf("%d\nAlice\n",t);
+			@for(int i=1;i<=n;i=i+1) putf("%d ",hp[i]);
+			break;
+		}
+		@for(int i=1;i<=2*n;i=i+1)
+			while(dth[p[i][nw[i]]]) nw[i]+=1;
+	}
+	return 0;
+}
