@@ -64,19 +64,24 @@ extern int yydebug;
     NE = 265,                      /* NE  */
     AND = 266,                     /* AND  */
     OR = 267,                      /* OR  */
-    CONST = 268,                   /* CONST  */
-    IF = 269,                      /* IF  */
-    ELSE = 270,                    /* ELSE  */
-    WHILE = 271,                   /* WHILE  */
-    NONE_TYPE = 272,               /* NONE_TYPE  */
-    INT = 273,                     /* INT  */
-    FLOAT = 274,                   /* FLOAT  */
-    FOR = 275,                     /* FOR  */
-    RETURN = 276,                  /* RETURN  */
-    BREAK = 277,                   /* BREAK  */
-    CONTINUE = 278,                /* CONTINUE  */
-    ERROR = 279,                   /* ERROR  */
-    THEN = 280                     /* THEN  */
+    ADDASSIGN = 268,               /* ADDASSIGN  */
+    MULASSIGN = 269,               /* MULASSIGN  */
+    SUBASSIGN = 270,               /* SUBASSIGN  */
+    DIVASSIGN = 271,               /* DIVASSIGN  */
+    MODASSIGN = 272,               /* MODASSIGN  */
+    CONST = 273,                   /* CONST  */
+    IF = 274,                      /* IF  */
+    ELSE = 275,                    /* ELSE  */
+    WHILE = 276,                   /* WHILE  */
+    NONE_TYPE = 277,               /* NONE_TYPE  */
+    INT = 278,                     /* INT  */
+    FLOAT = 279,                   /* FLOAT  */
+    FOR = 280,                     /* FOR  */
+    RETURN = 281,                  /* RETURN  */
+    BREAK = 282,                   /* BREAK  */
+    CONTINUE = 283,                /* CONTINUE  */
+    ERROR = 284,                   /* ERROR  */
+    THEN = 285                     /* THEN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -103,7 +108,7 @@ union YYSTYPE
     FuncFParam formal;   std::vector<FuncFParam>* formals;//added *
     BlockItem block_item;   std::vector<BlockItem>* block_items;//added *
 
-#line 107 "SysY_parser.tab.h"
+#line 112 "SysY_parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

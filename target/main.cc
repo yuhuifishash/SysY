@@ -169,8 +169,8 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(Mem2Reg);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        // llvmIR.PassExecutor(EliminateSimpleConstArrayValue);
-        // llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(EliminateSimpleConstArrayValue);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);

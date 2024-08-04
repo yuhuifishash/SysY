@@ -34,6 +34,7 @@ extern IdTable id_table;
 %token <int_token> INT_CONST
 %token LEQ GEQ EQ NE // <=   >=   ==   != 
 %token AND OR // &&    ||
+%token ADDASSIGN MULASSIGN SUBASSIGN DIVASSIGN MODASSIGN
 %token CONST IF ELSE WHILE NONE_TYPE INT FLOAT FOR
 %token RETURN BREAK CONTINUE ERROR
 
@@ -276,6 +277,36 @@ BlockItem
 Stmt
 :Lval '=' Exp ';'{
     $$ = new assign_stmt($1,$3);
+    $$->SetLineNumber(line_number);
+}
+|Lval ADDASSIGN Exp ';' {
+    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    auto n = new AddExp_plus(l,$3);
+    $$ = new assign_stmt(l,n);
+    $$->SetLineNumber(line_number);
+}
+|Lval SUBASSIGN Exp ';' {
+    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    auto n = new AddExp_sub(l,$3);
+    $$ = new assign_stmt(l,n);
+    $$->SetLineNumber(line_number);
+}
+|Lval MULASSIGN Exp ';' {
+    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    auto n = new MulExp_mul(l,$3);
+    $$ = new assign_stmt(l,n);
+    $$->SetLineNumber(line_number);
+}
+|Lval DIVASSIGN Exp ';' {
+    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    auto n = new MulExp_div(l,$3);
+    $$ = new assign_stmt(l,n);
+    $$->SetLineNumber(line_number);
+}
+|Lval MODASSIGN Exp ';' {
+    auto l = new Lval(((Lval*)$1)->name,((Lval*)$1)->dims);
+    auto n = new MulExp_mod(l,$3);
+    $$ = new assign_stmt(l,n);
     $$->SetLineNumber(line_number);
 }
 |Exp ';'{

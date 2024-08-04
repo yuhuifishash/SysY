@@ -54,7 +54,12 @@ Binary_Exponent_const [pP][\+\-]?[0-9]+
 "==" {cur_col_number = col_number;col_number += strlen(yytext);return EQ;}        
 "!=" {cur_col_number = col_number;col_number += strlen(yytext);return NE;}
 "&&" {cur_col_number = col_number;col_number += strlen(yytext);return AND;}         
-"||" {cur_col_number = col_number;col_number += strlen(yytext);return OR;}         
+"||" {cur_col_number = col_number;col_number += strlen(yytext);return OR;}
+"+=" {cur_col_number = col_number;col_number += strlen(yytext);return ADDASSIGN;}
+"-=" {cur_col_number = col_number;col_number += strlen(yytext);return SUBASSIGN;}       
+"*=" {cur_col_number = col_number;col_number += strlen(yytext);return MULASSIGN;}       
+"/=" {cur_col_number = col_number;col_number += strlen(yytext);return DIVASSIGN;}       
+"%=" {cur_col_number = col_number;col_number += strlen(yytext);return MODASSIGN;}                 
 "const" {cur_col_number = col_number;col_number += strlen(yytext);return CONST;}     
 "if" {cur_col_number = col_number;col_number += strlen(yytext);return IF;}       
 "else" {cur_col_number = col_number;col_number += strlen(yytext);return ELSE;}  

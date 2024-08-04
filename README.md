@@ -67,8 +67,45 @@ To generate asm of single file(*.sy) with optimization
 
 ## Mid-End Optimization
 
-## Back-End Optimization
+##### Analysis Pass
+-ControlFlowGraph
+-DomTree
+-AliasAnalysis
+-MemoryDependencyAnalysis
+-LoopBasicInformation
+-ScalarEvolution
+-LoopCarriedDependencyAnalysis
 
+
+
+##### TransForm Pass
+
+-TailrecursiveElimination
+-Mem2reg
+-SparseConditionalConstantPropagation
+-SimplifyCFG
+-InstSimplify
+-InstCombine
+-AggressiveDeadCodeElimination
+-CommonSubexpressionElimination
+-FunctionInline
+-LoopSimplify
+-LCSSA
+-LoopInvariantCodeMotion
+-LoopFullUnroll
+-LoopIdomRecognize
+-LoopFusion
+-LoopParallel
+-LoopStrengthReduce
+-LoopUnroll
+
+## Back-End Optimization
+-Machine-peephole
+-Machine-CSE
+-Machine-LICM
+-Machine-InstructionSchedule
+-RegisterCoalesce
+-LinearScan
 
 ## Reference
-
+https://github.com/llvm/llvm-project/blob/main/llvm/lib
