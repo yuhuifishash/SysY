@@ -1,48 +1,1067 @@
-const int mod[33] = {998244353,-998244353,2,-2,444,-444,123456789,-123456789,9999991,-9999991,17,-17,50,-50,987654321,-987654321,2147483647,-2147483647,-2147483648,123,-123,77,-77,2000000033,-2000000033,999,-999,100003,-100003,144,-144,65537,-65537};
+const int mod0 = 998244353;
+const int mod1 = -998244353;
+const int mod2 = 2;
+const int mod3 = -2;
+const int mod4 = 444;
+const int mod5 = -444;
+const int mod6 = 123456789;
+const int mod7 = -123456789;
+const int mod8 = 9999991;
+const int mod9 = -9999991;
+const int mod10 = 17;
+const int mod11 = -17;
+const int mod12 = 50;
+const int mod13 = -50;
+const int mod14 = 987654321;
+const int mod15 = -987654321;
+const int mod16 = 2147483647;
+const int mod17 = -2147483647;
+const int mod18 = -2147483648;
+const int mod19 = 123;
+const int mod20 = -123;
+const int mod21 = 77;
+const int mod22 = -77;
+const int mod23 = 2000000033;
+const int mod24 = -2000000033;
+const int mod25 = 999;
+const int mod26 = -999;
+const int mod27 = 100003;
+const int mod28 = -100003;
+const int mod29 = 144;
+const int mod30 = -144;
+const int mod31 = 65537;
+const int mod32 = -65537;
 
 int main() {
-	int n;
+    int n;
 	n=getint();
-	@for(int i=0;i<n;i=i+1){
-		int x;
+    @for (int i = 0; i < n; i = i + 1) {
+        int x;
 		x=getint();
-		@for(int j=0;j<33;j=j+1){
-			int y = x%mod[j];
-			if(x%mod[j] < mod[32-j-1]){
-				if(y%2==1){
-					if(y<0){
-						putf("%d ",y+1);
-					}else{
-						putf("%d ",y-1);
-					}
+        int y = x % mod0;
+        if (x % mod0 < mod32) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
 				}
-				if(y%2!=1){
-					if(y<0){
-						putf("%d ",y+2);
-					}else{
-						putf("%d ",y-2);
-					}
-				}
-				
-			}else{
-				if(y%2!=0){
-					if(y<0){
-						putf("%d ",y+3);
-					}else{
-						putf("%d ",y-3);
-					}
-				}
-				if(y%2==0){
-					if(y<0){
-						putf("%d ",y+4);
-					}else{
-						putf("%d ",y-4);
-					}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
 				}
 			}
-		}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod1;
+        if (x % mod1 < mod31) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod2;
+        if (x % mod2 < mod30) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod3;
+        if (x % mod3 < mod29) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod4;
+        if (x % mod4 < mod28) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod5;
+        if (x % mod5 < mod27) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod6;
+        if (x % mod6 < mod26) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod7;
+        if (x % mod7 < mod25) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+         
+		y = x % mod8;
+        if (x % mod8 < mod24) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod9;
+        if (x % mod9 < mod23) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod10;
+		if (x % mod10 < mod22) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod11;
+        if (x % mod11 < mod21) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod12;
+        if (x % mod12 < mod20) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod13;
+        if (x % mod13 < mod19) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod14;
+        if (x % mod14 < mod18) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod15;
+        if (x % mod15 < mod17) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod16;
+        if (x % mod16 < mod16) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod17;
+        if (x % mod17 < mod15) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod18;
+        if (x % mod18 < mod14) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod19;
+        if (x % mod19 < mod13) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod20;
+        if (x % mod20 < mod12) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod21;
+        if (x % mod21 < mod11) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod22;
+        if (x % mod22 < mod10) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod23;
+        if (x % mod23 < mod9) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod24;
+        if (x % mod24 < mod8) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod25;
+        if (x % mod25 < mod7) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod26;
+        if (x % mod26 < mod6) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod27;
+        if (x % mod27 < mod5) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod28;
+        if (x % mod28 < mod4) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod29;
+        if (x % mod29 < mod3) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod30;
+        if (x % mod30 < mod2) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod31;
+        if (x % mod31 < mod1) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
+		 
+		y = x % mod32;
+        if (x % mod32 < mod0) {
+			if (y % 2 == 1) {
+				if (y < 0) {
+					putf("%d ", y + 1);
+				} else {
+					putf("%d ", y - 1);
+				}
+			} else {
+				if (y < 0) {
+					putf("%d ", y + 2);
+				} else {
+					putf("%d ", y - 2);
+				}
+			}
+        } else {
+            if (y % 2 != 0) {
+                if (y < 0) {
+                    putf("%d ", y + 3);
+                } else {
+                    putf("%d ", y - 3);
+                }
+            } else {
+                if (y < 0) {
+                    putf("%d ", y + 4);
+                } else {
+                    putf("%d ", y - 4);
+                }
+            }
+        }
 		putf("\n");
-	}
-	
+    }
+
     return 0;
 }
