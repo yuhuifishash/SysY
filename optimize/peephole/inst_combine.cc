@@ -74,7 +74,7 @@ bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Ins
 
     bool changed = false;
     for (auto it = begin + 1; it != InstList.end() && cnt < win_size; ++it, ++cnt) {
-        changed |= EliminateSubEq(*begin,*it);
+        // changed |= EliminateSubEq(*begin,*it);
         changed |= EliminateDoubleConstDiv(*begin, *it);
         changed |= EliminateMod2EqNeCmp(C, *begin, *it, InstList, it);
         // changed |= EliminateConstDivIcmp(C, *begin, *it, InstList, it);
@@ -124,8 +124,11 @@ bool EliminateDoubleI32Add(Instruction a, Instruction b) {
 }
 
 // TODO():
-// %r = {a - (a - b)}  ->  %r = {(a - a) - b}  ->  %r = {0 - b}
+// %r = {a - (a - b)}  ->  %r = {(a - a) + b}  ->  %r = {b + 0}
 // %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
+// %r = {a - (a + b)}  ->  %r = {(a - a) - b} -> %r = {0 - b}
+// %r = {a - (b + a)}  ->  %r = {(a - a) - b} -> %r = {0 - b}
+// %r = {a + (b - a)}  ->  %r = {(a - a) + b} -> %r = {b + 0}
 bool EliminateSubEq(Instruction a, Instruction b) {
     if(a->GetOpcode() != SUB){
         return false;
