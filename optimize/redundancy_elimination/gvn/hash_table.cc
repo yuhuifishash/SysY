@@ -72,12 +72,12 @@ int HashTable::lookupOrAdd(Instruction I) {
     // case CALL:
     //     return lookupOrAddCall(I);
     //     break;
-    // case GETELEMENTPTR:
-    //     return lookupOrAddGep(I);
-    //     break;
-    case PHI:
-        return lookupOrAddPhi(I);
+    case GETELEMENTPTR:
+        return lookupOrAddGep(I);
         break;
+    // case PHI:
+    //     return lookupOrAddPhi(I);
+    //     break;
     default:
         break;
     }

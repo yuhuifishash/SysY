@@ -198,3 +198,69 @@ void ElimateGVNPhi(CFG *C) {
     SparseConditionalConstantPropagation(C);
     SimplifyCFG(C);
 }
+void GepGCM(CFG *C){
+    std::map<int,std::vector<Instruction>> usevector;
+    std::map<Instruction,int> usemindfn;
+    std::map<Instruction,int> usemaxdfn;
+    std::map<int,int> dfnmap;
+    int dclock = 0;
+    auto blockmap = *C->block_map;
+    hashtable.defineDFS(C);
+    bool Check = true;
+    auto DomTree = C->DomTree;
+    auto G = DomTree.dom_tree;
+    std::function<void(int)> DFS1 = [&](int ubbid) {
+        auto ubb = blockmap[ubbid];
+        dfnmap[ubbid]=++dclock;
+        for (int i = 0; i < G[ubbid].size(); ++i) {
+            auto vbb = G[ubbid][i];
+            auto vbbid = vbb->block_id;
+            DFS1(vbbid);
+        }
+    };
+    std::function<void(int)> DFS2 = [&](int ubbid) {
+        auto ubb = blockmap[ubbid];
+        auto it = ubb->Instruction_list.end();
+        do {
+            it--;
+            auto I = *it;
+            auto check = hashtable.lookupOrAdd(I);
+            if(I->GetOpcode()==GETELEMENTPTR){
+                usevector[check].push_back(I);
+            }else if(I->GetOpcode()==PHI){
+                auto phiI = (PhiInstruction*)I;
+                for(auto [labelop,valop]:phiI->GetPhiList()){
+                    if(valop->GetOperandType() != BasicOperand::REG){
+                        continue;
+                    }
+                    auto regop = (RegOperand*)valop;
+                    auto regno = regop->GetRegNo();
+                    if(hashtable.definemap.find(regno)==hashtable.definemap.end()){
+                        continue;
+                    }
+                    auto defI = hashtable.definemap[regno];
+                    if(defI->GetOpcode()!=GETELEMENTPTR){
+                        continue;
+                    }
+                    check = hashtable.lookupOrAdd(defI);
+                    usevector[check].push_back(I);
+                }
+            }
+        } while (it != ubb->Instruction_list.begin());
+
+        for (int i = 0; i < G[ubbid].size(); ++i) {
+            auto vbb = G[ubbid][i];
+            auto vbbid = vbb->block_id;
+            DFS2(vbbid);
+        }
+    };
+    DFS1(0);
+    DFS2(0);
+    //early schedule
+    //late schedule
+    // for (auto [id, bb] : *C->block_map) {
+    //     for (auto I : bb->Instruction_list) {
+
+    //     }
+    // }
+}
