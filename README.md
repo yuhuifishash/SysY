@@ -39,7 +39,7 @@ see **lib/sylib.c** and **lib/sylib.h**
 
 ### Architecture of Compilers
 
-you can see more details in **documents/***
+you can see more details in ![architecture](documents/architecture.png)
 
 ## Prerequisites
 
