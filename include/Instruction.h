@@ -424,6 +424,7 @@ public:
     Operand GetOp2() { return op2; }
     void SetOp1(Operand op) { op1 = op; }
     void SetOp2(Operand op) { op2 = op; }
+    void Setcond(IcmpCond newcond) { cond = newcond; }
     IcmpCond GetCompareCondition() { return cond; }
     Operand GetResult() { return result; }
 

@@ -1,0 +1,25 @@
+int main() {
+    int a;
+    int b;
+    int c;
+    a=getint();
+    b=getint();
+    c=getint();
+    int d;
+    // d = a - b;
+    // putint(d);
+    // int e;
+    // e = a - d;
+    // putint(e);
+    // e = d + b;
+    // putint(e);
+    // d = a/b;
+    putf("%d %d %d %d\n",a*0,a-4,0*b,c-c);
+    if(a/b>=c){
+        putf("type sge\n");
+    }
+    if(a/b>c){
+        putf("type sgt\n");
+    }
+    return 0;
+}

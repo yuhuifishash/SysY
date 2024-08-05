@@ -425,16 +425,45 @@ void I32ConstantSub2AddSimplify(Instruction I) {
 
 // TODO():ZeroResultSimplify
 //  {sub X, X},{Mul 0, X} is represented as 0 + 0
-void ZeroResultSimplify(Instruction I) {
-    // TODO("ZeroResultSimplify");
+void ZeroResultSimplify(Instruction &I) {
+    if(I->GetOpcode()==SUB){
+        
+        auto subI = (ArithmeticInstruction*)I;
+        if(subI->GetOperand1()->GetFullName() == subI->GetOperand2()->GetFullName()){
+            // I->PrintIR(std::cerr);
+            I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),subI->GetResultOperand());
+            // I->PrintIR(std::cerr);
+        }
+    }
+    if(I->GetOpcode()==MUL){
+        auto mulI = (ArithmeticInstruction*)I;
+        auto op1 = mulI->GetOperand1();
+        auto op2 = mulI->GetOperand2();
+        if(op1->GetOperandType() == BasicOperand::IMMI32){
+            auto num1 = ((ImmI32Operand*)op1)->GetIntImmVal();
+            if(num1 == 0){
+                // I->PrintIR(std::cerr);
+                I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
+                // I->PrintIR(std::cerr);
+            }
+        }else if(op2->GetOperandType() == BasicOperand::IMMI32){
+            auto num2 = ((ImmI32Operand*)op2)->GetIntImmVal();
+            if(num2== 0){
+                // I->PrintIR(std::cerr);
+                I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
+                // I->PrintIR(std::cerr);
+            }
+        }
+    }
 }
 
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
-        for (auto I : bb->Instruction_list) {
+        for (auto &I : bb->Instruction_list) {
             // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);
             I32ConstantSub2AddSimplify(I);
+            ZeroResultSimplify(I);
         }
     }
     SrcEqResultInstEliminate(C);
