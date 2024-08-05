@@ -35,7 +35,7 @@ int Arr[a][b] = {}
 you can see more details in **lexer/SysY_lexer.l** and **parser/SysY_parser.y**
 
 ### IO
-see lib/sylib.c and lib/sylib.h
+see **lib/sylib.c** and **lib/sylib.h**
 
 ### Architecture of Compilers
 
@@ -105,11 +105,17 @@ To generate asm of single file(*.sy) with optimization
 
 ##### Analysis Pass
 -ControlFlowGraph
+
 -DomTree
+
 -AliasAnalysis
+
 -MemoryDependencyAnalysis
+
 -LoopBasicInformation
+
 -ScalarEvolution
+
 -LoopCarriedDependencyAnalysis
 
 
@@ -117,32 +123,56 @@ To generate asm of single file(*.sy) with optimization
 ##### TransForm Pass
 
 -TailRecursiveElimination
+
 -Mem2reg
+
 -SparseConditionalConstantPropagation
+
 -SimplifyCFG
+
 -InstSimplify
+
 -InstCombine
+
 -AggressiveDeadCodeElimination
+
 -CommonSubexpressionElimination
+
 -DeadStoreElimination
+
 -RedundantBranchElimination
+
 -FunctionInline
+
 -LoopSimplify
+
 -LCSSA
+
 -LoopInvariantCodeMotion
+
 -LoopFullUnroll
+
 -LoopIdomRecognize
+
 -LoopFusion
+
 -LoopParallel
+
 -LoopStrengthReduce
+
 -LoopUnroll
 
 ## Back-End Optimization
 -MachinePeephole
+
 -MachineCSE
+
 -MachineLICM
+
 -MachineInstructionSchedule
+
 -RegisterCoalesce
+
 -LinearScan
 
 ## Reference
