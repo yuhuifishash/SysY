@@ -77,7 +77,7 @@ bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Ins
         changed |= EliminateSubEq(*begin,*it);
         changed |= EliminateDoubleConstDiv(*begin, *it);
         changed |= EliminateMod2EqNeCmp(C, *begin, *it, InstList, it);
-        changed |= EliminateConstDivIcmp(C, *begin, *it, InstList, it);
+        // changed |= EliminateConstDivIcmp(C, *begin, *it, InstList, it);
     }
     return changed;
 }
@@ -184,7 +184,7 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 // if(%r / c1 > c2) => if(%r > (c2+1)*c1-1) 
 // if(%r / c1 >= c2) => if(%r >= c2*c1) 
 // if(%r / c1 < c2) => if(%r < c2*c1) 
-// if(%r / c1 >= c2) => if(%r >= (c2+1)*c1-1) 
+// if(%r / c1 <= c2) => if(%r <= (c2+1)*c1-1) 
 // the result can not overflow
 static std::map<IcmpCond,IcmpCond> divmap={{slt,sgt},{sgt,slt},{sle,sge},{sge,sle}};
 bool EliminateConstDivIcmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
