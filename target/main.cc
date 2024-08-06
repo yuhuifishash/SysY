@@ -175,6 +175,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(MinMaxRecognize);
         llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
@@ -345,6 +346,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(EraseNoUseGlobal);

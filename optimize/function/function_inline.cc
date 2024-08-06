@@ -3,8 +3,8 @@
 #include <iostream>
 
 void SparseConditionalConstantPropagation(CFG *C);
-// void InstSimplify(CFG *C);
-// void InstCombine(CFG *C);
+void InstSimplify(CFG *C);
+void InstCombine(CFG *C);
 void SimplifyCFG(CFG *C);
 
 extern std::map<std::string, CFG *> CFGMap;
@@ -357,6 +357,8 @@ void InlineDFS(CFG *uCFG) {
     uCFG->BuildDominatorTree();
     SparseConditionalConstantPropagation(uCFG);
     SimplifyCFG(uCFG);
+    InstCombine(uCFG);
+    InstSimplify(uCFG);
     for (auto [id, bb] : *uCFG->block_map) {
         for (auto I : bb->Instruction_list) {
             I->SetBlockID(id);

@@ -423,7 +423,6 @@ void I32ConstantSub2AddSimplify(Instruction I) {
     }
 }
 
-// TODO():ZeroResultSimplify
 //  {sub X, X},{Mul 0, X} is represented as 0 + 0
 void ZeroResultSimplify(Instruction &I) {
     if(I->GetOpcode()==SUB){
@@ -455,6 +454,12 @@ void ZeroResultSimplify(Instruction &I) {
             }
         }
     }
+}
+
+// TODO():DoubleAddInstSimplify
+// {%r = X + X} => {%r = X*2(the right operand is const)}
+void DoubleAddInstSimplify(Instruction &I) {
+
 }
 
 void InstSimplify(CFG *C) {
