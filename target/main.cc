@@ -90,6 +90,7 @@ void MinMaxRecognize(CFG *C);
 void ArrayMinMaxRecognize(CFG *C);
 void LatchPhiCombine(CFG *C);
 void LoopIndVarSimplify(CFG *C);
+void LoopInvariantReassociate(CFG *C);
 void NaryReassociate(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
@@ -176,6 +177,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(MinMaxRecognize);
         llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
@@ -226,6 +228,12 @@ int main(int argc, char **argv) {
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(EliminateUselessFunction);
+
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopInvariantReassociate);
 
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
@@ -331,6 +339,14 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(NaryReassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(LoopInvariantCodeMotion);
+        llvmIR.PassExecutor(SimplifyCFG);
 #endif
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -352,6 +368,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(InstCombine);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(EraseNoUseGlobal);

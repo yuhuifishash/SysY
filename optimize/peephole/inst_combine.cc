@@ -123,7 +123,6 @@ bool EliminateDoubleI32Add(Instruction a, Instruction b) {
     return false;
 }
 
-// TODO():
 // %r = {a - (a - b)}  ->  %r = {(a - a) + b}  ->  %r = {b + 0}
 // %r = {(a - b) + b}  ->  %r = {a - (b - b)}  ->  %r = {a + 0}
 // %r = {a - (a + b)}  ->  %r = {(a - a) - b} -> %r = {0 - b}
@@ -214,6 +213,12 @@ bool EliminateSubEq(Instruction a, Instruction b) {
         // SubI2->PrintIR(std::cerr);
         // puts("------3------------");
     }
+    return false;
+}
+
+// TODO():EliminateMulAdd
+// a*c + a => a*(c+1) (c is const and c+1 can not overflow)
+bool EliminateMulAdd(Instruction a, Instruction b) {
     return false;
 }
 
