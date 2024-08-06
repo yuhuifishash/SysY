@@ -22,3 +22,23 @@ we only consider add.
 */
 
 // reference: LLVM  lib/Transforms/Scalar/NaryReassociate.cpp
+
+
+
+
+/*
+int t1 = i + b + c;
+b and c are loop invariant,
+we reassociate i + b + c into i + (b + c)
+we consider add and sub
+*/
+void LoopInvariantReassociate(CFG* C)
+{
+    for(auto l:C->LoopForest.loop_set){
+        auto scev = l->scev;
+        // use scev.InvariantSet to find the invariant register in loop l;
+        for(auto bb:l->loop_nodes){
+
+        }
+    }
+}

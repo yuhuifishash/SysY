@@ -90,6 +90,7 @@ void MinMaxRecognize(CFG *C);
 void ArrayMinMaxRecognize(CFG *C);
 void LatchPhiCombine(CFG *C);
 void LoopIndVarSimplify(CFG *C);
+void LoopInvariantReassociate(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -226,6 +227,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FunctionInline);
         llvmIR.PassExecutor(EliminateUselessFunction);
 
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(ScalarEvolution);
+        // llvmIR.PassExecutor(LoopInvariantReassociate);
+
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
             llvmIR.BuildLoopInfo();
@@ -327,6 +334,12 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(LoopInvariantCodeMotion);
+        llvmIR.PassExecutor(SimplifyCFG);
 #endif
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
