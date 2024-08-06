@@ -37,11 +37,18 @@ static bool LoopSameIterationsCheck(NaturalLoop *L1, NaturalLoop *L2) {
     auto info1 = L1->scev.forloop_info;
     auto info2 = L2->scev.forloop_info;
 
+    // info1.lowerbound.PrintSCEVValue();std::cerr<<"\n";
+    // info2.lowerbound.PrintSCEVValue();std::cerr<<"\n";
+    // info1.upperbound.PrintSCEVValue();std::cerr<<"\n";
+    // info2.upperbound.PrintSCEVValue();std::cerr<<"\n";
+    // std::cerr<<info1.is_upperbound_closed<<" "<<info2.is_upperbound_closed<<"\n";
+    // std::cerr<<info1.cond<<" "<<info2.cond<<"\n";
+    bool tag0 = info1.cond == info2.cond;
     bool tag1 = info1.is_upperbound_closed == info2.is_upperbound_closed;
     bool tag2 = info1.lowerbound == info2.lowerbound;
     bool tag3 = info1.upperbound == info2.upperbound;
     bool tag4 = info1.step == info2.step;
-    return tag1 && tag2 && tag3 && tag4;
+    return tag0 && tag1 && tag2 && tag3 && tag4;
 }
 
 // I1 and I2 must be GEP

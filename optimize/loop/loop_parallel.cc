@@ -69,7 +69,6 @@ NaturalLoop::LoopDepResult NaturalLoop::CheckDependenceResult(Instruction I1, In
             }
             auto scev1 = scev.SCEVMap[r1];
             auto scev2 = scev.SCEVMap[r2];
-
             if (scev1->len != 2 || scev2->len != 2) {
                 continue;
             }
@@ -352,11 +351,17 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR *IR) {
     auto st = LoadStI->GetResultReg();
     auto ed = LoadEdI->GetResultReg();
     auto thread = LoadThreadIdI->GetResultReg();
-
-    // part = (ed - st) / 4
-    // ST = part*thread
-    // ED = part*(thread + 1)
-    // if(thread == 3){ED = ed}
+    /* if cond == slt
+        part = (ed - st) / 4
+        ST = part*thread + st
+        ED = part*(thread + 1) + st
+        if(thread == 3){ED = ed}*/
+    /* if cond == sle
+        part = (ed - st) / 4
+        ST = part*thread + st
+        ED = part*(thread + 1) + st - 1
+        if(thread == 3){ED = ed}
+    */
     auto SubI = new ArithmeticInstruction(SUB, I32, ed, st, GetNewRegOperand(++parallel_reg));
     auto partI =
     new ArithmeticInstruction(DIV, I32, SubI->GetResultReg(), new ImmI32Operand(4), GetNewRegOperand(++parallel_reg));
@@ -366,13 +371,24 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR *IR) {
     new ArithmeticInstruction(ADD, I32, thread, new ImmI32Operand(1), GetNewRegOperand(++parallel_reg));
     auto edmulI = new ArithmeticInstruction(MUL, I32, partI->GetResultReg(), threadaddI->GetResultReg(),
                                             GetNewRegOperand(++parallel_reg));
-    auto EDI = new ArithmeticInstruction(ADD, I32, edmulI->GetResultReg(), st, GetNewRegOperand(++parallel_reg));
+
+    ArithmeticInstruction* edtmpI = nullptr;
+    ArithmeticInstruction* EDI = nullptr;
+    if(scev.forloop_info.cond == slt){
+        EDI = new ArithmeticInstruction(ADD, I32, edmulI->GetResultReg(), st, GetNewRegOperand(++parallel_reg));
+    }else{
+        edtmpI = new ArithmeticInstruction(ADD, I32, edmulI->GetResultReg(), st, GetNewRegOperand(++parallel_reg));
+        EDI = new ArithmeticInstruction(SUB, I32, edtmpI->GetResultReg(), new ImmI32Operand(1), GetNewRegOperand(++parallel_reg));
+    }
     entry->InsertInstruction(1, SubI);
     entry->InsertInstruction(1, partI);
     entry->InsertInstruction(1, stmulI);
     entry->InsertInstruction(1, STI);
     entry->InsertInstruction(1, threadaddI);
     entry->InsertInstruction(1, edmulI);
+    if(edtmpI != nullptr) {
+        entry->InsertInstruction(1, edtmpI);
+    }
     entry->InsertInstruction(1, EDI);
 
     auto threadcmpI = new IcmpInstruction(I32, thread, new ImmI32Operand(3), eq, GetNewRegOperand(++parallel_reg));

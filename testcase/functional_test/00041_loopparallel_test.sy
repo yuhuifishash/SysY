@@ -1,0 +1,91 @@
+int A[10000005]={};
+int B[10000005]={};
+int C[10000005]={};
+int D[10000005]={};
+int main()
+{
+    int i = 0;
+    int n = getint();
+
+    @for(int i=0;i<n/4;i=i+1){
+        A[i] = 4+i;
+    }
+    @for(int i=0;i<=n/4;i=i+1){
+        B[i] = 13+i;
+    }
+    @for(int i=0;i<=n/4;i=i+1){
+        B[i] = 21+i;
+    }
+    @for(int i=0;n/4>i;i=i+1){
+        C[i] = 14+i;
+    }
+    @for(int i=0;i<=n/4;i=i+1){
+        D[i] = 26+i;
+    }
+
+    @for(int i=n/4;i<=n/2;i=i+1){
+        A[i] += 33+i;
+    }
+    @for(int i=n/4;i<=n/2;i=i+1){
+        B[i] += 44+i;
+    }
+    @for(int i=n/4;i<n/2;i=i+1){
+        C[i] += 55+i;
+    }
+
+    @for(int i=n/2;i<n*3/4;i=i+1){
+        A[i] += 66+i;
+    }
+    @for(int i=n/2;i<n*3/4;i=i+2){
+        B[i] = 77+i;
+    }
+    @for(int i=n/2;i<n*3/4;i=i+2){
+        C[i] += 88+i;
+    }
+    @for(int i=n/2;i<=n*3/4;i=i+2){
+        D[i] += 99+i;
+    }
+
+    @for(int i=n*3/4;i<n;i=i+1){
+        A[i] += 103+i;
+    }
+    @for(int i=n*3/4;i>n;i=i+1){
+        B[i] += 105+i;
+    }
+    @for(int i=n*3/4;i<n;i=i+1){
+        C[i] += 105+i;
+    }
+    @for(int i=n*3/4;i<n;i=i+1){
+        D[i] += 222+i;
+    }
+
+    @for(int i=-n*3/4;i>n;i=i+1){
+        B[i+n] += 9962+i;
+    }
+    @for(int i=-n*3/4;i<n;i=i+1){
+        A[i+n] += 9961+i;
+    }
+    @for(int i=-n*3/4;i<n;i=i+1){
+        C[i+n] += 9963+i;
+    }
+    @for(int i=-n*3/4;i<n;i=i+1){
+        D[i+n] += 9966+i;
+    }
+    
+    int S1 = 0, S2 = 0, S3 = 0, S4 = 0;
+    @for(int i=0;i<5000000;i=i+1){
+        S1 += A[i] + i;
+        S2 += B[i] + i+1;
+        S3 += C[i] + i+2;
+        S4 += D[i] + i+3;
+        S1 %= 998244353;
+        S2 %= 998244353;
+        S3 %= 998244353;
+        S4 %= 998244353;
+    }
+    putint(S1);putch(10);
+    putint(S2);putch(10);
+    putint(S3);putch(10);
+    putint(S4);putch(10);
+    return 0;
+}
