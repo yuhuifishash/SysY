@@ -133,29 +133,89 @@ void GatherUseSregs(MachineFunction *func, std::vector<std::vector<int>>&reg_occ
     }
 }
 
-void GetDfsOrder (MachineDominatorTree *domtree, int domroot, std::vector<int> order, std::vector<int> &depth) {
-
+void GetDfsOrder (MachineDominatorTree *domtree, int cur, std::vector<int>&order, std::map<int, int> &vsd) {
+    order.push_back(cur);
+    vsd[cur] = 1;
+    for (auto child : domtree->dom_tree[cur]) {
+        int child_id = child->getLabelId();
+        if (vsd.find(child_id) == vsd.end()) {
+            vsd[child_id] = 1;
+            GetDfsOrder(domtree, child_id, order, vsd);
+        }
+    }
 }
 
-int CalculateLCA (std::vector<int> &reg_occurblockids, MachineDominatorTree *domtree, int domroot) {
-    std::vector<int> dfsorder, depth;
-    GetDfsOrder(domtree, domroot, dfsorder, depth);
-    for (auto it = dfsorder.begin();it != dfsorder.end();++it) {
+void GetDepth (MachineDominatorTree *domtree, int domroot, std::map<int, int> &dph) {
+    std::queue<int> q;
+    q.push(domroot);
+    dph[domroot] = 1;
+    while (!q.empty()) {
+        auto cur = q.front();
+        q.pop();
+        for (auto child : domtree->dom_tree[cur]) {
+            int child_id = child->getLabelId();
+            if (dph.find(child_id) == dph.end()) {
+                dph[child_id] = dph[cur] + 1;
+                q.push(child_id);
+            }
+        }
+    }
+}
 
+int CalculateLCA (int x, int y, MachineDominatorTree *domtree, std::map<int, int> &dph) {
+    while (dph[x] > dph[y]) { x = domtree->idom[x]->getLabelId(); }
+    while (dph[y] > dph[x]) { y = domtree->idom[y]->getLabelId(); }
+    while (x != y) {
+        x = domtree->idom[x]->getLabelId();
+        y = domtree->idom[y]->getLabelId();
+    }
+    return x;
+}
+
+int CalculateGroupLCA (std::vector<int> &reg_occurblockids, MachineDominatorTree *domtree, int domroot) {
+    std::vector<int> dfsorder;
+    std::map<int, int> vsd;
+    std::map<int, int> dph;
+    GetDfsOrder(domtree, domroot, dfsorder, vsd);
+    GetDepth(domtree, domroot, dph);
+    int first = -1, last = -1;
+    std::map<int,int> blockhasreg;
+    for (auto b : reg_occurblockids) {
+        blockhasreg[b] = 1;
+    }
+    for (auto it = dfsorder.begin();it != dfsorder.end();++it) {
+        if (blockhasreg[*it]) {
+            first = *it;
+            break;
+        }
     }
     for (auto it = dfsorder.rbegin();it != dfsorder.rend();++it) {
-
+        if (blockhasreg[*it]) {
+            last = *it;
+            break;
+        }
     }
+    Assert(first != -1 && last != -1);
+    return CalculateLCA(first, last, domtree, dph);
 }
 
 void RiscV64LowerStack::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
         std::vector<std::vector<int>> saveregs_occurblockids;
+        std::vector<int> sd_blocks;
+        std::vector<int> ld_blocks;
+        sd_blocks.resize(64);
+        ld_blocks.resize(64);
         GatherUseSregs(func, saveregs_occurblockids);
         int saveregnum = 0;
-        for (auto v : saveregs_occurblockids) {
-            if (!v.empty()) { saveregnum++; }
+        for (auto i = 0; i < saveregs_occurblockids.size(); i++) {
+            auto v = saveregs_occurblockids[i];
+            if (!v.empty()) {
+                saveregnum++;
+                sd_blocks[i] = CalculateGroupLCA(v, &func->getMachineCFG()->DomTree, 0);
+                ld_blocks[i] = CalculateGroupLCA(v, &func->getMachineCFG()->PostDomTree, func->getMachineCFG()->ret_block->Mblock->getLabelId());
+            }
         }
         func->AddStackSize(saveregnum * 8);
         for (auto &b : func->blocks) {
