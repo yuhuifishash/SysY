@@ -197,6 +197,8 @@ std::string RegOperand::GetFullName() {
 
 std::string ImmI32Operand::GetFullName() { return std::to_string(immVal); }
 
+std::string ImmI64Operand::GetFullName() { return std::to_string(immVal); }
+
 std::string ImmF32Operand::GetFullName() {
     std::stringstream ss;
     ss << "0x" << std::hex << GetFloatByteVal();
