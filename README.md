@@ -138,6 +138,8 @@ To generate asm of single file(*.sy) with optimization
 
 -AggressiveDeadCodeElimination
 
+-Reassociate
+
 -CommonSubexpressionElimination
 
 -DeadStoreElimination
@@ -165,6 +167,7 @@ To generate asm of single file(*.sy) with optimization
 -LoopUnroll
 
 ## Back-End Optimization
+
 -MachinePeephole
 
 -MachineCSE
@@ -178,4 +181,5 @@ To generate asm of single file(*.sy) with optimization
 -LinearScan
 
 ## Reference
+
 https://github.com/llvm/llvm-project/blob/main/llvm/lib
