@@ -334,6 +334,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleAliasAnalysis);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
