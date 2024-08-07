@@ -42,13 +42,6 @@ static Instruction FindTerminal(CFG *C, int bbid) {
     return bb->Instruction_list.back();
 }
 void AggressiveDeadCodeElimination(CFG *C) {
-    // std::cerr<<C->function_def->GetFunctionName()<<'\n';
-    // if(C->function_def->GetFunctionName() == "mod"){
-    //     for(auto [id,bb] : *C->block_map){
-    //         bb->printIR(std::cerr);
-
-    //     }
-    // }
     std::deque<Instruction> worklist;
     std::map<int, Instruction> defmap;
     std::set<Instruction> liveInstructionset;
@@ -60,10 +53,8 @@ void AggressiveDeadCodeElimination(CFG *C) {
     auto PostDomTree = C->PostDomTree;
     auto PostDomTreeidom = PostDomTree.idom;
     auto blockmap = *C->block_map;
-    // int cnt = 0;
     for (auto [id, bb] : blockmap) {
         for (auto I : bb->Instruction_list) {
-            // cnt ++;
             I->SetBlockID(id);
             if (I->GetOpcode() == STORE || I->GetOpcode() == CALL || I->GetOpcode() == RET) {
                 worklist.push_back(I);
@@ -80,8 +71,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
         if (liveInstructionset.find(I) != liveInstructionset.end()) {
             continue;
         }
-        // I->PrintIR(std::cerr);
-        // std::cerr<<I->GetBlockID()<<'\n';
         liveInstructionset.insert(I);
         auto parBBno = I->GetBlockID();
         auto parBB = blockmap[I->GetBlockID()];
@@ -100,7 +89,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
         }
 
         if (parBBno != -1) {
-            // std::cerr<<parBBno<<" "<<CDG_precursor.size()<<'\n';
             for (auto CDG_pre : CDG_precursor[parBBno]) {
                 auto CDG_preno = CDG_pre->block_id;
                 auto terminalI = FindTerminal(C, CDG_preno);
@@ -125,7 +113,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
         }
     }
 
-    // int cnt2 = 0;
     for (auto [id, bb] : *C->block_map) {
         auto terminalI = FindTerminal(C, id);
         auto tmp_Instruction_list = bb->Instruction_list;
@@ -138,7 +125,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
                         livebbid = PostDomTreeidom[id]->block_id;
                     }
                     I = new BrUncondInstruction(GetNewLabelOperand(livebbid));
-                    // cnt2++;
                 } else {
                     continue;
                 }

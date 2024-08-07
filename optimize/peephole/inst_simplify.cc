@@ -327,7 +327,6 @@ void SrcEqResultInstEliminate(CFG *C) {
                 if (num != 0.0) {
                     continue;
                 }
-                // AddI->PrintIR(std::cerr);
                 Connect(AddI->GetResultReg(), AddI->GetOperand1());
                 EraseSet.insert(I);
             }
@@ -342,7 +341,6 @@ void SrcEqResultInstEliminate(CFG *C) {
                 if (num != 1.0) {
                     continue;
                 }
-                // std::cerr<<num-1<<'\n';
                 Connect(SubI->GetResultReg(), SubI->GetOperand1());
                 EraseSet.insert(I);
             }
@@ -376,7 +374,6 @@ void SrcEqResultInstEliminate(CFG *C) {
             I->ReplaceRegByMap(UnionFindMap);
             bb->InsertInstruction(1, I);
         }
-        // bb->printIR(std::cerr);
     }
     UnionFindMap.clear();
     EraseSet.clear();
@@ -428,9 +425,7 @@ void ZeroResultSimplify(Instruction &I) {
         
         auto subI = (ArithmeticInstruction*)I;
         if(subI->GetOperand1()->GetFullName() == subI->GetOperand2()->GetFullName()){
-            // I->PrintIR(std::cerr);
             I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),subI->GetResultOperand());
-            // I->PrintIR(std::cerr);
         }
     }
     if(I->GetOpcode()==MUL){
@@ -440,16 +435,12 @@ void ZeroResultSimplify(Instruction &I) {
         if(op1->GetOperandType() == BasicOperand::IMMI32){
             auto num1 = ((ImmI32Operand*)op1)->GetIntImmVal();
             if(num1 == 0){
-                // I->PrintIR(std::cerr);
                 I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
-                // I->PrintIR(std::cerr);
             }
         }else if(op2->GetOperandType() == BasicOperand::IMMI32){
             auto num2 = ((ImmI32Operand*)op2)->GetIntImmVal();
             if(num2== 0){
-                // I->PrintIR(std::cerr);
                 I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
-                // I->PrintIR(std::cerr);
             }
         }
     }
@@ -464,7 +455,6 @@ void DoubleAddInstSimplify(Instruction &I) {
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {
         for (auto &I : bb->Instruction_list) {
-            // I->PrintIR(std::cerr);
             I32ConstantSimplify(I);
             I32ConstantSub2AddSimplify(I);
             ZeroResultSimplify(I);
@@ -691,23 +681,8 @@ void GEPStrengthReduce(CFG *C) {
                 for (auto BefI : GepPtrMap[ptrOpStr]) {
                     auto aimOp = existpass(GepI, BefI);
                     if (aimOp != -1) {
-                        // auto GepDims = GepI->GetDims();
-                        // auto GepIndexes = GepI->GetIndexes();
-                        // // I->PrintIR(std::cerr);
-                        // // BefI->PrintIR(std::cerr);
-                        // // OpDefI->PrintIR(std::cerr);
-                        // GepDims.clear();
                         auto ptrVal = BefI->GetResultReg();
-
-                        // // std::cerr<<ptrVal->GetFullName()<<'\n';
-                        // GepIndexes.clear();
-                        // GepIndexes.push_back(new ImmI32Operand(aimOp));
-                        // GepIndexes.push_back(ptrVal);
-                        // GepI->SetNonResultOperands(GepIndexes);
-                        // GepI->SetDims(GepDims);
-
                         auto BefIopNo = ((RegOperand *)ptrVal)->GetRegNo();
-                        // UnionFindMap[GepIopNo] = BefIopNo;
                         G[BefIopNo].push_back(std::make_pair(GepIopNo, aimOp));
                         rd[GepIopNo]++;
                         // GepI->PrintIR(std::cerr);
@@ -715,7 +690,6 @@ void GEPStrengthReduce(CFG *C) {
                         break;
                     }
                 }
-                // std::cerr<<GepPtrMap[ptrOp].size()<<'\n';
             }
             // (*now->Instruction_list.begin())->PrintIR(std::cerr);
             Instructionset.erase(I);
@@ -798,10 +772,7 @@ void GEPStrengthReduce(CFG *C) {
             auto GepIImm = ((ImmI32Operand *)GepIop)->GetIntImmVal();
             auto ptrOp = GepI->GetPtrVal();
             auto ptrOpStr = ptrOp->GetFullName();
-            // I->PrintIR(std::cerr);
-            // if(ptrOpStr == "%r71"){
-            //     I->PrintIR(std::cerr);
-            // }
+
             GepPtrMap[ptrOp->GetFullName()].pop_back();
             for (auto BefInstruction : GepPtrMap[ptrOpStr]) {
                 auto BefI = (GetElementptrInstruction *)BefInstruction;
@@ -828,9 +799,6 @@ void GEPStrengthReduce(CFG *C) {
                     }
                 }
             }
-            // std::cerr<<GepPtrMap[ptrOp].size()<<'\n';
-
-            // (*now->Instruction_list.begin())->PrintIR(std::cerr);
             Instructionset.erase(I);
         } while (Instruction_it != now->Instruction_list.begin());
     };

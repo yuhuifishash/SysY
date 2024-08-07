@@ -291,15 +291,11 @@ bool EliminateConstDivIcmp(Instruction a, Instruction b) {
 // c1*c2 can not overflow (range of int32_t)
 
 bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
-    // a->PrintIR(std::cerr);
-    // b->PrintIR(std::cerr);
     if (a->GetOpcode() != DIV || b->GetOpcode() != DIV) {
         return false;
     }
     auto divI1 = (ArithmeticInstruction *)a;
     auto divI2 = (ArithmeticInstruction *)b;
-    // divI1->PrintIR(std::cerr);
-    // divI2->PrintIR(std::cerr);
     if (divI1->GetDataType() != I32 || divI2->GetResultType() != I32) {
         return false;
     }
@@ -311,7 +307,6 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     auto divI2op2 = divI2->GetOperand2();
     if (divI1resultop->GetFullName() != divI2op1->GetFullName() || divI2op2->GetOperandType() != BasicOperand::IMMI32 ||
         divI1op2->GetOperandType() != BasicOperand::IMMI32) {
-        // std::cerr<<divI2op1->GetOperandType()<<" "<<divI1op2->GetOperandType()<<" "<<divI2op1->GetFullName()<<'\n';
         return false;
     }
 

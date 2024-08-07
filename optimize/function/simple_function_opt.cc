@@ -125,9 +125,6 @@ bool TailRecursiveEliminateCheck(CFG *C) {
                 for (auto args : CallI->GetParameterList()) {
                     auto args_regno = ((RegOperand *)args.second)->GetRegNo();
                     // std::cout<<args_regno<<'\n';
-                    // if(CallI->GetFunctionName()=="DFS"){
-                    //     std::cout<<args_regno<<'\n';
-                    // }
                     if (GEPMap.find(args_regno) != GEPMap.end()) {
                         return false;
                     }
