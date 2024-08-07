@@ -452,7 +452,10 @@ void RiscV64Spiller::GenerateCopyFromStackCode(std::list<MachineBaseInstruction 
 std::list<MachineBaseInstruction *>::iterator RiscV64Block::getInsertBeforeBrIt() {
     auto it = --instructions.end();
     auto jal_pos = it;
-    for (auto it = --instructions.end(); it != instructions.begin(); --it) {
+    if (instructions.empty()) {
+        return instructions.end();
+    }
+    for (auto it = --instructions.end(); it != --instructions.begin(); --it) {
         if ((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI) {
             continue;
         }
@@ -481,7 +484,10 @@ std::vector<int> RiscV64Block::getAllBranch() {
     auto it = --instructions.end();
     // auto jal_pos = it;
     std::vector<int> ret;
-    for (auto it = --instructions.end(); it != instructions.begin(); --it) {
+    if (instructions.empty()) {
+        return ret;
+    }
+    for (auto it = --instructions.end();it != --instructions.begin(); --it) {
         if ((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI) {
             continue;
         }
