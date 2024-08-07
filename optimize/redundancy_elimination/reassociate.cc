@@ -114,7 +114,6 @@ void LoopInvariantReassociate(CFG* C)
                     }
                 }else{
                     isconst = 1;
-                    // continue;
                 }
                 
                 /*
@@ -146,8 +145,8 @@ void LoopInvariantReassociate(CFG* C)
                         }
                     }
 
-                    I1->PrintIR(std::cerr);
-                    I2->PrintIR(std::cerr);
+                    // I1->PrintIR(std::cerr);
+                    // I2->PrintIR(std::cerr);
                     switch (type){
                         case 0:// a b r1 c -> c b r1 a
                             std::swap(I1op1,I2op2);
@@ -173,14 +172,19 @@ void LoopInvariantReassociate(CFG* C)
                     I1->SetOperand2(I1op2);
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
-                    I1->PrintIR(std::cerr);
-                    I2->PrintIR(std::cerr);
+                    if(type != -1){
+                        scev.InvariantSet.insert(result1->GetRegNo());
+                        // std::cerr<<result1->GetFullName()<<'\n';
+                    }
+                    // I1->PrintIR(std::cerr);
+                    // I2->PrintIR(std::cerr);
+                    // puts("=============");
                     continue;
                 }
                 
                 if(check4 || (!check2&&check5) || (!check3&&check6)){
-                    // I1->PrintIR(std::cerr);
-                    // I2->PrintIR(std::cerr);
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
                     switch (type){
                         case 0:// a b r1 c -> a c r1 b
                             std::swap(I1op2,I2op2);
@@ -192,14 +196,8 @@ void LoopInvariantReassociate(CFG* C)
                             std::swap(I2op1,I1op1);
                             break;
                         case 2:// a b r1 c -> a c r1 b
-                            // I1->PrintIR(std::cerr);
-                            // I2->PrintIR(std::cerr);
                             I1->Setopcode(ADD);
                             I2->Setopcode(SUB);
-                            // std::cerr<<I1op2->GetFullName()<<" "<<I2op2->GetFullName()<<'\n';
-                            // I1->PrintIR(std::cerr);
-                            // I2->PrintIR(std::cerr);
-                            // puts("--------------");
                             std::swap(I1op2,I2op2);
                             break;
                         case 3:// a b r1 c -> a c r1 b
@@ -212,6 +210,13 @@ void LoopInvariantReassociate(CFG* C)
                     I1->SetOperand2(I1op2);
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
+                    if(type != -1){
+                        scev.InvariantSet.insert(result1->GetRegNo());
+                        // std::cerr<<result1->GetFullName()<<'\n';
+                    }
+                    // I1->PrintIR(std::cerr);
+                    // I2->PrintIR(std::cerr);
+                    // puts("=============");
                     continue;
                 }
             }
