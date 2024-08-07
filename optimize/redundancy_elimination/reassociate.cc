@@ -62,20 +62,37 @@ void LoopInvariantReassociate(CFG* C)
                 auto b = *it;
                 ArithmeticInstruction* I1;
                 ArithmeticInstruction* I2;
+                /*
+                    case 1: a + b + c => r1 = a + b, r2 = r1 + c
+                        => (b,c) r1 = b + c, r2 = r1 + a
+                        => (a,c) r1 = a + c, r2 = r1 + b
+                    case 2: a + b - c => r1 = a + b, r2 = r1 - c
+                        => (b,c) r1 = c - b, r2 = a - r1
+                        => (a,c) r1 = c - a, r2 = b - r1
+                    case 3: a - b + c => r1 = a - b, r2 = r1 + c
+                        => (b,c) r1 = c - b, r2 = r1 + a
+                        => (a,c) r1 = a + c, r2 = r1 - b
+                    case 4: a - b - c => r1 = a - b, r2 = r1 - c
+                        => (b,c) r1 = b + c, r2 = a - r1
+                        => (a,c) r1 = a - c, r2 = r1 - b
+                */
+                int type = -1;
                 if(a->GetOpcode() == ADD && b->GetOpcode() == ADD){
-                    I1 = (ArithmeticInstruction*)a;
-                    I2 = (ArithmeticInstruction*)b;
+                    type = 0;
                 }else if(a->GetOpcode() == ADD && b->GetOpcode() == SUB){
-                    continue;
+                    type = 1;
                 }else if(a->GetOpcode() == SUB && b->GetOpcode() == ADD){
-                    continue;
+                    type = 2;
                 }else if(a->GetOpcode() == SUB && b->GetOpcode() == SUB){
-                    continue;
+                    type = 3;
                 }else{
                     continue;
                 }
+                I1 = (ArithmeticInstruction*)a;
+                I2 = (ArithmeticInstruction*)b;
                 auto result1 = ((RegOperand*)I1->GetResultReg());
                 auto result2 = ((RegOperand*)I1->GetResultReg());
+                auto datatype = I1->GetDataType();
                 if(usemap[result1->GetRegNo()] > 1){
                     continue;
                 }
@@ -88,29 +105,104 @@ void LoopInvariantReassociate(CFG* C)
                 }else if(I2op1->GetFullName() != result1->GetFullName()){
                     continue;
                 }
-                if(I2op2->GetOperandType() != BasicOperand::REG){
-                    continue;
-                }
-                auto reg2 = (RegOperand*)I2op2;
-                auto regno2 = reg2->GetRegNo();
-                if(scev.InvariantSet.find(regno2)==scev.InvariantSet.end()){
-                    continue;
-                }
-                if(I1op2->GetOperandType() == BasicOperand::REG){
-                    auto reg1 = (RegOperand*)I1op2;
-                    auto regno1 = reg1->GetRegNo();
-                    if(scev.InvariantSet.find(regno1)!=scev.InvariantSet.end()){
-                        std::swap(I1op1,I2op2);
+                bool isconst = 0;
+                if(I2op2->GetOperandType() == BasicOperand::REG){
+                    auto reg2 = (RegOperand*)I2op2;
+                    auto regno2 = reg2->GetRegNo();
+                    if(scev.InvariantSet.find(regno2)==scev.InvariantSet.end()){
                         continue;
                     }
+                }else{
+                    isconst = 1;
+                    continue;
                 }
-                if(I1op1->GetOperandType() == BasicOperand::REG){
-                    auto reg1 = (RegOperand*)I1op1;
-                    auto regno1 = reg1->GetRegNo();
-                    if(scev.InvariantSet.find(regno1)!=scev.InvariantSet.end()){
-                        std::swap(I1op2,I2op2);
-                        continue;
+                
+                /*
+                    case 1: a + b + c => r1 = a + b, r2 = r1 + c
+                        => (b,c) r1 = b + c, r2 = r1 + a
+                        => (a,c) r1 = a + c, r2 = r1 + b
+                    case 2: a + b - c => r1 = a + b, r2 = r1 - c
+                        => (b,c) r1 = c - b, r2 = a - r1
+                        => (a,c) r1 = c - a, r2 = b - r1
+                    case 3: a - b + c => r1 = a - b, r2 = r1 + c
+                        => (b,c) r1 = c - b, r2 = r1 + a
+                        => (a,c) r1 = a + c, r2 = r1 - b
+                    case 4: a - b - c => r1 = a - b, r2 = r1 - c
+                        => (b,c) r1 = b + c, r2 = a - r1
+                        => (a,c) r1 = a - c, r2 = r1 - b
+                */
+                bool check1 = (I1op2->GetOperandType() == BasicOperand::REG) && (scev.InvariantSet.find(((RegOperand*)I1op2)->GetRegNo())!=scev.InvariantSet.end());
+                bool check2 = 0 && (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op2)->GetIntImmVal() != 0);
+                bool check3 = 0 && (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op2)->GetFloatVal() != 0.0);
+                bool check4 = (I1op1->GetOperandType() == BasicOperand::REG) && (scev.InvariantSet.find(((RegOperand*)I1op1)->GetRegNo())!=scev.InvariantSet.end());
+                bool check5 = 0 && (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op1)->GetIntImmVal() != 0);
+                bool check6 = 0 && (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op1)->GetFloatVal() != 0.0);
+                if(check1 || (check2&&!check5) || (check3&&!check6)){
+                    if(check1 && I1op1->GetOperandType() == BasicOperand::REG){
+                        auto reg22 = (RegOperand*)I1op1;
+                        auto regno22 = reg22->GetRegNo();
+                        if(scev.InvariantSet.find(regno22)!=scev.InvariantSet.end()){
+                            continue;
+                        }
                     }
+                    switch (type){
+                        case 0:// a b r1 c -> c b r1 a
+                            std::swap(I1op1,I2op2);
+                            break;
+                        case 1:// a b r1 c -> c b a r1
+                            I1->Setopcode(SUB);
+                            std::swap(I2op1,I2op2);
+                            std::swap(I1op1,I2op1);
+                            break;
+                        case 2:// a b r1 c -> c b r1 a
+                            std::swap(I1op1,I2op2);
+                            break;
+                        case 3:// a b r1 c -> b c a r1
+                            I1->Setopcode(ADD);
+                            std::swap(I1op1,I1op2);
+                            std::swap(I2op1,I2op2);
+                            std::swap(I1op2,I2op1);
+                            break;
+                        default:
+                            break;
+                    }                       
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    continue;
+                }
+                
+                if(check4 || (!check2&&check5) || (!check3&&check6)){
+                    // I1->PrintIR(std::cerr);
+                    // I2->PrintIR(std::cerr);
+                    switch (type){
+                        case 0:// a b r1 c -> a c r1 b
+                            std::swap(I1op2,I2op2);
+                            break;
+                        case 1:// a b r1 c -> c a b r1
+                            I1->Setopcode(SUB);
+                            std::swap(I1op1,I1op2);
+                            std::swap(I2op1,I2op2);
+                            std::swap(I2op1,I1op1);
+                            break;
+                        case 2:// a b r1 c -> a c r1 b
+                            // I1->PrintIR(std::cerr);
+                            // I2->PrintIR(std::cerr);
+                            I1->Setopcode(ADD);
+                            I2->Setopcode(SUB);
+                            // std::cerr<<I1op2->GetFullName()<<" "<<I2op2->GetFullName()<<'\n';
+                            // I1->PrintIR(std::cerr);
+                            // I2->PrintIR(std::cerr);
+                            // puts("--------------");
+                            std::swap(I1op2,I2op2);
+                            break;
+                        case 3:// a b r1 c -> a c r1 b
+                            std::swap(I1op2,I2op2);
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    continue;
                 }
             }
         }
@@ -182,7 +274,7 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList){
         }
         if(op->GetOperandType() == BasicOperand::IMMF32){
             auto num = ((ImmF32Operand*)op)->GetFloatVal();
-            if(num == 0){
+            if(num == 0.0){
                 return true;
             }
             return false;

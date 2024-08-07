@@ -233,7 +233,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopInvariantReassociate);
+        llvmIR.PassExecutor(LoopInvariantReassociate);
 
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
