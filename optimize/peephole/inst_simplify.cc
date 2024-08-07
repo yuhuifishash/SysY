@@ -69,7 +69,6 @@ void FindNoWriteStaticGlobal(LLVMIR *IR) {
             }
         }
     }
-    // puts("DONE");
     for(auto [str,var]:StaticGlobalMap){
         if(GlobalUsedSet.find(str) == GlobalUsedSet.end() && ConstGlobalMap.find(str) == ConstGlobalMap.end()){
             ConstGlobalMap.insert(std::make_pair(str,var));
@@ -605,7 +604,6 @@ void GEPStrengthReduce(CFG *C) {
             auto GepI = (GetElementptrInstruction *)I;
             auto GepDims = GepI->GetDims();
             auto GepIndexes = GepI->GetIndexes();
-            // puts("----------");
             // I->PrintIR(std::cerr);
             // BefI->PrintIR(std::cerr);
             // OpDefI->PrintIR(std::cerr);
@@ -695,7 +693,6 @@ void GEPStrengthReduce(CFG *C) {
                     if (aimOp != -1) {
                         // auto GepDims = GepI->GetDims();
                         // auto GepIndexes = GepI->GetIndexes();
-                        // // puts("----------");
                         // // I->PrintIR(std::cerr);
                         // // BefI->PrintIR(std::cerr);
                         // // OpDefI->PrintIR(std::cerr);
@@ -817,7 +814,6 @@ void GEPStrengthReduce(CFG *C) {
                     auto newImm = GepIImm - BefIImm;
                     if (newImm < max_imm32 && newImm > -max_imm32) {
                         auto GepIndexes = GepI->GetIndexes();
-                        // puts("----------");
                         // I->PrintIR(std::cerr);
                         // BefI->PrintIR(std::cerr);
                         // OpDefI->PrintIR(std::cerr);

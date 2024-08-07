@@ -145,8 +145,6 @@ void LoopInvariantReassociate(CFG* C)
                         }
                     }
 
-                    // I1->PrintIR(std::cerr);
-                    // I2->PrintIR(std::cerr);
                     switch (type){
                         case 0:// a b r1 c -> c b r1 a
                             std::swap(I1op1,I2op2);
@@ -174,11 +172,7 @@ void LoopInvariantReassociate(CFG* C)
                     I2->SetOperand2(I2op2);
                     if(type != -1){
                         scev.InvariantSet.insert(result1->GetRegNo());
-                        // std::cerr<<result1->GetFullName()<<'\n';
                     }
-                    // I1->PrintIR(std::cerr);
-                    // I2->PrintIR(std::cerr);
-                    // puts("=============");
                     continue;
                 }
                 
@@ -212,11 +206,7 @@ void LoopInvariantReassociate(CFG* C)
                     I2->SetOperand2(I2op2);
                     if(type != -1){
                         scev.InvariantSet.insert(result1->GetRegNo());
-                        // std::cerr<<result1->GetFullName()<<'\n';
                     }
-                    // I1->PrintIR(std::cerr);
-                    // I2->PrintIR(std::cerr);
-                    // puts("=============");
                     continue;
                 }
             }
@@ -231,12 +221,6 @@ void Reassociate(CFG *C){
             addmap.clear();
             definemap.clear();
             addoperandmap.clear();
-            // std::cerr<<id<<'\n';
-            // puts("=================================");
-            // if(C->max_reg==495){
-            //     // bb->printIR(std::cerr);
-            //     break;
-            // }
             ReassociateAddSubStoreMap(bb->Instruction_list);
             changed = false;
             
@@ -251,14 +235,6 @@ void Reassociate(CFG *C){
                 }
             }
             SimpleDCE(C);
-            // if(C->max_reg==494){
-            //     bb->printIR(std::cerr);
-            //     // break;
-            // }else if(C->max_reg<493){
-            //     std::cerr<<C->max_reg<<'\n';
-            // }
-            // bb->printIR(std::cerr);
-            // break;
         }
     }
 }
@@ -320,11 +296,6 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList){
             if(resultreg1->GetFullName() == I2op2->GetFullName()){
                 std::swap(I2op1,I2op2);
             }
-            // if(check(I1op1) || check(I1op2) || check(I2op2)){
-            //     existlast = 0;
-            //     itb++;
-            //     continue;
-            // }
             std::pair<std::string,std::string> pair1,pair2;
             if(resultreg1->GetFullName() == I2op1->GetFullName()){
                 if(I1op2->GetFullName() > I2op2->GetFullName()){
@@ -349,9 +320,6 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList){
                     }
                 }
                 laststr1 = pair1;
-                // AddI1->PrintIR(std::cerr);AddI2->PrintIR(std::cerr);
-                // std::cerr<<pair1.first<<" "<<pair1.second<<'\n';
-                // std::cerr<<pair2.first<<" "<<pair2.second<<'\n';
                 if(pair1 != pair2){
                     if(addmap.find(pair2) == addmap.end()){
                         existlast2 = 1;
@@ -368,7 +336,6 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList){
                     existlast2 = 1;
                 }
                 laststr2 = pair2;
-                // std::cerr<<existlast1<<' '<<existlast2<<'\n';
             }else{
                 existlast1 = 0;
                 existlast2 = 0;
@@ -398,8 +365,6 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
         }else if(resultreg1->GetFullName() != I2op1->GetFullName() || I2op2->GetFullName() == I2op1->GetFullName()){
             return false;
         }
-        // a->PrintIR(std::cerr);
-        // b->PrintIR(std::cerr);
         std::pair<std::string,std::string> pair1,pair2;
         if(I1op2->GetFullName() > I2op2->GetFullName()){
             pair1 = std::make_pair(I2op2->GetFullName(),I1op2->GetFullName());
@@ -415,7 +380,6 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
         bool existoptimize = 0;
         for(int i = 0;i <= 1 ;++i){
             auto pairnow = pairn[i];
-            // std::cerr<<pairnow.first<<" "<<pairnow.second<<" "<<addmap[pairnow]<<'\n';
             if(addmap.find(pairnow) != addmap.end() && addmap[pairnow] > 1){
                 RegOperand *addop = nullptr;
                 if(addoperandmap.find(pairnow) == addoperandmap.end()){
@@ -437,39 +401,19 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
                         }
                         
                     }
-                    // a->PrintIR(std::cerr);
-                    // if(addI->GetResultRegNo() == 401){
-                    //     addI->PrintIR(std::cerr);
-                    //     // std::cerr<<C->max_reg<<'\n';
-                    //     puts("asda");
-                    // }
                     InstList.insert(insertit,addI);
                 }else{
                     addop = (RegOperand*)addoperandmap[pairnow];
                 }
                 if(!existoptimize){
-                    // if(addop->GetRegNo() <= 495){
-                    //     AddI1->PrintIR(std::cerr);
-                    //     AddI2->PrintIR(std::cerr);                    
-                    // }
                     if(i&1){
                         AddI2->SetOperand1(I1op2);
                     }else{
                         AddI2->SetOperand1(I1op1);
                     }
-                    AddI2->SetOperand2(addop);
-                    // if(addop->GetRegNo() <= 495){
-                    //     AddI2->PrintIR(std::cerr);
-                    //     std::cerr<<addmap[pairnow]<<'\n';
-                    //     for(auto I : InstList){
-                    //         I->PrintIR(std::cerr);
-                    //     }
-                    //     puts("_)________===========");
-                    // }
-                    
+                    AddI2->SetOperand2(addop);                   
                     existoptimize = 1;
                 }
-                // puts("HERE");
             }
         }
         return existoptimize;

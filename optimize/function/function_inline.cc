@@ -367,11 +367,9 @@ void InlineDFS(CFG *uCFG) {
 }
 void FunctionInline(LLVMIR *IR) {
     // CFGvis.clear();
-    // puts("HEREH0");
     CFGvis.clear();
     reinlinecallI.clear();
     is_reinline = false;
-    // puts("HEREH1");
     InlineDFS(fcallgraph.MainCFG);
 
     // BuildCG();

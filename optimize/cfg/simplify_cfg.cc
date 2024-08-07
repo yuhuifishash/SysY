@@ -49,7 +49,6 @@ L2:
                     sle %r0,%r1
 */
 void MinMaxRecognize(CFG *C) {
-    // puts("BEGIN");
     auto blockmap = *C->block_map;
     std::map<int, Instruction> definemap;
     for (auto [id, bb] : blockmap) {
@@ -295,7 +294,6 @@ void ArrayMinMaxRecognize(CFG *C) {
             }
             auto IcmpOp1_origin = IcmpI->GetOp1();
             auto IcmpOp2_origin = IcmpI->GetOp2();
-            // puts("HHH");
             if (IcmpOp1_origin->GetOperandType() != BasicOperand::REG) {
                 continue;
             }
@@ -350,7 +348,6 @@ void ArrayMinMaxRecognize(CFG *C) {
                 continue;
             }
             if (C->invG[bb1->block_id].size() > 1) {
-                // puts("HERE");
                 continue;
             }
             // bb->printIR(std::cerr);
@@ -432,7 +429,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
     std::stack<LLVMBlock> bbstack;
     bool changed = true;
     // auto FuncdefI = C->function_def;
-    // puts("-----------------------");
     // FuncdefI->PrintIR(std::cerr);
     while (changed) {
         changed = false;
@@ -450,7 +446,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
             // for(auto [id,bb] : *C->block_map){
             //     bb->printIR(std::cerr);
             // }
-            // puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             for (auto bbv : G[uid]) {
                 // bbv->printIR(std::cerr);
                 int vid = bbv->block_id;
@@ -710,7 +705,6 @@ void EliminateDoubleBrUnCond(CFG *C) {
             }
         }
     }
-    // puts("HERE");
     std::map<int, LLVMBlock> new_block_map = *C->block_map;
     C->block_map->clear();
     for (auto [id, bb] : new_block_map) {

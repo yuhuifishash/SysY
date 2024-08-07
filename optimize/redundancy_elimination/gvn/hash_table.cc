@@ -242,7 +242,7 @@ int HashTable::lookupOrAddArithmetic(Instruction I) {
         str = OpcodeMap[(LLVMIROpcode)opcode_] + " " + TypeMap[type_] + " %v" + std::to_string(op1Value) + ",%v" +
               std::to_string(op2Value);
     }
-    // puts("HERER");
+
     auto resultstr = ArithmeticI->GetResultRegNo();
     if (valuemap.find(str) == valuemap.end()) {
         valuemap[str] = ++expr_number;

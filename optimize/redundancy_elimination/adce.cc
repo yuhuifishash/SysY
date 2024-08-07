@@ -42,7 +42,6 @@ static Instruction FindTerminal(CFG *C, int bbid) {
     return bb->Instruction_list.back();
 }
 void AggressiveDeadCodeElimination(CFG *C) {
-    // DONE("AggressiveDeadCodeElimination");
     // std::cerr<<C->function_def->GetFunctionName()<<'\n';
     // if(C->function_def->GetFunctionName() == "mod"){
     //     for(auto [id,bb] : *C->block_map){
@@ -75,7 +74,6 @@ void AggressiveDeadCodeElimination(CFG *C) {
         }
     }
 
-    // puts("-----------");
     while (!worklist.empty()) {
         auto I = worklist.front();
         worklist.pop_front();
@@ -162,5 +160,4 @@ void AggressiveDeadCodeElimination(CFG *C) {
     liveInstructionset.clear();
     liveBBset.clear();
     // std::cerr<<cnt<<" "<<liveInstructionset.size()+cnt2<<'\n';
-    // puts("ADCE DONE");
 }

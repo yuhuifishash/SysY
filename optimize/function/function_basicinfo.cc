@@ -82,14 +82,12 @@ void FunctionCallGraph::BuildCG(LLVMIR *IR) {
                 }
             }
         }
-        // puts("*---------------*");
         // CFG->function_def->PrintIR(std::cerr);
         // for(auto vCFG:CG[CFG]){
         //     auto I=CGCallI[CFG][vCFG][0];
         //     vCFG->function_def->PrintIR(std::cerr);
         //     I->PrintIR(std::cerr);
         // }
-        // puts("*********************");
         // std::cerr<<FuncName<<" : ";
         // for(auto v:CG[CFG]){
         //     std::cerr<<v->function_def->GetFunctionName()<<" ";

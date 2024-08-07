@@ -153,7 +153,6 @@ bool EliminateSubEq(Instruction a, Instruction b) {
             }
             SubI2->SetOperand1(I1op2);
             // SubI2->PrintIR(std::cerr);
-            // puts("--1----------------");
             return true;
         }
         if(b->GetOpcode() == ADD){
@@ -178,7 +177,6 @@ bool EliminateSubEq(Instruction a, Instruction b) {
             }
             AddI2->SetOperand1(I1op1);
             // AddI2->PrintIR(std::cerr);
-            // puts("---2---------------");
             return true;
         }
         return false;
@@ -211,7 +209,6 @@ bool EliminateSubEq(Instruction a, Instruction b) {
         }
         SubI2->SetOperand2(I1op2);
         // SubI2->PrintIR(std::cerr);
-        // puts("------3------------");
     }
     return false;
 }
@@ -331,7 +328,6 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b) {
     divI2->SetOperand2(new ImmI32Operand(num1 * num2));
     // divI1->PrintIR(std::cerr);
     // divI2->PrintIR(std::cerr);
-    // puts("-------");
     return true;
 }
 
