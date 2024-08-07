@@ -357,20 +357,20 @@ void RiscV64Printer::emit() {
                     }
                 }
             } else if (global_ins->type == I64) {
-                Assert (global_ins->arval.dims.empty());
-				if (global_ins->init_val != nullptr) {
-					Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMI64);
-					auto imm_op = (ImmI64Operand *)global_ins->init_val;
-					auto imm_ll = imm_op->GetLlImmVal();
-					s << "\t.quad\t" << imm_ll << "\n";
-				} else {
-					s << "\t.quad\t0\n";
-				}
-			}
+                Assert(global_ins->arval.dims.empty());
+                if (global_ins->init_val != nullptr) {
+                    Assert(global_ins->init_val->GetOperandType() == BasicOperand::IMMI64);
+                    auto imm_op = (ImmI64Operand *)global_ins->init_val;
+                    auto imm_ll = imm_op->GetLlImmVal();
+                    s << "\t.quad\t" << imm_ll << "\n";
+                } else {
+                    s << "\t.quad\t0\n";
+                }
+            }
         } else if (global->GetOpcode() == GLOBAL_STR) {
             auto str_ins = (GlobalStringConstInstruction *)global;
             // Log("Here");
-			s << str_ins->str_name << ":\n";
+            s << str_ins->str_name << ":\n";
             s << "\t.asciz\t"
               << "\"" << str_ins->str_val << "\""
               << "\n";

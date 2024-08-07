@@ -291,7 +291,6 @@ public:
     }
 };
 
-
 class MachineComment : public MachineBaseInstruction {
 private:
     std::string comment;
@@ -300,6 +299,7 @@ private:
 public:
 #endif
     MachineComment(std::string comment) : MachineBaseInstruction(MachineBaseInstruction::COMMENT), comment(comment) {}
+
 public:
     virtual std::vector<Register *> GetReadReg() { return std::vector<Register *>(); }
     virtual std::vector<Register *> GetWriteReg() { return std::vector<Register *>(); }

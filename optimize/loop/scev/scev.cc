@@ -313,7 +313,7 @@ void SCEV::CheckSimpleForLoop() {
         return;
     }
 
-    if (L->exit_nodes.size() == 0){
+    if (L->exit_nodes.size() == 0) {
         is_simpleloop = false;
         return;
     }

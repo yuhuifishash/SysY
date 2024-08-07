@@ -174,7 +174,7 @@ void RiscV64SSAPeehole::Execute() {
     }
 }
 
-void RiscV64PostRAPeehole::Execute () {
+void RiscV64PostRAPeehole::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
         for (auto block : func->blocks) {

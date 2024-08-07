@@ -372,13 +372,14 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR *IR) {
     auto edmulI = new ArithmeticInstruction(MUL, I32, partI->GetResultReg(), threadaddI->GetResultReg(),
                                             GetNewRegOperand(++parallel_reg));
 
-    ArithmeticInstruction* edtmpI = nullptr;
-    ArithmeticInstruction* EDI = nullptr;
-    if(scev.forloop_info.cond == slt){
+    ArithmeticInstruction *edtmpI = nullptr;
+    ArithmeticInstruction *EDI = nullptr;
+    if (scev.forloop_info.cond == slt) {
         EDI = new ArithmeticInstruction(ADD, I32, edmulI->GetResultReg(), st, GetNewRegOperand(++parallel_reg));
-    }else{
+    } else {
         edtmpI = new ArithmeticInstruction(ADD, I32, edmulI->GetResultReg(), st, GetNewRegOperand(++parallel_reg));
-        EDI = new ArithmeticInstruction(SUB, I32, edtmpI->GetResultReg(), new ImmI32Operand(1), GetNewRegOperand(++parallel_reg));
+        EDI = new ArithmeticInstruction(SUB, I32, edtmpI->GetResultReg(), new ImmI32Operand(1),
+                                        GetNewRegOperand(++parallel_reg));
     }
     entry->InsertInstruction(1, SubI);
     entry->InsertInstruction(1, partI);
@@ -386,7 +387,7 @@ bool NaturalLoop::LoopParallel(CFG *C, LLVMIR *IR) {
     entry->InsertInstruction(1, STI);
     entry->InsertInstruction(1, threadaddI);
     entry->InsertInstruction(1, edmulI);
-    if(edtmpI != nullptr) {
+    if (edtmpI != nullptr) {
         entry->InsertInstruction(1, edtmpI);
     }
     entry->InsertInstruction(1, EDI);

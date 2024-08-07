@@ -299,10 +299,10 @@ void NaturalLoop::LoopGepStrengthReduce(CFG *C) {
             }
             auto GEPI = (GetElementptrInstruction *)I;
             auto ptr = GEPI->GetPtrVal();
-            if(ptr->GetOperandType() == BasicOperand::REG){
-                auto r_ptr = ((RegOperand*)ptr)->GetRegNo();
-                if(scev.InvariantSet.find(r_ptr) == scev.InvariantSet.end()){
-                    continue; //ptr must be invariant
+            if (ptr->GetOperandType() == BasicOperand::REG) {
+                auto r_ptr = ((RegOperand *)ptr)->GetRegNo();
+                if (scev.InvariantSet.find(r_ptr) == scev.InvariantSet.end()) {
+                    continue;    // ptr must be invariant
                 }
             }
             bool isReduceBetter = false;

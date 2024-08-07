@@ -17,7 +17,7 @@ public:
 
     SymbolTable symbol_table;
     std::map<Symbol, VarAttribute> GlobalTable;
-    std::map<Symbol, int> GlobalStrTable; 
+    std::map<Symbol, int> GlobalStrTable;
 
     SemantTable() {
         Symbol getint = id_table.add_id("getint");

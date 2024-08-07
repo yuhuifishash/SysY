@@ -251,7 +251,7 @@ struct RvOpInfo OpTable[] = {[RISCV_SLL] = RvOpInfo{RvOpInfo::R_type, "sll", 1},
                              [RISCV_MAX] = RvOpInfo{RvOpInfo::R_type, "max", 1},
                              [RISCV_MINU] = RvOpInfo{RvOpInfo::R_type, "minu", 1},
                              [RISCV_MAXU] = RvOpInfo{RvOpInfo::R_type, "maxu", 1},
-                             
+
                              [RISCV_FCVT_D_S] = RvOpInfo{RvOpInfo::R2_type, "fcvt.d.s", 2},
                              [RISCV_ZEXT_W] = RvOpInfo{RvOpInfo::R2_type, "zext.w", 1}};
 
@@ -487,7 +487,7 @@ std::vector<int> RiscV64Block::getAllBranch() {
     if (instructions.empty()) {
         return ret;
     }
-    for (auto it = --instructions.end();it != --instructions.begin(); --it) {
+    for (auto it = --instructions.end(); it != --instructions.begin(); --it) {
         if ((*it)->arch == MachineBaseInstruction::COMMENT || (*it)->arch == MachineBaseInstruction::PHI) {
             continue;
         }
