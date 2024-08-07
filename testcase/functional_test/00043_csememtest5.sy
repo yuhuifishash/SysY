@@ -1,0 +1,125 @@
+const int p = 998244353;
+int A[500] = {};
+int B[500] = {};
+int C[500] = {};
+int D[500] = {};
+int E[500] = {};
+int F[500] = {};
+void write_array(int A[],int B[],int C[],int D[],int E[],int F[],int n)
+{
+    if(n < 0){
+        return;
+    }
+    // read A,C,E
+    // write B,D,F
+    B[n] += A[n];
+    D[n] += C[n];
+    F[n] += E[n];
+    write_array(C,F,A,D,E,B,n-1);
+
+    B[n] += C[n];
+    D[n] += E[n];
+    F[n] += A[n];
+
+    B[n]%=p;
+    D[n]%=p;
+    F[n]%=p;
+}
+
+int f(int n,int a[],int x)
+{
+    if(n == 1){
+        return a[x];
+    }else if(n == 2){
+        return a[x+1];
+    }else if(n < 0){
+        return 0;
+    }
+
+    return (f(n-1,a,x) + f(n-2,a,x)) % 998244353;
+}
+
+int ans[200] = {};
+int main()
+{
+    int n = getint();
+    A[0] = 1;B[0] = 2;C[0] = 3;D[0] = 4;E[0] = 5;F[0] = 6;
+    ans[0] = f(n,A,0);
+    ans[1] = f(n,B,0);
+    ans[2] = f(n,C,0);
+    ans[3] = f(n,D,0);
+    ans[4] = f(n,E,0);
+    ans[5] = f(n,F,0);
+
+    write_array(A,A,A,A,A,A,200);
+
+    ans[6] = f(n,A,0);
+    ans[7] = f(n,B,0); // can cse
+    ans[8] = f(n,C,0); // can cse
+    ans[9] = f(n,D,0); // can cse
+    ans[10] = f(n,E,0); // can cse
+    ans[11] = f(n,F,0); // can cse
+
+    write_array(A,A,C,A,E,A,200);
+
+    ans[12] = f(n,A,0);
+    ans[13] = f(n,B,0); // can cse
+    ans[14] = f(n,C,0); // can cse
+    ans[15] = f(n,D,0); // can cse
+    ans[16] = f(n,E,0); // can cse
+    ans[17] = f(n,F,0); // can cse
+
+    write_array(A,B,C,D,E,F,200);
+
+    ans[18] = f(n,A,0); // can cse
+    ans[19] = f(n,B,0); 
+    ans[20] = f(n,C,0); // can cse
+    ans[21] = f(n,D,0); 
+    ans[22] = f(n,E,0); // can cse
+    ans[23] = f(n,F,0); 
+
+    write_array(B,A,D,C,F,E,200);
+
+    ans[24] = f(n,A,0); 
+    ans[25] = f(n,B,0); // can cse
+    ans[26] = f(n,C,0); 
+    ans[27] = f(n,D,0); // can cse
+    ans[28] = f(n,E,0); 
+    ans[29] = f(n,F,0); // can cse
+
+    write_array(C,D,E,F,A,A,200);
+
+    ans[30] = f(n,A,0); 
+    ans[31] = f(n,B,0); 
+    ans[32] = f(n,C,0); 
+    ans[33] = f(n,D,0); 
+    ans[34] = f(n,E,0); 
+    ans[35] = f(n,F,0); 
+
+    write_array(B,B,A,F,C,C,200);
+    
+    ans[36] = f(n,A,0); 
+    ans[37] = f(n,B,0); 
+    ans[38] = f(n,C,0); 
+    ans[39] = f(n,D,0); 
+    ans[40] = f(n,E,0); 
+    ans[41] = f(n,F,0); 
+
+    write_array(C,B,A,A,E,B,200);
+    
+    ans[42] = f(n,A,0); 
+    ans[43] = f(n,B,0); 
+    ans[44] = f(n,C,0); 
+    ans[45] = f(n,D,0); 
+    ans[46] = f(n,E,0); 
+    ans[47] = f(n,F,0); 
+
+    putarray(200,A);
+    putarray(200,B);
+    putarray(200,C);
+    putarray(200,D);
+    putarray(200,E);
+    putarray(200,F);
+    putarray(50,ans);
+    return 0;
+}

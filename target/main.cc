@@ -233,7 +233,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopInvariantReassociate);
+        llvmIR.PassExecutor(LoopInvariantReassociate);
+        llvmIR.PassExecutor(SimplifyCFG);
 
         // repeat 5 times
         for (int i = 0; i < 5; ++i) {
@@ -262,6 +263,10 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimpleDCE);
         }
         llvmIR.PassExecutor(BranchCSE);
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
+        llvmIR.BuildCFG();
+        llvmIR.BuildDominatorTree();
+
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
