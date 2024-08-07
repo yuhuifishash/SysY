@@ -114,7 +114,7 @@ void LoopInvariantReassociate(CFG* C)
                     }
                 }else{
                     isconst = 1;
-                    continue;
+                    // continue;
                 }
                 
                 /*
@@ -132,11 +132,11 @@ void LoopInvariantReassociate(CFG* C)
                         => (a,c) r1 = a - c, r2 = r1 - b
                 */
                 bool check1 = (I1op2->GetOperandType() == BasicOperand::REG) && (scev.InvariantSet.find(((RegOperand*)I1op2)->GetRegNo())!=scev.InvariantSet.end());
-                bool check2 = 0 && (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op2)->GetIntImmVal() != 0);
-                bool check3 = 0 && (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op2)->GetFloatVal() != 0.0);
+                bool check2 = (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op2)->GetIntImmVal() != 0);
+                bool check3 = (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op2)->GetFloatVal() != 0.0);
                 bool check4 = (I1op1->GetOperandType() == BasicOperand::REG) && (scev.InvariantSet.find(((RegOperand*)I1op1)->GetRegNo())!=scev.InvariantSet.end());
-                bool check5 = 0 && (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op1)->GetIntImmVal() != 0);
-                bool check6 = 0 && (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op1)->GetFloatVal() != 0.0);
+                bool check5 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMI32) && (((ImmI32Operand*)I1op1)->GetIntImmVal() != 0);
+                bool check6 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) && (((ImmF32Operand*)I1op1)->GetFloatVal() != 0.0);
                 if(check1 || (check2&&!check5) || (check3&&!check6)){
                     if(check1 && I1op1->GetOperandType() == BasicOperand::REG){
                         auto reg22 = (RegOperand*)I1op1;
@@ -145,6 +145,9 @@ void LoopInvariantReassociate(CFG* C)
                             continue;
                         }
                     }
+
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
                     switch (type){
                         case 0:// a b r1 c -> c b r1 a
                             std::swap(I1op1,I2op2);
@@ -165,7 +168,11 @@ void LoopInvariantReassociate(CFG* C)
                             break;
                         default:
                             break;
-                    }                       
+                    }
+                    I1->SetOperand1(I1op1);
+                    I1->SetOperand2(I1op2);
+                    I2->SetOperand1(I2op1);
+                    I2->SetOperand2(I2op2);
                     I1->PrintIR(std::cerr);
                     I2->PrintIR(std::cerr);
                     continue;
@@ -201,7 +208,10 @@ void LoopInvariantReassociate(CFG* C)
                         default:
                             break;
                     }
-                    
+                    I1->SetOperand1(I1op1);
+                    I1->SetOperand2(I1op2);
+                    I2->SetOperand1(I2op1);
+                    I2->SetOperand2(I2op2);
                     continue;
                 }
             }
