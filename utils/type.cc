@@ -778,7 +778,7 @@ void IRgenTypeConverse(LLVMBlock B, Type::ty type_src, Type::ty type_dst, int sr
         IRgenSitofp(B, src, ++max_reg);
     } else if (type_src == Type::FLOAT && type_dst == Type::DOUBLE) {
         IRgenFpext(B, src, ++max_reg);
-    }else {
+    } else {
         assert(false);
     }
 }

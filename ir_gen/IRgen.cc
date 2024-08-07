@@ -267,7 +267,7 @@ void FuncRParams::codeIR() {}
 void Func_call::codeIR() {
     LLVMBlock B = llvmIR.GetBlock(function_now, now_label);
 
-    if(name->get_string() == "putf"){
+    if (name->get_string() == "putf") {
         auto params = ((FuncRParams *)funcr_params)->params;
         std::vector<std::pair<LLVMType, Operand>> args;
 
@@ -280,7 +280,7 @@ void Func_call::codeIR() {
             param->codeIR();
 
             auto real_type = param->attribute.T.type;
-            if(param->attribute.T.type == Type::FLOAT){
+            if (param->attribute.T.type == Type::FLOAT) {
                 real_type = Type::DOUBLE;
                 IRgenTypeConverse(B, param->attribute.T.type, Type::DOUBLE, max_reg);
             }
@@ -289,7 +289,7 @@ void Func_call::codeIR() {
         IRgenCallVoid(B, VOID, args, name->get_string());
         return;
     }
-    
+
     Type::ty return_type = semant_table.FunctionTable[name]->return_type;
     LLVMType ret_type = Type2LLvm[return_type];
 
@@ -348,7 +348,7 @@ void FloatConst::codeIR() {
 
 void StringConst::codeIR() {
     int id = semant_table.GlobalStrTable[str];
-    irgen_table.current_strptr = GetNewGlobalOperand(".str"+std::to_string(id));
+    irgen_table.current_strptr = GetNewGlobalOperand(".str" + std::to_string(id));
 }
 
 void PrimaryExp_branch::codeIR() { exp->codeIR(); }
@@ -448,7 +448,7 @@ void while_stmt::codeIR() {
 void for_stmt::codeIR() {
     int judge_label = llvmIR.NewBlock(function_now, max_label)->block_id;
     int body_label = llvmIR.NewBlock(function_now, max_label)->block_id;
-    int latch_label = llvmIR.NewBlock(function_now, max_label)->block_id; 
+    int latch_label = llvmIR.NewBlock(function_now, max_label)->block_id;
     int end_label = llvmIR.NewBlock(function_now, max_label)->block_id;
 
     int t1 = loop_start_label;
@@ -484,7 +484,6 @@ void for_stmt::codeIR() {
 
     loop_start_label = t1;
     loop_end_label = t2;
-
 }
 
 void continue_stmt::codeIR() {

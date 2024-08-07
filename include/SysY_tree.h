@@ -513,7 +513,7 @@ public:
     Stmt body;
     Stmt latch;
     Decl decl;
-    for_stmt(Expression c,Stmt b,Stmt l,Decl d):Cond(c),body(b),latch(l),decl(d){}
+    for_stmt(Expression c, Stmt b, Stmt l, Decl d) : Cond(c), body(b), latch(l), decl(d) {}
     void codeIR();
     void TypeCheck();
     void printAST(std::ostream &s, int pad);

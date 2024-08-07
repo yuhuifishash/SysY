@@ -8,19 +8,19 @@ extern std::map<std::string, VarAttribute> ConstGlobalMap;
 extern std::map<std::string, VarAttribute> StaticGlobalMap;
 
 // if find, erase the var from StaticGlobalMap, and add it to ConstGlobalMap
-void FindNoWriteStaticGlobal(LLVMIR *IR) { 
+void FindNoWriteStaticGlobal(LLVMIR *IR) {
     std::set<std::string> GlobalUsedSet;
-    std::map<int,std::string> GEPMap;
+    std::map<int, std::string> GEPMap;
     for (auto [defI, cfg] : IR->llvm_cfg) {
         for (auto [id, bb] : *cfg->block_map) {
             for (auto I : bb->Instruction_list) {
-                if(I->GetOpcode() == GETELEMENTPTR){
-                    auto gepI = (GetElementptrInstruction*)I;
+                if (I->GetOpcode() == GETELEMENTPTR) {
+                    auto gepI = (GetElementptrInstruction *)I;
                     auto ptr = gepI->GetPtrVal();
-                    if(ptr->GetOperandType() != BasicOperand::GLOBAL){
+                    if (ptr->GetOperandType() != BasicOperand::GLOBAL) {
                         continue;
                     }
-                    auto gptr = (GlobalOperand*)ptr;
+                    auto gptr = (GlobalOperand *)ptr;
                     auto name = gptr->GetName();
                     GEPMap[gepI->GetResultRegNo()] = name;
                 }
@@ -30,36 +30,38 @@ void FindNoWriteStaticGlobal(LLVMIR *IR) {
     for (auto [defI, cfg] : IR->llvm_cfg) {
         for (auto [id, bb] : *cfg->block_map) {
             for (auto I : bb->Instruction_list) {
-                if(I->GetOpcode() == STORE){
-                    auto storeI = (StoreInstruction*)I;
+                if (I->GetOpcode() == STORE) {
+                    auto storeI = (StoreInstruction *)I;
                     auto op = storeI->GetPointer();
                     if (op->GetOperandType() == BasicOperand::GLOBAL) {
                         auto gop = (GlobalOperand *)op;
                         auto name = gop->GetName();
-                        if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
+                        if (StaticGlobalMap.find(name) != StaticGlobalMap.end()) {
                             GlobalUsedSet.insert(name);
                         }
-                    }else if(op->GetOperandType() == BasicOperand::REG){
-                        auto regop = (RegOperand*)op;
+                    } else if (op->GetOperandType() == BasicOperand::REG) {
+                        auto regop = (RegOperand *)op;
                         auto regopno = regop->GetRegNo();
-                        if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
+                        if (GEPMap.find(regopno) == GEPMap.end() ||
+                            StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()) {
                             continue;
                         }
                         GlobalUsedSet.insert(GEPMap[regopno]);
                     }
-                }else if(I->GetOpcode() == CALL){
-                    auto callI = (CallInstruction*)I;
-                    for(auto [type,op]:callI->GetParameterList()){
+                } else if (I->GetOpcode() == CALL) {
+                    auto callI = (CallInstruction *)I;
+                    for (auto [type, op] : callI->GetParameterList()) {
                         if (op->GetOperandType() == BasicOperand::GLOBAL) {
                             auto gop = (GlobalOperand *)op;
                             auto name = gop->GetName();
-                            if(StaticGlobalMap.find(name) != StaticGlobalMap.end()){
+                            if (StaticGlobalMap.find(name) != StaticGlobalMap.end()) {
                                 GlobalUsedSet.insert(name);
                             }
-                        }else if(op->GetOperandType() == BasicOperand::REG){
-                            auto regop = (RegOperand*)op;
+                        } else if (op->GetOperandType() == BasicOperand::REG) {
+                            auto regop = (RegOperand *)op;
                             auto regopno = regop->GetRegNo();
-                            if(GEPMap.find(regopno) == GEPMap.end() || StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()){
+                            if (GEPMap.find(regopno) == GEPMap.end() ||
+                                StaticGlobalMap.find(GEPMap[regopno]) == StaticGlobalMap.end()) {
                                 continue;
                             }
                             GlobalUsedSet.insert(GEPMap[regopno]);
@@ -69,14 +71,14 @@ void FindNoWriteStaticGlobal(LLVMIR *IR) {
             }
         }
     }
-    for(auto [str,var]:StaticGlobalMap){
-        if(GlobalUsedSet.find(str) == GlobalUsedSet.end() && ConstGlobalMap.find(str) == ConstGlobalMap.end()){
-            ConstGlobalMap.insert(std::make_pair(str,var));
+    for (auto [str, var] : StaticGlobalMap) {
+        if (GlobalUsedSet.find(str) == GlobalUsedSet.end() && ConstGlobalMap.find(str) == ConstGlobalMap.end()) {
+            ConstGlobalMap.insert(std::make_pair(str, var));
             // std::cerr<<str<<'\n';
         }
     }
-    for(auto [str,var]:ConstGlobalMap){
-        if(StaticGlobalMap.find(str) != StaticGlobalMap.end()){
+    for (auto [str, var] : ConstGlobalMap) {
+        if (StaticGlobalMap.find(str) != StaticGlobalMap.end()) {
             StaticGlobalMap.erase(str);
             // std::cerr<<str<<'\n';
         }
@@ -128,7 +130,7 @@ void GlobalConstReplace(CFG *C) {
             }
 
             auto pointer = (GlobalOperand *)LoadI->GetPointer();
-            
+
             if (ConstGlobalMap.find(pointer->GetName()) != ConstGlobalMap.end()) {
                 VarAttribute val = ConstGlobalMap[pointer->GetName()];
                 if (val.type == Type::INT) {
@@ -138,69 +140,66 @@ void GlobalConstReplace(CFG *C) {
                     I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
                                                   new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
                 }
-                // I->PrintIR(std::cerr);   
+                // I->PrintIR(std::cerr);
             }
         }
     }
 }
 
 // GEPindex is const and ArrayDefine is const, we need not to load.
-void EliminateSimpleConstArrayValue(CFG *C) { 
-    std::map<int,Operand> GEPMap;
+void EliminateSimpleConstArrayValue(CFG *C) {
+    std::map<int, Operand> GEPMap;
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
-            if(I->GetOpcode() != GETELEMENTPTR){
+            if (I->GetOpcode() != GETELEMENTPTR) {
                 continue;
             }
-            auto gepI = (GetElementptrInstruction*)I;
+            auto gepI = (GetElementptrInstruction *)I;
             auto ptrop = gepI->GetPtrVal();
-            if(ptrop->GetOperandType()!=BasicOperand::GLOBAL){
+            if (ptrop->GetOperandType() != BasicOperand::GLOBAL) {
                 continue;
             }
-            auto gop = (GlobalOperand*)ptrop;
-            if(ConstGlobalMap.find(gop->GetName())==ConstGlobalMap.end()){
+            auto gop = (GlobalOperand *)ptrop;
+            if (ConstGlobalMap.find(gop->GetName()) == ConstGlobalMap.end()) {
                 continue;
             }
-            auto [num,siz] = gepI->GetConstIndexes();
-            if(siz != 1){
+            auto [num, siz] = gepI->GetConstIndexes();
+            if (siz != 1) {
                 continue;
             }
             auto constvar = ConstGlobalMap[gop->GetName()];
-            if(constvar.type == Type::INT){
+            if (constvar.type == Type::INT) {
                 auto constnum = constvar.IntInitVals.at(num);
-                GEPMap[gepI->GetResultRegNo()]=new ImmI32Operand(constnum);
-            }else if(constvar.type == Type::FLOAT){
+                GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(constnum);
+            } else if (constvar.type == Type::FLOAT) {
                 auto constnum = constvar.FloatInitVals.at(num);
-                GEPMap[gepI->GetResultRegNo()]=new ImmF32Operand(constnum);
+                GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(constnum);
             }
-            
+
             // std::cerr<<num<<' '<<siz<<" "<<constnum<<'\n';
         }
     }
     for (auto [id, bb] : *C->block_map) {
         for (auto &I : bb->Instruction_list) {
-            if(I->GetOpcode() != LOAD){
+            if (I->GetOpcode() != LOAD) {
                 continue;
             }
-            auto loadI = (LoadInstruction*)I;
+            auto loadI = (LoadInstruction *)I;
             auto ptrop = loadI->GetPointer();
-            if(ptrop->GetOperandType()!=BasicOperand::REG){
+            if (ptrop->GetOperandType() != BasicOperand::REG) {
                 continue;
             }
-            auto ptrreg = (RegOperand*)ptrop;
+            auto ptrreg = (RegOperand *)ptrop;
             auto ptrno = ptrreg->GetRegNo();
-            if(GEPMap.find(ptrno) == GEPMap.end()){
+            if (GEPMap.find(ptrno) == GEPMap.end()) {
                 continue;
             }
             auto op = GEPMap[ptrno];
-            if(op->GetOperandType() == BasicOperand::IMMI32){
-                I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), op,
-                                                  loadI->GetResultReg());
-            }else if(op->GetOperandType() == BasicOperand::IMMF32){
-                I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
-                                                  op, loadI->GetResultReg());
+            if (op->GetOperandType() == BasicOperand::IMMI32) {
+                I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), op, loadI->GetResultReg());
+            } else if (op->GetOperandType() == BasicOperand::IMMF32) {
+                I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0), op, loadI->GetResultReg());
             }
-                  
         }
     }
 }
@@ -390,9 +389,9 @@ void I32ConstantSimplify(Instruction I) {
         }
     }
     if (I->GetOpcode() == ICMP) {
-        auto IcmpI = (IcmpInstruction*)I;
-        if(IcmpI->GetCompareCondition() == eq || IcmpI->GetCompareCondition() == ne){
-            if(IcmpI->GetOp1()->GetOperandType() == BasicOperand::IMMI32) {
+        auto IcmpI = (IcmpInstruction *)I;
+        if (IcmpI->GetCompareCondition() == eq || IcmpI->GetCompareCondition() == ne) {
+            if (IcmpI->GetOp1()->GetOperandType() == BasicOperand::IMMI32) {
                 auto op1 = IcmpI->GetOp1();
                 auto op2 = IcmpI->GetOp2();
                 IcmpI->SetOp1(op2);
@@ -421,26 +420,33 @@ void I32ConstantSub2AddSimplify(Instruction I) {
 
 //  {sub X, X},{Mul 0, X} is represented as 0 + 0
 void ZeroResultSimplify(Instruction &I) {
-    if(I->GetOpcode()==SUB){
-        
-        auto subI = (ArithmeticInstruction*)I;
-        if(subI->GetOperand1()->GetFullName() == subI->GetOperand2()->GetFullName()){
-            I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),subI->GetResultOperand());
+    if (I->GetOpcode() == SUB) {
+
+        auto subI = (ArithmeticInstruction *)I;
+        if (subI->GetOperand1()->GetFullName() == subI->GetOperand2()->GetFullName()) {
+            // I->PrintIR(std::cerr);
+            I =
+            new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0), subI->GetResultOperand());
+            // I->PrintIR(std::cerr);
         }
     }
-    if(I->GetOpcode()==MUL){
-        auto mulI = (ArithmeticInstruction*)I;
+    if (I->GetOpcode() == MUL) {
+        auto mulI = (ArithmeticInstruction *)I;
         auto op1 = mulI->GetOperand1();
         auto op2 = mulI->GetOperand2();
-        if(op1->GetOperandType() == BasicOperand::IMMI32){
-            auto num1 = ((ImmI32Operand*)op1)->GetIntImmVal();
-            if(num1 == 0){
-                I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
+        if (op1->GetOperandType() == BasicOperand::IMMI32) {
+            auto num1 = ((ImmI32Operand *)op1)->GetIntImmVal();
+            if (num1 == 0) {
+                I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
+                                              mulI->GetResultOperand());
             }
-        }else if(op2->GetOperandType() == BasicOperand::IMMI32){
-            auto num2 = ((ImmI32Operand*)op2)->GetIntImmVal();
-            if(num2== 0){
-                I = new ArithmeticInstruction(ADD,I32,new ImmI32Operand(0),new ImmI32Operand(0),mulI->GetResultOperand());
+        } else if (op2->GetOperandType() == BasicOperand::IMMI32) {
+            auto num2 = ((ImmI32Operand *)op2)->GetIntImmVal();
+            if (num2 == 0) {
+                // I->PrintIR(std::cerr);
+                I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
+                                              mulI->GetResultOperand());
+                // I->PrintIR(std::cerr);
             }
         }
     }
@@ -448,9 +454,7 @@ void ZeroResultSimplify(Instruction &I) {
 
 // TODO():DoubleAddInstSimplify
 // {%r = X + X} => {%r = X*2(the right operand is const)}
-void DoubleAddInstSimplify(Instruction &I) {
-
-}
+void DoubleAddInstSimplify(Instruction &I) {}
 
 void InstSimplify(CFG *C) {
     for (auto [id, bb] : *C->block_map) {

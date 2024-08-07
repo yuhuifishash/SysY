@@ -942,8 +942,7 @@ private:
     Operand value;
 
 public:
-    FpextInstruction(Operand result_receiver, Operand value_for_cast)
-        : result(result_receiver), value(value_for_cast) {
+    FpextInstruction(Operand result_receiver, Operand value_for_cast) : result(result_receiver), value(value_for_cast) {
         this->opcode = FPEXT;
     }
     virtual LLVMType GetResultType() { return I32; }
@@ -958,7 +957,6 @@ public:
     virtual Instruction CopyInstruction();
     virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
 };
-
 
 class BitCastInstruction : public BasicInstruction {
 private:

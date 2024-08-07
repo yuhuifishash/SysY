@@ -378,8 +378,8 @@ void Func_call::TypeCheck() {
         }
     }
     // do not check putf
-    if(name->get_string() == "putf"){
-        if(funcr_params_len < 1){
+    if (name->get_string() == "putf") {
+        if (funcr_params_len < 1) {
             error_msgs.push_back("Function FuncFParams and FuncRParams are not matched in line " +
                                  std::to_string(line_number) + "\n");
         }
@@ -432,7 +432,7 @@ void FloatConst::TypeCheck() {
 void StringConst::TypeCheck() {
     attribute.T.type = Type::PTR;
     GlobalStrCnt += 1;
-    auto GlobalStrI = new GlobalStringConstInstruction(str->get_string(),".str"+std::to_string(GlobalStrCnt));
+    auto GlobalStrI = new GlobalStringConstInstruction(str->get_string(), ".str" + std::to_string(GlobalStrCnt));
     llvmIR.global_def.push_back(GlobalStrI);
     semant_table.GlobalStrTable[str] = GlobalStrCnt;
 }
@@ -770,26 +770,26 @@ void CompUnit_Decl::TypeCheck() {
             ConstGlobalMap[def->GetName()->get_string()] = val;
         }
 
-        if (init == nullptr) { 
+        if (init == nullptr) {
             if (def->GetDims() != nullptr) {
                 int arraySz = 1;
                 for (auto d : val.dims) {
                     arraySz *= d;
                 }
-                if(type_decl == Type::INT){
+                if (type_decl == Type::INT) {
                     val.type = Type::INT;
-                    val.IntInitVals.resize(arraySz,0);
-                }else if(type_decl == Type::FLOAT){
+                    val.IntInitVals.resize(arraySz, 0);
+                } else if (type_decl == Type::FLOAT) {
                     val.type = Type::FLOAT;
-                    val.FloatInitVals.resize(arraySz,0);
+                    val.FloatInitVals.resize(arraySz, 0);
                 }
-            }else{
-                if(type_decl == Type::INT){
+            } else {
+                if (type_decl == Type::INT) {
                     val.type = Type::INT;
-                    val.IntInitVals.resize(1,0);
-                }else if(type_decl == Type::FLOAT){
+                    val.IntInitVals.resize(1, 0);
+                } else if (type_decl == Type::FLOAT) {
                     val.type = Type::FLOAT;
-                    val.FloatInitVals.resize(1,0);
+                    val.FloatInitVals.resize(1, 0);
                 }
             }
         }
