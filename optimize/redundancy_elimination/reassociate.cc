@@ -177,8 +177,6 @@ void LoopInvariantReassociate(CFG* C)
                 }
                 
                 if(check4 || (!check2&&check5) || (!check3&&check6)){
-                    I1->PrintIR(std::cerr);
-                    I2->PrintIR(std::cerr);
                     switch (type){
                         case 0:// a b r1 c -> a c r1 b
                             std::swap(I1op2,I2op2);
