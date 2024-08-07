@@ -159,7 +159,7 @@ typedef BasicOperand *Operand;
 // @operands in instruction
 class BasicOperand {
 public:
-    enum operand_type { REG = 1, IMMI32 = 2, IMMF32 = 3, GLOBAL = 4, LABEL = 5 };
+    enum operand_type { REG = 1, IMMI32 = 2, IMMF32 = 3, GLOBAL = 4, LABEL = 5, IMMI64 = 6 };
 
 protected:
     operand_type operandType;
@@ -197,6 +197,21 @@ public:
 
     ImmI32Operand(int immVal) {
         this->operandType = IMMI32;
+        this->immVal = immVal;
+    }
+    virtual std::string GetFullName();
+    virtual Operand CopyOperand();
+};
+
+// @integer64 immediate
+class ImmI64Operand : public BasicOperand {
+    long long immVal;
+
+public:
+    long long GetLlImmVal() { return immVal; }
+
+    ImmI64Operand(long long immVal) {
+        this->operandType = IMMI64;
         this->immVal = immVal;
     }
     virtual std::string GetFullName();

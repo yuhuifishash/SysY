@@ -96,15 +96,12 @@ void RiscV64LowerImm::Execute() {
     }
 }
 
-typedef unsigned long long Uint64;
-typedef unsigned int Uint32;
 struct Multiplier {
     Uint64 m;
     int l;
 };
 
 Multiplier chooseMultiplier(Uint32 d, int p) {
-    // l = ceil(log2(d))
     constexpr int N = 32;
     int l = N - __builtin_clz(d - 1);
     Uint64 low = (Uint64(1) << (N + l)) / d;

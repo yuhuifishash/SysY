@@ -157,6 +157,7 @@ enum {
     RISCV_MAXU,
 
     RISCV_FCVT_D_S,
+    RISCV_ZEXT_W,
 };
 
 struct RvOpInfo {

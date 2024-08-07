@@ -213,6 +213,21 @@ int RiscV64Selector::ExtractOp2ImmF32(BasicOperand *op) {
     return ((ImmF32Operand *)op)->GetFloatVal();
 }
 
+struct Multiplier64 {
+    Uint128 m;
+    int l;
+};
+
+Multiplier64 chooseMultiplier(Uint64 d, int p) {
+    constexpr int N = 64;
+    int l = N - __builtin_clzll(d - 1);
+    Uint128 low = (Uint128(1) << (N + l)) / d;
+    Uint128 high = ((Uint128(1) << (N + l)) + (Uint128(1) << (N + l - p))) / d;
+    while((low >> 1) < (high >> 1) && l > 0)
+        low >>= 1, high >>= 1, --l;
+    return {high, l};
+}
+
 template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(ArithmeticInstruction *ins) {
     if (ins->GetOpcode() == ADD) {
         if (ins->GetDataType() == I32) {
@@ -658,34 +673,61 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             long long val3 = ((ImmI32Operand *)op3)->GetIntImmVal();
             cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg, (val1 * val2) % val3, INT64));
         } else {
-            Register op_reg[3];
-            Operand op[] = {op1, op2, op3};
-            Register middle_reg = GetNewReg(INT64);
-            for (int i = 0; i < 3; i++) {
-                if (op[i]->GetOperandType() == BasicOperand::IMMI32) {
-                    op_reg[i] = GetNewReg(INT64);
-                    cur_block->push_back(
-                    rvconstructor->ConstructCopyRegImmI(op_reg[i], ((ImmI32Operand *)op[i])->GetIntImmVal(), INT64));
-                } else if (op[i]->GetOperandType() == BasicOperand::REG) {
-                    op_reg[i] = GetllvmReg(((RegOperand *)op[i])->GetRegNo(), INT64);
-                } else {
-                    ERROR("Unexpected Operand Type");
-                }
+            Assert(op3->GetOperandType() == BasicOperand::IMMI32);
+            Uint64 div = ((ImmI32Operand *)op3)->GetIntImmVal();
+            Register r1 = ExtractOp2Reg(op1, INT64);
+            Register r2 = ExtractOp2Reg(op2, INT64);
+            Register r1_64 = GetNewReg(INT64);
+            Register r2_64 = GetNewReg(INT64);
+            Register r_n = GetNewReg(INT64);
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_ZEXT_W, r1_64, r1));
+            cur_block->push_back(rvconstructor->ConstructR2(RISCV_ZEXT_W, r2_64, r2));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL, r_n, r1_64, r2_64));
+            Register r_n0 = r_n;
+            if (__builtin_ctzll(div)) {
+                r_n0 = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SRLI, r_n0, r_n, __builtin_ctzll(div)));
             }
-            Register mod1_reg;
-            Register mod2_reg;
-            if (op2->GetOperandType() == BasicOperand::IMMI32 && op3->GetOperandType() == BasicOperand::IMMI32) {
-                mod1_reg = GetNewReg(INT64);
-                mod2_reg = op_reg[1];
-                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod1_reg, op_reg[0], op_reg[2]));
+            Multiplier64 mult = chooseMultiplier(div >> __builtin_ctzll(div), 64 - __builtin_ctzll(div));
+            Uint128 mul_imm = mult.m;
+            bool overflow = false;
+            if (mul_imm >= Uint128(1) << 64) {
+                mul_imm -= ((Uint128(1)) << 64);
+                overflow = true;
+            }
+            Assert(mul_imm < Uint128(1) << 64);
+            Register mulimm_r = GetNewReg(INT64);
+            if (mul_imm < Uint128(1) << 32) {
+                cur_block->push_back(rvconstructor->ConstructCopyRegImmI(mulimm_r, mul_imm, INT64));
             } else {
-                mod1_reg = GetNewReg(INT64);
-                mod2_reg = GetNewReg(INT64);
-                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod1_reg, op_reg[0], op_reg[2]));
-                cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, mod2_reg, op_reg[1], op_reg[2]));
+                std::string imm_name = ".IMM_" + std::to_string((Uint64)mul_imm);
+                if (!global_imm_vsd[mul_imm]) {
+                    dest->global_def.push_back(new GlobalVarDefineInstruction(imm_name, I64, new ImmI64Operand(mul_imm)));
+                    global_imm_vsd[mul_imm] = true;
+                }
+                Register lui_r = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructULabel(RISCV_LUI, lui_r, RiscVLabel(imm_name, true)));
+                cur_block->push_back(rvconstructor->ConstructILabel(RISCV_LD, mulimm_r, lui_r, RiscVLabel(imm_name, false)));
             }
-            cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL, middle_reg, mod1_reg, mod2_reg));
-            cur_block->push_back(rvconstructor->ConstructR(RISCV_REMW, result_reg, middle_reg, op_reg[2]));
+            Register k_r = GetNewReg(INT64);
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_MULHU, k_r, r_n0, mulimm_r));
+            Register div_r = GetNewReg(INT64);
+            if (!overflow) {
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SRLI, div_r, k_r, mult.l));
+            } else {
+                Register sub_r = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_SUB, sub_r, r_n0, k_r));
+                Register sub_d2 = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SRLI, sub_d2, sub_r, 1));
+                Register add_r = GetNewReg(INT64);
+                cur_block->push_back(rvconstructor->ConstructR(RISCV_ADD, add_r, sub_d2, k_r));
+                cur_block->push_back(rvconstructor->ConstructIImm(RISCV_SRLI, div_r, add_r, mult.l - 1));
+            }
+            Register prod_part_r = GetNewReg(INT64);
+            Register divisor_r = GetNewReg(INT64);
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(divisor_r, div, INT64));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_MUL, prod_part_r, div_r, divisor_r));
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_SUB, result_reg, r_n, prod_part_r));
         }
     } else if (ins->GetOpcode() == UMIN_I32) {
         TODO("UMIN");

@@ -91,6 +91,7 @@ void ArrayMinMaxRecognize(CFG *C);
 void LatchPhiCombine(CFG *C);
 void LoopIndVarSimplify(CFG *C);
 void LoopInvariantReassociate(CFG *C);
+void Reassociate(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -210,6 +211,7 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(SimpleDCE);
+        llvmIR.PassExecutor(Reassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(BranchCSE);
         llvmIR.ElimateUnreachedInstructionAndBlocks();
@@ -247,6 +249,7 @@ int main(int argc, char **argv) {
             llvmIR.PassExecutor(SimplifyCFG);
 
             llvmIR.PassExecutor(SimpleAliasAnalysis);
+            llvmIR.PassExecutor(Reassociate);
             llvmIR.PassExecutor(SimpleCSE);
             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
@@ -304,6 +307,7 @@ int main(int argc, char **argv) {
         }
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(Reassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -337,6 +341,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(Reassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -357,12 +362,14 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(ScalarEvolution);
         llvmIR.PassExecutor(LoopGepStrengthReduce);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(Reassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
         llvmIR.PassExecutor(LoopIndVarSimplify);
         llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(Reassociate);
         llvmIR.PassExecutor(SimpleCSE);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(InstCombine);

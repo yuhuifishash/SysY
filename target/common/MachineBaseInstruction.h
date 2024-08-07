@@ -98,6 +98,10 @@
     } while (0)
 #endif
 
+typedef unsigned __int128 Uint128;
+typedef unsigned long long Uint64;
+typedef unsigned int Uint32;
+
 struct MachineDataType {
     enum { INT, FLOAT };
     enum { B32, B64, B128 };

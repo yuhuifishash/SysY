@@ -465,6 +465,8 @@ Operand ImmI32Operand::CopyOperand() { return new ImmI32Operand(immVal); }
 
 Operand ImmF32Operand::CopyOperand() { return new ImmF32Operand(immVal); }
 
+Operand ImmI64Operand::CopyOperand() { return new ImmI64Operand(immVal); }
+
 Operand LabelOperand::CopyOperand() { return GetNewLabelOperand(label_no); }
 
 Operand GlobalOperand::CopyOperand() { return GetNewGlobalOperand(name); }
