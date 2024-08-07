@@ -174,6 +174,45 @@ void RiscV64SSAPeehole::Execute() {
     }
 }
 
+void RiscV64PostRAPeehole::Execute () {
+    for (auto func : unit->functions) {
+        current_func = func;
+        for (auto block : func->blocks) {
+            cur_block = block;
+            for (auto it = ++block->begin(); it != block->end(); ++it) {
+                auto cur_ins = *it;
+                auto pre_ins = *(--it);
+                ++it;
+                if (cur_ins->arch == MachineBaseInstruction::RiscV && pre_ins->arch == MachineBaseInstruction::RiscV) {
+                    auto cur_rvins = (RiscV64Instruction *)cur_ins;
+                    auto pre_rvins = (RiscV64Instruction *)pre_ins;
+                    if (cur_rvins->getOpcode() == RISCV_LD && pre_rvins->getOpcode() == RISCV_SD) {
+                        if (cur_rvins->getRd() == pre_rvins->getRs1()) {
+                            if (cur_rvins->getRs1() == pre_rvins->getRs2()) {
+                                if (cur_rvins->getUseLabel() == pre_rvins->getUseLabel()) {
+                                    if (cur_rvins->getUseLabel()) {
+                                        if (cur_rvins->getLabel() == pre_rvins->getLabel()) {
+                                            // Log("Elimated Redundant Load from label");
+                                            it = block->erase(it);
+                                            --it;
+                                        }
+                                    } else {
+                                        if (cur_rvins->getImm() == pre_rvins->getImm()) {
+                                            // Log("Elimated Redundant Load from reg");
+                                            it = block->erase(it);
+                                            --it;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 void RiscV64SSADeadDefElimate::Execute() {
     for (auto func : unit->functions) {
         current_func = func;

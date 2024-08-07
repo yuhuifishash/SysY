@@ -648,7 +648,9 @@ public:
         ret->SetNoSchedule(no_schedule);
         return ret;
     }
+#ifdef ENABLE_COMMENT
     MachineComment *ConstructComment(std::string comment) { return new MachineComment(comment); }
+#endif
 };
 extern RiscV64InstructionConstructor *rvconstructor;
 

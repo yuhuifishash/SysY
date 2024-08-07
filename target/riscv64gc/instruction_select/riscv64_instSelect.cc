@@ -1920,9 +1920,11 @@ template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCast
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst) {
+#ifdef ENABLE_COMMENT
     std::ostringstream oss;
     inst->PrintIR(oss);
     cur_block->push_back(rvconstructor->ConstructComment(oss.str()));
+#endif
     switch (inst->GetOpcode()) {
     case LOAD:
         ConvertAndAppend<LoadInstruction *>((LoadInstruction *)inst);

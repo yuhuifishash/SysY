@@ -15,4 +15,13 @@ public:
     RiscV64SSADeadDefElimate(MachineUnit *unit) : MachinePass(unit) {}
     void Execute();
 };
+
+class RiscV64PostRAPeehole : public MachinePass {
+    const int length = 5;
+
+public:
+    RiscV64PostRAPeehole(MachineUnit *unit) : MachinePass(unit) {}
+    void Execute();
+};
+
 #endif

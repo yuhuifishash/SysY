@@ -99,7 +99,9 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                             can_seq.push(srcreg);
                         }
                     }
+#ifdef ENABLE_COMMENT
                     block->insert(insert_it, new MachineComment("Phi Destruction Copy\n"));
+#endif
                     auto copy_instr = new MachineCopyInstruction(srcop, new MachineRegister(dstreg), dstreg.type);
                     copy_instr->SetNoSchedule(true);
                     block->insert(insert_it, copy_instr);
@@ -109,7 +111,9 @@ void MachinePhiDestruction::PhiDestructionInCurrentFunction() {
                 auto mid_reg = current_func->GetNewRegister(pair.first.type.data_type, pair.first.type.data_length);
                 auto dst_reg = pair.first;
                 auto src_op = pair.second;
+#ifdef ENABLE_COMMENT
                 block->insert(insert_it, new MachineComment("Phi Destruction Copy\n"));
+#endif
                 auto copy_instr = new MachineCopyInstruction(src_op, new MachineRegister(mid_reg), dst_reg.type);
                 copy_instr->SetNoSchedule(true);
                 block->insert(insert_it, copy_instr);
