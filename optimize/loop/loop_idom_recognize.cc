@@ -107,18 +107,6 @@ static bool LoopReduceSimpleAddMod(CFG *C, NaturalLoop *L) {
     if (L->loop_nodes.size() != 2) {    // empty latch
         return false;
     }
-    if (L->scev.forloop_info.is_upperbound_closed) {    // if overflow, return false
-        if (L->scev.forloop_info.lowerbound.type != OTHER) {
-            return false;
-        }
-        if (L->scev.forloop_info.lowerbound.op1->GetOperandType() != BasicOperand::IMMI32) {
-            return false;
-        }
-        auto op1 = (ImmI32Operand *)L->scev.forloop_info.lowerbound.op1;
-        if (op1->GetIntImmVal() <= -2147483647) {
-            return false;
-        }
-    }
     assert(L->exit_nodes.size() == 1);
     auto exit = *L->exit_nodes.begin();
     assert(L->latches.size() == 1);

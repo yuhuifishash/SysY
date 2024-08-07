@@ -180,6 +180,8 @@ To generate asm of single file(*.sy) with optimization
 
 -LinearScan
 
+-PrologueEpilogueOptimization
+
 ## Reference
 
 https://github.com/llvm/llvm-project/blob/main/llvm/lib

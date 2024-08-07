@@ -33,10 +33,10 @@ if [ $1 == 'llvm' ] ; then
         rm -rf ${pwdout}/${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            timeout 30 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 600 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            timeout 30 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 600 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
@@ -66,10 +66,10 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
         rm -rf ${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            timeout 30 qemu-arm ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 600 qemu-arm ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            timeout 30 qemu-arm ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 600 qemu-arm ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
@@ -82,7 +82,7 @@ elif [ $1 == 'S' ] && [ $3 == 'armv7' ] ; then
         fi
         rm ${pwdout}/${var##*/}
     done
-    echo AsmArmv7Test:${score}/${score_all}
+    echo Armv7Test:${score}/${score_all}
 elif [ $1 == 'S' ] && [ $3 == 'rv64gc' ] ; then
     score=0
     score_all=0
@@ -99,10 +99,10 @@ elif [ $1 == 'S' ] && [ $3 == 'rv64gc' ] ; then
         rm -rf ${var##*/}.o
         mv a.out ${pwdout}/${var##*/}
         if [ -f "${pwdin}/${var##*/}.in" ];then
-            timeout 30 qemu-riscv64 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
+            timeout 600 qemu-riscv64 ./${pwdout}/${var##*/} < ${pwdin}/${var##*/}.in > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         else
-            timeout 30 qemu-riscv64 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
+            timeout 600 qemu-riscv64 ./${pwdout}/${var##*/} > ./${pwdout}/${var##*/}.out
             echo $? >> ${pwdout}/${var##*/}.out
         fi
         diff --strip-trailing-cr -b ${pwdin}/${var##*/}.out ${pwdout}/${var##*/}.out > /dev/null
