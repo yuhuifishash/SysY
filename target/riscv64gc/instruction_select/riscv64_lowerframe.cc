@@ -73,7 +73,6 @@ void RiscV64LowerFrame::Execute() {
                         ERROR("Unknown type");
                     }
                 }
-                b->push_front(rvconstructor->ConstructComment("Lowerframe: parameters\n"));
 #ifdef SAVEREGBYCOPY
                 for (int i = 0; i < saveregnum; i++) {
                     if (save_regs[i].type == INT64) {
@@ -84,7 +83,6 @@ void RiscV64LowerFrame::Execute() {
                         rvconstructor->ConstructCopyReg(save_regs[i], GetPhysicalReg(save_regids[i]), FLOAT64));
                     }
                 }
-                b->push_front(rvconstructor->ConstructComment("Lowerframe: save regs\n"));
 #endif
             }
 #ifdef SAVEREGBYCOPY
@@ -96,7 +94,6 @@ void RiscV64LowerFrame::Execute() {
                     if (riscv_last_ins->getRs1() == GetPhysicalReg(RISCV_ra)) {
                         Assert(riscv_last_ins->getImm() == 0);
                         b->pop_back();
-                        b->push_back(rvconstructor->ConstructComment("LowerFrame: restore regs\n"));
                         for (int i = 0; i < saveregnum; i++) {
                             if (save_regs[i].type == INT64) {
                                 b->push_back(
