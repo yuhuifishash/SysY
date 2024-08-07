@@ -348,7 +348,7 @@ Register RiscV64Spiller::GenerateReadCode(std::list<MachineBaseInstruction *>::i
     // missing lowerimm
     // missing stack size adjust
     int offset = raw_stk_offset + function->GetStackOffset();
-    cur_block->insert(it, rvconstructor->ConstructComment("Read Spill\n"));
+    // cur_block->insert(it, rvconstructor->ConstructComment("Read Spill\n"));
     if (offset <= 2047 && offset >= -2048) {
         if (type == INT64) {
             cur_block->insert(it, rvconstructor->ConstructIImm(RISCV_LD, read_mid_reg, GetPhysicalReg(RISCV_sp),
@@ -376,7 +376,7 @@ Register RiscV64Spiller::GenerateWriteCode(std::list<MachineBaseInstruction *>::
     auto write_mid_reg = function->GetNewRegister(type.data_type, type.data_length);
     int offset = raw_stk_offset + function->GetStackOffset();
     ++it;
-    cur_block->insert(it, rvconstructor->ConstructComment("Write Spill\n"));
+    // cur_block->insert(it, rvconstructor->ConstructComment("Write Spill\n"));
     if (offset <= 2047 && offset >= -2048) {
         if (type == INT64) {
             cur_block->insert(it, rvconstructor->ConstructSImm(RISCV_SD, write_mid_reg, GetPhysicalReg(RISCV_sp),
@@ -403,7 +403,7 @@ Register RiscV64Spiller::GenerateWriteCode(std::list<MachineBaseInstruction *>::
 void RiscV64Spiller::GenerateCopyToStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
                                              Register reg, MachineDataType type) {
     int offset = raw_stk_offset + function->GetStackOffset();
-    cur_block->insert(it, rvconstructor->ConstructComment("Write Spill\n"));
+    // cur_block->insert(it, rvconstructor->ConstructComment("Write Spill\n"));
     if (offset <= 2047 && offset >= -2048) {
         if (type == INT64) {
             cur_block->insert(
@@ -427,7 +427,7 @@ void RiscV64Spiller::GenerateCopyToStackCode(std::list<MachineBaseInstruction *>
 void RiscV64Spiller::GenerateCopyFromStackCode(std::list<MachineBaseInstruction *>::iterator &it, int raw_stk_offset,
                                                Register reg, MachineDataType type) {
     int offset = raw_stk_offset + function->GetStackOffset();
-    cur_block->insert(it, rvconstructor->ConstructComment("Read Spill\n"));
+    // cur_block->insert(it, rvconstructor->ConstructComment("Read Spill\n"));
     if (offset <= 2047 && offset >= -2048) {
         if (type == INT64) {
             cur_block->insert(

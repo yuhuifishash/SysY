@@ -329,8 +329,15 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
             Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
             Register sub1 = GetllvmReg(((RegOperand *)ins->GetOperand1())->GetRegNo(), INT64);
             int imm = ((ImmI32Operand *)ins->GetOperand2())->GetIntImmVal();
-            Log("Entered -%d", imm);
+            // if (imm == -2147483648) {
+                // Log("Entered -INF");
+                // Register sub2 = GetNewReg(INT64);
+                // cur_block->push_back(rvconstructor->ConstructCopyRegImmI(sub2, imm, INT64));
+                // cur_block->push_back(rvconstructor->ConstructR(RISCV_SUBW, rd, sub1, sub2));
+            // } else {
+            // Log("Entered -%d", imm);
             cur_block->push_back(rvconstructor->ConstructIImm(RISCV_ADDIW, rd, sub1, -imm));
+            // }
         } else {
             Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
             Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), INT64);
@@ -668,10 +675,10 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
         auto result_reg = GetllvmReg(((RegOperand *)result_op)->GetRegNo(), INT64);
         if (op1->GetOperandType() == BasicOperand::IMMI32 && op2->GetOperandType() == BasicOperand::IMMI32 &&
             op3->GetOperandType() == BasicOperand::IMMI32) {
-            long long val1 = ((ImmI32Operand *)op1)->GetIntImmVal();
-            long long val2 = ((ImmI32Operand *)op2)->GetIntImmVal();
-            long long val3 = ((ImmI32Operand *)op3)->GetIntImmVal();
-            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg, (val1 * val2) % val3, INT64));
+            unsigned int val1 = ((ImmI32Operand *)op1)->GetIntImmVal();
+            unsigned int val2 = ((ImmI32Operand *)op2)->GetIntImmVal();
+            unsigned int val3 = ((ImmI32Operand *)op3)->GetIntImmVal();
+            cur_block->push_back(rvconstructor->ConstructCopyRegImmI(result_reg, (1ll * val1 * val2) % val3, INT64));
         } else {
             Assert(op3->GetOperandType() == BasicOperand::IMMI32);
             Uint64 div = ((ImmI32Operand *)op3)->GetIntImmVal();
