@@ -317,9 +317,22 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         return false;
     }
     int inst_number = 0;
+    bool array_tag = false;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
+        for(auto I:bb->Instruction_list){
+            if(I->GetOpcode() == STORE || I->GetOpcode() == LOAD){
+                array_tag = true;
+                break;
+            }
+        }
     }
+    int unroll_times = 4;
+    if (inst_number <= 20 && array_tag) {
+        unroll_times = 8;
+    }
+    // std::cerr<<inst_number<<" "<<unroll_times<<"\n";
+
     if (inst_number > 50) {
         return false;
     }
@@ -385,7 +398,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
         I->ReplaceRegByMap(RemainRegReplaceMap);
     }
 
-    // exiting: i < n -> i < n - 4
+    // exiting: i < n -> i < n - unroll_times
     auto exitingI = *(old_exiting->Instruction_list.end() - 2);
     assert(exitingI->GetOpcode() == ICMP);
     auto IcmpI = (IcmpInstruction *)exitingI;
@@ -393,18 +406,18 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
     assert(scev1 != nullptr && scev2 != nullptr);
     if (scev1->len == 2 && scev2->len == 1) {
-        auto AddI = new ArithmeticInstruction(ADD, I32, op2, new ImmI32Operand(-4), GetNewRegOperand(++C->max_reg));
+        auto AddI = new ArithmeticInstruction(ADD, I32, op2, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
     } else if (scev1->len == 1 && scev2->len == 2) {
-        auto AddI = new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(-4), GetNewRegOperand(++C->max_reg));
+        auto AddI = new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
     } else {
         assert(false);
     }
 
-    // add CondBlock   if(upperbound - lowerbound >= 4){ do{}while(i+4 < n)}  remain_loop
+    // add CondBlock   if(upperbound - lowerbound >= unroll_times){ do{}while(i < n - unroll_times)}  remain_loop
     // CondBlock -> remain_header || npreheader
     LLVMBlock CondBlock = C->NewBlock();
     LLVMBlock npreheader = C->NewBlock();
@@ -417,7 +430,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto CondI3 =
     new ArithmeticInstruction(SUB, I32, CondI2->GetResultReg(), CondI1->GetResultReg(), GetNewRegOperand(++C->max_reg));
     auto CondI4 =
-    new IcmpInstruction(I32, CondI3->GetResultReg(), new ImmI32Operand(4), sge, GetNewRegOperand(++C->max_reg));
+    new IcmpInstruction(I32, CondI3->GetResultReg(), new ImmI32Operand(unroll_times), sge, GetNewRegOperand(++C->max_reg));
     auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(), GetNewLabelOperand(npreheader->block_id),
                                         GetNewLabelOperand(remain_header->block_id));
     CondBlock->InsertInstruction(1, CondI1);
@@ -445,7 +458,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     preheader = old_preheader = npreheader;
 
     int i = 0;
-    while (i < 3) {
+    while (i < unroll_times - 1) {
         std::map<int, int> RegReplaceMap;
         std::map<int, int> LabelReplaceMap;
         LLVMBlock new_header = nullptr;

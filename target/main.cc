@@ -23,6 +23,7 @@
 #include <iostream>
 
 #define AggressiveOptimize
+// #define PARALLELOptimize
 
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
     fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
@@ -313,7 +314,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 #endif
 
-#ifdef AggressiveOptimize
+#ifdef PARALLELOptimize
         llvmIR.PassExecutor(AddParallelLib);
 
         llvmIR.BuildLoopInfo();
