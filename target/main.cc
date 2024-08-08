@@ -22,9 +22,6 @@
 #include <iomanip>
 #include <iostream>
 
-#define AggressiveOptimize
-// #define PARALLELOptimize
-
 #define ALIGNED_FORMAT_OUTPUT_HEAD(STR, CISU, PROP, STR3, STR4)                                                        \
     fout << std::fixed << std::setprecision(12) << std::setw(15) << std::left << STR << " " << std::setw(20)           \
          << std::left << CISU << " " << std::setw(32) << std::left << PROP << std::setw(15) << std::left << STR3       \
@@ -295,7 +292,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildCFG();
         llvmIR.BuildDominatorTree();
 
-#ifdef AggressiveOptimize
+#ifdef O2_ENABLE
         for (int i = 0; i < 4; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
@@ -314,7 +311,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 #endif
 
-#ifdef PARALLELOptimize
+#ifdef PARALLEL_ENABLE
         llvmIR.PassExecutor(AddParallelLib);
 
         llvmIR.BuildLoopInfo();
@@ -328,7 +325,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
 #endif
 
-#ifdef AggressiveOptimize
+#ifdef O2_ENABLE
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -414,7 +411,9 @@ int main(int argc, char **argv) {
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
         if (optimize_flag) {
-            RiscV64InstructionSchedule(m_unit).Execute();
+            #ifdef O3_ENABLE
+                RiscV64InstructionSchedule(m_unit).Execute();
+            #endif
         }
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         RiscV64PostRAPeehole(m_unit).Execute();

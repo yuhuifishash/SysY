@@ -325,6 +325,7 @@ void InlineDFS(CFG *uCFG) {
         }
     }
 
+    #ifdef O3_ENABLE
     if (fcallgraph.CG.find(uCFG) != fcallgraph.CG.end() &&
         fcallgraph.CGNum[uCFG].find(uCFG) != fcallgraph.CGNum[uCFG].end()) {
         int i = 0;
@@ -352,6 +353,7 @@ void InlineDFS(CFG *uCFG) {
         }
         is_reinline = false;
     }
+    #endif
 
     uCFG->BuildCFG();
     uCFG->BuildDominatorTree();

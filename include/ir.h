@@ -3,6 +3,10 @@
 
 #include "cfg.h"
 
+#define O2_ENABLE
+// #define O3_ENABLE
+// #define PARALLEL_ENABLE
+
 class LLVMIR {
 public:
     std::vector<Instruction> global_def{};
