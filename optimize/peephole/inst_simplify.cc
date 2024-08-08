@@ -133,12 +133,24 @@ void GlobalConstReplace(CFG *C) {
 
             if (ConstGlobalMap.find(pointer->GetName()) != ConstGlobalMap.end()) {
                 VarAttribute val = ConstGlobalMap[pointer->GetName()];
+                
                 if (val.type == Type::INT) {
-                    I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
+                    if(val.IntInitVals.empty()){
+                        I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
                                                   LoadI->GetResultReg());
+                    }else{
+                        I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
+                                                  LoadI->GetResultReg());
+                    }
+                    
                 } else if (val.type == Type::FLOAT) {
-                    I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
+                    if(val.FloatInitVals.empty()){
+                        I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
+                                                  new ImmF32Operand(0), LoadI->GetResultReg());
+                    }else{
+                        I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
                                                   new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
+                    }
                 }
                 // I->PrintIR(std::cerr);
             }
@@ -169,11 +181,20 @@ void EliminateSimpleConstArrayValue(CFG *C) {
             }
             auto constvar = ConstGlobalMap[gop->GetName()];
             if (constvar.type == Type::INT) {
-                auto constnum = constvar.IntInitVals.at(num);
-                GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(constnum);
+                if(constvar.IntInitVals.empty()){
+                    GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(0);
+                }else{
+                    auto constnum = constvar.IntInitVals.at(num);
+                    GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(constnum);
+                }
+                
             } else if (constvar.type == Type::FLOAT) {
-                auto constnum = constvar.FloatInitVals.at(num);
-                GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(constnum);
+                if(constvar.FloatInitVals.empty()){
+                    GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(0);
+                }else{
+                    auto constnum = constvar.FloatInitVals.at(num);
+                    GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(constnum);
+                }
             }
 
             // std::cerr<<num<<' '<<siz<<" "<<constnum<<'\n';
