@@ -320,8 +320,8 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     bool array_tag = false;
     for (auto bb : loop_nodes) {
         inst_number += bb->Instruction_list.size();
-        for(auto I:bb->Instruction_list){
-            if(I->GetOpcode() == STORE || I->GetOpcode() == LOAD){
+        for (auto I : bb->Instruction_list) {
+            if (I->GetOpcode() == STORE || I->GetOpcode() == LOAD) {
                 array_tag = true;
                 break;
             }
@@ -406,11 +406,13 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto scev1 = scev.GetOperandSCEV(op1), scev2 = scev.GetOperandSCEV(op2);
     assert(scev1 != nullptr && scev2 != nullptr);
     if (scev1->len == 2 && scev2->len == 1) {
-        auto AddI = new ArithmeticInstruction(ADD, I32, op2, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
+        auto AddI =
+        new ArithmeticInstruction(ADD, I32, op2, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp2(GetNewRegOperand(C->max_reg));
     } else if (scev1->len == 1 && scev2->len == 2) {
-        auto AddI = new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
+        auto AddI =
+        new ArithmeticInstruction(ADD, I32, op1, new ImmI32Operand(-unroll_times), GetNewRegOperand(++C->max_reg));
         exiting->Instruction_list.insert(exiting->Instruction_list.end() - 2, AddI);
         IcmpI->SetOp1(GetNewRegOperand(C->max_reg));
     } else {
@@ -429,8 +431,8 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     auto CondI2 = scev.forloop_info.upperbound.GenerateValueInst(C);
     auto CondI3 =
     new ArithmeticInstruction(SUB, I32, CondI2->GetResultReg(), CondI1->GetResultReg(), GetNewRegOperand(++C->max_reg));
-    auto CondI4 =
-    new IcmpInstruction(I32, CondI3->GetResultReg(), new ImmI32Operand(unroll_times), sge, GetNewRegOperand(++C->max_reg));
+    auto CondI4 = new IcmpInstruction(I32, CondI3->GetResultReg(), new ImmI32Operand(unroll_times), sge,
+                                      GetNewRegOperand(++C->max_reg));
     auto CondI5 = new BrCondInstruction(CondI4->GetResultReg(), GetNewLabelOperand(npreheader->block_id),
                                         GetNewLabelOperand(remain_header->block_id));
     CondBlock->InsertInstruction(1, CondI1);

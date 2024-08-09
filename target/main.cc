@@ -196,6 +196,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(LatchPhiCombine);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(SimpleAliasAnalysis);
+        llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -311,6 +313,8 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 #endif
 
+        // llvmIR.PassExecutor(Sink);
+
 #ifdef PARALLEL_ENABLE
         llvmIR.PassExecutor(AddParallelLib);
 
@@ -411,9 +415,9 @@ int main(int argc, char **argv) {
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
         if (optimize_flag) {
-            #ifdef O3_ENABLE
-                RiscV64InstructionSchedule(m_unit).Execute();
-            #endif
+#ifdef O3_ENABLE
+            RiscV64InstructionSchedule(m_unit).Execute();
+#endif
         }
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         RiscV64PostRAPeehole(m_unit).Execute();

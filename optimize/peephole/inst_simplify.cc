@@ -133,23 +133,23 @@ void GlobalConstReplace(CFG *C) {
 
             if (ConstGlobalMap.find(pointer->GetName()) != ConstGlobalMap.end()) {
                 VarAttribute val = ConstGlobalMap[pointer->GetName()];
-                
+
                 if (val.type == Type::INT) {
-                    if(val.IntInitVals.empty()){
+                    if (val.IntInitVals.empty()) {
                         I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(0),
-                                                  LoadI->GetResultReg());
-                    }else{
-                        I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0), new ImmI32Operand(val.IntInitVals[0]),
-                                                  LoadI->GetResultReg());
+                                                      LoadI->GetResultReg());
+                    } else {
+                        I = new ArithmeticInstruction(ADD, I32, new ImmI32Operand(0),
+                                                      new ImmI32Operand(val.IntInitVals[0]), LoadI->GetResultReg());
                     }
-                    
+
                 } else if (val.type == Type::FLOAT) {
-                    if(val.FloatInitVals.empty()){
+                    if (val.FloatInitVals.empty()) {
+                        I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0), new ImmF32Operand(0),
+                                                      LoadI->GetResultReg());
+                    } else {
                         I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
-                                                  new ImmF32Operand(0), LoadI->GetResultReg());
-                    }else{
-                        I = new ArithmeticInstruction(FADD, FLOAT32, new ImmF32Operand(0),
-                                                  new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
+                                                      new ImmF32Operand(val.FloatInitVals[0]), LoadI->GetResultReg());
                     }
                 }
                 // I->PrintIR(std::cerr);
@@ -181,17 +181,17 @@ void EliminateSimpleConstArrayValue(CFG *C) {
             }
             auto constvar = ConstGlobalMap[gop->GetName()];
             if (constvar.type == Type::INT) {
-                if(constvar.IntInitVals.empty()){
+                if (constvar.IntInitVals.empty()) {
                     GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(0);
-                }else{
+                } else {
                     auto constnum = constvar.IntInitVals.at(num);
                     GEPMap[gepI->GetResultRegNo()] = new ImmI32Operand(constnum);
                 }
-                
+
             } else if (constvar.type == Type::FLOAT) {
-                if(constvar.FloatInitVals.empty()){
+                if (constvar.FloatInitVals.empty()) {
                     GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(0);
-                }else{
+                } else {
                     auto constnum = constvar.FloatInitVals.at(num);
                     GEPMap[gepI->GetResultRegNo()] = new ImmF32Operand(constnum);
                 }
