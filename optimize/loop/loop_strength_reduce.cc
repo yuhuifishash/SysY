@@ -473,7 +473,6 @@ then %r25 and %r24 are same
 */
 void LoopIndVarSimplify(CFG *C) {
     std::map<int, Instruction> define_map;
-    std::set<Instruction> EraseSet;
     std::map<int, int> replace_map;
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
