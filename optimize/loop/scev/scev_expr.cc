@@ -177,6 +177,9 @@ SCEVValue SCEVValue::operator-(SCEVValue b) {
             auto imm1 = ((ImmI32Operand *)b.op1)->GetIntImmVal();
             auto imm2 = ((ImmI32Operand *)op2)->GetIntImmVal();
             auto imm = imm1 - imm2;
+            if (type == SUB) {
+                imm = imm1 + imm2;
+            }
             if (imm == 0) {
                 return {op1, OTHER, nullptr};
             } else {
