@@ -133,15 +133,15 @@ void LoopInvariantReassociate(CFG *C) {
                               (scev.InvariantSet.find(((RegOperand *)I1op2)->GetRegNo()) != scev.InvariantSet.end());
                 bool check2 = (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMI32) &&
                               (((ImmI32Operand *)I1op2)->GetIntImmVal() != 0);
-                bool check3 = (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMF32) &&
-                              (((ImmF32Operand *)I1op2)->GetFloatVal() != 0.0);
+                // bool check3 = (!isconst) && (I1op2->GetOperandType() == BasicOperand::IMMF32) &&
+                //               (((ImmF32Operand *)I1op2)->GetFloatVal() != 0.0);
                 bool check4 = (I1op1->GetOperandType() == BasicOperand::REG) &&
                               (scev.InvariantSet.find(((RegOperand *)I1op1)->GetRegNo()) != scev.InvariantSet.end());
                 bool check5 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMI32) &&
                               (((ImmI32Operand *)I1op1)->GetIntImmVal() != 0);
-                bool check6 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) &&
-                              (((ImmF32Operand *)I1op1)->GetFloatVal() != 0.0);
-                if (check1 || (check2 && !check5) || (check3 && !check6)) {
+                // bool check6 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) &&
+                //               (((ImmF32Operand *)I1op1)->GetFloatVal() != 0.0);
+                if (check1 || (check2 && !check5)) {
                     if (check1 && I1op1->GetOperandType() == BasicOperand::REG) {
                         auto reg22 = (RegOperand *)I1op1;
                         auto regno22 = reg22->GetRegNo();
@@ -181,7 +181,7 @@ void LoopInvariantReassociate(CFG *C) {
                     continue;
                 }
 
-                if (check4 || (!check2 && check5) || (!check3 && check6)) {
+                if (check4 || (!check2 && check5)) {
                     switch (type) {
                     case 0:    // a b r1 c -> a c r1 b
                         std::swap(I1op2, I2op2);
@@ -266,13 +266,13 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList) {
             }
             return false;
         }
-        if (op->GetOperandType() == BasicOperand::IMMF32) {
-            auto num = ((ImmF32Operand *)op)->GetFloatVal();
-            if (num == 0.0) {
-                return true;
-            }
-            return false;
-        }
+        // if (op->GetOperandType() == BasicOperand::IMMF32) {
+        //     auto num = ((ImmF32Operand *)op)->GetFloatVal();
+        //     if (num == 0.0) {
+        //         return true;
+        //     }
+        //     return false;
+        // }
         return false;
     };
     if (InstList.size() < 4) {
@@ -356,6 +356,9 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
 
         auto AddI1 = (ArithmeticInstruction *)a;
         auto AddI2 = (ArithmeticInstruction *)b;
+        if (AddI1->GetDataType() != I32 || AddI2->GetDataType() != I32 ) {
+            return false;
+        }
         auto resultreg1 = AddI1->GetResultReg();
         auto resultreg2 = AddI2->GetResultReg();
         auto resulttype = resultreg1->GetOperandType();
@@ -386,23 +389,24 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
             if (addmap.find(pairnow) != addmap.end() && addmap[pairnow] > 1) {
                 RegOperand *addop = nullptr;
                 if (addoperandmap.find(pairnow) == addoperandmap.end()) {
+                    Instruction addI;
                     addop = GetNewRegOperand(++C->max_reg);
                     addoperandmap[pairnow] = addop;
-                    Instruction addI;
-                    if (AddI1->GetDataType() == I32) {
+                    // if (AddI1->GetDataType() == I32) {
                         if (i & 1) {
                             addI = new ArithmeticInstruction(ADD, I32, I1op1, I2op2, addop);
                         } else {
                             addI = new ArithmeticInstruction(ADD, I32, I1op2, I2op2, addop);
                         }
 
-                    } else {
-                        if (i & 1) {
-                            addI = new ArithmeticInstruction(FADD, FLOAT32, I1op1, I2op2, addop);
-                        } else {
-                            addI = new ArithmeticInstruction(FADD, FLOAT32, I1op2, I2op2, addop);
-                        }
-                    }
+                    // } else {
+                    //     if (i & 1) {
+                    //         addI = new ArithmeticInstruction(FADD, FLOAT32, I1op1, I2op2, addop);
+                    //     } else {
+                    //         addI = new ArithmeticInstruction(FADD, FLOAT32, I1op2, I2op2, addop);
+                    //     }
+
+                    // }
                     InstList.insert(insertit, addI);
                 } else {
                     addop = (RegOperand *)addoperandmap[pairnow];
