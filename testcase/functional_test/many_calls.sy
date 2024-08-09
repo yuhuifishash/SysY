@@ -1,0 +1,57 @@
+int add (int a,int b) {
+    return a + b;
+}
+int sub (int a,int b) {
+    return a - b;
+}
+int mul (int a,int b) {
+    return a * b;
+}
+int div (int a,int b) {
+    return a / b;
+}
+int mod (int a,int b) {
+    return a % b;
+}
+int main () {
+    int a = getint();
+    int b = getint();
+    int c = getint();
+    int d = getint();
+    int e = getint();
+    int f = getint();
+    putint(
+    mod(
+        sub(
+            a,
+            add(
+                add(
+                    mul(b,c),
+                    d),
+                e
+            )
+        ),
+        f
+    ));// (a-(b*c+d+e))%f
+    putch(10);
+    a = getint();
+    b = getint();
+    c = getint();
+    d = getint();
+    e = getint();
+    f = getint();
+    int g = getint();
+    putint(
+    add(
+        add(
+            div(a,b),
+            mul(
+                sub(c,d),
+                add(e,f)
+            )
+        ),
+        g
+    ));// a/b+(c-d)*(e+f)+g
+    putch(10);
+    return 0;
+}

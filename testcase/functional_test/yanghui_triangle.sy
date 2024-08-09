@@ -1,0 +1,21 @@
+int result[2][2222];
+void fillline (int last_line[], int cur_line[], int n) {
+    cur_line[0] = 1;
+    if (n == 1) return;
+    fillline(cur_line, last_line, n-1);
+    @for (int i = 1; i < n; i=i+1) {
+        cur_line[i] = last_line[i] + last_line[i - 1];
+    }
+}
+int main () {
+    int n = getint();
+    fillline(result[0], result[1], n);
+    @for (int j = 0; j < 2; j=j+1) {
+        @for (int i = 0; i < n; i=i+1) {
+            putint(result[j][i]);
+            putch(32);
+        }
+        putch(10);
+    }
+    return 0;
+}

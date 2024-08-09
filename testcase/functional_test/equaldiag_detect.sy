@@ -1,0 +1,40 @@
+int n,m,A[1111][1111];
+int diffa[111111],diffb[111111];
+int vala[111111],valb[111111];
+int vsda[111111],vsdb[111111];
+int main(){
+    int n = getint();
+    int m = getint();
+    @for(int i=1;i<=n;i=i+1){
+        @for(int j=1;j<=m;j=j+1){
+            A[i][j] = getint();
+            if(vsda[i+j]){
+                if(vala[i+j]!=A[i][j]){
+                    diffa[i+j]=1;
+                }
+            }else{
+                vsda[i+j]=1;
+                vala[i+j]=A[i][j];
+            }
+            if(vsdb[n+m+i-j]){
+                if(valb[n+m+i-j]!=A[i][j]){
+                    diffb[n+m+i-j]=1;
+                }
+            }else{
+                vsdb[n+m+i-j]=1;
+                valb[n+m+i-j]=A[i][j];
+            }
+        }
+    }
+    @for(int i=1;i<=n;i=i+1){
+        @for(int j=1;j<=m;j=j+1){
+            if(diffa[i+j]==0&&diffb[n+m+i-j]==0){
+                putch(0x58); // 'X'
+            }else{
+                putch(0117); // 'O'
+            }
+        }
+        putch(10);
+    }
+    return 0;
+}

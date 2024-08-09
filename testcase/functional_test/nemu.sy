@@ -1,0 +1,67 @@
+int opcode[111];
+int dest[111];
+int operand1[111];
+int operand2[111];
+int regfile[32];
+int add (int a,int b) {
+    return a + b;
+}
+int sub (int a,int b) {
+    return a - b;
+}
+int mul (int a,int b) {
+    return a * b;
+}
+int div (int a,int b) {
+    return a / b;
+}
+int mod (int a,int b) {
+    return a % b;
+}
+int op_exec (int op, int num1, int num2) {
+    if (op == 1) return add(num1,num2);
+    if (op == 2) return sub(num1,num2);
+    if (op == 3) return mul(num1,num2);
+    if (op == 4) return div(num1,num2);
+    if (op == 5) return mod(num1,num2);
+    return 0;
+}
+int operand_decode (int operand) {
+    if (operand >= 32) return operand - 32;
+    return regfile[operand];
+}
+void exec (int op, int dest, int op1, int op2) {
+    regfile[dest] = op_exec(op, operand_decode(op1), operand_decode(op2));
+}
+int main () {
+    int T = getint();
+    @for (int i = 0; i < T; i = i + 1) {
+        opcode[i] = getint();
+        dest[i] = getint();
+        operand1[i] = getint();
+        operand2[i] = getint();
+    }
+    int K = getint();
+    int pc = 0;
+    @for (int i = 0; i < K; i = i + 1) {
+        int op = getint();
+        if (op == 1) {
+            // step
+            if (pc < T) {
+                exec(opcode[pc], dest[pc], operand1[pc], operand2[pc]);
+                pc = pc + 1;
+            } else {
+                putch(101);
+                putch(114);
+                putch(114);
+                putch(10);
+            }
+        } else if (op == 2) {
+            // check val
+            int regno = getint();
+            putint(regfile[regno]);
+            putch(10);
+        }
+    }
+    return 0;
+}
