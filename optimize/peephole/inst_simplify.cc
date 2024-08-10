@@ -523,7 +523,6 @@ Need to be optimize:
 the transformed instruction is %r3 = add %r1, 2 , we named it SubDef.
 */
 void GEPStrengthReduce(CFG *C) {
-    // DOING("GEPStrengthReduce");
 
     std::set<Instruction> Instructionset;
     std::map<std::string, std::vector<Instruction>> GepPtrMap;
@@ -533,7 +532,7 @@ void GEPStrengthReduce(CFG *C) {
     std::set<Instruction> AddInstConstantSet;
     std::map<int, std::vector<std::pair<int, int>>> G;
     std::map<int, Instruction> GepResultMap;
-    std::vector<int> rd(C->max_reg, 0);
+    std::map<int,int> rd;
     std::function<int(Instruction, Instruction)> existpass = [&](Instruction GepI, Instruction BefI) {
         // check the two Instruction whether to be optimize
         // return the difference value between two Instruction if to be optimize, otherwise -1.
@@ -709,7 +708,11 @@ void GEPStrengthReduce(CFG *C) {
                         auto ptrVal = BefI->GetResultReg();
                         auto BefIopNo = ((RegOperand *)ptrVal)->GetRegNo();
                         G[BefIopNo].push_back(std::make_pair(GepIopNo, aimOp));
-                        rd[GepIopNo]++;
+                        if(rd.find(GepIopNo) == rd.end()){
+                            rd[GepIopNo] = 1;
+                        }else{
+                            rd[GepIopNo]++;
+                        }
                         // GepI->PrintIR(std::cerr);
                         // BefI->PrintIR(std::cerr);
                         break;
@@ -720,7 +723,7 @@ void GEPStrengthReduce(CFG *C) {
             Instructionset.erase(I);
         } while (Instruction_it != now->Instruction_list.begin());
         for (int i = 0; i <= C->max_reg; ++i) {
-            if (G[i].size() > 0 && rd[i] == 0) {
+            if (G[i].size() > 0 && rd.find(i) == rd.end()) {
                 auto rtI = GepResultMap[i];
                 auto rtBefI = (GetElementptrInstruction *)rtI;
                 DFS2(i, i, 0, rtI->GetResultReg());

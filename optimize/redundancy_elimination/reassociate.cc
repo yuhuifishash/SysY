@@ -149,7 +149,7 @@ void LoopInvariantReassociate(CFG *C) {
                             continue;
                         }
                     }
-                    I1->PrintIR(std::cerr);
+
                     switch (type) {
                     case 0:    // a b r1 c -> c b r1 a
                         std::swap(I1op1, I2op2);
