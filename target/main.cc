@@ -90,7 +90,6 @@ void LatchPhiCombine(CFG *C);
 void LoopIndVarSimplify(CFG *C);
 void LoopInvariantReassociate(CFG *C);
 void Reassociate(CFG *C);
-void Sink(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -197,8 +196,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(LatchPhiCombine);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(LoopClosedSSA);
         llvmIR.PassExecutor(LoopRotate);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
@@ -234,7 +231,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(ScalarEvolution);
-        // llvmIR.PassExecutor(LoopInvariantReassociate);
+        llvmIR.PassExecutor(LoopInvariantReassociate);
         llvmIR.PassExecutor(SimplifyCFG);
 
         // repeat 5 times
@@ -354,7 +351,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(LoopInvariantCodeMotion);
         llvmIR.PassExecutor(SimplifyCFG);
 #endif
-        
 
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(GEPStrengthReduce);
@@ -377,13 +373,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(SimpleDCE);
         llvmIR.PassExecutor(SimplifyCFG);
-
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(Sink);
-        llvmIR.PassExecutor(SimplifyCFG);
-
         llvmIR.PassExecutor(EraseNoUseGlobal);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
@@ -422,9 +411,9 @@ int main(int argc, char **argv) {
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
         if (optimize_flag) {
-#ifdef O3_ENABLE
-            RiscV64InstructionSchedule(m_unit).Execute();
-#endif
+            #ifdef O3_ENABLE
+                RiscV64InstructionSchedule(m_unit).Execute();
+            #endif
         }
         FastLinearScan(m_unit, &regs, &spiller).Execute();
         RiscV64PostRAPeehole(m_unit).Execute();
