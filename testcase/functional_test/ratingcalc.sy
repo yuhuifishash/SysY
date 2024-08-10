@@ -1,0 +1,56 @@
+float constants[50], achievements[50];
+int DX_rating = 0;
+int getSingleRating (float constant, float achievement) {
+    // calculate achievement * constant here
+    if (achievement >= 1.005) {
+        return 1.005 * constant * 22.4;
+    } else if (achievement >= 1.000) {
+        return achievement * constant * 21.6;
+    } else if (achievement >= 0.995) {
+        return achievement * constant * 21.1;
+    } else if (achievement >= 0.990) {
+        return achievement * constant * 20.8;
+    } else if (achievement >= 0.980) {
+        return achievement * constant * 20.3;
+    } else if (achievement >= 0.970) {
+        return achievement * constant * 20.0;
+    } else if (achievement >= 0.940) {
+        return achievement * constant * 16.8;
+    } else if (achievement >= 0.900) {
+        return achievement * constant * 15.2;
+    } else if (achievement >= 0.800) {
+        return achievement * constant * 13.6;
+    } else if (achievement >= 0.750) {
+        return achievement * constant * 12.0;
+    } else if (achievement >= 0.700) {
+        return achievement * constant * 11.2;
+    } else if (achievement >= 0.600) {
+        return achievement * constant * 9.6;
+    } else if (achievement >= 0.500) {
+        return achievement * constant * 8.0;
+    } else if (achievement >= 0.400) {
+        return achievement * constant * 6.4;
+    } else if (achievement >= 0.300) {
+        return achievement * constant * 4.8;
+    } else if (achievement >= 0.200) {
+        return achievement * constant * 3.2;
+    } else if (achievement >= 0.100) {
+        return achievement * constant * 1.6;
+    } else {
+        return 0;
+    }
+}
+int main () {
+    @for (int i = 0; i < 50; i = i + 1) {
+        constants[i] = getfloat();
+        achievements[i] = getfloat();
+    }
+    @for (int i = 0; i < 50; i = i + 1) {
+        @for (int j = 0; j < getSingleRating(constants[i], achievements[i]/100); j = j + 1) {
+            DX_rating = DX_rating + 1;
+        }
+        // DX_rating = DX_rating + getSingleRating(constants[i], achievements[i]/100);
+    }
+    putf("DX rating: %d\n", DX_rating);
+    return 0;
+}
