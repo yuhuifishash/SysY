@@ -1,0 +1,58 @@
+int add (int a,int b) {
+    return a + b;
+}
+int sub (int a,int b) {
+    return a - b;
+}
+int mul (int a,int b) {
+    return a * b;
+}
+int div (int a,int b) {
+    return a / b;
+}
+int mod (int a,int b) {
+    return a % b;
+}
+int res[22];
+int main () {
+    // a + b * c + d
+    // a + d - b * c
+    int a = getint(); // 114
+    int b = getint(); // 24
+    int c = getint(); // 3
+    int d = getint(); // 7
+
+    res[0] = add(add(a,mul(b,c)),d);// a + b * c + d
+    if (a + d) {
+        putint(b * c);// 72
+    }else if (b * c) {
+        putint(a + d);
+    }
+    putch(10);
+    res[1] = sub(add(a,d),mul(b,c));// a + d - b * c
+    res[2] = a + b * c + d;// a + b * c + d
+    res[3] = a + d - b * c;// a + d - b * c
+    res[4] = add(d, mul(b,c)) + a;// a + b * c + d
+    res[5] = a-1;// a - 1 + d + b * c
+    @for (int i = 0; i < d; i=i+1) {
+        res[5] = res[5] + 1;
+    }
+    if (b && c) {
+        @for (int i = 0; i < c; i=i+1) {
+            res[5] = res[5] + b;
+        }
+    }
+    putint(res[0]);// 193
+    putch(10);
+    putint(res[1]);// 49
+    putch(10);
+    putint(res[2]);// 193
+    putch(10);
+    putint(res[3]);// 49
+    putch(10);
+    putint(res[4]);// 193
+    putch(10);
+    putint(res[5]);// 192
+    putch(10);
+    return 0;
+}

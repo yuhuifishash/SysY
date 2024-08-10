@@ -15,7 +15,7 @@ int main () {
     }
     @for (int i = 0; i < n ; i = i+1) {
         @for (int j = 0; j < n; j = j+1) {
-            putint(AllNegative1[0][0]);
+            putint(AllNegative1[i][j]);
         }
         putch(10);
     }
