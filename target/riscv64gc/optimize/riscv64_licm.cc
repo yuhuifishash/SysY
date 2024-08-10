@@ -104,6 +104,7 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
     if (!isNeedLicm(I)) {
         return false;
     }
+    // TODO():estimate the register pressure in this loop
     auto wr = I->GetWriteReg();
     assert(wr.size() == 1);
     auto result_r = (*wr.begin())->reg_no;

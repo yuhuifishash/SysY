@@ -1,0 +1,111 @@
+
+int n,m;
+const int max_n=1e3+5;
+int fac[max_n*2],inv[max_n*2],inv_fac[max_n*2],now=1;
+const int max_m=100+5;
+int a[max_m],b[max_m];
+const int mod=998244353;
+int multiply(int a, int n){
+  int res = 0;
+  while(n){
+    if(n%2 == 1){
+      res=res+a;
+      res%=mod;
+    }
+    a = a + a;
+    a %= mod;
+    n/=2;
+  }
+  return res;
+}
+
+int qpow(int a,int n)
+{
+	int res=1;
+	while(n)
+	{
+		if(n%2 == 1){
+			res=multiply(res,a)%mod;
+    }
+		a=multiply(a,a);
+		n/=2;
+	}
+	return res;
+}
+
+int C(int n,int m)
+{
+	return multiply(multiply(fac[n],inv_fac[m]),inv_fac[n-m]);
+}
+int M[max_m][max_m];
+int det()
+{
+	int res=1;
+	int flag_neg=0;
+	@for(int i=1;i<=m;i=i+1)
+	{
+		int k=i;
+		while(k<=m&&!M[k][i])
+			k=k+1;
+		if(k>m)
+			return 0;
+		if(k!=i)
+		{
+			@for(int j=i;j<=m;j=j+1){
+        int tmp = M[i][j];
+        M[i][j] = M[k][j];
+        M[k][j] = tmp;
+      }
+      if(flag_neg == 0){flag_neg = 1;}
+      else{flag_neg = 0;}
+		}
+		res=multiply(res,(M[i][i]+mod)%mod);
+		int t=qpow(M[i][i],mod-2);
+		@for(int k=i+1;k<=m;k=k+1)
+		{
+			int t0=multiply(t,M[k][i]);
+			@for(int j=i;j<=m;j=j+1)
+				M[k][j]=((M[k][j]-multiply(M[i][j],t0))%mod+mod)%mod;
+		}
+	}
+  if(flag_neg){
+    return mod-res;
+  }else{
+    return res;
+  }
+}
+int main()
+{
+	fac[0]=1;inv_fac[0]=1;
+	fac[1]=1;inv_fac[1]=1;inv[1]=1;
+	int T;
+	T = getint();
+	while(T)
+	{
+    T = T - 1;
+    n = getint();
+    m = getint();
+		while(now<2*n)
+		{
+			now+=1;
+			fac[now]=multiply(fac[now-1],now);
+			inv[now]=multiply((mod-mod/now),inv[mod%now]);
+			inv_fac[now]=multiply(inv_fac[now-1],inv[now]);
+		}
+		@for(int i=1;i<=m;i=i+1){
+      a[i] = getint();
+      b[i] = getint();
+    }
+		@for(int i=1;i<=m;i=i+1)
+			@for(int j=1;j<=m;j=j+1){
+        if(a[i]<=b[j]){
+          M[i][j] = C(b[j]-a[i]+n-1,n-1);
+        }else{
+          M[i][j] = 0;
+        }
+      }
+    putint(det());
+    putch(10);
+	}
+    return 0;
+}

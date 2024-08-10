@@ -1,0 +1,95 @@
+int A[5000005] = {};
+int S[25] = {};
+int T[25] = {};
+int main()
+{
+  int i = 0;
+  int n = getint(), k = getint();
+  while(i < n){
+    A[i] = i;
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < k){
+    int s = getint();
+    int t = getint();
+    S[i] = s;
+    T[i] = t; 
+
+    A[s] = s*s;
+    A[t] = t*t;
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < k){
+    A[S[i]] = A[S[i]] + S[i];
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < k){
+    A[T[i]] = A[T[i]] + T[i];
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < n){
+    A[S[i%k]*T[i%k]%99] += S[i%k]*T[i%k];
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < n){
+    A[S[i%k]*T[i%k]%99] += S[i%k] + T[i%k];
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < n){
+    A[i] = A[i] + 15;
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < n){
+    A[i] = A[i] + 5;
+    i = i + 1;
+  }
+
+  i = 0;
+  int s = 0;
+  while(i < n){
+    s = s + A[i] + i;
+    s %= 998244353;
+    i = i + 1;
+  }
+  putint(s);
+  putch(10);
+
+  i = 0;
+  while(i < n){
+    A[S[i%k]*T[i%k]%99] = S[i%k]*T[i%k];
+    i = i + 1;
+  }
+
+  i = 0;
+  while(i < n){
+    A[S[i%k]*T[i%k]%99] = S[i%k] + T[i%k];
+    i = i + 1;
+  }
+
+  i = 0;
+  s = 0;
+  while(i < n){
+    s = s + A[i] + i;
+    s %= 998244353;
+    i = i + 1;
+  }
+
+  putint(s);
+  putch(10);
+
+  return 0;
+}

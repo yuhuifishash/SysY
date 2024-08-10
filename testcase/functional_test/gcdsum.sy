@@ -1,0 +1,54 @@
+int mu[10000010];int flag[10000010],prime[10000010],cnt,f[10000010],sum[10000010];
+int min(int a,int b)
+{
+  if(a < b){
+    return a;
+  }
+  return b;
+}
+void sieve() {
+    mu[1]=1;
+    @for (int i=2;i<=10000000;i=i+1) {
+        if (!flag[i]) {cnt=cnt+1;prime[cnt]=i;mu[i]=-1;}
+        @for (int j=1;j<=cnt&&i*prime[j]<=10000000;j=j+1) {
+            flag[i*prime[j]]=1;
+            if (i%prime[j]==0) break;
+            mu[i*prime[j]]=-mu[i];
+        }
+    }
+    @for (int i=1;i<=cnt;i=i+1)
+        @for (int j=1;prime[i]*j<=10000000;j=j+1)
+            f[j*prime[i]]+=mu[j];
+    @for (int i=1;i<=10000000;i=i+1)
+        sum[i]=sum[i-1]+f[i];
+}
+int solve(int a,int b) {
+    int ans=0;
+    if (a>b) {
+      int tmp = a;
+      a = b;
+      b = tmp;
+    }
+    @for (int l=1,r=0;l<=a;l=r+1) {
+        r=min(a/(a/l),b/(b/l));
+        ans+=(sum[r]-sum[l-1])*(a/l)*(b/l);
+    }
+    return ans;
+}
+int main() {
+    sieve();
+    int n,m,T;T = getint();
+    while (T) {
+        T = T - 1;
+        n = getint();
+        m = getint();
+        if (n>m){
+          int tmp = n;
+          n = m;
+          m = tmp;
+        }
+        putint(solve(n,m));
+        putch(10);
+    }
+    return 0;
+}
