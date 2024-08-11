@@ -1,0 +1,93 @@
+
+const int N=1e5+5;
+int n,sum,rt,mxdep;
+int vis[N],t[N*2],mx[N],size1[N],dep[N],dis[N];
+int ans,g[N*2][2],f[N*2][2];
+
+int head[N],cnt;
+int e_to[N*2], e_next[N*2], e_w[N*2];
+void add(int u,int v,int w)
+{
+    cnt = cnt + 1;
+	e_to[cnt]=v;e_next[cnt]=head[u];e_w[cnt]=w;head[u]=cnt;
+    cnt = cnt + 1;
+	e_to[cnt]=u;e_next[cnt]=head[v];e_w[cnt]=w;head[v]=cnt;
+}
+
+int max(int a,int b)
+{
+    if(a < b){
+        return b;
+    }else{
+        return a;
+    }
+}
+void getroot(int x,int fa)
+{
+	size1[x]=1;mx[x]=0;
+	@for(int i=head[x];i;i=e_next[i])
+	if(e_to[i]!=fa&&!vis[e_to[i]])
+	{
+		getroot(e_to[i],x);
+		size1[x]+=size1[e_to[i]];
+		mx[x]=max(mx[x],size1[e_to[i]]);
+	}
+	mx[x]=max(mx[x],sum-size1[x]);
+	if(mx[x]<mx[rt]) rt=x;
+}
+
+void dfs(int x,int fa)
+{
+	mxdep=max(mxdep,dep[x]);
+    if(t[dis[x]]){
+        f[dis[x]][1] += 1;
+    }else{
+        f[dis[x]][0] += 1;
+    }
+	t[dis[x]]+=1;
+	@for(int i=head[x];i;i=e_next[i]) if(e_to[i]!=fa&&!vis[e_to[i]])
+	{
+		dep[e_to[i]]=dep[x]+1;
+		dis[e_to[i]]=dis[x]+e_w[i];
+		dfs(e_to[i],x);
+	}
+	t[dis[x]]-=1;
+}
+void solve(int x)
+{
+	int mx=0;vis[x]=1;g[n][0]=1;
+	@for(int i=head[x];i;i=e_next[i]) if(!vis[e_to[i]])
+	{
+		dis[e_to[i]]=n+e_w[i];dep[e_to[i]]=1;mxdep=1;
+		dfs(e_to[i],0);mx=max(mx,mxdep);
+		ans+=(g[n][0]-1)*f[n][0];
+		@for(int j=-mxdep;j<=mxdep;j=j+1)
+		ans+=g[n-j][1]*f[n+j][1]+g[n-j][0]*f[n+j][1]+g[n-j][1]*f[n+j][0];
+		@for(int j=n-mxdep;j<=n+mxdep;j=j+1)
+		{
+			g[j][0]+=f[j][0];
+			g[j][1]+=f[j][1];
+			f[j][0]=0;f[j][1]=0;
+		}
+	}
+	@for(int i=n-mx;i<=n+mx;i=i+1) {g[i][0]=0;g[i][1]=0;}
+	@for(int i=head[x];i;i=e_next[i])
+	if(!vis[e_to[i]])
+	{
+		sum=size1[e_to[i]];rt=0;getroot(e_to[i],0);solve(rt);
+	}
+}
+int main()
+{
+	n=getint();
+	@for(int i=1;i<n;i=i+1)
+	{
+		int u=getint(),v=getint(),w=getint();
+		if(!w) w=-1;
+		add(u,v,w);
+	}
+	sum=n;mx[0]=n;
+	getroot(1,0);
+	solve(rt);
+	putf("%d\n",ans);
+}

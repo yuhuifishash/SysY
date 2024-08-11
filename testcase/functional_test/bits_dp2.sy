@@ -1,0 +1,161 @@
+int p2[31]={};
+
+// all the numbers are unsigned int
+int shl(int a,int bits){
+    return a*p2[bits];
+}
+int shr(int a,int bits){
+    return a/p2[bits];
+}
+
+int or(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] == 1 || b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+
+int and(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] == 1 && b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+
+int xor(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] + b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+int min(int a,int b)
+{
+    if(a < b){
+        return a;
+    }
+    return b;
+}
+
+int select(int cond,int a,int b){
+    if(cond){
+        return a;
+    }
+    return b;
+}
+
+int n,ans,limit;
+int t[1010],b[1010];
+int dp[1010][300][20];
+const int INF = 0x3f3f3f3f;
+int main()
+{
+    p2[0] = 1;
+    int i = 1;
+    while(i<31){
+        p2[i] = p2[i-1]*2;
+        i = i + 1;
+    }
+    int T;
+    T=getint();
+    while(T)
+    {
+        T =T-1;
+        n=getint();
+        @for(int i=1;i<=n;i=i+1){
+            t[i]=getint();b[i]=getint();
+        }
+        @for(int i=0;i<1010;i=i+1){
+            @for(int j=0;j<300;j=j+1){
+                @for(int k=0;k<20;k=k+1){
+                    dp[i][j][k] = INF;
+                }
+            }
+        }
+        dp[1][0][7]=0;
+        @for(int i=1;i<=n;i=i+1)
+            @for(int j=0;j<256;j=j+1)
+                @for(int k=-8;k<=7;k=k+1)
+                    if(dp[i][j][k+8]!=INF)
+                    {
+                        if(and(j,1))
+                            dp[i+1][shr(j,1)][k+7]=min(dp[i+1][shr(j,1)][k+7],dp[i][j][k+8]);
+                        else
+                        {
+                            limit=INF;
+                            @for(int h=0;h<=7;h=h+1)
+                                if(!(and(shr(j,h),1)))
+                                {
+                                    if(i+h>limit)
+                                        break;
+                                    limit=min(limit,i+h+b[i+h]);
+                                    dp[i][or(j,shl(1,h))][h+8]=min(dp[i][or(j,shl(1,h))][h+8],dp[i][j][k+8]+select(i+k,xor(t[i+k],t[i+h]),0));
+                                }
+                        }
+                    }
+        ans=INF;
+        @for(int k=0;k<=8;k=k+1)
+            ans=min(ans,dp[n+1][0][k]);
+        putf("%d\n",ans);
+    }
+    return 0;
+}

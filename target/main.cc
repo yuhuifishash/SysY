@@ -459,17 +459,17 @@ int main(int argc, char **argv) {
             RiscV64LICM(m_unit).Execute();
             RiscV64CSE(m_unit).Execute();
         }
-        MachinePhiDestruction(m_unit).Execute();
-        RiscV64LowerFImmCopy(m_unit).Execute();
-        RiscV64LowerIImmCopy(m_unit).Execute();
+        // MachinePhiDestruction(m_unit).Execute();
+        // RiscV64LowerFImmCopy(m_unit).Execute();
+        // RiscV64LowerIImmCopy(m_unit).Execute();
         // RiscV64InstructionSchedule(m_unit).Execute();
 
         // MachinePhiDestruction(m_unit).Execute();
         // RiscV64LowerFImmCopy(m_unit).Execute();
         // RiscV64LowerIImmCopy(m_unit).Execute();
-        if (optimize_flag) {
-            RiscV64InstructionSchedule(m_unit).Execute();
-        }
+        // if (optimize_flag) {
+        //     RiscV64InstructionSchedule(m_unit).Execute();
+        // }
 
         MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
         printer->emit();
