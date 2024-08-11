@@ -1,0 +1,38 @@
+int t,md;
+int n,a,b,ans[3][3],l[3][3],d[3][3];
+void mul(int x[][3],int y[][3]){
+    int a=x[0][0],b=x[0][1],c=x[1][0],d=x[1][1];
+    x[0][0]=(a*y[0][0]+b*y[1][0])%md;
+    x[0][1]=(a*y[0][1]+b*y[1][1])%md;
+    x[1][0]=(c*y[0][0]+d*y[1][0])%md;
+    x[1][1]=(c*y[0][1]+d*y[1][1])%md;
+}
+void initd(){
+	d[0][0]=0;d[0][1]=1;d[1][0]=1;d[1][1]=1;
+}
+void power(int x){
+    ans[0][0]=1;ans[1][1]=1;
+    ans[0][1]=0;ans[1][0]=0;
+    initd(); 
+    while(x){
+        l[0][0]=d[0][0];l[0][1]=d[0][1];
+        l[1][0]=d[1][0];l[1][1]=d[1][1];
+        if(x%2==1)mul(ans,l);
+        mul(d,l);
+        x/=2;
+    }
+}
+int main(){
+	t = getint();
+	while(t){
+        t=t-1;
+    n = getint();
+    md = getint();
+		power(n-1);
+		a=(ans[0][0]+ans[1][0])%md;
+		b=(ans[0][1]+ans[1][1])%md;
+    putint((a*a+a)%md*b%md);
+		putch(10);
+	}
+	return 0;
+}
