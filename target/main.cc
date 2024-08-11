@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(EliminateSimpleConstArrayValue);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-
+/*
         llvmIR.PassExecutor(SimplifyCFG);
         llvmIR.PassExecutor(InstSimplify);
         llvmIR.PassExecutor(InstCombine);
@@ -384,7 +384,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(Sink);
         llvmIR.PassExecutor(SimplifyCFG);
 
-        llvmIR.PassExecutor(EraseNoUseGlobal);
+        llvmIR.PassExecutor(EraseNoUseGlobal);*/
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
