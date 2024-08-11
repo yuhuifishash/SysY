@@ -1,0 +1,141 @@
+Input a random number: 
+
+step: 0
+score: 0
+_ _ _ _ 
+_ _ _ _ 
+_ _ 2 _ 
+_ _ _ _ 
+
+step: 1
+score: 0
+_ _ 2 _ 
+_ _ _ _ 
+_ _ _ _ 
+_ _ 2 _ 
+
+step: 2
+score: 0
+2 _ 2 _ 
+_ _ _ _ 
+_ _ _ _ 
+2 _ _ _ 
+
+step: 3
+score: 4
+_ _ _ _ 
+_ _ _ _ 
+_ _ _ _ 
+4 _ 2 4 
+
+step: 4
+score: 4
+_ _ _ _ 
+_ _ _ _ 
+_ _ 2 _ 
+_ 4 2 4 
+
+step: 5
+score: 8
+_ 4 4 4 
+_ _ _ _ 
+_ _ _ _ 
+_ _ 4 _ 
+
+step: 6
+score: 16
+_ 4 8 4 
+_ _ _ _ 
+_ _ _ _ 
+_ _ _ 4 
+
+step: 7
+score: 24
+_ 4 8 8 
+_ _ 2 _ 
+_ _ _ _ 
+_ _ _ _ 
+w, a, s, d: move
+h: print this help
+q: quit
+p: print the map
+Invalid input. Try again.
+Invalid input. Try again.
+
+
+step: 7
+score: 24
+_ 4 8 8 
+_ _ 2 _ 
+_ _ _ _ 
+_ _ _ _ 
+
+
+step: 7
+score: 24
+_ 4 8 8 
+_ _ 2 _ 
+_ _ _ _ 
+_ _ _ _ 
+Invalid input. Try again.
+Invalid input. Try again.
+Invalid input. Try again.
+Invalid input. Try again.
+
+step: 8
+score: 40
+4  16 __ __ 
+2  __ 2  __ 
+__ __ __ __ 
+__ __ __ __ 
+
+step: 9
+score: 44
+__ __ 4  16 
+__ __ __ 4  
+__ __ __ 4  
+__ __ __ __ 
+
+step: 10
+score: 52
+__ __ __ __ 
+__ __ 4  __ 
+__ __ __ 16 
+__ __ 4  8  
+
+step: 11
+score: 60
+__ __ __ __ 
+__ __ __ __ 
+__ __ __ 16 
+2  __ 8  8  
+
+step: 12
+score: 60
+2  __ 8  16 
+4  __ __ 8  
+__ __ __ __ 
+__ __ __ __ 
+
+step: 13
+score: 60
+4  __ __ __ 
+__ __ __ __ 
+2  __ __ 16 
+4  __ 8  8  
+
+step: 14
+score: 76
+4  __ __ 4  
+__ __ __ __ 
+2  16 __ __ 
+4  16 __ __ 
+
+step: 15
+score: 108
+4  32 2  4  
+2  __ __ __ 
+4  __ __ __ 
+__ __ __ __ 
+Game over.
+0
