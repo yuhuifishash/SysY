@@ -1,0 +1,170 @@
+
+
+
+const int S = 1024 + 5;
+int n, a[S], F[S][S], L[S*2], R[S*2], tot_dfn, dp[S*2][S];
+int b[S], vis[S];
+int p2[31]={};
+
+// all the numbers are unsigned int
+int shl(int a,int bits){
+    return a*p2[bits];
+}
+int shr(int a,int bits){
+    return a/p2[bits];
+}
+
+int or(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] == 1 || b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+
+int and(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] == 1 && b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+
+int xor(int a,int b){
+    int a_bits[32]={}, b_bits[32]={};
+    int i = 0;
+    while(a){
+        a_bits[i] = a%2;
+        a = a/2;
+        i = i + 1;
+    }
+
+    i = 0;
+    while(b){
+        b_bits[i] = b%2;
+        b = b/2;
+        i = i + 1;
+    }
+
+    int ans = 0;
+    i = 0;
+    while(i < 30){
+        if(a_bits[i] + b_bits[i] == 1){
+            ans = ans + p2[i];
+        }
+        i = i + 1;
+    }
+    return ans;
+}
+
+
+void prework(int x, int d) {
+	L[x] = tot_dfn + 1;
+	if (d == n + 1) {
+        tot_dfn += 1;
+		R[x] = tot_dfn;
+		return;
+	}
+	prework(2*x, d + 1);
+	prework(2*x + 1, d + 1);
+	R[x] = tot_dfn;
+}
+int min(int a,int b)
+{
+    if(a < b){
+        return a;
+    }
+    return b;
+}
+void dfs(int x, int d) {
+	@for (int i = 0; i <= shl(1 , (n - d + 1)); i=i+1) dp[x][i] = 0x3f3f3f3f;
+	if (d == n + 1) {
+		dp[x][0] = 0; dp[x][1] = 0;
+		int xx = x - shl(1 , n) + 1;
+		@for (int p = shr(x , 1); p; p=p/2) {
+			int v = 0;
+			if (L[p*2] <= L[x] && L[x] <= R[p*2]) v = F[xx][R[p*2+1]] - F[xx][L[p*2+1] - 1];
+			else v = F[xx][R[p*2]] - F[xx][L[p*2] - 1];
+			if (vis[p] == 0) dp[x][0] += v;
+			else dp[x][1] += v;
+
+		}
+		dp[x][xor(b[xx], 1)] += a[xx];
+		return;
+	}
+	vis[x] = 0;// nA < nB
+	dfs(x*2, d + 1);
+	dfs(x*2+1, d + 1);
+	@for (int i = 0; i <= (shl(1,n-d)); i=i+1)
+		@for (int j = 0; j <= (shl(1,n-d)); j=j+1)
+			if (i + j > (shl(1,n-d))) dp[x][i + j] = min(dp[x][i + j], dp[x*2][i] + dp[x*2+1][j]);
+	vis[x] = 1;
+	dfs(x*2, d + 1);
+	dfs(x*2+1, d + 1);
+	@for (int i = 0; i <= (shl(1,n-d)); i=i+1)
+		@for (int j = 0; j <= (shl(1,n-d)); j=j+1)
+			if (i + j <= (shl(1,n-d))) dp[x][i + j] = min(dp[x][i + j], dp[x*2][i] + dp[x*2+1][j]);
+}
+int main() {
+    p2[0] = 1;
+    int i = 1;
+    while(i<31){
+        p2[i] = p2[i-1]*2;
+        i = i + 1;
+    }
+
+	n = getint();
+	@for (int i = 1; i <= (shl(1,n)); i=i+1) b[i] = getint();
+	@for (int i = 1; i <= (shl(1,n)); i=i+1) a[i] = getint();
+	@for (int i = 1; i <= (shl(1,n)); i=i+1)
+		@for (int j = 1; j <= (shl(1,n)) - i; j=j+1) F[i][i+j] = getint();
+	@for (int i = 1; i <= (shl(1,n)); i=i+1)
+		@for (int j = 1; j <= i; j=j+1) F[i][j] = F[j][i];
+	@for (int i = 1; i <= (shl(1,n)); i=i+1)
+		@for (int j = 1; j <= (shl(1,n)); j=j+1) F[i][j] += F[i][j - 1];
+	prework(1, 1);
+	dfs(1, 1);
+	int ans = 0x3f3f3f3f;
+	@for (int i = 0; i <= (shl(1,n)); i=i+1) ans = min(ans, dp[1][i]);
+	putint(ans);
+    putch(10);
+    return 0;
+}
