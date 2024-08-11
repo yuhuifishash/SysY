@@ -732,6 +732,7 @@ void EliminateUselessPhi(CFG *C) {
     bool changed = true;
     auto FuncdefI = C->function_def;
     std::function<Operand(Operand)> UnionFind = [&](Operand RegToFind) -> Operand {
+
         auto RegToFindNo = ((RegOperand *)RegToFind)->GetRegNo();
         if (UnionFindMap[RegToFindNo] == RegToFind)
             return RegToFind;
@@ -772,30 +773,37 @@ void EliminateUselessPhi(CFG *C) {
                 auto ResultReg = PhiI->GetResultReg();
                 auto ResultRegNo = ((RegOperand *)ResultReg)->GetRegNo();
                 bool NeedtoReleace = 1;
+                bool isallreg = (ResultOperands[0]->GetOperandType() == BasicOperand::REG);
                 for (u_int32_t i = 1; i < ResultOperands.size(); ++i) {
                     if (ResultOperands[i]->GetFullName() != ResultOperands[i - 1]->GetFullName()) {
                         NeedtoReleace = 0;
-                        break;
+                        // break;
+                    }
+                    if(ResultOperands[i]->GetOperandType() != BasicOperand::REG){
+                        isallreg = 0;
                     }
                 }
 
                 if (NeedtoReleace) {
-                    changed |= true;
-                    if (ResultOperands.size() == 1 && ResultOperands[0]->GetOperandType() != BasicOperand::REG) {
+                    
+                    if (ResultOperands.size() == 1 && !isallreg) {
                         // example2
                         if (ResultOperands[0]->GetOperandType() == BasicOperand::IMMI32) {
+                            changed |= true;
                             I = new ArithmeticInstruction(
                             ADD, I32, new ImmI32Operand(0),
                             new ImmI32Operand(((ImmI32Operand *)ResultOperands[0])->GetIntImmVal()),
                             PhiI->GetResultReg());
-                        } else {
+                        } else if(ResultOperands[0]->GetOperandType() == BasicOperand::IMMF32){
+                            changed |= true;
                             I = new ArithmeticInstruction(
                             FADD, FLOAT32, new ImmF32Operand(0),
                             new ImmF32Operand(((ImmF32Operand *)ResultOperands[0])->GetFloatVal()),
                             PhiI->GetResultReg());
                         }
-                    } else {
+                    } else if(isallreg){
                         // example1
+                        changed |= true;
                         EraseSet.insert(I);
                         auto Findfa = UnionFind(ResultOperands[0]);
                         auto Findson = UnionFind(ResultReg);
