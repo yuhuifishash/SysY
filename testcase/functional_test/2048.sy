@@ -1,0 +1,318 @@
+// A simple 2048 game.
+// Author: 383494.
+
+// SysY library in C.
+/*
+#include <stdio.h>
+
+
+int getint() {
+  int val;
+  scanf("%d", &val);
+  return val;
+}
+
+int getch() { return getchar(); }
+
+int getarray(int val[]) {
+  int len;
+  for (int i = 0; i < len; i++) {
+    scanf("%d", val + i);
+  }
+  return len;
+}
+
+void putint(int val) { printf("%d", val); }
+
+void putch(int val) { putchar(val); }
+
+void putarray(int len, int arr[]) {
+  printf("%d:", len);
+  for (int i = 0; i < len; i++) {
+    printf(" %d", arr[i]);
+  }
+}
+//*/
+int or(int a,int b)
+{
+    if(a || b){
+        return 1;
+    }
+    return 0;
+}
+
+// Constants.
+const int UP = 0;
+const int DOWN = 1;
+const int LEFT = 2;
+const int RIGHT = 3;
+
+const int MAP_LEN = 4;
+
+const int POW2[20] = {1,     2,     4,     8,      16,     32,    64,
+                      128,   256,   512,   1024,   2048,   4096,  8192,
+                      16384, 32768, 65536, 131072, 262144, 524288};
+const int LEN_OF_POW2[20] = {0, 1, 1, 1, 2, 2, 2, 3, 3, 3,
+                             4, 4, 4, 4, 5, 5, 5, 6, 6, 6}; // x * log10(2)
+
+int STR_INIT[25] = {73, 110, 112, 117, 116, 32, 97,  32,  114,
+                    97, 110, 100, 111, 109, 32, 110, 117, 109,
+                    98, 101, 114, 58,  32,  10, 0};
+int STR_HELP[62] = {119, 44,  32,  97,  44,  32,  115, 44,  32,  100, 58,
+                    32,  109, 111, 118, 101, 10,  104, 58,  32,  112, 114,
+                    105, 110, 116, 32,  116, 104, 105, 115, 32,  104, 101,
+                    108, 112, 10,  113, 58,  32,  113, 117, 105, 116, 10,
+                    112, 58,  32,  112, 114, 105, 110, 116, 32,  116, 104,
+                    101, 32,  109, 97,  112, 10,  0};
+// "score: "
+int STR_SCORE[8] = {115, 99, 111, 114, 101, 58, 32, 0};
+// "step: "
+int STR_STEP[7] = {115, 116, 101, 112, 58, 32, 0};
+int STR_GG[12] = {71, 97, 109, 101, 32, 111, 118, 101, 114, 46, 10, 0};
+int STR_INVALID[26] = {73,  110, 118, 97,  108, 105, 100, 32,  105,
+                       110, 112, 117, 116, 46,  32,  84,  114, 121,
+                       32,  97,  103, 97,  105, 110, 46,  0};
+const int CHR_SPACE = 32;
+const int CHR_ENTER = 10;
+
+// Map, stores log2(x) if x != 0.
+int map[MAP_LEN][MAP_LEN];
+int score;
+int step;
+int max_num_len;
+int alive;
+
+// Random lib.
+int seed;
+
+int rand() {
+  seed = (seed * 214013 + 2531011) % 0x40000000;
+  if (seed < 0)
+    seed = -seed;
+  return seed / 65536 % 0x8000;
+}
+
+// 0 to end a string.
+void put_string(int str[]) {
+  int i = 0;
+  while (str[i] != 0) {
+    putch(str[i]);
+    i = i + 1;
+  }
+}
+
+// Clears the map.
+void clear_map() {
+  int x = 0, y;
+  while (x < MAP_LEN) {
+    y = 0;
+    while (y < MAP_LEN) {
+      map[x][y] = 0;
+      y = y + 1;
+    }
+    x = x + 1;
+  }
+}
+
+// Game init.
+void init() {
+  clear_map();
+  score = 0;
+  step = 0;
+  max_num_len = 1;
+  alive = 1;
+}
+
+void print_map() {
+  putch(CHR_ENTER);
+  put_string(STR_STEP);
+  putint(step);
+  putch(CHR_ENTER);
+  put_string(STR_SCORE);
+  putint(score);
+  putch(CHR_ENTER);
+  int x = 0, y;
+  while (x < MAP_LEN) {
+    y = 0;
+    while (y < MAP_LEN) {
+      if (map[x][y] == 0) {
+        int i = LEN_OF_POW2[map[x][y]] + 1;
+        while (i <= max_num_len) {
+          putch(95);
+          i = i + 1;
+        }
+        putch(CHR_SPACE);
+      } else {
+        putint(POW2[map[x][y]]);
+        int i = LEN_OF_POW2[map[x][y]];
+        while (i <= max_num_len) {
+          putch(CHR_SPACE);
+          i = i + 1;
+        }
+      }
+      y = y + 1;
+    }
+    putch(CHR_ENTER);
+    x = x + 1;
+  }
+}
+
+// return bool
+// var == dx or var == dy
+int move_base(int inc, int var[], int other[], int x[], int y[],
+              int is_dry_run) {
+  int start, end;
+  int moved = 0;
+  if (inc == -1) {
+    start = MAP_LEN - 1;
+    end = -1;
+  } else {
+    start = 0;
+    end = MAP_LEN;
+  }
+  other[0] = start;
+  while (other[0] != end) {
+    int ptr_from = start + inc, ptr_to = start;
+    while (ptr_from != end) {
+      if (ptr_from == ptr_to) {
+        ptr_from = ptr_from + inc;
+        continue;
+      }
+      var[0] = ptr_from;
+      int from_num = map[x[0]][y[0]];
+      var[0] = ptr_to;
+      int to_num = map[x[0]][y[0]];
+      if (to_num == 0) {
+        if (from_num == 0) {
+          ptr_from = ptr_from + inc;
+        } else {
+          if (is_dry_run) {
+            return 1;
+          }
+          map[x[0]][y[0]] = from_num;
+          var[0] = ptr_from;
+          map[x[0]][y[0]] = 0;
+          moved = 1;
+          ptr_from = ptr_from + inc;
+        }
+      } else {
+        if (from_num == to_num) {
+          if (is_dry_run) {
+            return 1;
+          }
+          // Merges two numbers.
+          var[0] = ptr_to;
+          map[x[0]][y[0]] = to_num + 1;
+          var[0] = ptr_from;
+          map[x[0]][y[0]] = 0;
+          int new_num_len = LEN_OF_POW2[to_num + 1];
+          if (new_num_len > max_num_len) {
+            max_num_len = new_num_len;
+          }
+          score = score + POW2[to_num + 1];
+          moved = 1;
+          ptr_to = ptr_to + inc;
+        } else if (from_num == 0) {
+          ptr_from = ptr_from + inc;
+        } else {
+          ptr_to = ptr_to + inc;
+        }
+      }
+    }
+    other[0] = other[0] + inc;
+  }
+  return moved;
+}
+
+void generate() {
+  int x = 0, y, chosen_x, chosen_y, empty = 0;
+  while (x < MAP_LEN) {
+    y = 0;
+    while (y < MAP_LEN) {
+      if (map[x][y] == 0) {
+        empty = empty + 1;
+        if (rand() % empty == 0) {
+          chosen_x = x;
+          chosen_y = y;
+        }
+      }
+      y = y + 1;
+    }
+    x = x + 1;
+  }
+  int num;
+  if (rand() % 2 < 1) {
+    num = 1;
+  } else {
+    num = 2;
+  }
+  map[chosen_x][chosen_y] = num;
+}
+
+void move(int pos) {
+  int x[1], y[1], inc = 1 - pos % 2 * 2;
+  int moved;
+  if (pos / 2 == 0) {
+    moved = move_base(inc, x, y, x, y, 0);
+  } else {
+    moved = move_base(inc, y, x, x, y, 0);
+  }
+  if (!moved) {
+    put_string(STR_INVALID);
+    putch(CHR_ENTER);
+    return;
+  }
+  step = step + 1;
+  generate();
+  print_map();
+}
+
+int try_move() {
+  int x[1], y[1];
+  return or(or(move_base(1, x, y, x, y, 1) , move_base(1, y, x, x, y, 1)) ,
+         or(move_base(-1, x, y, x, y, 1) , move_base(-1, y, x, x, y, 1)));
+}
+
+int main() {
+  put_string(STR_INIT);
+  seed = getint();
+  init();
+  generate();
+  print_map();
+  while (alive) {
+    int ch = getch();
+    if (ch == 119) {
+      move(UP);
+    } else if (ch == 97) {
+      move(LEFT);
+    } else if (ch == 115) {
+      move(DOWN);
+    } else if (ch == 100) {
+      move(RIGHT);
+    } else if (ch == 104) {
+      // help
+      put_string(STR_HELP);
+    } else if (ch == 113 || ch == -1) {
+      // quit
+      put_string(STR_GG);
+      return 0;
+    } else if (ch == 112) {
+      // print the map
+      putch(CHR_ENTER);
+      print_map();
+    } else if (ch == 32 || ch == 10 || ch == 13) {
+      // ' ' or '\n' or '\r'
+      continue;
+    } else {
+      put_string(STR_INVALID);
+      putch(CHR_ENTER);
+      seed = (seed + ch) % 0x40000000;
+    }
+
+    if (!try_move()) {
+      put_string(STR_GG);
+      break;
+    }
+  }
+  return 0;
+}
