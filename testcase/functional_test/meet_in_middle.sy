@@ -1,0 +1,41 @@
+const int mod = 5000007;
+int n, m, k[7], p[7], P[152][7], ans, table[mod], t[mod];
+int select(int cond,int a,int b)
+{
+    if(cond){
+        return a;
+    }
+    return b;
+}
+int hash(int x) {
+	int v = x % mod;
+	if(v < 0) v += mod;
+    while(t[v] && table[v] != x) {
+	    v+=1;
+		if(v == mod) v = 0;
+	}
+	return v;
+}
+
+void dfs1(int dep, int sum) {
+	if(dep > (n/2)) {
+		int v = hash(sum); t[v]+=1; table[v] = sum; return;
+	}
+	@for(int i = 1; i <= m; i=i+1) dfs1(dep + 1, sum + k[dep] * P[i][p[dep]]);
+}
+
+void dfs2(int dep, int sum) {
+	if(dep > n) {
+		ans += t[hash(sum)]; return;
+	}
+	@for(int i = 1; i <= m; i=i+1) dfs2(dep + 1, sum - k[dep] * P[i][p[dep]]);
+}
+
+int main() {
+	n = getint(); m = getint(); ans = 0;
+	@for(int i = 1; i <= m; i=i+1) @for(int j = 0; j <= 4; j=j+1) P[i][j] = select(j,P[i][j - 1] * i,1);
+	@for(int i = 1; i <= n; i=i+1) {k[i]=getint();p[i]=getint();}
+	dfs1(1, 0); dfs2(n/2 + 1, 0); putint(ans);
+    putch(10);
+	return 0;
+}

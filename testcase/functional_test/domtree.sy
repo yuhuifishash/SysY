@@ -1,0 +1,105 @@
+const int N=200000,M=300000;
+
+int n,m;
+int e_y[M*2+N+9], e_next[M*2+N+9];
+int lin[3][N+9],cs;
+
+void Ins(int id,int x,int y){cs+=1;e_y[cs]=y;e_next[cs]=lin[id][x];lin[id][x]=cs;}
+
+void into(){
+  n = getint();m=getint();
+  @for (int i=1;i<=m;i=i+1){
+    int x=getint(),y=getint();
+    Ins(0,x,y);Ins(1,y,x);
+  }
+}
+
+int dfn[N+9],ord[N+9],co;
+int fa[N+9];
+
+void Tarjan(int k){
+  co+=1;
+  dfn[k] = co;
+  ord[dfn[k]]=k;
+  @for (int i=lin[0][k];i;i=e_next[i])
+    if (!dfn[e_y[i]]){
+      fa[e_y[i]]=k;
+      Tarjan(e_y[i]);
+    }
+}
+
+int idom[N+9],sdom[N+9];
+int uni[N+9],mn[N+9];
+int select(int cond,int a,int b)
+{
+    if(cond){
+        return a;
+    }
+    return b;
+}
+int eq(int a,int b)
+{
+    if(a == b){
+        return 1;
+    }
+    return 0;
+}
+int Query_uni(int k){
+  if (k==uni[k]) return k;
+  int res=Query_uni(uni[k]);
+  if (dfn[sdom[mn[uni[k]]]]<dfn[sdom[mn[k]]]) mn[k]=mn[uni[k]];
+  uni[k] = res;
+  return uni[k];
+}
+
+void Contract(int st){
+  Tarjan(st);
+  @for (int i=1;i<=n;i=i+1) {sdom[i]=i;uni[i]=i;mn[i]=i;}
+  @for (int i=co;i>=2;i=i-1){
+    int t=ord[i];
+    @for (int i=lin[1][t];i;i=e_next[i]){
+      int y=e_y[i];
+      if (!dfn[y]) continue;
+      Query_uni(y);
+      if (dfn[sdom[mn[y]]]<dfn[sdom[t]]) sdom[t]=sdom[mn[y]];
+    }
+    uni[t]=fa[t];
+    Ins(2,sdom[t],t);
+    t=fa[t];
+    @for (int i=lin[2][t];i;i=e_next[i]){
+      int y=e_y[i];
+      Query_uni(y);
+      idom[y]=select(eq(t,sdom[mn[y]]),t,mn[y]);
+    }
+    lin[2][t]=0;
+  }
+  @for (int i=2;i<=co;i=i+1){
+    int t=ord[i];
+    if (idom[t] != sdom[t]) idom[t]=idom[idom[t]];
+  }
+}
+
+int ans[N+9];
+
+void Get_ans(){
+  @for (int i=co;i>=2;i=i-1) {ans[ord[i]]+=1; ans[idom[ord[i]]]+=ans[ord[i]];}
+  ans[1]+=1;
+}
+
+void work(){
+  Contract(1);
+  Get_ans();
+}
+
+void outo(){
+  @for (int i=1;i<=n;i=i+1)
+    putf("%d ",ans[i]);
+  putf("");
+}
+
+int main(){
+  into();
+  work();
+  outo();
+  return 0;
+}
