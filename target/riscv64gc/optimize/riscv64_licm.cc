@@ -1,6 +1,7 @@
 #include "riscv64_licm.h"
 #include <functional>
 
+#define REGISTER_PRESSURE_AWARE
 // #define MachineLICM_DEBUG
 
 void RiscV64LICM::Execute() {
@@ -104,7 +105,25 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
     if (!isNeedLicm(I)) {
         return false;
     }
-    // TODO():estimate the register pressure in this loop
+    // In order to avoid greater register pressure, we limit the count of instructions can motion
+    /* 
+        we do not consider mul
+        motion addi may not increase register pressure
+        lui %1,%hi(k)
+        addi %2,%1,%lo(k)
+    */
+#ifdef REGISTER_PRESSURE_AWARE
+    if(currloop_motion_count >= max_motion_count){
+        if(I->arch != MachineBaseInstruction::RiscV){
+            return false;
+        }
+        auto rvI = (RiscV64Instruction *)I;
+        if(rvI->getOpcode() != RISCV_MUL && rvI->getOpcode() != RISCV_ADDI){
+            return false;
+        }
+    }
+#endif
+
     auto wr = I->GetWriteReg();
     assert(wr.size() == 1);
     auto result_r = (*wr.begin())->reg_no;
@@ -113,10 +132,12 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
         auto src = cpI->GetSrc();
         if (src->op_type == MachineBaseOperand::IMMI || src->op_type == MachineBaseOperand::IMMF) {
             InvariantSet.insert(result_r);
+            currloop_motion_count += 1;
             return true;
         } else if (src->op_type == MachineBaseOperand::REG) {
             auto r = ((MachineRegister *)src)->reg.reg_no;
             if (InvariantSet.find(r) != InvariantSet.end()) {
+                currloop_motion_count += 1;
                 return true;
             }
             auto defbb = InstDefMap[r];
@@ -125,6 +146,7 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
             }
             if (L->loop_nodes.find(defbb) == L->loop_nodes.end()) {
                 InvariantSet.insert(result_r);
+                currloop_motion_count += 1;
                 return true;
             }
             return false;
@@ -133,10 +155,12 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
         auto rvI = (RiscV64Instruction *)I;
         if (rvI->getOpcode() == RISCV_LUI) {
             InvariantSet.insert(result_r);
+            currloop_motion_count += 1;
             return true;
         } else if (rvI->getOpcode() == RISCV_ADDI) {
             auto rs1 = rvI->getRs1().reg_no;
             if (InvariantSet.find(rs1) != InvariantSet.end()) {
+                currloop_motion_count += 1;
                 return true;
             }
             auto defbb = InstDefMap[rs1];
@@ -145,6 +169,7 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
             }
             if (L->loop_nodes.find(defbb) == L->loop_nodes.end()) {
                 InvariantSet.insert(result_r);
+                currloop_motion_count += 1;
                 return true;
             }
             return false;
@@ -165,6 +190,7 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
                 }
             }
             InvariantSet.insert(result_r);
+            currloop_motion_count += 1;
             return true;
         } else {
             ERROR("Unexpected Opcode");
@@ -222,7 +248,10 @@ void RiscV64LICM::AddPreheader() {
 }
 
 void RiscV64LICM::LICMInCurrLoop() {
+    currloop_motion_count = 0;
+    max_motion_count = GetMaxInstMotionNumber(curr_loop);
     GetInvariantInCurrLoop();
+
     if (InvariantInstList.size() != 0) {
         AddPreheader();
 #ifdef MachineLICM_DEBUG
@@ -246,4 +275,27 @@ void RiscV64LICM::LICMInCurrLoop() {
             InstDefMap[wr->reg_no] = curr_loop->preheader;
         }
     }
+}
+
+int RiscV64LICM::GetMaxInstMotionNumber(MachineNaturalLoop *L) {
+    int inst_number = 0;
+    int bb_number = L->loop_nodes.size();
+    int ans = 6;
+    for(auto bb:L->loop_nodes){
+        inst_number += bb->GetInsList().size();
+    }
+    if(current_func->getMachineCFG()->LoopForest.loopG[L->loop_id].size() == 0){
+        ans += 6;
+    }
+    if(inst_number > 100){
+        ans -= 1;
+    }
+    if(bb_number > 3 && bb_number < 10){
+        ans -= 1;
+    }
+    if(bb_number >= 10){
+        ans -= 2;
+    }
+    // std::cerr<<inst_number<<" "<<bb_number<<" "<<ans<<"\n";
+    return ans;
 }
