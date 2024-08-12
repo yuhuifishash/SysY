@@ -748,17 +748,6 @@ void SCCP(CFG *C) {
             }
         }
     }
-    // std::cout<<func_ins->get_Func_name()<<"\n";
-    // for(auto [l0,tag]:CFGedgeExec){
-    //     std::cout<<l0.first<<" "<<l0.second<<"\n";
-    // }
-    // for(auto B:(*block)){
-    //     for(auto I:B.second->Instruction_list){
-    //         I->printIR(std::cout);
-    //         std::cout<<I->LatticeStatus<<" "<<I->lattice_val<<"\n";
-    //     }
-    // }
-    // std::cout<<"\n\n";
 
     ReplaceRegToConst(C);
     ConstInstructionElimate(C);
@@ -773,6 +762,35 @@ void SparseConditionalConstantPropagation(CFG *C) {
     SetInstructionBlockID(C);
     BuildSSAGraph(C);
     SCCP(C);
+
+    // if no return, this indicates that the function has infinite loop and we will definitely arrive this loop
+    // because most programs do not have infinite loop, we make the function only have one ret instructions 
+    // TODO(): fix this problem. (now if the function has no ret_block, the pass after will cause SegmentFault)
+
+    bool ret_tag = false;
+    for (auto [id,bb]:*C->block_map){
+        auto I = bb->Instruction_list.back();
+        if(I->GetOpcode() == RET){
+            ret_tag = true;
+        }
+    }
+    if(ret_tag == false){
+        C->block_map->clear();
+        C->max_label = -1;
+        C->max_reg = -1;
+        auto bb = C->NewBlock();
+        if(C->function_def->GetReturnType() == VOID){
+            bb->InsertInstruction(1,new RetInstruction(VOID,nullptr));
+        }else if(C->function_def->GetReturnType() == I32){
+            bb->InsertInstruction(1,new RetInstruction(I32,new ImmI32Operand(0)));
+        }else if(C->function_def->GetReturnType() == FLOAT32){
+            bb->InsertInstruction(1,new RetInstruction(FLOAT32, new ImmF32Operand(0)));
+        }else{
+            ERROR("Unexpected Type");
+        }
+        C->ret_block = bb;
+    }
+
     C->BuildCFG();
     C->BuildDominatorTree();
 }
