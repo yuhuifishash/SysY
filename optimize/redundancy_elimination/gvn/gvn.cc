@@ -199,24 +199,43 @@ void ElimateGVNPhi(CFG *C) {
     SimplifyCFG(C);
 }
 static std::set<int> arithset = {ADD,SUB,MUL,DIV,FADD,FSUB,FMUL,FDIV,MOD,BITXOR};
-void GCM(CFG *C) {
+void GlobalCodeMotion(CFG *C) {
+    std::cerr<<C->function_def->GetFunctionName()<<'\n';
     std::map<int, std::vector<Instruction>> usevector;
     std::map<int, int> usemindfn;
     std::map<int, int> usemaxdfn;
-    std::map<int, int> dfnmap;
+    std::map<int, int> dfnmap;//label->dfn
     std::map<int, int> depth;
+    std::map<int, int> par;
+    std::set<int> isoptimized;
     int dclock = 0;
     auto blockmap = *C->block_map;
     hashtable.defineDFS(C);
     bool Check = true;
     auto DomTree = C->DomTree;
     auto G = DomTree.dom_tree;
+    par[0] = -1;
+    std::function<int(int,int)> LCA = [&](int ubbid,int vbbid) {
+        if(depth[ubbid] < depth[vbbid]){
+            std::swap(ubbid,vbbid);
+        }
+        while(depth[ubbid] > depth[vbbid]){
+            ubbid = par[ubbid];
+        }
+        while(ubbid!=vbbid){
+            ubbid = par[ubbid];
+            vbbid = par[vbbid];
+        }
+        return ubbid;
+    };
     std::function<void(int)> DFS1 = [&](int ubbid) {
         auto ubb = blockmap[ubbid];
         dfnmap[ubbid] = ++dclock;
         for (int i = 0; i < G[ubbid].size(); ++i) {
             auto vbb = G[ubbid][i];
             auto vbbid = vbb->block_id;
+            par[vbbid] = ubbid;
+            depth[vbbid] = depth[ubbid] + 1;
             DFS1(vbbid);
         }
     };
@@ -227,8 +246,16 @@ void GCM(CFG *C) {
             it--;
             auto I = *it;
             auto check = hashtable.lookupOrAdd(I);
+            auto labelid = I->GetBlockID();
+            auto labeldfn = dfnmap[labelid];
             if (arithset.find(I->GetOpcode()) != arithset.end()) {
                 usevector[check].push_back(I);
+                if(usemindfn.find(check)==usemindfn.end()){
+                    usemindfn[check] = usemaxdfn[check] = labeldfn;
+                }else{
+                    usemindfn[check] = std::min(usemindfn[check],labeldfn);
+                    usemaxdfn[check] = std::max(usemaxdfn[check],labeldfn);
+                }
             } else if (I->GetOpcode() == PHI) {
                 auto phiI = (PhiInstruction *)I;
                 for (auto [labelop, valop] : phiI->GetPhiList()) {
@@ -245,7 +272,14 @@ void GCM(CFG *C) {
                         continue;
                     }
                     check = hashtable.lookupOrAdd(defI);
-                    usevector[check].push_back(I);
+                    // usevector[check].push_back(I);
+                    auto usedfn = dfnmap[((LabelOperand*)labelop)->GetLabelNo()];
+                    if(usemindfn.find(check)==usemindfn.end()){
+                        usemindfn[check] = usemaxdfn[check] = usedfn;
+                    }else{
+                        usemindfn[check] = std::min(usemindfn[check],usedfn);
+                        usemaxdfn[check] = std::max(usemaxdfn[check],usedfn);
+                    }
                 }
             }
         } while (it != ubb->Instruction_list.begin());
@@ -253,24 +287,112 @@ void GCM(CFG *C) {
         for (int i = 0; i < G[ubbid].size(); ++i) {
             auto vbb = G[ubbid][i];
             auto vbbid = vbb->block_id;
-            depth[vbbid] = depth[ubbid] + 1;
             DFS2(vbbid);
         }
     };
-    DFS1(0);
     depth[0] = 0;
+    DFS1(0);
     DFS2(0);
     bool changed = true;
+    // puts("HERE");
     while(changed){
         changed = false;
         for(auto [val,vec]:usevector){
-
+            if(vec.size() == 1 || isoptimized.find(val) != isoptimized.end()){
+                continue;
+            }
+            auto nowI = vec[0];
+            nowI->PrintIR(std::cerr);
+            vec[1]->PrintIR(std::cerr);
+            std::cerr<<val<<" "<<vec.size()<<" "<<hashtable.lookupOrAdd(vec[0])<<" "<<hashtable.lookup(vec[1])<<" "<<'\n';
+            bool nowcangcm = true;
+            int deflabelmin = usemindfn[val];
+            int deflabelmax = usemaxdfn[val];
+            
+            int dfnlca = LCA(dfnmap[deflabelmin],dfnmap[deflabelmax]);
+            for(auto useop:nowI->GetNonResultOperands()){
+                if(useop->GetOperandType()!=BasicOperand::REG){
+                    continue;
+                }
+                // std::cerr<<useop->GetFullName()<<'\n';
+                auto usereg = (RegOperand*)useop;
+                auto useregno = usereg->GetRegNo();
+                // std::cerr<<useop->GetFullName()<<'\n';
+                if(hashtable.definemap.find(useregno) == hashtable.definemap.end()){
+                    continue;
+                }
+                auto useI = hashtable.definemap[useregno];
+                auto useval = hashtable.lookupOrAdd(useI);
+                
+                if(useval == -1){
+                    nowcangcm = false;
+                    break;
+                }
+                auto labelid = useI->GetBlockID();
+                if(!DomTree.IsDominate(labelid,dfnlca)){
+                    nowcangcm = false;
+                    break;
+                }
+                // std::cerr<<useop->GetFullName()<<'\n';
+            }
+            if(!nowcangcm){
+                continue;
+            }
+            changed = true;
+            isoptimized.insert(val);
+            
+            // std::cerr<<val<<'\n';
+            auto &lcabb = blockmap[dfnlca];
+            auto newI = nowI->CopyInstruction();
+            if(newI->GetOpcode() == GETELEMENTPTR){
+                ((GetElementptrInstruction*)newI)->SetResultReg(GetNewRegOperand(++C->max_reg));
+            }else{
+                ((ArithmeticInstruction*)newI)->SetResultReg(GetNewRegOperand(++C->max_reg));
+            }
+            hashtable.lookupOrAdd(newI);
+            hashtable.definemap[newI->GetResultRegNo()] = newI;
+            std::map<int,int> replacemap;
+            bool insertback = true;
+            for(auto replaceI:vec){
+                replacemap[replaceI->GetResultRegNo()] = newI->GetResultRegNo();
+                if(replaceI->GetBlockID() == dfnlca){
+                    insertback = false;
+                }
+            }
+            nowI->PrintIR(std::cerr);
+            newI->PrintIR(std::cerr);
+            puts("-------");
+            if(insertback){
+                auto oldI = lcabb->Instruction_list.back();
+                lcabb->Instruction_list.pop_back();
+                lcabb->InsertInstruction(1,newI);
+                lcabb->InsertInstruction(1,oldI);
+            }else{
+                for(auto it = lcabb->Instruction_list.begin();it != lcabb->Instruction_list.end(); ++it){
+                    if(replacemap.find((*it)->GetResultRegNo())!=replacemap.end()){
+                        // lcabb->printIR(std::cerr);
+                        lcabb->Instruction_list.insert(it,newI);
+                        // lcabb->printIR(std::cerr);
+                        break;
+                    }
+                }
+            }
+            for(auto [id,bb]:*C->block_map){
+                for(auto &I:bb->Instruction_list){
+                    auto regno = I->GetResultRegNo();
+                    if(replacemap.find(regno)!=replacemap.end()){
+                        continue;
+                    }
+                    // if(regno == 260){
+                    //     I->PrintIR(std::cerr);
+                    // }
+                    I->ReplaceRegByMap(replacemap);
+                    // if(regno == 260){
+                    //     I->PrintIR(std::cerr);
+                    // }
+                }
+            }
         }
     }
     // late schedule
-    //  for (auto [id, bb] : *C->block_map) {
-    //      for (auto I : bb->Instruction_list) {
-
-    //     }
-    // }
 }

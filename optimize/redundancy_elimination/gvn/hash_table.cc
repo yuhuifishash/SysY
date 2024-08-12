@@ -177,7 +177,13 @@ int HashTable::lookupOrAddReg(Operand op) {
             stringmap[expr_number] = opstr;
             return expr_number;
         }
-        return lookupOrAdd(definemap[RegNo]);
+        auto now = lookupOrAdd(definemap[RegNo]);
+        if(now == -1){
+            valuemap[opstr] = ++expr_number;
+            stringmap[expr_number] = opstr;
+            return expr_number;
+        }
+        return now;
     }
     if (valuemap.find(opstr) != valuemap.end()) {
         return valuemap[opstr];
@@ -244,6 +250,7 @@ int HashTable::lookupOrAddArithmetic(Instruction I) {
     }
 
     auto resultstr = ArithmeticI->GetResultRegNo();
+    
     if (valuemap.find(str) == valuemap.end()) {
         valuemap[str] = ++expr_number;
         stringmap[expr_number] = str;
@@ -256,6 +263,11 @@ int HashTable::lookupOrAddArithmetic(Instruction I) {
     // }
     valuevetor[valuemap[str]].push_back(I->GetResultReg());
     resultmap[resultstr] = valuemap[str];
+    // if(resultstr == 11){
+    //     puts("DEBUG GVN");
+    //     I->PrintIR(std::cerr);
+    //     std::cerr<<valuemap[str]<<" "<<str<<'\n';
+    // }
     return valuemap[str];
 }
 

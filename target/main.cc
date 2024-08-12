@@ -91,6 +91,7 @@ void LoopIndVarSimplify(CFG *C);
 void LoopInvariantReassociate(CFG *C);
 void Reassociate(CFG *C);
 void Sink(CFG *C);
+void GlobalCodeMotion(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -271,9 +272,10 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
-
+        
+        // llvmIR.PassExecutor(GlobalCodeMotion);
         // TODO():GVN/GCM
-
+        
         for (int i = 0; i < 5; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
