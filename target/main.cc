@@ -297,7 +297,7 @@ int main(int argc, char **argv) {
         llvmIR.BuildCFG();
         llvmIR.BuildDominatorTree();
 
-#ifdef O2_ENABLE
+#ifdef O3_ENABLE
         for (int i = 0; i < 4; ++i) {
             llvmIR.BuildLoopInfo();
             llvmIR.PassExecutor(LoopSimplify);
@@ -424,7 +424,7 @@ int main(int argc, char **argv) {
         RiscV64LowerIImmCopy(m_unit).Execute();
         // std::cerr<<"Alloc\n";
         if (optimize_flag) {
-#ifdef O3_ENABLE
+#ifdef O2_ENABLE
             RiscV64InstructionSchedule(m_unit).Execute();
 #endif
         }
