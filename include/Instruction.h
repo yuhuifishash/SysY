@@ -392,6 +392,7 @@ public:
     Operand GetResultReg() { return result; }
     void SetOperand1(Operand op) { op1 = op; }
     void SetOperand2(Operand op) { op2 = op; }
+    void SetResultReg(Operand op) { result = op; }
     void SwapOperand() { std::swap(op1, op2); }
     void Setopcode(LLVMIROpcode id) { opcode = id; }
     ArithmeticInstruction(LLVMIROpcode opcode, enum LLVMType type, Operand op1, Operand op2, Operand result) {
@@ -839,6 +840,7 @@ public:
     Operand GetPtrVal() { return ptrval; }
     std::vector<int> GetDims() { return dims; }
     std::vector<Operand> GetIndexes() { return indexes; }
+    void SetResultReg(Operand op) { result = op; }
 
     // if index is constant, return {value,resultArraySize}. else, return -1.
     std::pair<int, int> GetConstIndexes();

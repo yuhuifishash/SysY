@@ -38,6 +38,7 @@ public:
         return valuemap[ExprStr];
     }
     int lookupOrAdd(Instruction I);
+    int lookupOrAddOthers(Instruction I);
     int lookupOrAddReg(Operand op);
     int lookupOrAddStore(Instruction I);
     int lookupOrAddArithmetic(Instruction I);
