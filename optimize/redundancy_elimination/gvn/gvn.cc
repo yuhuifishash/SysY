@@ -198,11 +198,13 @@ void ElimateGVNPhi(CFG *C) {
     SparseConditionalConstantPropagation(C);
     SimplifyCFG(C);
 }
-void GepGCM(CFG *C) {
+static std::set<int> arithset = {ADD,SUB,MUL,DIV,FADD,FSUB,FMUL,FDIV,MOD,BITXOR};
+void GCM(CFG *C) {
     std::map<int, std::vector<Instruction>> usevector;
-    std::map<Instruction, int> usemindfn;
-    std::map<Instruction, int> usemaxdfn;
+    std::map<int, int> usemindfn;
+    std::map<int, int> usemaxdfn;
     std::map<int, int> dfnmap;
+    std::map<int, int> depth;
     int dclock = 0;
     auto blockmap = *C->block_map;
     hashtable.defineDFS(C);
@@ -225,7 +227,7 @@ void GepGCM(CFG *C) {
             it--;
             auto I = *it;
             auto check = hashtable.lookupOrAdd(I);
-            if (I->GetOpcode() == GETELEMENTPTR) {
+            if (arithset.find(I->GetOpcode()) != arithset.end()) {
                 usevector[check].push_back(I);
             } else if (I->GetOpcode() == PHI) {
                 auto phiI = (PhiInstruction *)I;
@@ -239,7 +241,7 @@ void GepGCM(CFG *C) {
                         continue;
                     }
                     auto defI = hashtable.definemap[regno];
-                    if (defI->GetOpcode() != GETELEMENTPTR) {
+                    if (defI->GetOpcode() != GETELEMENTPTR && arithset.find(I->GetOpcode()) == arithset.end()) {
                         continue;
                     }
                     check = hashtable.lookupOrAdd(defI);
@@ -247,16 +249,24 @@ void GepGCM(CFG *C) {
                 }
             }
         } while (it != ubb->Instruction_list.begin());
-
+        
         for (int i = 0; i < G[ubbid].size(); ++i) {
             auto vbb = G[ubbid][i];
             auto vbbid = vbb->block_id;
+            depth[vbbid] = depth[ubbid] + 1;
             DFS2(vbbid);
         }
     };
     DFS1(0);
+    depth[0] = 0;
     DFS2(0);
-    // early schedule
+    bool changed = true;
+    while(changed){
+        changed = false;
+        for(auto [val,vec]:usevector){
+
+        }
+    }
     // late schedule
     //  for (auto [id, bb] : *C->block_map) {
     //      for (auto I : bb->Instruction_list) {
