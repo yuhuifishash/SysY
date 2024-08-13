@@ -1,0 +1,68 @@
+// multiple useless loops
+int A[1000] = {};
+int main()
+{
+    int T = getint();
+    while(T){
+        T = T-1;
+        int n = getint(); // n = 200
+        @for(int i=0;i<n;i=i+1){
+            A[i] = i*i-100*i;
+        }
+
+        int st = getint();
+        if(st){
+            if(st > 5){
+                if(st > 10){
+                    if(st > 100){
+                        int S = 0;
+                        @for(int i=0;i<n;i=i+1){ // useless
+                            S = S + A[i];
+                            if(i == n/2){
+                                break;
+                            }
+                        }
+                        if(st == 200){
+                            return st;
+                        }
+                        S = 0;
+                        int S1 = 0;
+                        int S2 = 0;
+                        int S3,S4,S5 = 0;
+                        int S6 = 0;
+                        int S7 = 0;
+                        @for(int i=0;i<n;i=i+1){
+                            @for(int j=0;j<n;j=j+1){
+                                S += A[i]+A[j];
+                                S1 += A[i]+S6;
+                                @for(int k=0;k<n;k=k+1){
+                                    S2 += A[i]+A[j]+A[k]; // useless
+                                    @for(int t=0;t<n;t=t+1){
+                                        A[t] += 1;
+                                        S3 += t; //useless 
+                                        S4 += A[t]+A[k]; //useless
+                                        if(t == n/3){
+                                            S7 += A[t] + n/3; //useless
+                                            continue;
+                                        }
+                                        if(t == n/2){
+                                            S6 += A[t] + n/2;
+                                            break;
+                                        }
+                                        S5 += A[t]+A[j]; //useless
+                                    }
+                                }
+                                S %= 998244353;
+                                S1 %= 998244353;
+                                S6 %= 998244353;
+                            }
+                        }
+                        putint(S1);putch(32);
+                        putint(S);putch(10);
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
