@@ -198,13 +198,15 @@ void ElimateGVNPhi(CFG *C) {
     SparseConditionalConstantPropagation(C);
     SimplifyCFG(C);
 }
-static std::set<int> arithset = {ADD,SUB,MUL,DIV,FADD,FSUB,FMUL,FDIV,MOD,BITXOR};
+#define GVN_DEBUG
+static std::set<int> arithset = {ADD,SUB,MUL,DIV,FADD,FSUB,FMUL,FDIV,MOD,BITXOR,GETELEMENTPTR};
 void GlobalCodeMotion(CFG *C) {
     std::cerr<<C->function_def->GetFunctionName()<<'\n';
     std::map<int, std::vector<Instruction>> usevector;
     std::map<int, int> usemindfn;
     std::map<int, int> usemaxdfn;
     std::map<int, int> dfnmap;//label->dfn
+    std::map<int, int> dclockmap;//dfn->label
     std::map<int, int> depth;
     std::map<int, int> par;
     std::set<int> isoptimized;
@@ -219,6 +221,9 @@ void GlobalCodeMotion(CFG *C) {
         if(depth[ubbid] < depth[vbbid]){
             std::swap(ubbid,vbbid);
         }
+        // if(ubbid == 9 && vbbid == 15){
+        //     puts("HERE");
+        // }
         while(depth[ubbid] > depth[vbbid]){
             ubbid = par[ubbid];
         }
@@ -231,6 +236,7 @@ void GlobalCodeMotion(CFG *C) {
     std::function<void(int)> DFS1 = [&](int ubbid) {
         auto ubb = blockmap[ubbid];
         dfnmap[ubbid] = ++dclock;
+        dclockmap[dclock] = ubbid;
         for (int i = 0; i < G[ubbid].size(); ++i) {
             auto vbb = G[ubbid][i];
             auto vbbid = vbb->block_id;
@@ -253,6 +259,9 @@ void GlobalCodeMotion(CFG *C) {
                 if(usemindfn.find(check)==usemindfn.end()){
                     usemindfn[check] = usemaxdfn[check] = labeldfn;
                 }else{
+                    #ifdef GVN_DEBUG
+
+                    #endif
                     usemindfn[check] = std::min(usemindfn[check],labeldfn);
                     usemaxdfn[check] = std::max(usemaxdfn[check],labeldfn);
                 }
@@ -287,6 +296,7 @@ void GlobalCodeMotion(CFG *C) {
         for (int i = 0; i < G[ubbid].size(); ++i) {
             auto vbb = G[ubbid][i];
             auto vbbid = vbb->block_id;
+            // std::cerr<<ubbid<<" "<<vbbid<<'\n';
             DFS2(vbbid);
         }
     };
@@ -298,18 +308,19 @@ void GlobalCodeMotion(CFG *C) {
     while(changed){
         changed = false;
         for(auto [val,vec]:usevector){
+            // vec[0]->PrintIR(std::cerr);
             if(vec.size() == 1 || isoptimized.find(val) != isoptimized.end()){
                 continue;
             }
             auto nowI = vec[0];
-            nowI->PrintIR(std::cerr);
-            vec[1]->PrintIR(std::cerr);
-            std::cerr<<val<<" "<<vec.size()<<" "<<hashtable.lookupOrAdd(vec[0])<<" "<<hashtable.lookup(vec[1])<<" "<<'\n';
+            // nowI->PrintIR(std::cerr);
+            // vec[1]->PrintIR(std::cerr);
+            // std::cerr<<val<<" "<<vec.size()<<" "<<nowI->GetBlockID()<<" "<<vec[1]->GetBlockID()<<" "<<'\n';
             bool nowcangcm = true;
             int deflabelmin = usemindfn[val];
             int deflabelmax = usemaxdfn[val];
-            
-            int dfnlca = LCA(dfnmap[deflabelmin],dfnmap[deflabelmax]);
+            // std::cerr<<dclockmap[deflabelmin]<<" "<<dclockmap[deflabelmax]<<'\n';
+            int dfnlca = LCA(dclockmap[deflabelmin],dclockmap[deflabelmax]);
             for(auto useop:nowI->GetNonResultOperands()){
                 if(useop->GetOperandType()!=BasicOperand::REG){
                     continue;
@@ -325,6 +336,8 @@ void GlobalCodeMotion(CFG *C) {
                 auto useval = hashtable.lookupOrAdd(useI);
                 
                 if(useval == -1){
+                    // puts("HERE");
+                    // std::cerr<<useop->GetFullName()<<'\n';
                     nowcangcm = false;
                     break;
                 }
@@ -335,6 +348,7 @@ void GlobalCodeMotion(CFG *C) {
                 }
                 // std::cerr<<useop->GetFullName()<<'\n';
             }
+            
             if(!nowcangcm){
                 continue;
             }
@@ -343,6 +357,7 @@ void GlobalCodeMotion(CFG *C) {
             
             // std::cerr<<val<<'\n';
             auto &lcabb = blockmap[dfnlca];
+            std::cerr<<lcabb->block_id<<'\n';
             auto newI = nowI->CopyInstruction();
             if(newI->GetOpcode() == GETELEMENTPTR){
                 ((GetElementptrInstruction*)newI)->SetResultReg(GetNewRegOperand(++C->max_reg));
@@ -361,12 +376,27 @@ void GlobalCodeMotion(CFG *C) {
             }
             nowI->PrintIR(std::cerr);
             newI->PrintIR(std::cerr);
+            // std::cerr<<dfnlca<<'\n';
             puts("-------");
             if(insertback){
+                std::deque<Instruction> deq;
                 auto oldI = lcabb->Instruction_list.back();
+                deq.push_back(lcabb->Instruction_list.back());
                 lcabb->Instruction_list.pop_back();
+                // std::cerr<<
+                if(oldI->GetOpcode() == BR_COND){
+                    // deq.back()->PrintIR(std::cerr);
+                    // puts("HERE");
+                    deq.push_back(lcabb->Instruction_list.back());
+                    // deq.back()->PrintIR(std::cerr);
+                    lcabb->Instruction_list.pop_back();
+                }
                 lcabb->InsertInstruction(1,newI);
-                lcabb->InsertInstruction(1,oldI);
+                while(!deq.empty()){
+                    // deq.back()->PrintIR(std::cerr);
+                    lcabb->InsertInstruction(1,deq.back());
+                    deq.pop_back();
+                }
             }else{
                 for(auto it = lcabb->Instruction_list.begin();it != lcabb->Instruction_list.end(); ++it){
                     if(replacemap.find((*it)->GetResultRegNo())!=replacemap.end()){

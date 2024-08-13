@@ -69,15 +69,15 @@ int HashTable::lookupOrAdd(Instruction I) {
     // case FCMP:
     //     return lookupOrAddFcmp(I);
     //     break;
-    // case CALL:
-    //     return lookupOrAddCall(I);
-    //     break;
+    case CALL:
+        return lookupOrAddCall(I);
+        break;
     case GETELEMENTPTR:
         return lookupOrAddGep(I);
         break;
-    // case PHI:
-    //     return lookupOrAddPhi(I);
-    //     break;
+    case PHI:
+        return lookupOrAddPhi(I);
+        break;
     default:
         break;
     }
