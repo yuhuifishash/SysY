@@ -1,0 +1,109 @@
+const int N=3e4,p=998244353,g=3,gi=332748118;
+
+int multiply(int a, int n){
+  int res = 0;
+  while(n){
+    if(n%2 == 1){
+      res=res+a;
+      res%=p;
+    }
+    a = a + a;
+    a %= p;
+    n/=2;
+  }
+  return res;
+}
+
+int qpow(int a,int n)
+{
+	int res=1;
+	while(n)
+	{
+		if(n%2 == 1){
+			res=multiply(res,a)%p;
+        }
+		a=multiply(a,a);
+		n/=2;
+	}
+	return res;
+}
+
+int pls(int x,int y){x+=y;if(x>=p){return x-p;}else{return x;}}
+int dec(int x,int y){x-=y;if(x<0){return x+p;}else{return x;}}
+int mul(int x,int y){return multiply(x,y);}
+
+int A[N],B[N];
+int n,m,l,r[N],inv;
+
+void ntt(int a[],int f)
+{
+    @for (int i=0; i<n; i=i+1) if (i<r[i]){
+        int tmp = a[i];
+        a[i] = a[r[i]];
+        a[r[i]] = tmp;
+    }
+    @for (int i=1; i<n; i=i*2)
+    {
+        int t = 0;
+        if(f==1){
+            t = g;
+        }else{
+            t = gi;
+        }
+        int wn=qpow(t,(p-1)/(i*2));
+        @for (int j=0; j<n; j=j+(i*2))
+        {
+            int w=1;
+            @for (int k=0; k<i; k=k+1)
+            {
+                int x=a[j+k],y=mul(w,a[i+j+k]);
+                a[j+k]=pls(x,y);a[j+k+i]=dec(x,y);
+                w=mul(w,wn);
+            }
+        }
+    }
+    if (f==-1) @for (int i=0; i<n; i=i+1) a[i]=mul(a[i],inv);
+}
+
+int or(int a,int b)
+{
+    // putf("%d %d ",a,b);
+    int i=0;
+    int ans = 0;
+    int p2 = 1;
+    while(i<30){
+        int t1=a%2,t2=b%2;
+        if(t1+t2>=1){
+            ans = ans + p2;
+        }
+        p2 = p2*2;
+        a = a/2;
+        b = b/2;
+        i = i + 1;
+    }
+    // putf("%d\n",ans);
+    return ans;
+}
+
+int main()
+{
+    n=getint();m=getint();
+    @for (int i=0; i<=n; i=i+1) {A[i]=getint();A[i]=dec(A[i],0);}
+    @for (int i=0; i<=m; i=i+1) {B[i]=getint();B[i]=dec(B[i],0);}
+    m+=n;n=1;
+    while(n<=m) {l+=1;n=n*2;}
+    inv=qpow(n,p-2);
+    @for (int i=0; i<n; i=i+1) {
+        r[i] = r[i/2]/2;
+        if (i%2==1) {
+            r[i] = or(r[i],n/2);
+        }
+    }
+    ntt(A,1);
+    ntt(B,1);
+    @for (int i=0; i<n; i=i+1) A[i]=mul(A[i],B[i]);
+    ntt(A,-1);
+    @for (int i=0; i<=m; i=i+1) putf("%d ",A[i]);
+    putch(10);
+    return 0;
+}

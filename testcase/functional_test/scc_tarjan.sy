@@ -1,0 +1,86 @@
+const int maxn = 100000 + 10000, maxm = 100000 + 10000;
+int Index,pd[maxn],DFN[maxn],LOW[maxn];
+int tot,color[maxn],sum[maxn],f[maxn];
+int edge,fir[maxn],Next[maxm],to[maxm];
+int sta[maxn],top; 
+int n,m,val[maxn],x[maxm],y[maxm],ans;
+int min(int a,int b){
+    if(a < b){
+        return a;
+    }
+    return b;
+}
+int max(int a,int b)
+{
+    if(a < b){
+        return b;
+    }
+    return a;
+}
+void add(int x,int y){
+    edge+=1;
+    to[edge]=y; Next[edge]=fir[x]; fir[x]=edge;
+}
+void tarjan(int x){
+    top+=1;Index+=1;  
+    sta[top]=x;
+    pd[x]=1;
+    DFN[x]=Index;LOW[x]=Index;
+    @for(int i=fir[x];i;i=Next[i]){
+        int v=to[i];
+        if(!DFN[v]){
+            tarjan(v);
+            LOW[x]=min(LOW[x],LOW[v]);
+        }
+        else if(pd[v]){
+            LOW[x]=min(LOW[x],DFN[v]);
+        }
+    }
+    if(DFN[x]==LOW[x]){
+        tot+=1;
+        while(sta[top+1]!=x){
+            color[sta[top]]=tot;
+            sum[tot]+=val[sta[top]];
+            pd[sta[top-1]]=0;
+            top=top-1;
+        }
+    }
+}
+void search(int x){   //在DAG上记忆化搜索
+    if(f[x]) return ;
+    f[x]=sum[x];
+    int maxsum = 0;
+    @for(int i=fir[x];i;i=Next[i]){
+        if(!f[to[i]]) search(to[i]);
+        maxsum=max(maxsum,f[to[i]]);
+    }
+    f[x]+=maxsum;
+}
+int main(){
+    n=getint(); m=getint();
+    @for(int i=1;i<=n;i=i+1) val[i]=getint();
+    @for(int i=1;i<=m;i=i+1){
+        x[i]=getint();                                
+        y[i]=getint();
+        add(x[i],y[i]);
+    }
+    @for(int i=1;i<=n;i=i+1) if(!DFN[i]) tarjan(i);
+    @for(int i=0;i<maxn;i=i+1){
+        fir[i] = 0;
+        Next[i] = 0;
+        to[i] = 0;
+    }
+    edge=0;
+    @for(int i=1;i<=m;i=i+1){       
+        if(color[x[i]]!=color[y[i]])
+            add(color[x[i]],color[y[i]]);
+    }
+    @for(int i=1;i<=tot;i=i+1){  
+        if(!f[i]){
+            search(i);
+            ans=max(ans,f[i]);
+        }
+    }
+    putf("%d\n",ans);
+    return 0;
+}

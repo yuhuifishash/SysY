@@ -765,6 +765,7 @@ void SparseConditionalConstantPropagation(CFG *C) {
 
     // if no return, this indicates that the function has infinite loop and we will definitely arrive this loop
     // because most programs do not have infinite loop, we make the function only have one ret instructions 
+    // though it is wrong in some real-world programs.
     // TODO(): fix this problem. (now if the function has no ret_block, the pass after will cause SegmentFault)
 
     bool ret_tag = false;
@@ -790,6 +791,11 @@ void SparseConditionalConstantPropagation(CFG *C) {
         }
         C->ret_block = bb;
     }
+
+    // we will also eliminate the blocks that return block can not arrive in the reverse cfg.
+    // though it is wrong in some real-world programs.
+    // TODO(): fix this problem (now this situation will also cause the compiler SegmentFault in later passes)
+
 
     C->BuildCFG();
     C->BuildDominatorTree();
