@@ -276,9 +276,10 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
-
-        // llvmIR.PassExecutor(GlobalCodeMotion);
-        // TODO():GVN/GCM
+        
+#ifdef O3_ENABLE
+        llvmIR.PassExecutor(GlobalCodeMotion);
+#endif
 
         for (int i = 0; i < 5; ++i) {
             llvmIR.BuildLoopInfo();
