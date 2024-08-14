@@ -69,22 +69,22 @@ int HashTable::lookupOrAdd(Instruction I) {
     // case FCMP:
     //     return lookupOrAddFcmp(I);
     //     break;
-    case CALL:
-        return lookupOrAddCall(I);
-        break;
+    // case CALL:
+    //     return lookupOrAddCall(I);
+    //     break;
     case GETELEMENTPTR:
         return lookupOrAddGep(I);
         break;
-    case PHI:
-        return lookupOrAddPhi(I);
-        break;
+    // case PHI:
+    //     return lookupOrAddPhi(I);
+    //     break;
     default:
         break;
     }
     if (ArithmeticSet.find(opcode_) != ArithmeticSet.end()) {
         return lookupOrAddArithmetic(I);
     }
-    return -1;
+    return lookupOrAddOthers(I);
 }
 
 int HashTable::lookup(Instruction I) {
@@ -154,7 +154,28 @@ void HashTable::defineDFS(CFG *C) {
         }
     }
 }
-
+int HashTable::lookupOrAddOthers(Instruction I) {
+    if(I->GetResultReg() == nullptr){
+        return -1;
+    }
+    // puts("WE TAKE I HERE");
+    // I->PrintIR(std::cerr);
+    auto op = I->GetResultReg();
+    auto opstr = op->GetFullName();
+    auto RegOp = (RegOperand *)op;
+    auto RegNo = RegOp->GetRegNo();
+    if (valuemap.find(opstr) == valuemap.end() && resultmap.find(RegNo) == resultmap.end()) {
+        // puts("WE TAKE I HERE TYPE 1");
+        // definemap[RegNo]->PrintIR(std::cerr);
+        valuemap[opstr] = ++expr_number;
+        stringmap[expr_number] = opstr;
+        return expr_number;
+    }
+    if (valuemap.find(opstr) != valuemap.end()) {
+        return valuemap[opstr];
+    }
+    return resultmap[RegNo];
+}
 int HashTable::lookupOrAddReg(Operand op) {
     if (op == nullptr) {
         return -1;

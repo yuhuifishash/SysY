@@ -303,7 +303,10 @@ void GlobalCodeMotion(CFG *C) {
     depth[0] = 0;
     DFS1(0);
     DFS2(0);
+
     bool changed = true;
+    auto funcdefI = C->function_def;
+    auto funcdefnum = funcdefI->formals_reg.size();
     // puts("HERE");
     while(changed){
         changed = false;
@@ -321,6 +324,7 @@ void GlobalCodeMotion(CFG *C) {
             int deflabelmax = usemaxdfn[val];
             // std::cerr<<dclockmap[deflabelmin]<<" "<<dclockmap[deflabelmax]<<'\n';
             int dfnlca = LCA(dclockmap[deflabelmin],dclockmap[deflabelmax]);
+            
             for(auto useop:nowI->GetNonResultOperands()){
                 if(useop->GetOperandType()!=BasicOperand::REG){
                     continue;
@@ -329,23 +333,31 @@ void GlobalCodeMotion(CFG *C) {
                 auto usereg = (RegOperand*)useop;
                 auto useregno = usereg->GetRegNo();
                 // std::cerr<<useop->GetFullName()<<'\n';
-                if(hashtable.definemap.find(useregno) == hashtable.definemap.end()){
-                    continue;
+                if(useregno >= funcdefnum){
+                    if(hashtable.definemap.find(useregno) == hashtable.definemap.end()){
+                        continue;
+                    }
+                    auto useI = hashtable.definemap[useregno];
+                    auto useval = hashtable.lookupOrAdd(useI);
+                    
+                    if(useval == -1){
+                        // puts("HERE");
+                        // std::cerr<<useop->GetFullName()<<'\n';
+                        nowcangcm = false;
+                        break;
+                    }
+                    auto labelid = useI->GetBlockID();
+                    if(!DomTree.IsDominate(labelid,dfnlca)){
+                        nowcangcm = false;
+                        break;
+                    }
+                }else{
+                    // puts("DEBUG HERE");
+                    // nowI->PrintIR(std::cerr);
+                    // nowcangcm = false;
+                    // break;
                 }
-                auto useI = hashtable.definemap[useregno];
-                auto useval = hashtable.lookupOrAdd(useI);
                 
-                if(useval == -1){
-                    // puts("HERE");
-                    // std::cerr<<useop->GetFullName()<<'\n';
-                    nowcangcm = false;
-                    break;
-                }
-                auto labelid = useI->GetBlockID();
-                if(!DomTree.IsDominate(labelid,dfnlca)){
-                    nowcangcm = false;
-                    break;
-                }
                 // std::cerr<<useop->GetFullName()<<'\n';
             }
             
@@ -357,7 +369,7 @@ void GlobalCodeMotion(CFG *C) {
             
             // std::cerr<<val<<'\n';
             auto &lcabb = blockmap[dfnlca];
-            std::cerr<<lcabb->block_id<<'\n';
+            // std::cerr<<lcabb->block_id<<'\n';
             auto newI = nowI->CopyInstruction();
             if(newI->GetOpcode() == GETELEMENTPTR){
                 ((GetElementptrInstruction*)newI)->SetResultReg(GetNewRegOperand(++C->max_reg));
@@ -374,10 +386,15 @@ void GlobalCodeMotion(CFG *C) {
                     insertback = false;
                 }
             }
-            nowI->PrintIR(std::cerr);
+            #ifdef GVN_DEBUG
+            for(auto II : vec){
+                II->PrintIR(std::cerr);
+            }
+            puts("---->");
             newI->PrintIR(std::cerr);
             // std::cerr<<dfnlca<<'\n';
             puts("-------");
+            #endif
             if(insertback){
                 std::deque<Instruction> deq;
                 auto oldI = lcabb->Instruction_list.back();
