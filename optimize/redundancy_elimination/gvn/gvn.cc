@@ -221,9 +221,6 @@ void GlobalCodeMotion(CFG *C) {
         if(depth[ubbid] < depth[vbbid]){
             std::swap(ubbid,vbbid);
         }
-        // if(ubbid == 9 && vbbid == 15){
-        //     puts("HERE");
-        // }
         while(depth[ubbid] > depth[vbbid]){
             ubbid = par[ubbid];
         }
@@ -234,6 +231,7 @@ void GlobalCodeMotion(CFG *C) {
         return ubbid;
     };
     std::function<void(int)> DFS1 = [&](int ubbid) {
+        // update depth and parent of domtree
         auto ubb = blockmap[ubbid];
         dfnmap[ubbid] = ++dclock;
         dclockmap[dclock] = ubbid;
@@ -246,6 +244,7 @@ void GlobalCodeMotion(CFG *C) {
         }
     };
     std::function<void(int)> DFS2 = [&](int ubbid) {
+        // GVN
         auto ubb = blockmap[ubbid];
         auto it = ubb->Instruction_list.end();
         do {
@@ -281,7 +280,6 @@ void GlobalCodeMotion(CFG *C) {
                         continue;
                     }
                     check = hashtable.lookupOrAdd(defI);
-                    // usevector[check].push_back(I);
                     auto usedfn = dfnmap[((LabelOperand*)labelop)->GetLabelNo()];
                     if(usemindfn.find(check)==usemindfn.end()){
                         usemindfn[check] = usemaxdfn[check] = usedfn;
@@ -307,33 +305,34 @@ void GlobalCodeMotion(CFG *C) {
     bool changed = true;
     auto funcdefI = C->function_def;
     auto funcdefnum = funcdefI->formals_reg.size();
-    // puts("HERE");
+    // GCM
     while(changed){
         changed = false;
         for(auto [val,vec]:usevector){
-            // vec[0]->PrintIR(std::cerr);
             if(vec.size() == 1 || isoptimized.find(val) != isoptimized.end()){
                 continue;
             }
             auto nowI = vec[0];
+            #ifdef GVN_DEBUG
             // nowI->PrintIR(std::cerr);
             // vec[1]->PrintIR(std::cerr);
             // std::cerr<<val<<" "<<vec.size()<<" "<<nowI->GetBlockID()<<" "<<vec[1]->GetBlockID()<<" "<<'\n';
+            #endif
             bool nowcangcm = true;
             int deflabelmin = usemindfn[val];
             int deflabelmax = usemaxdfn[val];
-            // std::cerr<<dclockmap[deflabelmin]<<" "<<dclockmap[deflabelmax]<<'\n';
             int dfnlca = LCA(dclockmap[deflabelmin],dclockmap[deflabelmax]);
+            // get LCA of Instrutions
             
             for(auto useop:nowI->GetNonResultOperands()){
+                // check all of useop whether dominote Instructions
                 if(useop->GetOperandType()!=BasicOperand::REG){
                     continue;
                 }
-                // std::cerr<<useop->GetFullName()<<'\n';
                 auto usereg = (RegOperand*)useop;
                 auto useregno = usereg->GetRegNo();
-                // std::cerr<<useop->GetFullName()<<'\n';
                 if(useregno >= funcdefnum){
+                    // useregno isn't formal_reg of function
                     if(hashtable.definemap.find(useregno) == hashtable.definemap.end()){
                         continue;
                     }
@@ -357,8 +356,6 @@ void GlobalCodeMotion(CFG *C) {
                     // nowcangcm = false;
                     // break;
                 }
-                
-                // std::cerr<<useop->GetFullName()<<'\n';
             }
             
             if(!nowcangcm){
@@ -367,9 +364,7 @@ void GlobalCodeMotion(CFG *C) {
             changed = true;
             isoptimized.insert(val);
             
-            // std::cerr<<val<<'\n';
             auto &lcabb = blockmap[dfnlca];
-            // std::cerr<<lcabb->block_id<<'\n';
             auto newI = nowI->CopyInstruction();
             if(newI->GetOpcode() == GETELEMENTPTR){
                 ((GetElementptrInstruction*)newI)->SetResultReg(GetNewRegOperand(++C->max_reg));
@@ -392,7 +387,6 @@ void GlobalCodeMotion(CFG *C) {
             }
             puts("---->");
             newI->PrintIR(std::cerr);
-            // std::cerr<<dfnlca<<'\n';
             puts("-------");
             #endif
             if(insertback){
