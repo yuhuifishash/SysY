@@ -1,0 +1,31 @@
+int a[10000]={};
+int b[10000]={};
+int main()
+{
+    int s = 0;
+    while(1){
+        s = s + 1;
+        a[s] = a[s]+9961;
+        a[s+1] += 3;
+        if(s == 100){
+            break;
+        }
+    }
+    // now the address of a[s] can be cse
+    int i=0;
+    while(i < 1000){
+        a[s] = a[s] + 13;
+        b[i] = b[i] + a[i] + a[s];
+        i = i + 1;
+    }
+    i=0;
+    while(i < 1000){
+        a[s] = a[s] + 7;
+        b[i] = b[i] + 2*a[i] + a[s];
+        i = i + 1;
+    }
+    putarray(1000,a);
+    putarray(1000,b);
+
+    return 0;
+}
