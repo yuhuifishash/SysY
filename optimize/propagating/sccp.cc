@@ -764,29 +764,29 @@ void SparseConditionalConstantPropagation(CFG *C) {
     SCCP(C);
 
     // if no return, this indicates that the function has infinite loop and we will definitely arrive this loop
-    // because most programs do not have infinite loop, we make the function only have one ret instructions 
+    // because most programs do not have infinite loop, we make the function only have one ret instructions
     // though it is wrong in some real-world programs.
     // TODO(): fix this problem. (now if the function has no ret_block, the pass after will cause SegmentFault)
 
     bool ret_tag = false;
-    for (auto [id,bb]:*C->block_map){
+    for (auto [id, bb] : *C->block_map) {
         auto I = bb->Instruction_list.back();
-        if(I->GetOpcode() == RET){
+        if (I->GetOpcode() == RET) {
             ret_tag = true;
         }
     }
-    if(ret_tag == false){
+    if (ret_tag == false) {
         C->block_map->clear();
         C->max_label = -1;
         C->max_reg = -1;
         auto bb = C->NewBlock();
-        if(C->function_def->GetReturnType() == VOID){
-            bb->InsertInstruction(1,new RetInstruction(VOID,nullptr));
-        }else if(C->function_def->GetReturnType() == I32){
-            bb->InsertInstruction(1,new RetInstruction(I32,new ImmI32Operand(0)));
-        }else if(C->function_def->GetReturnType() == FLOAT32){
-            bb->InsertInstruction(1,new RetInstruction(FLOAT32, new ImmF32Operand(0)));
-        }else{
+        if (C->function_def->GetReturnType() == VOID) {
+            bb->InsertInstruction(1, new RetInstruction(VOID, nullptr));
+        } else if (C->function_def->GetReturnType() == I32) {
+            bb->InsertInstruction(1, new RetInstruction(I32, new ImmI32Operand(0)));
+        } else if (C->function_def->GetReturnType() == FLOAT32) {
+            bb->InsertInstruction(1, new RetInstruction(FLOAT32, new ImmF32Operand(0)));
+        } else {
             ERROR("Unexpected Type");
         }
         C->ret_block = bb;
@@ -799,33 +799,33 @@ void SparseConditionalConstantPropagation(CFG *C) {
     vis.resize(C->max_label + 1);
     std::queue<LLVMBlock> q;
     q.push(C->ret_block);
-    while(!q.empty()){
+    while (!q.empty()) {
         auto x = q.front();
         q.pop();
-        if(vis[x->block_id]){
+        if (vis[x->block_id]) {
             continue;
         }
         vis[x->block_id] = 1;
-        for(auto v:C->GetPredecessor(x->block_id)){
+        for (auto v : C->GetPredecessor(x->block_id)) {
             q.push(v);
         }
     }
-    for(auto it = C->block_map->begin(); it != C->block_map->end();){
-        if(!vis[it->second->block_id]){
+    for (auto it = C->block_map->begin(); it != C->block_map->end();) {
+        if (!vis[it->second->block_id]) {
             // std::cerr<<it->second->block_id<<"\n";
             it = C->block_map->erase(it);
-        }else{
+        } else {
             ++it;
         }
     }
-    for(auto [id,bb]:*C->block_map){
+    for (auto [id, bb] : *C->block_map) {
         auto endI = bb->Instruction_list.back();
-        if(endI->GetOpcode() == BR_COND){
-            auto brcondI = (BrCondInstruction*)endI;
-            if(vis[((LabelOperand*)brcondI->GetFalseLabel())->GetLabelNo()] == 0){
+        if (endI->GetOpcode() == BR_COND) {
+            auto brcondI = (BrCondInstruction *)endI;
+            if (vis[((LabelOperand *)brcondI->GetFalseLabel())->GetLabelNo()] == 0) {
                 bb->Instruction_list.pop_back();
                 bb->Instruction_list.push_back(new BrUncondInstruction(brcondI->GetTrueLabel()));
-            }else if(vis[((LabelOperand*)brcondI->GetTrueLabel())->GetLabelNo()] == 0){
+            } else if (vis[((LabelOperand *)brcondI->GetTrueLabel())->GetLabelNo()] == 0) {
                 bb->Instruction_list.pop_back();
                 bb->Instruction_list.push_back(new BrUncondInstruction(brcondI->GetFalseLabel()));
             }

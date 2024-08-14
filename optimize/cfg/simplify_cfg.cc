@@ -732,7 +732,6 @@ void EliminateUselessPhi(CFG *C) {
     bool changed = true;
     auto FuncdefI = C->function_def;
     std::function<Operand(Operand)> UnionFind = [&](Operand RegToFind) -> Operand {
-
         auto RegToFindNo = ((RegOperand *)RegToFind)->GetRegNo();
         if (UnionFindMap[RegToFindNo] == RegToFind)
             return RegToFind;
@@ -779,13 +778,13 @@ void EliminateUselessPhi(CFG *C) {
                         NeedtoReleace = 0;
                         // break;
                     }
-                    if(ResultOperands[i]->GetOperandType() != BasicOperand::REG){
+                    if (ResultOperands[i]->GetOperandType() != BasicOperand::REG) {
                         isallreg = 0;
                     }
                 }
 
                 if (NeedtoReleace) {
-                    
+
                     if (ResultOperands.size() == 1 && !isallreg) {
                         // example2
                         if (ResultOperands[0]->GetOperandType() == BasicOperand::IMMI32) {
@@ -794,14 +793,14 @@ void EliminateUselessPhi(CFG *C) {
                             ADD, I32, new ImmI32Operand(0),
                             new ImmI32Operand(((ImmI32Operand *)ResultOperands[0])->GetIntImmVal()),
                             PhiI->GetResultReg());
-                        } else if(ResultOperands[0]->GetOperandType() == BasicOperand::IMMF32){
+                        } else if (ResultOperands[0]->GetOperandType() == BasicOperand::IMMF32) {
                             changed |= true;
                             I = new ArithmeticInstruction(
                             FADD, FLOAT32, new ImmF32Operand(0),
                             new ImmF32Operand(((ImmF32Operand *)ResultOperands[0])->GetFloatVal()),
                             PhiI->GetResultReg());
                         }
-                    } else if(isallreg){
+                    } else if (isallreg) {
                         // example1
                         changed |= true;
                         EraseSet.insert(I);

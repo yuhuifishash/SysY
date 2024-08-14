@@ -106,19 +106,19 @@ bool RiscV64LICM::isInvariant(MachineCFG *C, MachineBaseInstruction *I, MachineN
         return false;
     }
     // In order to avoid greater register pressure, we limit the count of instructions can motion
-    /* 
+    /*
         we do not consider mul
         motion addi may not increase register pressure
         lui %1,%hi(k)
         addi %2,%1,%lo(k)
     */
 #ifdef REGISTER_PRESSURE_AWARE
-    if(currloop_motion_count >= max_motion_count){
-        if(I->arch != MachineBaseInstruction::RiscV){
+    if (currloop_motion_count >= max_motion_count) {
+        if (I->arch != MachineBaseInstruction::RiscV) {
             return false;
         }
         auto rvI = (RiscV64Instruction *)I;
-        if(rvI->getOpcode() != RISCV_MUL && rvI->getOpcode() != RISCV_ADDI){
+        if (rvI->getOpcode() != RISCV_MUL && rvI->getOpcode() != RISCV_ADDI) {
             return false;
         }
     }
@@ -281,19 +281,19 @@ int RiscV64LICM::GetMaxInstMotionNumber(MachineNaturalLoop *L) {
     int inst_number = 0;
     int bb_number = L->loop_nodes.size();
     int ans = 6;
-    for(auto bb:L->loop_nodes){
+    for (auto bb : L->loop_nodes) {
         inst_number += bb->GetInsList().size();
     }
-    if(current_func->getMachineCFG()->LoopForest.loopG[L->loop_id].size() == 0){
+    if (current_func->getMachineCFG()->LoopForest.loopG[L->loop_id].size() == 0) {
         ans += 6;
     }
-    if(inst_number > 100){
+    if (inst_number > 100) {
         ans -= 1;
     }
-    if(bb_number > 3 && bb_number < 10){
+    if (bb_number > 3 && bb_number < 10) {
         ans -= 1;
     }
-    if(bb_number >= 10){
+    if (bb_number >= 10) {
         ans -= 2;
     }
     // std::cerr<<inst_number<<" "<<bb_number<<" "<<ans<<"\n";

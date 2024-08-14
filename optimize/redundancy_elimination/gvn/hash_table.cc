@@ -79,7 +79,7 @@ void HashTable::defineDFS(CFG *C) {
     }
 }
 int HashTable::lookupOrAddOthers(Instruction I) {
-    if(I->GetResultReg() == nullptr){
+    if (I->GetResultReg() == nullptr) {
         return -1;
     }
     auto op = I->GetResultReg();
@@ -115,7 +115,7 @@ int HashTable::lookupOrAddReg(Operand op) {
             return expr_number;
         }
         auto now = lookupOrAdd(definemap[RegNo]);
-        if(now == -1){
+        if (now == -1) {
             valuemap[opstr] = ++expr_number;
             return expr_number;
         }
@@ -167,10 +167,10 @@ int HashTable::lookupOrAddArithmetic(Instruction I) {
         std::swap(op1Value, op2Value);
     }
     std::string str;
-    str = "Arithmetic " + std::to_string(opcode_) + " type" + TypeMap[type_] + " %v" + std::to_string(op1Value) + ",%v" +
-              std::to_string(op2Value);
-    if(op3Value != -1){
-        str +=  ",%v" + std::to_string(op3Value);
+    str = "Arithmetic " + std::to_string(opcode_) + " type" + TypeMap[type_] + " %v" + std::to_string(op1Value) +
+          ",%v" + std::to_string(op2Value);
+    if (op3Value != -1) {
+        str += ",%v" + std::to_string(op3Value);
     }
 
     auto resultstr = ArithmeticI->GetResultRegNo();

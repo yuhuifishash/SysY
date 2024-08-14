@@ -1,6 +1,6 @@
 #include "riscv64_ins_schedule.h"
-#include "../instruction_print/riscv64_printer.h"
 #include "../../common/machine_passes/register_alloc/liveinterval.h"
+#include "../instruction_print/riscv64_printer.h"
 
 #define PREVENT_PRESSURE
 
@@ -134,9 +134,8 @@ struct InsPrioEntry {
 };
 
 void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstruction *> &list,
-                                               std::vector<MachineBaseInstruction *> &res,
-                                               ActiveRegSet&active_set,
-                                               std::map<Register, int>&kill_countdown) {
+                                               std::vector<MachineBaseInstruction *> &res, ActiveRegSet &active_set,
+                                               std::map<Register, int> &kill_countdown) {
     // Construct Data Dependency Graph
     // Assume no phi
     res.clear();

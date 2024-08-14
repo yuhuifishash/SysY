@@ -532,7 +532,7 @@ void GEPStrengthReduce(CFG *C) {
     std::set<Instruction> AddInstConstantSet;
     std::map<int, std::vector<std::pair<int, int>>> G;
     std::map<int, Instruction> GepResultMap;
-    std::map<int,int> rd;
+    std::map<int, int> rd;
     std::function<int(Instruction, Instruction)> existpass = [&](Instruction GepI, Instruction BefI) {
         // check the two Instruction whether to be optimize
         // return the difference value between two Instruction if to be optimize, otherwise -1.
@@ -708,9 +708,9 @@ void GEPStrengthReduce(CFG *C) {
                         auto ptrVal = BefI->GetResultReg();
                         auto BefIopNo = ((RegOperand *)ptrVal)->GetRegNo();
                         G[BefIopNo].push_back(std::make_pair(GepIopNo, aimOp));
-                        if(rd.find(GepIopNo) == rd.end()){
+                        if (rd.find(GepIopNo) == rd.end()) {
                             rd[GepIopNo] = 1;
-                        }else{
+                        } else {
                             rd[GepIopNo]++;
                         }
                         // GepI->PrintIR(std::cerr);

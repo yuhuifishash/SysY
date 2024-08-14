@@ -1,11 +1,10 @@
 #include "memdep.h"
 #include <set>
 
-/*TODO(): 
-the implement of this pass is very terrible, this pass can only judge instructions' dependency that one dominates another
-and O(n) Time-Complexity for each query (n is the number of the instructions)
-we also do not sure whether this pass is correct.
-we need MemorySSA for better MemDepAnalyser
+/*TODO():
+the implement of this pass is very terrible, this pass can only judge instructions' dependency that one dominates
+another and O(n) Time-Complexity for each query (n is the number of the instructions) we also do not sure whether this
+pass is correct. we need MemorySSA for better MemDepAnalyser
 */
 class SimpleMemDepAnalyser : public MemoryDependenceAnalyser {
 private:

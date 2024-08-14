@@ -295,7 +295,7 @@ static bool LoopAntiDependencyCheck(CFG *C, NaturalLoop *L1, NaturalLoop *L2) {
                 }
                 auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
                 auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
-                if(GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR){
+                if (GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR) {
                     return false;
                 }
                 if (LoopDepSingleInstCheck(L1, L2, GEPI1, GEPI2)) {
@@ -317,7 +317,7 @@ static bool LoopAntiDependencyCheck(CFG *C, NaturalLoop *L1, NaturalLoop *L2) {
                 }
                 auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
                 auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
-                if(GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR){
+                if (GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR) {
                     return false;
                 }
                 if (LoopDepSingleInstCheck(L1, L2, GEPI2, GEPI1)) {
@@ -339,7 +339,7 @@ static bool LoopAntiDependencyCheck(CFG *C, NaturalLoop *L1, NaturalLoop *L2) {
                 }
                 auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
                 auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
-                if(GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR){
+                if (GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR) {
                     return false;
                 }
                 if (LoopDepSingleInstCheck(L1, L2, GEPI1, GEPI2)) {

@@ -266,13 +266,6 @@ void ReassociateAddSubStoreMap(std::deque<Instruction> InstList) {
             }
             return false;
         }
-        // if (op->GetOperandType() == BasicOperand::IMMF32) {
-        //     auto num = ((ImmF32Operand *)op)->GetFloatVal();
-        //     if (num == 0.0) {
-        //         return true;
-        //     }
-        //     return false;
-        // }
         return false;
     };
     if (InstList.size() < 4) {
@@ -356,7 +349,7 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
 
         auto AddI1 = (ArithmeticInstruction *)a;
         auto AddI2 = (ArithmeticInstruction *)b;
-        if (AddI1->GetDataType() != I32 || AddI2->GetDataType() != I32 ) {
+        if (AddI1->GetDataType() != I32 || AddI2->GetDataType() != I32) {
             return false;
         }
         auto resultreg1 = AddI1->GetResultReg();
@@ -393,20 +386,11 @@ bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruct
                     addop = GetNewRegOperand(++C->max_reg);
                     addoperandmap[pairnow] = addop;
                     // if (AddI1->GetDataType() == I32) {
-                        if (i & 1) {
-                            addI = new ArithmeticInstruction(ADD, I32, I1op1, I2op2, addop);
-                        } else {
-                            addI = new ArithmeticInstruction(ADD, I32, I1op2, I2op2, addop);
-                        }
-
-                    // } else {
-                    //     if (i & 1) {
-                    //         addI = new ArithmeticInstruction(FADD, FLOAT32, I1op1, I2op2, addop);
-                    //     } else {
-                    //         addI = new ArithmeticInstruction(FADD, FLOAT32, I1op2, I2op2, addop);
-                    //     }
-
-                    // }
+                    if (i & 1) {
+                        addI = new ArithmeticInstruction(ADD, I32, I1op1, I2op2, addop);
+                    } else {
+                        addI = new ArithmeticInstruction(ADD, I32, I1op2, I2op2, addop);
+                    }
                     InstList.insert(insertit, addI);
                 } else {
                     addop = (RegOperand *)addoperandmap[pairnow];

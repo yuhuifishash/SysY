@@ -70,11 +70,7 @@ void MakeFunctionOneExit(CFG *C) {
     C->BuildCFG();
 }
 
-void RetMotion(CFG *C){
-    std::map<int,std::vector<int>> G;
-    
-
-}
+void RetMotion(CFG *C) { std::map<int, std::vector<int>> G; }
 
 /**
  * this function will elimate tailrecursive
