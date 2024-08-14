@@ -1,0 +1,77 @@
+int main()
+{
+    int S = 0;
+    int T = getint();
+
+    while(T ){
+        T = T - 1;
+        int s = getint();
+        int t = getint();
+
+        int S = 0;
+        @for(int i = s; i < t; i=i+1){
+            S = S + 988244353;
+            S = S % 998244353;
+        }
+
+        putint(S);
+        putch(10);
+
+
+        S = 0;
+        @for(int i = s; i <= t; i=i+1){
+            S = S + 9852453;
+            S = S % 99824435;
+        }
+
+        putint(S);
+        putch(10);
+
+        S = 0;
+        @for(int i = -2147483647; i <= t; i=i+1){
+            S = S + 987456321;
+            S = S % 1000000007;
+        }
+
+        putint(S);
+        putch(10);
+
+        S = 0;
+        @for(int i = -2147483648; i <= t; i=i+1){
+            S = S + 987456321;
+            S = S % 1000000009;
+        }
+
+        putint(S);
+        putch(10);
+    }
+
+    S = 0;
+    @for(int i = -2147483647; i <= 2147483646; i=i+1){
+        S = S + 4567812;
+        S = S % 987654321;
+    }
+
+    putint(S);
+    putch(10);
+
+    S = 0;
+    @for(int i = -2147483648; i <= 2147483646; i=i+1){
+        S = S + 4567812;
+        S = S % 998244583;
+    }
+
+    putint(S);
+    putch(10);
+
+
+    S = 0;
+    @for(int i = -2147483648; i < 2147483647; i=i+1){
+        S = S + 4567812;
+        S = S % 65536123;
+    }
+
+    putint(S);
+    putch(10);
+    return 0;
+}
