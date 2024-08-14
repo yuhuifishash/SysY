@@ -1,0 +1,15 @@
+int f() {
+    putint(44); putch(10);
+    return 1;
+}
+
+int g(int x1,int x2,int x3,int x4,int x5) {
+    if (x5 < 5) {
+        x5 = f();
+    }
+    return x5;
+}
+
+int main() {
+    return g(1, 2, 3, 4, 5);
+}

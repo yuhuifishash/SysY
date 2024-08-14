@@ -1,0 +1,44 @@
+
+int A[10][10][10];
+
+void print_2d(int a[][10]) {
+    int i = 0;
+    while( i < 10 ) {
+        int j = 0;
+        while(j < 10) {
+            putint(a[i][j]); putch(10);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void print_1d(int a[]) {
+    int i = 0;
+    while( i < 10 ) {
+        putint(a[i]); putch(10);
+        i = i + 1;
+    }
+}
+
+int main() {
+    getarray(A[0][0]);
+
+    int i = 0;
+    while(i < 10) {
+        print_2d(A[i]);
+        i = i + 1;
+    }
+
+    {
+        int i = 9;
+        while(i >= 0) {
+            int j = 0;
+            while(j < 10) {
+                print_1d(A[j][i]);
+                j = j + 1;
+            }
+            i = i - 1;
+        }
+    }
+}

@@ -1,0 +1,21 @@
+int a[10] = {1,2,3,4,5,6,7,8,9,10};
+
+int recur_sum(int A[], int i) {
+    if (i > 0) {
+        return recur_sum(A, i-1) + A[i];
+    } else {
+        return A[0];
+    }
+}
+
+int fib(int n) {
+    if (n <= 2) return 1;
+    return fib(n-1)+fib(n-2);
+}
+
+int main() {
+    putint(0x80000000); putch(10);
+    putint(fib(30)); putch(10);
+    putint(recur_sum(a, 9)); putch(10);
+    return 0;
+}

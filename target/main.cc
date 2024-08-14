@@ -274,7 +274,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
         
-        llvmIR.PassExecutor(GlobalCodeMotion);
+        // llvmIR.PassExecutor(GlobalCodeMotion);
         // TODO():GVN/GCM
         
         for (int i = 0; i < 5; ++i) {

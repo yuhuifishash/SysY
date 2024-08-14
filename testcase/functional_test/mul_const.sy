@@ -1,0 +1,15 @@
+int main() {
+    int n = getint();
+
+    putint(n*0); putch(10);
+    putint(n*1); putch(10);
+    putint(n*7); putch(10);
+    putint(n*-1); putch(10);
+    putint(n*-5); putch(10);
+    putint(n*-1000000007); putch(10);
+    putint(n*1000000007); putch(10);
+    putint(n*998244353); putch(10);
+    putint(n*1026); putch(10);
+    
+    return 0;
+}

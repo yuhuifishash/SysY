@@ -1,0 +1,28 @@
+const int N = 5;
+const int seed[3]     = { 19971231, 19981013, 1000000000 + 7};
+int seed_non_const[3] = { 19971231, 19981013, 1000000000 + 7};
+int changing[3]       = { 1, 2, 3 };
+int chg2[3][3]        = { 1, 2, 3 };
+
+int alias(int A[]) {
+    A[2] = 4;
+}
+
+int main() {
+    const int C = N*seed[1];
+    int C2 = N*seed_non_const[1];
+
+    putint(N);                 putch(10);
+    putint(seed[1]);           putch(10);
+    putint(C);                 putch(10);
+    putint(seed_non_const[2]); putch(10);
+    putint(C2);                putch(10);
+
+    alias(changing);
+    putint(changing[2]);       putch(10);
+
+    alias(chg2[0]);
+    putint(chg2[0][2]);         putch(10);
+
+    return 0;
+}

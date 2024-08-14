@@ -1,0 +1,31 @@
+const int N = 300;
+
+int a[300][300];
+int b[300][300];
+
+void transpose(int A[][300], int B[][300]) {
+    int i = 0, j = 0;
+    while(i < N) {
+        while(j < N) {
+            B[j][i] = A[i][j];
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+int main() {
+    int n = getarray(a[0]);
+    int i = 0, j = 0;
+    transpose(a, b);
+    while(i < N) {
+        while(j < N) {
+            putint(b[i][j]);
+            putch(32);
+            j = j + 1;
+        }
+        putch(0xa);
+        i = i + 1;
+    }
+    return 0;
+}

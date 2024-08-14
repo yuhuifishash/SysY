@@ -1,0 +1,10 @@
+
+int main() {
+    putint(0x80000000); putch(10);
+    putint(0x7fffffff); putch(10);
+    putint(-2147483648); putch(10);
+    putint(2147483647); putch(10);
+    putint(017777777777); putch(10); // INT_MAX in octal
+    putint(020000000000); putch(10); // INT_MIN in octal
+    return 0;
+}

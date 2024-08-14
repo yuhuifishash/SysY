@@ -1,0 +1,77 @@
+void print_2d(int A[][2]) {
+    int i = 0;
+    while(i < 4) {
+        int j = 0;
+        while(j < 2) {
+            putint(A[i][j]); putch(10);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void print_2d_another(int A[][3]) {
+    int i = 0;
+    while(i < 3) {
+        int j = 0;
+        while(j < 3) {
+            putint(A[i][j]); putch(10);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void print_3d(int A[][5][6]) {
+    int i = 0;
+    while(i < 4) {
+        int j = 0;
+        while(j < 5) {
+            int k = 0;
+            while(k < 6) {
+                putint(A[i][j][k]); putch(10);
+                k = k + 1;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+int A[4][2] = {1, 9, 3};
+int B[4][2] = {{1}, {3}};
+
+int main() {
+/*
+*/
+    const int a[4][2] = {};
+    const int b[4][2] = {1, 2, 3, 4, 5, 6, 7, 8};
+    const int c[4][2] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    const int d[4][2] = {1, 2, {3}, {5}, 7 , 8};
+    const int e[4][2] = {{d[2][1], c[2][1]}, {3, 4}, {5, 6}, {7, 8}};
+
+    print_2d(A);
+    print_2d(B);
+    print_2d(a);
+    print_2d(b);
+    print_2d(c);
+    print_2d(d);
+    print_2d(e);
+    
+    const int k[3][3] = {1,2,3,6};
+    print_2d_another(k);
+    //const int a[4][4] = {{2, 3}, {4, 5}};
+    const int a3[4][5][6] = {};    
+    const int b3[4][5][6] = {{2, 3}, {2, 3, 4}, {{2, 3}}};    
+    const int c3[4][5][6] = {1, 2, 3};    
+    const int d3[4][5][6] = {{}, {2}, {3}, {4}};    
+    const int e3[4][5][6] = {{{1,2,3}}};    
+    print_3d(a3);
+    print_3d(b3);
+    print_3d(c3);
+    print_3d(d3);
+    print_3d(e3);
+
+    //return e[3][1] + e[0][0] + e[0][1] + a[2][0];
+    return 0;
+}

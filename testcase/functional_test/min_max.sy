@@ -1,0 +1,21 @@
+int main() {
+    int a[5];
+    int n = getarray(a);
+    int i = 0;
+    putint(2147483647); putch(10);
+    putint(-2147483648); putch(10);
+    putint(0-2147483648); putch(10);
+    putint(0-2147483647); putch(10);
+    putint(0- -2147483648); putch(10);
+    while(i < n) {
+        putint(a[i]/-2147483647); putch(10);
+        putint(a[i]+2147483647); putch(10);
+        putint(a[i]-2147483647); putch(10);
+        putint(a[i]*2147483647); putch(10);
+        putint(a[i]/2147483647); putch(10);
+        putint(a[i]/-2147483647); putch(10);
+        putint(a[i]%2147483647); putch(10);
+        putint(a[i]%-2147483647); putch(10);
+        i = i + 1;
+    }
+}
