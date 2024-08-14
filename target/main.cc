@@ -167,6 +167,9 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FindNoWriteStaticGlobal);
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
+        // llvmIR.PassExecutor(RetMotion);
+        // llvmIR.ElimateUnreachedInstructionAndBlocks();
+        // llvmIR.BuildCFG();
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
