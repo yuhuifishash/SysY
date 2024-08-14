@@ -92,6 +92,7 @@ void LoopInvariantReassociate(CFG *C);
 void Reassociate(CFG *C);
 void Sink(CFG *C);
 void GlobalCodeMotion(CFG *C);
+void RetMotion(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);

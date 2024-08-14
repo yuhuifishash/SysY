@@ -70,6 +70,12 @@ void MakeFunctionOneExit(CFG *C) {
     C->BuildCFG();
 }
 
+void RetMotion(CFG *C){
+    std::map<int,std::vector<int>> G;
+    
+
+}
+
 /**
  * this function will elimate tailrecursive
  * you can use testcase 087_gcd.sy to check
