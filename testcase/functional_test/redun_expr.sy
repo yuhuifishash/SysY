@@ -1,0 +1,21 @@
+int main () {
+    int a = getint();
+    int b = getint();
+    int c = getint();
+    int d = getint();
+    int e = getint();
+    int f = getint();
+    int g = getint();
+    int h = 0;
+    if (a + c == a + e) {
+        h = f+g;
+    } else {
+        h = f+g+1;
+    }
+    h = h + c+d+c+d+c+d+c+d;
+    h = h + 4*c+4*d;
+    h = h + 4*(c+d);
+    putint(h);
+    putch(10);
+    return 0;
+}

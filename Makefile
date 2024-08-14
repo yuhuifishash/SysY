@@ -54,7 +54,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm,submit
+.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm,run-all
 
 SysYc : $(BINARY)
 
@@ -76,6 +76,8 @@ grade : $(BINARY)
 
 perf : $(BINARY)
 	./SysY_performance.sh $(STAGE) $(ARCH)
+
+run-all : grade, perf
 
 gdb : $(BINARY)
 	./SysY_gdb_single.sh $(CASE).sy $(STAGE) $(OFLAG)

@@ -1,11 +1,15 @@
 #include "riscv64_ins_schedule.h"
 #include "../instruction_print/riscv64_printer.h"
+#include "../../common/machine_passes/register_alloc/liveinterval.h"
+
+#define PREVENT_PRESSURE
 
 // #define SCHEDULEDBG
 
 void RiscV64InstructionSchedule::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
+        liveness = new Liveness(current_func);
         for (auto block : func->blocks) {
             cur_block = block;
             ExecuteInBlock();
@@ -130,7 +134,9 @@ struct InsPrioEntry {
 };
 
 void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstruction *> &list,
-                                               std::vector<MachineBaseInstruction *> &res) {
+                                               std::vector<MachineBaseInstruction *> &res,
+                                               ActiveRegSet&active_set,
+                                               std::map<Register, int>&kill_countdown) {
     // Construct Data Dependency Graph
     // Assume no phi
     res.clear();
@@ -245,11 +251,42 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
     ExecState state;
 
     while (!ready_set.empty() || !state.empty()) {
+        bool haveins = false;
+#ifdef PREVENT_PRESSURE
         for (auto it = ready_set.begin(); it != ready_set.end();) {
+            auto entry = *it;
+            if (!active_set.judgeSpill(entry.ins, kill_countdown)) {
+                if (state.Issue(entry.ins)) {    // if an FU exists to start at the cycle
+                    it = ready_set.erase(it);
+                    res.push_back(entry.ins);
+                    active_set.addins(entry.ins, kill_countdown);
+                    haveins = true;
+                } else {
+                    ++it;
+                }
+            } else {
+                // Log("Skipped due to pressure");
+                ++it;
+            }
+            if (state.full()) {
+                break;
+            }
+        }
+#endif
+
+        for (auto it = ready_set.begin(); it != ready_set.end();) {
+            if (haveins) {
+                // Log("Considering Pressure");
+                break;
+            }
+            // Log("Ignoring Pressure");
             auto entry = *it;
             if (state.Issue(entry.ins)) {    // if an FU exists to start at the cycle
                 it = ready_set.erase(it);
                 res.push_back(entry.ins);
+#ifdef PREVENT_PRESSURE
+                active_set.addins(entry.ins, kill_countdown);
+#endif
             } else {
                 ++it;
             }
@@ -257,6 +294,7 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
                 break;
             }
         }
+
         auto retirelist = state.nextCycle();
         for (auto ins : retirelist) {
             state.Retire(ins);
@@ -283,6 +321,25 @@ void RiscV64InstructionSchedule::ExecuteInList(std::vector<MachineBaseInstructio
 void RiscV64InstructionSchedule::ExecuteInBlock() {
     std::vector<MachineBaseInstruction *> schedule_batch;
     std::vector<MachineBaseInstruction *> result;
+
+    std::map<Register, int> kill_countdown;
+    ActiveRegSet active_set;
+    for (auto reg : liveness->GetOUT(cur_block->getLabelId())) {
+        kill_countdown[reg] = 1;
+    }
+    for (auto reg : liveness->GetIN(cur_block->getLabelId())) {
+        active_set.add(reg);
+    }
+
+    for (auto ins : *cur_block) {
+        if (ins->arch == MachineBaseInstruction::COMMENT) {
+            continue;
+        }
+        for (auto reg : ins->GetReadReg()) {
+            kill_countdown[*reg] = kill_countdown[*reg] + 1;
+        }
+    }
+
     for (auto ins : *cur_block) {
         if (ins->arch == MachineBaseInstruction::COMMENT) {
             continue;
@@ -292,7 +349,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
         } else {
             if (!schedule_batch.empty()) {
                 std::vector<MachineBaseInstruction *> schedule_result;
-                ExecuteInList(schedule_batch, schedule_result);
+                ExecuteInList(schedule_batch, schedule_result, active_set, kill_countdown);
                 for (auto scheduled_ins : schedule_result) {
                     result.push_back(scheduled_ins);
                 }
@@ -303,7 +360,7 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
     }
     if (!schedule_batch.empty()) {
         std::vector<MachineBaseInstruction *> schedule_result;
-        ExecuteInList(schedule_batch, schedule_result);
+        ExecuteInList(schedule_batch, schedule_result, active_set, kill_countdown);
         for (auto scheduled_ins : schedule_result) {
             result.push_back(scheduled_ins);
         }
