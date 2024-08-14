@@ -305,6 +305,7 @@ void GlobalCodeMotion(CFG *C) {
     bool changed = true;
     auto funcdefI = C->function_def;
     auto funcdefnum = funcdefI->formals_reg.size();
+    int isfirst = 0;
     // GCM
     while(changed){
         changed = false;
@@ -362,7 +363,15 @@ void GlobalCodeMotion(CFG *C) {
                 continue;
             }
             changed = true;
+            if(isfirst != -1){
+                isfirst++;
+                if(isfirst > 5){
+                    isfirst = -1;
+                    break;
+                }
+            }
             isoptimized.insert(val);
+            
             
             auto &lcabb = blockmap[dfnlca];
             auto newI = nowI->CopyInstruction();
@@ -424,13 +433,7 @@ void GlobalCodeMotion(CFG *C) {
                     if(replacemap.find(regno)!=replacemap.end()){
                         continue;
                     }
-                    // if(regno == 260){
-                    //     I->PrintIR(std::cerr);
-                    // }
                     I->ReplaceRegByMap(replacemap);
-                    // if(regno == 260){
-                    //     I->PrintIR(std::cerr);
-                    // }
                 }
             }
         }
