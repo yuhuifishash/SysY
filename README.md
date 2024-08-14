@@ -130,6 +130,8 @@ To generate asm of single file(*.sy) with optimization
 
 -SparseConditionalConstantPropagation
 
+-FunctionInline
+
 -SimplifyCFG
 
 -InstSimplify

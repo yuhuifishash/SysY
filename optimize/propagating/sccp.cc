@@ -791,13 +791,46 @@ void SparseConditionalConstantPropagation(CFG *C) {
         }
         C->ret_block = bb;
     }
-
+    C->BuildCFG();
     // we will also eliminate the blocks that return block can not arrive in the reverse cfg.
     // though it is wrong in some real-world programs.
     // TODO(): fix this problem (now this situation will also cause the compiler SegmentFault in later passes)
-    
-
-
+    std::vector<int> vis;
+    vis.resize(C->max_label + 1);
+    std::queue<LLVMBlock> q;
+    q.push(C->ret_block);
+    while(!q.empty()){
+        auto x = q.front();
+        q.pop();
+        if(vis[x->block_id]){
+            continue;
+        }
+        vis[x->block_id] = 1;
+        for(auto v:C->GetPredecessor(x->block_id)){
+            q.push(v);
+        }
+    }
+    for(auto it = C->block_map->begin(); it != C->block_map->end();){
+        if(!vis[it->second->block_id]){
+            // std::cerr<<it->second->block_id<<"\n";
+            it = C->block_map->erase(it);
+        }else{
+            ++it;
+        }
+    }
+    for(auto [id,bb]:*C->block_map){
+        auto endI = bb->Instruction_list.back();
+        if(endI->GetOpcode() == BR_COND){
+            auto brcondI = (BrCondInstruction*)endI;
+            if(vis[((LabelOperand*)brcondI->GetFalseLabel())->GetLabelNo()] == 0){
+                bb->Instruction_list.pop_back();
+                bb->Instruction_list.push_back(new BrUncondInstruction(brcondI->GetTrueLabel()));
+            }else if(vis[((LabelOperand*)brcondI->GetTrueLabel())->GetLabelNo()] == 0){
+                bb->Instruction_list.pop_back();
+                bb->Instruction_list.push_back(new BrUncondInstruction(brcondI->GetFalseLabel()));
+            }
+        }
+    }
 
     C->BuildCFG();
     C->BuildDominatorTree();
