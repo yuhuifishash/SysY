@@ -1,0 +1,8 @@
+int f() { putint(1); putch(10); return 1; }
+int g() { putint(2); putch(10); return 1; }
+int h() { putint(3); putch(10); return 1; }
+int i() { putint(4); putch(10); return 1; }
+
+int main() {
+    return f() + g() + h() + i();
+}

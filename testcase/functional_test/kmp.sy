@@ -1,0 +1,114 @@
+
+int str_len(int s[]) {
+    int count = 0;
+    while(s[count] != 0) {
+        count = count + 1;
+    }
+    return count;
+}
+
+// Fills lps[] for given patttern pat[0..M-1]
+void computeLPSArray(int pat[], int M, int lps[])
+{
+	// length of the previous longest prefix suffix
+	int len = 0, i = 1;
+
+	lps[0] = 0; // lps[0] is always 0
+
+	// the loop calculates lps[i] for i = 1 to M-1
+	while (i < M) {
+		if (pat[i] == pat[len]) {
+			len = len + 1;
+			lps[i] = len;
+			i = i + 1;
+		}
+		else // (pat[i] != pat[len])
+		{
+			// This is tricky. Consider the example.
+			// AAACAAAA and i = 7. The idea is similar
+			// to search step.
+			if (len != 0) {
+				len = lps[len - 1];
+
+				// Also, note that we do not increment
+				// i here
+			}
+			else // if (len == 0)
+			{
+				lps[i] = 0;
+				i = i + 1;
+			}
+		}
+	}
+}
+
+// Prints occurrences of txt[] in pat[]
+int KMPSearch(int pat[], int txt[])
+{
+	int M = str_len(pat);
+	int N = str_len(txt);
+
+	int i = 0; // index for txt[]
+	int j = 0; // index for pat[]
+
+	// create lps[] that will hold the longest prefix suffix
+	// values for pattern
+	int lps[300];
+
+	// Preprocess the pattern (calculate lps[] array)
+	computeLPSArray(pat, M, lps);
+
+	while (i < N) {
+		if (pat[j] == txt[i]) {
+			j = j + 1;
+			i = i + 1;
+		}
+
+		if (j == M) {
+            return i-j;
+			j = lps[j - 1];
+		}
+
+		// mismatch after j matches
+		else if (i < N && pat[j] != txt[i]) {
+			// Do not match lps[0..lps[j-1]] characters,
+			// they will match anyway
+			if (j != 0)
+				j = lps[j - 1];
+			else
+				i = i + 1;
+		}
+	}
+    return -1;
+}
+
+
+// Driver program to test above function
+int main()
+{
+    int len;
+	int txt[128];
+	int pat[128];
+    int i = 0;
+
+    len = getint();
+    putint(len); putch(10);
+    while(i < len) { 
+        txt[i] = getch();
+        i = i + 1;
+    }
+    txt[len] = 0;
+
+    len = getint();
+    putint(len); putch(10);
+    i = 0;
+    while(i < len) {
+        pat[i] = getch();
+        i = i + 1;
+    }
+    pat[len] = 0;
+
+	putint(KMPSearch(pat, txt));
+    putch(10);
+	return 0;
+}

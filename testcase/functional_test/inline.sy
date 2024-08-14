@@ -1,0 +1,48 @@
+int glo = 44;
+
+int f(int n) {
+    if (n <= 1) return 1;
+    return n*f(n-1);
+}
+
+int g(int n) {
+    if (n >= 2) {
+        return n * 2;
+    } else {
+        return n * 44; 
+    }
+}
+
+
+int main() {
+
+    // should not inline recursive functions (yet)
+    putint(f(10)); putint(10);
+
+    // flat out inline g()
+    putint(g(10)); putint(10);
+
+    /*
+    // order of inlining
+    h(1);
+    putint(glo); putint(10);
+    */
+
+    return 0;
+}
+
+/*
+int meaning_less_calc() {
+    int i = 0;
+    int sum = 0;
+    while(i < 44444) {
+        sum = sum + i*5;
+    }
+    return sum;
+}
+
+int h(int n) {
+    glo = n*2;
+    return meaning_less_calc();
+}
+*/

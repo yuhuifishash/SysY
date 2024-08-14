@@ -1,0 +1,26 @@
+int A[3];
+int B[3][3][3];
+
+int f() {
+    putint(44); putch(10);
+    return 1;
+}
+
+int g() {
+    putint(55); putch(10);
+    return 1;
+}
+
+int h() {
+    putint(66); putch(10);
+    return 1;
+}
+
+int main() {
+    f() + f();
+    -f();
+    A[f()];
+    B[f()][g()][h()];
+    
+    return 0;
+}

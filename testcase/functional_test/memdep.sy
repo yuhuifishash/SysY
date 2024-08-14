@@ -1,0 +1,16 @@
+int A[3] = {};
+
+int f() { return 5; }
+
+int main() {
+    int t = A[0], i = 0, sum = 0;
+    A[0] = 1;
+    while( i < 5 ) {
+        sum = sum + f();
+        i = i + 1;
+    }
+
+    putint(A[0]+t+sum); putch(10);
+
+    return 0;
+}

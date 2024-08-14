@@ -1,0 +1,25 @@
+int foo = 44;
+
+// can global and function share the same name?
+// the answer is no for gcc
+// int foo() {
+int bar() {
+    {
+        putint(foo); putch(10);
+        foo = 1;
+        putint(foo); putch(10);
+    }
+    int foo = 2;
+    putint(foo); putch(10);
+    foo = 4;
+
+    {
+        int foo = 3;
+        putint(foo); putch(10);
+    }
+    return foo;
+}
+
+int main() {
+    return bar();
+}

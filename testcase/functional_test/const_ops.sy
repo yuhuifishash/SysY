@@ -1,0 +1,16 @@
+int main() {
+    int l1 = -0XA2f; putint(l1); putch(10);
+    int l2 = -017; putint(l2); putch(10);
+    int x1 = 1+1; putint(x1); putch(10);
+    int x2 = 1-1; putint(x2); putch(10);
+    int x3 = 1*1; putint(x3); putch(10);
+    int x4 = 1/1; putint(x4); putch(10);
+    int x5 = 1/-1; putint(x5); putch(10);
+
+    if (1 && 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}

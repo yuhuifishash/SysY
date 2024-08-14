@@ -185,3 +185,8 @@ To generate asm of single file(*.sy) with optimization
 ## Reference
 
 https://github.com/llvm/llvm-project/blob/main/llvm/lib
+
+**testcase reference**
+https://github.com/pku-minic/awesome-sysy
+https://github.com/sally-compiler/SallyCompiler
+tutorials of some problems in OJ https://www.luogu.com.cn/

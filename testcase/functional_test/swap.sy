@@ -1,0 +1,25 @@
+int swap(int i, int j) {
+    if (i < j) {
+        int t = i;
+        i = j;
+        j = t;
+    }
+    return i+2*j;
+}
+
+int sth(int i, int j) {
+    int sum = 0;
+    while(sum < 100) {
+        int t = i;
+        i = j;
+        j = t;
+        sum = sum + i;
+    }
+    return sum;
+}
+
+int main() {
+    //putint(swap(getint(), getint())); putch(10);
+    putint(sth(getint(), getint())); putch(10);
+    return 0;
+}

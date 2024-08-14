@@ -1,0 +1,27 @@
+int g(int n) {
+    putint(1); putch(10);
+    if (n < 8) return 1;
+    else return 0;
+    if(n<8){
+        return 1;
+    }
+    return 0;
+}
+
+int f(int n) {
+    putint(2); putch(10);
+    if (n < 5) return 1;
+    else return 0;
+}
+
+int main() {
+    int i = getint(), j = getint();
+    while(f(i) && g(j)) {
+        if (f(i) || g(j)) {
+            i = i + g(j) + f(i);
+        } else {
+            j = j + g(j) + f(i);
+
+        }
+    }
+}

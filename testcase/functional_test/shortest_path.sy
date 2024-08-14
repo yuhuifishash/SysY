@@ -1,0 +1,76 @@
+
+int main() {
+	int V, E;
+    int i, j, k;
+	V = getint();
+	E = getint();
+
+	int adj[100][100];
+
+	i = 0;
+	while(i < V) {
+		j = 0;
+		while (j < V) {
+			if (i == j) adj[i][j] = 0;
+			else adj[i][j] = 101*100;
+			j = j+1;
+		}
+		i = i+1;
+	}
+
+	i = 0;
+	while (i < E) {
+		int type, a, b, len, w;
+		type = getint();
+		a = getint();
+		b = getint();
+		len = getint();
+
+        // @type == 1
+        if (type) {
+            w = len*len;
+        } else {
+            w = len;
+        }
+
+		adj[a-1][b-1] = w;
+        adj[b-1][a-1] = w;
+
+        i = i + 1;
+	}
+
+    i = 0;
+	while (i < V) {
+        j = 0;
+		while (j < V) {
+            if (adj[i][j] == 101*100) {
+                putch(0x49); putch(0x4e); putch(0x46); putch(0x9);
+            } else {
+                putint(adj[i][j]); putch(0x9);
+            }
+            j = j + 1;
+		}
+		putch(10);
+        i = i + 1;
+	}
+
+    k = 0;
+	while (k < V) {
+        i = 0;
+		while (i < V) {
+            j = 0;
+			while (j < V) {
+				if (adj[i][j] > adj[i][k] + adj[k][j]) {
+					adj[i][j] = adj[i][k] + adj[k][j];
+				}
+                j = j + 1;
+			}
+            i = i + 1;
+		}
+        k = k + 1;
+	}
+
+    putint(adj[0][V-1]);
+
+	return 0;
+}

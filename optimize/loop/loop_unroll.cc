@@ -118,7 +118,7 @@ bool NaturalLoop::ConstantLoopFullyUnroll(CFG *C) {
     LLVMBlock old_latch = *latches.begin();
     LLVMBlock old_preheader = preheader;
     std::set<LLVMBlock> old_loop_nodes = loop_nodes;
-    // TODO("LoopUnroll Not Implemented");
+    
     int i = lb;
     while (!IsLoopEnd(i, ub, info.cond)) {
         std::map<int, int> RegReplaceMap;

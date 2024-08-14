@@ -1,0 +1,13 @@
+int main() {
+    int a[5];
+    int n = getarray(a);
+    int i = 0;
+    while(i < n) {
+        putint(a[i]/1); putch(10);
+        putint(a[i]*1); putch(10);
+        putint(a[i]*-1); putch(10);
+        putint(a[i]%-1); putch(10);
+        putint(a[i]/-1); putch(10);
+        i = i + 1;
+    }
+}

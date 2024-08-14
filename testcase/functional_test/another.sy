@@ -1,0 +1,13 @@
+int p = 0;
+
+int f() {
+    p = 1;
+    return 1;
+}
+
+int main() {
+    int k[4][4] = {};
+    k[p][p] = f();
+    putint(k[3][3]); putch(10);
+    return 0;
+}

@@ -1,0 +1,27 @@
+int f(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8, int x9, int x10, int x11, int x12, int x13, int x14, int x15, int x16, int x17, int x18, int x19, int x20) {
+    return x1+ x2+ x3+ x4+ x5+ x6+ x7+ x8+ x9+ x10+ x11+ x12+ x13+ x14+ x15+ x16+ x17+ x18+ x19+ x20;
+}
+
+int g(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8, int x9, int x10, int x11, int x12, int x13, int x14, int x15, int x16, int x17, int x18, int x19, int x20, int x21, int x22) {
+    return x1+ x2+ x3+ x4+ x5+ x6+ x7+ x8+ x9+ x10+ x11+ x12+ x13+ x14+ x15+ x16+ x17+ x18+ x19+ x20 + x21 + x22;
+}
+
+int func(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9) {
+    int b1 = getint();
+    int b2 = getint();
+    int b3 = getint();
+    int b4 = getint();
+    int b5 = getint();
+    int b6 = getint();
+    int b7 = getint();
+    int b8 = getint();
+    int b9 = getint();
+    int a[3] = {1,2,3};
+    return f(a1, a2, a3, a4, a5, a6, a7, a8, a9, a[0], a[1], a[2], 13, 14, 15, 16, 17, 18, 19, 20)+
+    g(b1, b2, b3, b4, b5, b6, b7, b8, b9, a[2], 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 );
+}
+
+int main() {
+    putint(func(44, 23, 128, 48, 82, 93, 12, 49, 39)); putch(10);
+    return 0;
+}
