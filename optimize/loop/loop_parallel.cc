@@ -120,6 +120,10 @@ bool NaturalLoop::LoopCarriedDependenceTest(CFG *C) {
                 }
                 auto GEPI1 = ResultMap[((RegOperand *)ptr1)->GetRegNo()];
                 auto GEPI2 = ResultMap[((RegOperand *)ptr2)->GetRegNo()];
+                if(GEPI1->GetOpcode() != GETELEMENTPTR || GEPI2->GetOpcode() != GETELEMENTPTR){
+                    return false;
+                }
+                // GEPI1->PrintIR(std::cerr);GEPI2->PrintIR(std::cerr);
                 auto result = CheckDependenceResult(GEPI1, GEPI2);
                 if (result != NONE) {
                     return false;
