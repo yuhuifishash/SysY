@@ -1,0 +1,83 @@
+int A[3300][3300] = {};
+int S[3300] = {};
+int main()
+{
+    int n = getint();
+
+    @for(int i=0;i<n;i=i+1){
+        @for(int j=0;j<n;j=j+1){
+            A[i][j] = i*n+j;
+        }
+    }
+
+    @for(int i=n/61;i<=n-n/21;i=i+1){
+        @for(int j=0;j<n;j=j+1){
+            A[i][j] -= 55;
+        }
+    }
+
+    @for(int i=0;i<n;i=i+2){
+        @for(int j=19+n/121;j<=n-5-n/90;j=j+1){
+            A[i][j] += 66;
+        }
+    }
+
+    @for(int i=5+n/171;n-n/73>=i;i=i+1){
+        @for(int j=0;j<n;j=j+1){
+            if(i+j < n){
+                A[i][j] += 333;
+                A[i][j+1] += 222;
+            }else{
+                A[i][j+1] += 221;
+                A[i][j] += 333;
+            }
+        }
+    }
+
+    @for(int i=n;0<i;i=i-1){
+        @for(int j=n/3;j<=n/2+n/4;j=j+1){
+            if(i>j){
+                A[i][j] -= 666;
+                A[i][j/5] = i+j;
+            }else{
+                A[i][j] -= 666;
+                A[i][j/4] = j+i;
+            }
+            A[i][j/5] = i+j;
+        }
+    }
+
+    @for(int i=n/5;i<n-n/5;i=i+1){
+        @for(int j=n-n/4;j>n/4;j=j-1){
+            if(A[i][j]>0){
+                A[i][j] *= -1;
+            }
+            A[i][j] *= -2;
+            if(A[i][j] < i+j){
+                A[i][j] %= i+j;
+            }
+            A[i][j] %= i+j;
+        }
+    }
+
+    @for(int i=2;i<=n/2 + 500;i=i+1){
+        A[i][n%i] += 5;
+        if(i <= n%i){
+            A[i][n%i] +=5;
+        }
+    }
+
+    @for(int i=0;i<=n;i=i+1){
+        @for(int j=0;j<=n;j=j+1){
+            S[i] = S[i] + A[i][j] + i*j;
+            S[i] %= 998244353;
+        }
+    }
+
+    @for(int i=0;i<=n;i=i+1){
+        putint(S[i]);
+        putch(10);
+    }
+    
+    return 0;
+}
