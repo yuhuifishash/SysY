@@ -71,39 +71,25 @@ void MakeFunctionOneExit(CFG *C) {
     C->BuildCFG();
 }
 
-void RetMotion(CFG *C) { 
-    std::map<int, std::vector<int>> G;
-    for(auto [id,bb]:*C->block_map){
-        auto endI = bb->Instruction_list.back();
-        if(endI->GetOpcode() == BR_UNCOND){
-            auto bruncondI = (BrUncondInstruction*)endI;
-            auto labelid = bruncondI->GetTarget();
-            G[id].push_back(labelid);
-        }else if(endI->GetOpcode() == BR_COND){
-            auto brcondI = (BrCondInstruction*)endI;
-            auto truelabelid = ((LabelOperand*)brcondI->GetTrueLabel())->GetLabelNo();
-            auto falselabelid = ((LabelOperand*)brcondI->GetFalseLabel())->GetLabelNo();
-            G[id].push_back(truelabelid);
-            G[id].push_back(falselabelid);
-        }
+void RetMotion(CFG *C) {
+    if(C->function_def->GetResultType() != VOID){
+        return;
     }
+    auto G = C->G;
     auto blockmap = *C->block_map;
     std::function<int(int)> GetRetBB = [&](int ubbid) {
         if(G[ubbid].empty()){
             return -1;
         }
-        while(1){
+        while(!G[ubbid].empty()){
+            ubbid = G[ubbid][0]->block_id;
             if(G[ubbid].size() == 2){
                 return -1;
-            }
-            ubbid = G[ubbid][0];
-            if(G[ubbid].empty()){
-                break;
             }
             auto bb = blockmap[ubbid];
             if(bb->Instruction_list.size()>1){
                 return -1;
-            }
+            }           
         }
         return ubbid;
     };
@@ -115,27 +101,13 @@ void RetMotion(CFG *C) {
                 if(function_name != C->function_def->GetFunctionName()){
                     continue;
                 }
-                // std::cerr<<function_name<<'\n';
                 auto retbbid = GetRetBB(id);
                 if(retbbid == -1){
                     continue;
                 }
-                
+                std::cerr<<function_name<<'\n';
                 bb->Instruction_list.pop_back();
-                // bb->printIR(std::cerr);
-                std::map<int,int> replacemap;
-                for(auto retbbI : blockmap[retbbid]->Instruction_list){
-                    // retbbI->PrintIR(std::cerr);
-                    if(retbbI->GetResultReg() != nullptr){
-                        auto newreg = GetNewRegOperand(++C->max_reg);
-                        replacemap[retbbI->GetResultRegNo()] = ((RegOperand*)newreg)->GetRegNo();
-                        
-                    }
-                    auto newI = retbbI->CopyInstruction();
-                    newI->ReplaceRegByMap(replacemap);
-                    bb->InsertInstruction(1,newI);
-                }
-                // bb->printIR(std::cerr);
+                bb->InsertInstruction(1,(blockmap[retbbid]->Instruction_list.back())->CopyInstruction());
                 break;
             }
         }

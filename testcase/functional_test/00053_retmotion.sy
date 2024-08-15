@@ -1,0 +1,18 @@
+void f(int n){
+    if(n == 1){
+        putf("f done");
+        return;
+    }
+    if(n%2 == 1){
+        putf("not odd");
+        f(n-2);
+    }else{
+        putf("odd");
+        f(n-1);
+    }
+}
+int main() {
+    int n = getint();
+    f(n);
+    return 0;
+}
