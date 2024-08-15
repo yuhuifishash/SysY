@@ -3,10 +3,6 @@
 #include <deque>
 // #define GVN_DEBUG
 
-void SparseConditionalConstantPropagation(CFG *C);
-// void InstSimplify(CFG *C);
-// void InstCombine(CFG *C);
-void SimplifyCFG(CFG *C);
 void SimpleDCE(CFG *C);
 
 HashTable hashtable;

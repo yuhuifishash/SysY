@@ -167,9 +167,11 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(FindNoWriteStaticGlobal);
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(EliminateEmptyIndexGEP);
-        // llvmIR.PassExecutor(RetMotion);
-        // llvmIR.ElimateUnreachedInstructionAndBlocks();
-        // llvmIR.BuildCFG();
+
+        llvmIR.PassExecutor(RetMotion);
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
+        llvmIR.BuildCFG();
+        
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
@@ -276,7 +278,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
         llvmIR.PassExecutor(SimpleDSE);
         llvmIR.PassExecutor(SimpleDCE);
-        
+
 #ifdef O3_ENABLE
         llvmIR.PassExecutor(GlobalCodeMotion);
 #endif

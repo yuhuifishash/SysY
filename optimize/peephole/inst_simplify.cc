@@ -731,8 +731,6 @@ void GEPStrengthReduce(CFG *C) {
         }
     };
 
-    C->BuildCFG();
-    C->BuildDominatorTree();
     Gepdfs(0);
     GepPtrMap.clear();
     AddDefMap.clear();

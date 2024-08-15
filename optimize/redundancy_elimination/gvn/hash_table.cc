@@ -43,8 +43,6 @@ int HashTable::lookupOrAdd(Instruction I) {
 }
 
 void HashTable::defineDFS(CFG *C) {
-    C->BuildCFG();
-    C->BuildDominatorTree();
     expr_number = 0;
     valuemap.clear();
     resultmap.clear();

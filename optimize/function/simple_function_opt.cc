@@ -23,8 +23,29 @@ void MakeFunctionOneExit(CFG *C) {
         ret_type = RetI->GetType();
         OneExitqueue.push(bb);
     }
-
-    if (ret_cnt <= 1) {
+    if (ret_cnt == 0){
+        // if no return, this indicates that the function has infinite loop and we will definitely arrive this loop
+        // because most programs do not have infinite loop, we make the function only have one ret instructions
+        // though it is wrong in some real-world programs.
+        // TODO(): fix this problem. (now if the function has no ret_block, the pass after will cause SegmentFault)
+        C->block_map->clear();
+        C->max_label = -1;
+        C->max_reg = -1;
+        auto bb = C->NewBlock();
+        if (C->function_def->GetReturnType() == VOID) {
+            bb->InsertInstruction(1, new RetInstruction(VOID, nullptr));
+        } else if (C->function_def->GetReturnType() == I32) {
+            bb->InsertInstruction(1, new RetInstruction(I32, new ImmI32Operand(0)));
+        } else if (C->function_def->GetReturnType() == FLOAT32) {
+            bb->InsertInstruction(1, new RetInstruction(FLOAT32, new ImmF32Operand(0)));
+        } else {
+            ERROR("Unexpected Type");
+        }
+        C->ret_block = bb;
+        C->BuildCFG();
+        return;
+    }
+    if (ret_cnt == 1) {
         C->ret_block = OneExitqueue.front();
         if (!OneExitqueue.empty()) {
             OneExitqueue.pop();
@@ -75,24 +96,24 @@ void RetMotion(CFG *C) {
     if(C->function_def->GetResultType() != VOID){
         return;
     }
-    auto G = C->G;
     auto blockmap = *C->block_map;
     std::function<int(int)> GetRetBB = [&](int ubbid) {
-        if(G[ubbid].empty()){
+        if(C->G[ubbid].empty()){
             return -1;
         }
-        while(!G[ubbid].empty()){
-            ubbid = G[ubbid][0]->block_id;
-            if(G[ubbid].size() == 2){
+        while(!C->G[ubbid].empty()){
+            if(C->G[ubbid].size() >= 2){
                 return -1;
             }
+            ubbid = C->G[ubbid][0]->block_id;
             auto bb = blockmap[ubbid];
-            if(bb->Instruction_list.size()>1){
+            if(bb->Instruction_list.size() > 1){
                 return -1;
             }           
         }
         return ubbid;
     };
+
     for(auto [id,bb]:blockmap){
         for(auto I : bb->Instruction_list){
             if(I->GetOpcode() == CALL){
@@ -105,14 +126,12 @@ void RetMotion(CFG *C) {
                 if(retbbid == -1){
                     continue;
                 }
-                std::cerr<<function_name<<'\n';
                 bb->Instruction_list.pop_back();
-                bb->InsertInstruction(1,(blockmap[retbbid]->Instruction_list.back())->CopyInstruction());
+                bb->InsertInstruction(1,new RetInstruction(VOID,nullptr));
                 break;
             }
         }
     }
-
 }
 
 /**

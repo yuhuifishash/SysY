@@ -8,8 +8,6 @@
 static std::vector<std::vector<LLVMBlock>> BuildCDG(CFG *C) {
     std::vector<std::vector<LLVMBlock>> CDG;
     std::vector<std::vector<LLVMBlock>> CDG_precursor;
-    C->BuildCFG();
-    C->BuildDominatorTree();
     std::vector<int> rd;
     auto G = C->G;
     auto invG = C->invG;
