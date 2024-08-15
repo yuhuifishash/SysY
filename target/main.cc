@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(RetMotion);
         llvmIR.ElimateUnreachedInstructionAndBlocks();
         llvmIR.BuildCFG();
-        
+
         llvmIR.PassExecutor(TailRecursiveEliminate);
         llvmIR.PassExecutor(MakeFunctionOneExit);
 
