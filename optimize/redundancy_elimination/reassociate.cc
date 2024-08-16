@@ -1,6 +1,7 @@
 #include "../../include/cfg.h"
 #include <functional>
-// TODO():Reassociate
+
+// #define REASSOCIATE_DEBUG
 void SimpleDCE(CFG *C);
 void ReassociateAddSubStoreMap(std::deque<Instruction> InstList);
 bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
@@ -37,6 +38,9 @@ we reassociate i + b + c into i + (b + c)
 we consider add and sub
 */
 void LoopInvariantReassociate(CFG *C) {
+    #ifdef REASSOCIATE_DEBUG
+    std::cerr<<C->function_def->GetFunctionName()<<'\n';
+    #endif
     std::map<int, int> usemap;
     for (auto [id, bb] : *C->block_map) {
         for (auto I : bb->Instruction_list) {
@@ -59,6 +63,7 @@ void LoopInvariantReassociate(CFG *C) {
             for (auto it = bb->Instruction_list.begin() + 1; it != bb->Instruction_list.end(); it++) {
                 auto a = *(it - 1);
                 auto b = *it;
+                
                 ArithmeticInstruction *I1;
                 ArithmeticInstruction *I2;
                 /*
@@ -95,6 +100,10 @@ void LoopInvariantReassociate(CFG *C) {
                 if (usemap[result1->GetRegNo()] > 1) {
                     continue;
                 }
+                // #ifdef REASSOCIATE_DEBUG
+                // I1->PrintIR(std::cerr);
+                // I2->PrintIR(std::cerr);
+                // #endif
                 auto I1op1 = I1->GetOperand1();
                 auto I1op2 = I1->GetOperand2();
                 auto I2op1 = I2->GetOperand1();
@@ -114,7 +123,7 @@ void LoopInvariantReassociate(CFG *C) {
                 } else {
                     isconst = 1;
                 }
-
+                
                 /*
                     case 1: a + b + c => r1 = a + b, r2 = r1 + c
                         => (b,c) r1 = b + c, r2 = r1 + a
@@ -171,10 +180,19 @@ void LoopInvariantReassociate(CFG *C) {
                     default:
                         break;
                     }
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    #endif
                     I1->SetOperand1(I1op1);
                     I1->SetOperand2(I1op2);
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    puts("--------------");
+                    #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());
                     }
@@ -203,10 +221,19 @@ void LoopInvariantReassociate(CFG *C) {
                     default:
                         break;
                     }
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    #endif
                     I1->SetOperand1(I1op1);
                     I1->SetOperand2(I1op2);
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    puts("--------------");
+                    #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());
                     }

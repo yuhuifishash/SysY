@@ -215,7 +215,7 @@ int HashTable::lookupOrAddPhi(Instruction I) {
         PairSet.insert(std::make_pair(value_, it->first));
     }
     for (auto it = PairSet.begin(); it != PairSet.end(); ++it) {
-        str += "[%v" + std::to_string(it->first) + "," + it->second->GetFullName() + "]";
+        str += "[%v" + std::to_string(it->first) + "]";
         auto jt = it;
         if ((++jt) != PairSet.end())
             str += ",";

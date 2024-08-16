@@ -108,11 +108,14 @@ bool EliminateDoubleI32Add(Instruction a, Instruction b) {
         if (opb1->GetOperandType() == BasicOperand::REG) {
             opb1_regno = ((RegOperand *)opb1)->GetRegNo();
             if (opb1_regno == resulta_regno) {
-                Ib->SetOperand1(opa1->CopyOperand());
-
+                
                 int consta = ((ImmI32Operand *)opa2)->GetIntImmVal();
                 int constb = ((ImmI32Operand *)opb2)->GetIntImmVal();
-
+                auto ans = 1LL * consta + constb;
+                if(ans > maxINT || ans < nemaxINT){
+                    return false;
+                }
+                Ib->SetOperand1(opa1->CopyOperand());
                 Ib->SetOperand2(new ImmI32Operand(consta + constb));
                 // Ib->PrintIR(std::cerr);
                 return true;
