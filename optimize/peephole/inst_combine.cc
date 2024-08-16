@@ -111,10 +111,10 @@ bool EliminateDoubleI32Add(Instruction a, Instruction b) {
                 
                 int consta = ((ImmI32Operand *)opa2)->GetIntImmVal();
                 int constb = ((ImmI32Operand *)opb2)->GetIntImmVal();
-                auto ans = 1LL * consta + constb;
-                if(ans > maxINT || ans < nemaxINT){
-                    return false;
-                }
+                // auto ans = consta + constb;
+                // if(ans > maxINT || ans < nemaxINT){
+                //     return false;
+                // }
                 Ib->SetOperand1(opa1->CopyOperand());
                 Ib->SetOperand2(new ImmI32Operand(consta + constb));
                 // Ib->PrintIR(std::cerr);
