@@ -25,6 +25,7 @@ void RiscV64LowerFrame::Execute() {
         for (auto &b : func->blocks) {
             cur_block = b;
             if (b->getLabelId() == 0) {
+                // Register para_basereg = current_func->GetNewReg(INT64);
                 int i32_cnt = 0;
                 int f32_cnt = 0;
                 int para_offset = 0;
@@ -44,8 +45,10 @@ void RiscV64LowerFrame::Execute() {
                             rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
                             ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
                             b->push_front(reloc_para);
-                            // b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para,
-                            // GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            //// b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para,
+                            //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+
+                            // b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         i32_cnt++;
@@ -64,8 +67,10 @@ void RiscV64LowerFrame::Execute() {
                             rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
                             ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
                             b->push_front(reloc_para);
-                            // b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para,
-                            // GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            //// b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para,
+                            //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+
+                            // b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         f32_cnt++;
@@ -73,6 +78,8 @@ void RiscV64LowerFrame::Execute() {
                         ERROR("Unknown type");
                     }
                 }
+
+                // cur_block->push_front(rvconstructor->ConstructCopyReg(para_basereg, GetPhysicalReg(RISCV_fp), INT64));
 #ifdef SAVEREGBYCOPY
                 for (int i = 0; i < saveregnum; i++) {
                     if (save_regs[i].type == INT64) {
@@ -301,6 +308,8 @@ void RiscV64LowerStack::Execute() {
                                                             GetPhysicalReg(RISCV_sp), stacksz_reg));
                     b->push_front(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                 }
+                // b->push_front(rvconstructor->ConstructR(RISCV_ADD, GetPhysicalReg(RISCV_fp), GetPhysicalReg(RISCV_sp), GetPhysicalReg(RISCV_x0)));
+                // fp may not be restored at beginning
                 if (restore_at_beginning) {
                     int offset = 0;
                     for (int i = 0; i < 64; i++) {

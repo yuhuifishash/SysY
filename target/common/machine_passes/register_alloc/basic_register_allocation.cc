@@ -164,6 +164,7 @@ void RegisterAllocation::UpdateIntervalsInCurrentFunc() {
         last_use.clear();
         last_def.clear();
     }
+// #define PRINT_INTERVALS
 #ifdef PRINT_INTERVALS
     std::cerr << "Check Intervals " << mfun->getFunctionName().c_str() << " Before Coalesce" << std::endl;
     for (auto interval_pair : intervals) {
