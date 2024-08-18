@@ -84,9 +84,12 @@ private:
 protected:
     int stack_sz;
     int para_sz;
+    bool has_inpara_instack;
     MachineCFG *mcfg;
 
 public:
+    bool HasInParaInStack() { return has_inpara_instack; }
+    void SetHasInParaInStack(bool has) { has_inpara_instack = has; }
     void UpdateMaxLabel(int labelid) { max_exist_label = max_exist_label > labelid ? max_exist_label : labelid; }
     const decltype(parameters) &GetParameters() { return parameters; }
     void AddParameter(Register reg) { parameters.push_back(reg); }
@@ -149,7 +152,7 @@ public:
 
 public:
     MachineFunction(std::string name, MachineBlockFactory *blockfactory)
-        : func_name(name), stack_sz(0), para_sz(0), block_factory(blockfactory), max_exist_label(0) {}
+        : func_name(name), stack_sz(0), para_sz(0), block_factory(blockfactory), max_exist_label(0), has_inpara_instack(false) {}
 };
 
 class MachineUnit {

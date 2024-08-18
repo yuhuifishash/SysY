@@ -166,7 +166,7 @@ bool TryMemOffset (std::list<MachineBaseInstruction *>::iterator &pre,
                                 return true;
                             }
                         } else if (cur_rvins->getImm() == 0) {
-                            Log("Optimized ld +label");
+                            // Log("Optimized ld +label");
                             cur_rvins->setUseLabel(true);
                             cur_rvins->setLabel(pre_rvins->getLabel());
                             cur_rvins->setRs1(pre_rvins->getRs1());
@@ -184,7 +184,7 @@ bool TryMemOffset (std::list<MachineBaseInstruction *>::iterator &pre,
                                 return true;
                             }
                         } else if (cur_rvins->getImm() == 0) {
-                            Log("Optimized sd +label");
+                            // Log("Optimized sd +label");
                             cur_rvins->setUseLabel(true);
                             cur_rvins->setLabel(pre_rvins->getLabel());
                             cur_rvins->setRs2(pre_rvins->getRs1());
