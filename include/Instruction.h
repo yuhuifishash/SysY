@@ -114,6 +114,7 @@ enum LLVMIROpcode {
     FMAX_F32 = 37,
     BITAND = 38,
     FPEXT = 39,
+    SELECT = 40,
 };
 
 // @Operand datatypes
@@ -490,6 +491,34 @@ public:
     }
 
     virtual LLVMType GetResultType() { return I1; }
+    virtual void PrintIR(std::ostream &s);
+    int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
+    Operand GetResultReg() { return result; }
+    void ReplaceRegByMap(const std::map<int, int> &Rule);
+    void ReplaceLabelByMap(const std::map<int, int> &Rule) {}
+    std::vector<Operand> GetNonResultOperands();
+    void SetNonResultOperands(std::vector<Operand> ops);
+    virtual Instruction CopyInstruction();
+    virtual int ConstPropagate(std::map<int, Instruction> &regresult_map);
+};
+
+class SelectInstruction : public BasicInstruction {
+private:
+    enum LLVMType type;
+    Operand op1;
+    Operand op2;
+    Operand cond;
+    Operand result;
+public:
+    SelectInstruction(enum LLVMType t, Operand o1, Operand o2, Operand c, Operand res) {
+        this->opcode = LLVMIROpcode::SELECT;
+        this->type = t;
+        this->op1 = o1;
+        this->op2 = o2;
+        this->cond = c;
+        this->result = res;
+    }
+    virtual LLVMType GetResultType() { return type; }
     virtual void PrintIR(std::ostream &s);
     int GetResultRegNo() { return ((RegOperand *)result)->GetRegNo(); }
     Operand GetResultReg() { return result; }

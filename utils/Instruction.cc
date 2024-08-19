@@ -296,6 +296,11 @@ void FcmpInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     op2 = ops[1];
 }
 
+void SelectInstruction::SetNonResultOperands(std::vector<Operand> ops) {
+    op1 = ops[0];
+    op2 = ops[1];
+}
+
 std::vector<Operand> PhiInstruction::GetNonResultOperands() {
     std::vector<Operand> ret;
     for (auto label_val_pair : phi_list) {
@@ -384,6 +389,14 @@ int AllocaInstruction::GetAllocaSize() {
         sz *= d;
     }
     return sz;
+}
+
+std::vector<Operand> SelectInstruction::GetNonResultOperands() {
+    std::vector<Operand> ret;
+    ret.push_back(op1);
+    ret.push_back(op2);
+    // ret.push_back(cond);
+    return ret;
 }
 
 std::vector<Operand> GetElementptrInstruction::GetNonResultOperands() {
@@ -507,6 +520,13 @@ Instruction FcmpInstruction::CopyInstruction() {
     Operand nop2 = op2->CopyOperand();
     Operand nresult = result->CopyOperand();
     return new FcmpInstruction(type, nop1, nop2, cond, nresult);
+}
+
+Instruction SelectInstruction::CopyInstruction() {
+    Operand nop1 = op1->CopyOperand();
+    Operand nop2 = op2->CopyOperand();
+    Operand nresult = result->CopyOperand();
+    return new SelectInstruction(type, nop1, nop2, cond, nresult);
 }
 
 Instruction PhiInstruction::CopyInstruction() {
@@ -761,6 +781,24 @@ void RetInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
             if (Rule.find(result_reg->GetRegNo()) != Rule.end())
                 ret_val = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
         }
+    }
+}
+
+void SelectInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
+    if (op2->GetOperandType() == BasicOperand::REG) {
+        auto op2_reg = (RegOperand *)op2;
+        if (Rule.find(op2_reg->GetRegNo()) != Rule.end())
+            this->op2 = GetNewRegOperand(Rule.find(op2_reg->GetRegNo())->second);
+    }
+    if (op1->GetOperandType() == BasicOperand::REG) {
+        auto op1_reg = (RegOperand *)op1;
+        if (Rule.find(op1_reg->GetRegNo()) != Rule.end())
+            this->op1 = GetNewRegOperand(Rule.find(op1_reg->GetRegNo())->second);
+    }
+    if (result->GetOperandType() == BasicOperand::REG) {
+        auto result_reg = (RegOperand *)result;
+        if (Rule.find(result_reg->GetRegNo()) != Rule.end())
+            this->result = GetNewRegOperand(Rule.find(result_reg->GetRegNo())->second);
     }
 }
 
