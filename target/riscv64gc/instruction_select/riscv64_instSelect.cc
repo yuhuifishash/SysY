@@ -1,6 +1,8 @@
 #include "riscv64_instSelect.h"
 #include <sstream>
 
+extern bool optimize_flag;
+
 template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstruction *ins) {
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
         // Lazy("Deal with alloca later");
@@ -2249,8 +2251,10 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 cur_mcfg->MakeEdge(i, arc->block_id);
             }
         }
-        cur_mcfg->BuildDominatoorTree();
-        cur_mcfg->BuildLoopForest();
+        if (optimize_flag) {
+            cur_mcfg->BuildDominatoorTree();
+            cur_mcfg->BuildLoopForest();
+        }
     }
 }
 
