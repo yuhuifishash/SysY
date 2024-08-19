@@ -58,6 +58,14 @@ static InstCSEInfo GetCSEInfo(Instruction I) {
             ans.operand_list.push_back(op->GetFullName());
         }
     }
+
+    if(I->GetOpcode() == GETELEMENTPTR){
+        auto GEPI = (GetElementptrInstruction*)I;
+        for(auto dim:GEPI->GetDims()){
+            ans.operand_list.push_back((new ImmI32Operand(dim))->GetFullName());
+        }
+        
+    }
     return ans;
 }
 
