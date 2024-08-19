@@ -850,23 +850,6 @@ void EliminateUselessPhi(CFG *C) {
     }
 }
 
-void NestedLoopWithoutInitValCheck(CFG *C) {
-    for (auto l1 : C->LoopForest.loop_set) {
-        for (auto l2 : C->LoopForest.loop_set) {
-            if(l1 == l2){
-                continue;
-            }
-            if(C->LoopForest.loopG[l1->loop_id].size() != 1){
-                continue;
-            }
-            auto sl = *C->LoopForest.loopG[l1->loop_id].begin();
-            if(sl != l2){
-                continue;
-            }
-            std::cout<<sl->header->block_id<<" "<<l1->header->block_id<<"\n";
-        }
-    }
-}
 
 void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);
