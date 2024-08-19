@@ -642,7 +642,7 @@ void NestedLoopWithoutInitValCheck(CFG *C) {
                 }
             }
             
-            std::cerr<<"NestedLoop "<<l1->header->block_id<<" "<<l2->header->block_id<<"\n";
+            // std::cerr<<"NestedLoop "<<l1->header->block_id<<" "<<l2->header->block_id<<"\n";
 
             std::set<LLVMBlock> new_l1_loop_nodes;
             std::map<int,int> RegReplaceMap;
