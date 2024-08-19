@@ -60,9 +60,11 @@ void SimpleIfConversion(CFG *C) {
 
         auto prepre0 = C->GetPredecessor(pre[0]);
         auto prepre1 = C->GetPredecessor(pre[1]);
+        auto sucpre0 = C->GetSuccessor(pre[0]);
+        auto sucpre1 = C->GetSuccessor(pre[1]);
         LLVMBlock ancient = nullptr;
         std::vector<Instruction> Middle_block;
-        if (prepre0.size() == 1 && prepre0[0] == pre[1]) {
+        if (prepre0.size() == 1 && prepre0[0] == pre[1] && sucpre0.size() == 1) {
             ancient = pre[1];
             // copy pre0
             block_erase_list.push_back(pre[0]->block_id);
@@ -71,7 +73,7 @@ void SimpleIfConversion(CFG *C) {
                     Middle_block.push_back(ins);
                 }
             }
-        } else if (prepre1.size() == 1 && prepre1[0] == pre[0]) {
+        } else if (prepre1.size() == 1 && prepre1[0] == pre[0] && sucpre1.size() == 1) {
             ancient = pre[0];
             // copy pre1
             block_erase_list.push_back(pre[1]->block_id);
@@ -80,7 +82,7 @@ void SimpleIfConversion(CFG *C) {
                     Middle_block.push_back(ins);
                 }
             }
-        } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0]) {
+        } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0] && sucpre0.size() == 1 && sucpre1.size() == 1) {
             ancient = prepre0[0];
             // copy pre0 and pre1
             block_erase_list.push_back(pre[0]->block_id);

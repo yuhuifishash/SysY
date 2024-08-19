@@ -8,6 +8,7 @@
 #include "./riscv64gc/instruction_select/riscv64_lowercopy.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerframe.h"
 #include "./riscv64gc/instruction_select/riscv64_lowerimm.h"
+#include "./riscv64gc/instruction_select/riscv64_lowerselect.h"
 #include "./riscv64gc/optimize/riscv64_branch_predict.h"
 #include "./riscv64gc/optimize/riscv64_cse.h"
 #include "./riscv64gc/optimize/riscv64_ins_schedule.h"
@@ -413,8 +414,8 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(EraseNoUseGlobal);
 
-        // llvmIR.PassExecutor(SimpleIfConversion);
-        // llvmIR.PassExecutor(SimplifyCFG);
+        llvmIR.PassExecutor(SimpleIfConversion);
+        llvmIR.PassExecutor(SimplifyCFG);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
@@ -460,6 +461,7 @@ int main(int argc, char **argv) {
         RiscV64PostRAPeehole(m_unit).Execute();
         // std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();
+        RiscV64LowerSelect(m_unit).Execute();
         // std::cerr<<"LowerStack\n";
         RiscV64LowerStack(m_unit).Execute();
         // std::cerr<<"End\n";

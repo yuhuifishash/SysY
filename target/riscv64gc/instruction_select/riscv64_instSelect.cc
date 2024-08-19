@@ -2080,7 +2080,6 @@ template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectIn
     }
 
     auto br_ins = rvconstructor->ConstructBImm(opcode, cmp_op1, cmp_op2, 0);
-    br_ins->setUseLabel(false);
     auto rd = GetllvmReg(((RegOperand *)ins->GetResultReg())->GetRegNo(), INT64);
     // Extract srctrue and srcfalse
     auto op1 = ins->GetOp1();
