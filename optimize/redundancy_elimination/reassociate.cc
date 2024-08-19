@@ -1,7 +1,7 @@
 #include "../../include/cfg.h"
 #include <functional>
 
-#define REASSOCIATE_DEBUG
+// #define REASSOCIATE_DEBUG
 void SimpleDCE(CFG *C);
 void ReassociateAddSubStoreMap(std::deque<Instruction> InstList);
 bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
@@ -201,7 +201,7 @@ void LoopInvariantReassociate(CFG *C) {
                     #ifdef REASSOCIATE_DEBUG
                     I1->PrintIR(std::cerr);
                     I2->PrintIR(std::cerr);
-                    puts("typ1:--------------");
+                    // puts("typ1:--------------");
                     #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());
@@ -247,7 +247,7 @@ void LoopInvariantReassociate(CFG *C) {
                     #ifdef REASSOCIATE_DEBUG
                     I1->PrintIR(std::cerr);
                     I2->PrintIR(std::cerr);
-                    puts("typ2:--------------");
+                    // puts("typ2:--------------");
                     #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());
