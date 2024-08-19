@@ -204,6 +204,21 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
         llvmIR.PassExecutor(SimpleDSE);
 
+#ifdef O3_ENABLE    
+        llvmIR.BuildLoopInfo();
+        llvmIR.PassExecutor(LoopSimplify);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(LoopClosedSSA);
+        llvmIR.PassExecutor(ScalarEvolution);
+        llvmIR.PassExecutor(NestedLoopWithoutInitValCheck);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+        llvmIR.PassExecutor(AggressiveDeadCodeElimination);
+        llvmIR.ElimateUnreachedInstructionAndBlocks();
+        llvmIR.BuildCFG();
+        llvmIR.BuildDominatorTree();
+        llvmIR.PassExecutor(SimplifyCFG);
+#endif
+
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(LatchPhiCombine);
@@ -236,8 +251,6 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(InstCombine);
         llvmIR.PassExecutor(MinMaxRecognize);
         llvmIR.PassExecutor(SimpleDCE);
-
-        // llvmIR.PassExecutor(NestedLoopWithoutInitValCheck);
 
         llvmIR.BuildFunctionInfo();
         llvmIR.PassExecutor(FunctionInline);
