@@ -8,6 +8,7 @@ bool EliminateDoubleConstDiv(Instruction a, Instruction b);
 bool EliminateMod2EqNeCmp(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
                           std::deque<Instruction>::iterator insertit);
 bool EliminateConstDivIcmp(Instruction a, Instruction b);
+bool EliminateMulAdd(Instruction a, Instruction b);
 void DomTreeDfsI32AddCombine(CFG *C);
 static const int maxINT = 2147483647, nemaxINT = -2147483648;
 
@@ -78,6 +79,7 @@ bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Ins
         changed |= EliminateDoubleConstDiv(*begin, *it);
         changed |= EliminateMod2EqNeCmp(C, *begin, *it, InstList, it);
         changed |= EliminateConstDivIcmp(*begin, *it);
+        changed |= EliminateMulAdd(*begin, *it);
     }
     return changed;
 }
@@ -229,6 +231,33 @@ bool EliminateMulAdd(Instruction a, Instruction b) {
     auto I1op2 = I1->GetOperand2();
     auto I2op1 = I2->GetOperand1();
     auto I2op2 = I2->GetOperand2();
+    if(I1op2->GetFullName() == I2op2->GetFullName()){
+        // c*a+a
+        std::swap(I1op1,I1op2);
+    }else if(I1op2->GetFullName() == I2op1->GetFullName()){
+        // a+c*a
+        std::swap(I1op1,I1op2);
+        std::swap(I2op1,I2op2);
+    }else if(I1op1->GetFullName() == I2op1->GetFullName()){
+        // a+a*c
+        std::swap(I2op1,I2op2);
+    }
+    if(I1op1->GetFullName() != I2op2->GetFullName()){
+        return false;
+    }
+    if(I1op1->GetOperandType() != BasicOperand::REG || I1op2->GetOperandType() != BasicOperand::IMMI32){
+        return false;
+    }
+    auto result1 = I1->GetResultOperand();
+    auto result2 = I2->GetResultOperand();
+    if(result1->GetFullName() != I2op1->GetFullName()){
+        return false;
+    }
+    I2->Setopcode(MUL);
+    I2->SetOperand1(I1op1);
+    auto imm = ((ImmI32Operand*)I1op2)->GetIntImmVal();
+    I2->SetOperand2(new ImmI32Operand(imm+1));
+    // I2->PrintIR(std::cerr);
     return true; 
 }
 
