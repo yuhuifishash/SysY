@@ -24,6 +24,20 @@ B0    B3  may be transformed to B0(B1 B2 use select)->B3
   \B2/
 B0 and B3 only have one successors
 */
+bool IsOpcodeBannedFromSelectMerge (int opcode) {
+    constexpr int banned_list[] = {BR_COND, STORE, CALL, DIV, MOD};
+    for (auto ban_op : banned_list) {
+        if (opcode == ban_op) { return true; }
+    }
+    // return false;
+    constexpr int permit_list[] = {BR_UNCOND, ADD, SUB, MUL, BITXOR, SHL, UMIN_I32, UMAX_I32, SMIN_I32, SMAX_I32, BITCAST, FMIN_F32, FMAX_F32, BITAND, FPEXT, SELECT};
+    for (auto permit_op : permit_list) {
+        if (opcode == permit_op) { return false; }
+    }
+    return true;
+}
+#define MAX_MERGE_NUM 4
+#define MAX_SINGLE_MERGE_NUM 2
 void SimpleIfConversion(CFG *C) {
     std::vector<int> block_erase_list;
     for (auto [id,bb]:*C->block_map) {
@@ -39,24 +53,7 @@ void SimpleIfConversion(CFG *C) {
         if (phi_cnt != 1) { continue; }
         if (phi->GetDataType() != I32) { continue; }
         if (phi->GetPhiList().size() != 2) { continue; }
-        // if (pre[0]->Instruction_list.size() >= 4) { continue; }
-        // if (pre[1]->Instruction_list.size() >= 4) { continue; }
         bool has_side_effect = false;
-
-        for (auto I : pre[0]->Instruction_list) {
-            if (I->GetOpcode() == STORE || I->GetOpcode() == CALL || I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
-                has_side_effect = true;
-                break;
-            }
-        }
-        if (has_side_effect) { continue; }
-        for (auto I : pre[1]->Instruction_list) {
-            if (I->GetOpcode() == STORE || I->GetOpcode() == CALL || I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
-                has_side_effect = true;
-                break;
-            }
-        }
-        if (has_side_effect) { continue; }
 
         auto prepre0 = C->GetPredecessor(pre[0]);
         auto prepre1 = C->GetPredecessor(pre[1]);
@@ -67,6 +64,15 @@ void SimpleIfConversion(CFG *C) {
         if (prepre0.size() == 1 && prepre0[0] == pre[1] && sucpre0.size() == 1) {
             ancient = pre[1];
             // copy pre0
+            for (auto I : pre[0]->Instruction_list) {
+                if (IsOpcodeBannedFromSelectMerge(I->GetOpcode())) {
+                    has_side_effect = true;
+                    break;
+                }
+            }
+            if (has_side_effect) { continue; }
+            // if (pre[0]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
+            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
             block_erase_list.push_back(pre[0]->block_id);
             for (auto ins : pre[0]->Instruction_list) {
                 if (ins->GetOpcode() != BR_UNCOND) {
@@ -76,6 +82,15 @@ void SimpleIfConversion(CFG *C) {
         } else if (prepre1.size() == 1 && prepre1[0] == pre[0] && sucpre1.size() == 1) {
             ancient = pre[0];
             // copy pre1
+            for (auto I : pre[1]->Instruction_list) {
+                if (IsOpcodeBannedFromSelectMerge(I->GetOpcode())) {
+                    has_side_effect = true;
+                    break;
+                }
+            }
+            if (has_side_effect) { continue; }
+            // if (pre[1]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
+            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
             block_erase_list.push_back(pre[1]->block_id);
             for (auto ins : pre[1]->Instruction_list) {
                 if (ins->GetOpcode() != BR_UNCOND) {
@@ -85,6 +100,23 @@ void SimpleIfConversion(CFG *C) {
         } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0] && sucpre0.size() == 1 && sucpre1.size() == 1) {
             ancient = prepre0[0];
             // copy pre0 and pre1
+            for (auto I : pre[0]->Instruction_list) {
+                if (IsOpcodeBannedFromSelectMerge(I->GetOpcode())) {
+                    has_side_effect = true;
+                    break;
+                }
+            }
+            if (has_side_effect) { continue; }
+            for (auto I : pre[1]->Instruction_list) {
+                if (IsOpcodeBannedFromSelectMerge(I->GetOpcode())) {
+                    has_side_effect = true;
+                    break;
+                }
+            }
+            if (has_side_effect) { continue; }
+            if (pre[0]->Instruction_list.size() + pre[1]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
+            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
+            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
             block_erase_list.push_back(pre[0]->block_id);
             block_erase_list.push_back(pre[1]->block_id);
             for (auto ins : pre[0]->Instruction_list) {
@@ -99,7 +131,7 @@ void SimpleIfConversion(CFG *C) {
             }
         } else { continue; }
         if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) { continue; }
-        Log("If Conversion Applied");
+        // Log("If Conversion Applied");
         // pop ancient's br
         Assert(ancient->Instruction_list.back()->GetOpcode() == BR_COND);
         auto brcond_ins = (BrCondInstruction*)ancient->Instruction_list.back();
@@ -118,7 +150,7 @@ void SimpleIfConversion(CFG *C) {
         }
 
         // ancient pushback icmp
-        ancient->InsertInstruction(1, icmp);
+        // ancient->InsertInstruction(1, icmp);
         auto cond = icmp->GetResultReg();
         Assert(cond->GetOperandType() == BasicOperand::REG);
         auto cond_reg = (RegOperand *)cond;
@@ -168,6 +200,7 @@ void SimpleIfConversion(CFG *C) {
         auto select_ins = new SelectInstruction(phi->GetResultType(), true_op, false_op, cond_reg, phi->GetResultOp());
         // ancient->InsertInstruction(1, select_ins);
         bb->Instruction_list[0] = select_ins;
+        bb->InsertInstruction(0, icmp);
 
         // pushback bb
         // for (auto ins : bb->Instruction_list) {

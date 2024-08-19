@@ -390,7 +390,13 @@ public:
     }
     std::vector<Register *> GetWriteReg() {
         Assert(dst->op_type == MachineBaseOperand::REG);
-        return std::vector<Register *>({&(((MachineRegister *)dst)->reg)});
+        std::vector<Register *> ret = {&(((MachineRegister *)dst)->reg)};
+        for (auto reg : cond->GetReadReg()) {
+            ret.push_back(reg);
+        }
+        if (srcfalse->op_type == MachineBaseOperand::REG)
+            ret.push_back(&(((MachineRegister *)srcfalse)->reg));
+        return ret;
     }
 
     MachineSelectInstruction(MachineBaseInstruction *cond, MachineBaseOperand *dst, MachineBaseOperand *srctrue, MachineBaseOperand *srcfalse): cond(cond), dst(dst), srctrue(srctrue), srcfalse(srcfalse), MachineBaseInstruction(MachineBaseInstruction::SELECT) {}

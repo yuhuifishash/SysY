@@ -62,25 +62,23 @@ void RiscV64LowerSelect::Execute() {
                     auto rd = ((MachineRegister*)(m_select->GetDst()))->reg;
                     it = block->erase(it);
                     auto srcfalse = m_select->GetSrcFalse();
-                    // auto srcfalse = m_select->GetSrcTrue();
                     auto srctrue = m_select->GetSrcTrue();
-                    // auto srctrue = m_select->GetSrcFalse();
-                    // Mov False Val
-                    if (srcfalse->op_type == MachineBaseOperand::REG) {
-                        Register reg = ((MachineRegister*)srcfalse)->reg;
+                    // Mov True Val
+                    if (srctrue->op_type == MachineBaseOperand::REG) {
+                        Register reg = ((MachineRegister*)srctrue)->reg;
                         block->insert(it, rvconstructor->ConstructR(RISCV_ADD, rd, reg, GetPhysicalReg(RISCV_x0))); // mov rd, falseval
-                    } else if (srcfalse->op_type == MachineBaseOperand::IMMI) {
-                        block->insert(it, rvconstructor->ConstructUImm(RISCV_LI, rd, ((MachineImmediateInt*)srcfalse)->imm32)); // mov rd, falseval
+                    } else if (srctrue->op_type == MachineBaseOperand::IMMI) {
+                        block->insert(it, rvconstructor->ConstructUImm(RISCV_LI, rd, ((MachineImmediateInt*)srctrue)->imm32)); // mov rd, falseval
                     } else {
                         ERROR("Unexpected src type");
                     }
-                    // Conditional Mov True Val
+                    // Conditional Mov False Val
                     MachineBaseInstruction* true_mov = nullptr;
-                    if (srctrue->op_type == MachineBaseOperand::REG) {
-                        Register reg = ((MachineRegister*)srctrue)->reg;
+                    if (srcfalse->op_type == MachineBaseOperand::REG) {
+                        Register reg = ((MachineRegister*)srcfalse)->reg;
                         true_mov = rvconstructor->ConstructR(RISCV_ADD, rd, reg, GetPhysicalReg(RISCV_x0));
-                    } else if (srctrue->op_type == MachineBaseOperand::IMMI) {
-                        true_mov = rvconstructor->ConstructUImm(RISCV_LI, rd, ((MachineImmediateInt*)srctrue)->imm32);
+                    } else if (srcfalse->op_type == MachineBaseOperand::IMMI) {
+                        true_mov = rvconstructor->ConstructUImm(RISCV_LI, rd, ((MachineImmediateInt*)srcfalse)->imm32);
                     } else {
                         ERROR("Unexpected src type");
                     }

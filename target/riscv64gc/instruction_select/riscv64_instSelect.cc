@@ -1929,7 +1929,7 @@ template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCast
 
 
 template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectInstruction *ins) {
-    Log("SelectInstruction Selected");
+    // Log("SelectInstruction Selected");
     // op1, op2, cond, result
     Assert(ins->GetCond()->GetOperandType() == BasicOperand::REG);
     auto cond_reg = (RegOperand *)ins->GetCond();
