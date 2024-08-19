@@ -458,6 +458,7 @@ int main(int argc, char **argv) {
 #endif
         }
         FastLinearScan(m_unit, &regs, &spiller).Execute();
+        RiscV64ElimateNop(m_unit).Execute();
         RiscV64PostRAPeehole(m_unit).Execute();
         // std::cerr<<"LowerCopy\n";
         RiscV64LowerCopy(m_unit).Execute();

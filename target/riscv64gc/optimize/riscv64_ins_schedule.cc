@@ -343,6 +343,9 @@ void RiscV64InstructionSchedule::ExecuteInBlock() {
         if (ins->arch == MachineBaseInstruction::COMMENT) {
             continue;
         }
+        for (auto reg : ins->GetWriteReg()) {
+            active_set.add(*reg);
+        }
         if (ins->CanSchedule()) {
             schedule_batch.push_back(ins);
         } else {

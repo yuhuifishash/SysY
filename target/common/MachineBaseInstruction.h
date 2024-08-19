@@ -251,7 +251,7 @@ public:
 
 class MachineBaseInstruction {
 public:
-    enum { ARM = 0, RiscV, PHI, COPY, COMMENT, SELECT };
+    enum { ARM = 0, RiscV, PHI, COPY, COMMENT, SELECT, NOP };
     const int arch;
 
 private:
@@ -369,6 +369,18 @@ public:
     int GetLatency() { return 1; }
 };
 
+class MachineNop : public MachineBaseInstruction {
+private:
+    std::vector<Register*> reads, writes;
+public:
+    MachineNop() : MachineBaseInstruction(MachineBaseInstruction::NOP) {}
+    std::vector<Register *> GetReadReg() { return reads; }
+    std::vector<Register *> GetWriteReg() { return writes; }
+    void SetReadReg(std::vector<Register*> reads) { this->reads = reads;}
+    void SetWriteReg(std::vector<Register*> writes) { this->writes = writes;}
+    int GetLatency() { return 0; }
+};
+
 class MachineSelectInstruction : public MachineBaseInstruction {
 private:
     MachineBaseInstruction *cond;
@@ -388,14 +400,23 @@ public:
         }
         return ret;
     }
-    std::vector<Register *> GetWriteReg() {
-        Assert(dst->op_type == MachineBaseOperand::REG);
-        std::vector<Register *> ret = {&(((MachineRegister *)dst)->reg)};
+    std::vector<Register *> GetReadRegnext() {
+        std::vector<Register *> ret;
         for (auto reg : cond->GetReadReg()) {
             ret.push_back(reg);
         }
         if (srcfalse->op_type == MachineBaseOperand::REG)
             ret.push_back(&(((MachineRegister *)srcfalse)->reg));
+        return ret;
+    }
+    std::vector<Register *> GetWriteReg() {
+        Assert(dst->op_type == MachineBaseOperand::REG);
+        std::vector<Register *> ret = {&(((MachineRegister *)dst)->reg)};
+        return ret;
+    }
+    std::vector<Register *> GetWriteRegnext() {
+        Assert(dst->op_type == MachineBaseOperand::REG);
+        std::vector<Register *> ret = {&(((MachineRegister *)dst)->reg)};
         return ret;
     }
 

@@ -89,3 +89,20 @@ void RiscV64LowerSelect::Execute() {
         }
     }
 }
+
+void RiscV64ElimateNop::Execute() {
+    for (auto function : unit->functions) {
+        auto block_it = function->getMachineCFG()->getSeqScanIterator();
+        block_it->open();
+        while (block_it->hasNext()) {
+            auto block = block_it->next()->Mblock;
+            for (auto it = block->begin(); it != block->end(); ++it) {
+                auto &ins = *it;
+                if (ins->arch == MachineBaseInstruction::NOP) {
+                    it = block->erase(it);
+                    --it;
+                }
+            }
+        }
+    }
+}

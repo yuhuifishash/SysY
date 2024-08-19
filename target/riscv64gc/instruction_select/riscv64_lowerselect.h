@@ -10,4 +10,11 @@ public:
     void Execute();
 };
 
+class RiscV64ElimateNop : public MachinePass {
+protected:
+public:
+    RiscV64ElimateNop(MachineUnit *unit) : MachinePass(unit) {}
+    void Execute();
+};
+
 #endif
