@@ -299,6 +299,7 @@ void RiscV64Printer::emit() {
                         printRVfield(sel_ins->GetSrcFalse());
 						s << "\n";
                     }
+				} else if (ins->arch == MachineBaseInstruction::NOP) {
 				} else {
                     ERROR("Unexpected arch");
                 }

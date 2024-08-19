@@ -1929,7 +1929,8 @@ template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCast
 
 
 template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectInstruction *ins) {
-    Log("SelectInstruction Selected");
+    rvconstructor->DisableSchedule();
+    // Log("SelectInstruction Selected");
     // op1, op2, cond, result
     Assert(ins->GetCond()->GetOperandType() == BasicOperand::REG);
     auto cond_reg = (RegOperand *)ins->GetCond();
@@ -2080,7 +2081,6 @@ template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectIn
     }
 
     auto br_ins = rvconstructor->ConstructBImm(opcode, cmp_op1, cmp_op2, 0);
-    br_ins->setUseLabel(false);
     auto rd = GetllvmReg(((RegOperand *)ins->GetResultReg())->GetRegNo(), INT64);
     // Extract srctrue and srcfalse
     auto op1 = ins->GetOp1();
@@ -2103,8 +2103,13 @@ template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectIn
         ERROR("Unexpected op type");
     }
 
-    auto sel_ins = rvconstructor->ConstructSelect(br_ins, rd, optrue, opfalse);
+    auto sel_ins = (MachineSelectInstruction*)rvconstructor->ConstructSelect(br_ins, rd, optrue, opfalse);
     cur_block->push_back(sel_ins);
+    auto livemarker = new MachineNop();
+    livemarker->SetNoSchedule(true);
+    livemarker->SetReadReg(sel_ins->GetReadRegnext());
+    livemarker->SetWriteReg(sel_ins->GetWriteRegnext());
+    cur_block->push_back(livemarker);
 }
 
 template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst) {
