@@ -244,9 +244,9 @@ void RiscV64SSAPeehole::Execute() {
                         break;
                     }
 #ifdef FMATH_FAST
-                    // if (optimize_flag && Tryfmla(jt,it,block)){
-                    //     break;
-                    // }
+                    if (Tryfmla(jt,it,block)){
+                        break;
+                    }
 #endif
                     if (Tryshxadd(jt, it, block)) {
                         break;
