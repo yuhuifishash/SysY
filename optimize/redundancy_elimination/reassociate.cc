@@ -1,7 +1,7 @@
 #include "../../include/cfg.h"
 #include <functional>
 
-// #define REASSOCIATE_DEBUG
+#define REASSOCIATE_DEBUG
 void SimpleDCE(CFG *C);
 void ReassociateAddSubStoreMap(std::deque<Instruction> InstList);
 bool ReassociateAddSub(CFG *C, Instruction a, Instruction b, std::deque<Instruction> &InstList,
@@ -108,8 +108,12 @@ void LoopInvariantReassociate(CFG *C) {
                 auto I1op2 = I1->GetOperand2();
                 auto I2op1 = I2->GetOperand1();
                 auto I2op2 = I2->GetOperand2();
+                bool toExchange = false;
                 if (I2op2->GetFullName() == result1->GetFullName()) {
                     std::swap(I2op1, I2op2);
+                    if(I2->GetOpcode() == SUB){
+                        toExchange = true;
+                    }
                 } else if (I2op1->GetFullName() != result1->GetFullName()) {
                     continue;
                 }
@@ -151,6 +155,7 @@ void LoopInvariantReassociate(CFG *C) {
                 // bool check6 = (!isconst) && (I1op1->GetOperandType() == BasicOperand::IMMF32) &&
                 //               (((ImmF32Operand *)I1op1)->GetFloatVal() != 0.0);
                 if (check1 || (check2 && !check5)) {
+                    // b c is const
                     if (check1 && I1op1->GetOperandType() == BasicOperand::REG) {
                         auto reg22 = (RegOperand *)I1op1;
                         auto regno22 = reg22->GetRegNo();
@@ -158,7 +163,10 @@ void LoopInvariantReassociate(CFG *C) {
                             continue;
                         }
                     }
-
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    #endif
                     switch (type) {
                     case 0:    // a b r1 c -> c b r1 a
                         std::swap(I1op1, I2op2);
@@ -169,10 +177,12 @@ void LoopInvariantReassociate(CFG *C) {
                         std::swap(I1op1, I2op1);
                         break;
                     case 2:    // a b r1 c -> c b r1 a
+                        
                         std::swap(I1op1, I2op2);
                         break;
                     case 3:    // a b r1 c -> b c a r1
                         I1->Setopcode(ADD);
+                        
                         std::swap(I1op1, I1op2);
                         std::swap(I2op1, I2op2);
                         std::swap(I1op2, I2op1);
@@ -180,18 +190,18 @@ void LoopInvariantReassociate(CFG *C) {
                     default:
                         break;
                     }
-                    #ifdef REASSOCIATE_DEBUG
-                    I1->PrintIR(std::cerr);
-                    I2->PrintIR(std::cerr);
-                    #endif
+                    
                     I1->SetOperand1(I1op1);
                     I1->SetOperand2(I1op2);
+                    if(toExchange){
+                        std::swap(I2op1, I2op2);
+                    }
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
                     #ifdef REASSOCIATE_DEBUG
                     I1->PrintIR(std::cerr);
                     I2->PrintIR(std::cerr);
-                    puts("--------------");
+                    puts("typ1:--------------");
                     #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());
@@ -200,6 +210,11 @@ void LoopInvariantReassociate(CFG *C) {
                 }
 
                 if (check4 || (!check2 && check5)) {
+                    // a c is const 
+                    #ifdef REASSOCIATE_DEBUG
+                    I1->PrintIR(std::cerr);
+                    I2->PrintIR(std::cerr);
+                    #endif
                     switch (type) {
                     case 0:    // a b r1 c -> a c r1 b
                         std::swap(I1op2, I2op2);
@@ -221,18 +236,18 @@ void LoopInvariantReassociate(CFG *C) {
                     default:
                         break;
                     }
-                    #ifdef REASSOCIATE_DEBUG
-                    I1->PrintIR(std::cerr);
-                    I2->PrintIR(std::cerr);
-                    #endif
+                    
                     I1->SetOperand1(I1op1);
                     I1->SetOperand2(I1op2);
+                    if(toExchange){
+                        std::swap(I2op1, I2op2);
+                    }
                     I2->SetOperand1(I2op1);
                     I2->SetOperand2(I2op2);
                     #ifdef REASSOCIATE_DEBUG
                     I1->PrintIR(std::cerr);
                     I2->PrintIR(std::cerr);
-                    puts("--------------");
+                    puts("typ2:--------------");
                     #endif
                     if (type != -1) {
                         scev.InvariantSet.insert(result1->GetRegNo());

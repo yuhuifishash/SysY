@@ -1,0 +1,57 @@
+int array3D[205][205][205] = {};
+int main() {
+    int n = getint();
+    @for (int i = 0; i < n; i=i+1) {
+        @for (int j = 0; j < n; j=j+1) {
+            @for (int k = 0; k < n; k=k+1) {
+                array3D[i][j][k]=getint();
+            }
+        }
+    }
+    @for(int p = 1;p <= 100;p=p+1){
+        int imin,imax,jmin,jmax;
+        imin = getint();
+        imax = getint();
+        jmin = getint();
+        jmax = getint();
+        int hash = 0;
+        @for (int i = 0; i < imax; i=i+1) {
+            array3D[i][jmin][jmax] = n - (i + jmin);
+        }
+        @for (int i = imin; i < imax; i=i+1) {
+            hash = (hash + array3D[i][jmin][jmax])%4453;
+            if(hash < 0){
+                hash += 4453;
+            }
+        }
+        @for (int i = 0; i < imax; i=i+1) {
+            array3D[i][jmax][jmin] = 5 * (jmax - i);
+        }
+        @for (int i = imin; i < imax; i=i+1) {
+            hash = (hash + array3D[i][jmax][jmin])%4453;
+            if(hash < 0){
+                hash += 4453;
+            }
+        }
+        @for (int i = 1; i < imax; i=i+1) {
+            array3D[i][jmax][jmax] = n - (i + jmin);
+        }
+        @for (int i = imin; i < imax; i=i+1) {
+            hash = (hash + array3D[i][jmax][jmax])%4453;
+            if(hash < 0){
+                hash += 4453;
+            }
+        }
+        @for (int i = 1; i < imax; i=i+1) {
+            array3D[i][jmin][jmin] = 5 * (jmax - i);
+        }
+        @for (int i = imin; i < imax; i=i+1) {
+            hash = (hash + array3D[i][jmin][jmin])%4453;
+            if(hash < 0){
+                hash += 4453;
+            }
+        }
+        putf("%d\n",hash);
+    }
+    return 0;
+}
