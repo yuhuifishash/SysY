@@ -479,8 +479,7 @@ int main(int argc, char **argv) {
         //     RiscV64InstructionSchedule(m_unit).Execute();
         // }
 
-        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
-        printer->emit();
+        RiscV64Printer(fout, m_unit).emit();
     }
     fout.close();
     return 0;

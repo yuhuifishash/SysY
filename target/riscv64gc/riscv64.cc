@@ -23,6 +23,8 @@ std::vector<Register *> RiscV64Instruction::GetReadReg() {
         return GetJ_typeReadreg();
     case RvOpInfo::CALL_type:
         return GetCall_typeReadreg();
+    case RvOpInfo::BCC_type:
+        return GetBCC_typeReadreg();
     }
     ERROR("Unexpected insformat");
 }
@@ -47,6 +49,8 @@ std::vector<Register *> RiscV64Instruction::GetWriteReg() {
         return GetJ_typeWritereg();
     case RvOpInfo::CALL_type:
         return GetCall_typeWritereg();
+    case RvOpInfo::BCC_type:
+        return GetBCC_typeWritereg();
     }
     ERROR("Unexpected insformat");
 }
@@ -253,7 +257,19 @@ struct RvOpInfo OpTable[] = {[RISCV_SLL] = RvOpInfo{RvOpInfo::R_type, "sll", 1},
                              [RISCV_MAXU] = RvOpInfo{RvOpInfo::R_type, "maxu", 1},
 
                              [RISCV_FCVT_D_S] = RvOpInfo{RvOpInfo::R2_type, "fcvt.d.s", 2},
-                             [RISCV_ZEXT_W] = RvOpInfo{RvOpInfo::R2_type, "zext.w", 1}};
+                             [RISCV_ZEXT_W] = RvOpInfo{RvOpInfo::R2_type, "zext.w", 1},
+
+                             [RISCV_BEQ_CC] = RvOpInfo{RvOpInfo::BCC_type, "beq", 2},
+                             [RISCV_BNE_CC] = RvOpInfo{RvOpInfo::BCC_type, "bne", 1},
+                             [RISCV_BLT_CC] = RvOpInfo{RvOpInfo::BCC_type, "blt", 1},
+                             [RISCV_BGE_CC] = RvOpInfo{RvOpInfo::BCC_type, "bge", 1},
+                             [RISCV_BLTU_CC] = RvOpInfo{RvOpInfo::BCC_type, "bltu", 1},
+                             [RISCV_BGEU_CC] = RvOpInfo{RvOpInfo::BCC_type, "bgeu", 1},
+                             [RISCV_BGT_CC] = RvOpInfo{RvOpInfo::BCC_type, "bgt", 1},
+                             [RISCV_BLE_CC] = RvOpInfo{RvOpInfo::BCC_type, "ble", 1},
+                             [RISCV_BGTU_CC] = RvOpInfo{RvOpInfo::BCC_type, "bgtu", 1},
+                             [RISCV_BLEU_CC] = RvOpInfo{RvOpInfo::BCC_type, "bleu", 1},
+};
 
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 #pragma GCC diagnostic ignored "-Wc99-designator"

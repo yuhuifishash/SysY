@@ -251,7 +251,7 @@ public:
 
 class MachineBaseInstruction {
 public:
-    enum { ARM = 0, RiscV, PHI, COPY, COMMENT };
+    enum { ARM = 0, RiscV, PHI, COPY, COMMENT, SELECT };
     const int arch;
 
 private:
@@ -367,5 +367,37 @@ public:
     MachineBaseOperand *GetDst() { return dst; }
     MachineDataType GetCopyType() { return copy_type; }
     int GetLatency() { return 1; }
+};
+
+class MachineSelectInstruction : public MachineBaseInstruction {
+private:
+    MachineBaseInstruction *cond;
+    MachineBaseOperand *dst;
+    MachineBaseOperand *srctrue;
+    MachineBaseOperand *srcfalse;
+
+public:
+    std::vector<Register *> GetReadReg() {
+        std::vector<Register *> ret;
+        if (srctrue->op_type == MachineBaseOperand::REG)
+            ret.push_back(&(((MachineRegister *)srctrue)->reg));
+        if (srcfalse->op_type == MachineBaseOperand::REG)
+            ret.push_back(&(((MachineRegister *)srcfalse)->reg));
+        for (auto reg : cond->GetReadReg()) {
+            ret.push_back(reg);
+        }
+        return ret;
+    }
+    std::vector<Register *> GetWriteReg() {
+        Assert(dst->op_type == MachineBaseOperand::REG);
+        return std::vector<Register *>({&(((MachineRegister *)dst)->reg)});
+    }
+
+    MachineSelectInstruction(MachineBaseInstruction *cond, MachineBaseOperand *dst, MachineBaseOperand *srctrue, MachineBaseOperand *srcfalse): cond(cond), dst(dst), srctrue(srctrue), srcfalse(srcfalse), MachineBaseInstruction(MachineBaseInstruction::SELECT) {}
+    MachineBaseInstruction *GetCond() { return cond; }
+    MachineBaseOperand *GetDst() { return dst; }
+    MachineBaseOperand *GetSrcTrue() { return srctrue; }
+    MachineBaseOperand *GetSrcFalse() { return srcfalse; }
+    int GetLatency() { return 2; }
 };
 #endif
