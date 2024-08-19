@@ -211,6 +211,7 @@ bool EliminateSubEq(Instruction a, Instruction b) {
             SubI2->SetOperand1(new ImmF32Operand(0));
         }
         SubI2->SetOperand2(I1op2);
+        return true;
         // SubI2->PrintIR(std::cerr);
     }
     return false;
@@ -218,7 +219,18 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 
 // TODO():EliminateMulAdd
 // a*c + a => a*(c+1) (c is const and c+1 can not overflow)
-bool EliminateMulAdd(Instruction a, Instruction b) { return false; }
+bool EliminateMulAdd(Instruction a, Instruction b) { 
+    if(a->GetOpcode() != MUL || b->GetOpcode() != ADD){
+        return false;
+    }
+    auto I1 = (ArithmeticInstruction*)a;
+    auto I2 = (ArithmeticInstruction*)b;
+    auto I1op1 = I1->GetOperand1();
+    auto I1op2 = I1->GetOperand2();
+    auto I2op1 = I2->GetOperand1();
+    auto I2op2 = I2->GetOperand2();
+    return true; 
+}
 
 // c1 > 0 && c2 > 0
 // if(%r / c1 > c2) => if(%r > (c2+1)*c1-1)
