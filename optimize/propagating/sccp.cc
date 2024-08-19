@@ -331,6 +331,15 @@ int FcmpInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     return 1;
 }
 
+int SelectInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
+    auto &lattice = ConstLatticeMap[this];
+    if (lattice.status == ConstLattice::VAR) {
+        return 0;
+    }
+    lattice.status = ConstLattice::VAR;
+    return 1;
+}
+
 int CallInstruction::ConstPropagate(std::map<int, Instruction> &regresult_map) {
     auto &lattice = ConstLatticeMap[this];
     if (lattice.status == ConstLattice::VAR) {

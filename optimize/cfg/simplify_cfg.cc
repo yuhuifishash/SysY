@@ -22,11 +22,11 @@ void EliminateSimpleShortCircult(CFG *C) {
   /B1\
 B0    B3  may be transformed to B0(B1 B2 use select)->B3
   \B2/
-
-B0--->B2  may be transformed to B0(B1 use select)->B2
-  \B1/
+B0 and B3 only have one successors
 */
-void SimpleIfConversion(CFG *C) {}
+void SimpleIfConversion(CFG *C) {
+
+}
 
 /*
 L0(bb1):

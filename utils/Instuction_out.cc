@@ -497,6 +497,13 @@ void RetInstruction::PrintIR(std::ostream &s) {
     s << "\n";
 }
 
+void SelectInstruction::PrintIR(std::ostream &s) {
+    s << "select i1 " << cond;
+    s << ", " << type << " " << op1;
+    s << ", " << type << " " << op2;
+    s << "\n";
+}
+
 /*
 Syntax:
 <result> = getelementptr <ty>, ptr <ptrval>{, [inrange] <ty> <idx>}*
