@@ -289,7 +289,6 @@ int CalculateGroupLCA(std::vector<int> &reg_occurblockids, MachineDominatorTree 
 void RiscV64LowerStack::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
-        func->getMachineCFG()->BuildDominatoorTree();
         std::vector<std::vector<int>> saveregs_occurblockids, saveregs_rwblockids;
         GatherUseSregs(func, saveregs_occurblockids, saveregs_rwblockids);
         std::vector<int> sd_blocks;
@@ -310,6 +309,7 @@ void RiscV64LowerStack::Execute() {
         bool restore_at_beginning = (-8 + func->GetStackSize()) >= 2048;
         if (!optimize_flag) { restore_at_beginning = true; }
         if (!restore_at_beginning) {
+            func->getMachineCFG()->BuildDominatoorTree();
             for (int i = 0; i < saveregs_occurblockids.size(); i++) {
                 auto &vld = saveregs_rwblockids[i];
                 auto &vsd = saveregs_rwblockids[i];
