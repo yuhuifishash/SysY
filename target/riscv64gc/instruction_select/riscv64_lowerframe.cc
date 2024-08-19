@@ -11,6 +11,8 @@ RISCV_fs6, RISCV_fs7, RISCV_fs8, RISCV_fs9, RISCV_fs10, RISCV_fs11, RISCV_ra,
 };
 constexpr int saveregnum = 25;
 
+extern bool optimize_flag;
+
 void RiscV64LowerFrame::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
@@ -162,6 +164,55 @@ void GatherUseSregs(MachineFunction *func, std::vector<std::vector<int>> &reg_de
     }
 }
 
+void GatherUseSregs (MachineFunction* func, std::vector<int>& saveregs) {
+    int RegNeedSaved[64] = {
+        [RISCV_s0] = 1,
+        [RISCV_s1] = 1,
+        [RISCV_s2] = 1,
+        [RISCV_s3] = 1,
+        [RISCV_s4] = 1,
+        [RISCV_s5] = 1,
+        [RISCV_s6] = 1,
+        [RISCV_s7] = 1,
+        [RISCV_s8] = 1,
+        [RISCV_s9] = 1,
+        [RISCV_s10] = 1,
+        [RISCV_s11] = 1,
+        [RISCV_fs0] = 1,
+        [RISCV_fs1] = 1,
+        [RISCV_fs2] = 1,
+        [RISCV_fs3] = 1,
+        [RISCV_fs4] = 1,
+        [RISCV_fs5] = 1,
+        [RISCV_fs6] = 1,
+        [RISCV_fs7] = 1,
+        [RISCV_fs8] = 1,
+        [RISCV_fs9] = 1,
+        [RISCV_fs10] = 1,
+        [RISCV_fs11] = 1,
+        [RISCV_ra] = 1,
+    };
+    for (auto &b : func->blocks) {
+        for (auto ins : *b) {
+            for (auto reg : ins->GetWriteReg()) {
+                if (reg->is_virtual == false) {
+                    if (RegNeedSaved[reg->reg_no]) {
+                        RegNeedSaved[reg->reg_no] = 0;
+                        saveregs.push_back(reg->reg_no);
+                    }
+                }
+            }
+        }
+    }
+    // save fp
+    if (func->HasInParaInStack()) {
+        if (RegNeedSaved[RISCV_fp]) {
+            RegNeedSaved[RISCV_fp] = 0;
+            saveregs.push_back(RISCV_fp);
+        }
+    }
+}
+
 void GetDfsOrder(MachineDominatorTree *domtree, int cur, std::vector<int> &order, std::map<int, int> &vsd) {
     order.push_back(cur);
     vsd[cur] = 1;
@@ -238,36 +289,42 @@ int CalculateGroupLCA(std::vector<int> &reg_occurblockids, MachineDominatorTree 
 void RiscV64LowerStack::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
-        func->getMachineCFG()->BuildDominatoorTree();
         std::vector<std::vector<int>> saveregs_occurblockids, saveregs_rwblockids;
+        GatherUseSregs(func, saveregs_occurblockids, saveregs_rwblockids);
         std::vector<int> sd_blocks;
         std::vector<int> ld_blocks;
         std::vector<int> restore_offset;
         sd_blocks.resize(64);
         ld_blocks.resize(64);
         restore_offset.resize(64);
-        GatherUseSregs(func, saveregs_occurblockids, saveregs_rwblockids);
         int saveregnum = 0, cur_restore_offset = 0;
         for (int i = 0; i < saveregs_occurblockids.size(); i++) {
             auto &vld = saveregs_rwblockids[i];
-            auto &vsd = saveregs_rwblockids[i];
             if (!vld.empty()) {
                 saveregnum++;
-                cur_restore_offset -= 8;
-                restore_offset[i] = cur_restore_offset;
-                ld_blocks[i] = CalculateGroupLCA(vld, &func->getMachineCFG()->PostDomTree,
-                                                 func->getMachineCFG()->ret_block->Mblock->getLabelId());
-                if (ld_blocks[i] != func->getMachineCFG()->ret_block->Mblock->getLabelId()) {
-                    ld_blocks[i] = func->getMachineCFG()->PostDomTree.idom[ld_blocks[i]]->getLabelId();
-                }
-                vsd.push_back(ld_blocks[i]);
-                sd_blocks[i] = CalculateGroupLCA(vsd, &func->getMachineCFG()->DomTree, 0);
             }
         }
         func->AddStackSize(saveregnum * 8);
         auto mcfg = func->getMachineCFG();
         bool restore_at_beginning = (-8 + func->GetStackSize()) >= 2048;
+        if (!optimize_flag) { restore_at_beginning = true; }
         if (!restore_at_beginning) {
+            func->getMachineCFG()->BuildDominatoorTree();
+            for (int i = 0; i < saveregs_occurblockids.size(); i++) {
+                auto &vld = saveregs_rwblockids[i];
+                auto &vsd = saveregs_rwblockids[i];
+                if (!vld.empty()) {
+                    cur_restore_offset -= 8;
+                    restore_offset[i] = cur_restore_offset;
+                    ld_blocks[i] = CalculateGroupLCA(vld, &func->getMachineCFG()->PostDomTree,
+                                                    func->getMachineCFG()->ret_block->Mblock->getLabelId());
+                    if (ld_blocks[i] != func->getMachineCFG()->ret_block->Mblock->getLabelId()) {
+                        ld_blocks[i] = func->getMachineCFG()->PostDomTree.idom[ld_blocks[i]]->getLabelId();
+                    }
+                    vsd.push_back(ld_blocks[i]);
+                    sd_blocks[i] = CalculateGroupLCA(vsd, &func->getMachineCFG()->DomTree, 0);
+                }
+            }
             for (int i = 0; i < saveregs_occurblockids.size(); i++) {
                 if (!saveregs_occurblockids[i].empty()) {
                     int regno = i;

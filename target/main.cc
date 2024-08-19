@@ -107,6 +107,8 @@ void LoopParallel(CFG *C, LLVMIR *IR);
 
 enum Target { ARMV7 = 1, RV64GC = 2 } target;
 
+bool optimize_flag = false;
+
 int main(int argc, char **argv) {
     // target = ARMV7;
     target = RV64GC;
@@ -162,7 +164,7 @@ int main(int argc, char **argv) {
     llvmIR.CFGInit();
     llvmIR.BuildCFG();
 
-    bool optimize_flag =
+    optimize_flag =
     (argc == 6 && (strcmp(argv[optimize_tag], "-O1") == 0 || strcmp(argv[optimize_tag], "-O2") == 0));
     if (optimize_flag) {
         llvmIR.PassExecutor(FindNoWriteStaticGlobal);
@@ -495,8 +497,7 @@ int main(int argc, char **argv) {
         //     RiscV64InstructionSchedule(m_unit).Execute();
         // }
 
-        MachinePrinter *printer = new RiscV64Printer(fout, m_unit);
-        printer->emit();
+        RiscV64Printer(fout, m_unit).emit();
     }
     fout.close();
     return 0;

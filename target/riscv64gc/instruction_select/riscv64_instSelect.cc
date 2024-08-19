@@ -1,6 +1,8 @@
 #include "riscv64_instSelect.h"
 #include <sstream>
 
+extern bool optimize_flag;
+
 template <> void RiscV64Selector::ConvertAndAppend<LoadInstruction *>(LoadInstruction *ins) {
     if (ins->GetPointer()->GetOperandType() == BasicOperand::REG) {
         // Lazy("Deal with alloca later");
@@ -1924,6 +1926,187 @@ template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCast
     }
 }
 
+
+
+template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectInstruction *ins) {
+    Log("SelectInstruction Selected");
+    // op1, op2, cond, result
+    Assert(ins->GetCond()->GetOperandType() == BasicOperand::REG);
+    auto cond_reg = (RegOperand *)ins->GetCond();
+    auto br_reg = GetllvmReg(cond_reg->GetRegNo(), INT64);
+    auto cmp_ins = cmp_context[br_reg];
+    int opcode;
+    Register cmp_rd, cmp_op1, cmp_op2;
+    if (cmp_ins->GetOpcode() == ICMP) {
+        auto icmp_ins = (IcmpInstruction *)cmp_ins;
+        if (icmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG) {
+            cmp_op1 = GetllvmReg(((RegOperand *)icmp_ins->GetOp1())->GetRegNo(), INT64);
+        } else if (icmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMI32) {
+            // volatile int temp = ((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal();
+            if (((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal() != 0) {
+                cmp_op1 = GetNewReg(INT64);
+                auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(
+                cmp_op1, ((ImmI32Operand *)icmp_ins->GetOp1())->GetIntImmVal(), INT64);
+                cur_block->push_back(copy_imm_instr);
+            } else {
+                cmp_op1 = GetPhysicalReg(RISCV_x0);
+            }
+        } else {
+            ERROR("Unexpected ICMP op1 type");
+        }
+        if (icmp_ins->GetOp2()->GetOperandType() == BasicOperand::REG) {
+            cmp_op2 = GetllvmReg(((RegOperand *)icmp_ins->GetOp2())->GetRegNo(), INT64);
+        } else if (icmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMI32) {
+            if (((ImmI32Operand *)icmp_ins->GetOp2())->GetIntImmVal() != 0) {
+                cmp_op2 = GetNewReg(INT64);
+                auto copy_imm_instr = rvconstructor->ConstructCopyRegImmI(
+                cmp_op2, ((ImmI32Operand *)icmp_ins->GetOp2())->GetIntImmVal(), INT64);
+                cur_block->push_back(copy_imm_instr);
+            } else {
+                cmp_op2 = GetPhysicalReg(RISCV_x0);
+            }
+        } else {
+            ERROR("Unexpected ICMP op2 type");
+        }
+        switch (icmp_ins->GetCompareCondition()) {
+        case eq:    // beq
+            opcode = RISCV_BEQ;
+            break;
+        case ne:    // bne
+            opcode = RISCV_BNE;
+            break;
+        case ugt:    // bgtu --p
+            opcode = RISCV_BGTU;
+            break;
+        case uge:    // bgeu
+            opcode = RISCV_BGEU;
+            break;
+        case ult:    // bltu
+            opcode = RISCV_BLTU;
+            break;
+        case ule:    // bleu --p
+            opcode = RISCV_BLEU;
+            break;
+        case sgt:    // bgt --p
+            opcode = RISCV_BGT;
+            break;
+        case sge:    // bge
+            opcode = RISCV_BGE;
+            break;
+        case slt:    // blt
+            opcode = RISCV_BLT;
+            break;
+        case sle:    // ble --p
+            opcode = RISCV_BLE;
+            break;
+        default:
+            ERROR("Unexpected ICMP cond");
+        }
+    } else if (cmp_ins->GetOpcode() == FCMP) {
+        ERROR("No Fcmp Support Yet");
+        auto fcmp_ins = (FcmpInstruction *)cmp_ins;
+        if (fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::REG) {
+            cmp_op1 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp1())->GetRegNo(), FLOAT64);
+        } else if (fcmp_ins->GetOp1()->GetOperandType() == BasicOperand::IMMF32) {
+            cmp_op1 = GetNewReg(FLOAT64);
+            auto cmp_oppre = GetNewReg(INT64);
+            // float float_val = ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal();
+            // cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre, *(int *)&float_val, INT64));
+            // cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X, cmp_op1, cmp_oppre));
+            auto copy_imm_instr =
+            rvconstructor->ConstructCopyRegImmF(cmp_op1, ((ImmF32Operand *)fcmp_ins->GetOp1())->GetFloatVal(), FLOAT64);
+            cur_block->push_back(copy_imm_instr);
+        } else {
+            ERROR("Unexpected FCMP op1 type");
+        }
+        if (fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::REG) {
+            cmp_op2 = GetllvmReg(((RegOperand *)fcmp_ins->GetOp2())->GetRegNo(), FLOAT64);
+        } else if (fcmp_ins->GetOp2()->GetOperandType() == BasicOperand::IMMF32) {
+            cmp_op2 = GetNewReg(FLOAT64);
+            auto cmp_oppre = GetNewReg(INT64);
+            // float float_val = ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal();
+            // cur_block->push_back(rvconstructor->ConstructCopyRegImmI(cmp_oppre, *(int *)&float_val, INT64));
+            // cur_block->push_back(rvconstructor->ConstructR2(RISCV_FMV_W_X, cmp_op2, cmp_oppre));
+            auto copy_imm_instr =
+            rvconstructor->ConstructCopyRegImmF(cmp_op2, ((ImmF32Operand *)fcmp_ins->GetOp2())->GetFloatVal(), FLOAT64);
+            cur_block->push_back(copy_imm_instr);
+        } else {
+            ERROR("Unexpected FCMP op2 type");
+        }
+        cmp_rd = GetNewReg(INT64);
+        switch (fcmp_ins->GetCompareCondition()) {
+        case OEQ:
+        case UEQ:
+            // FEQ.S
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, cmp_rd, cmp_op1, cmp_op2));
+            opcode = RISCV_BNE;
+            break;
+        case OGT:
+        case UGT:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, cmp_rd, cmp_op2, cmp_op1));
+            opcode = RISCV_BNE;
+            break;
+        case OGE:
+        case UGE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, cmp_rd, cmp_op2, cmp_op1));
+            opcode = RISCV_BNE;
+            break;
+        case OLT:
+        case ULT:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLT_S, cmp_rd, cmp_op1, cmp_op2));
+            opcode = RISCV_BNE;
+            break;
+        case OLE:
+        case ULE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FLE_S, cmp_rd, cmp_op1, cmp_op2));
+            opcode = RISCV_BNE;
+            break;
+        case ONE:
+        case UNE:
+            cur_block->push_back(rvconstructor->ConstructR(RISCV_FEQ_S, cmp_rd, cmp_op1, cmp_op2));
+            opcode = RISCV_BEQ;
+            break;
+        case ORD:
+        case UNO:
+        case TRUE:
+        case FALSE:
+        default:
+            ERROR("Unexpected FCMP cond");
+        }
+        cmp_op1 = cmp_rd;
+        cmp_op2 = GetPhysicalReg(RISCV_x0);
+    } else {
+        ERROR("No Cmp Before select");
+    }
+
+    auto br_ins = rvconstructor->ConstructBImm(opcode, cmp_op1, cmp_op2, 0);
+    br_ins->setUseLabel(false);
+    auto rd = GetllvmReg(((RegOperand *)ins->GetResultReg())->GetRegNo(), INT64);
+    // Extract srctrue and srcfalse
+    auto op1 = ins->GetOp1();
+    MachineBaseOperand *optrue = nullptr;
+    if (op1->GetOperandType() == BasicOperand::REG) {
+        optrue = new MachineRegister(GetllvmReg(((RegOperand*)op1)->GetRegNo(), INT64));
+    } else if (op1->GetOperandType() == BasicOperand::IMMI32) {
+        optrue = new MachineImmediateInt(((ImmI32Operand*)op1)->GetIntImmVal());
+    } else {
+        ERROR("Unexpected op type");
+    }
+
+    auto op2 = ins->GetOp2();
+    MachineBaseOperand *opfalse = nullptr;
+    if (op2->GetOperandType() == BasicOperand::REG) {
+        opfalse = new MachineRegister(GetllvmReg(((RegOperand*)op2)->GetRegNo(), INT64));
+    } else if (op2->GetOperandType() == BasicOperand::IMMI32) {
+        opfalse = new MachineImmediateInt(((ImmI32Operand*)op2)->GetIntImmVal());
+    } else {
+        ERROR("Unexpected op type");
+    }
+
+    auto sel_ins = rvconstructor->ConstructSelect(br_ins, rd, optrue, opfalse);
+    cur_block->push_back(sel_ins);
+}
+
 template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst) {
 #ifdef ENABLE_COMMENT
     std::ostringstream oss;
@@ -2000,6 +2183,9 @@ template <> void RiscV64Selector::ConvertAndAppend<Instruction>(Instruction inst
     case BITCAST:
         ConvertAndAppend<BitCastInstruction *>((BitCastInstruction *)inst);
         break;
+    case SELECT:
+        ConvertAndAppend<SelectInstruction *>((SelectInstruction *)inst);
+        break;
     }
     rvconstructor->EnableSchedule();
 }
@@ -2065,8 +2251,10 @@ void RiscV64Selector::SelectInstructionAndBuildCFG() {
                 cur_mcfg->MakeEdge(i, arc->block_id);
             }
         }
-        cur_mcfg->BuildDominatoorTree();
-        cur_mcfg->BuildLoopForest();
+        if (optimize_flag) {
+            cur_mcfg->BuildDominatoorTree();
+            cur_mcfg->BuildLoopForest();
+        }
     }
 }
 

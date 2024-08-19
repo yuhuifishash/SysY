@@ -69,6 +69,7 @@ template <> void RiscV64Printer::printRVfield<MachineBaseOperand *>(MachineBaseO
     }
 }
 
+template <> void RiscV64Printer::printAsm<MachineBaseInstruction *>(MachineBaseInstruction *ins);
 template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instruction *ins) {
     s << OpTable[ins->getOpcode()].name << "\t\t";
     if (strlen(OpTable[ins->getOpcode()].name) <= 3) {
@@ -165,13 +166,20 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
     case RvOpInfo::CALL_type:
         s << ins->getLabel().name;
         break;
+	case RvOpInfo::BCC_type:
+        printRVfield(ins->getRs1());
+        s << ",";
+        printRVfield(ins->getRs2());
+        s << ",1f; ";
+        printAsm(ins->GetSubInstruction());
+		s << "; 1: ";
+        break;
     default:
         ERROR("Unexpected instruction format");
     }
     if (!ins->CanSchedule()) {
         s << " # Can't schedule";
     }
-    s << "\n";
 }
 
 template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyInstruction *ins) {
@@ -182,7 +190,6 @@ template <> void RiscV64Printer::printAsm<MachineCopyInstruction *>(MachineCopyI
     if (!ins->CanSchedule()) {
         s << " # Can't schedule";
     }
-    s << "\n";
 }
 
 template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiInstruction *ins) {
@@ -196,7 +203,6 @@ template <> void RiscV64Printer::printAsm<MachinePhiInstruction *>(MachinePhiIns
         s << ",%L" << label;
         s << "] ";
     }
-    s << "\n";
 }
 
 template <> void RiscV64Printer::printMachineIR<RiscV64Instruction *>(RiscV64Instruction *ins) {
@@ -263,20 +269,37 @@ void RiscV64Printer::emit() {
                     }
                     s << "\t";
                     printAsm((RiscV64Instruction *)ins);
+					s << "\n";
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
                     if (::print_comment) {
                         s << "\t";
                         printAsm((MachinePhiInstruction *)ins);
+						s << "\n";
                     }
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     s << "\t";
                     printAsm((MachineCopyInstruction *)ins);
+					s << "\n";
                 } else if (ins->arch == MachineBaseInstruction::COMMENT) {
                     if (::print_comment) {
                         s << "\t";
                         s << "# " << ((MachineComment *)ins)->GetComment();
+						s << "\n";
                     }
-                } else {
+                } else if (ins->arch == MachineBaseInstruction::SELECT) {
+                    if (::print_comment) {
+                        s << "\t";
+						auto sel_ins = (MachineSelectInstruction *)ins;
+						printAsm(sel_ins->GetCond());
+						s << "|";
+                        printRVfield(sel_ins->GetDst());
+						s << ",";
+                        printRVfield(sel_ins->GetSrcTrue());
+						s << ",";
+                        printRVfield(sel_ins->GetSrcFalse());
+						s << "\n";
+                    }
+				} else {
                     ERROR("Unexpected arch");
                 }
             }

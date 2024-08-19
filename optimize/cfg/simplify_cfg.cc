@@ -25,9 +25,67 @@ B0    B3  may be transformed to B0(B1 B2 use select)->B3
 B0 and B3 only have one successors
 */
 void SimpleIfConversion(CFG *C) {
-    for(auto [id,bb]:*C->block_map){
+    // for(auto [id,bb]:*C->block_map) {
+    //     auto pre = C->GetPredecessor(id);
+    //     if (pre.size() != 2) { continue; }
+    //     int phi_cnt = 0;
+    //     PhiInstruction *phi = nullptr;
+    //     for (auto I : bb->Instruction_list) {
+    //         if (I->GetOpcode() != PHI) { break; }
+    //         phi_cnt++;
+    //         phi = (PhiInstruction *)I;
+    //     }
+    //     if (phi_cnt != 1) { continue; }
+    //     if (phi->GetPhiList().size() != 2) { continue; }
+    //     auto prepre0 = C->GetPredecessor(pre[0]);
+    //     auto prepre1 = C->GetPredecessor(pre[1]);
+    //     LLVMBlock ancient = nullptr;
+    //     std::vector<Instruction> Middle_block;
+    //     if (prepre0.size() == 1 && prepre0[0] == pre[1]) {
+    //         ancient = pre[1];
+    //         // copy pre0
+    //         for (auto ins : pre[0]->Instruction_list) {
+    //             if (ins->GetOpcode() != BR_UNCOND) {
+    //                 Middle_block.push_back(ins);
+    //             }
+    //         }
+    //     } else if (prepre1.size() == 1 && prepre1[0] == pre[0]) {
+    //         ancient = pre[0];
+    //         // copy pre1
+    //         for (auto ins : pre[1]->Instruction_list) {
 
-    }
+    //         }
+    //     } else if (prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0]) {
+    //         ancient = prepre0[0];
+    //         // copy pre0 and pre1
+    //         for (auto ins : pre[0]->Instruction_list) {
+
+    //         }
+    //         for (auto ins : pre[1]->Instruction_list) {
+
+    //         }
+    //     } else { continue; }
+    //     if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) { continue; }
+    //     // pop ancient's br
+    //     ancient->Instruction_list.pop_back();
+    //     // pop ancient's icmp and save
+    //     Assert(ancient->Instruction_list.back()->GetOpcode() == ICMP);
+    //     auto icmp = ancient->Instruction_list.back();
+    //     ancient->Instruction_list.pop_back();
+    //     // ancient pushback Middle_block
+    //     for (auto ins : Middle_block) {
+    //         ancient->InsertInstruction(1, ins);
+    //     }
+    //     // ancient pushback icmp
+    //     ancient->InsertInstruction(1, icmp);
+    //     // ancient pushback select
+
+    //     // pushback bb
+    //     for (auto ins : bb->Instruction_list) {
+    //         ancient->InsertInstruction(1, ins);
+    //     }
+    // }
+    // C->BuildCFG();
 }
 
 /*

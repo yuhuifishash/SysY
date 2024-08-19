@@ -510,6 +510,9 @@ private:
     Operand cond;
     Operand result;
 public:
+    Operand GetCond() { return cond; }
+    Operand GetOp1() { return op1; }
+    Operand GetOp2() { return op2; }
     SelectInstruction(enum LLVMType t, Operand o1, Operand o2, Operand c, Operand res) {
         this->opcode = LLVMIROpcode::SELECT;
         this->type = t;

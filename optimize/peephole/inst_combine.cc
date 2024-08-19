@@ -79,7 +79,7 @@ bool ApplyCombineRules(CFG *C, std::deque<Instruction> &InstList, std::deque<Ins
         changed |= EliminateDoubleConstDiv(*begin, *it);
         changed |= EliminateMod2EqNeCmp(C, *begin, *it, InstList, it);
         changed |= EliminateConstDivIcmp(*begin, *it);
-        changed |= EliminateMulAdd(*begin, *it);
+        // changed |= EliminateMulAdd(*begin, *it);
     }
     return changed;
 }
@@ -222,43 +222,44 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 // TODO():EliminateMulAdd
 // a*c + a => a*(c+1) (c is const and c+1 can not overflow)
 bool EliminateMulAdd(Instruction a, Instruction b) { 
-    if(a->GetOpcode() != MUL || b->GetOpcode() != ADD){
-        return false;
-    }
-    auto I1 = (ArithmeticInstruction*)a;
-    auto I2 = (ArithmeticInstruction*)b;
-    auto I1op1 = I1->GetOperand1();
-    auto I1op2 = I1->GetOperand2();
-    auto I2op1 = I2->GetOperand1();
-    auto I2op2 = I2->GetOperand2();
-    if(I1op2->GetFullName() == I2op2->GetFullName()){
-        // c*a+a
-        std::swap(I1op1,I1op2);
-    }else if(I1op2->GetFullName() == I2op1->GetFullName()){
-        // a+c*a
-        std::swap(I1op1,I1op2);
-        std::swap(I2op1,I2op2);
-    }else if(I1op1->GetFullName() == I2op1->GetFullName()){
-        // a+a*c
-        std::swap(I2op1,I2op2);
-    }
-    if(I1op1->GetFullName() != I2op2->GetFullName()){
-        return false;
-    }
-    if(I1op1->GetOperandType() != BasicOperand::REG || I1op2->GetOperandType() != BasicOperand::IMMI32){
-        return false;
-    }
-    auto result1 = I1->GetResultOperand();
-    auto result2 = I2->GetResultOperand();
-    if(result1->GetFullName() != I2op1->GetFullName()){
-        return false;
-    }
-    I2->Setopcode(MUL);
-    I2->SetOperand1(I1op1);
-    auto imm = ((ImmI32Operand*)I1op2)->GetIntImmVal();
-    I2->SetOperand2(new ImmI32Operand(imm+1));
-    // I2->PrintIR(std::cerr);
-    return true; 
+    // if(a->GetOpcode() != MUL || b->GetOpcode() != ADD){
+    //     return false;
+    // }
+    // auto I1 = (ArithmeticInstruction*)a;
+    // auto I2 = (ArithmeticInstruction*)b;
+    // auto I1op1 = I1->GetOperand1();
+    // auto I1op2 = I1->GetOperand2();
+    // auto I2op1 = I2->GetOperand1();
+    // auto I2op2 = I2->GetOperand2();
+    // if(I1op2->GetFullName() == I2op2->GetFullName()){
+    //     // c*a+a
+    //     std::swap(I1op1,I1op2);
+    // }else if(I1op2->GetFullName() == I2op1->GetFullName()){
+    //     // a+c*a
+    //     std::swap(I1op1,I1op2);
+    //     std::swap(I2op1,I2op2);
+    // }else if(I1op1->GetFullName() == I2op1->GetFullName()){
+    //     // a+a*c
+    //     std::swap(I2op1,I2op2);
+    // }
+    // if(I1op1->GetFullName() != I2op2->GetFullName()){
+    //     return false;
+    // }
+    // if(I1op1->GetOperandType() != BasicOperand::REG || I1op2->GetOperandType() != BasicOperand::IMMI32){
+    //     return false;
+    // }
+    // auto result1 = I1->GetResultOperand();
+    // auto result2 = I2->GetResultOperand();
+    // if(result1->GetFullName() != I2op1->GetFullName()){
+    //     return false;
+    // }
+    // I2->Setopcode(MUL);
+    // I2->SetOperand1(I1op1);
+    // auto imm = ((ImmI32Operand*)I1op2)->GetIntImmVal();
+    // I2->SetOperand2(new ImmI32Operand(imm+1));
+    // // I2->PrintIR(std::cerr);
+    // return true; 
+    return false;
 }
 
 // c1 > 0 && c2 > 0
