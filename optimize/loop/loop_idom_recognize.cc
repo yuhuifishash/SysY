@@ -458,3 +458,286 @@ bool NaturalLoop::LoopIdomRecognize(CFG *C) {
 
     return false;
 }
+
+
+/*
+int i = 0;
+int j = 0;
+while(i < n){
+    while(j < n){
+        do_something
+        j = j + 1;
+    }
+    do_something
+    i = i + 1;
+}
+
+-----------------------------------------
+
+i = 0;
+if(i < n){
+    do_somthing
+    while(j < n){
+        do_something
+        j = j + 1
+    }
+    i = i + 1
+}
+while(i < n){
+    do_something
+    i = i + 1
+}
+*/
+void NestedLoopWithoutInitValCheck(CFG *C) {
+    std::map<int, Instruction> ResultMap;
+
+    for (auto [id, bb] : *C->block_map) {
+        for (auto I : bb->Instruction_list) {
+            I->SetBlockID(bb->block_id);
+            int v = I->GetResultRegNo();
+            if (v != -1) {    // result exists
+                ResultMap[v] = I;
+            }
+        }
+    }
+
+
+    for (auto l1 : C->LoopForest.loop_set) {
+        for (auto l2 : C->LoopForest.loop_set) {
+            if(l1 == l2){
+                continue;
+            }
+            if(C->LoopForest.loopG[l1->loop_id].size() != 1){
+                continue;
+            }
+            auto sl = *C->LoopForest.loopG[l1->loop_id].begin();
+            if(sl != l2){
+                continue;
+            }
+            // if(l1->scev.is_simpleloop == false || l2->scev.is_simpleloop == false){
+            //     continue;
+            // }
+            if(l2->exiting_nodes.size() != 1){
+                continue;
+            }
+            if(l2->exit_nodes.size() != 1){
+                continue;
+            }
+            if(l1->exit_nodes.size() != 1){
+                continue;
+            }
+            if(l1->exiting_nodes.size() != 1){
+                continue;
+            }
+            auto l1_exiting = *l1->exiting_nodes.begin();
+            auto l1_exit = *l1->exit_nodes.begin();
+            auto l2_exiting = *l2->exiting_nodes.begin();
+            auto l2_exit = *l2->exit_nodes.begin();
+            assert(l1->latches.size() == 1);
+            auto l1_latch = *l1->latches.begin();
+            if(l1_exiting != l1->header){
+                continue;
+            }
+            if(l2_exiting != l2->header){
+                continue;
+            }
+            // std::cerr<<sl->header->block_id<<" "<<l1->header->block_id<<"\n";
+            int l2_header_phicnt = 0;
+            PhiInstruction* l2_phiI;
+            for(auto I:l2->header->Instruction_list){
+                if(I->GetOpcode() == PHI){
+                    ++l2_header_phicnt;
+                    l2_phiI = (PhiInstruction*)I;
+                }
+            }
+            if(l2_header_phicnt != 1){
+                continue;
+            }
+            
+            //check l2 lcssa
+            int l2_lcssacnt = 0;
+            PhiInstruction* l2_lcssaI;
+            for(auto I:l2_exit->Instruction_list){
+                if(I->GetOpcode() == PHI){
+                    ++l2_lcssacnt;
+                    l2_lcssaI = (PhiInstruction*)I;
+                }
+            }
+            if(l2_lcssacnt != 1){
+                continue;
+            }
+
+            if(l2_lcssaI->GetValOperand(l2_exiting->block_id) != l2_phiI->GetResultReg()){
+                continue;
+            }
+            // l2_lcssaI->PrintIR(std::cerr);
+            // l2_phiI->PrintIR(std::cerr);
+            auto init_val = l2_phiI->GetValOperand(l2->preheader->block_id);
+            if(init_val->GetOperandType() != BasicOperand::REG){
+                continue;
+            }
+            auto init_val_reg = (RegOperand*)init_val;
+            auto init_resultI = ResultMap[init_val_reg->GetRegNo()];
+            if(init_resultI == nullptr){
+                continue;
+            }
+            if(init_resultI->GetOpcode() != PHI){
+                continue;
+            }
+            if(init_resultI->GetBlockID() != l1->header->block_id){
+                continue;
+            }
+
+            // init_resultI->PrintIR(std::cerr);
+            auto init_latchval = ((PhiInstruction*)init_resultI)->GetValOperand(l1_latch->block_id);
+
+            if(init_latchval != l2_lcssaI->GetResultReg()){
+                continue;
+            }
+
+            auto l2_exitingI = *(l2_exiting->Instruction_list.end()-2);
+            if(l2_exitingI->GetOpcode() != ICMP){
+                continue;
+            }
+            auto l2_exitingIcmpI = (IcmpInstruction*)l2_exitingI;
+            auto op1 = l2_exitingIcmpI->GetOp1();
+            auto op2 = l2_exitingIcmpI->GetOp2();
+
+            auto scev1 = l2->scev.GetOperandSCEV(op1), scev2 = l2->scev.GetOperandSCEV(op2);
+
+            if (scev1 == nullptr || scev2 == nullptr) {
+                continue;
+            }
+            if (scev1->len > 2 || scev2->len > 2) {
+                continue;
+            }
+            if (scev1->len == 2 && scev2->len == 2) {
+                continue;
+            }
+            if (scev1->len == 1 && scev2->len == 1) {
+                continue;
+            }
+            if(scev1->len == 2 && scev2->len == 1) {
+                if(op2->GetOperandType() == BasicOperand::REG){
+                    auto op2_resultI = ResultMap[((RegOperand*)op2)->GetRegNo()];
+                    if(op2_resultI != nullptr){
+                        auto resbbid = op2_resultI->GetBlockID();
+                        auto resbb = (*C->block_map)[resbbid];
+                        if(l1->loop_nodes.find(resbb) != l1->loop_nodes.end()){
+                            continue;
+                        }
+                    }
+                }
+            }
+            if(scev1->len == 1 && scev2->len == 2) {
+                if(op1->GetOperandType() == BasicOperand::REG){
+                    auto op1_resultI = ResultMap[((RegOperand*)op1)->GetRegNo()];
+                    if(op1_resultI != nullptr){
+                        auto resbbid = op1_resultI->GetBlockID();
+                        auto resbb = (*C->block_map)[resbbid];
+                        if(l1->loop_nodes.find(resbb) != l1->loop_nodes.end()){
+                            continue;
+                        }
+                    }
+                }
+            }
+            
+            // std::cerr<<"NestedLoop "<<l1->header->block_id<<" "<<l2->header->block_id<<"\n";
+
+            std::set<LLVMBlock> new_l1_loop_nodes;
+            std::map<int,int> RegReplaceMap;
+            std::map<int,int> LabelReplaceMap;
+            LLVMBlock nexit = nullptr, nexiting = nullptr;
+            LLVMBlock nheader = nullptr, nl2_exit = nullptr;
+            for(auto bb:l1->loop_nodes){
+                if(l2->loop_nodes.find(bb) != l2->loop_nodes.end()){
+                    continue; // erase the loop l2 in new loop
+                }
+                auto nbb = C->NewBlock();
+                new_l1_loop_nodes.insert(nbb);
+                if(bb == l1_exiting){
+                    nexiting = nbb;
+                }
+                if(bb == l1->header){
+                    nheader = nbb;
+                }
+                if(bb == l2_exit){
+                    nl2_exit = nbb;
+                }
+                
+                LabelReplaceMap[bb->block_id] = nbb->block_id;
+                for(auto I:bb->Instruction_list){
+                    auto nI = I->CopyInstruction();
+                    nbb->InsertInstruction(1,nI);
+                    int res_regno = I->GetResultRegNo();
+                    if (res_regno != -1) {
+                        RegReplaceMap[res_regno] = ++C->max_reg;
+                    }
+                }
+            }
+            LabelReplaceMap[l2->header->block_id] = nl2_exit->block_id;
+
+            
+            for(auto bb:new_l1_loop_nodes){
+                for(auto I:bb->Instruction_list){
+                    I->ReplaceRegByMap(RegReplaceMap);
+                    I->ReplaceLabelByMap(LabelReplaceMap);
+                }
+            }
+            
+            // nl2_exit phi_cnt = 1
+            // we need to change this phi to phi i32 [0,%l2_exiting]
+            for(auto l2:nl2_exit->Instruction_list){
+                if(l2->GetOpcode() == PHI){
+                    auto phiI = (PhiInstruction*)l2;
+                    phiI->SetValOperand(nl2_exit->block_id,new ImmI32Operand(0));
+                }else{
+                    break;
+                }
+            }
+
+
+            // change phi in nl1_header
+            for(int i = 0; i < l1->header->Instruction_list.size(); ++i){
+                auto I1 = l1->header->Instruction_list[i];
+                auto I2 = nheader->Instruction_list[i];
+                if(I1->GetOpcode() == PHI){
+                    auto PhiI1 = (PhiInstruction*)I1;
+                    auto PhiI2 = (PhiInstruction*)I2;
+                    auto val = PhiI1->GetValOperand(l1_latch->block_id);
+                    PhiI2->SetNewFrom(l1->preheader->block_id, l1_latch->block_id);
+                    PhiI2->SetValOperand(l1_latch->block_id, val);
+                    PhiI1->ErasePhi(l1_latch->block_id);
+                }
+            }
+
+            // l1_latch -> nexit
+            auto l1_latchendI = l1_latch->Instruction_list.back();
+            assert(l1_latchendI->GetOpcode() == BR_UNCOND);
+            auto l1_latchendbrI = (BrUncondInstruction*)l1_latchendI;
+            l1_latchendbrI->SetTarget(GetNewLabelOperand(nheader->block_id));
+
+            // add phi val l1_exiting -> l1_exit
+            // and change phi in l1_exit
+            for (auto I:l1_exit->Instruction_list){
+                if(I->GetOpcode() == PHI){
+                    auto PhiI = (PhiInstruction*)I;
+                    auto val = PhiI->GetValOperand(l1_exiting->block_id);
+                    assert(val->GetOperandType() == BasicOperand::REG);
+                    auto resultI = ResultMap[((RegOperand*)val)->GetRegNo()];
+                    assert(resultI->GetOpcode() == PHI);
+                    auto phiresultI = (PhiInstruction*)resultI;
+                    I->ReplaceRegByMap(RegReplaceMap);
+                    I->ReplaceLabelByMap(LabelReplaceMap);
+                    PhiI->InsertPhi(phiresultI->GetValOperand(l1->preheader->block_id),GetNewLabelOperand(l1_exiting->block_id));
+                    break;
+                }
+            }
+
+
+            C->BuildCFG();
+            C->BuildDominatorTree();
+            return;
+        }
+    }
+}

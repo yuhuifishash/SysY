@@ -25,67 +25,176 @@ B0    B3  may be transformed to B0(B1 B2 use select)->B3
 B0 and B3 only have one successors
 */
 void SimpleIfConversion(CFG *C) {
-    // for(auto [id,bb]:*C->block_map) {
-    //     auto pre = C->GetPredecessor(id);
-    //     if (pre.size() != 2) { continue; }
-    //     int phi_cnt = 0;
-    //     PhiInstruction *phi = nullptr;
-    //     for (auto I : bb->Instruction_list) {
-    //         if (I->GetOpcode() != PHI) { break; }
-    //         phi_cnt++;
-    //         phi = (PhiInstruction *)I;
-    //     }
-    //     if (phi_cnt != 1) { continue; }
-    //     if (phi->GetPhiList().size() != 2) { continue; }
-    //     auto prepre0 = C->GetPredecessor(pre[0]);
-    //     auto prepre1 = C->GetPredecessor(pre[1]);
-    //     LLVMBlock ancient = nullptr;
-    //     std::vector<Instruction> Middle_block;
-    //     if (prepre0.size() == 1 && prepre0[0] == pre[1]) {
-    //         ancient = pre[1];
-    //         // copy pre0
-    //         for (auto ins : pre[0]->Instruction_list) {
-    //             if (ins->GetOpcode() != BR_UNCOND) {
-    //                 Middle_block.push_back(ins);
-    //             }
-    //         }
-    //     } else if (prepre1.size() == 1 && prepre1[0] == pre[0]) {
-    //         ancient = pre[0];
-    //         // copy pre1
-    //         for (auto ins : pre[1]->Instruction_list) {
+    std::vector<int> block_erase_list;
+    for (auto [id,bb]:*C->block_map) {
+        auto pre = C->GetPredecessor(id);
+        if (pre.size() != 2) { continue; }
+        int phi_cnt = 0;
+        PhiInstruction *phi = nullptr;
+        for (auto I : bb->Instruction_list) {
+            if (I->GetOpcode() != PHI) { break; }
+            phi_cnt++;
+            phi = (PhiInstruction *)I;
+        }
+        if (phi_cnt != 1) { continue; }
+        if (phi->GetDataType() != I32) { continue; }
+        if (phi->GetPhiList().size() != 2) { continue; }
+        // if (pre[0]->Instruction_list.size() >= 4) { continue; }
+        // if (pre[1]->Instruction_list.size() >= 4) { continue; }
+        bool has_side_effect = false;
 
-    //         }
-    //     } else if (prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0]) {
-    //         ancient = prepre0[0];
-    //         // copy pre0 and pre1
-    //         for (auto ins : pre[0]->Instruction_list) {
+        for (auto I : pre[0]->Instruction_list) {
+            if (I->GetOpcode() == STORE || I->GetOpcode() == CALL || I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
+                has_side_effect = true;
+                break;
+            }
+        }
+        if (has_side_effect) { continue; }
+        for (auto I : pre[1]->Instruction_list) {
+            if (I->GetOpcode() == STORE || I->GetOpcode() == CALL || I->GetOpcode() == DIV || I->GetOpcode() == MOD) {
+                has_side_effect = true;
+                break;
+            }
+        }
+        if (has_side_effect) { continue; }
 
-    //         }
-    //         for (auto ins : pre[1]->Instruction_list) {
+        auto prepre0 = C->GetPredecessor(pre[0]);
+        auto prepre1 = C->GetPredecessor(pre[1]);
+        LLVMBlock ancient = nullptr;
+        std::vector<Instruction> Middle_block;
+        if (prepre0.size() == 1 && prepre0[0] == pre[1]) {
+            ancient = pre[1];
+            // copy pre0
+            block_erase_list.push_back(pre[0]->block_id);
+            for (auto ins : pre[0]->Instruction_list) {
+                if (ins->GetOpcode() != BR_UNCOND) {
+                    Middle_block.push_back(ins);
+                }
+            }
+        } else if (prepre1.size() == 1 && prepre1[0] == pre[0]) {
+            ancient = pre[0];
+            // copy pre1
+            block_erase_list.push_back(pre[1]->block_id);
+            for (auto ins : pre[1]->Instruction_list) {
+                if (ins->GetOpcode() != BR_UNCOND) {
+                    Middle_block.push_back(ins);
+                }
+            }
+        } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0]) {
+            ancient = prepre0[0];
+            // copy pre0 and pre1
+            block_erase_list.push_back(pre[0]->block_id);
+            block_erase_list.push_back(pre[1]->block_id);
+            for (auto ins : pre[0]->Instruction_list) {
+                if (ins->GetOpcode() != BR_UNCOND) {
+                    Middle_block.push_back(ins);
+                }
+            }
+            for (auto ins : pre[1]->Instruction_list) {
+                if (ins->GetOpcode() != BR_UNCOND) {
+                    Middle_block.push_back(ins);
+                }
+            }
+        } else { continue; }
+        if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) { continue; }
+        Log("If Conversion Applied");
+        // pop ancient's br
+        Assert(ancient->Instruction_list.back()->GetOpcode() == BR_COND);
+        auto brcond_ins = (BrCondInstruction*)ancient->Instruction_list.back();
+        auto truelabel = (LabelOperand*)brcond_ins->GetTrueLabel();
+        auto falselabel = (LabelOperand*)brcond_ins->GetFalseLabel();
+        ancient->Instruction_list.pop_back();
 
-    //         }
-    //     } else { continue; }
-    //     if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) { continue; }
-    //     // pop ancient's br
-    //     ancient->Instruction_list.pop_back();
-    //     // pop ancient's icmp and save
-    //     Assert(ancient->Instruction_list.back()->GetOpcode() == ICMP);
-    //     auto icmp = ancient->Instruction_list.back();
-    //     ancient->Instruction_list.pop_back();
-    //     // ancient pushback Middle_block
-    //     for (auto ins : Middle_block) {
-    //         ancient->InsertInstruction(1, ins);
-    //     }
-    //     // ancient pushback icmp
-    //     ancient->InsertInstruction(1, icmp);
-    //     // ancient pushback select
+        // pop ancient's icmp and save
+        Assert(ancient->Instruction_list.back()->GetOpcode() == ICMP);
+        auto icmp = (IcmpInstruction*)ancient->Instruction_list.back();
+        ancient->Instruction_list.pop_back();
 
-    //     // pushback bb
-    //     for (auto ins : bb->Instruction_list) {
-    //         ancient->InsertInstruction(1, ins);
-    //     }
-    // }
-    // C->BuildCFG();
+        // ancient pushback Middle_block
+        for (auto ins : Middle_block) {
+            ancient->InsertInstruction(1, ins);
+        }
+
+        // ancient pushback icmp
+        ancient->InsertInstruction(1, icmp);
+        auto cond = icmp->GetResultReg();
+        Assert(cond->GetOperandType() == BasicOperand::REG);
+        auto cond_reg = (RegOperand *)cond;
+
+        // ancient pushback bruncond
+        ancient->InsertInstruction(1, new BrUncondInstruction(GetNewLabelOperand(id)));
+
+        // ancient pushback select
+        // decide which T which F
+        auto pair1 = phi->GetPhiList()[0];
+        auto pair2 = phi->GetPhiList()[1];
+
+        Assert(pair1.first->GetOperandType() == BasicOperand::LABEL);
+        Assert(pair2.first->GetOperandType() == BasicOperand::LABEL);
+
+        auto label1 = (LabelOperand*)pair1.first;
+        auto label2 = (LabelOperand*)pair2.first;
+
+        auto op1 = pair1.second;
+        auto op2 = pair2.second;
+
+        auto true_op = op1;
+        auto false_op = op2;
+
+        if (label1->GetLabelNo() == truelabel->GetLabelNo() && label2->GetLabelNo() == falselabel->GetLabelNo()) {
+            true_op = op1;
+            false_op = op2;
+        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() && label1->GetLabelNo() == falselabel->GetLabelNo()) {
+            true_op = op2;
+            false_op = op1;
+        } else if (label1->GetLabelNo() == truelabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id && falselabel->GetLabelNo() == id) {
+            true_op = op1;
+            false_op = op2;
+        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id && falselabel->GetLabelNo() == id) {
+            true_op = op2;
+            false_op = op1;
+        } else if (label1->GetLabelNo() == falselabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id && truelabel->GetLabelNo() == id) {
+            true_op = op2;
+            false_op = op1;
+        } else if (label2->GetLabelNo() == falselabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id && truelabel->GetLabelNo() == id) {
+            true_op = op1;
+            false_op = op2;
+        } else {
+            ERROR("If Conversion Error");
+        }
+
+        auto select_ins = new SelectInstruction(phi->GetResultType(), true_op, false_op, cond_reg, phi->GetResultOp());
+        // ancient->InsertInstruction(1, select_ins);
+        bb->Instruction_list[0] = select_ins;
+
+        // pushback bb
+        // for (auto ins : bb->Instruction_list) {
+        //     if (ins->GetOpcode() != PHI) {
+        //         ancient->InsertInstruction(1, ins);
+        //     }
+        // }
+
+        // // successors phi: id -> ancient
+        // for (auto succ : C->GetSuccessor(id)) {
+        //     for (auto I : succ->Instruction_list) {
+        //         if (I->GetOpcode() != PHI) { break; }
+        //         auto phi_ins = (PhiInstruction *)I;
+        //         auto&phi_list = phi_ins->GetPhiList();
+        //         for (int i = 0;i<phi_list.size();i++) {
+        //             auto& phi_pair = phi_list[i];
+        //             if (((LabelOperand*)phi_pair.first)->GetLabelNo() == id) {
+        //                 phi_pair.first = GetNewLabelOperand(ancient->block_id);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
+        // block_erase_list.push_back(id);
+    }
+    for (auto id : block_erase_list) {
+        C->block_map->erase(id);
+    }
+    C->BuildCFG();
 }
 
 /*
@@ -908,23 +1017,6 @@ void EliminateUselessPhi(CFG *C) {
     }
 }
 
-void NestedLoopWithoutInitValCheck(CFG *C) {
-    for (auto l1 : C->LoopForest.loop_set) {
-        for (auto l2 : C->LoopForest.loop_set) {
-            if(l1 == l2){
-                continue;
-            }
-            if(C->LoopForest.loopG[l1->loop_id].size() != 1){
-                continue;
-            }
-            auto sl = *C->LoopForest.loopG[l1->loop_id].begin();
-            if(sl != l2){
-                continue;
-            }
-            std::cout<<sl->header->block_id<<" "<<l1->header->block_id<<"\n";
-        }
-    }
-}
 
 void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);

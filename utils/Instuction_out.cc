@@ -498,6 +498,7 @@ void RetInstruction::PrintIR(std::ostream &s) {
 }
 
 void SelectInstruction::PrintIR(std::ostream &s) {
+    s << result << " = ";
     s << "select i1 " << cond;
     s << ", " << type << " " << op1;
     s << ", " << type << " " << op2;

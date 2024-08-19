@@ -1,5 +1,7 @@
 #include "riscv64_peehole.h"
 
+extern bool optimize_flag;
+
 bool TryAddi(std::list<MachineBaseInstruction *>::iterator &pre, std::list<MachineBaseInstruction *>::iterator &cur,
              MachineBlock *block) {
     auto pre_ins = *pre;
@@ -50,6 +52,35 @@ bool Tryfmla(std::list<MachineBaseInstruction *>::iterator &pre, std::list<Machi
                     return true;
                 } else if (pre_rvins->getRd() == cur_rvins->getRs2()) {
                     diff_op = cur_rvins->getRs1();
+                }
+            }
+        }
+        if (pre_rvins->getOpcode() == RISCV_FMUL_S && cur_rvins->getOpcode() == RISCV_FSUB_S) {
+            if (!pre_rvins->getRd().is_virtual) return false;
+            if (pre_rvins->getRd() == cur_rvins->getRs1() || pre_rvins->getRd() == cur_rvins->getRs2()) {
+                auto diff_op = cur_rvins->getRs1();
+                if (pre_rvins->getRd() == cur_rvins->getRs1()) {
+                    // r0 = r1 * r2
+                    // r3 = r0 - r4
+
+                    // r3 = r1 * r2 - r4
+                    // Log("Performed fmsub");
+                    diff_op = cur_rvins->getRs2();
+                    cur = block->erase(cur);
+                    block->insert(cur, rvconstructor->ConstructR4(RISCV_FMSUB_S, cur_rvins->getRd(), pre_rvins->getRs1(), pre_rvins->getRs2(), diff_op));
+                    --cur;
+                    return true;
+                } else if (pre_rvins->getRd() == cur_rvins->getRs2()) {
+                    // r0 = r1 * r2
+                    // r3 = r4 - r0
+
+                    // r3 = -r1 * r2 + r4
+                    // Log("Performed fnmadd");
+                    diff_op = cur_rvins->getRs1();
+                    cur = block->erase(cur);
+                    block->insert(cur, rvconstructor->ConstructR4(RISCV_FNMADD_S, cur_rvins->getRd(), pre_rvins->getRs1(), pre_rvins->getRs2(), diff_op));
+                    --cur;
+                    return true;
                 }
             }
         }
@@ -212,7 +243,11 @@ void RiscV64SSAPeehole::Execute() {
                     if (TryAddi(jt, it, block)) {
                         break;
                     }
-                    // if (Tryfmla(jt,it,block)){ break; }
+#ifdef FMATH_FAST
+                    if (Tryfmla(jt,it,block)){
+                        break;
+                    }
+#endif
                     if (Tryshxadd(jt, it, block)) {
                         break;
                     }

@@ -6,6 +6,7 @@
 #define O2_ENABLE
 #define O3_ENABLE
 #define PARALLEL_ENABLE
+// #define FMATH_FAST
 
 class LLVMIR {
 public:

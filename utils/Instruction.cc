@@ -299,6 +299,7 @@ void FcmpInstruction::SetNonResultOperands(std::vector<Operand> ops) {
 void SelectInstruction::SetNonResultOperands(std::vector<Operand> ops) {
     op1 = ops[0];
     op2 = ops[1];
+    cond = ops[2];
 }
 
 std::vector<Operand> PhiInstruction::GetNonResultOperands() {
@@ -395,7 +396,7 @@ std::vector<Operand> SelectInstruction::GetNonResultOperands() {
     std::vector<Operand> ret;
     ret.push_back(op1);
     ret.push_back(op2);
-    // ret.push_back(cond);
+    ret.push_back(cond);
     return ret;
 }
 
@@ -526,7 +527,8 @@ Instruction SelectInstruction::CopyInstruction() {
     Operand nop1 = op1->CopyOperand();
     Operand nop2 = op2->CopyOperand();
     Operand nresult = result->CopyOperand();
-    return new SelectInstruction(type, nop1, nop2, cond, nresult);
+    Operand ncond = cond->CopyOperand();
+    return new SelectInstruction(type, nop1, nop2, ncond, nresult);
 }
 
 Instruction PhiInstruction::CopyInstruction() {
@@ -794,6 +796,11 @@ void SelectInstruction::ReplaceRegByMap(const std::map<int, int> &Rule) {
         auto op1_reg = (RegOperand *)op1;
         if (Rule.find(op1_reg->GetRegNo()) != Rule.end())
             this->op1 = GetNewRegOperand(Rule.find(op1_reg->GetRegNo())->second);
+    }
+    if (cond->GetOperandType() == BasicOperand::REG) {
+        auto cond_reg = (RegOperand *)cond;
+        if (Rule.find(cond_reg->GetRegNo()) != Rule.end())
+            this->cond = GetNewRegOperand(Rule.find(cond_reg->GetRegNo())->second);
     }
     if (result->GetOperandType() == BasicOperand::REG) {
         auto result_reg = (RegOperand *)result;

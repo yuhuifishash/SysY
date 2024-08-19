@@ -49,6 +49,17 @@ NaturalLoop::LoopDepResult NaturalLoop::CheckDependenceResult(Instruction I1, In
     if (ptr1 != ptr2) {
         return ANY;
     }
+    if (GEPI1->GetDims().size() != GEPI2->GetDims().size()) {
+        return ANY;
+    }
+    for (int i = 0; i < GEPI1->GetDims().size(); ++i) {
+        auto d1 = GEPI1->GetDims()[i];
+        auto d2 = GEPI2->GetDims()[i];
+        if (d1 != d2) {
+            return ANY;
+        }
+    }
+
     auto idxes1 = GEPI1->GetIndexes();
     auto idxes2 = GEPI2->GetIndexes();
     if (idxes1.size() != idxes2.size()) {
