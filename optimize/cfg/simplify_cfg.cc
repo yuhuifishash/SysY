@@ -25,7 +25,9 @@ B0    B3  may be transformed to B0(B1 B2 use select)->B3
 B0 and B3 only have one successors
 */
 void SimpleIfConversion(CFG *C) {
+    for(auto [id,bb]:*C->block_map){
 
+    }
 }
 
 /*
@@ -844,6 +846,24 @@ void EliminateUselessPhi(CFG *C) {
                     I->SetNonResultOperands(NonResultOperands);
                 }
             }
+        }
+    }
+}
+
+void NestedLoopWithoutInitValCheck(CFG *C) {
+    for (auto l1 : C->LoopForest.loop_set) {
+        for (auto l2 : C->LoopForest.loop_set) {
+            if(l1 == l2){
+                continue;
+            }
+            if(C->LoopForest.loopG[l1->loop_id].size() != 1){
+                continue;
+            }
+            auto sl = *C->LoopForest.loopG[l1->loop_id].begin();
+            if(sl != l2){
+                continue;
+            }
+            std::cout<<sl->header->block_id<<" "<<l1->header->block_id<<"\n";
         }
     }
 }

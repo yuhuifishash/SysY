@@ -93,6 +93,7 @@ void Reassociate(CFG *C);
 void Sink(CFG *C);
 void GlobalCodeMotion(CFG *C);
 void RetMotion(CFG *C);
+void NestedLoopWithoutInitValCheck(CFG *C);
 
 void SimpleAliasAnalysis(LLVMIR *IR);
 void FunctionInline(LLVMIR *IR);
@@ -233,166 +234,168 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(MinMaxRecognize);
         llvmIR.PassExecutor(SimpleDCE);
 
-        llvmIR.BuildFunctionInfo();
-        llvmIR.PassExecutor(FunctionInline);
-        llvmIR.PassExecutor(EliminateUselessFunction);
+        llvmIR.PassExecutor(NestedLoopWithoutInitValCheck);
 
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopInvariantReassociate);
-        llvmIR.PassExecutor(SimplifyCFG);
+//         llvmIR.BuildFunctionInfo();
+//         llvmIR.PassExecutor(FunctionInline);
+//         llvmIR.PassExecutor(EliminateUselessFunction);
 
-        // repeat 5 times
-        for (int i = 0; i < 5; ++i) {
-            llvmIR.BuildLoopInfo();
-            llvmIR.PassExecutor(LoopSimplify);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(LoopClosedSSA);
-            llvmIR.PassExecutor(ScalarEvolution);
-            llvmIR.PassExecutor(ConstantLoopFullyUnroll);
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(ScalarEvolution);
+//         llvmIR.PassExecutor(LoopInvariantReassociate);
+//         llvmIR.PassExecutor(SimplifyCFG);
 
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(SimplifyCFG);
+//         // repeat 5 times
+//         for (int i = 0; i < 5; ++i) {
+//             llvmIR.BuildLoopInfo();
+//             llvmIR.PassExecutor(LoopSimplify);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(LoopClosedSSA);
+//             llvmIR.PassExecutor(ScalarEvolution);
+//             llvmIR.PassExecutor(ConstantLoopFullyUnroll);
 
-            llvmIR.PassExecutor(SimpleAliasAnalysis);
-            llvmIR.PassExecutor(Reassociate);
-            llvmIR.PassExecutor(SimpleCSE);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(SimplifyCFG);
 
-            llvmIR.BuildLoopInfo();
-            llvmIR.PassExecutor(LoopSimplify);
-            llvmIR.PassExecutor(LoopInvariantCodeMotion);
+//             llvmIR.PassExecutor(SimpleAliasAnalysis);
+//             llvmIR.PassExecutor(Reassociate);
+//             llvmIR.PassExecutor(SimpleCSE);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(SimplifyCFG);
-            llvmIR.PassExecutor(InstCombine);
-            llvmIR.PassExecutor(SimpleDCE);
-        }
-        llvmIR.PassExecutor(BranchCSE);
-        llvmIR.ElimateUnreachedInstructionAndBlocks();
-        llvmIR.BuildCFG();
-        llvmIR.BuildDominatorTree();
+//             llvmIR.BuildLoopInfo();
+//             llvmIR.PassExecutor(LoopSimplify);
+//             llvmIR.PassExecutor(LoopInvariantCodeMotion);
 
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimpleDSE);
-        llvmIR.PassExecutor(SimpleDCE);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(SimplifyCFG);
+//             llvmIR.PassExecutor(InstCombine);
+//             llvmIR.PassExecutor(SimpleDCE);
+//         }
+//         llvmIR.PassExecutor(BranchCSE);
+//         llvmIR.ElimateUnreachedInstructionAndBlocks();
+//         llvmIR.BuildCFG();
+//         llvmIR.BuildDominatorTree();
 
-#ifdef O3_ENABLE
-        llvmIR.PassExecutor(GlobalCodeMotion);
-#endif
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(SimpleDSE);
+//         llvmIR.PassExecutor(SimpleDCE);
 
-        for (int i = 0; i < 5; ++i) {
-            llvmIR.BuildLoopInfo();
-            llvmIR.PassExecutor(LoopSimplify);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(LoopClosedSSA);
-            llvmIR.PassExecutor(ScalarEvolution);
-            llvmIR.PassExecutor(LoopIdomRecognize);
-            llvmIR.PassExecutor(SimplifyCFG);
-        }
+// #ifdef O3_ENABLE
+//         llvmIR.PassExecutor(GlobalCodeMotion);
+// #endif
 
-        llvmIR.BuildFunctionInfo();
-        llvmIR.PassExecutor(FunctionInline);
-        llvmIR.PassExecutor(SimplifyCFG);
-        llvmIR.PassExecutor(MinMaxRecognize);
-        llvmIR.PassExecutor(ArrayMinMaxRecognize);
+//         for (int i = 0; i < 5; ++i) {
+//             llvmIR.BuildLoopInfo();
+//             llvmIR.PassExecutor(LoopSimplify);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(LoopClosedSSA);
+//             llvmIR.PassExecutor(ScalarEvolution);
+//             llvmIR.PassExecutor(LoopIdomRecognize);
+//             llvmIR.PassExecutor(SimplifyCFG);
+//         }
 
-        llvmIR.PassExecutor(AggressiveDeadCodeElimination);
-        llvmIR.ElimateUnreachedInstructionAndBlocks();
-        llvmIR.BuildCFG();
-        llvmIR.BuildDominatorTree();
+//         llvmIR.BuildFunctionInfo();
+//         llvmIR.PassExecutor(FunctionInline);
+//         llvmIR.PassExecutor(SimplifyCFG);
+//         llvmIR.PassExecutor(MinMaxRecognize);
+//         llvmIR.PassExecutor(ArrayMinMaxRecognize);
 
-#ifdef O3_ENABLE
-        for (int i = 0; i < 4; ++i) {
-            llvmIR.BuildLoopInfo();
-            llvmIR.PassExecutor(LoopSimplify);
-            llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-            llvmIR.PassExecutor(LoopClosedSSA);
-            llvmIR.PassExecutor(ScalarEvolution);
-            llvmIR.PassExecutor(SimpleAliasAnalysis);
-            llvmIR.PassExecutor(LoopFusion);
-            llvmIR.PassExecutor(SimplifyCFG);
-        }
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(Reassociate);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SimpleDSE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-#endif
+//         llvmIR.PassExecutor(AggressiveDeadCodeElimination);
+//         llvmIR.ElimateUnreachedInstructionAndBlocks();
+//         llvmIR.BuildCFG();
+//         llvmIR.BuildDominatorTree();
 
-#ifdef PARALLEL_ENABLE
-        llvmIR.PassExecutor(AddParallelLib);
+// #ifdef O3_ENABLE
+//         for (int i = 0; i < 4; ++i) {
+//             llvmIR.BuildLoopInfo();
+//             llvmIR.PassExecutor(LoopSimplify);
+//             llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//             llvmIR.PassExecutor(LoopClosedSSA);
+//             llvmIR.PassExecutor(ScalarEvolution);
+//             llvmIR.PassExecutor(SimpleAliasAnalysis);
+//             llvmIR.PassExecutor(LoopFusion);
+//             llvmIR.PassExecutor(SimplifyCFG);
+//         }
+//         llvmIR.PassExecutor(SimpleDCE);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(Reassociate);
+//         llvmIR.PassExecutor(SimpleCSE);
+//         llvmIR.PassExecutor(SimpleDSE);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+// #endif
 
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(LoopClosedSSA);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(LoopParallel);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimplifyCFG);
-#endif
+// #ifdef PARALLEL_ENABLE
+//         llvmIR.PassExecutor(AddParallelLib);
 
-#ifdef O2_ENABLE
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(LoopClosedSSA);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(SimpleForLoopUnroll);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimplifyCFG);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(InstSimplify);
-        llvmIR.PassExecutor(InstCombine);
-        llvmIR.PassExecutor(InstSimplify);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(Reassociate);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(LoopClosedSSA);
+//         llvmIR.PassExecutor(ScalarEvolution);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(LoopParallel);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(SimplifyCFG);
+// #endif
 
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(LoopInvariantCodeMotion);
-        llvmIR.PassExecutor(SimplifyCFG);
-#endif
+// #ifdef O2_ENABLE
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(LoopClosedSSA);
+//         llvmIR.PassExecutor(ScalarEvolution);
+//         llvmIR.PassExecutor(SimpleForLoopUnroll);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(SimplifyCFG);
+//         llvmIR.PassExecutor(SimpleDCE);
+//         llvmIR.PassExecutor(InstSimplify);
+//         llvmIR.PassExecutor(InstCombine);
+//         llvmIR.PassExecutor(InstSimplify);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(Reassociate);
+//         llvmIR.PassExecutor(SimpleCSE);
+//         llvmIR.PassExecutor(SimpleDCE);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(GEPStrengthReduce);
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(ScalarEvolution);
-        llvmIR.PassExecutor(LoopGepStrengthReduce);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(LoopInvariantCodeMotion);
+//         llvmIR.PassExecutor(SimplifyCFG);
+// #endif
 
-        llvmIR.PassExecutor(LoopIndVarSimplify);
-        llvmIR.PassExecutor(InstCombine);
-        llvmIR.PassExecutor(SimpleAliasAnalysis);
-        llvmIR.PassExecutor(SimpleCSE);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(InstCombine);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(InstSimplify);
-        llvmIR.PassExecutor(SimpleDCE);
-        llvmIR.PassExecutor(SimplifyCFG);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(GEPStrengthReduce);
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(ScalarEvolution);
+//         llvmIR.PassExecutor(LoopGepStrengthReduce);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(SimpleCSE);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
 
-        llvmIR.BuildLoopInfo();
-        llvmIR.PassExecutor(LoopSimplify);
-        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
-        llvmIR.PassExecutor(Sink);
-        llvmIR.PassExecutor(SimplifyCFG);
+//         llvmIR.PassExecutor(LoopIndVarSimplify);
+//         llvmIR.PassExecutor(InstCombine);
+//         llvmIR.PassExecutor(SimpleAliasAnalysis);
+//         llvmIR.PassExecutor(SimpleCSE);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(InstCombine);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(InstSimplify);
+//         llvmIR.PassExecutor(SimpleDCE);
+//         llvmIR.PassExecutor(SimplifyCFG);
 
-        llvmIR.PassExecutor(EraseNoUseGlobal);
+//         llvmIR.BuildLoopInfo();
+//         llvmIR.PassExecutor(LoopSimplify);
+//         llvmIR.PassExecutor(SparseConditionalConstantPropagation);
+//         llvmIR.PassExecutor(Sink);
+//         llvmIR.PassExecutor(SimplifyCFG);
+
+//         llvmIR.PassExecutor(EraseNoUseGlobal);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
