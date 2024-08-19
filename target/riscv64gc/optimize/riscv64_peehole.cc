@@ -147,6 +147,57 @@ bool TryConstshxadd(std::list<MachineBaseInstruction *>::iterator &pre,
     return false;
 }
 
+bool TryMemOffset (std::list<MachineBaseInstruction *>::iterator &pre,
+                    std::list<MachineBaseInstruction *>::iterator &cur, MachineBlock *block) {
+    auto pre_ins = *pre;
+    auto cur_ins = *cur;
+    if (pre_ins->arch == MachineBaseInstruction::RiscV && cur_ins->arch == MachineBaseInstruction::RiscV) {
+        auto pre_rvins = (RiscV64Instruction *)pre_ins;
+        auto cur_rvins = (RiscV64Instruction *)cur_ins;
+        if (pre_rvins->getOpcode() == RISCV_ADDI) {
+            if (cur_rvins->getUseLabel() == false) {
+                if (cur_rvins->getOpcode() == RISCV_LD || cur_rvins->getOpcode() == RISCV_LW || cur_rvins->getOpcode() == RISCV_FLD || cur_rvins->getOpcode() == RISCV_FLW) {
+                    if (pre_rvins->getRd() == cur_rvins->getRs1()) {
+                        if (pre_rvins->getUseLabel() == false) {
+                            int new_imm = pre_rvins->getImm() + cur_rvins->getImm();
+                            if (new_imm >= -2048 && new_imm <= 2047) {
+                                cur_rvins->setImm(new_imm);
+                                cur_rvins->setRs1(pre_rvins->getRs1());
+                                return true;
+                            }
+                        } else if (cur_rvins->getImm() == 0) {
+                            // Log("Optimized ld +label");
+                            cur_rvins->setUseLabel(true);
+                            cur_rvins->setLabel(pre_rvins->getLabel());
+                            cur_rvins->setRs1(pre_rvins->getRs1());
+                            return true;
+                        }
+
+                    }
+                } else if (cur_rvins->getOpcode() == RISCV_SD || cur_rvins->getOpcode() == RISCV_SW || cur_rvins->getOpcode() == RISCV_FSD || cur_rvins->getOpcode() == RISCV_FSW) {
+                    if (pre_rvins->getRd() == cur_rvins->getRs2()) {
+                        if (pre_rvins->getUseLabel() == false) {
+                            int new_imm = pre_rvins->getImm() + cur_rvins->getImm();
+                            if (new_imm >= -2048 && new_imm <= 2047) {
+                                cur_rvins->setImm(new_imm);
+                                cur_rvins->setRs2(pre_rvins->getRs1());
+                                return true;
+                            }
+                        } else if (cur_rvins->getImm() == 0) {
+                            // Log("Optimized sd +label");
+                            cur_rvins->setUseLabel(true);
+                            cur_rvins->setLabel(pre_rvins->getLabel());
+                            cur_rvins->setRs2(pre_rvins->getRs1());
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void RiscV64SSAPeehole::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
@@ -166,6 +217,9 @@ void RiscV64SSAPeehole::Execute() {
                         break;
                     }
                     if (TryConstshxadd(jt, it, block, current_func)) {
+                        break;
+                    }
+                    if (TryMemOffset(jt, it, block)) {
                         break;
                     }
                 }

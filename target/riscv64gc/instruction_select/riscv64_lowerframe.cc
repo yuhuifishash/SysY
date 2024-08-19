@@ -14,6 +14,7 @@ constexpr int saveregnum = 25;
 void RiscV64LowerFrame::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
+#ifdef SAVEREGBYCOPY
         Register save_regs[1 + 12 + 12];
         for (int i = 0; i < saveregnum; i++) {
             if (save_regids[i] >= RISCV_x0 && save_regids[i] <= RISCV_x31) {
@@ -22,9 +23,11 @@ void RiscV64LowerFrame::Execute() {
                 save_regs[i] = func->GetNewRegister(FLOAT64.data_type, FLOAT64.data_length);
             }
         }
+#endif
         for (auto &b : func->blocks) {
             cur_block = b;
             if (b->getLabelId() == 0) {
+                Register para_basereg = current_func->GetNewReg(INT64);
                 int i32_cnt = 0;
                 int f32_cnt = 0;
                 int para_offset = 0;
@@ -35,17 +38,19 @@ void RiscV64LowerFrame::Execute() {
                             rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_a0 + i32_cnt), INT64));
                         }
                         if (i32_cnt >= 8) {
-                            auto offset_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
-                            auto addr_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
-                            b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, addr_reg, 0));
-                            b->push_front(
-                            rvconstructor->ConstructR(RISCV_ADD, addr_reg, GetPhysicalReg(RISCV_sp), offset_reg));
-                            auto reloc_para =
-                            rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
-                            ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
-                            b->push_front(reloc_para);
-                            // b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para,
-                            // GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            // auto offset_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
+                            // auto addr_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
+                            // b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, addr_reg, 0));
+                            // b->push_front(
+                            // rvconstructor->ConstructR(RISCV_ADD, addr_reg, GetPhysicalReg(RISCV_sp), offset_reg));
+                            // auto reloc_para =
+                            // rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
+                            // ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
+                            // b->push_front(reloc_para);
+                            //// b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para,
+                            //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+
+                            b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         i32_cnt++;
@@ -55,23 +60,30 @@ void RiscV64LowerFrame::Execute() {
                             rvconstructor->ConstructCopyReg(para, GetPhysicalReg(RISCV_fa0 + f32_cnt), FLOAT64));
                         }
                         if (f32_cnt >= 8) {
-                            auto offset_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
-                            auto addr_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
-                            b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, addr_reg, 0));
-                            b->push_front(
-                            rvconstructor->ConstructR(RISCV_ADD, addr_reg, GetPhysicalReg(RISCV_sp), offset_reg));
-                            auto reloc_para =
-                            rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
-                            ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
-                            b->push_front(reloc_para);
-                            // b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para,
-                            // GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+                            // auto offset_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
+                            // auto addr_reg = func->GetNewRegister(INT64.data_type, INT64.data_length);
+                            // b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, addr_reg, 0));
+                            // b->push_front(
+                            // rvconstructor->ConstructR(RISCV_ADD, addr_reg, GetPhysicalReg(RISCV_sp), offset_reg));
+                            // auto reloc_para =
+                            // rvconstructor->ConstructUImm(RISCV_LI, offset_reg, func->GetStackSize() + para_offset);
+                            // ((RiscV64Function *)current_func)->AddStkParaIns(reloc_para);
+                            // b->push_front(reloc_para);
+                            //// b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para,
+                            //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
+
+                            b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         f32_cnt++;
                     } else {
                         ERROR("Unknown type");
                     }
+                }
+
+                if (para_offset != 0) {
+                    current_func->SetHasInParaInStack(true);
+                    cur_block->push_front(rvconstructor->ConstructCopyReg(para_basereg, GetPhysicalReg(RISCV_fp), INT64));
                 }
 #ifdef SAVEREGBYCOPY
                 for (int i = 0; i < saveregnum; i++) {
@@ -143,6 +155,10 @@ void GatherUseSregs(MachineFunction *func, std::vector<std::vector<int>> &reg_de
                 }
             }
         }
+    }
+    if (func->HasInParaInStack()) {
+        reg_defblockids[RISCV_fp].push_back(0);
+        reg_rwblockids[RISCV_fp].push_back(0);
     }
 }
 
@@ -254,20 +270,22 @@ void RiscV64LowerStack::Execute() {
         if (!restore_at_beginning) {
             for (int i = 0; i < saveregs_occurblockids.size(); i++) {
                 if (!saveregs_occurblockids[i].empty()) {
-                    int sp_offset = restore_offset[i] + func->GetStackSize();
-                    int saveb = sd_blocks[i];
-                    auto block = mcfg->GetNodeByBlockId(saveb)->Mblock;
-                    int sd_op = 0;
                     int regno = i;
-                    if (regno >= RISCV_x0 && regno <= RISCV_x31) {
-                        sd_op = RISCV_SD;
-                    } else {
-                        sd_op = RISCV_FSD;
+                    int sp_offset = restore_offset[i] + func->GetStackSize();
+                    if (!func->HasInParaInStack() || i != RISCV_fp) {
+                        int saveb = sd_blocks[i];
+                        auto block = mcfg->GetNodeByBlockId(saveb)->Mblock;
+                        int sd_op = 0;
+                        if (regno >= RISCV_x0 && regno <= RISCV_x31) {
+                            sd_op = RISCV_SD;
+                        } else {
+                            sd_op = RISCV_FSD;
+                        }
+                        block->push_front(
+                        rvconstructor->ConstructSImm(sd_op, GetPhysicalReg(i), GetPhysicalReg(RISCV_sp), sp_offset));
                     }
-                    block->push_front(
-                    rvconstructor->ConstructSImm(sd_op, GetPhysicalReg(i), GetPhysicalReg(RISCV_sp), sp_offset));
                     int restoreb = ld_blocks[i];
-                    block = mcfg->GetNodeByBlockId(restoreb)->Mblock;
+                    auto block = mcfg->GetNodeByBlockId(restoreb)->Mblock;
                     auto it = block->getInsertBeforeBrIt();
 
 #ifdef PRINT_DBG
@@ -301,6 +319,10 @@ void RiscV64LowerStack::Execute() {
                                                             GetPhysicalReg(RISCV_sp), stacksz_reg));
                     b->push_front(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                 }
+                if (func->HasInParaInStack()){
+                    b->push_front(rvconstructor->ConstructR(RISCV_ADD, GetPhysicalReg(RISCV_fp), GetPhysicalReg(RISCV_sp), GetPhysicalReg(RISCV_x0)));
+                }
+                // fp should always be restored at beginning now
                 if (restore_at_beginning) {
                     int offset = 0;
                     for (int i = 0; i < 64; i++) {
@@ -316,6 +338,8 @@ void RiscV64LowerStack::Execute() {
                             }
                         }
                     }
+                } else if (func->HasInParaInStack()) {
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_fp), GetPhysicalReg(RISCV_sp), restore_offset[RISCV_fp]));
                 }
             }
             auto last_ins = *(b->ReverseBegin());

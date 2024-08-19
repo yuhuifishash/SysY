@@ -188,16 +188,19 @@ void FastLinearScan::CoalesceInCurrentFunc() {
             }
         }
     }
-    // std::cerr<<"Check Intervals "<<current_func->getFunctionName().c_str()<<" After Coalesce"<<std::endl;
-    // for(auto interval_pair : intervals){
-    //     auto reg = interval_pair.first;
-    //     auto interval = interval_pair.second;
-    //     std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
-    //     for(auto seg : interval){
-    //         std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
-    //     }
-    //     std::cerr<<"Ref: "<<interval.getReferenceCount();
-    //     std::cerr<<"\n";
-    // }
-    // std::cerr<<"\n";
+// #define COAL_POST_CHECK
+#ifdef COAL_POST_CHECK
+    std::cerr<<"Check Intervals "<<current_func->getFunctionName().c_str()<<" After Coalesce"<<std::endl;
+    for(auto interval_pair : intervals){
+        auto reg = interval_pair.first;
+        auto interval = interval_pair.second;
+        std::cerr<<reg.is_virtual<<" "<<reg.reg_no<<" ";
+        for(auto seg : interval){
+            std::cerr<<"["<<seg.begin<<","<<seg.end<<") ";
+        }
+        std::cerr<<"Ref: "<<interval.getReferenceCount();
+        std::cerr<<"\n";
+    }
+    std::cerr<<"\n";
+#endif
 }
