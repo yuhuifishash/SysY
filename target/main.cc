@@ -102,6 +102,7 @@ void FindNoWriteStaticGlobal(LLVMIR *IR);
 void AddParallelLib(LLVMIR *IR);
 void EliminateUselessFunction(LLVMIR *IR);
 void EraseNoUseGlobal(LLVMIR *IR);
+void SimpleIfConversion(CFG *C);
 
 void LoopParallel(CFG *C, LLVMIR *IR);
 
@@ -398,6 +399,9 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(SimplifyCFG);
 
         llvmIR.PassExecutor(EraseNoUseGlobal);
+
+        // llvmIR.PassExecutor(SimpleIfConversion);
+        // llvmIR.PassExecutor(SimplifyCFG);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
