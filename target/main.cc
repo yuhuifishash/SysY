@@ -414,8 +414,8 @@ int main(int argc, char **argv) {
 
         llvmIR.PassExecutor(EraseNoUseGlobal);
 
-        llvmIR.PassExecutor(SimpleIfConversion);
-        llvmIR.PassExecutor(SimplifyCFG);
+        // llvmIR.PassExecutor(SimpleIfConversion);
+        // llvmIR.PassExecutor(SimplifyCFG);
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
