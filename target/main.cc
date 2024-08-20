@@ -419,6 +419,8 @@ int main(int argc, char **argv) {
     } else {
         llvmIR.PassExecutor(GlobalConstReplace);
         llvmIR.PassExecutor(MakeFunctionOneExit);
+        llvmIR.PassExecutor(Mem2Reg);
+        llvmIR.PassExecutor(SparseConditionalConstantPropagation);
     }
 
     if (strcmp(argv[step_tag], "-llvm") == 0) {

@@ -423,6 +423,7 @@ void SCEV::CheckSimpleForLoop() {
     // info.lowerbound.PrintSCEVValue();std::cerr<<" ";
     // info.upperbound.PrintSCEVValue();std::cerr<<" ";
     // info.step.PrintSCEVValue();std::cerr<<" ";
+    // std::cerr<<info.cond<<" ";
     // std::cerr<<info.is_upperbound_closed<<"\n";
 }
 
