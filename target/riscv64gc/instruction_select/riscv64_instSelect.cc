@@ -210,7 +210,7 @@ int RiscV64Selector::ExtractOp2ImmI32(BasicOperand *op) {
     return ((ImmI32Operand *)op)->GetIntImmVal();
 }
 
-int RiscV64Selector::ExtractOp2ImmF32(BasicOperand *op) {
+float RiscV64Selector::ExtractOp2ImmF32(BasicOperand *op) {
     Assert(op->GetOperandType() == BasicOperand::IMMF32);
     return ((ImmF32Operand *)op)->GetFloatVal();
 }
@@ -522,6 +522,23 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
         } else {
             Assert(ins->GetResultOperand()->GetOperandType() == BasicOperand::REG);
             Register rd = GetllvmReg(((RegOperand *)ins->GetResultOperand())->GetRegNo(), FLOAT64);
+            if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32) {
+                float op1_val = ExtractOp2ImmF32(ins->GetOperand1());
+                if (op1_val == 0) {
+                    // Log("Neg");
+                    Assert(ins->GetOperand2()->GetOperandType() == BasicOperand::REG);
+                    cur_block->push_back(rvconstructor->ConstructR2(RISCV_FNEG_S, rd, ExtractOp2Reg(ins->GetOperand2(), FLOAT64)));
+                    return;
+                }
+            } else if (ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32) {
+                float op2_val = ExtractOp2ImmF32(ins->GetOperand2());
+                if (op2_val == 0) {
+                    // Log("sub 0");
+                    Assert(ins->GetOperand1()->GetOperandType() == BasicOperand::REG);
+                    cur_block->push_back(rvconstructor->ConstructCopyReg(rd, ExtractOp2Reg(ins->GetOperand1(), FLOAT64), FLOAT64));
+                    return;
+                }
+            }
             Register fsub1, fsub2;
             if (ins->GetOperand1()->GetOperandType() == BasicOperand::IMMF32) {
                 fsub1 = GetNewReg(FLOAT64);

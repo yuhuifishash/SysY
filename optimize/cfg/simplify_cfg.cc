@@ -30,7 +30,7 @@ bool IsOpcodeBannedFromSelectMerge (int opcode) {
         if (opcode == ban_op) { return true; }
     }
     // return false;
-    constexpr int permit_list[] = {BR_UNCOND, ADD, SUB, MUL, BITXOR, SHL, UMIN_I32, UMAX_I32, SMIN_I32, SMAX_I32, BITCAST, FMIN_F32, FMAX_F32, BITAND, FPEXT, SELECT};
+    constexpr int permit_list[] = {BR_UNCOND, ADD, SUB, MUL, BITXOR, SHL, UMIN_I32, UMAX_I32, SMIN_I32, SMAX_I32, BITCAST, LOAD, BITAND, FPEXT, SELECT};
     for (auto permit_op : permit_list) {
         if (opcode == permit_op) { return false; }
     }

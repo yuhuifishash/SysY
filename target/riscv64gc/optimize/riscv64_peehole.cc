@@ -229,12 +229,70 @@ bool TryMemOffset (std::list<MachineBaseInstruction *>::iterator &pre,
     return false;
 }
 
+bool InFMList (int opcode) {
+    constexpr int fmlist[] = {RISCV_FMADD_S, RISCV_FMSUB_S, RISCV_FNMADD_S, RISCV_FNMSUB_S};
+    for (auto op : fmlist) {
+        if (opcode == op) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int ReverseMulOp (int opcode) {
+    Assert(InFMList(opcode));
+    if (opcode == RISCV_FMADD_S) {
+        return RISCV_FNMADD_S;
+    } else if (opcode == RISCV_FMSUB_S) {
+        return RISCV_FNMSUB_S;
+    } else if (opcode == RISCV_FNMADD_S) {
+        return RISCV_FMADD_S;
+    } else if (opcode == RISCV_FNMSUB_S) {
+        return RISCV_FMSUB_S;
+    }
+    ERROR("...");
+    return -1;
+}
+
+int ReverseAddOp (int opcode) {
+    Assert(InFMList(opcode));
+    if (opcode == RISCV_FMADD_S) {
+        return RISCV_FMSUB_S;
+    } else if (opcode == RISCV_FMSUB_S) {
+        return RISCV_FMADD_S;
+    } else if (opcode == RISCV_FNMADD_S) {
+        return RISCV_FNMSUB_S;
+    } else if (opcode == RISCV_FNMSUB_S) {
+        return RISCV_FNMADD_S;
+    }
+}
+
+#ifdef FMATH_FAST
+#define FNEG_AWARE
+#endif
+
 void RiscV64SSAPeehole::Execute() {
     for (auto func : unit->functions) {
         current_func = func;
+#ifdef FNEG_AWARE
+        std::map<Register, Register> negative_map;
+#endif
         for (auto block : func->blocks) {
             cur_block = block;
             for (auto it = block->begin(); it != block->end(); ++it) {
+#ifdef FNEG_AWARE
+                if ((*it)->arch == MachineBaseInstruction::RiscV) {
+                    auto rvins = (RiscV64Instruction *)*it;
+                    if (rvins->getOpcode() == RISCV_FNEG_S) {
+                        Register rd = rvins->getRd();
+                        Register rs1 = rvins->getRs1();
+                        if (rd.is_virtual && rs1.is_virtual) {
+                            Assert(negative_map.find(rd) == negative_map.end());
+                            negative_map[rd] = rs1;
+                        }
+                    }
+                }
+#endif
                 auto jt = it;
                 for (int i = 1; i <= length; i++) {
                     if (jt == block->begin())
@@ -259,6 +317,40 @@ void RiscV64SSAPeehole::Execute() {
                     }
                 }
             }
+#ifdef FNEG_AWARE
+            for (auto it = block->begin(); it != block->end(); ++it) {
+                if ((*it)->arch == MachineBaseInstruction::RiscV) {
+                    auto rvins = (RiscV64Instruction *)*it;
+                    if (InFMList(rvins->getOpcode())) {
+                        Assert(OpTable[rvins->getOpcode()].ins_formattype == RvOpInfo::R4_type);
+                        Log("FNEG Applied on FMADDs");
+                        auto rs1 = rvins->getRs1();
+                        auto rs2 = rvins->getRs2();
+                        auto rs3 = rvins->getRs3();
+                        int mul_neg = false;
+                        int add_neg = false;
+                        if (negative_map.find(rs1) != negative_map.end()) {
+                            rvins->setRs1(negative_map[rs1]);
+                            mul_neg = !mul_neg;
+                        }
+                        if (negative_map.find(rs2) != negative_map.end()) {
+                            rvins->setRs2(negative_map[rs2]);
+                            mul_neg = !mul_neg;
+                        }
+                        if (negative_map.find(rs3) != negative_map.end()) {
+                            rvins->setRs3(negative_map[rs3]);
+                            add_neg = !add_neg;
+                        }
+                        if (mul_neg) {
+                            rvins->setOpcode(ReverseMulOp(rvins->getOpcode()), false);
+                        }
+                        if (add_neg) {
+                            rvins->setOpcode(ReverseAddOp(rvins->getOpcode()), false);
+                        }
+                    }
+                }
+            }
+#endif
         }
     }
 }
