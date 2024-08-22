@@ -1,4 +1,4 @@
-# 2024编译系统实现赛(决赛性能分第二名)
+# 2024编译系统实现赛(Risc-V赛道决赛性能分第二名)
 
 # SysY Compiler
 #### SysY -> RISC-V 64bits GC_Zba_Zbb
