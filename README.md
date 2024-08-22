@@ -184,7 +184,9 @@ To generate asm of single file(*.sy) with optimization
 
 -LinearScan
 
--PrologueEpilogueOptimization
+-PrologueEpilogueOpt
+
+-ShortForwardBranchOpt
 
 ## Reference
 
