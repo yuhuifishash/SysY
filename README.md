@@ -148,8 +148,6 @@ To generate asm of single file(*.sy) with optimization
 
 -RedundantBranchElimination
 
--FunctionInline
-
 -LoopSimplify
 
 -LCSSA
