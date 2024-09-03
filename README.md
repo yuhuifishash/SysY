@@ -3,6 +3,9 @@
 # SysY Compiler
 #### SysY -> RISC-V 64bits GC_Zba_Zbb
 
+## Bugs
+1. QueryAlias in AliasAnalysis after LoopParallel may make mistakes, because LoopParallel may generate new pointers, but AliasAnalysis only consider array.
+
 ## OverView
 
 ### Introduction to SysY (subset of C, but something different with C)
