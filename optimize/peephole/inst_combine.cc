@@ -110,7 +110,7 @@ bool EliminateDoubleI32Add(Instruction a, Instruction b) {
         if (opb1->GetOperandType() == BasicOperand::REG) {
             opb1_regno = ((RegOperand *)opb1)->GetRegNo();
             if (opb1_regno == resulta_regno) {
-                
+
                 int consta = ((ImmI32Operand *)opa2)->GetIntImmVal();
                 int constb = ((ImmI32Operand *)opb2)->GetIntImmVal();
                 // auto ans = consta + constb;
@@ -221,7 +221,7 @@ bool EliminateSubEq(Instruction a, Instruction b) {
 
 // TODO():EliminateMulAdd
 // a*c + a => a*(c+1) (c is const and c+1 can not overflow)
-bool EliminateMulAdd(Instruction a, Instruction b) { 
+bool EliminateMulAdd(Instruction a, Instruction b) {
     // if(a->GetOpcode() != MUL || b->GetOpcode() != ADD){
     //     return false;
     // }
@@ -258,7 +258,7 @@ bool EliminateMulAdd(Instruction a, Instruction b) {
     // auto imm = ((ImmI32Operand*)I1op2)->GetIntImmVal();
     // I2->SetOperand2(new ImmI32Operand(imm+1));
     // // I2->PrintIR(std::cerr);
-    // return true; 
+    // return true;
     return false;
 }
 

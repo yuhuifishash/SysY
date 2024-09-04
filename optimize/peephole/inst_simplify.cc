@@ -545,12 +545,12 @@ void GEPStrengthReduce(CFG *C) {
         }
         auto GepDim = ((GetElementptrInstruction *)GepI)->GetDims();
         auto BefDim = ((GetElementptrInstruction *)BefI)->GetDims();
-        if(GepDim.size() != BefDim.size()){
+        if (GepDim.size() != BefDim.size()) {
             aimOperand = -1;
             return aimOperand;
         }
-        for(int i = 0;i < GepDim.size(); ++i){
-            if(GepDim[i]!=BefDim[i]){
+        for (int i = 0; i < GepDim.size(); ++i) {
+            if (GepDim[i] != BefDim[i]) {
                 aimOperand = -1;
                 return aimOperand;
             }
@@ -559,7 +559,7 @@ void GEPStrengthReduce(CFG *C) {
         std::vector<int> siz;
         int siz_now = 1;
         siz1.push(siz_now);
-        
+
         for (int i = GepDim.size() - 1; i >= 0; --i) {
             siz_now *= GepDim[i];
             siz1.push(siz_now);

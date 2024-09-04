@@ -15,7 +15,8 @@ void VirtualRegisterRewrite::ExecuteInFunc() {
         auto block = block_it->next()->Mblock;
         for (auto it = block->begin(); it != block->end(); ++it) {
             auto ins = *it;
-            if (ins->arch == MachineBaseInstruction::NOP) continue;
+            if (ins->arch == MachineBaseInstruction::NOP)
+                continue;
             // Log("%d",ins->getNumber());
             for (auto reg : ins->GetReadReg()) {
                 if (reg->is_virtual == false) {
@@ -59,7 +60,8 @@ void SpillCodeGen::ExecuteInFunc(MachineFunction *function, std::map<Register, A
         cur_block = block_it->next()->Mblock;
         for (auto it = cur_block->begin(); it != cur_block->end(); ++it) {
             auto ins = *it;
-            if (ins->arch == MachineBaseInstruction::NOP) continue;
+            if (ins->arch == MachineBaseInstruction::NOP)
+                continue;
             if (ins->arch == MachineBaseInstruction::COPY) {
                 auto copy_ins = (MachineCopyInstruction *)ins;
                 if (!copy_ins->GetReadReg().empty() && !copy_ins->GetWriteReg().empty()) {

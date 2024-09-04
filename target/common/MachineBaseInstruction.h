@@ -371,13 +371,14 @@ public:
 
 class MachineNop : public MachineBaseInstruction {
 private:
-    std::vector<Register*> reads, writes;
+    std::vector<Register *> reads, writes;
+
 public:
     MachineNop() : MachineBaseInstruction(MachineBaseInstruction::NOP) {}
     std::vector<Register *> GetReadReg() { return reads; }
     std::vector<Register *> GetWriteReg() { return writes; }
-    void SetReadReg(std::vector<Register*> reads) { this->reads = reads;}
-    void SetWriteReg(std::vector<Register*> writes) { this->writes = writes;}
+    void SetReadReg(std::vector<Register *> reads) { this->reads = reads; }
+    void SetWriteReg(std::vector<Register *> writes) { this->writes = writes; }
     int GetLatency() { return 0; }
 };
 
@@ -420,7 +421,10 @@ public:
         return ret;
     }
 
-    MachineSelectInstruction(MachineBaseInstruction *cond, MachineBaseOperand *dst, MachineBaseOperand *srctrue, MachineBaseOperand *srcfalse): cond(cond), dst(dst), srctrue(srctrue), srcfalse(srcfalse), MachineBaseInstruction(MachineBaseInstruction::SELECT) {}
+    MachineSelectInstruction(MachineBaseInstruction *cond, MachineBaseOperand *dst, MachineBaseOperand *srctrue,
+                             MachineBaseOperand *srcfalse)
+        : cond(cond), dst(dst), srctrue(srctrue), srcfalse(srcfalse),
+          MachineBaseInstruction(MachineBaseInstruction::SELECT) {}
     MachineBaseInstruction *GetCond() { return cond; }
     MachineBaseOperand *GetDst() { return dst; }
     MachineBaseOperand *GetSrcTrue() { return srctrue; }

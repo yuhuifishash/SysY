@@ -166,13 +166,13 @@ template <> void RiscV64Printer::printAsm<RiscV64Instruction *>(RiscV64Instructi
     case RvOpInfo::CALL_type:
         s << ins->getLabel().name;
         break;
-	case RvOpInfo::BCC_type:
+    case RvOpInfo::BCC_type:
         printRVfield(ins->getRs1());
         s << ",";
         printRVfield(ins->getRs2());
         s << ",1f; ";
         printAsm(ins->GetSubInstruction());
-		s << "; 1: ";
+        s << "; 1: ";
         break;
     default:
         ERROR("Unexpected instruction format");
@@ -269,38 +269,38 @@ void RiscV64Printer::emit() {
                     }
                     s << "\t";
                     printAsm((RiscV64Instruction *)ins);
-					s << "\n";
+                    s << "\n";
                 } else if (ins->arch == MachineBaseInstruction::PHI) {
                     if (::print_comment) {
                         s << "\t";
                         printAsm((MachinePhiInstruction *)ins);
-						s << "\n";
+                        s << "\n";
                     }
                 } else if (ins->arch == MachineBaseInstruction::COPY) {
                     s << "\t";
                     printAsm((MachineCopyInstruction *)ins);
-					s << "\n";
+                    s << "\n";
                 } else if (ins->arch == MachineBaseInstruction::COMMENT) {
                     if (::print_comment) {
                         s << "\t";
                         s << "# " << ((MachineComment *)ins)->GetComment();
-						s << "\n";
+                        s << "\n";
                     }
                 } else if (ins->arch == MachineBaseInstruction::SELECT) {
                     if (::print_comment) {
                         s << "\t";
-						auto sel_ins = (MachineSelectInstruction *)ins;
-						printAsm(sel_ins->GetCond());
-						s << "|";
+                        auto sel_ins = (MachineSelectInstruction *)ins;
+                        printAsm(sel_ins->GetCond());
+                        s << "|";
                         printRVfield(sel_ins->GetDst());
-						s << ",";
+                        s << ",";
                         printRVfield(sel_ins->GetSrcTrue());
-						s << ",";
+                        s << ",";
                         printRVfield(sel_ins->GetSrcFalse());
-						s << "\n";
+                        s << "\n";
                     }
-				} else if (ins->arch == MachineBaseInstruction::NOP) {
-				} else {
+                } else if (ins->arch == MachineBaseInstruction::NOP) {
+                } else {
                     ERROR("Unexpected arch");
                 }
             }

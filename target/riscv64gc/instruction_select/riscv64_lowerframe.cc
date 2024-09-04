@@ -52,7 +52,8 @@ void RiscV64LowerFrame::Execute() {
                             //// b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para,
                             //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
 
-                            b->push_front(rvconstructor->ConstructIImm(RISCV_LD, para, GetPhysicalReg(RISCV_fp), para_offset));
+                            b->push_front(
+                            rvconstructor->ConstructIImm(RISCV_LD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         i32_cnt++;
@@ -74,7 +75,8 @@ void RiscV64LowerFrame::Execute() {
                             //// b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para,
                             //// GetPhysicalReg(RISCV_sp),func->GetStackSize()+para_offset));
 
-                            b->push_front(rvconstructor->ConstructIImm(RISCV_FLD, para, GetPhysicalReg(RISCV_fp), para_offset));
+                            b->push_front(
+                            rvconstructor->ConstructIImm(RISCV_FLD, para, GetPhysicalReg(RISCV_fp), para_offset));
                             para_offset += 8;
                         }
                         f32_cnt++;
@@ -85,7 +87,8 @@ void RiscV64LowerFrame::Execute() {
 
                 if (para_offset != 0) {
                     current_func->SetHasInParaInStack(true);
-                    cur_block->push_front(rvconstructor->ConstructCopyReg(para_basereg, GetPhysicalReg(RISCV_fp), INT64));
+                    cur_block->push_front(
+                    rvconstructor->ConstructCopyReg(para_basereg, GetPhysicalReg(RISCV_fp), INT64));
                 }
 #ifdef SAVEREGBYCOPY
                 for (int i = 0; i < saveregnum; i++) {
@@ -164,33 +167,13 @@ void GatherUseSregs(MachineFunction *func, std::vector<std::vector<int>> &reg_de
     }
 }
 
-void GatherUseSregs (MachineFunction* func, std::vector<int>& saveregs) {
+void GatherUseSregs(MachineFunction *func, std::vector<int> &saveregs) {
     int RegNeedSaved[64] = {
-        [RISCV_s0] = 1,
-        [RISCV_s1] = 1,
-        [RISCV_s2] = 1,
-        [RISCV_s3] = 1,
-        [RISCV_s4] = 1,
-        [RISCV_s5] = 1,
-        [RISCV_s6] = 1,
-        [RISCV_s7] = 1,
-        [RISCV_s8] = 1,
-        [RISCV_s9] = 1,
-        [RISCV_s10] = 1,
-        [RISCV_s11] = 1,
-        [RISCV_fs0] = 1,
-        [RISCV_fs1] = 1,
-        [RISCV_fs2] = 1,
-        [RISCV_fs3] = 1,
-        [RISCV_fs4] = 1,
-        [RISCV_fs5] = 1,
-        [RISCV_fs6] = 1,
-        [RISCV_fs7] = 1,
-        [RISCV_fs8] = 1,
-        [RISCV_fs9] = 1,
-        [RISCV_fs10] = 1,
-        [RISCV_fs11] = 1,
-        [RISCV_ra] = 1,
+    [RISCV_s0] = 1,  [RISCV_s1] = 1,  [RISCV_s2] = 1,   [RISCV_s3] = 1,   [RISCV_s4] = 1,
+    [RISCV_s5] = 1,  [RISCV_s6] = 1,  [RISCV_s7] = 1,   [RISCV_s8] = 1,   [RISCV_s9] = 1,
+    [RISCV_s10] = 1, [RISCV_s11] = 1, [RISCV_fs0] = 1,  [RISCV_fs1] = 1,  [RISCV_fs2] = 1,
+    [RISCV_fs3] = 1, [RISCV_fs4] = 1, [RISCV_fs5] = 1,  [RISCV_fs6] = 1,  [RISCV_fs7] = 1,
+    [RISCV_fs8] = 1, [RISCV_fs9] = 1, [RISCV_fs10] = 1, [RISCV_fs11] = 1, [RISCV_ra] = 1,
     };
     for (auto &b : func->blocks) {
         for (auto ins : *b) {
@@ -307,7 +290,9 @@ void RiscV64LowerStack::Execute() {
         func->AddStackSize(saveregnum * 8);
         auto mcfg = func->getMachineCFG();
         bool restore_at_beginning = (-8 + func->GetStackSize()) >= 2048;
-        if (!optimize_flag) { restore_at_beginning = true; }
+        if (!optimize_flag) {
+            restore_at_beginning = true;
+        }
         if (!restore_at_beginning) {
             func->getMachineCFG()->BuildDominatoorTree();
             for (int i = 0; i < saveregs_occurblockids.size(); i++) {
@@ -317,7 +302,7 @@ void RiscV64LowerStack::Execute() {
                     cur_restore_offset -= 8;
                     restore_offset[i] = cur_restore_offset;
                     ld_blocks[i] = CalculateGroupLCA(vld, &func->getMachineCFG()->PostDomTree,
-                                                    func->getMachineCFG()->ret_block->Mblock->getLabelId());
+                                                     func->getMachineCFG()->ret_block->Mblock->getLabelId());
                     if (ld_blocks[i] != func->getMachineCFG()->ret_block->Mblock->getLabelId()) {
                         ld_blocks[i] = func->getMachineCFG()->PostDomTree.idom[ld_blocks[i]]->getLabelId();
                     }
@@ -376,8 +361,9 @@ void RiscV64LowerStack::Execute() {
                                                             GetPhysicalReg(RISCV_sp), stacksz_reg));
                     b->push_front(rvconstructor->ConstructUImm(RISCV_LI, stacksz_reg, func->GetStackSize()));
                 }
-                if (func->HasInParaInStack()){
-                    b->push_front(rvconstructor->ConstructR(RISCV_ADD, GetPhysicalReg(RISCV_fp), GetPhysicalReg(RISCV_sp), GetPhysicalReg(RISCV_x0)));
+                if (func->HasInParaInStack()) {
+                    b->push_front(rvconstructor->ConstructR(RISCV_ADD, GetPhysicalReg(RISCV_fp),
+                                                            GetPhysicalReg(RISCV_sp), GetPhysicalReg(RISCV_x0)));
                 }
                 // fp should always be restored at beginning now
                 if (restore_at_beginning) {
@@ -396,7 +382,8 @@ void RiscV64LowerStack::Execute() {
                         }
                     }
                 } else if (func->HasInParaInStack()) {
-                    b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_fp), GetPhysicalReg(RISCV_sp), restore_offset[RISCV_fp]));
+                    b->push_front(rvconstructor->ConstructSImm(RISCV_SD, GetPhysicalReg(RISCV_fp),
+                                                               GetPhysicalReg(RISCV_sp), restore_offset[RISCV_fp]));
                 }
             }
             auto last_ins = *(b->ReverseBegin());

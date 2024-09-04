@@ -410,7 +410,7 @@ private:
 
     int ret_type;
 
-    MachineBaseInstruction* sub_instruction;
+    MachineBaseInstruction *sub_instruction;
 
     std::vector<Register *> GetR_typeReadreg() { return {&rs1, &rs2}; }
     std::vector<Register *> GetR2_typeReadreg() { return {&rs1}; }
@@ -488,8 +488,8 @@ private:
     RiscV64Instruction() : MachineBaseInstruction(MachineBaseInstruction::RiscV), imm(0), use_label(false) {}
 
 public:
-    MachineBaseInstruction* GetSubInstruction() { return sub_instruction; }
-    void SetSubInstruction(MachineBaseInstruction* sub_instruction) { this->sub_instruction = sub_instruction; }
+    MachineBaseInstruction *GetSubInstruction() { return sub_instruction; }
+    void SetSubInstruction(MachineBaseInstruction *sub_instruction) { this->sub_instruction = sub_instruction; }
     void setOpcode(int op, bool use_label) {
         this->op = op;
         this->use_label = use_label;
@@ -691,7 +691,7 @@ public:
         ret->SetNoSchedule(no_schedule);
         return ret;
     }
-    RiscV64Instruction *ConstructBCC(int op, Register rs1, Register rs2, MachineBaseInstruction* subins) {
+    RiscV64Instruction *ConstructBCC(int op, Register rs1, Register rs2, MachineBaseInstruction *subins) {
         Assert(OpTable[op].ins_formattype == RvOpInfo::BCC_type);
         RiscV64Instruction *ret = new RiscV64Instruction();
         ret->setOpcode(op, false);
@@ -701,28 +701,37 @@ public:
         ret->SetNoSchedule(no_schedule);
         return ret;
     }
-    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction* cond, Register rd, Register srctrue, Register srcfalse) {
-        MachineSelectInstruction* select_ins = new MachineSelectInstruction(cond, new MachineRegister(rd), new MachineRegister(srctrue), new MachineRegister(srcfalse));
+    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction *cond, Register rd, Register srctrue,
+                                              Register srcfalse) {
+        MachineSelectInstruction *select_ins = new MachineSelectInstruction(
+        cond, new MachineRegister(rd), new MachineRegister(srctrue), new MachineRegister(srcfalse));
         select_ins->SetNoSchedule(no_schedule);
         return select_ins;
     }
-    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction* cond, Register rd, int srctrue, Register srcfalse) {
-        MachineSelectInstruction* select_ins = new MachineSelectInstruction(cond, new MachineRegister(rd), new MachineImmediateInt(srctrue), new MachineRegister(srcfalse));
+    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction *cond, Register rd, int srctrue,
+                                              Register srcfalse) {
+        MachineSelectInstruction *select_ins = new MachineSelectInstruction(
+        cond, new MachineRegister(rd), new MachineImmediateInt(srctrue), new MachineRegister(srcfalse));
         select_ins->SetNoSchedule(no_schedule);
         return select_ins;
     }
-    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction* cond, Register rd, Register srctrue, int srcfalse) {
-        MachineSelectInstruction* select_ins = new MachineSelectInstruction(cond, new MachineRegister(rd), new MachineRegister(srctrue), new MachineImmediateInt(srcfalse));
+    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction *cond, Register rd, Register srctrue,
+                                              int srcfalse) {
+        MachineSelectInstruction *select_ins = new MachineSelectInstruction(
+        cond, new MachineRegister(rd), new MachineRegister(srctrue), new MachineImmediateInt(srcfalse));
         select_ins->SetNoSchedule(no_schedule);
         return select_ins;
     }
-    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction* cond, Register rd, int srctrue, int srcfalse) {
-        MachineSelectInstruction* select_ins = new MachineSelectInstruction(cond, new MachineRegister(rd), new MachineImmediateInt(srctrue), new MachineImmediateInt(srcfalse));
+    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction *cond, Register rd, int srctrue, int srcfalse) {
+        MachineSelectInstruction *select_ins = new MachineSelectInstruction(
+        cond, new MachineRegister(rd), new MachineImmediateInt(srctrue), new MachineImmediateInt(srcfalse));
         select_ins->SetNoSchedule(no_schedule);
         return select_ins;
     }
-    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction* cond, Register rd, MachineBaseOperand* srctrue, MachineBaseOperand* srcfalse) {
-        MachineSelectInstruction* select_ins = new MachineSelectInstruction(cond, new MachineRegister(rd), srctrue, srcfalse);
+    MachineSelectInstruction *ConstructSelect(MachineBaseInstruction *cond, Register rd, MachineBaseOperand *srctrue,
+                                              MachineBaseOperand *srcfalse) {
+        MachineSelectInstruction *select_ins =
+        new MachineSelectInstruction(cond, new MachineRegister(rd), srctrue, srcfalse);
         select_ins->SetNoSchedule(no_schedule);
         return select_ins;
     }

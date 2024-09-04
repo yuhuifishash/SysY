@@ -166,8 +166,7 @@ int main(int argc, char **argv) {
     llvmIR.CFGInit();
     llvmIR.BuildCFG();
 
-    optimize_flag =
-    (argc == 6 && (strcmp(argv[optimize_tag], "-O1") == 0 || strcmp(argv[optimize_tag], "-O2") == 0));
+    optimize_flag = (argc == 6 && (strcmp(argv[optimize_tag], "-O1") == 0 || strcmp(argv[optimize_tag], "-O2") == 0));
     if (optimize_flag) {
         llvmIR.PassExecutor(FindNoWriteStaticGlobal);
         llvmIR.PassExecutor(GlobalConstReplace);
@@ -205,7 +204,7 @@ int main(int argc, char **argv) {
         llvmIR.PassExecutor(OnlyBasicBlockCSE);
         llvmIR.PassExecutor(SimpleDSE);
 
-#ifdef O3_ENABLE    
+#ifdef O3_ENABLE
         llvmIR.BuildLoopInfo();
         llvmIR.PassExecutor(LoopSimplify);
         llvmIR.PassExecutor(SparseConditionalConstantPropagation);

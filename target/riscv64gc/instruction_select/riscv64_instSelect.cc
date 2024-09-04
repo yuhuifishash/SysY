@@ -527,7 +527,8 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 if (op1_val == 0) {
                     // Log("Neg");
                     Assert(ins->GetOperand2()->GetOperandType() == BasicOperand::REG);
-                    cur_block->push_back(rvconstructor->ConstructR2(RISCV_FNEG_S, rd, ExtractOp2Reg(ins->GetOperand2(), FLOAT64)));
+                    cur_block->push_back(
+                    rvconstructor->ConstructR2(RISCV_FNEG_S, rd, ExtractOp2Reg(ins->GetOperand2(), FLOAT64)));
                     return;
                 }
             } else if (ins->GetOperand2()->GetOperandType() == BasicOperand::IMMF32) {
@@ -535,7 +536,8 @@ template <> void RiscV64Selector::ConvertAndAppend<ArithmeticInstruction *>(Arit
                 if (op2_val == 0) {
                     // Log("sub 0");
                     Assert(ins->GetOperand1()->GetOperandType() == BasicOperand::REG);
-                    cur_block->push_back(rvconstructor->ConstructCopyReg(rd, ExtractOp2Reg(ins->GetOperand1(), FLOAT64), FLOAT64));
+                    cur_block->push_back(
+                    rvconstructor->ConstructCopyReg(rd, ExtractOp2Reg(ins->GetOperand1(), FLOAT64), FLOAT64));
                     return;
                 }
             }
@@ -1943,8 +1945,6 @@ template <> void RiscV64Selector::ConvertAndAppend<BitCastInstruction *>(BitCast
     }
 }
 
-
-
 template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectInstruction *ins) {
     rvconstructor->DisableSchedule();
     // Log("SelectInstruction Selected");
@@ -2103,9 +2103,9 @@ template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectIn
     auto op1 = ins->GetOp1();
     MachineBaseOperand *optrue = nullptr;
     if (op1->GetOperandType() == BasicOperand::REG) {
-        optrue = new MachineRegister(GetllvmReg(((RegOperand*)op1)->GetRegNo(), INT64));
+        optrue = new MachineRegister(GetllvmReg(((RegOperand *)op1)->GetRegNo(), INT64));
     } else if (op1->GetOperandType() == BasicOperand::IMMI32) {
-        optrue = new MachineImmediateInt(((ImmI32Operand*)op1)->GetIntImmVal());
+        optrue = new MachineImmediateInt(((ImmI32Operand *)op1)->GetIntImmVal());
     } else {
         ERROR("Unexpected op type");
     }
@@ -2113,14 +2113,14 @@ template <> void RiscV64Selector::ConvertAndAppend<SelectInstruction *>(SelectIn
     auto op2 = ins->GetOp2();
     MachineBaseOperand *opfalse = nullptr;
     if (op2->GetOperandType() == BasicOperand::REG) {
-        opfalse = new MachineRegister(GetllvmReg(((RegOperand*)op2)->GetRegNo(), INT64));
+        opfalse = new MachineRegister(GetllvmReg(((RegOperand *)op2)->GetRegNo(), INT64));
     } else if (op2->GetOperandType() == BasicOperand::IMMI32) {
-        opfalse = new MachineImmediateInt(((ImmI32Operand*)op2)->GetIntImmVal());
+        opfalse = new MachineImmediateInt(((ImmI32Operand *)op2)->GetIntImmVal());
     } else {
         ERROR("Unexpected op type");
     }
 
-    auto sel_ins = (MachineSelectInstruction*)rvconstructor->ConstructSelect(br_ins, rd, optrue, opfalse);
+    auto sel_ins = (MachineSelectInstruction *)rvconstructor->ConstructSelect(br_ins, rd, optrue, opfalse);
     cur_block->push_back(sel_ins);
     auto livemarker = new MachineNop();
     livemarker->SetNoSchedule(true);

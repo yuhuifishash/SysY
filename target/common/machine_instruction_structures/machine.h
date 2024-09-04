@@ -152,7 +152,8 @@ public:
 
 public:
     MachineFunction(std::string name, MachineBlockFactory *blockfactory)
-        : func_name(name), stack_sz(0), para_sz(0), block_factory(blockfactory), max_exist_label(0), has_inpara_instack(false) {}
+        : func_name(name), stack_sz(0), para_sz(0), block_factory(blockfactory), max_exist_label(0),
+          has_inpara_instack(false) {}
 };
 
 class MachineUnit {

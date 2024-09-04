@@ -509,6 +509,7 @@ private:
     Operand op2;
     Operand cond;
     Operand result;
+
 public:
     Operand GetCond() { return cond; }
     Operand GetOp1() { return op1; }

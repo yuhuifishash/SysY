@@ -316,7 +316,7 @@ bool NaturalLoop::SimpleForLoopUnroll(CFG *C) {
     if (stepval != 1) {
         return false;
     }
-    if(scev.forloop_info.cond != sle && scev.forloop_info.cond != slt){
+    if (scev.forloop_info.cond != sle && scev.forloop_info.cond != slt) {
         return false;
     }
     int inst_number = 0;

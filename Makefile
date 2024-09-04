@@ -7,8 +7,6 @@ SRCDIR += ./target/common/machine_passes/register_alloc/graph_color
 SRCDIR += ./target/common/machine_instruction_structures
 SRCDIR += ./target/common/machine_instruction_structures/cfg_iterators
 SRCDIR += ./target/common/machine_passes
-SRCDIR += ./target/armv7/instruction_select
-SRCDIR += ./target/armv7/instruction_print
 SRCDIR += ./target/riscv64gc
 SRCDIR += ./target/riscv64gc/instruction_print
 SRCDIR += ./target/riscv64gc/instruction_select
@@ -54,7 +52,7 @@ $(OBJDIR)/%.o : %.cc
 
 -include $(OBJS:.o=.d)
 
-.PHONY : SysYc,clean-obj,clean-all,lexer,parser,format,compile,grade,perf,gdb,run,gdbasm,run-all
+.PHONY : SysYc clean-obj clean-all lexer parser format compile grade perf gdb run gdbasm run-all
 
 SysYc : $(BINARY)
 

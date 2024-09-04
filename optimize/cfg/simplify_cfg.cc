@@ -24,15 +24,20 @@ B0    B3  may be transformed to B0(B1 B2 use select)->B3
   \B2/
 B0 and B3 only have one successors
 */
-bool IsOpcodeBannedFromSelectMerge (int opcode) {
+bool IsOpcodeBannedFromSelectMerge(int opcode) {
     constexpr int banned_list[] = {BR_COND, STORE, CALL, DIV, MOD};
     for (auto ban_op : banned_list) {
-        if (opcode == ban_op) { return true; }
+        if (opcode == ban_op) {
+            return true;
+        }
     }
     // return false;
-    constexpr int permit_list[] = {BR_UNCOND, ADD, SUB, MUL, BITXOR, SHL, UMIN_I32, UMAX_I32, SMIN_I32, SMAX_I32, BITCAST, LOAD, BITAND, FPEXT, SELECT};
+    constexpr int permit_list[] = {BR_UNCOND, ADD,      SUB,     MUL,  BITXOR, SHL,   UMIN_I32, UMAX_I32,
+                                   SMIN_I32,  SMAX_I32, BITCAST, LOAD, BITAND, FPEXT, SELECT};
     for (auto permit_op : permit_list) {
-        if (opcode == permit_op) { return false; }
+        if (opcode == permit_op) {
+            return false;
+        }
     }
     return true;
 }
@@ -40,19 +45,29 @@ bool IsOpcodeBannedFromSelectMerge (int opcode) {
 #define MAX_SINGLE_MERGE_NUM 2
 void SimpleIfConversion(CFG *C) {
     std::vector<int> block_erase_list;
-    for (auto [id,bb]:*C->block_map) {
+    for (auto [id, bb] : *C->block_map) {
         auto pre = C->GetPredecessor(id);
-        if (pre.size() != 2) { continue; }
+        if (pre.size() != 2) {
+            continue;
+        }
         int phi_cnt = 0;
         PhiInstruction *phi = nullptr;
         for (auto I : bb->Instruction_list) {
-            if (I->GetOpcode() != PHI) { break; }
+            if (I->GetOpcode() != PHI) {
+                break;
+            }
             phi_cnt++;
             phi = (PhiInstruction *)I;
         }
-        if (phi_cnt != 1) { continue; }
-        if (phi->GetDataType() != I32) { continue; }
-        if (phi->GetPhiList().size() != 2) { continue; }
+        if (phi_cnt != 1) {
+            continue;
+        }
+        if (phi->GetDataType() != I32) {
+            continue;
+        }
+        if (phi->GetPhiList().size() != 2) {
+            continue;
+        }
         bool has_side_effect = false;
 
         auto prepre0 = C->GetPredecessor(pre[0]);
@@ -70,9 +85,13 @@ void SimpleIfConversion(CFG *C) {
                     break;
                 }
             }
-            if (has_side_effect) { continue; }
+            if (has_side_effect) {
+                continue;
+            }
             // if (pre[0]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
-            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
+            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) {
+                continue;
+            }
             block_erase_list.push_back(pre[0]->block_id);
             for (auto ins : pre[0]->Instruction_list) {
                 if (ins->GetOpcode() != BR_UNCOND) {
@@ -88,16 +107,21 @@ void SimpleIfConversion(CFG *C) {
                     break;
                 }
             }
-            if (has_side_effect) { continue; }
+            if (has_side_effect) {
+                continue;
+            }
             // if (pre[1]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
-            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
+            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) {
+                continue;
+            }
             block_erase_list.push_back(pre[1]->block_id);
             for (auto ins : pre[1]->Instruction_list) {
                 if (ins->GetOpcode() != BR_UNCOND) {
                     Middle_block.push_back(ins);
                 }
             }
-        } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0] && sucpre0.size() == 1 && sucpre1.size() == 1) {
+        } else if (prepre0.size() == 1 && prepre0.size() == prepre1.size() && prepre0[0] == prepre1[0] &&
+                   sucpre0.size() == 1 && sucpre1.size() == 1) {
             ancient = prepre0[0];
             // copy pre0 and pre1
             for (auto I : pre[0]->Instruction_list) {
@@ -106,17 +130,27 @@ void SimpleIfConversion(CFG *C) {
                     break;
                 }
             }
-            if (has_side_effect) { continue; }
+            if (has_side_effect) {
+                continue;
+            }
             for (auto I : pre[1]->Instruction_list) {
                 if (IsOpcodeBannedFromSelectMerge(I->GetOpcode())) {
                     has_side_effect = true;
                     break;
                 }
             }
-            if (has_side_effect) { continue; }
-            if (pre[0]->Instruction_list.size() + pre[1]->Instruction_list.size() >= MAX_MERGE_NUM) { continue; }
-            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
-            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) { continue; }
+            if (has_side_effect) {
+                continue;
+            }
+            if (pre[0]->Instruction_list.size() + pre[1]->Instruction_list.size() >= MAX_MERGE_NUM) {
+                continue;
+            }
+            if (pre[0]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) {
+                continue;
+            }
+            if (pre[1]->Instruction_list.size() >= MAX_SINGLE_MERGE_NUM) {
+                continue;
+            }
             block_erase_list.push_back(pre[0]->block_id);
             block_erase_list.push_back(pre[1]->block_id);
             for (auto ins : pre[0]->Instruction_list) {
@@ -129,19 +163,23 @@ void SimpleIfConversion(CFG *C) {
                     Middle_block.push_back(ins);
                 }
             }
-        } else { continue; }
-        if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) { continue; }
+        } else {
+            continue;
+        }
+        if (ancient->Instruction_list[ancient->Instruction_list.size() - 2]->GetOpcode() != ICMP) {
+            continue;
+        }
         // Log("If Conversion Applied");
         // pop ancient's br
         Assert(ancient->Instruction_list.back()->GetOpcode() == BR_COND);
-        auto brcond_ins = (BrCondInstruction*)ancient->Instruction_list.back();
-        auto truelabel = (LabelOperand*)brcond_ins->GetTrueLabel();
-        auto falselabel = (LabelOperand*)brcond_ins->GetFalseLabel();
+        auto brcond_ins = (BrCondInstruction *)ancient->Instruction_list.back();
+        auto truelabel = (LabelOperand *)brcond_ins->GetTrueLabel();
+        auto falselabel = (LabelOperand *)brcond_ins->GetFalseLabel();
         ancient->Instruction_list.pop_back();
 
         // pop ancient's icmp and save
         Assert(ancient->Instruction_list.back()->GetOpcode() == ICMP);
-        auto icmp = (IcmpInstruction*)ancient->Instruction_list.back();
+        auto icmp = (IcmpInstruction *)ancient->Instruction_list.back();
         ancient->Instruction_list.pop_back();
 
         // ancient pushback Middle_block
@@ -166,8 +204,8 @@ void SimpleIfConversion(CFG *C) {
         Assert(pair1.first->GetOperandType() == BasicOperand::LABEL);
         Assert(pair2.first->GetOperandType() == BasicOperand::LABEL);
 
-        auto label1 = (LabelOperand*)pair1.first;
-        auto label2 = (LabelOperand*)pair2.first;
+        auto label1 = (LabelOperand *)pair1.first;
+        auto label2 = (LabelOperand *)pair2.first;
 
         auto op1 = pair1.second;
         auto op2 = pair2.second;
@@ -178,19 +216,24 @@ void SimpleIfConversion(CFG *C) {
         if (label1->GetLabelNo() == truelabel->GetLabelNo() && label2->GetLabelNo() == falselabel->GetLabelNo()) {
             true_op = op1;
             false_op = op2;
-        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() && label1->GetLabelNo() == falselabel->GetLabelNo()) {
+        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() &&
+                   label1->GetLabelNo() == falselabel->GetLabelNo()) {
             true_op = op2;
             false_op = op1;
-        } else if (label1->GetLabelNo() == truelabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id && falselabel->GetLabelNo() == id) {
+        } else if (label1->GetLabelNo() == truelabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id &&
+                   falselabel->GetLabelNo() == id) {
             true_op = op1;
             false_op = op2;
-        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id && falselabel->GetLabelNo() == id) {
+        } else if (label2->GetLabelNo() == truelabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id &&
+                   falselabel->GetLabelNo() == id) {
             true_op = op2;
             false_op = op1;
-        } else if (label1->GetLabelNo() == falselabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id && truelabel->GetLabelNo() == id) {
+        } else if (label1->GetLabelNo() == falselabel->GetLabelNo() && label2->GetLabelNo() == ancient->block_id &&
+                   truelabel->GetLabelNo() == id) {
             true_op = op2;
             false_op = op1;
-        } else if (label2->GetLabelNo() == falselabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id && truelabel->GetLabelNo() == id) {
+        } else if (label2->GetLabelNo() == falselabel->GetLabelNo() && label1->GetLabelNo() == ancient->block_id &&
+                   truelabel->GetLabelNo() == id) {
             true_op = op1;
             false_op = op2;
         } else {
@@ -1051,7 +1094,6 @@ void EliminateUselessPhi(CFG *C) {
         }
     }
 }
-
 
 void SimplifyCFG(CFG *C) {
     EliminateUselessPhi(C);
